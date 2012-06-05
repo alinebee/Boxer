@@ -30,6 +30,7 @@
     
 	BXVideoFrame *_currentFrame;
 	NSArray *_shaders;
+    NSArray *_shaderTextures;
 	
 	BOOL _supportsFBO;
 	BOOL _useScalingBuffer;
@@ -46,6 +47,7 @@
 	BOOL _needsNewFrameTexture;
 	BOOL _needsFrameTextureUpdate;
 	BOOL _recalculateScalingBuffer;
+    BOOL _recalculateShaderTextures;
 	
 	CFAbsoluteTime _lastFrameTime;
 	CFTimeInterval _renderingTime;
@@ -63,7 +65,7 @@
 @property (retain, readonly) BXVideoFrame *currentFrame;
 
 //An array of BXBSNESShaders that will be applied in order when rendering the current frame.
-@property (retain) NSArray *shaders;
+@property (copy, nonatomic) NSArray *shaders;
 
 //The viewport in the current context into which we'll render the frame.
 @property (assign, nonatomic) CGRect viewport;

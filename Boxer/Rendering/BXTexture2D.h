@@ -95,11 +95,20 @@ extern NSString * const BXGLFramebufferExtensionErrorDomain;
               error: (NSError **)outError;
 
 //Fills the specified region of the texture (expressed in texels)
-//with the specified bytes, assumed to be in the format GL_BGRA and 
-//GL_UNSIGNED_INT_8_8_8_8_REV.
+//with the specified bytes, assumed to be in the format GL_BGRA
+//and GL_UNSIGNED_INT_8_8_8_8_REV.
 //Returns NO and populates outError if there was an error and outError was provided.
 - (BOOL) fillRegion: (CGRect)region
           withBytes: (const GLvoid *)bytes
+              error: (NSError **)outError;
+
+//Fills the specified region of the texture with the specified color values (ranging from 0 to 1).
+//Mostly used for blanking the texture.
+- (BOOL) fillRegion: (CGRect)region
+            withRed: (CGFloat)red
+              green: (CGFloat)green
+               blue: (CGFloat)blue
+              alpha: (CGFloat)alpha
               error: (NSError **)outError;
 
 //Cleans up the texture resource. After this, the texture should not be used.

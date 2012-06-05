@@ -252,6 +252,34 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
     return succeeded;
 }
 
+- (BOOL) fillRegion: (CGRect)region
+            withRed: (CGFloat)red
+              green: (CGFloat)green
+               blue: (CGFloat)blue
+              alpha: (CGFloat)alpha
+              error: (NSError **)outError
+{
+    //We upload bytes in BGRA format
+    GLubyte components[4] = {
+        blue * 255,
+        green * 255,
+        red * 255,
+        alpha * 255
+    };
+    
+    size_t numBytes = _textureSize.width * _textureSize.height * 4;
+    GLvoid *colorData = (GLvoid *)malloc(numBytes);
+    BOOL succeeded = NO;
+    if (colorData)
+    {
+        //Write the color data in stripes into the buffer
+        memset_pattern4(colorData, components, numBytes);
+        
+        succeeded = [self fillRegion: region withBytes: colorData error: outError];
+        free(colorData);
+    }
+    return succeeded;
+}
 
 #pragma mark -
 #pragma mark Behaviour

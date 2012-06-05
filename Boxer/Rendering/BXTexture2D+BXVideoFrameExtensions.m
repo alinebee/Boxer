@@ -37,7 +37,16 @@
 - (BOOL) fillWithVideoFrame: (BXVideoFrame *)frame
                       error: (NSError **)outError
 {
-    self.contentRegion = CGRectMake(0, 0, frame.size.width, frame.size.height);
+    //If the frame has changed shape: update the content region, wipe the texture clean,
+    //and copy the entire frame into the texture rather than bothering to check for changed lines.
+    CGRect newContentRegion = CGRectMake(0, 0, frame.size.width, frame.size.height);
+    if (!CGRectEqualToRect(_contentRegion, newContentRegion))
+    {
+        self.contentRegion = newContentRegion;
+        CGRect textureRegion = CGRectMake(0, 0, _textureSize.width, _textureSize.height);
+        [self fillRegion: textureRegion withRed: 0 green: 0 blue: 0 alpha: 0 error: nil];
+        return [self fillRegion: newContentRegion withBytes: frame.bytes error: outError];
+    }
     
     //Optimisation: only upload the changed regions to the texture.
     //TODO: profile this and see if it's quicker under some circumstances

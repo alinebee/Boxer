@@ -10,7 +10,7 @@
 #import <OpenGL/CGLMacro.h>
 #import <OpenGL/glu.h>
 #import <OpenGL/CGLRenderers.h>
-#import "BXShader.h"
+#import "BXBSNESShader.h"
 #import "BXVideoFrame.h"
 #import "BXTexture2D+BXVideoFrameExtensions.h"
 #import "BXGeometry.h"
@@ -29,19 +29,19 @@
 #define BXScalingBufferScaleCutoff 4.0f
 
 
-//The vertex coordinates of the viewport in the screen projection matrix, unflipped and flipped
+//The vertex coordinates of a viewport-covering quad in orthographic projection, unflipped and flipped
 GLfloat viewportVertices[] = {
-    -1,	1,
+    0,	1,
     1,	1,
-    1,	-1,
-    -1,	-1
+    1,	0,
+    0,	0
 };
 
 GLfloat viewportVerticesFlipped[] = {
-    -1,	-1,
-    1,	-1,
+    0,	0,
+    1,	0,
     1,	1,
-    -1,	1
+    0,	1
 };
 
 
@@ -52,6 +52,8 @@ GLfloat viewportVerticesFlipped[] = {
 //The texture into which we are drawing output for scaling.
 @property (retain) BXTexture2D *scalingBufferTexture;
 
+@property (retain) NSArray *shaderTextures;
+
 @property (readwrite, retain) BXVideoFrame *currentFrame;
 
 //Prepares our context, turning unnecessary rendering features off and others on.
@@ -59,9 +61,10 @@ GLfloat viewportVerticesFlipped[] = {
 
 //Ensure our framebuffer and scaling buffers are prepared for rendering the current frame.
 //Called when the layer is about to be drawn.
-- (void) _prepareScalingBufferForFrame: (BXVideoFrame *)frame;
-
 - (void) _prepareFrameTextureForFrame: (BXVideoFrame *)frame;
+- (void) _prepareScalingBufferForFrame: (BXVideoFrame *)frame;
+- (void) _prepareShaderTexturesForFrame: (BXVideoFrame *)frame;
+
 
 //Render the specified frame into the specified GL context.
 - (void) _renderFrame: (BXVideoFrame *)frame;
@@ -83,6 +86,7 @@ GLfloat viewportVerticesFlipped[] = {
 @synthesize frameTexture = _frameTexture;
 @synthesize scalingBufferTexture = _scalingBufferTexture;
 @synthesize shaders = _shaders;
+@synthesize shaderTextures = _shaderTextures;
 @synthesize frameRate = _frameRate;
 @synthesize renderingTime = _renderingTime;
 @synthesize viewport = _viewport;
@@ -115,11 +119,6 @@ GLfloat viewportVerticesFlipped[] = {
             _maxScalingBufferSize = _maxTextureSize;
         }
         
-        /*
-         NSError *loadError = nil;
-         self.currentShader = [BXShader shaderNamed: @"Scale4xHQ" inSubdirectory: @"Shaders" error: &loadError];
-         */
-        
         [self _prepareContext];
     }
     return self;
@@ -141,6 +140,9 @@ GLfloat viewportVerticesFlipped[] = {
         glDisable(GL_DITHER);
         glDisable(GL_FOG);
         glPixelZoom(1.0f, 1.0f);
+        glOrtho(0, 1,
+                0, 1,
+                -1, 1);
     CGLUnlockContext(cgl_ctx);
 }
 
@@ -152,6 +154,7 @@ GLfloat viewportVerticesFlipped[] = {
     
     CGLLockContext(cgl_ctx);
         self.shaders = nil;
+        self.shaderTextures = nil;
         self.frameTexture = nil;
         self.scalingBufferTexture = nil;
         
@@ -173,18 +176,19 @@ GLfloat viewportVerticesFlipped[] = {
 {
     if (frame != self.currentFrame)
     {   
-        //If the current buffer can't accommodate the new frame,
+        //If the current texture isn't large enough to fit the new frame,
         //we'll need to create a new one.
         if (![self.frameTexture canAccomodateVideoFrame: frame])
         {
             _needsNewFrameTexture = YES;
         }
         
-        //If the buffers for the two frames are a different size,
+        //If the two frames are a different size,
         //we may need to recreate the scaling buffer.
         if (!NSEqualSizes(frame.size, self.currentFrame.size))
         {
             _recalculateScalingBuffer = YES;
+            _recalculateShaderTextures = YES;
         }
         
         self.currentFrame = frame;
@@ -217,6 +221,18 @@ GLfloat viewportVerticesFlipped[] = {
         
         //We may need to recalculate the scaling buffer size if our viewport changes.
         _recalculateScalingBuffer = YES;
+        _recalculateShaderTextures = YES;
+    }
+}
+
+- (void) setShaders: (NSArray *)shaders
+{
+    if (![shaders isEqualToArray: self.shaders])
+    {
+        [_shaders release];
+        _shaders = [shaders copy];
+        
+        _recalculateShaderTextures = YES;
     }
 }
 
@@ -238,6 +254,7 @@ GLfloat viewportVerticesFlipped[] = {
     CGLLockContext(_context);
         [self _prepareFrameTextureForFrame: frame];
         [self _prepareScalingBufferForFrame: frame];
+        [self _prepareShaderTexturesForFrame: frame];
         [self _renderFrame: frame];
     CGLUnlockContext(_context);
     
@@ -258,7 +275,7 @@ GLfloat viewportVerticesFlipped[] = {
 }
 
 - (void) flush
-{   
+{
     CGLLockContext(_context);
         CGLFlushDrawable(_context);
     CGLUnlockContext(_context);
@@ -269,61 +286,126 @@ GLfloat viewportVerticesFlipped[] = {
 {
     CGLContextObj cgl_ctx = _context;
 	
-	GLint contextFramebuffer = 0;
-	if (_useScalingBuffer)
-    {
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &contextFramebuffer);
-    }
-	
-	//Calculate the appropriate viewport to display this frame given its intended aspect ratio.
-	CGRect viewportRect = self.viewport;
-    [self _setViewportToRegion: viewportRect];
-	
-    //Fill the areas of the context outside our viewport with black
+    //Fill the context with black before we begin
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 	
-	//Activate our scaling buffer, which we'll draw the frame into first
-	if (_useScalingBuffer)
+	if (_scalingBuffer && self.shaders.count)
 	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _scalingBuffer);
-		
-		//Set the GL viewport to match the extents of the scaling buffer, rather than the viewport.
+        //Retrieve the current framebuffer so we can revert to it for the final drawing stage.
+        GLint contextFramebuffer = 0;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &contextFramebuffer);
+        
+        BXTexture2D *inTexture = self.frameTexture;
+        BXTexture2D *outTexture = nil;
+        
+        NSUInteger i, numShaders = self.shaders.count, numShaderTextures = self.shaderTextures.count;
+        
+        NSAssert(numShaderTextures >= (numShaders - 1), @"Insufficient shader textures to cover all shaders in list.");
+        
+        for (i=0; i < numShaders; i++)
+        {
+            BXBSNESShader *shader = [self.shaders objectAtIndex: i];
+            
+            //The final shader may not have an output texture of its own;
+            //in which case we'll render directly to the output.
+            if (numShaderTextures < i)
+                outTexture = [self.shaderTextures objectAtIndex: i];
+            else
+                outTexture = nil;
+            
+            CGRect outputRect;
+            GLfloat *quadCoords;
+            //If we do have a texture to render into, bind that to the framebuffer now.
+            if (outTexture)
+            {   
+                glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _scalingBuffer);
+                
+                [outTexture bindToFrameBuffer: _scalingBuffer
+                                   attachment: GL_COLOR_ATTACHMENT0
+                                        level: 0
+                                        error: nil];
+                
+                outputRect = outTexture.contentRegion;
+                quadCoords = viewportVerticesFlipped;
+            }
+            //Otherwise we'll render straight to the screen.
+            else
+            {
+                glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, contextFramebuffer);
+                outputRect = self.viewport;
+                quadCoords = viewportVertices;
+            }
+            
+            glUseProgramObjectARB(shader.shaderProgram);
+            
+            [shader setTexture: 0];
+            [shader setTextureSize: inTexture.textureSize];
+            [shader setInputSize: inTexture.contentRegion.size];
+            [shader setOutputSize: outputRect.size];
+            shader.frameCount++;
+            
+            //Apply the desired filtering mode to the texture we'll be rendering
+            //(TODO: we could do this in advance already.)
+            switch (shader.filterType)
+            {
+                case BXBSNESShaderFilterNearest:
+                    inTexture.minFilter = inTexture.magFilter = GL_NEAREST;
+                    break;
+                case BXBSNESShaderFilterLinear:
+                case BXBSNESShaderFilterAuto:
+                default:
+                    inTexture.minFilter = inTexture.magFilter = GL_LINEAR;
+                    break;
+            }
+            
+            [self _setViewportToRegion: outputRect];
+            [inTexture drawOntoVertices: quadCoords error: nil];
+            
+            inTexture = outTexture;
+        }
+        
+        glUseProgram(NULL);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, contextFramebuffer);
+        
+        //If we were left with a final rendered texture at the end of the process,
+        //draw this to the screen now.
+        if (outTexture)
+        {
+            [self _setViewportToRegion: self.viewport];
+            [outTexture drawOntoVertices: viewportVertices error: nil];
+        }
+    }
+    else if (_useScalingBuffer)
+    {
+        //Retrieve the current framebuffer so we can revert to it afterwards.
+        GLint contextFramebuffer = 0;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &contextFramebuffer);
+        
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _scalingBuffer);
+        
+        //First set the GL viewport to match the content of the scaling buffer.
         CGRect scalingBufferViewport = self.scalingBufferTexture.contentRegion;
         [self _setViewportToRegion: scalingBufferViewport];
-	}
-	
-	//Draw the frame texture as a quad filling the viewport/framebuffer
-	//-----------
-	
-	if (self.shaders.count)
-	{
-        BXShader *currentShader = [self.shaders objectAtIndex: 0];
-		glUseProgramObjectARB(currentShader.shaderProgram);
-		glUniform1iARB([currentShader locationOfUniform: "OGL2Texture"], 0);
-	}
-	
-    [self.frameTexture drawOntoVertices: viewportVertices error: NULL];
-	
-	if (self.shaders)
-    {
-        glUseProgramObjectARB(NULL);
-    }
-	
-	if (_useScalingBuffer)
-	{
-		//Revert the framebuffer to the context's original target,
-		//so that future drawing goes to the screen (or a parent framebuffer)
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, contextFramebuffer);
         
-		//Revert the GL viewport to match the real viewport again.
-        [self _setViewportToRegion: viewportRect];
-		
-		//Finally, draw the scaling buffer texture into the original viewport
+        //Draw the frame into the scaling buffer.
+        [self.frameTexture drawOntoVertices: viewportVertices error: NULL];
+        
+        //Revert the framebuffer to the context's original target,
+        //so that future drawing goes to the screen (or a parent framebuffer.)
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, contextFramebuffer);
+        
+        //Finally, draw the scaling buffer texture into the final viewport
         //Note that this is flipped vertically from the coordinates we use
-        //for rendering the frame texture (DOCUMENT WHY THIS IS SO!)
+        //for rendering the frame texture - DOCUMENT WHY THIS IS SO!
+        [self _setViewportToRegion: self.viewport];
         [self.scalingBufferTexture drawOntoVertices: viewportVerticesFlipped error: NULL];
-	}
+    }
+    else
+    {
+        [self _setViewportToRegion: self.viewport];
+        [self.frameTexture drawOntoVertices: viewportVertices error: NULL];
+    }
 }
 
 - (void) _setViewportToRegion: (CGRect)viewport 
@@ -346,10 +428,11 @@ GLfloat viewportVerticesFlipped[] = {
     if (!self.frameTexture || _needsNewFrameTexture)
     {
         NSError *textureError = nil;
-        //Clear our old frame texture straight away when replacing it
+        //Clear our old frame texture straight away when replacing it,
+        //so that the resources won't linger around.
         [self.frameTexture deleteTexture];
         
-        self.frameTexture = [BXTexture2D textureWithType: GL_TEXTURE_RECTANGLE_ARB
+        self.frameTexture = [BXTexture2D textureWithType: GL_TEXTURE_2D
                                               videoFrame: frame
                                              inGLContext: _context
                                                    error: &textureError];
@@ -366,6 +449,83 @@ GLfloat viewportVerticesFlipped[] = {
     {
         [self.frameTexture fillWithVideoFrame: frame error: NULL];
         _needsFrameTextureUpdate = NO;
+    }
+}
+
+- (void) _prepareShaderTexturesForFrame: (BXVideoFrame *)frame
+{
+    if (self.shaders.count && (!self.shaderTextures || _recalculateShaderTextures))
+    {
+        CGLContextObj cgl_ctx = _context;
+        
+        CGSize inputSize = NSSizeToCGSize(frame.size);
+        CGSize finalOutputSize = self.viewport.size;
+        CGSize recommendedOutputSize = [self _idealScalingBufferSizeForFrame: frame toViewportSize: finalOutputSize];
+        if (CGSizeEqualToSize(recommendedOutputSize, CGSizeZero))
+            recommendedOutputSize = finalOutputSize;
+        
+        BOOL requiresFinalPass = NO;
+        
+        NSUInteger i, numShaders = self.shaders.count;
+        NSMutableArray *shaderTextures = [NSMutableArray arrayWithCapacity: numShaders];
+        
+        for (i=0; i<numShaders; i++)
+        {
+            BOOL isFirstShader = (i == 0);
+            BOOL isLastShader = (numShaders <= i + 1);
+            
+            BXBSNESShader *shader = [self.shaders objectAtIndex: i];
+            
+            //Ask the shader how big a surface it wants to render into.
+            CGSize outputSize = [shader outputSizeForInputSize: inputSize
+                                               finalOutputSize: finalOutputSize];
+            
+            //If no preferred size was given, and this is the first shader, then use our own preferred output size.
+            if (isFirstShader)
+            {
+                if (outputSize.width == 0)
+                    outputSize.width = recommendedOutputSize.width;
+                
+                if (outputSize.height == 0)
+                    outputSize.height = recommendedOutputSize.height;
+            }
+            
+            //If this was the last shader:
+            //If a preferred size was already given, then record that we'll need to do a final-pass rendering.
+            //Otherwise we'll just render straight into the framebuffer.
+            if (isLastShader)
+            {
+                if (outputSize.width == 0)
+                    outputSize.width = finalOutputSize.width;
+                else if (outputSize.height != finalOutputSize.height)
+                    requiresFinalPass = YES;
+                
+                if (outputSize.height == 0)
+                    outputSize.height = finalOutputSize.height;
+                else if (outputSize.height != finalOutputSize.height)
+                    requiresFinalPass = YES;
+            }
+            
+            NSLog(@"Preparing framebuffer texture with size: %@", NSStringFromCGSize(outputSize));
+            if (!isLastShader || requiresFinalPass)
+            {
+                BXTexture2D *outputTexture = [[[BXTexture2D alloc] initWithType: GL_TEXTURE_2D
+                                                                    contentSize: outputSize
+                                                                          bytes: NULL
+                                                                    inGLContext: cgl_ctx
+                                                                          error: nil] autorelease];
+                
+                [shaderTextures addObject: outputTexture];
+            }
+            
+            inputSize = outputSize;
+        }
+        
+        //Wipe out all the previous textures before we replace them.
+        [self.shaderTextures makeObjectsPerformSelector: @selector(deleteTexture)];
+        self.shaderTextures = shaderTextures;
+        
+        _recalculateShaderTextures = NO;
     }
 }
 
@@ -390,7 +550,7 @@ GLfloat viewportVerticesFlipped[] = {
                 [self.scalingBufferTexture deleteTexture];
                 
                 //(Re)create the scaling buffer texture in the new dimensions
-                self.scalingBufferTexture = [BXTexture2D textureWithType: GL_TEXTURE_RECTANGLE_ARB
+                self.scalingBufferTexture = [BXTexture2D textureWithType: GL_TEXTURE_2D
                                                              contentSize: newBufferSize
                                                                    bytes: NULL
                                                              inGLContext: _context
@@ -400,7 +560,7 @@ GLfloat viewportVerticesFlipped[] = {
                 BOOL bindSucceeded = [self.scalingBufferTexture bindToFrameBuffer: _scalingBuffer
                                                                        attachment: GL_COLOR_ATTACHMENT0_EXT
                                                                             level: 0
-                                                                            error: nil];
+                                                                            error: NULL];
                 
                 //If binding failed, then ditch the texture after all.
                 if (!bindSucceeded)

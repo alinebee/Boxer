@@ -325,7 +325,7 @@ NSString * const BXBSNESShaderErrorDomain = @"BXBSNESShaderErrorDomain";
             break;
         case BXBSNESShaderScaleAuto:
         default:
-            outputSize.width = finalOutputSize.width;
+            outputSize.width = 0;
     }
     
     switch (self.verticalScalingBehaviour)
@@ -341,7 +341,7 @@ NSString * const BXBSNESShaderErrorDomain = @"BXBSNESShaderErrorDomain";
             break;
         case BXBSNESShaderScaleAuto:
         default:
-            outputSize.height = finalOutputSize.height;
+            outputSize.height = 0;
     }
     
     return outputSize;

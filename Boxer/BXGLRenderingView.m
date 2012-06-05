@@ -11,6 +11,7 @@
 #import "BXVideoFrame.h"
 #import "BXGeometry.h"
 #import "BXDOSWindowController.h" //For notifications
+#import "BXBSNESShader.h"
 
 #pragma mark -
 #pragma mark Private interface declaration
@@ -166,6 +167,19 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	
     //Create a new renderer for this context, and set it up appropriately
     self.renderer = [[[BXRenderer alloc] initWithGLContext: cgl_ctx] autorelease];
+    
+    NSURL *shaderURL = [[NSBundle mainBundle] URLForResource: @"cgwg-CRT-v5.OpenGL"
+                                               withExtension: @"shader"
+                                                subdirectory: @"Shaders"];
+    if (shaderURL)
+    {
+        NSError *shaderLoadError = nil;
+        self.renderer.shaders = [BXBSNESShader shadersWithContentsOfURL: shaderURL
+                                                              inContext: cgl_ctx
+                                                                  error: &shaderLoadError];
+        if (shaderLoadError)
+            NSLog(@"%@", shaderLoadError);
+    }
     if (self.currentFrame)
     {
         self.renderer.viewport = NSRectToCGRect(self.viewportRect);

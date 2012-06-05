@@ -20,7 +20,9 @@
     BXVideoFrame *_currentFrame;
 	CVDisplayLinkRef _displayLink;
     BOOL _needsCVLinkDisplay;
+    BOOL _managesAspectRatio;
 }
 @property (retain) BXRenderer *renderer;
+@property (assign, nonatomic) BOOL managesAspectRatio;
 
 @end

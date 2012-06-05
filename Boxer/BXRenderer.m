@@ -85,34 +85,11 @@ GLfloat viewportVerticesFlipped[] = {
 @synthesize shaders = _shaders;
 @synthesize frameRate = _frameRate;
 @synthesize renderingTime = _renderingTime;
-@synthesize canvas = _canvas;
-@synthesize maintainsAspectRatio = _maintainsAspectRatio;
-
-- (void) dealloc
-{
-    CGLContextObj cgl_ctx = _context;
-    
-    CGLLockContext(cgl_ctx);
-        self.currentFrame = nil;
-        self.shaders = nil;
-        self.frameTexture = nil;
-        self.scalingBufferTexture = nil;
-        
-        if (glIsFramebufferEXT(_scalingBuffer))
-            glDeleteFramebuffersEXT(1, &_scalingBuffer);
-        _scalingBuffer = 0;
-    CGLUnlockContext(cgl_ctx);
-    
-    CGLReleaseContext(_context);
-    
-	[super dealloc];
-}
+@synthesize viewport = _viewport;
 
 
 #pragma mark -
 #pragma mark Initialization and deallocation
-#pragma mark -
-#pragma mark Preparing and tearing down the GL context
 
 - (id) initWithGLContext: (CGLContextObj)glContext
 {
@@ -167,6 +144,27 @@ GLfloat viewportVerticesFlipped[] = {
     CGLUnlockContext(cgl_ctx);
 }
 
+- (void) dealloc
+{
+    self.currentFrame = nil;
+    
+    CGLContextObj cgl_ctx = _context;
+    
+    CGLLockContext(cgl_ctx);
+        self.shaders = nil;
+        self.frameTexture = nil;
+        self.scalingBufferTexture = nil;
+        
+        if (glIsFramebufferEXT(_scalingBuffer))
+            glDeleteFramebuffersEXT(1, &_scalingBuffer);
+        _scalingBuffer = 0;
+    CGLUnlockContext(cgl_ctx);
+    
+    CGLReleaseContext(_context);
+    
+	[super dealloc];
+}
+
 
 #pragma mark -
 #pragma mark Handling frame updates and canvas resizes
@@ -211,41 +209,14 @@ GLfloat viewportVerticesFlipped[] = {
 	return _maxTextureSize;
 }
 
-- (void) setCanvas: (CGRect)newCanvas
+- (void) setViewport: (CGRect)viewport
 {
-    if (!CGRectEqualToRect(_canvas, newCanvas))
+    if (!CGRectEqualToRect(_viewport, viewport))
     {
-        _canvas = newCanvas;
+        _viewport = viewport;
         
-        //We need to recalculate the scaling buffer size if our canvas changes.
+        //We may need to recalculate the scaling buffer size if our viewport changes.
         _recalculateScalingBuffer = YES;
-    }
-}
-
-- (void) setMaintainsAspectRatio: (BOOL)flag
-{
-    if (_maintainsAspectRatio != flag)
-    {
-        _maintainsAspectRatio = flag;
-        
-        //We need to recalculate the scaling buffer size if our aspect ratio changes.
-        _recalculateScalingBuffer = YES;
-    }
-}
-
-- (CGRect) viewportForFrame: (BXVideoFrame *)frame
-{
-	if (self.maintainsAspectRatio)
-	{
-		NSSize frameSize = frame.scaledSize;
-		NSRect frameRect = NSMakeRect(0.0f, 0.0f, frameSize.width, frameSize.height);
-		NSRect bounds = NSRectFromCGRect(self.canvas);
-		
-		return NSRectToCGRect(fitInRect(frameRect, bounds, NSMakePoint(0.5f, 0.5f)));
-	}
-	else
-    {
-        return self.canvas;
     }
 }
 
@@ -305,15 +276,12 @@ GLfloat viewportVerticesFlipped[] = {
     }
 	
 	//Calculate the appropriate viewport to display this frame given its intended aspect ratio.
-	CGRect viewportRect = [self viewportForFrame: frame];
+	CGRect viewportRect = self.viewport;
     [self _setViewportToRegion: viewportRect];
 	
-    //Fill the areas outside our viewport with black
-	if (!CGRectEqualToRect(viewportRect, self.canvas))
-	{
-		glClearColor(0, 0, 0, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
-	}
+    //Fill the areas of the context outside our viewport with black
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
 	
 	//Activate our scaling buffer, which we'll draw the frame into first
 	if (_useScalingBuffer)
@@ -405,7 +373,7 @@ GLfloat viewportVerticesFlipped[] = {
 {
     if (_scalingBuffer && _recalculateScalingBuffer)
     {	
-        CGSize viewportSize = [self viewportForFrame: frame].size;
+        CGSize viewportSize = self.viewport.size;
         CGSize oldBufferSize = self.scalingBufferTexture.contentRegion.size;
         CGSize newBufferSize = [self _idealScalingBufferSizeForFrame: frame
                                                       toViewportSize: viewportSize];

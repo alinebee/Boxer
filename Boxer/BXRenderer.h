@@ -34,8 +34,7 @@
 	BOOL _supportsFBO;
 	BOOL _useScalingBuffer;
 	
-	CGRect _canvas;
-	BOOL _maintainsAspectRatio;
+	CGRect _viewport;
 	
     BXTexture2D *_frameTexture;
     BXTexture2D *_scalingBufferTexture;
@@ -66,13 +65,8 @@
 //An array of BXBSNESShaders that will be applied in order when rendering the current frame.
 @property (retain) NSArray *shaders;
 
-//The bounds of the view/layer in which we are rendering.
-//Set by the view, and used for viewport and scaling calculations.
-@property (assign, nonatomic) CGRect canvas;
-
-//Whether to adjust the GL viewport to match the aspect ratio of the current frame.
-//If NO, the GL viewport will fill the entire canvas.
-@property (assign, nonatomic) BOOL maintainsAspectRatio;
+//The viewport in the current context into which we'll render the frame.
+@property (assign, nonatomic) CGRect viewport;
 
 
 //The frames-per-second the renderer is producing, measured as the time between
@@ -95,9 +89,6 @@
 
 //Returns the maximum drawable frame size. This is usually a limit of the maximum GL texture size.
 - (CGSize) maxFrameSize;
-
-//Returns the rectangular region of the current canvas that the specified frame would be drawn into.
-- (CGRect) viewportForFrame: (BXVideoFrame *)frame;
 
 //Whether the renderer is ready to render the current frame.
 //Will be YES as long as there is a frame to render.

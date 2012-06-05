@@ -8,6 +8,8 @@
 
 #import "BXGLRenderingView.h"
 #import "BXRenderer.h"
+#import "BXVideoFrame.h"
+#import "BXGeometry.h"
 #import "BXDOSWindowController.h" //For notifications
 
 #pragma mark -
@@ -43,6 +45,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @implementation BXGLRenderingView
 @synthesize renderer = _renderer;
 @synthesize currentFrame = _currentFrame;
+@synthesize managesAspectRatio = _managesAspectRatio;
 @synthesize needsCVLinkDisplay = _needsCVLinkDisplay;
 
 - (void) dealloc
@@ -62,19 +65,10 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 #pragma mark -
 #pragma mark Rendering methods
 
-- (void) setManagesAspectRatio: (BOOL)manage
-{
-	self.renderer.maintainsAspectRatio = manage;
-}
-
-- (BOOL) managesAspectRatio
-{
-	return self.renderer.maintainsAspectRatio;	
-}
-
 - (void) updateWithFrame: (BXVideoFrame *)frame
 {
     self.currentFrame = frame;
+    self.renderer.viewport = NSRectToCGRect([self viewportForFrame: frame]);
     [self.renderer updateWithFrame: frame];
     
     //If we're using a CV Link, don't tell Cocoa that we need redrawing:
@@ -86,9 +80,36 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         self.needsDisplay = YES;
 }
 
+//Returns the rectangular region of the view into which the specified frame should be drawn.
+- (NSRect) viewportForFrame: (BXVideoFrame *)frame
+{
+    if (self.managesAspectRatio)
+	{
+		NSSize frameSize = frame.scaledSize;
+		NSRect frameRect = NSMakeRect(0.0f, 0.0f, frameSize.width, frameSize.height);
+		
+		return fitInRect(frameRect, self.bounds, NSMakePoint(0.5f, 0.5f));
+	}
+	else
+    {
+        return self.bounds;
+    }
+}
+
+- (void) setManagesAspectRatio: (BOOL)enabled
+{
+    if (self.managesAspectRatio != enabled)
+    {
+        _managesAspectRatio = enabled;
+        
+        //Update the renderer's viewport to compensate for the change
+        self.renderer.viewport = NSRectToCGRect([self viewportForFrame: self.currentFrame]);
+    }
+}
+
 - (NSRect) viewportRect
 {
-	return NSRectFromCGRect([self.renderer viewportForFrame: self.currentFrame]);
+	return [self viewportForFrame: self.currentFrame];
 }
 
 - (NSSize) maxFrameSize
@@ -111,9 +132,9 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	
     //Create a new renderer for this context, and set it up appropriately
     self.renderer = [[[BXRenderer alloc] initWithGLContext: cgl_ctx] autorelease];
-    self.renderer.canvas = NSRectToCGRect(self.bounds);
     if (self.currentFrame)
     {
+        self.renderer.viewport = NSRectToCGRect([self viewportForFrame: self.currentFrame]);
         [self.renderer updateWithFrame: self.currentFrame];
     }
     
@@ -156,7 +177,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 - (void) reshape
 {
     [super reshape];
-    self.renderer.canvas = NSRectToCGRect(self.bounds);
+    self.renderer.viewport = NSRectToCGRect([self viewportForFrame: self.currentFrame]);
 }
 
 - (void) drawRect: (NSRect)dirtyRect

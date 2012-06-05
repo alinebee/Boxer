@@ -15,7 +15,12 @@
 @class BXVideoFrame;
 
 @protocol BXFrameRenderingView
-@property (assign) BOOL managesAspectRatio;
+
+//Returns whether the view should adjust its viewport to suit the aspect ratio
+//of the current frame, or whether this will be done by adjusting the dimensions
+//of the view itself.
+- (void) setManagesAspectRatio: (BOOL)managesAspectRatio;
+- (BOOL) managesAspectRatio;
 
 //Tells the view to render the specified frame next time it is redrawn.
 //Will usually mark the view as needing display.

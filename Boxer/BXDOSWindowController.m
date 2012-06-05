@@ -646,8 +646,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) windowDidExitFullScreen: (NSNotification *)notification
 {
-    //Turn on aspect ratio correction again
-    self.renderingView.managesAspectRatio = YES;
+    //Turn off aspect ratio correction again
+    self.renderingView.managesAspectRatio = NO;
     
     //By this point, we have returned to our desired window size.
     //Delete the old autosaved size before restoring the original

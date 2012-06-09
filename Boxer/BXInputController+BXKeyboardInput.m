@@ -148,7 +148,7 @@
         
         modifiedKeys[OSXKeyCode] = NO;
     }
-    
+
     //Release the regular key mapping in any case.
     BXDOSKeyCode dosKeyCode = [self _DOSKeyCodeForSystemKeyCode: OSXKeyCode];
     if (dosKeyCode != KBD_NONE)
@@ -157,8 +157,19 @@
 
 - (void) flagsChanged: (NSEvent *)theEvent
 {
+    //When the Cmd key is pressed, release all active keys and don't trigger key events for the flag change.
+    //This way we avoid Cmd key shortcuts interfering with (or inadvertently triggering) the game's own functions.
     NSUInteger currentModifiers = theEvent.modifierFlags;
-	[self _syncModifierFlags: currentModifiers];
+    if ((currentModifiers & NSCommandKeyMask) == NSCommandKeyMask)
+    {
+        [self._emulatedKeyboard clearInput];
+        lastModifiers = currentModifiers;
+    }
+    else
+    {
+        [self _syncModifierFlags: currentModifiers];
+    }
+    //Do sync the mouse-button states regardless, however
     [self _syncSimulatedMouseButtons: currentModifiers];
 }
 

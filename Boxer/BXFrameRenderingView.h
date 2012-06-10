@@ -39,4 +39,9 @@
 //This may be a portion of the total view size, when in fullscreen mode.
 - (NSRect) viewportRect;
 
+//Get/set the maximum size that the viewport is allowed to reach, beyond which it should remain
+//the same size within the center of the view.
+- (NSSize) maxViewportSize;
+- (void) setMaxViewportSize: (NSSize)size;
+
 @end

@@ -49,6 +49,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @synthesize managesAspectRatio = _managesAspectRatio;
 @synthesize needsCVLinkDisplay = _needsCVLinkDisplay;
 @synthesize viewportRect = _viewportRect;
+@synthesize maxViewportSize = _maxViewportSize;
 
 - (void) dealloc
 {
@@ -113,7 +114,16 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 		NSSize frameSize = frame.scaledSize;
 		NSRect frameRect = NSMakeRect(0.0f, 0.0f, frameSize.width, frameSize.height);
 		
-		return fitInRect(frameRect, self.bounds, NSMakePoint(0.5f, 0.5f));
+        NSRect maxViewportRect = self.bounds;
+        //If we have a maximum viewport size, fit the frame within that.
+        if (!NSEqualSizes(self.maxViewportSize, NSZeroSize) && !sizeFitsWithinSize(maxViewportRect.size, self.maxViewportSize))
+        {
+            maxViewportRect = resizeRectFromPoint(maxViewportRect, self.maxViewportSize, NSMakePoint(0.5f, 0.5f));
+            
+            //TODO: snap the viewport rect to an even multiple of the base resolution of the frame if it's close enough,
+            //using the same algorithm as we do in BXDOSWindowController when resizing the window.
+        }
+		return fitInRect(frameRect, maxViewportRect, NSMakePoint(0.5f, 0.5f));
 	}
 	else
     {
@@ -144,6 +154,17 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
             self.needsCVLinkDisplay = YES;
         else
             self.needsDisplay = YES;
+    }
+}
+
+- (void) setMaxViewportSize: (NSSize)maxViewportSize
+{
+    if (!NSEqualSizes(maxViewportSize, self.maxViewportSize))
+    {
+        _maxViewportSize = maxViewportSize;
+        
+        //Update our viewport immediately to compensate for the change
+        self.viewportRect = [self viewportForFrame: self.currentFrame];
     }
 }
 

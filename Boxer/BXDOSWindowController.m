@@ -43,6 +43,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 @synthesize inputController = _inputController;
 @synthesize statusBarController = _statusBarController;
 @synthesize autosaveNameBeforeFullScreen = _autosaveNameBeforeFullScreen;
+@synthesize aspectCorrected = _aspectCorrected;
 
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
@@ -117,6 +118,9 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     [self addObserver: self forKeyPath: @"document.currentPath" options: 0 context: nil];
     [self addObserver: self forKeyPath: @"document.paused" options: 0 context: nil];
     [self addObserver: self forKeyPath: @"document.autoPaused" options: 0 context: nil];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [self bind: @"aspectCorrected" toObject: defaults withKeyPath: @"aspectCorrected" options: nil];
 }
 
 - (void) _removeObservers
@@ -126,6 +130,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     [self removeObserver: self forKeyPath: @"document.currentPath"];
     [self removeObserver: self forKeyPath: @"document.paused"];
     [self removeObserver: self forKeyPath: @"document.autoPaused"];
+    
+    [self unbind: @"aspectCorrected"];
 }
 
 
@@ -445,12 +451,18 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) updateWithFrame: (BXVideoFrame *)frame
 {
+    //Apply aspect-ratio correction if appropriate
+    if (self.isAspectCorrected && [self _shouldCorrectAspectRatioOfFrame: frame])
+        [frame useAspectRatio: BX4by3AspectRatio];
+    else
+        [frame useSquarePixels];
+    
 	//Update the renderer with the new frame.
 	[self.renderingView updateWithFrame: frame];
     
     BOOL hasFrame = (frame != nil);
 	if (hasFrame)
-	{   
+	{
 		//Resize the window to accomodate the frame when DOS switches resolutions.
 		//IMPLEMENTATION NOTE: We do this after only updating the view, because the frame
 		//immediately *before* DOS changes resolution is usually (always?) video-buffer garbage.
@@ -463,6 +475,25 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	}
     
     [self.renderingView setHidden: !hasFrame];
+}
+
+- (BOOL) _shouldCorrectAspectRatioOfFrame: (BXVideoFrame *)frame
+{
+    return (frame != nil) && !frame.containsText;
+}
+
+- (void) setAspectCorrected: (BOOL)aspectCorrected
+{
+    if (aspectCorrected != self.aspectCorrected)
+    {
+        _aspectCorrected = aspectCorrected;
+        
+        //Force the current frame to be reprocessed so that we'll resize the window/fullscreen viewport
+        //to match the new aspect ratio.
+        BXVideoFrame *frame = self.renderingView.currentFrame;
+        if (frame)
+            [self updateWithFrame: frame];
+    }
 }
 
 - (NSSize) viewportSize

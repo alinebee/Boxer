@@ -29,6 +29,7 @@ extern const CGFloat BX4by3AspectRatio;
 	NSSize _baseResolution;
 	NSUInteger _bytesPerPixel;
 	NSSize _intendedScale;
+    BOOL _containsText;
     
     NSRange _dirtyRegions[MAX_DIRTY_REGIONS];
     NSUInteger _numDirtyRegions;
@@ -65,12 +66,14 @@ extern const CGFloat BX4by3AspectRatio;
 //The effective resolution of the frame scaled to the intended scale.
 @property (readonly) NSSize scaledResolution;
 
+//Whether the framebuffer is a text-mode frame. Provided by the emulator as a
+//scaling/aspect-ratio hint for downstream consumers. 
+@property (assign) BOOL containsText;
 
 //Read-only/mutable pointers to the frame's data.
 @property (readonly) NSMutableData *frameData;
 @property (readonly) const void *bytes;
 @property (readonly) void *mutableBytes;
-
 
 //The number of ranges of dirty lines. Incremented by setNeedsDisplayInRegion:
 //and reset to 0 by clearDirtyRegions. See the dirty region functions below.

@@ -63,7 +63,6 @@ typedef struct {
 	
 	NSInteger _currentVideoMode;
 	BXFilterType _filterType;
-	BOOL _aspectCorrected;
 	BOOL _frameInProgress;
 	
 #if __cplusplus
@@ -80,9 +79,6 @@ typedef struct {
 
 //The framebuffer we render our frames into.
 @property (retain, nonatomic) BXVideoFrame *currentFrame;
-
-//Whether to apply 4:3 aspect ratio correction to the rendered output.
-@property (assign, nonatomic, getter=isAspectCorrected) BOOL aspectCorrected;
 
 //The current rendering style as a DOSBox filter type constant.
 @property (assign, nonatomic) BXFilterType filterType;

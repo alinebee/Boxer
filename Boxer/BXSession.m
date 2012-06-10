@@ -367,7 +367,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		if (self.emulator)
 		{
 			self.emulator.delegate = nil;
-			[self.emulator.videoHandler unbind: @"aspectCorrected"];
+			//[self.emulator.videoHandler unbind: @"aspectCorrected"];
 			[self.emulator.videoHandler unbind: @"filterType"];
 			
             [self.emulator unbind: @"masterVolume"];
@@ -387,11 +387,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             
             [self.emulator bind: @"masterVolume" toObject: [NSApp delegate] withKeyPath: @"effectiveVolume" options: nil];
             
+            /*
 			[self.emulator.videoHandler bind: @"aspectCorrected"
                                     toObject: defaults
                                  withKeyPath: @"aspectCorrected"
                                      options: nil];
-            
+            */
 			[self.emulator.videoHandler bind: @"filterType"
                                     toObject: defaults
                                  withKeyPath: @"filterType"

@@ -43,6 +43,7 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	
     NSSize _currentScaledSize;
 	NSSize _currentScaledResolution;
+    BOOL _aspectCorrected;
 	BOOL _resizingProgrammatically;
     BOOL _windowIsClosing;
     
@@ -76,6 +77,9 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //The current size of the DOS rendering viewport.
 @property (readonly, nonatomic) NSSize viewportSize;
 
+//Whether we should force DOS frames to use a 4:3 aspect ratio.
+//Changing this will resize the DOS window/fullscreen viewport to suit.
+@property (assign, nonatomic, getter=isAspectCorrected) BOOL aspectCorrected;
 
 #pragma mark -
 #pragma mark Inherited accessor overrides

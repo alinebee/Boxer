@@ -91,7 +91,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 }
 
 
-+ (id)defaultAnimationForKey: (NSString *)key
++ (id) defaultAnimationForKey: (NSString *)key
 {
     if ([key isEqualToString: @"viewportRect"])
     {
@@ -168,7 +168,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     //Create a new renderer for this context, and set it up appropriately
     self.renderer = [[[BXRenderer alloc] initWithGLContext: cgl_ctx] autorelease];
     
-    NSURL *shaderURL = [[NSBundle mainBundle] URLForResource: @"cgwg-CRT-v5.OpenGL"
+    NSURL *shaderURL = [[NSBundle mainBundle] URLForResource: @"5xBR-v3.7a.OpenGL"
                                                withExtension: @"shader"
                                                 subdirectory: @"Shaders"];
     if (shaderURL)

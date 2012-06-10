@@ -69,6 +69,10 @@
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show animate: (BOOL)animate;
 
+//Whether aspect-ratio correction should be applied to the specified frame.
+//Will return NO for text-only frames, YES otherwise.
+- (BOOL) _shouldCorrectAspectRatioOfFrame: (BXVideoFrame *)frame;
+
 
 #pragma mark -
 #pragma mark Delegate and notification methods

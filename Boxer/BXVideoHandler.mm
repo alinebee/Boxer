@@ -35,15 +35,12 @@
 
 - (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution;
 
-- (void) _applyAspectCorrectionToFrame: (BXVideoFrame *)frame;
-
 @end
 
 
 @implementation BXVideoHandler
 @synthesize currentFrame = _currentFrame;
 @synthesize emulator = _emulator;
-@synthesize aspectCorrected = _aspectCorrected;
 @synthesize filterType = _filterType;
 
 
@@ -98,19 +95,6 @@
 - (void) setFrameskip: (NSUInteger)frameskip
 {
 	render.frameskip.max = (Bitu)frameskip;
-}
-
-//Toggles aspect ratio correction and resets the renderer to apply the change immediately.
-- (void) setAspectCorrected: (BOOL)correct
-{
-	if (correct != self.isAspectCorrected)
-	{
-		_aspectCorrected = correct;
-		//Reset to force a new frame buffer at the corrected size
-		//TODO: this would be unnecessary if we applied aspect correction higher up
-		//at the windowing level
-		[self reset];
-	}
 }
 
 //Chooses the specified filter, and resets the renderer to apply the change immediately.
@@ -169,18 +153,6 @@
 #pragma mark -
 #pragma mark DOSBox callbacks
 
-- (void) _applyAspectCorrectionToFrame: (BXVideoFrame *)frame
-{
-	//If aspect correction is turned on and we're in a graphical game,
-	//then apply the correction. (For now we leave it off for text-modes
-	//since they tend to look crappy scaled at small window sizes.)
-	if (self.isAspectCorrected && !self.isInTextMode)
-	{
-		[frame useAspectRatio: BX4by3AspectRatio];
-	}
-	else [frame useSquarePixels];
-}
-
 - (void) prepareForOutputSize: (NSSize)outputSize
                       atScale: (NSSize)scale
                  withCallback: (GFX_CallBack_t)newCallback
@@ -207,8 +179,7 @@
 	}
 	
     self.currentFrame.baseResolution = self.resolution;
-	[self _applyAspectCorrectionToFrame: self.currentFrame];
-	
+    self.currentFrame.containsText = nowTextMode;
 	
 	//Send notifications if the display mode has changed
 	

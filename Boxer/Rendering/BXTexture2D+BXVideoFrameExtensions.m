@@ -8,6 +8,7 @@
 #import "BXTexture2D+BXVideoFrameExtensions.h"
 #import "BXVideoFrame.h"
 #import "BXGeometry.h"
+#import <OpenGL/gl.h>
 
 @implementation BXTexture2D (BXVideoFrameExtensions)
 

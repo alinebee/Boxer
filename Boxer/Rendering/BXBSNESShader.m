@@ -7,6 +7,7 @@
 
 
 #import "BXBSNESShader.h"
+#import <OpenGL/gl.h>
 
 #pragma mark -
 #pragma mark Constants

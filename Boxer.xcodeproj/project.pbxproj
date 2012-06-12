@@ -1235,7 +1235,7 @@
 		9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorConfiguration.m; sourceTree = "<group>"; };
 		9FF68FF6157B9C6600F8B5BC /* BXTexture2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXTexture2D.h; path = Rendering/BXTexture2D.h; sourceTree = "<group>"; };
 		9FF68FF7157B9C6600F8B5BC /* BXTexture2D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXTexture2D.m; path = Rendering/BXTexture2D.m; sourceTree = "<group>"; };
-		9FF68FFE157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; name = "BXTexture2D+BXVideoFrameExtensions.h"; path = "Rendering/BXTexture2D+BXVideoFrameExtensions.h"; sourceTree = "<group>"; };
+		9FF68FFE157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "BXTexture2D+BXVideoFrameExtensions.h"; path = "Rendering/BXTexture2D+BXVideoFrameExtensions.h"; sourceTree = "<group>"; };
 		9FF68FFF157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "BXTexture2D+BXVideoFrameExtensions.m"; path = "Rendering/BXTexture2D+BXVideoFrameExtensions.m"; sourceTree = "<group>"; };
 		9FF865CD134DAB5A001CE857 /* BXTaskOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTaskOperation.h; sourceTree = "<group>"; };
 		9FF865CE134DAB5A001CE857 /* BXTaskOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTaskOperation.m; sourceTree = "<group>"; };
@@ -3416,8 +3416,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SDKROOT = macosx10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx10.7;
 				VALID_ARCHS = "i386 x86_64 ppc";
 			};
 			name = "Legacy Release";
@@ -3465,9 +3465,9 @@
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.7;
 			};
 			name = Debug;
 		};
@@ -3543,8 +3543,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SDKROOT = macosx10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx10.7;
 			};
 			name = Release;
 		};

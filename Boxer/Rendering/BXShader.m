@@ -7,6 +7,7 @@
 
 
 #import "BXShader.h"
+#import <OpenGL/gl.h>
 
 
 NSString * const BXShaderErrorDomain = @"BXShaderErrorDomain";

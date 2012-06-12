@@ -7,6 +7,7 @@
 
 #import "BXSessionPrivate.h"
 #import "BXFileTypes.h"
+#import "BXDOSWindowController.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXPaste.h"
 #import "BXEmulatorErrors.h"
@@ -50,7 +51,7 @@
 //Called by BXDOSWindowController draggingEntered: to figure out what we'd do with a dropped string.
 - (NSDragOperation) responseToDroppedString: (NSString *)droppedString
 {
-	if ([[self emulator] canAcceptPastedString: droppedString]) return NSDragOperationCopy;
+	if ([self.emulator canAcceptPastedString: droppedString]) return NSDragOperationCopy;
 	else return NSDragOperationNone;
 }
 
@@ -68,7 +69,7 @@
 	if (returnValue)
     {
         [NSApp activateIgnoringOtherApps: YES];
-        [[[self DOSWindowController] window] makeKeyAndOrderFront: self];
+        [self.DOSWindowController.window makeKeyAndOrderFront: self];
     }
 	return returnValue;
 }
@@ -76,7 +77,7 @@
 //Called by BXDOSWindowController performDragOperation: when a string has been drag-dropped onto Boxer.
 - (BOOL) handleDroppedString: (NSString *)droppedString
 {
-	BOOL returnValue = [[self emulator] handlePastedString: droppedString];
+	BOOL returnValue = [self.emulator handlePastedString: droppedString];
     
 	//If the dragged string was successfully handled, reactivate Boxer and return focus to the DOS window.
     if (returnValue)
@@ -85,7 +86,7 @@
         [self resume: self];
         
         [NSApp activateIgnoringOtherApps: YES];
-        [[[self DOSWindowController] window] makeKeyAndOrderFront: self];
+        [self.DOSWindowController.window makeKeyAndOrderFront: self];
     }
     return returnValue;
 }
@@ -97,16 +98,15 @@
 //This method indicates what we'll do with the dropped file, before we handle any actual drop.
 - (NSDragOperation) _responseToDroppedFile: (NSString *)filePath
 {
-	BXEmulator *theEmulator = [self emulator];
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	
-	BOOL isInProcess = [theEmulator isRunningProcess];
+	BOOL isInProcess = self.emulator.isRunningProcess;
 	
 	//We wouldn't accept any files that aren't on our accepted formats list.
-	if (![workspace file: filePath matchesTypes: [[self class] droppableFileTypes]]) return NSDragOperationNone;
+	if (![workspace file: filePath matchesTypes: [self.class droppableFileTypes]]) return NSDragOperationNone;
 	
 	//We wouldn't accept any executables if the emulator is running a process already.
-	if (isInProcess && [[self class] isExecutable: filePath]) return NSDragOperationNone;
+	if (isInProcess && [self.class isExecutable: filePath]) return NSDragOperationNone;
 	
 	//If the path is already accessible in DOS, and doesn't deserve its own mount point...
 	if (![self shouldMountNewDriveForPath: filePath])
@@ -140,7 +140,7 @@
             if (mountError)
             {
                 [self presentError: mountError
-                    modalForWindow: [self windowForSheet]
+                    modalForWindow: self.windowForSheet
                           delegate: nil
                 didPresentSelector: NULL
                        contextInfo: NULL];

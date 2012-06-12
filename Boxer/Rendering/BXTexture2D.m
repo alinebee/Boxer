@@ -8,6 +8,7 @@
 
 #import "BXTexture2D.h"
 #import "BXGeometry.h"
+#import <OpenGL/gl.h>
 
 NSString * const BXGLErrorDomain = @"BXGLErrorDomain";
 NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensionErrorDomain";

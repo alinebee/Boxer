@@ -31,6 +31,7 @@
 	BXVideoFrame *_currentFrame;
 	NSArray *_shaders;
     NSArray *_shaderTextures;
+    BOOL _shadersEnabled;
 	
 	BOOL _supportsFBO;
 	BOOL _useScalingBuffer;
@@ -66,6 +67,9 @@
 
 //An array of BXBSNESShaders that will be applied in order when rendering the current frame.
 @property (copy, nonatomic) NSArray *shaders;
+
+//Whether to render frames using the assigned shaders.
+@property (assign, nonatomic) BOOL shadersEnabled;
 
 //The viewport in the current context into which we'll render the frame.
 @property (assign, nonatomic) CGRect viewport;

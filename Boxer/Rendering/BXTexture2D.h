@@ -158,6 +158,9 @@ extern NSString * const BXGLFramebufferExtensionErrorDomain;
 //Whether the texture's extents contain the specified texel region.
 - (BOOL) containsRegion: (CGRect)region;
 
+//Whether the texture can contain the specified content size.
+- (BOOL) canAccomodateContentSize: (CGSize)contentSize;
+
 //Functions to convert to and from texels (coordinates expressed as pixel measurements)
 //and normalized texture coordinates (coordinates in which the texture size is {1, 1}).
 - (CGRect) normalizedRectFromTexelRect: (CGRect)rect;
@@ -172,7 +175,6 @@ extern NSString * const BXGLFramebufferExtensionErrorDomain;
 //(This means texels for GL_TEXTURE_RECTANGLE textures and normalized coordinates for everyone else.)
 - (CGRect) nativeRectFromTexelRect: (CGRect)rect;
 - (CGRect) nativeRectFromNormalizedRect: (CGRect)rect;
-
 
 #pragma mark -
 #pragma mark Class helper methods

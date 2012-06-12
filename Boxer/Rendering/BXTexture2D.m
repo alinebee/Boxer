@@ -381,6 +381,11 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
     return CGRectContainsRect(textureRegion, region);
 }
 
+- (BOOL) canAccomodateContentSize: (CGSize)contentSize
+{
+    return BXCGSizeFitsWithinSize(contentSize, self.textureSize);
+}
+
 - (CGRect) nativeRectFromTexelRect: (CGRect)rect
 {
     if (_usesNormalizedTextureCoordinates)

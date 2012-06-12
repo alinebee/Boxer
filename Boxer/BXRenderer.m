@@ -87,6 +87,7 @@ GLfloat viewportVerticesFlipped[] = {
 @synthesize scalingBufferTexture = _scalingBufferTexture;
 @synthesize shaders = _shaders;
 @synthesize shaderTextures = _shaderTextures;
+@synthesize shadersEnabled = _shadersEnabled;
 @synthesize frameRate = _frameRate;
 @synthesize renderingTime = _renderingTime;
 @synthesize viewport = _viewport;
@@ -97,7 +98,7 @@ GLfloat viewportVerticesFlipped[] = {
 
 - (id) initWithGLContext: (CGLContextObj)glContext
 {
-    if ((self = [super init]))
+    if ((self = [self init]))
     {
         CGLContextObj cgl_ctx = glContext;
         
@@ -118,6 +119,8 @@ GLfloat viewportVerticesFlipped[] = {
             glGenFramebuffersEXT(1, &_scalingBuffer);
             _maxScalingBufferSize = _maxTextureSize;
         }
+        
+        _shadersEnabled = YES;
         
         [self _prepareContext];
     }
@@ -454,27 +457,29 @@ GLfloat viewportVerticesFlipped[] = {
 
 - (void) _prepareShaderTexturesForFrame: (BXVideoFrame *)frame
 {
-    if (self.shaders.count && (!self.shaderTextures || _recalculateShaderTextures))
+    if (self.shaders.count && (!self.shaderTextures.count || _recalculateShaderTextures))
     {
         CGLContextObj cgl_ctx = _context;
         
         CGSize inputSize = NSSizeToCGSize(frame.size);
         CGSize finalOutputSize = self.viewport.size;
-        CGSize recommendedOutputSize = [self _idealScalingBufferSizeForFrame: frame toViewportSize: finalOutputSize];
+        CGSize recommendedOutputSize = [self _idealScalingBufferSizeForFrame: frame
+                                                              toViewportSize: finalOutputSize];
+        
         if (CGSizeEqualToSize(recommendedOutputSize, CGSizeZero))
             recommendedOutputSize = finalOutputSize;
         
         BOOL requiresFinalPass = NO;
         
-        NSUInteger i, numShaders = self.shaders.count;
+        NSUInteger currentShaderIndex, numShaders = self.shaders.count, numShaderTextures = self.shaderTextures.count;
         NSMutableArray *shaderTextures = [NSMutableArray arrayWithCapacity: numShaders];
         
-        for (i=0; i<numShaders; i++)
+        for (currentShaderIndex=0; currentShaderIndex<numShaders; currentShaderIndex++)
         {
-            BOOL isFirstShader = (i == 0);
-            BOOL isLastShader = (numShaders <= i + 1);
+            BOOL isFirstShader  = (currentShaderIndex == 0);
+            BOOL isLastShader   = (numShaders <= currentShaderIndex + 1);
             
-            BXBSNESShader *shader = [self.shaders objectAtIndex: i];
+            BXBSNESShader *shader = [self.shaders objectAtIndex: currentShaderIndex];
             
             //Ask the shader how big a surface it wants to render into.
             CGSize outputSize = [shader outputSizeForInputSize: inputSize
@@ -506,14 +511,32 @@ GLfloat viewportVerticesFlipped[] = {
                     requiresFinalPass = YES;
             }
             
-            NSLog(@"Preparing framebuffer texture with size: %@", NSStringFromCGSize(outputSize));
             if (!isLastShader || requiresFinalPass)
             {
-                BXTexture2D *outputTexture = [[[BXTexture2D alloc] initWithType: GL_TEXTURE_2D
-                                                                    contentSize: outputSize
-                                                                          bytes: NULL
-                                                                    inGLContext: cgl_ctx
-                                                                          error: nil] autorelease];
+                BXTexture2D *outputTexture = nil;
+                //Check if we have an existing texture for this shader that's already a suitable size,
+                //and reuse it if so.
+                if (currentShaderIndex < numShaderTextures)
+                {
+                    BXTexture2D *existingTexture = [self.shaderTextures objectAtIndex: currentShaderIndex];
+                    if ([existingTexture canAccomodateContentSize: outputSize])
+                    {
+                        NSLog(@"Reusing framebuffer texture with size: %@", NSStringFromCGSize(outputSize));
+                        outputTexture = existingTexture;
+                        outputTexture.contentRegion = CGRectMake(0, 0, outputSize.width, outputSize.height);
+                    }
+                }
+                
+                //Otherwise, create a new texture of the appropriate size.
+                if (!outputTexture)
+                {
+                    NSLog(@"Preparing framebuffer texture with size: %@", NSStringFromCGSize(outputSize));
+                    outputTexture = [[[BXTexture2D alloc] initWithType: GL_TEXTURE_2D
+                                                           contentSize: outputSize
+                                                                 bytes: NULL
+                                                           inGLContext: cgl_ctx
+                                                                 error: nil] autorelease];
+                }
                 
                 [shaderTextures addObject: outputTexture];
             }
@@ -521,8 +544,12 @@ GLfloat viewportVerticesFlipped[] = {
             inputSize = outputSize;
         }
         
-        //Wipe out all the previous textures before we replace them.
-        [self.shaderTextures makeObjectsPerformSelector: @selector(deleteTexture)];
+        //Wipe out all the previous textures (the ones we're not reusing) before we replace them.
+        for (BXTexture2D *oldTexture in self.shaderTextures)
+        {
+            if (![shaderTextures containsObject: oldTexture])
+                [oldTexture deleteTexture];
+        }
         self.shaderTextures = shaderTextures;
         
         _recalculateShaderTextures = NO;

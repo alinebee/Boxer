@@ -51,6 +51,9 @@ typedef NSUInteger NSTouchPhase;
 #endif
 
 
+#pragma mark -
+#pragma mark 10.7-only fullscreen and window-restoration APIs
+
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1070 //OS X 10.7
 
 @interface NSDocumentController (BXPostLeopardRestorationAPIs)
@@ -103,7 +106,9 @@ extern NSString * const NSWindowDidExitFullScreenNotification;
 
 
 
-//New 10.7 scroller and scrollview behaviour
+#pragma mark -
+#pragma mark 10.7 Scroll-view APIs
+
 enum {
     NSScrollerStyleLegacy       = 0,
     NSScrollerStyleOverlay      = 1
@@ -132,6 +137,23 @@ typedef NSInteger NSScrollElasticity;
 
 - (NSScrollElasticity)verticalScrollElasticity;
 - (void) setVerticalScrollElasticity: (NSScrollElasticity)elasticity;
+@end
+
+
+#pragma mark -
+#pragma mark 10.7-only Retina APIs
+
+extern NSString * const NSWindowDidChangeBackingPropertiesNotification;
+
+@interface NSView (BXPostLeopardRetinaAPIs)
+
+- (NSPoint) convertPointToBacking: (NSPoint)point;
+- (NSPoint) convertPointFromBacking: (NSPoint)point;
+- (NSSize) convertSizeToBacking: (NSSize)rect;
+- (NSSize) convertSizeFromBacking: (NSSize)rect;
+- (NSRect) convertRectToBacking: (NSRect)rect;
+- (NSRect) convertRectFromBacking: (NSRect)rect;
+
 @end
 
 #endif

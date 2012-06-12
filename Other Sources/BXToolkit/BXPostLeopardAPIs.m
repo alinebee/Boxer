@@ -10,6 +10,7 @@
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1070 //OS X 10.7
 
+NSString * const NSWindowDidChangeBackingPropertiesNotification = @"NSWindowDidChangeBackingPropertiesNotification";
 NSString * const NSWindowWillEnterFullScreenNotification = @"NSWindowWillEnterFullScreenNotification";
 NSString * const NSWindowDidEnterFullScreenNotification = @"NSWindowDidEnterFullScreenNotification";
 NSString * const NSWindowWillExitFullScreenNotification = @"NSWindowWillExitFullScreenNotification";

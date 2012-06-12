@@ -12,6 +12,7 @@
 #import "BXGeometry.h"
 #import "BXDOSWindowController.h" //For notifications
 #import "BXBSNESShader.h"
+#import "BXPostLeopardAPIs.h"
 
 #pragma mark -
 #pragma mark Private interface declaration
@@ -32,6 +33,10 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
                                CVOptionFlags* flagsOut,
                                void* displayLinkContext);
 
+//Updates the current renderer with the appropriate OpenGL viewport,
+//whenever the renderer or the viewport changes.
+- (void) _syncViewport;
+
 @end
 
 @interface NSBitmapImageRep (BXFlipper)
@@ -50,6 +55,22 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @synthesize needsCVLinkDisplay = _needsCVLinkDisplay;
 @synthesize viewportRect = _viewportRect;
 @synthesize maxViewportSize = _maxViewportSize;
+
+- (void) viewDidMoveToWindow
+{
+    //Listen for the window changing backing, so that we can adjust the viewport in case the scale factor has changed.
+    if (self.window)
+    {
+        [[NSNotificationCenter defaultCenter] addObserver: self
+                                                 selector: @selector(_syncViewport)
+                                                     name: NSWindowDidChangeBackingPropertiesNotification
+                                                   object: self.window];
+    }
+    else
+    {
+        [[NSNotificationCenter defaultCenter] removeObserver: self];
+    }
+}
 
 - (void) dealloc
 {
@@ -148,13 +169,23 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     {
         _viewportRect = newRect;
         
-        self.renderer.viewport = NSRectToCGRect(newRect);
-        
+        [self _syncViewport];
         if (_displayLink)
             self.needsCVLinkDisplay = YES;
         else
             self.needsDisplay = YES;
     }
+}
+
+- (void) _syncViewport
+{
+    NSRect backingRect = self.viewportRect;
+    
+    //Compensate for hi-res contexts
+    if ([self respondsToSelector: @selector(convertRectToBacking:)])
+        backingRect = [self convertRectToBacking: backingRect];
+    
+    self.renderer.viewport = NSRectToCGRect(backingRect);
 }
 
 - (void) setMaxViewportSize: (NSSize)maxViewportSize
@@ -201,11 +232,10 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         if (shaderLoadError)
             NSLog(@"%@", shaderLoadError);
     }
+    
     if (self.currentFrame)
-    {
-        self.renderer.viewport = NSRectToCGRect(self.viewportRect);
         [self.renderer updateWithFrame: self.currentFrame];
-    }
+    [self _syncViewport];
     
     //Set up the CV display link if desired
     BOOL useCVDisplayLink = [[NSUserDefaults standardUserDefaults] boolForKey: @"useCVDisplayLink"];
@@ -306,6 +336,10 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 //that can cope with our renderer's OpenGL output.
 - (NSBitmapImageRep *) bitmapImageRepForCachingDisplayInRect: (NSRect)theRect
 {
+    //Account for high-resolution displays when creating the bitmap context.
+    if ([self respondsToSelector: @selector(convertRectToBacking:)])
+        theRect = [self convertRectToBacking: theRect];
+    
     theRect = NSIntegralRect(theRect);
     
     //Pad the row out to the appropriate length

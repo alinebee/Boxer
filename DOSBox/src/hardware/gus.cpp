@@ -210,8 +210,10 @@ public:
 	}
 	void WritePanPot(Bit8u val) {
 		PanPot = val;
-		PanLeft = pantable[0x0f-(val & 0xf)];
-		PanRight = pantable[(val & 0xf)];
+		if ((val & 0xf) >= 8) PanLeft = pantable[val & 0xf];
+		else PanLeft = 0;
+		if ((val & 0xf) < 7) PanRight = pantable[0xf - (val & 0xf)];
+		else PanRight = 0;
 		UpdateVolumes();
 	}
 	Bit8u ReadPanPot(void) {
@@ -770,10 +772,29 @@ static void MakeTables(void) {
 		vol16bit[i]=(Bit16s)out;
 		out/=1.002709201;		/* 0.0235 dB Steps */
 	}
-	pantable[0]=0;
-	for (i=1;i<16;i++) {
-		pantable[i]=(Bit32u)(-128.0*(log((double)i/15.0)/log(2.0))*(double)(1 << RAMP_FRACT));
-	}
+	/* FIX: DOSBox 0.74 had code here that produced a pantable which
+	 *      had nothing to do with actual panning control variables.
+	 *      Instead it seemed to generate a 16-element map that started
+	 *      at 0, jumped sharply to unity and decayed to 0.
+	 *      The unfortunate result was that stock builds of DOSBox
+	 *      effectively locked Gravis Ultrasound capable programs
+	 *      to monural audio.
+	 *
+	 *      This fix generates the table properly so that they correspond
+	 *      to how much we attenuate the LEFT channel for any given
+	 *      4-bit value of the Panning register (you attenuate the
+	 *      RIGHT channel by looking at element 0xF - (val&0xF)).
+	 *
+	 *      Having made this fix I can finally enjoy old DOS demos
+	 *      in GUS stereo instead of having everything mushed into
+	 *      mono. */
+	for (i=0;i < 8;i++)
+		pantable[i] = 0;
+	for (i=8;i < 15;i++)
+		pantable[i]=(Bit32u)(-128.0*(log((double)(15-i)/7.0)/log(2.0))*(double)(1 << RAMP_FRACT));
+	/* if the program cranks the pan register all the way, ensure the
+	 * opposite channel is crushed to silence */
+	pantable[15] = 1UL << 30UL;
 }
 
 class GUS:public Module_base{

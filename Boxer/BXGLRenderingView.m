@@ -56,19 +56,19 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @synthesize viewportRect = _viewportRect;
 @synthesize maxViewportSize = _maxViewportSize;
 
-- (void) viewDidMoveToWindow
+- (void) viewWillMoveToWindow: (NSWindow *)newWindow
 {
-    //Listen for the window changing backing, so that we can adjust the viewport in case the scale factor has changed.
-    if (self.window)
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center removeObserver: self
+                      name: NSWindowDidChangeBackingPropertiesNotification
+                    object: self.window];
+    
+    if (newWindow)
     {
-        [[NSNotificationCenter defaultCenter] addObserver: self
-                                                 selector: @selector(_syncViewport)
-                                                     name: NSWindowDidChangeBackingPropertiesNotification
-                                                   object: self.window];
-    }
-    else
-    {
-        [[NSNotificationCenter defaultCenter] removeObserver: self];
+        [center addObserver: self
+                   selector: @selector(_syncViewport)
+                       name: NSWindowDidChangeBackingPropertiesNotification
+                     object: newWindow];
     }
 }
 
@@ -276,6 +276,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 - (void) reshape
 {
     [super reshape];
+    
     //Instantly recalculate our viewport rect whenever the view changes shape.
     self.viewportRect = [self viewportForFrame: self.currentFrame];
 }

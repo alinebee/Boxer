@@ -244,7 +244,7 @@ NSString * const BXBSNESShaderErrorDomain = @"BXBSNESShaderErrorDomain";
 
 //These functions look up the location of their uniforms the first time they are needed,
 //and store them thereafter.
-- (void) setTexture: (GLint)texture
+- (void) setTextureIndex: (GLint)texture
 {
     if (!_textureLocation)
     {

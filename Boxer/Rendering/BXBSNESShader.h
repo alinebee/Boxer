@@ -109,7 +109,7 @@ extern const GLcharARB * const BXBSNESShaderFrameCountUniform;
 
 //Apply the specified values into the shader's uniforms.
 //(Note that these are write-only).
-- (void) setTexture: (GLint)texture;
+- (void) setTextureIndex: (GLint)texture;
 - (void) setTextureSize: (CGSize)textureSize;
 - (void) setInputSize: (CGSize)size;
 - (void) setOutputSize: (CGSize)size;

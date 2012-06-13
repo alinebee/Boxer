@@ -284,7 +284,6 @@ GLfloat viewportVerticesFlipped[] = {
     CGLUnlockContext(_context);
 }
 
-
 - (void) _renderFrame: (BXVideoFrame *)frame
 {
     CGLContextObj cgl_ctx = _context;
@@ -293,7 +292,7 @@ GLfloat viewportVerticesFlipped[] = {
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 	
-	if (_scalingBuffer && self.shaders.count)
+	if (_scalingBuffer && self.shadersEnabled && self.shaders.count)
 	{
         //Retrieve the current framebuffer so we can revert to it for the final drawing stage.
         GLint contextFramebuffer = 0;
@@ -342,25 +341,11 @@ GLfloat viewportVerticesFlipped[] = {
             
             glUseProgramObjectARB(shader.shaderProgram);
             
-            [shader setTexture: 0];
-            [shader setTextureSize: inTexture.textureSize];
-            [shader setInputSize: inTexture.contentRegion.size];
-            [shader setOutputSize: outputRect.size];
+            shader.textureIndex = 0;
+            shader.textureSize = inTexture.textureSize;
+            shader.inputSize = inTexture.contentRegion.size;
+            shader.outputSize = outputRect.size;
             shader.frameCount++;
-            
-            //Apply the desired filtering mode to the texture we'll be rendering
-            //(TODO: we could do this in advance already.)
-            switch (shader.filterType)
-            {
-                case BXBSNESShaderFilterNearest:
-                    inTexture.minFilter = inTexture.magFilter = GL_NEAREST;
-                    break;
-                case BXBSNESShaderFilterLinear:
-                case BXBSNESShaderFilterAuto:
-                default:
-                    inTexture.minFilter = inTexture.magFilter = GL_LINEAR;
-                    break;
-            }
             
             [self _setViewportToRegion: outputRect];
             [inTexture drawOntoVertices: quadCoords error: nil];
@@ -474,6 +459,8 @@ GLfloat viewportVerticesFlipped[] = {
         NSUInteger currentShaderIndex, numShaders = self.shaders.count, numShaderTextures = self.shaderTextures.count;
         NSMutableArray *shaderTextures = [NSMutableArray arrayWithCapacity: numShaders];
         
+        BXTexture2D *inputTexture = self.frameTexture;
+        BXTexture2D *outputTexture = nil;
         for (currentShaderIndex=0; currentShaderIndex<numShaders; currentShaderIndex++)
         {
             BOOL isFirstShader  = (currentShaderIndex == 0);
@@ -513,7 +500,6 @@ GLfloat viewportVerticesFlipped[] = {
             
             if (!isLastShader || requiresFinalPass)
             {
-                BXTexture2D *outputTexture = nil;
                 //Check if we have an existing texture for this shader that's already a suitable size,
                 //and reuse it if so.
                 if (currentShaderIndex < numShaderTextures)
@@ -521,7 +507,6 @@ GLfloat viewportVerticesFlipped[] = {
                     BXTexture2D *existingTexture = [self.shaderTextures objectAtIndex: currentShaderIndex];
                     if ([existingTexture canAccomodateContentSize: outputSize])
                     {
-                        NSLog(@"Reusing framebuffer texture with size: %@", NSStringFromCGSize(outputSize));
                         outputTexture = existingTexture;
                         outputTexture.contentRegion = CGRectMake(0, 0, outputSize.width, outputSize.height);
                     }
@@ -541,6 +526,24 @@ GLfloat viewportVerticesFlipped[] = {
                 [shaderTextures addObject: outputTexture];
             }
             
+            
+            //Apply the desired filtering mode to the texture that will be used as input by this shader.
+            //TODO: since this may modify the scaling method of the original texture, which is constant
+            //between our three different rendering paths, then we should reset it upon switching away
+            //from the shader path.
+            switch (shader.filterType)
+            {
+                case BXBSNESShaderFilterNearest:
+                    inputTexture.minFilter = inputTexture.magFilter = GL_NEAREST;
+                    break;
+                case BXBSNESShaderFilterLinear:
+                case BXBSNESShaderFilterAuto:
+                default:
+                    inputTexture.minFilter = inputTexture.magFilter = GL_LINEAR;
+                    break;
+            }
+            
+            inputTexture = outputTexture;
             inputSize = outputSize;
         }
         

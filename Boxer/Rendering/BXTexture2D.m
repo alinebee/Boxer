@@ -383,7 +383,7 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
 
 - (BOOL) canAccomodateContentSize: (CGSize)contentSize
 {
-    return BXCGSizeFitsWithinSize(contentSize, self.textureSize);
+    return (contentSize.width <= self.textureSize.width) && (contentSize.height <= self.textureSize.height);
 }
 
 - (CGRect) nativeRectFromTexelRect: (CGRect)rect

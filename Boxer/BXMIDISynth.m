@@ -13,7 +13,7 @@
 
 @interface BXMIDISynth ()
 
-@property (readwrite, copy, nonatomic) NSString *soundFontPath;
+@property (readwrite, copy, nonatomic) NSURL *soundFontURL;
 
 - (BOOL) _prepareAudioGraphWithError: (NSError **)outError;
 
@@ -24,7 +24,7 @@
 #pragma mark Implementation
 
 @implementation BXMIDISynth
-@synthesize soundFontPath = _soundFontPath;
+@synthesize soundFontURL = _soundFontURL;
 
 
 #pragma mark -
@@ -47,7 +47,7 @@
 {
     [self close];
     
-    self.soundFontPath = nil;
+    self.soundFontURL = nil;
     
     [super dealloc];
 }
@@ -109,7 +109,7 @@
     }
     while (NO);
     
-    if (errCode)
+    if (errCode != noErr)
     {
         //Clean up after ourselves if there was an error
         if (_graph)
@@ -144,22 +144,22 @@
 - (NSDate *) dateWhenReady  { return [NSDate distantPast]; }
 
 
-- (BOOL) loadSoundFontAtPath: (NSString *)path
-                       error: (NSError **)outError
+- (BOOL) loadSoundFontWithContentsOfURL:(NSURL *)URL
+                                  error: (NSError **)outError
 {
     NSAssert(_synthUnit != NULL, @"loadSoundFontAtPath:error: called before successful initialization.");
     
-    path = path.stringByStandardizingPath;
+    URL = URL.URLByStandardizingPath;
     
-    if (![path isEqualToString: self.soundFontPath])
+    if (![URL isEqual: self.soundFontURL])
     {
         OSStatus errCode = noErr;
         
         //Clear any existing soundfont
-        if (path == nil)
+        if (URL == nil)
         {
             errCode = AudioUnitSetProperty(_synthUnit,
-                                           kMusicDeviceProperty_SoundBankFSRef,
+                                           kMusicDeviceProperty_SoundBankURL,
                                            kAudioUnitScope_Global,
                                            0,
                                            NULL,
@@ -169,26 +169,35 @@
         //Load a new soundfont
         else
         {
-            FSRef soundfontRef;
-            errCode = FSPathMakeRef((const UInt8 *)path.fileSystemRepresentation, &soundfontRef, NULL);
+            //Check first that the URL even exists before proceeding, for the reasons below.
+            BOOL resourceExists = [URL checkResourceIsReachableAndReturnError: outError];
             
-            if (errCode == noErr)
+            if (resourceExists)
             {
+                CFURLRef cfURL = (CFURLRef)URL;
                 errCode = AudioUnitSetProperty(_synthUnit,
-                                               kMusicDeviceProperty_SoundBankFSRef,
+                                               kMusicDeviceProperty_SoundBankURL,
                                                kAudioUnitScope_Global,
                                                0,
-                                               &soundfontRef,
-                                               sizeof(soundfontRef)
+                                               &cfURL,
+                                               sizeof(cfURL)
                                                );
+                
+                if (errCode != noErr)
+                {
+                    //WARNING: if the soundfont cannot be loaded (e.g. nonexistent URL
+                    //or incompatible file type) the synth unit will be left in an unusable state.
+                    //We should catch that case here and reset the synth.
+                }
             }
+            else return NO;
         }
         
-        if (errCode)
+        if (errCode != noErr)
         {
             if (outError)
             {
-                NSDictionary *userInfo = path ? [NSDictionary dictionaryWithObject: path forKey: NSFilePathErrorKey] : nil;
+                NSDictionary *userInfo = URL ? [NSDictionary dictionaryWithObject: URL forKey: NSURLErrorKey] : nil;
                 *outError = [NSError errorWithDomain: NSOSStatusErrorDomain
                                                 code: errCode
                                             userInfo: userInfo];
@@ -197,7 +206,7 @@
         }
         else
         {
-            self.soundFontPath = path;
+            self.soundFontURL = URL;
             return YES;
         }
     }
@@ -209,10 +218,10 @@
     NSAssert(_synthUnit != NULL, @"handleMessage: called before successful initialization.");
     NSAssert(message.length > 0, @"0-length message received by handleMessage:");
     
-    UInt8 *contents = (UInt8 *)[message bytes];
+    UInt8 *contents = (UInt8 *)message.bytes;
     UInt8 status = contents[0];
-    UInt8 data1 = ([message length] > 1) ? contents[1] : 0;
-    UInt8 data2 = ([message length] > 2) ? contents[2] : 0;
+    UInt8 data1 = (message.length > 1) ? contents[1] : 0;
+    UInt8 data2 = (message.length > 2) ? contents[2] : 0;
     
     MusicDeviceMIDIEvent(_synthUnit, status, data1, data2, 0);
 }
@@ -249,7 +258,7 @@
     
     AudioUnitParameterValue volume;
     OSStatus errCode = AudioUnitGetParameter(_outputUnit, kHALOutputParam_Volume, kAudioUnitScope_Global, 0, &volume);
-    return (!errCode) ? volume : 0.0f;
+    return (errCode == noErr) ? volume : 0.0f;
 }
 
 @end

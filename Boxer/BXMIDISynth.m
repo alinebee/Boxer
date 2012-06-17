@@ -202,43 +202,63 @@
 + (NSURL *) defaultSoundFontURL
 {
     NSBundle *coreAudioBundle = [NSBundle bundleWithIdentifier: @"com.apple.audio.units.Components"];
-    return [coreAudioBundle URLForResource: @"gs_instruments" withExtension: @"dls"];
+    NSURL *soundFontURL = [coreAudioBundle URLForResource: @"gs_instruments" withExtension: @"dls"];
+    
+    NSAssert(soundFontURL != nil, @"Default CoreAudio soundfont could not be found.");
+    return soundFontURL;
 }
 
-- (BOOL) loadSoundFontWithContentsOfURL:(NSURL *)URL
+- (BOOL) loadSoundFontWithContentsOfURL: (NSURL *)URL
                                   error: (NSError **)outError
 {
     NSAssert(_synthUnit != NULL, @"loadSoundFontAtPath:error: called before successful initialization.");
     
-    //When clearing the soundfont, reset it back to the default system soundfont.
-    if (!URL) URL = [self.class defaultSoundFontURL];
-    
-    URL = URL.URLByStandardizingPath;
+    //If we're clearing the soundfont, reset it back to the default system soundfont.
+    if (URL == nil)
+    {
+        URL = [self.class defaultSoundFontURL];
+        //Give up if the default soundfont could not be found.
+        if (URL == nil)
+        {
+            if (outError)
+            {
+                *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                                code: NSFileReadNoSuchFileError
+                                            userInfo: nil];
+            }
+            return NO;
+        }
+    }
+    else
+    {
+        URL = URL.URLByStandardizingPath;
+        
+        //Check that the URL even exists before proceeding further.
+        BOOL resourceExists = [URL checkResourceIsReachableAndReturnError: outError];
+        if (!resourceExists) return NO;
+    }
     
     if (![URL isEqual: self.soundFontURL])
     {
         OSStatus errCode = noErr;
         
-        //Check first that the URL even exists before proceeding.
-        BOOL resourceExists = [URL checkResourceIsReachableAndReturnError: outError];
+        CFURLRef cfURL = (CFURLRef)URL;
+        errCode = AudioUnitSetProperty(_synthUnit,
+                                       kMusicDeviceProperty_SoundBankURL,
+                                       kAudioUnitScope_Global,
+                                       0,
+                                       &cfURL,
+                                       sizeof(cfURL)
+                                       );
         
-        if (resourceExists)
+        if (errCode != noErr)
         {
-            CFURLRef cfURL = (CFURLRef)URL;
-            errCode = AudioUnitSetProperty(_synthUnit,
-                                           kMusicDeviceProperty_SoundBankURL,
-                                           kAudioUnitScope_Global,
-                                           0,
-                                           &cfURL,
-                                           sizeof(cfURL)
-                                           );
-            
-            if (errCode != noErr)
+            //If the soundfont cannot be loaded (e.g. incompatible file type)
+            //the synth unit may be left in an unusable state. So, reset it
+            //back to the previous soundfont we had, which may be the system soundfont.
+            CFURLRef previousURL = (CFURLRef)self.soundFontURL;
+            if (previousURL)
             {
-                //If the soundfont cannot be loaded (e.g. incompatible file type)
-                //the synth unit may be left in an unusable state. So, reset it
-                //back to the previous soundfont we had, which may be the system soundfont.
-                CFURLRef previousURL = (CFURLRef)self.soundFontURL;
                 AudioUnitSetProperty(_synthUnit,
                                      kMusicDeviceProperty_SoundBankURL,
                                      kAudioUnitScope_Global,
@@ -246,24 +266,24 @@
                                      &previousURL,
                                      sizeof(previousURL)
                                      );
-                
-                if (outError)
-                {
-                    NSDictionary *userInfo = URL ? [NSDictionary dictionaryWithObject: URL forKey: NSURLErrorKey] : nil;
-                    *outError = [NSError errorWithDomain: NSOSStatusErrorDomain
-                                                    code: errCode
-                                                userInfo: userInfo];
-                }
-                
-                return NO;
             }
-            else
+            
+            if (outError)
             {
-                self.soundFontURL = URL;
-                return YES;
+                NSDictionary *userInfo = [NSDictionary dictionaryWithObject: URL
+                                                                     forKey: NSURLErrorKey];
+                *outError = [NSError errorWithDomain: NSOSStatusErrorDomain
+                                                code: errCode
+                                            userInfo: userInfo];
             }
+            
+            return NO;
         }
-        else return NO;
+        else
+        {
+            self.soundFontURL = URL;
+            return YES;
+        }
     }
     else return YES;
 }

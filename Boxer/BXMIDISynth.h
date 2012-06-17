@@ -21,9 +21,12 @@
 }
 
 //The URL of the soundfont bank we are currently using,
-//or nil if no soundfont is in use.
-//Must be set with loadSoundFontWithContentsOfURL:error:
+//which be the default system unless a custom one has been
+//set with loadSoundFontWithContentsOfURL:error:
 @property (readonly, copy, nonatomic) NSURL *soundFontURL;
+
+//Returns the URL of the default system soundfont.
++ (NSURL *) defaultSoundFontURL;
 
 //Returns a fully-initialized synth ready to receive MIDI messages.
 //Returns nil and populates outError if the synth could not be initialised.
@@ -31,7 +34,8 @@
 
 //Sets the specified soundfont with which MIDI should be played back.
 //soundFontURL will be updated with the specified URL.
-//Pass nil as the path to clear a previous soundfont.
+//Pass nil as the path to clear a previous custom soundfont and revert
+//to using the system soundfont.
 //Returns YES if the soundfont was loaded/cleared, or NO and populates
 //outError if the soundfont couldn't be loaded for any reason (in which
 //case soundFontURL will remain unchanged.)

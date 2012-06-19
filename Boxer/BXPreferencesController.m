@@ -322,13 +322,13 @@
     
     [openPanel beginSheetModalForWindow: self.window
                       completionHandler: ^(NSInteger result) {
-                          if (result == NSOKButton)
+                          if (result == NSFileHandlingPanelOKButton)
                           {
                               NSArray *paths = [openPanel.URLs valueForKey: @"path"];
                               
                               //Close the panel before attempting to import, so that
                               //any error message from the panel won't screw up.
-                              [openPanel close];
+                              [openPanel orderOut: self];
                               
                               [self handleROMImportFromPaths: paths];
                           }

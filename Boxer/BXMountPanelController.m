@@ -61,8 +61,55 @@
     
     [openPanel beginSheetModalForWindow: theSession.windowForSheet
                       completionHandler: ^(NSInteger result) {
-                          [self mountChosenItem: openPanel returnCode: result contextInfo: NULL];
+                          if (result == NSFileHandlingPanelOKButton)
+                          {
+                              NSError *mountError = nil;
+                              BOOL succeeded = [self mountChosenURL: openPanel.URL error: &mountError];
+                              if (!succeeded && mountError)
+                              {
+                                  //Close the open panel so that it won't interfere with error messages.
+                                  [openPanel orderOut: self];
+                                  
+                                  //Display the error to the user as a sheet in the same window
+                                  //as we displayed the panel
+                                  [theSession presentError: mountError
+                                            modalForWindow: theSession.windowForSheet
+                                                  delegate: nil
+                                        didPresentSelector: NULL
+                                               contextInfo: NULL];
+                              }
+                          }
+                          self.representedObject = nil;
                       }];	
+}
+
+- (BOOL) mountChosenURL: (NSURL *)URL error: (NSError **)outError
+{
+    BXSession *session = self.representedObject;
+    NSString *path = URL.path;
+    
+    BXDriveType preferredType	= self.driveType.selectedItem.tag;
+    NSString *preferredLetter	= self.driveLetter.selectedItem.representedObject;
+    BOOL readOnly				= self.readOnlyToggle.state;
+    
+    BXDrive *drive = [BXDrive driveFromPath: path atLetter: preferredLetter withType: preferredType];
+    drive.readOnly = readOnly;
+    
+    drive = [session mountDrive: drive
+                       ifExists: BXDriveReplace
+                        options: BXDefaultDriveMountOptions
+                          error: outError];
+    
+    //Switch to the new mount after adding it
+    if (drive)
+    {
+        [session openFileAtPath: drive.path];
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
 }
 
 //(Re)initialise the possible values for drive letters
@@ -196,9 +243,9 @@
 	}
 	else
 	{
-		[self.driveType setEnabled: NO];
-    	[self.driveLetter setEnabled: NO];
-		[self.readOnlyToggle setEnabled: NO];
+        self.driveType.enabled = NO;
+        self.driveLetter.enabled = NO;
+        self.readOnlyToggle.enabled = NO;
     }
 }
 
@@ -208,9 +255,9 @@
 	[self syncMountOptionsForPanel: (NSOpenPanel *)sender.window];
 }
 
-- (void) panel: (NSOpenPanel *)openPanel directoryDidChange: (NSString *)path
+- (void) panel: (id)sender didChangeToDirectoryURL: (NSURL *)url
 {
-	[self syncMountOptionsForPanel: openPanel];
+	[self syncMountOptionsForPanel: sender];
 }
 
 - (void) panelSelectionDidChange: (id)sender
@@ -218,54 +265,11 @@
 	[self syncMountOptionsForPanel: sender];
 }
 
-- (BOOL) panel: (NSOpenPanel *)openPanel shouldShowFilename: (NSString *)path
+- (BOOL) panel: (id)sender shouldEnableURL: (NSURL *)URL
 {
-	if (![self.representedObject validateDrivePath: &path error: nil]) return NO;
-	
-	return YES;
-}
+    NSString *path = URL.path;
 
-- (void) mountChosenItem: (NSOpenPanel *)openPanel
-			  returnCode: (int)returnCode
-			 contextInfo: (void *)contextInfo
-{
-	if (returnCode == NSOKButton)
-	{
-        BXSession *session = self.representedObject;
-        
-		NSString *path = openPanel.URL.path;
-		
-		BXDriveType preferredType	= self.driveType.selectedItem.tag;
-		NSString *preferredLetter	= self.driveLetter.selectedItem.representedObject;
-		BOOL readOnly				= self.readOnlyToggle.state;
-		
-		BXDrive *drive = [BXDrive driveFromPath: path atLetter: preferredLetter withType: preferredType];
-		drive.readOnly = readOnly;
-        
-        NSError *mountError = nil;
-		drive = [session mountDrive: drive
-                           ifExists: BXDriveReplace
-                            options: BXDefaultDriveMountOptions
-                              error: &mountError];
-		
-		//Switch to the new mount after adding it
-		if (drive)
-        {
-            [session openFileAtPath: drive.path];
-        }
-        //Display the error to the user as a sheet in the same window we are on
-        else if (mountError)
-        {
-            NSWindow *window = openPanel.parentWindow;
-            [openPanel close];
-            [session presentError: mountError
-                   modalForWindow: window
-                         delegate: nil
-               didPresentSelector: NULL
-                      contextInfo: NULL];
-        }
-	}
-	self.representedObject = nil;
+	return [self.representedObject validateDrivePath: &path error: nil];
 }
 
 @end

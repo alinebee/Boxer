@@ -69,12 +69,13 @@
     
     [openPanel beginSheetModalForWindow: self.view.window
                       completionHandler: ^(NSInteger result) {
-                          if (result == NSOKButton)
+                          if (result == NSFileHandlingPanelOKButton)
                           {
                               NSString *path = openPanel.URL.path;
                               
-                              //Because an error sheet may be displayed from importFromSourcePath, we close the panel first
-                              [openPanel close];
+                              //Ensure the open panel is closed before we continue,
+                              //in case importFromSourcePath: decides to display errors.
+                              [openPanel orderOut: self];
                               
                               [self.controller.document importFromSourcePath: path];
                           }

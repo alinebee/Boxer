@@ -47,9 +47,8 @@
 //Used internally to synchronise the drive options to the currently selected file or folder.
 - (void) syncMountOptionsForPanel: (NSOpenPanel *)openPanel;
 
-//Mounts the currently selected file or folder in the specified open panel.
-- (void) mountChosenItem: (NSOpenPanel *)openPanel
-			  returnCode: (int)returnCode
-			 contextInfo: (void *)contextInfo;
+//Mounts the specified selected file or folder, chosen from the open panel.
+//Returns YES if successfully, or NO and populates outError if the drive could not be mounted.
+- (BOOL) mountChosenURL: (NSURL *)URL error: (NSError **)outError;
 
 @end

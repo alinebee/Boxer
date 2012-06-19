@@ -81,6 +81,9 @@
             {
                 if (window)
                 {
+                    //Close the open panel to avoid interfering with any error message
+                    [openPanel orderOut: self];
+                    
                     [self presentError: folderError
                         modalForWindow: window
                               delegate: nil
@@ -91,7 +94,6 @@
                 {
                     [self presentError: folderError];
                 }
-                
             }
         }
     };

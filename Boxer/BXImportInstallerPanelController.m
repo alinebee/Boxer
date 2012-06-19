@@ -172,11 +172,11 @@
     openPanel.directoryURL = [NSURL fileURLWithPath: self.controller.document.sourcePath];
     
     [openPanel beginSheetModalForWindow: self.view.window completionHandler: ^(NSInteger result) {
-        if (result == NSOKButton)
+        if (result == NSFileHandlingPanelOKButton)
         {
             [self addInstallerFromURL: openPanel.URL];
         }
-        else if (result == NSCancelButton)
+        else if (result == NSFileHandlingPanelCancelButton)
         {
             //Revert to the first menu item if the user cancelled,
             //to avoid leaving the option that opened the picker selected.

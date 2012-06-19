@@ -47,4 +47,7 @@
 //Display help for this stage of the import process.
 - (IBAction) showImportInstallerHelp: (id)sender;
 
+//Add a new installer with the specified URL to the list of available installers.
+- (void) addInstallerFromURL: (NSURL *)URL;
+
 @end

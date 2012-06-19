@@ -27,11 +27,6 @@
 //Used by _syncInstallerSelectorItems and _addChosenInstaller:returnCode:contextInfo:
 - (NSMenuItem *) _installerSelectorItemForPath: (NSString *)path;
 
-//Handles the response from the choose-an-installer panel.
-//Will add the chosen installer to the list of possible installers and select it.
-- (void) _addChosenInstaller: (NSOpenPanel *)openPanel
-				  returnCode: (int)returnCode
-				 contextInfo: (void *)contextInfo;
 @end
 
 
@@ -164,56 +159,56 @@
 {
 	NSOpenPanel *openPanel	= [NSOpenPanel openPanel];
 	
+    openPanel.delegate = self;
+    
     openPanel.canChooseFiles = YES;
+    openPanel.allowsMultipleSelection = NO;
     openPanel.canChooseDirectories = NO;
     openPanel.treatsFilePackagesAsDirectories = NO;
     openPanel.message = NSLocalizedString(@"Choose the DOS installer program for this game:",
                                           @"Help text shown at the top of choose-an-installer panel.");
 	
-    openPanel.delegate = self;
+    openPanel.allowedFileTypes = [BXFileTypes executableTypes].allObjects;
+    openPanel.directoryURL = [NSURL fileURLWithPath: self.controller.document.sourcePath];
     
-	[openPanel beginSheetForDirectory: self.controller.document.sourcePath
-								 file: nil
-								types: [BXFileTypes executableTypes].allObjects
-					   modalForWindow: self.view.window
-						modalDelegate: self
-					   didEndSelector: @selector(_addChosenInstaller:returnCode:contextInfo:)
-						  contextInfo: NULL];	
+    [openPanel beginSheetModalForWindow: self.view.window completionHandler: ^(NSInteger result) {
+        if (result == NSOKButton)
+        {
+            [self addInstallerFromURL: openPanel.URL];
+        }
+        else if (result == NSCancelButton)
+        {
+            //Revert to the first menu item if the user cancelled,
+            //to avoid leaving the option that opened the picker selected.
+            [self.installerSelector selectItemAtIndex: 0];
+        }
+    }];	
 }
 
-- (BOOL) panel: (id)sender shouldShowFilename: (NSString *)filename
+- (BOOL) panel: (id)sender shouldEnableURL: (NSURL *)URL
 {
+    NSString *path = URL.path;
 	//Disable files outside the source path of the import process, for sanity's sake
-	return [filename isRootedInPath: self.controller.document.sourcePath];
+	return [path isRootedInPath: self.controller.document.sourcePath];
 }
-
-- (void) _addChosenInstaller: (NSOpenPanel *)openPanel
-				  returnCode: (int)returnCode
-				 contextInfo: (void *)contextInfo
+     
+- (void) addInstallerFromURL: (NSURL *)URL
 {
-	if (returnCode == NSOKButton)
-	{
-		NSString *path = openPanel.URL.path;
-		
-		NSInteger itemIndex = [self.installerSelector indexOfItemWithRepresentedObject: path];
-		if (itemIndex != -1)
-		{
-			//This path already exists in the menu, select it
-			[self.installerSelector selectItemAtIndex: itemIndex];
-		}
-		else
-		{
-			//This installer is not yet in the menu - add a new entry for it and select it
-			NSMenuItem *item = [self _installerSelectorItemForPath: path];
-			[self.installerSelector.menu insertItem: item atIndex: 0];
-			[self.installerSelector selectItemAtIndex: 0];
-		}
-	}
-	else if (returnCode == NSCancelButton)
-	{
-		//Revert to the first menu item if the user cancelled
-		[self.installerSelector selectItemAtIndex: 0];
-	}
+    NSString *path = URL.path;
+    
+    NSInteger itemIndex = [self.installerSelector indexOfItemWithRepresentedObject: path];
+    if (itemIndex != -1)
+    {
+        //This path already exists in the menu, select it
+        [self.installerSelector selectItemAtIndex: itemIndex];
+    }
+    else
+    {
+        //This installer is not yet in the menu - add a new entry for it and select it
+        NSMenuItem *item = [self _installerSelectorItemForPath: path];
+        [self.installerSelector.menu insertItem: item atIndex: 0];
+        [self.installerSelector selectItemAtIndex: 0];
+    }
 }
 
 - (IBAction) showImportInstallerHelp: (id)sender

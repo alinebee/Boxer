@@ -9,8 +9,18 @@
 #import "BXGamesFolderPanelController.h"
 #import "BXAppController+BXGamesFolder.h"
 
+@interface BXGamesFolderPanelController ()
+
+//Called when the user chooses a folder. Returns YES if the folder has been successfully
+//assigned as the default games folder, or NO and populates outError if this could not
+//be accomplished.
+- (BOOL) chooseGamesFolderURL: (NSURL *)url error: (NSError **)outError;
+
+@end
+
 @implementation BXGamesFolderPanelController
-@synthesize sampleGamesToggle, useShelfAppearanceToggle;
+@synthesize sampleGamesToggle = _sampleGamesToggle;
+@synthesize useShelfAppearanceToggle = _useShelfAppearanceToggle;
 
 + (id) controller
 {
@@ -21,8 +31,8 @@
 
 - (void) dealloc
 {
-	[self setSampleGamesToggle: nil], sampleGamesToggle = nil;
-	[self setUseShelfAppearanceToggle: nil], useShelfAppearanceToggle = nil;
+    self.sampleGamesToggle = nil;
+    self.useShelfAppearanceToggle = nil;
 	[super dealloc];
 }
 
@@ -31,69 +41,86 @@
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 	
 	NSString *currentFolderPath = [[NSApp delegate] gamesFolderPath];
-	NSString *parentFolderPath, *currentFolderName;
+	NSString *parentFolderPath;
 	if (currentFolderPath)
 	{
 		parentFolderPath = [currentFolderPath stringByDeletingLastPathComponent];
-		currentFolderName = [currentFolderPath lastPathComponent];
 	}
 	else
 	{
 		//If no folder yet exists, default to the home directory
 		parentFolderPath = NSHomeDirectory();
-		currentFolderName = nil;
 	}
 	
-	[openPanel setCanCreateDirectories: YES];
-	[openPanel setCanChooseDirectories: YES];
-	[openPanel setCanChooseFiles: NO];
-	[openPanel setTreatsFilePackagesAsDirectories: NO];
-	[openPanel setAllowsMultipleSelection: NO];
-	
-	[openPanel setAccessoryView: [self view]];
-	[openPanel setDelegate: self];
-	
-	[openPanel setPrompt: NSLocalizedString(@"Select", @"Button label for Open panels when selecting a folder.")];
-	[openPanel setMessage: NSLocalizedString(@"Select a folder in which to keep your DOS games:",
-											 @"Help text shown at the top of choose-a-games-folder panel.")];
-	
+    openPanel.delegate = self;
+    openPanel.canCreateDirectories = YES;
+    openPanel.canChooseDirectories = YES;
+    openPanel.canChooseFiles = NO;
+    openPanel.treatsFilePackagesAsDirectories = NO;
+    openPanel.allowsMultipleSelection = NO;
+    
+    openPanel.accessoryView = self.view;
+    openPanel.directoryURL = [NSURL fileURLWithPath: parentFolderPath];
+    //NOTE: NSOpenPanel has deprecated the ability to specify an initial selection,
+    //otherwise we'd select the current folder initially.
+    
+    openPanel.prompt = NSLocalizedString(@"Select", @"Button label for Open panels when selecting a folder.");
+    openPanel.message = NSLocalizedString(@"Select a folder in which to keep your DOS games:",
+                                          @"Help text shown at the top of choose-a-games-folder panel.");
 	
 	//Set the initial state of the shelf-appearance toggle to match the current preference setting
-	[[self useShelfAppearanceToggle] setState: [[NSApp delegate] appliesShelfAppearanceToGamesFolder]];
+	self.useShelfAppearanceToggle.state = [[NSApp delegate] appliesShelfAppearanceToGamesFolder];
 	
+    void (^completionHandler)(NSInteger result) = ^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton)
+        {
+            NSError *folderError = nil;
+            BOOL assigned = [self chooseGamesFolderURL: openPanel.URL error: &folderError];
+            
+            if (!assigned && folderError)
+            {
+                if (window)
+                {
+                    [self presentError: folderError
+                        modalForWindow: window
+                              delegate: nil
+                    didPresentSelector: NULL
+                           contextInfo: NULL];
+                }
+                else
+                {
+                    [self presentError: folderError];
+                }
+                
+            }
+        }
+    };
+    
 	if (window)
 	{
-		[openPanel beginSheetForDirectory: parentFolderPath
-									 file: currentFolderName
-									types: nil
-						   modalForWindow: window
-							modalDelegate: self
-						   didEndSelector: @selector(setChosenGamesFolder:returnCode:contextInfo:)
-							  contextInfo: NULL];
+        [openPanel beginSheetModalForWindow: window
+                          completionHandler: completionHandler];
 	}
 	else
 	{
-		NSInteger returnCode = [openPanel runModalForDirectory: parentFolderPath
-														  file: currentFolderName
-														 types: nil];
-		
-		[self setChosenGamesFolder: openPanel returnCode: returnCode contextInfo: nil];
+        NSInteger returnCode = [openPanel runModal];
+        completionHandler(returnCode);
 	}
 }
 
-- (void) panelSelectionDidChange: (id)sender
+- (void) panelSelectionDidChange: (NSOpenPanel *)openPanel
 {
-	NSString *selection = [[sender URL] path];
+	NSString *selection = openPanel.URL.path;
 	NSFileManager *manager = [NSFileManager defaultManager];
-	BOOL hasFiles = ([[manager enumeratorAtPath: selection] nextObject] != nil);
+	BOOL hasFiles = ([manager enumeratorAtPath: selection].nextObject != nil);
 	
 	//If the selected folder is empty, turn on the copy-sample-games checkbox; otherwise, clear it. 
-	[[self sampleGamesToggle] setState: !hasFiles];
+	self.sampleGamesToggle.state = !hasFiles;
 }
 
-- (void) panel: (NSOpenPanel *)openPanel directoryDidChange: (NSString *)path
+- (void) panel: (NSOpenPanel *)openPanel didChangeToDirectoryURL: (NSURL *)url
 {
-	[self panelSelectionDidChange: openPanel];
+    [self panelSelectionDidChange: openPanel];
 }
 
 //Delegate validation method for 10.6 and above.
@@ -103,50 +130,18 @@
 	return [[NSApp delegate] validateGamesFolderPath: &path error: outError];
 }
 
-//Delegate validation method for 10.5. Will be ignored on 10.6 and above.
-- (BOOL) panel: (NSOpenPanel *)openPanel isValidFilename: (NSString *)path
+- (BOOL) chooseGamesFolderURL: (NSURL *)URL error: (NSError **)outError
 {
-	NSError *validationError = nil;
-	BOOL isValid = [[NSApp delegate] validateGamesFolderPath: &path error: &validationError];
-	if (!isValid)
-	{
-		[openPanel presentError: validationError
-				 modalForWindow: openPanel
-					   delegate: nil
-			 didPresentSelector: NULL
-					contextInfo: NULL];
-	}
-	return isValid;
-}
-
-- (void) setChosenGamesFolder: (NSOpenPanel *)openPanel
-				   returnCode: (int)returnCode
-				  contextInfo: (void *)contextInfo
-{
-	if (returnCode == NSOKButton)
-	{
-		NSString *path = [[openPanel URL] path];
-		BXAppController *controller = [NSApp delegate];
-		BOOL addSampleGames		= [[self sampleGamesToggle] state];
-		BOOL useShelfAppearance	= [[self useShelfAppearanceToggle] state];
-		
-		NSError *folderError = nil;
-		BOOL assigned = [controller assignGamesFolderPath: path
-                                          withSampleGames: addSampleGames
-                                          shelfAppearance: useShelfAppearance
-                                          createIfMissing: NO
-                                                    error: &folderError];
-        
-        //If there was an error assigning the folder, bounce it up to the user.
-        if (!assigned && folderError)
-        {   
-            [self presentError: folderError
-                modalForWindow: openPanel
-                      delegate: nil
-            didPresentSelector: NULL
-                   contextInfo: NULL];
-        }
-	}
+    BXAppController *controller = [NSApp delegate];
+    BOOL addSampleGames		= self.sampleGamesToggle.state;
+    BOOL useShelfAppearance	= self.useShelfAppearanceToggle.state;
+    
+    return [controller assignGamesFolderPath: URL.path
+                             withSampleGames: addSampleGames
+                             shelfAppearance: useShelfAppearance
+                             createIfMissing: NO
+                                       error: outError];
+    
 }
 
 @end

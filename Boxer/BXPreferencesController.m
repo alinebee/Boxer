@@ -15,13 +15,19 @@
 #import "BXMT32ROMDropzone.h"
 #import "BXEmulatedMT32.h"
 #import "BXMIDIDeviceMonitor.h"
+#import "BXFilterGallery.h"
 
 #pragma mark -
 #pragma mark Implementation
 
 @implementation BXPreferencesController
-@synthesize filterGallery, gamesFolderSelector, currentGamesFolderItem;
-@synthesize MT32ROMDropzone, missingMT32ROMHelp, realMT32Help, MT32ROMOptions;
+@synthesize filterGallery = _filterGallery;
+@synthesize gamesFolderSelector = _gamesFolderSelector;
+@synthesize currentGamesFolderItem = _currentGamesFolderItem;
+@synthesize MT32ROMDropzone = _MT32ROMDropzone;
+@synthesize missingMT32ROMHelp = _missingMT32ROMHelp;
+@synthesize realMT32Help = _realMT32Help;
+@synthesize MT32ROMOptions = _MT32ROMOptions;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -48,10 +54,10 @@
 									@"BXIconifiedGamesFolderPath", NSValueTransformerNameBindingOption,
 									nil];
 	
-	[currentGamesFolderItem bind: @"attributedTitle"
-						toObject: [NSApp delegate]
-					 withKeyPath: @"gamesFolderPath"
-						 options: bindingOptions];
+	[self.currentGamesFolderItem bind: @"attributedTitle"
+                             toObject: [NSApp delegate]
+                          withKeyPath: @"gamesFolderPath"
+                              options: bindingOptions];
 	
     
     //Listen for changes to the ROMs so that we can set the correct device in the ROM dropzone.
@@ -81,16 +87,16 @@
     
     
     //Set up the audio preferences panel as a drag target for file drops.
-    NSView *audioPrefsView = [[[self tabView] tabViewItemAtIndex: BXAudioPreferencesPanel] view];
+    NSView *audioPrefsView = [self.tabView tabViewItemAtIndex: BXAudioPreferencesPanel].view;
 	[audioPrefsView registerForDraggedTypes: [NSArray arrayWithObject: NSFilenamesPboardType]];
 	
     
 	//Select the tab that the user had open last time.
     NSInteger selectedIndex = [[NSUserDefaults standardUserDefaults] integerForKey: @"initialPreferencesPanelIndex"];
 	
-	if (selectedIndex >= 0 && selectedIndex < [[self tabView] numberOfTabViewItems])
+	if (selectedIndex >= 0 && selectedIndex < self.tabView.numberOfTabViewItems)
 	{
-		[[self tabView] selectTabViewItemAtIndex: selectedIndex];
+		[self.tabView selectTabViewItemAtIndex: selectedIndex];
 	}
     
     //Finally, sync the MT-32 dropzone state.
@@ -104,15 +110,16 @@
     [[NSApp delegate] removeObserver: self forKeyPath: @"pathToMT32ControlROM"];
     [[NSApp delegate] removeObserver: self forKeyPath: @"pathToMT32PCMROM"];
     
-	[currentGamesFolderItem unbind: @"attributedTitle"];
+	[self.currentGamesFolderItem unbind: @"attributedTitle"];
 	
-    [self setMissingMT32ROMHelp: nil],          [missingMT32ROMHelp release];
-    [self setRealMT32Help: nil],                [realMT32Help release];
-    [self setMT32ROMOptions: nil],              [MT32ROMOptions release];
-    [self setMT32ROMDropzone: nil],             [MT32ROMDropzone release];
-	[self setFilterGallery: nil],				[filterGallery release];
-	[self setGamesFolderSelector: nil],			[gamesFolderSelector release];
-	[self setCurrentGamesFolderItem: nil],		[currentGamesFolderItem release];
+    self.missingMT32ROMHelp = nil;
+    self.realMT32Help = nil;
+    self.MT32ROMOptions = nil;
+    self.MT32ROMDropzone = nil;
+    self.filterGallery = nil;
+    self.gamesFolderSelector = nil;
+    self.currentGamesFolderItem = nil;
+    
 	[super dealloc];
 }
 
@@ -171,7 +178,7 @@
     BOOL showRealMT32Help;
     
     //First, check if any real MT-32s are plugged in.
-    BOOL realMT32Connected = [[[[NSApp delegate] MIDIDeviceMonitor] discoveredMT32s] count] > 0;
+    BOOL realMT32Connected = ([[NSApp delegate] MIDIDeviceMonitor].discoveredMT32s.count > 0);
     
     //If so, display a custom message
     if (realMT32Connected)
@@ -201,19 +208,19 @@
         //If ROMs are installed correctly, show the user what kind they have.
         if (type == BXMT32ROMTypeMT32)
         {
-            title = NSLocalizedString(@"Roland MT-32 emulation is now active.",
+            title = NSLocalizedString(@"Roland MT-32 emulation is installed.",
                                       @"Title shown in MT-32 ROM dropzone when MT-32 ROMs are installed.");
         }
         else if (type == BXMT32ROMTypeCM32L)
         {
-            title = NSLocalizedString(@"Roland CM-32L emulation is now active.",
+            title = NSLocalizedString(@"Roland CM-32L emulation is installed.",
                                       @"Title shown in MT-32 ROM dropzone when CM-32L ROMs are installed.");
         }
         
         //Otherwise, work out what went wrong.
-        else if ([[error domain] isEqualToString: BXEmulatedMT32ErrorDomain])
+        else if ([error.domain isEqualToString: BXEmulatedMT32ErrorDomain])
         {
-            switch ([error code])
+            switch (error.code)
             {
                 //One or both ROMs are not installed yet.
                 case BXEmulatedMT32MissingROM:
@@ -260,13 +267,13 @@
         showRealMT32Help    = NO;
     }
     
-    [[self MT32ROMDropzone] setROMType: type];
-    [[self MT32ROMDropzone] setTitle: title];
+    self.MT32ROMDropzone.ROMType = type;
+    self.MT32ROMDropzone.title = title;
     
     //Toggle the help text depending on whether we have valid ROMs or not.
-    [[self missingMT32ROMHelp] setHidden: !showROMHelp];
-    [[self realMT32Help] setHidden: !showRealMT32Help];
-    [[self MT32ROMOptions] setHidden: !showROMOptions];
+    self.missingMT32ROMHelp.hidden = !showROMHelp;
+    self.realMT32Help.hidden = !showRealMT32Help;
+    self.MT32ROMOptions.hidden = !showROMOptions;
 }
 
 - (BOOL) handleROMImportFromPaths: (NSArray *)paths
@@ -277,7 +284,7 @@
     if (error)
     {
         [self presentError: error
-            modalForWindow: [self window]
+            modalForWindow: self.window
                   delegate: nil
         didPresentSelector: NULL
                contextInfo: NULL];
@@ -295,48 +302,38 @@
 {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 	
-	[openPanel setCanCreateDirectories: NO];
-	[openPanel setCanChooseDirectories: YES];
-	[openPanel setCanChooseFiles: YES];
-	[openPanel setTreatsFilePackagesAsDirectories: NO];
-	[openPanel setAllowsMultipleSelection: YES];
-	[openPanel setDelegate: self];
-	
-	[openPanel setPrompt: NSLocalizedString(@"Import", @"Label for confirm button shown in MT-32 ROM file chooser panel.")];
-	[openPanel setMessage: NSLocalizedString(@"Select the MT-32 control ROM and PCM ROM to use.",
-											 @"Help text shown at the top of MT-32 ROM file chooser panel.")];
+    openPanel.delegate = self;
+    
+    openPanel.canCreateDirectories = NO;
+    openPanel.canChooseDirectories = YES;
+    openPanel.canChooseFiles = YES;
+    openPanel.treatsFilePackagesAsDirectories = NO;
+    openPanel.allowsMultipleSelection = YES;
+    
+    openPanel.prompt = NSLocalizedString(@"Import", @"Label for confirm button shown in MT-32 ROM file chooser panel.");
+	openPanel.message = NSLocalizedString(@"Select the MT-32 control ROM and PCM ROM to use.",
+                                          @"Help text shown at the top of MT-32 ROM file chooser panel.");
 	
     //Note: we use straight file extension comparisons instead
     //of UTI codes because the ".rom" extension is owned by a
     //dozen-and-one console emulators and any UTI definition
     //of our own would just fight with them.
-    NSArray *fileExtensions = [NSArray arrayWithObject: @"rom"];
+    openPanel.allowedFileTypes = [NSArray arrayWithObject: @"rom"];
     
-    [openPanel beginSheetForDirectory: nil
-                                 file: nil
-                                types: fileExtensions
-                       modalForWindow: [self window]
-                        modalDelegate: self
-                       didEndSelector: @selector(MT32ROMFileChooserDidEnd:returnCode:contextInfo:)
-                          contextInfo: NULL];
+    [openPanel beginSheetModalForWindow: self.window
+                      completionHandler: ^(NSInteger result) {
+                          if (result == NSOKButton)
+                          {
+                              NSArray *paths = [openPanel.URLs valueForKey: @"path"];
+                              
+                              //Close the panel before attempting to import, so that
+                              //any error message from the panel won't screw up.
+                              [openPanel close];
+                              
+                              [self handleROMImportFromPaths: paths];
+                          }
+                      }];
 }
-
-- (void) MT32ROMFileChooserDidEnd: (NSOpenPanel *)openPanel
-                       returnCode: (int)returnCode
-                      contextInfo: (void *)contextInfo
-{
-    if (returnCode == NSOKButton)
-	{
-        NSArray *paths = [[openPanel URLs] valueForKey: @"path"];
-        
-        //Close the panel before attempting to import, so that
-        //any error message from the panel won't screw up.
-        [openPanel close];
-        
-        [self handleROMImportFromPaths: paths];
-    }
-}
-
 
 //Display help for the Display Preferences panel.
 - (IBAction) showAudioPreferencesHelp: (id)sender
@@ -349,29 +346,33 @@
 //depending on whether ROMs are present yet or not.
 - (BOOL) validateMenuItem: (NSMenuItem *)menuItem
 {
-    if ([menuItem action] == @selector(showMT32ROMFileChooser:))
+    BOOL hasROMs = (self.MT32ROMDropzone.ROMType != BXMT32ROMTypeUnknown);
+    if (menuItem.action == @selector(showMT32ROMFileChooser:))
     {
-        NSString *title;
         //If we already have a valid ROM, then replace it
-        if ([[self MT32ROMDropzone] ROMType] != BXMT32ROMTypeUnknown)
-            title = NSLocalizedString(@"Replace MT-32 ROMs…", @"Title of menu item for choosing MT-32 ROMs to replace the existing set.");
-        
+        if (hasROMs)
+        {
+            menuItem.title = NSLocalizedString(@"Replace MT-32 ROMs…",
+                                               @"Title of menu item for choosing MT-32 ROMs to replace the existing set.");
+        }
         else
-            title = NSLocalizedString(@"Add MT-32 ROMs…", @"Title of menu item for choosing MT-32 ROMs to add when no ROMs are already present.");
-        
-        [menuItem setTitle: title];
+        {
+            menuItem.title = NSLocalizedString(@"Add MT-32 ROMs…",
+                                               @"Title of menu item for choosing MT-32 ROMs to add when no ROMs are already present.");
+        }
     }
-    else if ([menuItem action] == @selector(showMT32ROMsInFinder:))
+    else if (menuItem.action == @selector(showMT32ROMsInFinder:))
     {
-        NSString *title;
-        //If we already have a valid ROM, then replace it
-        if ([[self MT32ROMDropzone] ROMType] != BXMT32ROMTypeUnknown)
-            title = NSLocalizedString(@"Show ROMs in Finder", @"Title of menu item for revealing the MT-32 ROM folder in Finder, when ROMs are already present.");
-        
+        if (hasROMs)
+        {
+            menuItem.title = NSLocalizedString(@"Show ROMs in Finder",
+                                               @"Title of menu item for revealing the MT-32 ROM folder in Finder, when ROMs are already present.");
+        }
         else
-            title = NSLocalizedString(@"Show ROM folder in Finder", @"Title of menu item for revealing the MT-32 ROM folder in Finder, when no ROMs are present.");
-        
-        [menuItem setTitle: title];
+        {
+            menuItem.title = NSLocalizedString(@"Show ROM folder in Finder",
+                                               @"Title of menu item for revealing the MT-32 ROM folder in Finder, when no ROMs are present.");
+        }
     }
     return YES;    
 }
@@ -382,7 +383,7 @@
 
 - (IBAction) toggleShelfAppearance: (NSButton *)sender
 {
-	BOOL flag = [sender state] == NSOnState;
+	BOOL flag = (sender.state == NSOnState);
 	
 	//This will already have been set by the button's own binding,
 	//but it doesn't hurt to do it explicitly here
@@ -393,19 +394,22 @@
 	{
 		if (flag)
 		{
-			[[NSApp delegate] applyShelfAppearanceToPath: path andSubFolders: YES switchToShelfMode: YES];
+			[[NSApp delegate] applyShelfAppearanceToPath: path
+                                           andSubFolders: YES
+                                       switchToShelfMode: YES];
 		}
 		else
 		{
 			//Restore the folder to its unshelfed state
-			[[NSApp delegate] removeShelfAppearanceFromPath: path andSubFolders: YES];
+			[[NSApp delegate] removeShelfAppearanceFromPath: path
+                                              andSubFolders: YES];
 		}		
 	}
 }
 
-- (IBAction) toggleDefaultFilterType: (id)sender
+- (IBAction) toggleDefaultFilterType: (id <NSValidatedUserInterfaceItem>)sender
 {
-	NSInteger filterType = [sender tag];
+	NSInteger filterType = sender.tag;
 	[[NSUserDefaults standardUserDefaults] setInteger: filterType forKey: @"filterType"];
 }
 
@@ -413,7 +417,7 @@
 {
 	NSInteger defaultFilter = [[NSUserDefaults standardUserDefaults] integerForKey: @"filterType"];
 
-	for (id view in [filterGallery subviews])
+	for (id view in self.filterGallery.subviews)
 	{
 		if ([view isKindOfClass: [NSButton class]])
 		{
@@ -425,8 +429,8 @@
 - (IBAction) showGamesFolderChooser: (id)sender
 {
 	BXGamesFolderPanelController *chooser = [BXGamesFolderPanelController controller];
-	[chooser showGamesFolderPanelForWindow: [self window]];
-	[[self gamesFolderSelector] selectItemAtIndex: 0];
+	[chooser showGamesFolderPanelForWindow: self.window];
+	[self.gamesFolderSelector selectItemAtIndex: 0];
 }
 
 //Display help for the Display Preferences panel.

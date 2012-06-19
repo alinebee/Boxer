@@ -37,6 +37,10 @@
 //Shows a standard OS X open panel for choosing an executable file from Finder.
 - (IBAction) showProgramChooserPanel: (id)sender;
 
+//Called after choosing a new program from the file picker. Adds a new item for that URL
+//to the dropdown selector if it is not already present, and assigns that program to be the default.
+- (void) chooseDefaultProgramWithURL: (NSURL *)URL;
+
 //Reveals the current gamebox in Finder.
 - (IBAction) revealGamebox: (id)sender;
 

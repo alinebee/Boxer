@@ -19,12 +19,6 @@
 
 @interface BXImportDropzonePanelController ()
 
-//Handles the response from the choose-a-folder-to-import panel.
-//Will set our BXImportSession's source path to the chosen file.
-- (void) _importChosenPath: (NSOpenPanel *)openPanel
-				returnCode: (int)returnCode
-			   contextInfo: (void *)contextInfo;
-
 @end
 
 
@@ -61,39 +55,31 @@
 {
 	NSOpenPanel *openPanel	= [NSOpenPanel openPanel];
 	
-	[openPanel setCanChooseFiles: YES];
-	[openPanel setCanChooseDirectories: YES];
-	[openPanel setTreatsFilePackagesAsDirectories: NO];
-	[openPanel setMessage:	NSLocalizedString(@"Choose a DOS game folder, CD-ROM or disc image to import:",
-											  @"Help text shown at the top of choose-a-folder-to-import panel.")];
-	[openPanel setPrompt:	NSLocalizedString(@"Import",
-											  @"Label shown on accept button in choose-a-folder-to-import panel.")];
+    openPanel.delegate = self;
+    openPanel.canChooseFiles = YES;
+    openPanel.canChooseDirectories = YES;
+    openPanel.treatsFilePackagesAsDirectories = NO;
+    openPanel.message = NSLocalizedString(@"Choose a DOS game folder, CD-ROM or disc image to import:",
+                                          @"Help text shown at the top of choose-a-folder-to-import panel.");
+    
+    openPanel.prompt = NSLocalizedString(@"Import",
+                                         @"Label shown on accept button in choose-a-folder-to-import panel.");
 	
-	[openPanel setDelegate: self];
-	
-	[openPanel beginSheetForDirectory: nil
-								 file: nil
-								types: [[BXImportSession acceptedSourceTypes] allObjects]
-					   modalForWindow: [[self view] window]
-						modalDelegate: self
-					   didEndSelector: @selector(_importChosenPath:returnCode:contextInfo:)
-						  contextInfo: NULL];
+    openPanel.allowedFileTypes = [BXImportSession acceptedSourceTypes].allObjects;
+    
+    [openPanel beginSheetModalForWindow: self.view.window
+                      completionHandler: ^(NSInteger result) {
+                          if (result == NSOKButton)
+                          {
+                              NSString *path = openPanel.URL.path;
+                              
+                              //Because an error sheet may be displayed from importFromSourcePath, we close the panel first
+                              [openPanel close];
+                              
+                              [self.controller.document importFromSourcePath: path];
+                          }
+                      }];
 }
-
-- (void) _importChosenPath: (NSOpenPanel *)openPanel
-				returnCode: (int)returnCode
-			   contextInfo: (void *)contextInfo
-{
-	if (returnCode == NSOKButton)
-	{
-		NSString *path = [[openPanel URL] path];
-		
-		//Because an error sheet may be displayed from importFromSourcePath, we close the panel first
-		[openPanel close];
-		[[[self controller] document] importFromSourcePath: path];
-	}
-}
-
 
 - (IBAction) showImportDropzoneHelp: (id)sender
 {

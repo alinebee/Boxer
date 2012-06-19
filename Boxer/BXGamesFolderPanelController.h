@@ -16,12 +16,12 @@
 < NSOpenSavePanelDelegate >
 #endif
 {
-	IBOutlet NSButton *sampleGamesToggle;
-	IBOutlet NSButton *useShelfAppearanceToggle;
+	NSButton *_sampleGamesToggle;
+	NSButton *_useShelfAppearanceToggle;
 }
 
-@property (retain, nonatomic) NSButton *sampleGamesToggle;
-@property (retain, nonatomic) NSButton *useShelfAppearanceToggle;
+@property (retain, nonatomic) IBOutlet NSButton *sampleGamesToggle;
+@property (retain, nonatomic) IBOutlet NSButton *useShelfAppearanceToggle;
 
 //Returns a singleton instance, which loads the view from the NIB file the first time.
 + (id) controller;
@@ -29,11 +29,5 @@
 //Display the open panel as a sheet in the specified window
 //(or as a modal dialog, if window is null.)
 - (void) showGamesFolderPanelForWindow: (NSWindow *)window;
-
-//The callback called when the open panel is closed. Will set Boxer's games folder path
-//to the chosen folder, if one was selected.
-- (void) setChosenGamesFolder: (NSOpenPanel *)openPanel
-				   returnCode: (int)returnCode
-				  contextInfo: (void *)contextInfo;
 
 @end

@@ -12,15 +12,15 @@
 
 @interface BXFirstRunWindowController : NSWindowController <NSOpenSavePanelDelegate>
 {	
-	IBOutlet NSPopUpButton *gamesFolderSelector;
-	IBOutlet NSButton *addSampleGamesToggle;
-	IBOutlet NSButton *useShelfAppearanceToggle;
+	NSPopUpButton *_gamesFolderSelector;
+	NSButton *_addSampleGamesToggle;
+	NSButton *_useShelfAppearanceToggle;
 }
 
 //UI elements on the first-run panel.
-@property (retain, nonatomic) NSPopUpButton *gamesFolderSelector;
-@property (retain, nonatomic) NSButton *addSampleGamesToggle;
-@property (retain, nonatomic) NSButton *useShelfAppearanceToggle;
+@property (retain, nonatomic) IBOutlet NSPopUpButton *gamesFolderSelector;
+@property (retain, nonatomic) IBOutlet NSButton *addSampleGamesToggle;
+@property (retain, nonatomic) IBOutlet NSButton *useShelfAppearanceToggle;
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. The controller should always be accessed from this singleton.
@@ -32,10 +32,9 @@
 //Display an open panel for choosing the games folder.
 - (IBAction) showGamesFolderChooser: (id)sender;
 
-
-- (void) setChosenGamesFolder: (NSOpenPanel *)openPanel
-				   returnCode: (int)returnCode
-				  contextInfo: (void *)contextInfo;
+//Adds a new menu option for the specified folder to the games folder selector
+//(if one isn't already available) and selects the option.
+- (void) chooseGamesFolderWithURL: (NSURL *)URL;
 
 //Show/hide the window with a flip animation.
 - (void) showWindowWithTransition: (id)sender;

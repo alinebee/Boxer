@@ -34,11 +34,6 @@ enum {
 //Returns a newly-minted menu item for the specified path. Used internally by _programMenuItems.
 - (NSMenuItem *) _programMenuItemForPath: (NSString *)path onDrive: (BXDrive *)drive;
 
-//Handles the result of the choose-a-target panel.
-- (void) _setChosenProgramAsDefault: (NSOpenPanel *)openPanel
-						 returnCode: (int)returnCode
-						contextInfo: (void *)contextInfo;
-
 @end
 
 
@@ -137,9 +132,11 @@ enum {
 {
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 	
+    openPanel.delegate = self;
     openPanel.canChooseFiles = YES;
     openPanel.canChooseDirectories = NO;
     openPanel.treatsFilePackagesAsDirectories = YES;
+    openPanel.allowedFileTypes = [BXFileTypes executableTypes].allObjects;
     
     openPanel.message = NSLocalizedString(@"Choose the target program for this gamebox:",
                                           @"Help text shown at the top of choose-a-target-program panel.");
@@ -154,24 +151,51 @@ enum {
     if (!initialPath)
         initialPath = self.session.gamePackage.gamePath;
     
-    openPanel.delegate = self;
-	[openPanel beginSheetForDirectory: initialPath
-								 file: nil
-								types: [BXFileTypes executableTypes].allObjects
-					   modalForWindow: self.view.window
-						modalDelegate: self
-					   didEndSelector: @selector(_setChosenProgramAsDefault:returnCode:contextInfo:)
-						  contextInfo: NULL];
+    openPanel.directoryURL = [NSURL fileURLWithPath: initialPath];
+    
+    [openPanel beginSheetModalForWindow: self.view.window
+                      completionHandler: ^(NSInteger result) {
+                          if (result == NSFileHandlingPanelOKButton)
+                          {
+                              [self chooseDefaultProgramWithURL: openPanel.URL];
+                          }
+                          else if (result == NSFileHandlingPanelCancelButton)
+                          {
+                              //If the user cancelled, revert the menu item selection back to the default program
+                              [self syncSelection];
+                          }
+                      }];
 }
 
-- (BOOL) panel: (id)sender shouldShowFilename: (NSString *)filename
+- (void) chooseDefaultProgramWithURL: (NSURL *)URL
+{
+    NSString *path = URL.path;
+    
+    //Look for an existing menu item with that path
+    NSInteger itemIndex = [self.programSelector indexOfItemWithRepresentedObject: path];
+    if (itemIndex == -1)
+    {
+        //This program is not yet in the menu: add a new item for it and use its new index
+        NSMenu *menu = self.programSelector.menu;
+        NSMenuItem *item = [self _programMenuItemForPath: path onDrive: nil];
+        
+        itemIndex = [menu indexOfItemWithTag: BXGameboxPanelEndOfProgramsTag];
+        [menu insertItem: item atIndex: itemIndex];
+    }
+    
+    [self.programSelector selectItemAtIndex: itemIndex];
+    [self changeDefaultProgram: self.programSelector];
+}
+
+- (BOOL) panel: (id)sender shouldEnableURL: (NSURL *)URL
 {
 	BXSession *session = self.session;
+    NSString *path = URL.path;
     
 	//Disable files that are outside the gamebox or that aren't accessible in DOS.
-	if (![filename isRootedInPath: session.gamePackage.gamePath]) return NO;
+	if (![path isRootedInPath: session.gamePackage.gamePath]) return NO;
     
-	if (![session.emulator pathIsDOSAccessible: filename]) return NO;
+	if (![session.emulator pathIsDOSAccessible: path]) return NO;
     
 	return YES;
 }
@@ -277,37 +301,6 @@ enum {
 	
 	return items;
 }
-
-- (void) _setChosenProgramAsDefault: (NSOpenPanel *)openPanel
-						 returnCode: (int)returnCode
-						contextInfo: (void *)contextInfo
-{
-	if (returnCode == NSOKButton)
-	{
-		NSString *path = openPanel.URL.path;
-		
-		//Look for an existing program item with that path
-		NSInteger itemIndex = [self.programSelector indexOfItemWithRepresentedObject: path];
-		if (itemIndex == -1)
-		{
-			//This program is not yet in the menu: add a new item for it and use its new index
-			NSMenu *menu = self.programSelector.menu;
-			NSMenuItem *item = [self _programMenuItemForPath: path onDrive: nil];
-			
-			itemIndex = [menu indexOfItemWithTag: BXGameboxPanelEndOfProgramsTag];
-			[menu insertItem: item atIndex: itemIndex];
-		}
-		
-		[self.programSelector selectItemAtIndex: itemIndex];
-		[self changeDefaultProgram: self.programSelector];
-	}
-	else if (returnCode == NSCancelButton)
-	{
-		//If the user cancelled, revert the menu item selection back to the default program
-		[self syncSelection];
-	}
-}
-
 
 - (NSMenuItem *) _programMenuItemForPath: (NSString *)path onDrive: (BXDrive *)drive
 {

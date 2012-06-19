@@ -23,22 +23,22 @@ enum {
 
 @interface BXPreferencesController : BXTabbedWindowController <NSOpenSavePanelDelegate>
 {
-	IBOutlet BXFilterGallery *filterGallery;
-	IBOutlet NSPopUpButton *gamesFolderSelector;
-	IBOutlet NSMenuItem *currentGamesFolderItem;
-    IBOutlet BXMT32ROMDropzone *MT32ROMDropzone;
-    IBOutlet NSView *missingMT32ROMHelp;
-    IBOutlet NSView *realMT32Help;
-    IBOutlet NSView *MT32ROMOptions;
+    BXFilterGallery *_filterGallery;
+    NSPopUpButton *_gamesFolderSelector;
+	NSMenuItem *_currentGamesFolderItem;
+    BXMT32ROMDropzone *_MT32ROMDropzone;
+    NSView *_missingMT32ROMHelp;
+    NSView *_realMT32Help;
+    NSView *_MT32ROMOptions;
 }
 
-@property (retain, nonatomic) BXFilterGallery *filterGallery;
-@property (retain, nonatomic) NSPopUpButton *gamesFolderSelector;
-@property (retain, nonatomic) NSMenuItem *currentGamesFolderItem;
-@property (retain, nonatomic) BXMT32ROMDropzone *MT32ROMDropzone;
-@property (retain, nonatomic) NSView *missingMT32ROMHelp;
-@property (retain, nonatomic) NSView *realMT32Help;
-@property (retain, nonatomic) NSView *MT32ROMOptions;
+@property (retain, nonatomic) IBOutlet BXFilterGallery *filterGallery;
+@property (retain, nonatomic) IBOutlet NSPopUpButton *gamesFolderSelector;
+@property (retain, nonatomic) IBOutlet NSMenuItem *currentGamesFolderItem;
+@property (retain, nonatomic) IBOutlet BXMT32ROMDropzone *MT32ROMDropzone;
+@property (retain, nonatomic) IBOutlet NSView *missingMT32ROMHelp;
+@property (retain, nonatomic) IBOutlet NSView *realMT32Help;
+@property (retain, nonatomic) IBOutlet NSView *MT32ROMOptions;
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. BXPreferencesController should always be accessed from this singleton.
@@ -83,9 +83,6 @@ enum {
 
 //Show the ROM file chooser panel.
 - (IBAction) showMT32ROMFileChooser: (id)sender;
-- (void) MT32ROMFileChooserDidEnd: (NSOpenPanel *)openPanel
-                       returnCode: (int)returnCode
-                      contextInfo: (void *)contextInfo;
 
 //Does the work of importing ROMs from the specified path. Called when drag-dropping
 //ROMs onto the MT-32 ROM dropzone or choosing them from the file picker.

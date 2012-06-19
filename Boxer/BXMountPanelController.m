@@ -37,13 +37,13 @@
 	return self;
 }
 
-
 - (void) showMountPanelForSession: (BXSession *)theSession
 {
 	self.representedObject = theSession;
 	
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 	
+    openPanel.delegate = self;
     openPanel.canChooseFiles = YES;
     openPanel.canChooseDirectories = YES;
     openPanel.treatsFilePackagesAsDirectories = YES;
@@ -54,19 +54,15 @@
                                          @"Label shown on accept button in mount-a-new-drive panel.");
 	
     openPanel.accessoryView = self.view;
-    openPanel.delegate = self;
+    openPanel.allowedFileTypes = [BXFileTypes mountableTypes].allObjects;
+    openPanel.directoryURL = theSession.gamePackage.resourceURL;
 	
 	[self populateDrivesFromSession: theSession];
-
-    NSString *baseDirectory = theSession.gamePackage.resourcePath;
     
-	[openPanel beginSheetForDirectory: baseDirectory
-                                 file: nil
-                                types: [BXFileTypes mountableTypes].allObjects
-                       modalForWindow: theSession.windowForSheet
-                        modalDelegate: self
-                       didEndSelector: @selector(mountChosenItem:returnCode:contextInfo:)
-                          contextInfo: NULL];	
+    [openPanel beginSheetModalForWindow: theSession.windowForSheet
+                      completionHandler: ^(NSInteger result) {
+                          [self mountChosenItem: openPanel returnCode: result contextInfo: NULL];
+                      }];	
 }
 
 //(Re)initialise the possible values for drive letters

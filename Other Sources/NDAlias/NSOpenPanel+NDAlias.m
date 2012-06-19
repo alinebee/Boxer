@@ -37,17 +37,16 @@
  */
 - (NSArray *)aliases
 {
-	NSMutableArray *	aliases = nil;
-	NSArray *			filenames = [self filenames];
-	NSUInteger			i;
-	if (filenames != nil)
+	NSMutableArray *aliases = nil;
+    NSArray *URLs = self.URLs;
+	if (URLs != nil)
 	{
 		aliases = [NSMutableArray array];
-		for( i = 0; i < [filenames count]; i++)
-		{
-			NDAlias *		anAlias = [NDAlias aliasWithPath:[filenames objectAtIndex:i]];
-			[aliases addObject:anAlias];
-		}
+        for (NSURL *URL in URLs)
+        {
+			NDAlias *anAlias = [NDAlias aliasWithURL: URL];
+			[aliases addObject: anAlias];
+        }
 	}
 	
 	return aliases;

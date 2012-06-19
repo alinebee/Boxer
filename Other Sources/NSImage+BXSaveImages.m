@@ -15,14 +15,20 @@
 		 properties: (NSDictionary *)properties
 			  error: (NSError **)outError
 {
-	NSBitmapImageRep *rep = (NSBitmapImageRep *)[self bestRepresentationForDevice: nil];
+    NSRect targetRect = NSMakeRect(0, 0, self.size.width, self.size.height);
+    NSDictionary *hints = [NSDictionary dictionaryWithObjectsAndKeys:
+                           [NSNumber numberWithInt: NSImageInterpolationHigh], NSImageHintInterpolation,
+                           nil];
+	NSBitmapImageRep *rep = (NSBitmapImageRep *)[self bestRepresentationForRect: targetRect
+                                                                        context: nil
+                                                                          hints: hints];
 	
 	//If the image representation is not actually an NSBitmapImageRep,
 	//(e.g. it's vector data) then create one from the TIFF data.
 	//FIXME: this will be needlessly slow
 	if (![rep isKindOfClass: [NSBitmapImageRep class]])
 	{
-		rep = [NSBitmapImageRep imageRepWithData: [self TIFFRepresentation]];
+		rep = [NSBitmapImageRep imageRepWithData: self.TIFFRepresentation];
 	}
 	
 	NSData *data = [rep representationUsingType: type properties: properties];

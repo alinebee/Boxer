@@ -30,7 +30,9 @@ enum {
 
 
 @implementation BXFirstRunWindowController
-@synthesize gamesFolderSelector, addSampleGamesToggle, useShelfAppearanceToggle;
+@synthesize gamesFolderSelector = _gamesFolderSelector;
+@synthesize addSampleGamesToggle = _addSampleGamesToggle;
+@synthesize useShelfAppearanceToggle = _useShelfAppearanceToggle;
 
 + (id) controller
 {
@@ -42,9 +44,9 @@ enum {
 
 - (void) dealloc
 {	
-	[self setGamesFolderSelector: nil],			[gamesFolderSelector release];
-	[self setAddSampleGamesToggle: nil],		[addSampleGamesToggle release];
-	[self setUseShelfAppearanceToggle: nil],	[useShelfAppearanceToggle release];
+    self.gamesFolderSelector = nil;
+    self.addSampleGamesToggle = nil;
+    self.useShelfAppearanceToggle = nil;
 	
 	[super dealloc];
 }
@@ -52,12 +54,12 @@ enum {
 - (void) awakeFromNib
 {
 	//Empty the placeholder items first
-	NSMenu *menu = [gamesFolderSelector menu];
+	NSMenu *menu = self.gamesFolderSelector.menu;
 	NSUInteger startOfOptions	= [menu indexOfItemWithTag: BXGamesFolderSelectorStartOfOptionsTag];
 	NSUInteger endOfOptions		= [menu indexOfItemWithTag: BXGamesFolderSelectorEndOfOptionsTag];
 	NSRange optionRange			= NSMakeRange(startOfOptions, endOfOptions - startOfOptions);
 
-	for (NSMenuItem *oldItem in [[menu itemArray] subarrayWithRange: optionRange])
+	for (NSMenuItem *oldItem in [menu.itemArray subarrayWithRange: optionRange])
 		[menu removeItem: oldItem];
 	
 	
@@ -72,7 +74,7 @@ enum {
 		[menu insertItem: item atIndex: insertionPoint++];
 	}
 	
-	[gamesFolderSelector selectItemAtIndex: 0];	
+	[self.gamesFolderSelector selectItemAtIndex: 0];	
 }
 
 - (NSMenuItem *) _folderItemForPath: (NSString *)path
@@ -80,9 +82,8 @@ enum {
 	NSValueTransformer *pathTransformer = [NSValueTransformer valueTransformerForName: @"BXIconifiedGamesFolderPath"];
 	
 	NSMenuItem *item = [[NSMenuItem alloc] init];
-	[item setRepresentedObject: path];
-	
-	[item setAttributedTitle: [pathTransformer transformedValue: path]];
+	item.representedObject = path;
+    item.attributedTitle = [pathTransformer transformedValue: path];
 	
 	return [item autorelease];
 }
@@ -90,7 +91,7 @@ enum {
 - (void) showWindow: (id)sender
 {
 	[super showWindow: self];
-	[NSApp runModalForWindow: [self window]];
+	[NSApp runModalForWindow: self.window];
 }
 
 - (void) showWindowWithTransition: (id)sender
@@ -101,7 +102,7 @@ enum {
 							   duration: 0.5
 						   blockingMode: NSAnimationNonblocking];
 #else
-    [[self window] fadeInWithDuration: 0.5];
+    [self.window fadeInWithDuration: 0.5];
 #endif
     
 	[self showWindow: sender];
@@ -110,29 +111,28 @@ enum {
 - (void) hideWindowWithTransition: (id)sender
 {
 #ifdef USE_PRIVATE_APIS
-	[[self window] hideWithTransition: CGSFlip
-							direction: CGSDown
-							 duration: 0.5
-						 blockingMode: NSAnimationBlocking];
+	[self.window hideWithTransition: CGSFlip
+                          direction: CGSDown
+                           duration: 0.5
+                       blockingMode: NSAnimationBlocking];
 #else
-    [[self window] fadeOutWithDuration: 0.5];
+    [self.window fadeOutWithDuration: 0.5];
 #endif
 	
-	[[self window] close];
+	[self.window close];
 }
 	
 - (void) windowWillClose: (NSNotification *)notification
 {
-	if ([NSApp modalWindow] == [self window]) [NSApp stopModal];
+	if ([NSApp modalWindow] == self.window) [NSApp stopModal];
 }
 
 - (IBAction) makeGamesFolder: (id)sender
 {	
-	NSString *path = [[gamesFolderSelector selectedItem] representedObject];
+	NSString *path = self.gamesFolderSelector.selectedItem.representedObject;
 	
-	
-	BOOL applyShelfAppearance = (BOOL)[useShelfAppearanceToggle state];
-	BOOL addSampleGames = [addSampleGamesToggle state];
+	BOOL applyShelfAppearance = self.useShelfAppearanceToggle.state;
+	BOOL addSampleGames = self.addSampleGamesToggle.state;
     
     NSError *folderError = nil;
     
@@ -147,7 +147,7 @@ enum {
     if (!assigned && folderError)
     {
         [self presentError: folderError
-            modalForWindow: [self window]
+            modalForWindow: self.window
                   delegate: nil
         didPresentSelector: NULL
                contextInfo: NULL];
@@ -160,7 +160,7 @@ enum {
         //Lion's own window transitions will interfere with our own, so leave them out.
         if (isRunningOnLionOrAbove())
         {
-            [[self window] close];
+            [self.window close];
         }
         else
         {
@@ -178,67 +178,56 @@ enum {
 	
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 	
-	[openPanel setCanCreateDirectories: YES];
-	[openPanel setCanChooseDirectories: YES];
-	[openPanel setCanChooseFiles: NO];
-	[openPanel setTreatsFilePackagesAsDirectories: NO];
-	[openPanel setAllowsMultipleSelection: NO];
-	[openPanel setDelegate: self];
+    openPanel.delegate = self;
+    openPanel.canCreateDirectories = YES;
+    openPanel.canChooseDirectories = YES;
+    openPanel.canChooseFiles = NO;
+    openPanel.treatsFilePackagesAsDirectories = NO;
+    openPanel.allowsMultipleSelection = NO;
+    
+    openPanel.directoryURL = [NSURL fileURLWithPath: NSHomeDirectory()];
+    
+    openPanel.prompt = NSLocalizedString(@"Select", @"Button label for Open panels when selecting a folder.");
+    openPanel.message = NSLocalizedString(@"Select a folder in which to keep your DOS games:",
+                                          @"Help text shown at the top of choose-a-games-folder panel.");
 	
-	[openPanel setPrompt: NSLocalizedString(@"Select", @"Button label for Open panels when selecting a folder.")];
-	[openPanel setMessage: NSLocalizedString(@"Select a folder in which to keep your DOS games:",
-											 @"Help text shown at the top of choose-a-games-folder panel.")];
-	
-	[openPanel beginSheetForDirectory: NSHomeDirectory()
-								 file: nil
-								types: nil
-					   modalForWindow: [self window]
-						modalDelegate: self
-					   didEndSelector: @selector(setChosenGamesFolder:returnCode:contextInfo:)
-						  contextInfo: NULL];
+    [openPanel beginSheetModalForWindow: self.window completionHandler: ^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton)
+        {
+            NSURL *chosenURL = openPanel.URL;
+            [self chooseGamesFolderWithURL: chosenURL];
+        }
+        else
+        {
+            [self.gamesFolderSelector selectItemAtIndex: 0];
+        }
+    }];
 }
 
 //Delegate validation method for 10.6 and above.
-- (BOOL) panel: (id)openPanel validateURL: (NSURL *)url error: (NSError **)outError
+- (BOOL) panel: (id)openPanel validateURL: (NSURL *)URL error: (NSError **)outError
 {
-	NSString *path = [url path];
+	NSString *path = URL.path;
 	return [[NSApp delegate] validateGamesFolderPath: &path error: outError];
 }
 
-//Delegate validation method for 10.5. Will be ignored on 10.6 and above.
-- (BOOL) panel: (NSOpenPanel *)openPanel isValidFilename: (NSString *)path
+- (void) chooseGamesFolderWithURL: (NSURL *)URL
 {
-	NSError *validationError = nil;
-	BOOL isValid = [[NSApp delegate] validateGamesFolderPath: &path error: &validationError];
-	if (!isValid)
-	{
-		[openPanel presentError: validationError
-				 modalForWindow: openPanel
-					   delegate: nil
-			 didPresentSelector: NULL
-					contextInfo: NULL];
-	}
-	return isValid;
-}
-
-- (void) setChosenGamesFolder: (NSOpenPanel *)openPanel
-				   returnCode: (int)returnCode
-				  contextInfo: (void *)contextInfo
-{
-	if (returnCode == NSOKButton)
-	{
-		NSString *path = [[openPanel URL] path];
-		NSMenuItem *item = [self _folderItemForPath: path];
-		
-		NSMenu *menu = [gamesFolderSelector menu];
-		NSUInteger insertionPoint = [menu indexOfItemWithTag: BXGamesFolderSelectorEndOfOptionsTag];
-		[menu insertItem: item atIndex: insertionPoint];
-		[gamesFolderSelector selectItemAtIndex: insertionPoint];
-	}
-	else
-	{
-		[gamesFolderSelector selectItemAtIndex: 0];
-	}
+    NSString *path = URL.path;
+    
+    //Look for an existing menu item with that path
+    NSInteger itemIndex = [self.gamesFolderSelector indexOfItemWithRepresentedObject: path];
+    if (itemIndex == -1)
+    {
+        //This program is not yet in the menu: add a new item for it and use its new index
+        NSMenuItem *item = [self _folderItemForPath: path];
+        
+        NSMenu *menu = self.gamesFolderSelector.menu;
+        itemIndex = [menu indexOfItemWithTag: BXGamesFolderSelectorEndOfOptionsTag];
+        [menu insertItem: item atIndex: itemIndex];
+    }
+    
+    [self.gamesFolderSelector selectItemAtIndex: itemIndex];
 }
 
 @end

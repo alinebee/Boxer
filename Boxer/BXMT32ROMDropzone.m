@@ -6,12 +6,16 @@
  */
 
 #import "BXMT32ROMDropzone.h"
-#import "CALayer+BXLayerAdditions.h"
 
 #pragma mark -
 #pragma mark Private method declarations
 
 @interface BXMT32ROMDropzone ()
+@property (retain, nonatomic) CALayer *backgroundLayer;
+@property (retain, nonatomic) CALayer *CM32LLayer;
+@property (retain, nonatomic) CALayer *MT32Layer;
+@property (retain, nonatomic) CALayer *highlightLayer;
+@property (retain, nonatomic) CATextLayer *titleLayer;
 
 //Set up which device is displayed and how it should be highlighted.
 //Called whenever the ROM type changes or we highlight/unhighlight the field.
@@ -26,67 +30,82 @@
 @implementation BXMT32ROMDropzone
 @synthesize ROMType = _ROMType;
 @synthesize highlighted = _highlighted;
+@synthesize backgroundLayer = _backgroundLayer;
+@synthesize CM32LLayer = _CM32LLayer;
+@synthesize MT32Layer = _MT32Layer;
+@synthesize highlightLayer = _highlightLayer;
+@synthesize titleLayer = _titleLayer;
 
 - (void) awakeFromNib
 {
-    _backgroundLayer    = [[CALayer alloc] init];
-    _CM32LLayer         = [[CALayer alloc] init];
-    _MT32Layer          = [[CALayer alloc] init];
-    _highlightLayer     = [[CALayer alloc] init];
-    _titleLayer         = [[CATextLayer alloc] init];
+    self.backgroundLayer    = [CALayer layer];
+    self.CM32LLayer         = [CALayer layer];
+    self.MT32Layer          = [CALayer layer];
+    self.highlightLayer     = [CALayer layer];
+    self.titleLayer         = [CATextLayer layer];
+    
+    self.CM32LLayer.delegate = self;
+    self.MT32Layer.delegate = self;
+    self.highlightLayer.delegate = self;
+    self.titleLayer.delegate = self;
     
     //Retrieve the images we'll be using for the shelf and devices,
     //and set the layers to use them.
-    [_backgroundLayer setContentsFromImageNamed: @"MT32Shelf"];
-    [_CM32LLayer setContentsFromImageNamed: @"CM32L"];
-    [_MT32Layer setContentsFromImageNamed: @"MT32"];
-    [_highlightLayer setContentsFromImageNamed: @"MT32ShelfHighlight"];
+    self.backgroundLayer.contents   = [NSImage imageNamed: @"MT32Shelf"];
+    self.CM32LLayer.contents        = [NSImage imageNamed: @"CM32L"];
+    self.MT32Layer.contents         = [NSImage imageNamed: @"MT32"];
+    self.highlightLayer.contents    = [NSImage imageNamed: @"MT32ShelfHighlight"];
     
     //Force the shelf and device layers to the same size as the view.
-    _backgroundLayer.frame = NSRectToCGRect(self.bounds);
-    _CM32LLayer.frame = _MT32Layer.frame = _highlightLayer.frame = _backgroundLayer.bounds;
+    self.backgroundLayer.frame = NSRectToCGRect(self.bounds);
+    self.CM32LLayer.frame = self.MT32Layer.frame = self.highlightLayer.frame = self.backgroundLayer.bounds;
     
     
     //Start the device layers hidden - we'll unhide them selectively
     //when our type is changed.
-    _CM32LLayer.hidden = YES;
-    _MT32Layer.hidden = YES;
-    _highlightLayer.hidden = YES;
+    self.CM32LLayer.hidden      = YES;
+    self.MT32Layer.hidden       = YES;
+    self.highlightLayer.hidden  = YES;
     
     //Add a hidden glow to the CM-32L and MT-32 layers,
     //which will be unhidden when we highlight.
-    _MT32Layer.shadowRadius = _CM32LLayer.shadowRadius = 6;
-    _MT32Layer.shadowColor = _CM32LLayer.shadowColor = CGColorGetConstantColor(kCGColorWhite);
+    self.MT32Layer.shadowRadius = self.CM32LLayer.shadowRadius = 6;
+    self.MT32Layer.shadowColor  = self.CM32LLayer.shadowColor = CGColorGetConstantColor(kCGColorWhite);
     
 
     //Set up the title text layer to sit 20 pixels in from the shelf edges.
-    _titleLayer.frame = CGRectIntegral(CGRectInset(_backgroundLayer.bounds, 20.0f, 20.0f));
-    _titleLayer.wrapped = YES;
-    _titleLayer.alignmentMode = kCAAlignmentCenter;
+    self.titleLayer.frame = CGRectIntegral(CGRectInset(_backgroundLayer.bounds, 20.0f, 20.0f));
+    self.titleLayer.wrapped = YES;
+    self.titleLayer.alignmentMode = kCAAlignmentCenter;
     
-    _titleLayer.foregroundColor = CGColorGetConstantColor(kCGColorWhite);
-    _titleLayer.font        = [NSFont boldSystemFontOfSize: 0];
-    _titleLayer.fontSize    = 16.0f;
+    self.titleLayer.foregroundColor = CGColorGetConstantColor(kCGColorWhite);
+    self.titleLayer.font            = [NSFont boldSystemFontOfSize: 0];
+    self.titleLayer.fontSize        = 16.0f;
     
-    _titleLayer.shadowOffset = CGSizeMake(0, -1.0f);
-    _titleLayer.shadowRadius = 3.0f;
-    _titleLayer.shadowOpacity = 0.75f;
+    self.titleLayer.shadowOffset = CGSizeMake(0, -1.0f);
+    self.titleLayer.shadowRadius = 3.0f;
+    self.titleLayer.shadowOpacity = 0.75f;
     
-    //Keep the title layer in sync with the button's label.
-    [_titleLayer bind: @"string" toObject: self withKeyPath: @"title" options: nil];
+    //Keep the title layer in sync with our own label.
+    [self.titleLayer bind: @"string" toObject: self withKeyPath: @"title" options: nil];
     
-    [_backgroundLayer addSublayer: _CM32LLayer];
-    [_backgroundLayer addSublayer: _MT32Layer];
-    [_backgroundLayer addSublayer: _titleLayer];
-    [_backgroundLayer addSublayer: _highlightLayer];
+    [self.backgroundLayer addSublayer: self.CM32LLayer];
+    [self.backgroundLayer addSublayer: self.MT32Layer];
+    [self.backgroundLayer addSublayer: self.titleLayer];
+    [self.backgroundLayer addSublayer: self.highlightLayer];
     
-    [self setLayer: _backgroundLayer];
-    [self setWantsLayer: YES];
+    self.layer = self.backgroundLayer;
+    self.wantsLayer = YES;
+}
+
+- (BOOL) layer: (CALayer *)layer shouldInheritContentsScale: (CGFloat)newScale fromWindow: (NSWindow *)window
+{
+    return YES;
 }
 
 - (void) setHighlighted: (BOOL)flag
 {
-    if ([self isHighlighted] != flag)
+    if (self.isHighlighted != flag)
     {
         _highlighted = flag;
         [self _syncDisplayedDevice];
@@ -96,17 +115,17 @@
 - (void) _syncDisplayedDevice
 {
     [CATransaction begin];
-    //10.5 FIX: was setAnimationDuration, but that's 10.6-and-up.
-    [CATransaction setValue: [NSNumber numberWithDouble: 0.75] forKey: kCATransactionAnimationDuration];
-    
-    _CM32LLayer.hidden      = !(self.ROMType == BXMT32ROMTypeCM32L);
-    _MT32Layer.hidden       = !(self.ROMType == BXMT32ROMTypeMT32);
-    _highlightLayer.hidden  = !(self.ROMType == BXMT32ROMTypeUnknown && [self isHighlighted]);
-    
+        //10.5 FIX: was setAnimationDuration, but that's 10.6-and-up.
+        [CATransaction setValue: [NSNumber numberWithDouble: 0.75]
+                         forKey: kCATransactionAnimationDuration];
+        
+        self.CM32LLayer.hidden      = !(self.ROMType == BXMT32ROMTypeCM32L);
+        self.MT32Layer.hidden       = !(self.ROMType == BXMT32ROMTypeMT32);
+        self.highlightLayer.hidden  = !(self.ROMType == BXMT32ROMTypeUnknown && self.isHighlighted);
     [CATransaction commit];
     
-    _MT32Layer.shadowOpacity    = [self isHighlighted] ? 1: 0;
-    _CM32LLayer.shadowOpacity   = [self isHighlighted] ? 1: 0;
+    self.MT32Layer.shadowOpacity    = self.isHighlighted ? 1: 0;
+    self.CM32LLayer.shadowOpacity   = self.isHighlighted ? 1: 0;
 }
 
 - (void) setROMType: (BXMT32ROMType)ROMType
@@ -120,11 +139,11 @@
 
 - (void) dealloc
 {
-    [_backgroundLayer release], _backgroundLayer = nil;
-    [_MT32Layer release], _MT32Layer = nil;
-    [_CM32LLayer release], _CM32LLayer = nil;
-    [_highlightLayer release], _highlightLayer = nil;
-    [_titleLayer release], _titleLayer = nil;
+    self.backgroundLayer = nil;
+    self.MT32Layer = nil;
+    self.CM32LLayer = nil;
+    self.highlightLayer = nil;
+    self.titleLayer = nil;
     
     [super dealloc];
 }

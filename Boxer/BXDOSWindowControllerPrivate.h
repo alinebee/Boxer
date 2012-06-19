@@ -59,9 +59,6 @@
 //Returns the view size that should be used for rendering the specified frame.
 - (NSSize) _renderingViewSizeForFrame: (BXVideoFrame *)frame minSize: (NSSize)minViewSize;
 
-//Forces the emulator's video handler to recalculate its filter settings at the end of a resize event.
-- (void) _cleanUpAfterResize;
-
 //Resizes the window in anticipation of sliding out the specified view. This will ensure
 //there is enough room on screen to accomodate the new window size.
 - (void) _resizeToAccommodateSlidingView: (NSView *)view;
@@ -81,11 +78,6 @@
 //them in DOS if appropriate. These methods call corresponding methods on BXSession+BXDragDrop.
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender;
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender;
-
-//These tell the session to pause itself while a resize is in progress, and clean up when it finishes.
-- (void) renderingViewDidResize: (NSNotification *) notification;
-- (void) renderingViewWillLiveResize: (NSNotification *) notification;
-- (void) renderingViewDidLiveResize: (NSNotification *) notification;
 
 @end
 

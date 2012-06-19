@@ -27,9 +27,6 @@
 #import "BXGeometry.h"
 
 
-NSString * const BXViewWillLiveResizeNotification	= @"BXViewWillLiveResizeNotification";
-NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotification";
-
 @implementation BXDOSWindowController
 
 #pragma mark -
@@ -95,23 +92,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) _addObservers
 {
-	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-	
-	[center addObserver: self
-			   selector: @selector(renderingViewWillLiveResize:)
-				   name: BXViewWillLiveResizeNotification
-				 object: self.renderingView];
-	
-	[center addObserver: self
-			   selector: @selector(renderingViewDidResize:)
-				   name: NSViewFrameDidChangeNotification
-				 object: self.renderingView];
-	
-	[center addObserver: self
-			   selector: @selector(renderingViewDidLiveResize:)
-				   name: BXViewDidLiveResizeNotification
-				 object: self.renderingView];
-    
     //Why don't we just observe document directly, and do so in setDocument:, you ask?
     //Because AppKit sets a window controller's document in a fucked-up way and it's
     //not safe to attach observations to it directly.
@@ -125,8 +105,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) _removeObservers
 {
-	[[NSNotificationCenter defaultCenter] removeObserver: self];
-    
     [self removeObserver: self forKeyPath: @"document.currentPath"];
     [self removeObserver: self forKeyPath: @"document.paused"];
     [self removeObserver: self forKeyPath: @"document.autoPaused"];
@@ -540,28 +518,17 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	return _resizingProgrammatically || self.inputView.inLiveResize;
 }
 
-- (void) renderingViewDidResize: (NSNotification *) notification
-{
-	//Only clean up if we're not in the middle of a live or animated resize operation
-	//(We don't want to redraw on every single frame)
-	if (!self.isResizing)
-        [self _cleanUpAfterResize];
-}
-
-//Warn the emulator to prepare for emulation cutout when the resize starts
-- (void) renderingViewWillLiveResize: (NSNotification *) notification
+//Warn the emulator to prepare for emulation cutout when resizing the window
+- (void) windowWillStartLiveResize: (NSNotification *)notification
 {
 	[[NSNotificationCenter defaultCenter] postNotificationName: BXWillBeginInterruptionNotification object: self];
 }
 
-//Catch the end of a live resize event and clean up once we're done
-//While we're at it, let the emulator know it can unpause now
-- (void) renderingViewDidLiveResize: (NSNotification *) notification
+- (void) windowDidEndLiveResize: (NSNotification *)notification
 {
-	[self _cleanUpAfterResize];
-	[[NSNotificationCenter defaultCenter] postNotificationName: BXDidFinishInterruptionNotification object: self];
+	[[NSNotificationCenter defaultCenter] postNotificationName: BXDidFinishInterruptionNotification
+                                                        object: self];
 }
-
 
 
 //Snap to multiples of the base render size as we scale
@@ -590,6 +557,11 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	return newProposedSize;
 }
 
+//Respond to the window changing color-space or scaling factor by updating views that need to know about it.
+- (void) windowDidChangeBackingProperties: (NSNotification *)notification
+{
+    [self.renderingView windowDidChangeBackingProperties: notification];
+}
 
 //Return an appropriate "standard" (zoomed) frame for the window given the currently available screen space.
 //We define the standard frame to be the largest multiple of the game resolution, maintaining aspect ratio.
@@ -651,9 +623,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) windowDidEnterFullScreen: (NSNotification *)notification
 {
-    //Force the renderer to redraw after the resize to fullscreen
-    [self _cleanUpAfterResize];
-    
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center postNotificationName: BXSessionDidEnterFullScreenNotification object: self.document];
 }
@@ -693,9 +662,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
         [NSWindow removeFrameUsingName: self.autosaveNameBeforeFullScreen];
         [self.window setFrameAutosaveName: self.autosaveNameBeforeFullScreen];
     }
-    
-    //Force the renderer to redraw after the resize
-    [self _cleanUpAfterResize];
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center postNotificationName: BXSessionDidExitFullScreenNotification object: self.document];
@@ -798,12 +764,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 #pragma mark -
 #pragma mark Private methods
-
-- (void) _cleanUpAfterResize
-{
-	//Tell the renderer to refresh its filters to match the new size
-	[self.document.emulator.videoHandler reset];
-}
 
 - (BOOL) _resizeToAccommodateFrame: (BXVideoFrame *)frame
 {

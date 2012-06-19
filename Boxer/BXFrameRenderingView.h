@@ -44,4 +44,7 @@
 - (NSSize) maxViewportSize;
 - (void) setMaxViewportSize: (NSSize)size;
 
+//Called whenever the window changes color space or scaling factor.
+- (void) windowDidChangeBackingProperties: (NSNotification *)notification;
+
 @end

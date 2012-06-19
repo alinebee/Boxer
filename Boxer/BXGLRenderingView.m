@@ -56,22 +56,6 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @synthesize viewportRect = _viewportRect;
 @synthesize maxViewportSize = _maxViewportSize;
 
-- (void) viewWillMoveToWindow: (NSWindow *)newWindow
-{
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center removeObserver: self
-                      name: NSWindowDidChangeBackingPropertiesNotification
-                    object: self.window];
-    
-    if (newWindow)
-    {
-        [center addObserver: self
-                   selector: @selector(_syncViewport)
-                       name: NSWindowDidChangeBackingPropertiesNotification
-                     object: newWindow];
-    }
-}
-
 - (void) dealloc
 {
     self.currentFrame = nil;
@@ -281,6 +265,11 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     self.viewportRect = [self viewportForFrame: self.currentFrame];
 }
 
+- (void) windowDidChangeBackingProperties: (NSNotification *)notification
+{
+    [self _syncViewport];
+}
+
 - (void) drawRect: (NSRect)dirtyRect
 {
     self.needsCVLinkDisplay = NO;
@@ -311,22 +300,6 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	return kCVReturnSuccess;
 }
 
-
-//Silly notifications to let the window controller know when a live resize operation is starting/stopping,
-//so that it can clean up afterwards.
-- (void) viewWillStartLiveResize
-{	
-	[super viewWillStartLiveResize];
-	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewWillLiveResizeNotification
-                                                        object: self];
-}
-
-- (void) viewDidEndLiveResize
-{
-	[super viewDidEndLiveResize];
-	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewDidLiveResizeNotification
-                                                        object: self];
-}
 @end
 
 

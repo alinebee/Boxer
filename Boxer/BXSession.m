@@ -807,11 +807,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //Turn off display-sleep suppression
     [self _syncSuppressesDisplaySleep];
 	
-	//Clear our drive and program caches
+	//Clear our program caches
 	self.lastExecutedProgramPath = nil;
     self.lastLaunchedProgramPath = nil;
-	
-	self.drives = nil;
 
 	//Clear the final rendered frame
 	[self.DOSWindowController updateWithFrame: nil];

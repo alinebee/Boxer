@@ -18,7 +18,6 @@
 #import "BXInputView.h"
 
 #import "BXEmulator.h"
-#import "BXVideoHandler.h"
 
 #import "BXSession+BXDragDrop.h"
 #import "BXImportSession.h"
@@ -100,7 +99,15 @@
     [self addObserver: self forKeyPath: @"document.autoPaused" options: 0 context: nil];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [self bind: @"aspectCorrected" toObject: defaults withKeyPath: @"aspectCorrected" options: nil];
+    [self bind: @"aspectCorrected"
+      toObject: defaults
+   withKeyPath: @"aspectCorrected"
+       options: nil];
+    
+    [self.renderingView bind: @"renderingStyle"
+                    toObject: defaults
+                 withKeyPath: @"renderingStyle"
+                     options: nil];
 }
 
 - (void) _removeObservers
@@ -110,6 +117,7 @@
     [self removeObserver: self forKeyPath: @"document.autoPaused"];
     
     [self unbind: @"aspectCorrected"];
+    [self.renderingView unbind: @"renderingStyle"];
 }
 
 
@@ -372,30 +380,29 @@
 	[self setProgramPanelShown: NO animate: YES];
 }
 
-- (IBAction) toggleFilterType: (id <NSValidatedUserInterfaceItem>)sender
+- (IBAction) toggleRenderingStyle: (id <NSValidatedUserInterfaceItem>)sender
 {
-	NSInteger filterType = sender.tag;
-	[[NSUserDefaults standardUserDefaults] setInteger: filterType
-                                               forKey: @"filterType"];
+	BXRenderingStyle style = sender.tag;
+	[[NSUserDefaults standardUserDefaults] setInteger: style
+                                               forKey: @"renderingStyle"];
 }
 
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem
 {	
 	SEL theAction = theItem.action;
 
-	if (theAction == @selector(toggleFilterType:))
+	if (theAction == @selector(toggleRenderingStyle:))
 	{
-		BXFilterType filterType	= theItem.tag;
-		BXVideoHandler *videoHandler = self.document.emulator.videoHandler;
-		
-		//Update the option state to reflect the current filter selection
-		//If the filter is selected but not active at the current window size, we indicate this with a mixed state
-		
-		if		(filterType != videoHandler.filterType)	theItem.state = NSOffState;
-		else if	(videoHandler.filterIsActive)			theItem.state = NSOnState;
-		else 											theItem.state = NSMixedState;
-		
-		return self.document.isEmulating;
+		BXRenderingStyle renderingStyle = theItem.tag;
+		if (renderingStyle == self.renderingView.renderingStyle)
+        {
+            theItem.state = NSOnState;
+        }
+        else
+        {
+            theItem.state = NSOffState;
+        }
+		return YES;
 	}
 	
 	else if (theAction == @selector(toggleProgramPanelShown:))

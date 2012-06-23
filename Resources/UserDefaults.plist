@@ -12,7 +12,7 @@
 	<true/>
 	<key>useCVDisplayLink</key>
 	<true/>
-	<key>filterType</key>
+	<key>renderingStyle</key>
 	<integer>0</integer>
 	<key>initialInspectorPanelIndex</key>
 	<integer>1</integer>

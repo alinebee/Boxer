@@ -46,7 +46,7 @@
         // Controls the intensity of the barrel distortion used to emulate the
         // curvature of a CRT. 0.0 is perfectly flat, 1.0 is annoyingly
         // distorted, higher values are increasingly ridiculous.
-        #define distortion 0.1
+        #define distortion 0.05
 
         // Apply radial distortion to the given coordinate.
         vec2 radialDistortion(vec2 coord) {

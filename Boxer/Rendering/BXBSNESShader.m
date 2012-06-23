@@ -8,6 +8,7 @@
 
 #import "BXBSNESShader.h"
 #import <OpenGL/gl.h>
+#import <OpenGL/CGLMacro.h>
 
 #pragma mark -
 #pragma mark Constants
@@ -246,6 +247,7 @@ NSString * const BXBSNESShaderErrorDomain = @"BXBSNESShaderErrorDomain";
 //and store them thereafter.
 - (void) setTextureIndex: (GLint)texture
 {
+    CGLContextObj cgl_ctx = _context;
     if (!_textureLocation)
     {
         _textureLocation = glGetUniformLocationARB(self.shaderProgram, BXBSNESShaderTextureUniform);
@@ -257,6 +259,7 @@ NSString * const BXBSNESShaderErrorDomain = @"BXBSNESShaderErrorDomain";
 
 - (void) setTextureSize: (CGSize)textureSize
 {
+    CGLContextObj cgl_ctx = _context;
     if (!_textureSizeLocation)
     {
         _textureSizeLocation = glGetUniformLocationARB(self.shaderProgram, BXBSNESShaderTextureSizeUniform);
@@ -268,6 +271,7 @@ NSString * const BXBSNESShaderErrorDomain = @"BXBSNESShaderErrorDomain";
 
 - (void) setInputSize: (CGSize)inputSize
 {
+    CGLContextObj cgl_ctx = _context;
     if (!_inputSizeLocation)
     {
         _inputSizeLocation = glGetUniformLocationARB(self.shaderProgram, BXBSNESShaderInputSizeUniform);
@@ -279,6 +283,7 @@ NSString * const BXBSNESShaderErrorDomain = @"BXBSNESShaderErrorDomain";
 
 - (void) setOutputSize: (CGSize)outputSize
 {
+    CGLContextObj cgl_ctx = _context;
     if (!_outputSizeLocation)
     {
         _outputSizeLocation = glGetUniformLocationARB(self.shaderProgram, BXBSNESShaderOutputSizeUniform);
@@ -290,6 +295,7 @@ NSString * const BXBSNESShaderErrorDomain = @"BXBSNESShaderErrorDomain";
 
 - (void) setFrameCount: (uint64_t)frameCount
 {
+    CGLContextObj cgl_ctx = _context;
     if (frameCount != self.frameCount)
     {
         _frameCount = frameCount;

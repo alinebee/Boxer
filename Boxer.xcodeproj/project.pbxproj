@@ -96,6 +96,8 @@
 		9F4971BB108EF02F00282261 /* BXEmulator+BXDOSFileSystem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */; };
 		9F4B5284122591960055022A /* prompt.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F4B5283122591960055022A /* prompt.icns */; };
 		9F4E042C0F67E72300427D50 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4E042B0F67E72300427D50 /* AudioToolbox.framework */; };
+		9F4FC1151592508100319428 /* BXSupersamplingRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4FC1141592508100319428 /* BXSupersamplingRenderer.m */; };
+		9F4FC118159253DA00319428 /* BXShaderRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4FC117159253DA00319428 /* BXShaderRenderer.m */; };
 		9F511502129055FE00BEC0B9 /* BXImportCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F511501129055FE00BEC0B9 /* BXImportCommand.m */; };
 		9F53411812059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */; };
 		9F544A8010AB44C40030FED5 /* BXThemes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F544A7F10AB44C40030FED5 /* BXThemes.m */; };
@@ -418,7 +420,7 @@
 		9FE50B591365845200495EBE /* BXInputController+BXJoystickInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */; };
 		9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */; };
 		9FEAA3EC1204595B0085F008 /* BXOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3EB1204595B0085F008 /* BXOperation.m */; };
-		9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */; };
+		9FECE19011A31B8B00E0EBB6 /* BXBasicRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXBasicRenderer.m */; };
 		9FECE1C211A3244500E0EBB6 /* BXGLRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */; };
 		9FEF98011191E1EF002024DF /* BXEmulatedMouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXEmulatedMouse.mm */; };
 		9FF1562914506DBA00545317 /* BXHUDProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562814506DBA00545317 /* BXHUDProgressIndicator.m */; };
@@ -628,6 +630,11 @@
 		9F466AFB11A92C4B00C50965 /* UserDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefaults.plist; sourceTree = "<group>"; };
 		9F4B5283122591960055022A /* prompt.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = prompt.icns; sourceTree = "<group>"; };
 		9F4E042B0F67E72300427D50 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
+		9F4FC1131592508100319428 /* BXSupersamplingRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSupersamplingRenderer.h; sourceTree = "<group>"; };
+		9F4FC1141592508100319428 /* BXSupersamplingRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSupersamplingRenderer.m; sourceTree = "<group>"; };
+		9F4FC116159253DA00319428 /* BXShaderRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShaderRenderer.h; sourceTree = "<group>"; };
+		9F4FC117159253DA00319428 /* BXShaderRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXShaderRenderer.m; sourceTree = "<group>"; };
+		9F4FC1191592588600319428 /* BXBasicRendererPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BXBasicRendererPrivate.h; sourceTree = "<group>"; };
 		9F511500129055FE00BEC0B9 /* BXImportCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportCommand.h; sourceTree = "<group>"; };
 		9F511501129055FE00BEC0B9 /* BXImportCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportCommand.m; sourceTree = "<group>"; };
 		9F53411612059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXExecutableTypes.h"; sourceTree = "<group>"; };
@@ -1203,10 +1210,10 @@
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
 		9FE2172B121EED1E001452E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/ImportCoverArtTip.png; sourceTree = "<group>"; };
 		9FE2172D121EED1E001452E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/ImportRenameTip.png; sourceTree = "<group>"; };
-		9FE3237C157A42B3004492E8 /* BXShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXShader.h; path = Rendering/BXShader.h; sourceTree = "<group>"; };
-		9FE3237D157A42B3004492E8 /* BXShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXShader.m; path = Rendering/BXShader.m; sourceTree = "<group>"; };
-		9FE32380157A7498004492E8 /* BXBSNESShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXBSNESShader.h; path = Rendering/BXBSNESShader.h; sourceTree = "<group>"; };
-		9FE32381157A7498004492E8 /* BXBSNESShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXBSNESShader.m; path = Rendering/BXBSNESShader.m; sourceTree = "<group>"; };
+		9FE3237C157A42B3004492E8 /* BXShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShader.h; sourceTree = "<group>"; };
+		9FE3237D157A42B3004492E8 /* BXShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXShader.m; sourceTree = "<group>"; };
+		9FE32380157A7498004492E8 /* BXBSNESShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBSNESShader.h; sourceTree = "<group>"; };
+		9FE32381157A7498004492E8 /* BXBSNESShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBSNESShader.m; sourceTree = "<group>"; };
 		9FE50B571365845200495EBE /* BXInputController+BXJoystickInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXInputController+BXJoystickInput.h"; sourceTree = "<group>"; };
 		9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXInputController+BXJoystickInput.m"; sourceTree = "<group>"; };
 		9FE90BF511F8D1DC003CFFFF /* BXDelegatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDelegatedView.h; sourceTree = "<group>"; };
@@ -1215,8 +1222,8 @@
 		9FEAA3EA1204595B0085F008 /* BXOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperation.h; sourceTree = "<group>"; };
 		9FEAA3EB1204595B0085F008 /* BXOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXOperation.m; sourceTree = "<group>"; };
 		9FEBB70E11DF9BB50055933F /* BXEmulatorDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorDelegate.h; sourceTree = "<group>"; };
-		9FECE18E11A31B8B00E0EBB6 /* BXRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRenderer.h; sourceTree = "<group>"; };
-		9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRenderer.m; sourceTree = "<group>"; };
+		9FECE18E11A31B8B00E0EBB6 /* BXBasicRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBasicRenderer.h; sourceTree = "<group>"; };
+		9FECE18F11A31B8B00E0EBB6 /* BXBasicRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBasicRenderer.m; sourceTree = "<group>"; };
 		9FECE1C011A3244500E0EBB6 /* BXGLRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGLRenderingView.h; sourceTree = "<group>"; };
 		9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGLRenderingView.m; sourceTree = "<group>"; };
 		9FEF97FF1191E1EF002024DF /* BXEmulatedMouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedMouse.h; sourceTree = "<group>"; };
@@ -1233,10 +1240,10 @@
 		9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXVideoHandler.mm; sourceTree = "<group>"; };
 		9FF2E9BB11E6F4950051E485 /* BXEmulatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorConfiguration.h; sourceTree = "<group>"; };
 		9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorConfiguration.m; sourceTree = "<group>"; };
-		9FF68FF6157B9C6600F8B5BC /* BXTexture2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXTexture2D.h; path = Rendering/BXTexture2D.h; sourceTree = "<group>"; };
-		9FF68FF7157B9C6600F8B5BC /* BXTexture2D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXTexture2D.m; path = Rendering/BXTexture2D.m; sourceTree = "<group>"; };
-		9FF68FFE157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "BXTexture2D+BXVideoFrameExtensions.h"; path = "Rendering/BXTexture2D+BXVideoFrameExtensions.h"; sourceTree = "<group>"; };
-		9FF68FFF157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "BXTexture2D+BXVideoFrameExtensions.m"; path = "Rendering/BXTexture2D+BXVideoFrameExtensions.m"; sourceTree = "<group>"; };
+		9FF68FF6157B9C6600F8B5BC /* BXTexture2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTexture2D.h; sourceTree = "<group>"; };
+		9FF68FF7157B9C6600F8B5BC /* BXTexture2D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTexture2D.m; sourceTree = "<group>"; };
+		9FF68FFE157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXTexture2D+BXVideoFrameExtensions.h"; sourceTree = "<group>"; };
+		9FF68FFF157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXTexture2D+BXVideoFrameExtensions.m"; sourceTree = "<group>"; };
 		9FF865CD134DAB5A001CE857 /* BXTaskOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTaskOperation.h; sourceTree = "<group>"; };
 		9FF865CE134DAB5A001CE857 /* BXTaskOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTaskOperation.m; sourceTree = "<group>"; };
 		9FF86676134DCA16001CE857 /* cdrdao */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = cdrdao; sourceTree = "<group>"; };
@@ -1581,8 +1588,6 @@
 				9F4175AA119DBFDD00646B15 /* BXRenderingLayer.m */,
 				9FB4F9E211957B55006C8AC9 /* BXVideoFrame.h */,
 				9FB4F9E311957B55006C8AC9 /* BXVideoFrame.m */,
-				9FECE18E11A31B8B00E0EBB6 /* BXRenderer.h */,
-				9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */,
 				9FE3237C157A42B3004492E8 /* BXShader.h */,
 				9FE3237D157A42B3004492E8 /* BXShader.m */,
 				9FE32380157A7498004492E8 /* BXBSNESShader.h */,
@@ -1591,8 +1596,15 @@
 				9FF68FF7157B9C6600F8B5BC /* BXTexture2D.m */,
 				9FF68FFE157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.h */,
 				9FF68FFF157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m */,
+				9FECE18E11A31B8B00E0EBB6 /* BXBasicRenderer.h */,
+				9FECE18F11A31B8B00E0EBB6 /* BXBasicRenderer.m */,
+				9F4FC1191592588600319428 /* BXBasicRendererPrivate.h */,
+				9F4FC1131592508100319428 /* BXSupersamplingRenderer.h */,
+				9F4FC1141592508100319428 /* BXSupersamplingRenderer.m */,
+				9F4FC116159253DA00319428 /* BXShaderRenderer.h */,
+				9F4FC117159253DA00319428 /* BXShaderRenderer.m */,
 			);
-			name = Rendering;
+			path = Rendering;
 			sourceTree = "<group>";
 		};
 		9F24D2491224394D009C1817 /* Welcome wagon */ = {
@@ -2949,7 +2961,7 @@
 				9FB4F9E411957B55006C8AC9 /* BXVideoFrame.m in Sources */,
 				9F4175F1119DCF7E00646B15 /* BXFrameRateCounterLayer.m in Sources */,
 				9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */,
-				9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */,
+				9FECE19011A31B8B00E0EBB6 /* BXBasicRenderer.m in Sources */,
 				9FECE1C211A3244500E0EBB6 /* BXGLRenderingView.m in Sources */,
 				9FF1756D11B25F4E00D0FCDC /* BXInputView.m in Sources */,
 				9FF175E711B279F500D0FCDC /* BXVideoHandler.mm in Sources */,
@@ -3208,6 +3220,8 @@
 				9FE32382157A7498004492E8 /* BXBSNESShader.m in Sources */,
 				9FF68FF8157B9C6600F8B5BC /* BXTexture2D.m in Sources */,
 				9FF69000157BE82C00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m in Sources */,
+				9F4FC1151592508100319428 /* BXSupersamplingRenderer.m in Sources */,
+				9F4FC118159253DA00319428 /* BXShaderRenderer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

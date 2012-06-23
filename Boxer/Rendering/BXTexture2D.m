@@ -9,6 +9,7 @@
 #import "BXTexture2D.h"
 #import "BXGeometry.h"
 #import <OpenGL/gl.h>
+#import <OpenGL/CGLMacro.h>
 
 NSString * const BXGLErrorDomain = @"BXGLErrorDomain";
 NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensionErrorDomain";
@@ -32,7 +33,7 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
 
 + (CGSize) textureSizeNeededForContentSize: (CGSize)size withType: (GLenum)textureType
 {
-    if (textureType == GL_TEXTURE_RECTANGLE_ARB || textureType == GL_TEXTURE_RECTANGLE_EXT)
+    if (textureType == GL_TEXTURE_RECTANGLE_ARB)
     {
         return size;
     }
@@ -45,7 +46,7 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
 
 - (NSError *) latestGLError
 {
-    CGLSetCurrentContext(_context);
+    CGLContextObj cgl_ctx = _context;
     GLenum status = glGetError();
     if (status)
     {
@@ -94,7 +95,7 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
         _context = context;
         CGLRetainContext(context);
         
-        CGLSetCurrentContext(_context);
+        CGLContextObj cgl_ctx = _context;
         
         _type = type;
         _contentRegion = CGRectMake(0, 0, contentSize.width, contentSize.height);
@@ -105,7 +106,7 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
         //of the texture itself; otherwise, we need a power of two texture
         //size large enough to accomodate the content size.)
         _textureSize = [self.class textureSizeNeededForContentSize: contentSize withType: type];
-        if (_type == GL_TEXTURE_RECTANGLE_ARB || _type == GL_TEXTURE_RECTANGLE_EXT)
+        if (_type == GL_TEXTURE_RECTANGLE_ARB)
         {
             _usesNormalizedTextureCoordinates = NO;
             _horizontalWrapping = GL_CLAMP_TO_EDGE;
@@ -119,8 +120,6 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
         }
         _minFilter = GL_LINEAR;
         _magFilter = GL_LINEAR;
-        
-        glEnable(_type);
         
         //Create a new texture and bind it as the current target.
         glGenTextures(1, &_texture);
@@ -202,14 +201,10 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
 {
     if (_texture)
     {
-        //Because deleteTexture could be called in dealloc,
-        //which may occur at any time out of the direct control of the program flow,
-        //we need to lock the context to avoid stepping on anyone's toes.
-        CGLLockContext(_context);
-            CGLSetCurrentContext(_context);
-            glDeleteTextures(1, &_texture);
-            _texture = 0;
-        CGLUnlockContext(_context);
+        CGLContextObj cgl_ctx = _context;
+        
+        glDeleteTextures(1, &_texture);
+        _texture = 0;
     }
 }
 
@@ -235,7 +230,7 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
     NSAssert1(CGRectContainsRect(textureRegion, region),
               @"Region out of bounds: %@", NSStringFromRect(NSRectFromCGRect(region)));
     
-    CGLSetCurrentContext(_context);
+    CGLContextObj cgl_ctx = _context;
     
     glBindTexture(_type, _texture);
     
@@ -287,7 +282,7 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
 
 - (void) setIntValue: (GLint)value forParameter: (GLenum)parameter
 {
-    CGLSetCurrentContext(_context);
+    CGLContextObj cgl_ctx = _context;
     
     glBindTexture(_type, _texture);
     glTexParameteri(_type, parameter, value);
@@ -329,6 +324,26 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
     }
 }
 
+- (void) setMinFilter: (GLenum)minFilter
+            magFilter: (GLenum)magFilter
+             wrapping: (GLenum)wrapping
+{
+    if (_minFilter != minFilter || _magFilter != magFilter || _horizontalWrapping != wrapping || _verticalWrapping != wrapping)
+    {
+        CGLContextObj cgl_ctx = _context;
+        
+        glBindTexture(_type, _texture);
+        glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, minFilter);
+        glTexParameteri(_type, GL_TEXTURE_MAG_FILTER, magFilter);
+        glTexParameteri(_type, GL_TEXTURE_WRAP_S, wrapping);
+        glTexParameteri(_type, GL_TEXTURE_WRAP_T, wrapping);
+        
+        _minFilter = minFilter;
+        _magFilter = magFilter;
+        _horizontalWrapping = _verticalWrapping = wrapping;
+    }
+}
+
 
 #pragma mark -
 #pragma mark Framebuffers
@@ -338,13 +353,14 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
                      level: (GLint)level
                      error: (NSError **)outError
 {
-    CGLSetCurrentContext(_context);
+    CGLContextObj cgl_ctx = _context;
     
     //Record what the current framebuffer is, so that we can reset it after attachment.
-    GLint currentFramebuffer;
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &currentFramebuffer);
+    GLuint currentFramebuffer;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, (GLint *)&currentFramebuffer);
     
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebuffer);
+    if (currentFramebuffer != framebuffer)
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebuffer);
     
     glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,
                               attachment,
@@ -365,7 +381,8 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
         }
     }
     
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, currentFramebuffer);
+    if (currentFramebuffer != framebuffer)
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, currentFramebuffer);
         
     return succeeded;
 }
@@ -458,7 +475,7 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
 
 //Inner method for the below, which treats the region as being
 //expressed in the standard coordinate system for our texture type:
-//texels for GL_TEXTURE_RECTANGLE, normalized coordinates for GL_TEXTURE_2D.
+//texels for GL_TEXTURE_RECTANGLE_ARB, normalized coordinates for GL_TEXTURE_2D.
 //No coordinate translation is done.
 - (BOOL) _drawFromNativeRegion: (CGRect)region
                   ontoVertices: (GLfloat *)vertices
@@ -476,8 +493,9 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
 		minX,	maxY
     };
 	
-    CGLSetCurrentContext(_context);
+    CGLContextObj cgl_ctx = _context;
     
+    glEnable(_type);
 	glBindTexture(_type, _texture);
 	
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -490,6 +508,7 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
     
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
+    glDisable(_type);
     
     BOOL succeeded = [self _checkForGLError: outError];
     return succeeded;

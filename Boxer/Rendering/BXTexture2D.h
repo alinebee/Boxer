@@ -74,6 +74,10 @@ extern NSString * const BXGLFramebufferExtensionErrorDomain;
 @property (assign, nonatomic) GLenum horizontalWrapping;
 @property (assign, nonatomic) GLenum verticalWrapping;
 
+//Set the min and mag filter and texture wrapping mode simultaneously, which is more efficient.
+- (void) setMinFilter: (GLenum)minFilter
+            magFilter: (GLenum)magFilter
+             wrapping: (GLenum)wrappingMode;
 
 #pragma mark -
 #pragma mark Initialization and texture copying

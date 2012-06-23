@@ -114,7 +114,7 @@ extern NSString * const BXViewDidLiveResizeNotification;
 - (IBAction) hideProgramPanel: (id)sender;
 
 //Toggle the emulator's active rendering filter.
-- (IBAction) toggleFilterType: (id)sender;
+- (IBAction) toggleRenderingStyle: (id)sender;
 
 
 #pragma mark -

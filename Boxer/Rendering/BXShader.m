@@ -8,6 +8,7 @@
 
 #import "BXShader.h"
 #import <OpenGL/gl.h>
+#import <OpenGL/CGLMacro.h>
 
 
 NSString * const BXShaderErrorDomain = @"BXShaderErrorDomain";
@@ -45,11 +46,11 @@ NSString * const BXShaderUniformSizeKey = @"Size";
 
 + (NSString *) infoLogForObject: (GLhandleARB)objectHandle
                       inContext: (CGLContextObj)context
-{
-    CGLSetCurrentContext(context);
-    
+{   
     NSString *infoLog = nil;
     GLint infoLogLength = 0;
+    
+    CGLContextObj cgl_ctx = context;
     
     glGetObjectParameterivARB(objectHandle, GL_OBJECT_INFO_LOG_LENGTH_ARB, &infoLogLength);
     if (infoLogLength > 0) 
@@ -72,7 +73,7 @@ NSString * const BXShaderUniformSizeKey = @"Size";
 + (NSArray *) uniformDescriptionsForShaderProgram: (GLhandleARB)shaderProgram
                                         inContext: (CGLContextObj)context
 {
-    CGLSetCurrentContext(context);
+    CGLContextObj cgl_ctx = context;
     
     GLint numUniforms = 0;
     
@@ -128,7 +129,7 @@ NSString * const BXShaderUniformSizeKey = @"Size";
                              inContext: (CGLContextObj)context
                                  error: (NSError **)outError
 {
-    CGLSetCurrentContext(context);
+    CGLContextObj cgl_ctx = context;
     
     GLhandleARB shaderHandle = NULL;
     BOOL compiled = NO;
@@ -193,7 +194,7 @@ NSString * const BXShaderUniformSizeKey = @"Size";
                                     inContext: (CGLContextObj)context
                                         error: (NSError **)outError
 {
-    CGLSetCurrentContext(context);
+    CGLContextObj cgl_ctx = context;
     
     GLhandleARB programHandle = glCreateProgramObjectARB();
     
@@ -396,23 +397,22 @@ NSString * const BXShaderUniformSizeKey = @"Size";
 
 - (void) deleteShaderProgram
 {
-    self.shaderProgram = nil;
+    self.shaderProgram = NULL;
 }
 
 - (void) setShaderProgram: (GLhandleARB)shaderProgram
 {
     if (_shaderProgram != shaderProgram)
     {
-        //Because this could be called in dealloc, which may occur at any time 
-        //out of the direct control of the program flow, we need to lock the context
-        //to avoid stepping on anyone's toes.
-        CGLLockContext(_context);
-            CGLSetCurrentContext(_context);
-            if (_shaderProgram && _freeProgramWhenDone)
-                glDeleteObjectARB(_shaderProgram);
-                
-            _shaderProgram = shaderProgram;
-        CGLUnlockContext(_context);
+        if (_shaderProgram && _freeProgramWhenDone)
+        {
+            CGLContextObj cgl_ctx = _context;
+            
+            glDeleteObjectARB(_shaderProgram);
+            _shaderProgram = NULL;
+        }
+        
+        _shaderProgram = shaderProgram;
     }
 }
 
@@ -425,7 +425,7 @@ NSString * const BXShaderUniformSizeKey = @"Size";
 
 - (GLint) locationOfUniform: (const GLcharARB *)uniformName
 {
-    CGLSetCurrentContext(_context);
+    CGLContextObj cgl_ctx = _context;
     return glGetUniformLocationARB(_shaderProgram, uniformName);
 }
 

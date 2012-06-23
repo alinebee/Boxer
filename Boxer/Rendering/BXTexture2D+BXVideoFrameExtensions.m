@@ -9,6 +9,7 @@
 #import "BXVideoFrame.h"
 #import "BXGeometry.h"
 #import <OpenGL/gl.h>
+#import <OpenGL/CGLMacro.h>
 
 @implementation BXTexture2D (BXVideoFrameExtensions)
 
@@ -58,7 +59,8 @@
     GLsizei frameWidth = (GLsizei)frame.size.width;
     NSUInteger i, numRegions = frame.numDirtyRegions;
     
-    CGLSetCurrentContext(_context);
+    CGLContextObj cgl_ctx = _context;
+    
 	glBindTexture(_type, _texture);
     
     for (i=0; i < numRegions; i++)

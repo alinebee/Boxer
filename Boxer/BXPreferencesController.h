@@ -49,10 +49,10 @@ enum {
 #pragma mark Filter gallery controls
 
 //Change the default render filter to match the sender's tag.
-//Note that this uses an intentionally different name from the toggleFilterType: defined on
+//Note that this uses an intentionally different name from the toggleRenderingStyle: defined on
 //BXDOSWindowController and used by main menu items, as the two sets of controls need to be
 //validated differently.
-- (IBAction) toggleDefaultFilterType: (id)sender;
+- (IBAction) toggleDefaultRenderingStyle: (id)sender;
 
 //Toggle whether the games shelf appearance is applied to the games folder.
 //This will add/remove the appearance on-the-fly from the folder.

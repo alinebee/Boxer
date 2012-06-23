@@ -16,6 +16,7 @@
 #import "BXEmulatedMT32.h"
 #import "BXMIDIDeviceMonitor.h"
 #import "BXFilterGallery.h"
+#import "BXFrameRenderingView.h"
 
 #pragma mark -
 #pragma mark Implementation
@@ -44,7 +45,7 @@
 {
 	//Bind to the filter preference so that we can synchronise our filter selection controls when it changes
 	[[NSUserDefaults standardUserDefaults] addObserver: self
-											forKeyPath: @"filterType"
+											forKeyPath: @"renderingStyle"
 											   options: NSKeyValueObservingOptionInitial
 											   context: nil];
 	
@@ -130,7 +131,7 @@
 						context: (void *)context
 {
 	//Whenever the key path changes, synchronise our filter selection controls
-	if ([keyPath isEqualToString: @"filterType"])
+	if ([keyPath isEqualToString: @"renderingStyle"])
 	{
 		[self syncFilterControls];
 	}
@@ -407,15 +408,15 @@
 	}
 }
 
-- (IBAction) toggleDefaultFilterType: (id <NSValidatedUserInterfaceItem>)sender
+- (IBAction) toggleDefaultRenderingStyle: (id <NSValidatedUserInterfaceItem>)sender
 {
-	NSInteger filterType = sender.tag;
-	[[NSUserDefaults standardUserDefaults] setInteger: filterType forKey: @"filterType"];
+	BXRenderingStyle style = sender.tag;
+	[[NSUserDefaults standardUserDefaults] setInteger: style forKey: @"renderingStyle"];
 }
 
 - (void) syncFilterControls
 {
-	NSInteger defaultFilter = [[NSUserDefaults standardUserDefaults] integerForKey: @"filterType"];
+	NSInteger defaultFilter = [[NSUserDefaults standardUserDefaults] integerForKey: @"renderingStyle"];
 
 	for (id view in self.filterGallery.subviews)
 	{

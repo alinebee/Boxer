@@ -84,6 +84,48 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 #pragma mark -
 #pragma mark Rendering methods
 
+- (BXBasicRenderer *) rendererForStyle: (BXRenderingStyle)style inContext: (CGLContextObj)context
+{
+    BXBasicRenderer *renderer = nil;
+    NSString *shaderName = nil;
+    
+    switch (style)
+    {
+        case BXRenderingStyleNormal:
+            shaderName = nil;
+            break;
+        case BXRenderingStyleSmoothed:
+            shaderName = @"5xBR Semi-Rounded";
+            break;
+        case BXRenderingStyleCRT:
+            shaderName = @"CRT-simple";
+            break;
+    }
+    
+    if (shaderName)
+    {
+        NSURL *shaderURL = [[NSBundle mainBundle] URLForResource: shaderName
+                                                   withExtension: @"shader"
+                                                    subdirectory: @"Shaders"];
+        
+        NSError *loadError = nil;
+        renderer = [[[BXShaderRenderer alloc] initWithContentsOfURL: shaderURL
+                                                          inContext: context
+                                                              error: &loadError] autorelease];
+        
+        if (loadError)
+            NSLog(@"Error loading renderer for %@ shader: %@", shaderName, loadError);
+    }
+    
+    if (!renderer)
+        renderer = [[[BXSupersamplingRenderer alloc] initWithContext: context error: NULL] autorelease];
+    
+    if (!renderer)
+        renderer = [[[BXBasicRenderer alloc] initWithContext: context error: NULL] autorelease];
+    
+    return renderer;
+}
+
 - (void) updateWithFrame: (BXVideoFrame *)frame
 {
     self.currentFrame = frame;
@@ -228,43 +270,6 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 - (NSSize) maxFrameSize
 {
 	return NSSizeFromCGSize(self.renderer.maxFrameSize);
-}
-
-- (BXBasicRenderer *) rendererForStyle: (BXRenderingStyle)style inContext: (CGLContextObj)context
-{
-    BXBasicRenderer *renderer = nil;
-    NSString *shaderName = nil;
-    
-    switch (style)
-    {
-        case BXRenderingStyleNormal:
-            shaderName = nil;
-            break;
-        case BXRenderingStyleSmoothed:
-            shaderName = @"5xBR-v3.7a.OpenGL";
-            break;
-        case BXRenderingStyleCRT:
-            shaderName = @"cgwg-CRT-v5.OpenGL";
-    }
-    
-    if (shaderName)
-    {
-        NSURL *shaderURL = [[NSBundle mainBundle] URLForResource: shaderName
-                                                   withExtension: @"shader"
-                                                    subdirectory: @"Shaders"];
-        
-        renderer = [[[BXShaderRenderer alloc] initWithContentsOfURL: shaderURL
-                                                          inContext: context
-                                                              error: NULL] autorelease];
-    }
-    
-    if (!renderer)
-        renderer = [[[BXSupersamplingRenderer alloc] initWithContext: context error: NULL] autorelease];
-    
-    if (!renderer)
-        renderer = [[[BXBasicRenderer alloc] initWithContext: context error: NULL] autorelease];
-    
-    return renderer;
 }
 
 - (void) setRenderer: (BXBasicRenderer *)renderer

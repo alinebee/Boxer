@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Hyllian's 5xBR v3.7c (squared) Shader
+   Hyllian's 5xBR v3.7a Shader
+   
+   Copyright (C) 2011, 2012 Hyllian/Jararaca - sergiogdb@gmail.com
+   Copyright (C) 2012 crazy46guy (GLSL conversion)
+
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License
+   as published by the Free Software Foundation; either version 2
+   of the License, or (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+   (The original Cg version of the xBR family of shaders is available on
+   Github: https://github.com/twinaphex/common-shaders/tree/master/xBR )
 -->
 <shader language="GLSL">
   <vertex><![CDATA[
@@ -28,13 +48,11 @@
     }
   ]]></vertex>
 
-  <fragment filter="nearest"><![CDATA[
+  <fragment scale="5.0" filter="nearest"><![CDATA[
     uniform sampler2D rubyTexture;
     uniform vec2 rubyTextureSize;
 
     const float coef = 2.0;
-
-    const float threshold = 15.0;
 
     const float y_weight = 48.0;
     const float u_weight = 7.0;
@@ -62,10 +80,6 @@
 
     vec4 df(vec4 A, vec4 B) {
       return vec4(abs(A - B));
-    }
-
-    bvec4 close(vec4 A, vec4 B) {
-      return (lessThan(df(A, B), vec4(threshold)));
     }
 
     vec4 weighted_distance(vec4 a, vec4 b, vec4 c, vec4 d, vec4 e, vec4 f, vec4 g, vec4 h) {
@@ -132,15 +146,7 @@
       bvec4 fx_left = greaterThan(Ax * fp.y + Bx * fp.x, Cx);
       bvec4 fx_up   = greaterThan(Ay * fp.y + By * fp.x, Cy);
 
-      bvec4 t1 = _and_( notEqual(e, f), notEqual(e, h) );
-      bvec4 t2 = _and_( not(close(f, b)), not(close(f, c)) );
-      bvec4 t3 = _and_( not(close(h, d)), not(close(h, g)) );
-      bvec4 t4 = _and_( not(close(f, f4)), not(close(f, i4)) );
-      bvec4 t5 = _and_( not(close(h, h5)), not(close(h, i5)) );
-      bvec4 t6 = _and_( close(e, i), _or_(t4, t5) );
-      bvec4 t7 = _or_( close(e, g), close(e, c) );
-      bvec4 interp_restriction_lv1 = _and_( t1, _or_( _or_( _or_(t2, t3), t6 ), t7 ) );
-
+      bvec4 interp_restriction_lv1      = _and_( notEqual(e, f), notEqual(e, h) );
       bvec4 interp_restriction_lv2_left = _and_( notEqual(e, g), notEqual(d, g) );
       bvec4 interp_restriction_lv2_up   = _and_( notEqual(e, c), notEqual(b, c) );
 
@@ -155,7 +161,8 @@
 
       vec3 res = nc.x ? px.x ? F : H : nc.y ? px.y ? B : F : nc.z ? px.z ? D : B : nc.w ? px.w ? H : D : E;
 
-      gl_FragColor.xyz = res;
+      gl_FragColor.rgb = res;
+      gl_FragColor.a = 1.0;
     }
   ]]></fragment>
 </shader>

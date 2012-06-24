@@ -322,6 +322,8 @@
             //We'll be using the output texture from this texture as the input texture
             //for the next shader in the list.
             inputSize = outputSize;
+            
+            NSLog(@"Size needed for shader %i: %@", i, NSStringFromCGSize(outputSize));
         }
         
         //At this stage, we now know:
@@ -367,7 +369,7 @@
         if (numShadersNeedingBuffers > 1)
         {
             if (![self.auxiliaryBufferTexture canAccomodateContentSize: largestOutputSize])
-            {
+            {   
                 if (_currentBufferTexture == self.auxiliaryBufferTexture.texture)
                 _currentBufferTexture = 0;
                 

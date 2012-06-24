@@ -200,20 +200,13 @@
             //that it uses the new supersampling size.
             if ([self.supersamplingBufferTexture canAccomodateContentSize: _supersamplingSize])
             {
-                NSLog(@"Reusing existing texture of size: %@ to fit supersampling size: %@",
-                      NSStringFromCGSize(self.supersamplingBufferTexture.textureSize),
-                      NSStringFromCGSize(_supersamplingSize));
                 self.supersamplingBufferTexture.contentRegion = CGRectMake(0, 0,
                                                                            _supersamplingSize.width,
                                                                            _supersamplingSize.height);
             }
             //Otherwise, recreate the buffer texture if it can't accomodate the new size.
             else
-            {
-                NSLog(@"Unable to use existing texture of size: %@ to fit supersampling size: %@",
-                      NSStringFromCGSize(self.supersamplingBufferTexture.textureSize),
-                      NSStringFromCGSize(_supersamplingSize));
-                
+            {   
                 //Clear our old buffer texture straight away when replacing it
                 if (_currentBufferTexture == self.supersamplingBufferTexture.texture)
                     _currentBufferTexture = 0;

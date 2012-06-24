@@ -373,6 +373,20 @@
 		9FC8F50C10934F3400AD6307 /* NSString+BXPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */; };
 		9FC9E4E1136725190095DCDE /* BXEmulatedJoystick.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FC9E4E0136725190095DCDE /* BXEmulatedJoystick.mm */; };
 		9FC9E58F1367514C0095DCDE /* BXCHFlightstick.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */; };
+		9FCA157315970C5500C42D10 /* CM32L@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA156F15970C5500C42D10 /* CM32L@2x.png */; };
+		9FCA157415970C5500C42D10 /* MT32@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA157015970C5500C42D10 /* MT32@2x.png */; };
+		9FCA157515970C5500C42D10 /* MT32Shelf@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA157115970C5500C42D10 /* MT32Shelf@2x.jpg */; };
+		9FCA157615970C5500C42D10 /* MT32ShelfHighlight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA157215970C5500C42D10 /* MT32ShelfHighlight@2x.png */; };
+		9FCA157915970DF000C42D10 /* Blueprint@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA157815970DF000C42D10 /* Blueprint@2x.jpg */; };
+		9FCA157B159721A300C42D10 /* AboutBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA157A159721A300C42D10 /* AboutBackground@2x.png */; };
+		9FCA157D1597222D00C42D10 /* WelcomeSpotlight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA157C1597222D00C42D10 /* WelcomeSpotlight@2x.png */; };
+		9FCA157F1597223C00C42D10 /* Grille@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA157E1597223C00C42D10 /* Grille@2x.png */; };
+		9FCA1584159729C400C42D10 /* ImportCoverArtTip@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA1580159729C400C42D10 /* ImportCoverArtTip@2x.png */; };
+		9FCA1585159729C400C42D10 /* ImportRenameTip@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA1582159729C400C42D10 /* ImportRenameTip@2x.png */; };
+		9FCA1587159732F300C42D10 /* import@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA1586159732F300C42D10 /* import@2x.png */; };
+		9FCA158A1597377B00C42D10 /* Audio@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA15881597377B00C42D10 /* Audio@2x.png */; };
+		9FCA158B1597377B00C42D10 /* Keyboard@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA15891597377B00C42D10 /* Keyboard@2x.png */; };
+		9FCA158D15973A6D00C42D10 /* Display@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA158C15973A6D00C42D10 /* Display@2x.png */; };
 		9FCA702213DAE6F5006C5DF8 /* BXCoalfaceDrives.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */; };
 		9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
 		9FCBB2D110A61CA800C28B09 /* executable.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CE10A61CA800C28B09 /* executable.icns */; };
@@ -1144,6 +1158,20 @@
 		9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCHFlightstick.mm; sourceTree = "<group>"; };
 		9FC9E59A13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedJoystickPrivate.h; sourceTree = "<group>"; };
 		9FC9E59B13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedJoystickPrivate.h; sourceTree = "<group>"; };
+		9FCA156F15970C5500C42D10 /* CM32L@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "CM32L@2x.png"; sourceTree = "<group>"; };
+		9FCA157015970C5500C42D10 /* MT32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MT32@2x.png"; sourceTree = "<group>"; };
+		9FCA157115970C5500C42D10 /* MT32Shelf@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "MT32Shelf@2x.jpg"; sourceTree = "<group>"; };
+		9FCA157215970C5500C42D10 /* MT32ShelfHighlight@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MT32ShelfHighlight@2x.png"; sourceTree = "<group>"; };
+		9FCA157815970DF000C42D10 /* Blueprint@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Blueprint@2x.jpg"; sourceTree = "<group>"; };
+		9FCA157A159721A300C42D10 /* AboutBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AboutBackground@2x.png"; sourceTree = "<group>"; };
+		9FCA157C1597222D00C42D10 /* WelcomeSpotlight@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "WelcomeSpotlight@2x.png"; sourceTree = "<group>"; };
+		9FCA157E1597223C00C42D10 /* Grille@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Grille@2x.png"; sourceTree = "<group>"; };
+		9FCA1581159729C400C42D10 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = "English.lproj/ImportCoverArtTip@2x.png"; sourceTree = "<group>"; };
+		9FCA1583159729C400C42D10 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = "English.lproj/ImportRenameTip@2x.png"; sourceTree = "<group>"; };
+		9FCA1586159732F300C42D10 /* import@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "import@2x.png"; sourceTree = "<group>"; };
+		9FCA15881597377B00C42D10 /* Audio@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Audio@2x.png"; sourceTree = "<group>"; };
+		9FCA15891597377B00C42D10 /* Keyboard@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Keyboard@2x.png"; sourceTree = "<group>"; };
+		9FCA158C15973A6D00C42D10 /* Display@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Display@2x.png"; sourceTree = "<group>"; };
 		9FCA702013DAE6B1006C5DF8 /* BXCoalfaceDrives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalfaceDrives.h; sourceTree = "<group>"; };
 		9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalfaceDrives.mm; sourceTree = "<group>"; };
 		9FCBB2CD10A61CA800C28B09 /* boxer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = boxer.icns; sourceTree = "<group>"; };
@@ -2376,12 +2404,19 @@
 				9F9A4C9410F67A1F00E61965 /* GalleryBkg.jpg */,
 				9F9A4C9510F67A1F00E61965 /* GalleryTVScanlines.png */,
 				9F676BEF1235451B00924B8C /* Display.png */,
+				9FCA158C15973A6D00C42D10 /* Display@2x.png */,
 				9F1F00AA143F091300FF163A /* Audio.png */,
+				9FCA15881597377B00C42D10 /* Audio@2x.png */,
 				9FBA48BF1450B73900F9BBDE /* Keyboard.png */,
+				9FCA15891597377B00C42D10 /* Keyboard@2x.png */,
 				9F0102E11440561E00942713 /* MT32Shelf.jpg */,
+				9FCA157115970C5500C42D10 /* MT32Shelf@2x.jpg */,
 				9F0102DF1440543500942713 /* MT32ShelfHighlight.png */,
+				9FCA157215970C5500C42D10 /* MT32ShelfHighlight@2x.png */,
 				9F586CEF143E51DD00E840C8 /* CM32L.png */,
+				9FCA156F15970C5500C42D10 /* CM32L@2x.png */,
 				9F586CF0143E51DD00E840C8 /* MT32.png */,
+				9FCA157015970C5500C42D10 /* MT32@2x.png */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -2401,9 +2436,12 @@
 			children = (
 				9F25C4E112130B5E0025CB2C /* BrandWatermark.png */,
 				9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */,
+				9FCA157815970DF000C42D10 /* Blueprint@2x.jpg */,
 				9FA9E255121FD5BA006E20C4 /* DropzoneTemplate.pdf */,
 				9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */,
+				9FCA1580159729C400C42D10 /* ImportCoverArtTip@2x.png */,
 				9FE2172C121EED1E001452E3 /* ImportRenameTip.png */,
+				9FCA1582159729C400C42D10 /* ImportRenameTip@2x.png */,
 			);
 			name = Importing;
 			sourceTree = "<group>";
@@ -2424,6 +2462,7 @@
 		9F9606EE14F65B5F0072E90C /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				9FCA1586159732F300C42D10 /* import@2x.png */,
 				9F843FE01226EB1100FD37F1 /* import.png */,
 				9F4B5283122591960055022A /* prompt.icns */,
 				9FCBB2CD10A61CA800C28B09 /* boxer.icns */,
@@ -2475,11 +2514,14 @@
 				9F9606ED14F65B1A0072E90C /* Cover art */,
 				9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */,
 				9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */,
+				9FCA157C1597222D00C42D10 /* WelcomeSpotlight@2x.png */,
 				9FA9E27F121FD874006E20C4 /* PanelExpandTemplate.pdf */,
 				9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */,
 				9FBD321610E5144C00031CB6 /* Brand.png */,
 				9F59DD2210AF6129008DBBC1 /* Grille.png */,
+				9FCA157E1597223C00C42D10 /* Grille@2x.png */,
 				9FBC31D10F56C370001811F2 /* AboutBackground.png */,
+				9FCA157A159721A300C42D10 /* AboutBackground@2x.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -2881,6 +2923,20 @@
 				9F27BD1C14FAA4F5008EB0A1 /* Volume0PercentTemplate.pdf in Resources */,
 				9F839FB5150B81EF00337DD6 /* ScreenshotTemplate.pdf in Resources */,
 				9FE32383157A9559004492E8 /* Shaders in Resources */,
+				9FCA157315970C5500C42D10 /* CM32L@2x.png in Resources */,
+				9FCA157415970C5500C42D10 /* MT32@2x.png in Resources */,
+				9FCA157515970C5500C42D10 /* MT32Shelf@2x.jpg in Resources */,
+				9FCA157615970C5500C42D10 /* MT32ShelfHighlight@2x.png in Resources */,
+				9FCA157915970DF000C42D10 /* Blueprint@2x.jpg in Resources */,
+				9FCA157B159721A300C42D10 /* AboutBackground@2x.png in Resources */,
+				9FCA157D1597222D00C42D10 /* WelcomeSpotlight@2x.png in Resources */,
+				9FCA157F1597223C00C42D10 /* Grille@2x.png in Resources */,
+				9FCA1584159729C400C42D10 /* ImportCoverArtTip@2x.png in Resources */,
+				9FCA1585159729C400C42D10 /* ImportRenameTip@2x.png in Resources */,
+				9FCA1587159732F300C42D10 /* import@2x.png in Resources */,
+				9FCA158A1597377B00C42D10 /* Audio@2x.png in Resources */,
+				9FCA158B1597377B00C42D10 /* Keyboard@2x.png in Resources */,
+				9FCA158D15973A6D00C42D10 /* Display@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3373,6 +3429,22 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
+		9FCA1580159729C400C42D10 /* ImportCoverArtTip@2x.png */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FCA1581159729C400C42D10 /* English */,
+			);
+			name = "ImportCoverArtTip@2x.png";
+			sourceTree = "<group>";
+		};
+		9FCA1582159729C400C42D10 /* ImportRenameTip@2x.png */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FCA1583159729C400C42D10 /* English */,
+			);
+			name = "ImportRenameTip@2x.png";
+			sourceTree = "<group>";
+		};
 		9FDE34111351DCDB000DCE44 /* DOSImportWindow.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -3421,6 +3493,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = NO;
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.4pre;
 				CURRENT_PROJECT_VERSION = 20120529.1;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
@@ -3499,6 +3572,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = NO;
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.4pre;
 				CURRENT_PROJECT_VERSION = 20120529.1;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;

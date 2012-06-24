@@ -733,7 +733,7 @@
 																<object class="NSButtonCell" key="NSCell" id="648350135">
 																	<int key="NSCellFlags">67239424</int>
 																	<int key="NSCellFlags2">134250496</int>
-																	<string type="base64-UTF8" key="NSContents">T3JpZ2luYWwKA</string>
+																	<string key="NSContents">Original</string>
 																	<reference key="NSSupport" ref="467860324"/>
 																	<reference key="NSControlView" ref="362415687"/>
 																	<int key="NSButtonFlags">139215103</int>

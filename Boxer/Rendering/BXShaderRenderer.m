@@ -231,6 +231,8 @@
 
 - (CGSize) _idealShaderRenderingSizeForFrame: (BXVideoFrame *)frame toViewport: (CGRect)viewport
 {
+    return viewport.size;
+    /*
     CGSize preferredSupersamplingSize = [self _idealSupersamplingBufferSizeForFrame: frame
                                                                          toViewport: viewport];
     
@@ -238,6 +240,7 @@
         preferredSupersamplingSize = viewport.size;
     
     return preferredSupersamplingSize;
+     */
 }
 
 - (void) _prepareSupersamplingBufferForFrame: (BXVideoFrame *)frame

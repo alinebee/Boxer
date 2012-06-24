@@ -11,8 +11,10 @@
 	<key>trackMouseWhileUnlocked</key>
 	<false/>
 	<key>mouseButtonModifierRight</key>
-	<integer>262144</integer><!-- Option-->
+	<integer>262144</integer>
 	<key>mouseButtonModifierBoth</key>
-	<integer>786432</integer><!-- Ctrl+Option-->
+	<integer>786432</integer>
+	<key>showProgramPanel</key>
+	<true/>
 </dict>
 </plist>

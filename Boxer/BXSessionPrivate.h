@@ -55,6 +55,9 @@
 //Used by programWillStart and didStartGraphicalContext.
 - (BOOL) _shouldLeaveProgramPanelOpenAfterLaunch;
 
+//Whether to open the program panel when the user returns to the DOS prompt or bypasses the default program.
+- (BOOL) _shouldShowProgramPanelAtPrompt;
+
 //Whether we should close the session (and the application) after returning to the DOS prompt.
 - (BOOL) _shouldCloseOnProgramExit;
 

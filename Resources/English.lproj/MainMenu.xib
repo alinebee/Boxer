@@ -156,8 +156,8 @@
 								<object class="NSMenuItem" id="664396869">
 									<reference key="NSMenu" ref="135265988"/>
 									<string key="NSTitle">Hide Others</string>
-									<string key="NSKeyEquiv"/>
-									<int key="NSKeyEquivModMask">1048576</int>
+									<string key="NSKeyEquiv">h</string>
+									<int key="NSKeyEquivModMask">1572864</int>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>

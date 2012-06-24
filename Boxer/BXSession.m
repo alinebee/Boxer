@@ -68,6 +68,7 @@ NSString * const BXGameboxSettingsNameKey       = @"BXGameName";
 NSString * const BXGameboxSettingsProfileKey    = @"BXGameProfile";
 NSString * const BXGameboxSettingsProfileVersionKey = @"BXGameProfileVersion";
 NSString * const BXGameboxSettingsLastLocationKey = @"BXGameLastLocation";
+NSString * const BXGameboxSettingsShowProgramPanelKey = @"showProgramPanel";
 
 NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
 
@@ -108,7 +109,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 @synthesize autoPaused = _autoPaused;
 @synthesize interrupted = _interrupted;
 @synthesize suspended = _suspended;
-@synthesize userToggledProgramPanel = _userToggledProgramPanel;
 @synthesize cachedIcon = _cachedIcon;
 
 @synthesize importQueue = _importQueue;
@@ -436,15 +436,20 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[super removeWindowController: windowController];
 }
 
-- (void) setUserToggledProgramPanel: (BOOL)flag
+- (void) userDidToggleProgramPanel
 {
-	//Finesse: ignore program toggles while a program is running, only pay attention
-	//when the user hides the program panel at the DOS prompt. This makes the behaviour
-	//feel more 'natural', in that the panel will stay hidden while the user is mucking
-	//around at the prompt but will return as soon as the user exits.
-	if (self.emulator.isAtPrompt)
-        _userToggledProgramPanel = flag;
+    //If the user toggled the program panel while at the DOS prompt, record its state
+    //so that we'll return it to that state when they next return to the DOS prompt.
+    //(If they toggle it while running a game, we ignore the event because they're
+    //probably just messing around rather than indicating intent.)
+    if (self.emulator.isAtPrompt)
+    {
+        BOOL panelShown = self.DOSWindowController.programPanelShown;
+        [self.gameSettings setObject: [NSNumber numberWithBool: panelShown]
+                              forKey: BXGameboxSettingsShowProgramPanelKey];
+    }
 }
+
 
 #pragma mark -
 #pragma mark Flow control
@@ -956,10 +961,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             self.lastExecutedProgramPath = programPath;
 		}
         
-		//If the user hasn't manually opened/closed the program panel themselves,
-		//and we don't need to ask the user what to do with this program, then
-		//automatically hide the program panel shortly after launching.
-		if (!self.userToggledProgramPanel && ![self _shouldLeaveProgramPanelOpenAfterLaunch])
+		//If we don't need to ask the user what to do with this program,
+        //then automatically hide the program panel shortly after launching.
+		if (![self _shouldLeaveProgramPanelOpenAfterLaunch])
 		{
 			[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
 													 selector: @selector(showProgramPanel:)
@@ -1058,9 +1062,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //[[[self DOSWindowController] inputController] setSimulatedNumpadActive: NO];
     
         
-	//Show the program chooser after returning to the DOS prompt, as long
-	//as the program chooser hasn't been manually toggled from the DOS prompt
-	if (self.isGamePackage && !self.userToggledProgramPanel)
+	//Show the program chooser after returning to the DOS prompt if appropriate.
+	if ([self _shouldShowProgramPanelAtPrompt])
 	{
 		[NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
 												 selector: @selector(hideProgramPanel:)
@@ -1234,6 +1237,24 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     }
     else
         return NO;
+}
+
+- (BOOL) _shouldShowProgramPanelAtPrompt
+{
+    if (!self.gamePackage)
+        return NO;
+    else
+    {
+        NSNumber *showProgramPanel = [self.gameSettings objectForKey: BXGameboxSettingsShowProgramPanelKey];
+        if (showProgramPanel != nil)
+        {
+            return showProgramPanel.boolValue;
+        }
+        else
+        {
+            return YES;
+        }
+    }
 }
 
 - (void) _startEmulator

@@ -47,6 +47,7 @@ extern NSString * const BXGameboxSettingsNameKey;
 extern NSString * const BXGameboxSettingsProfileKey;
 extern NSString * const BXGameboxSettingsProfileVersionKey;
 extern NSString * const BXGameboxSettingsLastLocationKey;
+extern NSString * const BXGameboxSettingsShowProgramPanelKey;
 
 extern NSString * const BXGameboxSettingsDrivesKey;
 
@@ -90,7 +91,6 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 	BOOL _interrupted;
 	BOOL _suspended;
 	
-	BOOL _userToggledProgramPanel;
 	BOOL _userSkippedDefaultProgram;
     BOOL _waitingForFastForwardRelease;
 	
@@ -179,11 +179,6 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 //The icon for this DOS session, which corresponds to the icon of the session's gamebox.
 @property (copy, nonatomic) NSImage *representedIcon;
 
-//Whether the user has manually toggled the program panel this session.
-//BXSession uses this to finesse when it should auto-show/auto-hide the
-//program panel in response to leaving/returning to the DOS prompt.
-@property (assign, nonatomic) BOOL userToggledProgramPanel;
-
 
 //Whether the user has manually paused the emulation.
 @property (assign, nonatomic, getter=isPaused)			BOOL paused;
@@ -224,4 +219,7 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 //the application is quit.
 - (void) synchronizeSettings;
 
+//Called when the user has manually changed the state of the program panel.
+//This records the state of the program panel to use next time the user starts up this gamebox.
+- (void) userDidToggleProgramPanel;
 @end

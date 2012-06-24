@@ -366,8 +366,8 @@
 
 - (IBAction) toggleProgramPanelShown: (id)sender
 {
-	self.document.userToggledProgramPanel = YES;
 	[self setProgramPanelShown:	!self.programPanelShown animate: YES];
+    [self.document userDidToggleProgramPanel];
 }
 
 - (void) showProgramPanel: (id)sender

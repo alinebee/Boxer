@@ -36,7 +36,7 @@
 	<true/>
 	<key>muted</key>
 	<false/>
-	<key>globalVolume</key>
+	<key>masterVolume</key>
 	<real>1</real>
 	<key>useMultithreadedEmulation</key>
 	<false/>

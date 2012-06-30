@@ -305,6 +305,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 			//Merge the loaded values in, rather than replacing the default settings altogether.
 			[self.gameSettings addEntriesFromDictionary: gameboxSettings];
             
+            //TWEAK: transition the closeOnExit flag from out of the user-specific
+            //game settings and into the gamebox itself (v1.3 -> v1.3.1.)
+            NSNumber *closeOnExitFlag = [self.gameSettings objectForKey: @"closeOnExit"];
+            if (closeOnExitFlag != nil)
+            {
+                self.gamePackage.closeOnExit = closeOnExitFlag.boolValue;
+                //Remove the old setting so that we don't import it again next time.
+                [self.gameSettings removeObjectForKey: @"closeOnExit"];
+            }
+            
             //If we don't already have a game profile assigned,
             //then load any previously detected game profile for this game
             if (!self.gameProfile)
@@ -1201,10 +1211,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (BOOL) _shouldCloseOnProgramExit
 {
 	//Don't close if the auto-close preference is disabled for this gamebox
-	if (![[self.gameSettings objectForKey: @"closeOnExit"] boolValue]) return NO;
-	
-	//Don't close if the user skipped the startup program in order to start up at the DOS prompt
-	if (_userSkippedDefaultProgram) return NO;
+	if (!self.gamePackage.closeOnExit) return NO;
 	
 	//Don't close if we've been running a program other than the default program for the gamebox
 	if (![self.activeProgramPath isEqualToString: self.gamePackage.targetPath]) return NO;

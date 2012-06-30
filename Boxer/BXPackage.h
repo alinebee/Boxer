@@ -40,6 +40,9 @@ extern NSString * const BXGameIdentifierTypeKey;
 //relative to the base folder of the gamebox.
 extern NSString * const BXTargetProgramKey;
 
+//The gameInfo key under which we store the close-on-exit toggle flag as an NSNumber.
+extern NSString * const BXCloseOnExitKey;
+
 //The filename of the symlink pointing to the gamebox's target executable.
 //No longer used.
 extern NSString * const BXTargetSymlinkName;
@@ -112,8 +115,10 @@ typedef NSUInteger BXGameIdentifierType;
 @property (readonly, nonatomic) NSString *configurationFile;
 
 //The path to the default executable for this gamebox. Will be nil if the gamebox has no target executable.
-//This is stored internally as a symlink; setting this to nil will remove the symlink.
 @property (copy, nonatomic) NSString *targetPath;
+
+//Whether the emulation should finish once the target program exits, rather than returning to the DOS prompt.
+@property (assign, nonatomic) BOOL closeOnExit;
 
 //The cover art image for this gamebox. Will be nil if the gamebox has no custom cover art.
 //This is stored internally as the gamebox's OS X icon resource.

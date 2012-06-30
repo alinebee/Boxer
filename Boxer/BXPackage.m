@@ -22,6 +22,7 @@
 NSString * const BXGameIdentifierKey        = @"BXGameIdentifier";
 NSString * const BXGameIdentifierTypeKey    = @"BXGameIdentifierType";
 NSString * const BXTargetProgramKey         = @"BXDefaultProgramPath";
+NSString * const BXCloseOnExitKey           = @"BXCloseAfterDefaultProgram";
 
 NSString * const BXTargetSymlinkName			= @"DOSBox Target";
 NSString * const BXConfigurationFileName		= @"DOSBox Preferences";
@@ -240,6 +241,16 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	return YES;
 }
 
+- (BOOL) closeOnExit
+{
+    return [[self gameInfoForKey: BXCloseOnExitKey] boolValue];
+}
+
+- (void) setCloseOnExit: (BOOL)closeOnExit
+{
+    [self setGameInfo: [NSNumber numberWithBool: closeOnExit]
+               forKey: BXCloseOnExitKey];
+}
 
 - (NSString *) configurationFile
 {

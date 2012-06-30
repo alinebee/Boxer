@@ -806,11 +806,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) emulatorDidFinish: (NSNotification *)notification
 {
+    //If we were fast-forwarding, clear the bezel now.
+    [self releaseFastForward: self];
+    
 	//Flag that we're no longer emulating
 	self.emulating = NO;
+    
     //Turn off display-sleep suppression
     [self _syncSuppressesDisplaySleep];
-	
+    
 	//Clear our program caches
 	self.lastExecutedProgramPath = nil;
     self.lastLaunchedProgramPath = nil;
@@ -997,14 +1001,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//Clear the last executed program when a startup program or 'non-defaultable'
     //program finishes. This way, programWillStart: won't hang onto programs
     //we can't use as the default, such as autoexec commands or dispatch batchfiles.
-	//(Note that the last executed program is always cleared down in didReturnToShell:)
+    
+	//Note that we don't clear lastLaunchedProgramPath here, since the program may be
+    //passing control on to another program afterwards and we want to maintain a record
+    //of which program the user themselves actually launched. Both the last executed
+    //and the last launched program are always cleared down in didReturnToShell:.
 	NSString *executedPath = self.lastExecutedProgramPath;
     BOOL executedPathCanBeDefault = (executedPath && _hasLaunched && [self.gamePackage validateTargetPath: &executedPath error: nil]);
 	if (!executedPathCanBeDefault)
 	{
 		self.lastExecutedProgramPath = nil;
-        //TODO: do we need to extend this to lastLaunchedProgramPath too?
-        //The logic here is pretty damn fuzzy.
 	}
 	
 	//Check the running time of the program. If it was suspiciously short,
@@ -1213,8 +1219,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//Don't close if the auto-close preference is disabled for this gamebox
 	if (!self.gamePackage.closeOnExit) return NO;
 	
-	//Don't close if we've been running a program other than the default program for the gamebox
-	if (![self.activeProgramPath isEqualToString: self.gamePackage.targetPath]) return NO;
+	//Don't close if we launched a program other than the default program for the gamebox
+	if (![self.lastLaunchedProgramPath isEqualToString: self.gamePackage.targetPath]) return NO;
 	
 	//Don't close if there are drive imports in progress
 	if (self.isImportingDrives) return NO;

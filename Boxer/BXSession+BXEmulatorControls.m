@@ -332,11 +332,11 @@
         
 - (IBAction) releaseFastForward: (id)sender
 {
-    if (!self.isEmulating) return;
-    
-    if (self.emulator.turboSpeed)
+    if (self.emulator.turboSpeed || _waitingForFastForwardRelease)
     {
-        self.emulator.turboSpeed = NO;
+        if (self.isEmulating)
+            self.emulator.turboSpeed = NO;
+        
         BXBezelController *bezel = [BXBezelController controller];
         if (bezel.currentBezel == bezel.fastForwardBezel)
             [bezel hideBezel];

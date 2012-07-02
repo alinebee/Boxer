@@ -21,9 +21,9 @@
     if (![self isMT32Sysex: sysex matchingAddress: NULL isRequest: &isRequest])
         return NO;
     
-    //If we got this far, it's a valid MT-32 sysx: check if it confirms MT-32 support.
+    //If we got this far, it's a valid MT-32 sysex: check if it confirms MT-32 support.
     if (supportConfirmed)
-    {
+    {   
         //Sysex requests indicate the device is expecting a response from the MT-32:
         //treat them as confirming support.
         if (isRequest)
@@ -41,7 +41,16 @@
             //and volume settings: but will then proceed to deliver General MIDI music
             //to the MT-32 anyway.
             if (baseAddress == BXMT32SysexAddressReset || baseAddress == BXMT32SysexAddressSystemArea)
+            {
                 *supportConfirmed = NO;
+            }
+            
+            //7th Guest menu music attempts to send short messages to patch memory
+            //even in General MIDI mode, so we catch these and treat them as inconclusive.
+            else if (baseAddress == BXMT32SysexAddressPatchMemory && sysex.length == 12)
+            {
+                *supportConfirmed = NO;
+            }
             
             //If an LCD message is sent, check the contents to see if it matches messages we know to ignore.
             else if (baseAddress == BXMT32SysexAddressDisplay)

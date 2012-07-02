@@ -121,6 +121,11 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
             //then try to swap in an MT-32-supporting device immediately.
             if (supportConfirmed)
             {
+#if BOXER_DEBUG
+                NSLog(@"Conclusive MT-32 sysex: %@", [BXExternalMT32 dataInSysex: message
+                                                                includingAddress: YES]);
+#endif
+                
                 NSDictionary *description = [NSDictionary dictionaryWithObjectsAndKeys:
                                              [NSNumber numberWithInteger: BXMIDIMusicMT32], BXMIDIMusicTypeKey,
                                              nil];

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20120528.1</string>
+	<string>20120703.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
 		<dict>
@@ -1369,12 +1369,12 @@
 		</dict>
 		<dict>
 			<key>BXProfileIdentifier</key>
-			<string>net.washboardabs.extra-memory-games</string>
+			<string>net.washboardabs.max-memory-games</string>
 			<key>BXProfileDescription</key>
-			<string>Later games that like a lot of memory.</string>
+			<string>Later games that like a whole lot of memory.</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-				<string>More memory</string>
+				<string>Max memory</string>
 			</array>
 			<key>BXProfileMatches</key>
 			<array>

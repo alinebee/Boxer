@@ -27,6 +27,7 @@
 #import "NSWorkspace+BXExecutableTypes.h"
 #import "BXInputController.h"
 #import "NSObject+BXPerformExtensions.h"
+#import "NSKeyedArchiver+BXArchivingAdditions.h"
 
 #import "BXAppKitVersionHelpers.h"
 
@@ -662,11 +663,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             NSMutableArray *queuedDrives = [NSMutableArray arrayWithCapacity: self.allDrives.count];
             for (BXDrive *drive in self.allDrives)
             {
-                //Skip our own internal drives.
-                if (drive.isHidden || drive.isInternal)
+                //Skip our own internal drives and drives that are bundled into the gamebox.
+                if (drive.isHidden || drive.isInternal || [self driveIsBundled: drive])
                     continue;
                 
                 NSData *driveInfo = [NSKeyedArchiver archivedDataWithRootObject: drive];
+                
                 [queuedDrives addObject: driveInfo];
             }
             
@@ -679,7 +681,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         [defaults setObject: self.gameSettings forKey: defaultsKey];
 	}
 }
- 
+
 
 #pragma mark -
 #pragma mark Describing the document/process
@@ -1389,7 +1391,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     {
         BXDrive *drive = [NSKeyedUnarchiver unarchiveObjectWithData: driveInfo];
         
-        //Skip drives that couldn't be decoded (which will happen the path for the drive
+        //Skip drives that couldn't be decoded (which will happen if the path for the drive
         //had moved or been ejected/deleted in the interim.)
         if (!drive) continue;
         

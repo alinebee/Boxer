@@ -419,6 +419,7 @@
 		9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */; };
 		9FECE1C211A3244500E0EBB6 /* BXGLRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */; };
 		9FEF98011191E1EF002024DF /* BXEmulatedMouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXEmulatedMouse.mm */; };
+		9FF01AF815A4CC2C0087D63D /* NSKeyedArchiver+BXArchivingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF01AF715A4CC2C0087D63D /* NSKeyedArchiver+BXArchivingAdditions.m */; };
 		9FF1562914506DBA00545317 /* BXHUDProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562814506DBA00545317 /* BXHUDProgressIndicator.m */; };
 		9FF1562D14506E7200545317 /* BXHUDLevelIndicatorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */; };
 		9FF1563014506F5C00545317 /* BXKeyboardEventTap.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562F14506F5C00545317 /* BXKeyboardEventTap.m */; };
@@ -1214,6 +1215,8 @@
 		9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGLRenderingView.m; sourceTree = "<group>"; };
 		9FEF97FF1191E1EF002024DF /* BXEmulatedMouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedMouse.h; sourceTree = "<group>"; };
 		9FEF98001191E1EF002024DF /* BXEmulatedMouse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulatedMouse.mm; sourceTree = "<group>"; };
+		9FF01AF615A4CC2C0087D63D /* NSKeyedArchiver+BXArchivingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSKeyedArchiver+BXArchivingAdditions.h"; sourceTree = "<group>"; };
+		9FF01AF715A4CC2C0087D63D /* NSKeyedArchiver+BXArchivingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSKeyedArchiver+BXArchivingAdditions.m"; sourceTree = "<group>"; };
 		9FF1562714506DBA00545317 /* BXHUDProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHUDProgressIndicator.h; sourceTree = "<group>"; };
 		9FF1562814506DBA00545317 /* BXHUDProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHUDProgressIndicator.m; sourceTree = "<group>"; };
 		9FF1562B14506E7200545317 /* BXHUDLevelIndicatorCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHUDLevelIndicatorCell.h; sourceTree = "<group>"; };
@@ -2241,6 +2244,8 @@
 				9F9AEE8814CB4AEA00728641 /* BXAppKitVersionHelpers.m */,
 				9F1DE9B014FB7F3800F9C91E /* NSObject+BXPerformExtensions.h */,
 				9F1DE9B114FB7F3800F9C91E /* NSObject+BXPerformExtensions.m */,
+				9FF01AF615A4CC2C0087D63D /* NSKeyedArchiver+BXArchivingAdditions.h */,
+				9FF01AF715A4CC2C0087D63D /* NSKeyedArchiver+BXArchivingAdditions.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -3186,6 +3191,7 @@
 				9FD8BEE414FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m in Sources */,
 				9F9DF415153B058200233968 /* BXKeyBuffer.mm in Sources */,
 				9F887105156F85F9006CDB5F /* BXFileTypes.m in Sources */,
+				9FF01AF815A4CC2C0087D63D /* NSKeyedArchiver+BXArchivingAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

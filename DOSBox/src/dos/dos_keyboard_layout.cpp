@@ -1174,7 +1174,7 @@ public:
 		loaded_layout=new keyboard_layout();
 
 		const char * layoutname=section->Get_string("keyboardlayout");
-
+        
 		Bits wants_dos_codepage = -1;
 		if (!strncmp(layoutname,"auto",4)) {
 #if defined (WIN32)
@@ -1323,14 +1323,11 @@ public:
 #endif
             
             //--Added 2009-02-23 by Alun Bestor: if auto layout was specified, ask Boxer to provide a layout
-            if (!strncasecmp(layoutname, "auto", 4))
-            {
-                const char *preferredLayout = boxer_preferredKeyboardLayout();
-                if (preferredLayout) layoutname = preferredLayout;
-            }
+            const char *preferredLayout = boxer_preferredKeyboardLayout();
+            if (preferredLayout)
+                layoutname = preferredLayout;
             //--End of modifications
 		}
-
 		
 		bool extract_codepage = true;
 		if (wants_dos_codepage>0) {
@@ -1344,7 +1341,7 @@ public:
 			Bitu req_codepage = loaded_layout->extract_codepage(layoutname);
 			loaded_layout->read_codepage_file("auto", req_codepage);
 		}
-
+        
 /*		if (strncmp(layoutname,"auto",4) && strncmp(layoutname,"none",4)) {
 			LOG_MSG("Loading DOS keyboard layout %s ...",layoutname);
 		} */

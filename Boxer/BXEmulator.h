@@ -100,10 +100,6 @@ extern NSString * const shellProcessPath;
     //Used to selectively resume CD-ROM playback after unpausing.
     BOOL cdromWasPlaying;
     
-    //The autorelease pool for the current iteration of DOSBox's run loop.
-    //Created in _willStartRunLoop and released in _didFinishRunLoop.
-    NSAutoreleasePool *poolForRunLoop;
-    
     //The thread on which start was called.
     NSThread *emulationThread;
 	

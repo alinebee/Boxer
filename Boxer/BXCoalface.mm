@@ -23,14 +23,14 @@ void boxer_processEvents()
 }
 
 //Called at the start and end of every iteration of DOSBOX_RunMachine.
-void boxer_runLoopWillStart()
+void boxer_runLoopWillStartWithContextInfo(void **contextInfo)
 {
-	[[BXEmulator currentEmulator] _runLoopWillStart];
+	[[BXEmulator currentEmulator] _runLoopWillStartWithContextInfo: contextInfo];
 }
 
-void boxer_runLoopDidFinish()
+void boxer_runLoopDidFinishWithContextInfo(void *contextInfo)
 {
-	[[BXEmulator currentEmulator] _runLoopDidFinish];
+	[[BXEmulator currentEmulator] _runLoopDidFinishWithContextInfo: contextInfo];
 }
 
 //This is called at the start of DOSBox_NormalLoop, and

@@ -125,8 +125,8 @@ enum {
 - (BOOL) _runLoopShouldContinue;
 
 //Called at the start and end of each iteration of DOSBox's run loop.
-- (void) _runLoopWillStart;
-- (void) _runLoopDidFinish;
+- (void) _runLoopWillStartWithContextInfo: (void **)contextInfo;
+- (void) _runLoopDidFinishWithContextInfo: (void *)contextInfo;
 
 //Called at emulator startup.
 - (void) _startDOSBox;

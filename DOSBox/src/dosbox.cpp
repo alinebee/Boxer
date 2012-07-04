@@ -246,10 +246,12 @@ void DOSBOX_RunMachine(void){
 	Bitu ret;
 	do {
         //--Modified 2011-09-25 by Alun Bestor to bracket iterations of the run loop
-        //with our own callbacks.
-        boxer_runLoopWillStart();
+        //with our own callbacks. We pass along the contextInfo parameter so that
+        //Boxer knows which iteration of the runloop is running (in case of nested runloops).
+        void *contextInfo;
+        boxer_runLoopWillStartWithContextInfo(&contextInfo);
 		ret=(*loop)();
-        boxer_runLoopDidFinish();
+        boxer_runLoopDidFinishWithContextInfo(contextInfo);
         //--End of modifications.
 	} while (!ret);
 }

@@ -200,8 +200,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	[driveCache release], driveCache = nil;
 	[commandQueue release], commandQueue = nil;
     [pendingSysexMessages release], pendingSysexMessages = nil;
-    
-    [poolForRunLoop drain], poolForRunLoop = nil;
 	
 	[super dealloc];
 }
@@ -864,22 +862,24 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	return YES;
 }
 
-- (void) _runLoopWillStart
+- (void) _runLoopWillStartWithContextInfo: (void **)contextInfo
 {
-    //Create an autorelease pool for this iteration of the runloop
-    if (!poolForRunLoop) poolForRunLoop = [[NSAutoreleasePool alloc] init];
-    
+    //Create an autorelease pool for this iteration of the runloop:
+    //we'll drain it down in _runLoopDidFinishWithAutoreleasePool:
+    if (contextInfo)
+    {
+        *contextInfo = [[NSAutoreleasePool alloc] init];
+    }
 	[self.delegate emulatorWillStartRunLoop: self];
 }
 
-- (void) _runLoopDidFinish
+- (void) _runLoopDidFinishWithContextInfo: (void *)contextInfo
 {
 	[self.delegate emulatorDidFinishRunLoop: self];
     
-    if (poolForRunLoop)
+    if (contextInfo)
     {
-        [poolForRunLoop drain];
-        poolForRunLoop = nil;
+        [(NSAutoreleasePool *)contextInfo drain];
     }
 }
 

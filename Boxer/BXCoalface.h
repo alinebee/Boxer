@@ -87,9 +87,9 @@ extern "C" {
 	void boxer_handleDOSBoxTitleChange(Bit32s cycles, Bits frameskip, bool paused);
 	
 	//Called from dosbox.cpp to allow control over the emulation loop.
-	void boxer_runLoopWillStart();
+	void boxer_runLoopWillStartWithContextInfo(void **contextInfo);
+	void boxer_runLoopDidFinishWithContextInfo(void *contextInfo);
 	bool boxer_runLoopShouldContinue();
-	void boxer_runLoopDidFinish();
 	void boxer_processEvents();
 	
     void boxer_setJoystickActive(bool joystickActive);

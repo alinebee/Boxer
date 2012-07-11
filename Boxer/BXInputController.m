@@ -32,7 +32,14 @@
 
 
 @implementation BXInputController
-@synthesize mouseLocked, mouseActive, trackMouseWhileUnlocked, simulatedNumpadActive, mouseSensitivity, availableJoystickTypes;
+@synthesize mouseLocked = _mouseLocked;
+@synthesize mouseActive = _mouseActive;
+@synthesize trackMouseWhileUnlocked = _trackMouseWhileUnlocked;
+@synthesize simulatedNumpadActive = _simulatedNumpadActive;
+@synthesize mouseSensitivity = _mouseSensitivity;
+@synthesize availableJoystickTypes = _availableJoystickTypes;
+@synthesize controllerProfiles = _controllerProfiles;
+@synthesize cursorFade = _cursorFade;
 
 
 #pragma mark -
@@ -41,34 +48,34 @@
 - (void) awakeFromNib
 {	
 	//Initialize the controller profile map to an empty dictionary
-	controllerProfiles = [[NSMutableDictionary alloc] initWithCapacity: 1];
+	self.controllerProfiles = [NSMutableDictionary dictionaryWithCapacity: 1];
 	
 	//Initialize mouse sensitivity and tracking options to a suitable default
-	mouseSensitivity = 1.0f;
-	trackMouseWhileUnlocked = YES;
+	_mouseSensitivity = 1.0f;
+	_trackMouseWhileUnlocked = YES;
 	
 	//DOSBox-triggered cursor warp distances which fit within this deadzone will be ignored
 	//to prevent needless input delays. q.v. _emulatedCursorMovedToPointInCanvas:
-	cursorWarpDeadzone = NSInsetRect(NSZeroRect, -BXCursorWarpTolerance, -BXCursorWarpTolerance);
+	_cursorWarpDeadzone = NSInsetRect(NSZeroRect, -BXCursorWarpTolerance, -BXCursorWarpTolerance);
 	
 	//The extent of our relative mouse canvas. Mouse coordinates passed to DOSBox will be
 	//relative to this canvas and clamped to fit within it. q.v. mouseMoved:
-	canvasBounds = NSMakeRect(0.0f, 0.0f, 1.0f, 1.0f);
+	_canvasBounds = NSMakeRect(0.0f, 0.0f, 1.0f, 1.0f);
 	
 	//Used for constraining where the mouse cursor will appear when we unlock the mouse.
 	//This is inset slightly from canvasBounds, because a cursor that appears right at the
 	//very edge of the window looks dumb. q.v. _applyMouseLockState:
-	visibleCanvasBounds = NSMakeRect(0.01f, 0.01f, 0.98f, 0.98f);
+	_visibleCanvasBounds = NSMakeRect(0.01f, 0.01f, 0.98f, 0.98f);
 	
 	
 	//Insert ourselves into the responder chain as our view's next responder
-	[self setNextResponder: [[self view] nextResponder]];
-	[[self view] setNextResponder: self];
-	
+	self.nextResponder = self.view.nextResponder;
+    self.view.nextResponder = self;
+    
 	//Tell the view to accept touch events for 10.6 and above
-	if ([[self view] respondsToSelector: @selector(setAcceptsTouchEvents:)])
-		[[self view] setAcceptsTouchEvents: YES];
-	
+	if ([self.view respondsToSelector: @selector(setAcceptsTouchEvents:)])
+		self.view.acceptsTouchEvents = YES;
+         
 	//Set up a cursor region in the view for mouse handling
 	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingEnabledDuringMouseDrag | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect | NSTrackingAssumeInside;
 	
@@ -77,26 +84,28 @@
 																  owner: self
 															   userInfo: nil];
 	
-	[[self view] addTrackingArea: trackingArea];
+	[self.view addTrackingArea: trackingArea];
 	[trackingArea release];
 	 
 	
 	//Set up our cursor fade animation
-	cursorFade = [[BXCursorFadeAnimation alloc] initWithDuration: BXCursorFadeDuration
-												  animationCurve: NSAnimationEaseIn];
-	[cursorFade setDelegate: self];
-	[cursorFade setOriginalCursor: [NSCursor arrowCursor]];
-	[cursorFade setAnimationBlockingMode: NSAnimationNonblocking];
-	[cursorFade setFrameRate: BXCursorFadeFrameRate];
+	self.cursorFade = [[[BXCursorFadeAnimation alloc] initWithDuration: BXCursorFadeDuration
+                                                        animationCurve: NSAnimationEaseIn] autorelease];
+    
+    self.cursorFade.delegate = self;
+    self.cursorFade.originalCursor = [NSCursor arrowCursor];
+    self.cursorFade.animationBlockingMode = NSAnimationNonblocking;
+    self.cursorFade.frameRate = BXCursorFadeFrameRate;
 }
 
 - (void) dealloc
 {
-	[cursorFade stopAnimation];
-	[cursorFade release], cursorFade = nil;
-	[controllerProfiles release], controllerProfiles = nil;
-	[self setAvailableJoystickTypes: nil], [availableJoystickTypes release];
-	
+	[self.cursorFade stopAnimation];
+    
+    self.cursorFade = nil;
+    self.controllerProfiles = nil;
+    self.availableJoystickTypes = nil;
+    
 	[super dealloc];
 }
 
@@ -107,7 +116,7 @@
 
 - (void) setRepresentedObject: (BXSession *)session
 {
-	BXSession *previousSession = [self representedObject];
+	BXSession *previousSession = self.representedObject;
 	if (session != previousSession)
 	{
 		BXJoystickController *joystickController = [[NSApp delegate] joystickController];
@@ -217,9 +226,9 @@
 						context: (void *)context
 {
 	//Ignore mouse position updates if we know we were the ones that moved the mouse
-	if (!updatingMousePosition && [keyPath isEqualToString: @"emulator.mouse.position"])
+	if (!_updatingMousePosition && [keyPath isEqualToString: @"emulator.mouse.position"])
 	{
-		NSPoint mousePosition = [[self _emulatedMouse] position];
+		NSPoint mousePosition = self.emulatedMouse.position;
 		//Ensure we're synced to the OS X cursor whenever the emulator's mouse position changes
 		[self _emulatedCursorMovedToPointInCanvas: mousePosition];
 	}
@@ -260,8 +269,8 @@
     
     else if ([keyPath isEqualToString: @"joystickDevices"])
     {
-        BXEmulator *emulator = [[self representedObject] emulator];
-        id oldJoystick = [emulator joystick];
+        BXEmulator *emulator = self.representedObject.emulator;
+        id oldJoystick = emulator.joystick;
         
         //Connect a joystick if none was available before
 		[self _syncJoystickType];
@@ -271,7 +280,7 @@
         //of a joystick being added/removed by syncJoystickType above,
         //so only do this if the joystick didn't change
         //FIXME: ugh, move this logic to BXJoystickInput
-        BOOL joystickChanged = (oldJoystick != [emulator joystick]);
+        BOOL joystickChanged = (oldJoystick != emulator.joystick);
         if (!joystickChanged) [self _syncControllerProfiles];
         
         //Let the Inspector UI know to switch from the connect-a-controller panel
@@ -296,19 +305,24 @@
 
 - (BOOL) mouseInView
 {
-	if ([self mouseLocked]) return YES;
+	if (self.mouseLocked) return YES;
 	
-    NSPoint mouseLocation = [NSEvent mouseLocation];
-    NSWindow *window = [[self view] window];
+    NSPoint locationOnScreen = [NSEvent mouseLocation];
+    BXDOSWindow *window = (BXDOSWindow *)self.view.window;
     
-    //Check if that point is over our window to begin with
-    if ([NSWindow windowAtPoint: mouseLocation] != window) return NO;
+    //Check if that point is over our window to begin with and there are no interposing windows.
+    if ([NSWindow windowAtPoint: locationOnScreen] != window)
+        return NO;
     
-    //If it is, check if the mouse is inside our view
-	NSPoint pointInWindow = [window convertScreenToBase: mouseLocation];
-	NSPoint pointInView = [[self view] convertPoint: pointInWindow fromView: nil];
+    //If it is, check if the mouse is inside our actual DOS view.
+    NSPoint locationInWindow = [window convertScreenToBase: locationOnScreen];
+    NSPoint locationInView = [self.view convertPoint: locationInWindow fromView: nil];
     
-    return ([[self view] mouse: pointInView inRect: [[self view] bounds]]);
+    if (![self.view mouse: locationInView inRect: self.view.bounds])
+        return NO;
+    
+    //If we got this far, then yippee! the mouse is over the view and has nothing in the way.
+    return YES;
 }
 
 - (void) cursorUpdate: (NSEvent *)theEvent
@@ -317,25 +331,25 @@
     //to trigger spurious cursor updates which should be ignored.
     //TODO: find a better heuristic for detecting such cursor updates,
     //and figure out why they're being generated in the first place.
-    BOOL isSpuriousUpdate = (theEvent != nil) && ([theEvent timestamp] == 0);
+    BOOL isSpuriousUpdate = (theEvent != nil) && (theEvent.timestamp == 0);
     if (isSpuriousUpdate) return;
     
     //If we have control of the mouse cursor and we aren't fading it out yet,
     //start doing so now.
 	if ([self _controlsCursor])
 	{
-        if (![cursorFade isAnimating])
+        if (!self.cursorFade.isAnimating)
 		{
 			//If the cursor fade was interrupted, make it restart from the beginning
             //rather than where it left off last time.
-			[cursorFade setCurrentProgress: 0.0f];
-			[cursorFade startAnimation];
+			self.cursorFade.currentProgress = 0.0f;
+        	[self.cursorFade startAnimation];
 		}
 	}
     //Otherwise, restore the opaque cursor.
 	else
 	{
-		[cursorFade stopAnimation];
+		[self.cursorFade stopAnimation];
         [[NSCursor arrowCursor] set];
 	}
 }
@@ -360,24 +374,24 @@
 	//If the mouse has left the view, cancel the animation and don't change the cursor
 	else
 	{
-		if ([animation isAnimating]) [animation stopAnimation];
+		if (animation.isAnimating) [animation stopAnimation];
 		return NO;
 	}
 }
 
 - (void) didResignKey
 {
-	[self setMouseLocked: NO];
+    self.mouseLocked = NO;
+    
+    [self.emulatedKeyboard clearInput];
+	[self.emulatedMouse clearInput];
+	[self.emulatedJoystick clearInput];
 	
-	[[self _emulatedKeyboard] clearInput];
-	[[self _emulatedMouse] clearInput];
-	[[self _emulatedJoystick] clearInput];
-	
-	simulatedMouseButtons = BXNoMouseButtonsMask;
-	threeFingerTapStarted = 0;
+	_simulatedMouseButtons = BXNoMouseButtonsMask;
+	_threeFingerTapStarted = 0;
     
     //Clear our record of which keys were fn-modified
-    memset(&modifiedKeys, NO, sizeof(modifiedKeys));
+    memset(&_modifiedKeys, NO, sizeof(_modifiedKeys));
 }
 
 - (void) didBecomeKey
@@ -400,7 +414,9 @@ void _inputSourceChanged(CFNotificationCenterRef center,
                          const void *object,
                          CFDictionaryRef userInfo)
 {
-    [(BXInputController *)observer performSelectorOnMainThread: @selector(_syncKeyboardLayout) withObject: nil waitUntilDone: NO];
+    [(BXInputController *)observer performSelectorOnMainThread: @selector(_syncKeyboardLayout)
+                                                    withObject: nil
+                                                 waitUntilDone: NO];
 }
 
 
@@ -412,16 +428,17 @@ void _inputSourceChanged(CFNotificationCenterRef center,
     [self willChangeValueForKey: @"mouseLocked"];
     
 	//Don't continue if we're already in the right lock state
-	if (lock != [self mouseLocked])
+	if (lock != self.mouseLocked)
     {
-        if (!lock || force || [self canLockMouse])
+        if (!lock || force || self.canLockMouse)
         {
             [self _applyMouseLockState: lock];
-            mouseLocked = lock;
+            _mouseLocked = lock;
             
             //Let everybody know we've grabbed the mouse on behalf of our session
             NSString *notification = (lock) ? BXSessionDidLockMouseNotification : BXSessionDidUnlockMouseNotification;
-            [[NSNotificationCenter defaultCenter] postNotificationName: notification object: [self representedObject]]; 
+            [[NSNotificationCenter defaultCenter] postNotificationName: notification
+                                                                object: self.representedObject]; 
             
         }
     }
@@ -436,23 +453,24 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 
 - (void) setMouseActive: (BOOL)active
 {
-	if (active != mouseActive)
+	if (active != _mouseActive)
 	{
-		mouseActive = active;
+		_mouseActive = active;
         //Update the mouse cursor, in case the mouse became active while the cursor was already
         //over the window.
 		[self cursorUpdate: nil];
 		
 		//Release the mouse lock when DOS stops using the mouse, unless we're in fullscreen mode
-		if (!active && ![[[self _windowController] window] isFullScreen]) [self setMouseLocked: NO];
-	}
+		if (!active && !self.windowController.window.isFullScreen)
+            self.mouseLocked = NO;
+    }
 }
 
 - (void) setTrackMouseWhileUnlocked: (BOOL)track
 {	
-	if (trackMouseWhileUnlocked != track)
+	if (_trackMouseWhileUnlocked != track)
 	{
-		trackMouseWhileUnlocked = track;
+		_trackMouseWhileUnlocked = track;
 	
 		//If we're disabling tracking, and the mouse is currently unlocked,
 		//then warp the mouse to the center of the window as if we had just unlocked it.
@@ -468,17 +486,17 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 - (BOOL) trackMouseWhileUnlocked
 {
 	//Tweak: when in fullscreen mode, ignore the current mouse-tracking setting.
-	return trackMouseWhileUnlocked && ![[[self _windowController] window] isFullScreen];
+	return _trackMouseWhileUnlocked && !self.windowController.window.isFullScreen;
 }
 
 - (BOOL) canLockMouse
 {
 	if (![NSApp isActive]) return NO;
 	
-	if (![[[self view] window] isKeyWindow]) return NO;
+	if (!self.view.window.isKeyWindow) return NO;
 	
     //Always allow the mouse to be locked in fullscreen mode, even when the mouse is not active.
-	return ([self mouseActive] || [[[self _windowController] window] isFullScreen]);
+	return (self.mouseActive || self.windowController.window.isFullScreen);
 }
 
 
@@ -488,15 +506,15 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 - (IBAction) toggleMouseLocked: (id)sender
 {
 	BOOL lock;
-	BOOL wasLocked = [self mouseLocked];
+	BOOL wasLocked = self.mouseLocked;
 	
 	if ([sender respondsToSelector: @selector(boolValue)]) lock = [sender boolValue];
 	else lock = !wasLocked;
 	
-	[self setMouseLocked: lock];
-	
+    self.mouseLocked = lock;
+    
 	//If the mouse state was actually toggled, play a sound to commemorate the occasion
-	if ([self mouseLocked] != wasLocked)
+	if (self.mouseLocked != wasLocked)
 	{
 		NSString *lockSoundName	= (wasLocked) ? @"LockOpening" : @"LockClosing";
 		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: BXMouseLockSoundVolume];
@@ -505,10 +523,10 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 
 - (IBAction) toggleSimulatedNumpad: (id)sender
 {
-    BOOL simulating = [self simulatedNumpadActive];
-    [self setSimulatedNumpadActive: !simulating];
+    BOOL simulating = self.simulatedNumpadActive;
+    self.simulatedNumpadActive = !simulating;
     
-    if ([self simulatedNumpadActive])
+    if (self.simulatedNumpadActive)
         [[BXBezelController controller] showNumpadActiveBezel];
     else
         [[BXBezelController controller] showNumpadInactiveBezel];
@@ -516,37 +534,38 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 
 - (IBAction) toggleTrackMouseWhileUnlocked: (id)sender
 {
-	BOOL tracking = [self trackMouseWhileUnlocked];
-	[self setTrackMouseWhileUnlocked: !tracking];
+	BOOL currentlyTracking = self.trackMouseWhileUnlocked;
+    self.trackMouseWhileUnlocked = !currentlyTracking;
 }
 
 - (BOOL) validateMenuItem: (NSMenuItem *)menuItem
 {
-	SEL theAction = [menuItem action];
+	SEL theAction = menuItem.action;
 	
 	if (theAction == @selector(toggleMouseLocked:))
 	{
-		[menuItem setState: [self mouseLocked]];
-		return [self canLockMouse];
+        menuItem.state = self.mouseLocked;
+        return self.canLockMouse;
 	}
 	else if (theAction == @selector(toggleTrackMouseWhileUnlocked:))
 	{
-		[menuItem setState: [self trackMouseWhileUnlocked]];
+        menuItem.state = self.trackMouseWhileUnlocked;
+        return YES;
 		return YES;
 	}
 	else if (theAction == @selector(toggleSimulatedNumpad:))
 	{
-		[menuItem setState: [self simulatedNumpadActive]];
+        menuItem.state = self.simulatedNumpadActive;
         return YES;
 	}
     else if (theAction == @selector(sendNumLock:))
     {
-        [menuItem setState: [[self _emulatedKeyboard] numLockEnabled]];
+        menuItem.state = self.emulatedKeyboard.numLockEnabled;
         return YES;
     }
     else if (theAction == @selector(sendScrollLock:))
     {
-        [menuItem setState: [[self _emulatedKeyboard] scrollLockEnabled]];
+        menuItem.state = self.emulatedKeyboard.scrollLockEnabled;
         return YES;
     }
 	return YES;
@@ -583,28 +602,28 @@ void _inputSourceChanged(CFNotificationCenterRef center,
             //Check if our both-buttons-at-once modifiers are being pressed.
             if (bothButtonsModifierMask > 0 && (modifiers & bothButtonsModifierMask) == bothButtonsModifierMask)
             {
-                simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
-                [self._emulatedMouse buttonDown: BXMouseButtonLeft];
-                [self._emulatedMouse buttonDown: BXMouseButtonRight];
+                _simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
+                [self.emulatedMouse buttonDown: BXMouseButtonLeft];
+                [self.emulatedMouse buttonDown: BXMouseButtonRight];
             }
             
             //Check if our right-button modifiers are being pressed.
             else if (rightButtonModifierMask > 0 && (modifiers & rightButtonModifierMask) == rightButtonModifierMask)
             {
-                simulatedMouseButtons |= BXMouseButtonRightMask;
-                [self._emulatedMouse buttonDown: BXMouseButtonRight];
+                _simulatedMouseButtons |= BXMouseButtonRightMask;
+                [self.emulatedMouse buttonDown: BXMouseButtonRight];
             }
             
             //Otherwise, pass the left click on to the emulator as-is.
             else
             {
-                [self._emulatedMouse buttonDown: BXMouseButtonLeft];   
+                [self.emulatedMouse buttonDown: BXMouseButtonLeft];   
             }
         }
 	}
 	
 	//A single click on the window will lock the mouse if unlocked-tracking is disabled or we're in fullscreen mode
-	else if (![self trackMouseWhileUnlocked])
+	else if (!self.trackMouseWhileUnlocked)
 	{
 		[self toggleMouseLocked: self];
 	}
@@ -631,13 +650,13 @@ void _inputSourceChanged(CFNotificationCenterRef center,
         
         if (bothButtonsModifierMask > 0 && (currentModifiers & bothButtonsModifierMask) == bothButtonsModifierMask)
         {
-            simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
-            [self._emulatedMouse buttonDown: BXMouseButtonLeft];
-            [self._emulatedMouse buttonDown: BXMouseButtonRight];
+            _simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
+            [self.emulatedMouse buttonDown: BXMouseButtonLeft];
+            [self.emulatedMouse buttonDown: BXMouseButtonRight];
         }
         else
         {
-            [self._emulatedMouse buttonDown: BXMouseButtonRight];
+            [self.emulatedMouse buttonDown: BXMouseButtonRight];
         }
 	}
 	else
@@ -653,7 +672,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	
 	if ([self _controlsCursorWhileMouseInside] && theEvent.buttonNumber == BXMouseButtonMiddle)
 	{
-		[self._emulatedMouse buttonDown: BXMouseButtonMiddle];
+		[self.emulatedMouse buttonDown: BXMouseButtonMiddle];
 	}
 	else
 	{
@@ -676,7 +695,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
         NSDictionary *gameSettings = self.representedObject.gameSettings;
         NSUInteger bothButtonsModifierMask = [[gameSettings objectForKey: @"mouseButtonModifierBoth"] unsignedIntegerValue];
         
-        BOOL isSimulatingBothButtons = (simulatedMouseButtons & BXMouseButtonLeftAndRightMask) == BXMouseButtonLeftAndRightMask;
+        BOOL isSimulatingBothButtons = (_simulatedMouseButtons & BXMouseButtonLeftAndRightMask) == BXMouseButtonLeftAndRightMask;
         BOOL isPressingBothButtonsShortcut = bothButtonsModifierMask > 0 && ((currentModifiers & bothButtonsModifierMask) == bothButtonsModifierMask);
         
         //The user has released the both-buttons shortcut: release whichever mouse button
@@ -687,23 +706,23 @@ void _inputSourceChanged(CFNotificationCenterRef center,
             //otherwise, release the right button.
             if (rightButtonDown)
             {
-                [self._emulatedMouse buttonUp: BXMouseButtonLeft];
-                simulatedMouseButtons &= ~BXMouseButtonLeftMask;
+                [self.emulatedMouse buttonUp: BXMouseButtonLeft];
+                _simulatedMouseButtons &= ~BXMouseButtonLeftMask;
             }
             else
             {
-                [self._emulatedMouse buttonUp: BXMouseButtonRight];
-                simulatedMouseButtons &= ~BXMouseButtonRightMask;
+                [self.emulatedMouse buttonUp: BXMouseButtonRight];
+                _simulatedMouseButtons &= ~BXMouseButtonRightMask;
             }
         }
         //The user has pressed the both-buttons shortcut: simulate the other mouse button being pressed
         //along with whichever one was already pressed.
         else if (!isSimulatingBothButtons && isPressingBothButtonsShortcut)
         {
-            [self._emulatedMouse buttonDown: BXMouseButtonLeft];
-            [self._emulatedMouse buttonDown: BXMouseButtonRight];
+            [self.emulatedMouse buttonDown: BXMouseButtonLeft];
+            [self.emulatedMouse buttonDown: BXMouseButtonRight];
             
-            simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
+            _simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
         }
     }
 }
@@ -712,21 +731,21 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 {
 	if ([self _controlsCursorWhileMouseInside])
 	{
-		if (simulatedMouseButtons != BXNoMouseButtonsMask)
+		if (_simulatedMouseButtons != BXNoMouseButtonsMask)
 		{
-			if ((simulatedMouseButtons & BXMouseButtonLeftMask) == BXMouseButtonLeftMask)
-				[self._emulatedMouse buttonUp: BXMouseButtonLeft];
+			if ((_simulatedMouseButtons & BXMouseButtonLeftMask) == BXMouseButtonLeftMask)
+				[self.emulatedMouse buttonUp: BXMouseButtonLeft];
 			
-			if ((simulatedMouseButtons & BXMouseButtonRightMask) == BXMouseButtonRightMask)
-				[self._emulatedMouse buttonUp: BXMouseButtonRight];
+			if ((_simulatedMouseButtons & BXMouseButtonRightMask) == BXMouseButtonRightMask)
+				[self.emulatedMouse buttonUp: BXMouseButtonRight];
 			
-			if ((simulatedMouseButtons & BXMouseButtonMiddleMask) == BXMouseButtonMiddleMask)
-				[self._emulatedMouse buttonUp: BXMouseButtonMiddle];
+			if ((_simulatedMouseButtons & BXMouseButtonMiddleMask) == BXMouseButtonMiddleMask)
+				[self.emulatedMouse buttonUp: BXMouseButtonMiddle];
 			
-			simulatedMouseButtons = BXNoMouseButtonsMask;
+			_simulatedMouseButtons = BXNoMouseButtonsMask;
 		}
 		//Pass the mouse release as-is to our input handler
-		else [self._emulatedMouse buttonUp: BXMouseButtonLeft];
+		else [self.emulatedMouse buttonUp: BXMouseButtonLeft];
 	}
 	else
 	{
@@ -738,22 +757,22 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 {
 	if ([self _controlsCursorWhileMouseInside])
 	{
-		if (simulatedMouseButtons != BXNoMouseButtonsMask)
+		if (_simulatedMouseButtons != BXNoMouseButtonsMask)
 		{
-			if ((simulatedMouseButtons & BXMouseButtonLeftMask) == BXMouseButtonLeftMask)
-				[self._emulatedMouse buttonUp: BXMouseButtonLeft];
+			if ((_simulatedMouseButtons & BXMouseButtonLeftMask) == BXMouseButtonLeftMask)
+				[self.emulatedMouse buttonUp: BXMouseButtonLeft];
 			
-			if ((simulatedMouseButtons & BXMouseButtonRightMask) == BXMouseButtonRightMask)
-				[self._emulatedMouse buttonUp: BXMouseButtonRight];
+			if ((_simulatedMouseButtons & BXMouseButtonRightMask) == BXMouseButtonRightMask)
+				[self.emulatedMouse buttonUp: BXMouseButtonRight];
 			
-			if ((simulatedMouseButtons & BXMouseButtonMiddleMask) == BXMouseButtonMiddleMask)
-				[self._emulatedMouse buttonUp: BXMouseButtonMiddle];
+			if ((_simulatedMouseButtons & BXMouseButtonMiddleMask) == BXMouseButtonMiddleMask)
+				[self.emulatedMouse buttonUp: BXMouseButtonMiddle];
 			
-			simulatedMouseButtons = BXNoMouseButtonsMask;
+			_simulatedMouseButtons = BXNoMouseButtonsMask;
 		}
         else
         {
-            [self._emulatedMouse buttonUp: BXMouseButtonRight];
+            [self.emulatedMouse buttonUp: BXMouseButtonRight];
         }
 	}
 	else
@@ -768,7 +787,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	//Only pay attention to the middle mouse button; all others can do as they will
 	if (theEvent.buttonNumber == BXMouseButtonMiddle && [self _controlsCursorWhileMouseInside])
 	{
-		[self._emulatedMouse buttonUp: BXMouseButtonMiddle];
+		[self.emulatedMouse buttonUp: BXMouseButtonMiddle];
 	}		
 	else
 	{
@@ -785,56 +804,56 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	//Only apply mouse movement if we're locked or we're accepting unlocked mouse input
 	if ([self _controlsCursorWhileMouseInside])
 	{
-		NSRect canvas = [[self view] bounds];
+		NSRect canvas = self.view.bounds;
 		CGFloat width = canvas.size.width;
 		CGFloat height = canvas.size.height;
 		
-		NSPoint pointOnCanvas, delta;
+		NSPoint locationOnCanvas, delta;
 
 		//Make the delta relative to the canvas
-		delta = NSMakePoint([theEvent deltaX] / width,
-							[theEvent deltaY] / height);		
+		delta = NSMakePoint(theEvent.deltaX / width,
+							theEvent.deltaY / height);		
 		
 		//If we have just warped the mouse, the delta above will include the distance warped
 		//as well as the actual distance moved in this mouse event: so, we subtract the warp.
-		if (!NSEqualPoints(distanceWarped, NSZeroPoint))
+		if (!NSEqualPoints(_distanceWarped, NSZeroPoint))
 		{
-			delta.x -= distanceWarped.x;
-			delta.y -= distanceWarped.y;
+			delta.x -= _distanceWarped.x;
+			delta.y -= _distanceWarped.y;
 		}
 		
-		if (![self mouseLocked])
+		if (!self.mouseLocked)
 		{
-			NSPoint pointInView	= [[self view] convertPoint: [theEvent locationInWindow]
-												   fromView: nil];
-			pointOnCanvas = NSMakePoint(pointInView.x / width,
-										pointInView.y / height);
+			NSPoint locationInView	= [self.view convertPoint: theEvent.locationInWindow
+                                                    fromView: nil];
+			locationOnCanvas = NSMakePoint(locationInView.x / width,
+                                           locationInView.y / height);
 
 			//Clamp the position to within the canvas.
-			pointOnCanvas = clampPointToRect(pointOnCanvas, canvasBounds);
+			locationOnCanvas = clampPointToRect(locationOnCanvas, _canvasBounds);
 		}
 		else
 		{
 			//While the mouse is locked, OS X won't update the absolute cursor position and
 			//DOSBox won't pay attention to the absolute cursor position either, so we don't
 			//bother calculating it.
-			pointOnCanvas = NSZeroPoint;
+			locationOnCanvas = NSZeroPoint;
 			
 			//While the mouse is locked, we apply our mouse sensitivity to the delta.
-			delta.x *= mouseSensitivity;
-			delta.y *= mouseSensitivity;
+			delta.x *= self.mouseSensitivity;
+			delta.y *= self.mouseSensitivity;
 		}
 		
 		//Ensures we ignore any cursor-moved notifications from the emulator as a result of this call.
-		updatingMousePosition = YES;
+		_updatingMousePosition = YES;
 		
-		[[self _emulatedMouse] movedTo: pointOnCanvas
-									by: delta
-							  onCanvas: canvas
-						   whileLocked: [self mouseLocked]];
+		[self.emulatedMouse movedTo: locationOnCanvas
+                                 by: delta
+                           onCanvas: canvas
+                        whileLocked: self.mouseLocked];
 		
 		//Resume paying attention to mouse position updates.
-		updatingMousePosition = NO;
+		_updatingMousePosition = NO;
 	}
 	else
 	{
@@ -843,7 +862,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	
 	//Always reset our internal warp tracking after every mouse movement event,
 	//even if the event is not handled.
-	distanceWarped = NSZeroPoint;
+	_distanceWarped = NSZeroPoint;
 }
 
 //Treat drag events as simple mouse movement
@@ -879,50 +898,48 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	if ([self _controlsCursorWhileMouseInside])
 	{
 		NSSet *touches = [theEvent touchesMatchingPhase: NSTouchPhaseTouching
-												 inView: [self view]];
+												 inView: self.view];
 		
 		//As soon as the user has placed three fingers onto the touch surface,
 		//start tracking for the release to detect this as a three-finger tap gesture.
-		if ([touches count] == 3)
+		if (touches.count == 3)
 		{
-			threeFingerTapStarted = [NSDate timeIntervalSinceReferenceDate];
+			_threeFingerTapStarted = [NSDate timeIntervalSinceReferenceDate];
 		}
 		//If the user puts down more fingers, then cancel the gesture.
 		else
 		{
-			threeFingerTapStarted = 0;
+			_threeFingerTapStarted = 0;
 		}
 	}
 }
 
 - (void) touchesEndedWithEvent: (NSEvent *)theEvent
 {
-	if (threeFingerTapStarted && [self _controlsCursorWhileMouseInside])
+	if (_threeFingerTapStarted && [self _controlsCursorWhileMouseInside])
 	{
 		//If the touch has gone on for too long to treat as a tap,
 		//then cancel the gesture.
-		if (([NSDate timeIntervalSinceReferenceDate] - threeFingerTapStarted) > BXTapDurationThreshold)
+		if (([NSDate timeIntervalSinceReferenceDate] - _threeFingerTapStarted) > BXTapDurationThreshold)
 		{
-			threeFingerTapStarted = 0;
+			_threeFingerTapStarted = 0;
 		}
 		else
 		{
 			NSSet *touches = [theEvent touchesMatchingPhase: NSTouchPhaseTouching
-													 inView: [self view]];
+													 inView: self.view];
 			
 			//If all fingers have now been lifted from the surface,
 			//then treat this as a proper triple-tap gesture.
-			if ([touches count] == 0)
+			if (touches.count == 0)
 			{	
 				//Unpause when triple-tapping
 				[self.representedObject resume: self];
-				
-				BXEmulatedMouse *mouse = [self _emulatedMouse];
 			
-				[mouse buttonPressed: BXMouseButtonLeft];
-				[mouse buttonPressed: BXMouseButtonRight];
+				[self.emulatedMouse buttonPressed: BXMouseButtonLeft];
+				[self.emulatedMouse buttonPressed: BXMouseButtonRight];
 				
-				threeFingerTapStarted = 0;
+				_threeFingerTapStarted = 0;
 			}
 		}
 	}
@@ -933,59 +950,60 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	//The swipe event is a three-finger gesture based on movement and so may conflict with our own.
 	//(We listen for this instead of for the touchesMovedWithEvent: message because it means we don't
 	//have to bother calculating movement deltas.)
-	threeFingerTapStarted = 0;
+	_threeFingerTapStarted = 0;
 }
 
 - (void) touchesCancelledWithEvent: (NSEvent *)theEvent
 {
-	threeFingerTapStarted = 0;
+	_threeFingerTapStarted = 0;
 }
 
 
 #pragma mark -
 #pragma mark Private methods
 
-- (BXDOSWindowController *) _windowController	{ return [[self representedObject] DOSWindowController]; }
-- (BXEmulatedMouse *)_emulatedMouse				{ return [[[self representedObject] emulator] mouse]; }
-- (BXEmulatedKeyboard *)_emulatedKeyboard		{ return [[[self representedObject] emulator] keyboard]; }
-- (id <BXEmulatedJoystick>)_emulatedJoystick	{ return [[[self representedObject] emulator] joystick]; }
+- (BXDOSWindowController *) windowController	{ return self.representedObject.DOSWindowController; }
+- (BXEmulatedMouse *)emulatedMouse				{ return self.representedObject.emulator.mouse; }
+- (BXEmulatedKeyboard *)emulatedKeyboard		{ return self.representedObject.emulator.keyboard; }
+- (id <BXEmulatedJoystick>)emulatedJoystick     { return self.representedObject.emulator.joystick; }
 
 
 - (BOOL) _controlsCursor
 {
 	if (![self _controlsCursorWhileMouseInside]) return NO;
 	
-	if (![[[self view] window] isKeyWindow]) return NO;
+	if (!self.view.window.isKeyWindow) return NO;
 	
-	return [self mouseInView];
+	return self.mouseInView;
 }
 
 - (BOOL) _controlsCursorWhileMouseInside
 {
-	if (![self mouseActive]) return NO;
-	if ([[self representedObject] isSuspended]) return NO;
+    //Don't mess with the mouse cursor the emulator is paused or the program doesn't use the mouse.
+	if (!self.mouseActive) return NO;
+	if (self.representedObject.isSuspended) return NO;
 	
-	return ([self mouseLocked] || [self trackMouseWhileUnlocked]);
+	return (self.mouseLocked || self.trackMouseWhileUnlocked);
 }
 
 - (NSPoint) _pointOnScreen: (NSPoint)canvasPoint
 {
-	NSRect canvas = [[self view] bounds];
+	NSRect canvas = self.view.bounds;
 	NSPoint pointInView = NSMakePoint(canvasPoint.x * canvas.size.width,
 									  canvasPoint.y * canvas.size.height);
 	
-	NSPoint pointInWindow = [[self view] convertPoint: pointInView toView: nil];
-	NSPoint pointOnScreen = [[[self view] window] convertBaseToScreen: pointInWindow];
+	NSPoint pointInWindow = [self.view convertPoint: pointInView toView: nil];
+	NSPoint pointOnScreen = [self.view.window convertBaseToScreen: pointInWindow];
 	
 	return pointOnScreen;
 }
 
 - (NSPoint) _pointInCanvas: (NSPoint)screenPoint
 {
-	NSPoint pointInWindow	= [[[self view] window] convertScreenToBase: screenPoint];
-	NSPoint pointInView		= [[self view] convertPoint: pointInWindow fromView: nil];
+	NSPoint pointInWindow	= [self.view.window convertScreenToBase: screenPoint];
+	NSPoint pointInView		= [self.view convertPoint: pointInWindow fromView: nil];
 	
-	NSRect canvas = [[self view] bounds];
+	NSRect canvas = self.view.bounds;
 	NSPoint pointInCanvas = NSMakePoint(pointInView.x / canvas.size.width,
 										pointInView.y / canvas.size.height);
 	
@@ -1014,7 +1032,8 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 		//This prevents mouse clicks from going to other windows.
 		//(We avoid warping if the mouse is already over the view,
         //as this would cause an input delay.)
-		if (![self mouseInView]) [self _syncOSXCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
+		if (!self.mouseInView)
+            [self _syncOSXCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
 		
 		//Warp the DOS mouse cursor to the previous location of the OS X cursor upon locking.
 		//Disabled for now, because this gives poor results in games with relative mouse positioning
@@ -1040,12 +1059,12 @@ void _inputSourceChanged(CFNotificationCenterRef center,
         
 		//If we're unlocking the mouse, then sync the OS X mouse cursor
 		//to wherever DOSBox's cursor is located within the view.
-		NSPoint mousePosition = [[self _emulatedMouse] position];
+		NSPoint mousePosition = self.emulatedMouse.position;
 		
 		//Constrain the cursor position to slightly inset within the view:
 		//This ensures the mouse doesn't appear outside the view or right
 		//at the view's edge, which looks ugly.
-		mousePosition = clampPointToRect(mousePosition, visibleCanvasBounds);
+		mousePosition = clampPointToRect(mousePosition, _visibleCanvasBounds);
 		
 		[self _syncOSXCursorToPointInCanvas: mousePosition];
 		
@@ -1077,7 +1096,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	//then sync the OS X mouse cursor to match DOSBox's.
 	//(We only bother doing this if the mouse is unlocked; there's no point doing
 	//otherwise, since we'll sync the cursors when we unlock.)
-	if (!updatingMousePosition && ![self mouseLocked] && [self _controlsCursor])
+	if (!_updatingMousePosition && !self.mouseLocked && [self _controlsCursor])
 	{
 		//Don't sync if the mouse was warped to the 0, 0 point:
 		//This indicates a game testing the extents of the mouse canvas.
@@ -1085,14 +1104,14 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 		
 		//Don't sync if the mouse was warped outside the canvas:
 		//This would place the mouse cursor beyond the confines of the window.
-		if (!NSPointInRect(pointInCanvas, canvasBounds)) return;
+		if (!NSPointInRect(pointInCanvas, _canvasBounds)) return;
 		
 		//Because syncing the OS X cursor causes a slight but noticeable input delay,
 		//we check how far it moved and ignore small distances.
 		NSPoint oldPointInCanvas = [self _pointInCanvas: [NSEvent mouseLocation]];
 		NSPoint distance = deltaFromPointToPoint(oldPointInCanvas, pointInCanvas);
 
-		if (!NSPointInRect(distance, cursorWarpDeadzone))
+		if (!NSPointInRect(distance, _cursorWarpDeadzone))
 			[self _syncOSXCursorToPointInCanvas: pointInCanvas];
 	}
 }
@@ -1106,7 +1125,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	//next mouseMoved event to reflect the distance the mouse was warped. So, we determine how
 	//far the mouse was warped, and will subtract that from the next mouse delta calculation.
 	NSPoint oldPointInCanvas = [self _pointInCanvas: oldPointOnScreen];
-	distanceWarped = deltaFromPointToPoint(oldPointInCanvas, pointInCanvas);
+	_distanceWarped = deltaFromPointToPoint(oldPointInCanvas, pointInCanvas);
 	
 	
 	CGPoint cgPointOnScreen = NSPointToCGPoint(pointOnScreen);
@@ -1120,12 +1139,11 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 
 - (void) _syncEmulatedCursorToPointInCanvas: (NSPoint)pointInCanvas
 {
-	BXEmulatedMouse *mouse = [self _emulatedMouse];
-	NSPoint mousePosition = [mouse position];
+	NSPoint mousePosition = self.emulatedMouse.position;
 	NSPoint delta = deltaFromPointToPoint(mousePosition, pointInCanvas);
-	[mouse movedTo: pointInCanvas
-				by: delta
-		  onCanvas: [[self view] bounds]
-	   whileLocked: NO];
+	[self.emulatedMouse movedTo: pointInCanvas
+                             by: delta
+                       onCanvas: self.view.bounds
+                    whileLocked: NO];
 }
 @end

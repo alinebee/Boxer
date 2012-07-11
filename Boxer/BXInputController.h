@@ -25,38 +25,38 @@
 < NSAnimationDelegate >
 #endif
 {
-	BXCursorFadeAnimation *cursorFade;
+	BXCursorFadeAnimation *_cursorFade;
 	
-    BOOL simulatedNumpadActive;
-	BOOL mouseActive;
-	BOOL mouseLocked;
-	BOOL trackMouseWhileUnlocked;
-	CGFloat mouseSensitivity;
+    BOOL _simulatedNumpadActive;
+	BOOL _mouseActive;
+	BOOL _mouseLocked;
+	BOOL _trackMouseWhileUnlocked;
+	CGFloat _mouseSensitivity;
 	
 	//Used internally for constraining mouse location and movement
-	NSRect cursorWarpDeadzone;
-	NSRect canvasBounds;
-	NSRect visibleCanvasBounds;
+	NSRect _cursorWarpDeadzone;
+	NSRect _canvasBounds;
+	NSRect _visibleCanvasBounds;
 	
 	//Used internally for tracking mouse state between events
-	NSPoint distanceWarped;
-	BOOL updatingMousePosition;
-	NSTimeInterval threeFingerTapStarted;
+	NSPoint _distanceWarped;
+	BOOL _updatingMousePosition;
+	NSTimeInterval _threeFingerTapStarted;
     
-	BXMouseButtonMask simulatedMouseButtons;
+	BXMouseButtonMask _simulatedMouseButtons;
     
     //Which OSX virtual keycodes were pressed with a modifier, causing
     //them to send a different key than usual. Used for releasing
     //simulated keys upon key-up.
-    BOOL modifiedKeys[BXMaxSystemKeyCode];
+    BOOL _modifiedKeys[BXMaxSystemKeyCode];
     
-	NSUInteger lastModifiers;
+	NSUInteger _lastModifiers;
 	
-	NSMutableDictionary *controllerProfiles;
-	NSArray *availableJoystickTypes;
+	NSMutableDictionary *_controllerProfiles;
+	NSArray *_availableJoystickTypes;
     
     //Used internally by BXJoypadInput for tracking joypad state
-    JoypadAcceleration joypadFilteredAcceleration;
+    JoypadAcceleration _joypadFilteredAcceleration;
 }
 
 #pragma mark -

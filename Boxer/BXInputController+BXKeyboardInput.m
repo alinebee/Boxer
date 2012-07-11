@@ -59,7 +59,7 @@
     NSString *bestLayoutMatch = [self.class keyboardLayoutForCurrentInputMethod];
     if (bestLayoutMatch)
     {
-        [self._emulatedKeyboard setActiveLayout: bestLayoutMatch];
+        [self.emulatedKeyboard setActiveLayout: bestLayoutMatch];
     }
 }
 
@@ -89,7 +89,7 @@
             return;
         }
         //Pressing ESC while in fullscreen mode and not running a program, will exit fullscreen mode.
-        else if (self._windowController.window.isFullScreen && emulator.isAtPrompt)
+        else if (self.windowController.window.isFullScreen && emulator.isAtPrompt)
         {
             [NSApp sendAction: @selector(exitFullScreen:) to: nil from: self];
             return;
@@ -116,7 +116,7 @@
         {
             dosKeyCode = [self _simulatedNumpadKeyCodeForSystemKeyCode: OSXKeyCode];
             if (dosKeyCode != KBD_NONE)
-                modifiedKeys[OSXKeyCode] = YES;
+                _modifiedKeys[OSXKeyCode] = YES;
         }
         
         //If there's no numpad-simulation key equivalent, just go with the regular mapping
@@ -126,10 +126,10 @@
         if (dosKeyCode != KBD_NONE)
         {
 #ifdef BOXER_DEBUG
-            if ([self._emulatedKeyboard keyIsDown: dosKeyCode])
+            if ([self.emulatedKeyboard keyIsDown: dosKeyCode])
                 NSLog(@"STUCK KEY WARNING: key already down: %i", theEvent.keyCode);
 #endif
-            [self._emulatedKeyboard keyDown: dosKeyCode];
+            [self.emulatedKeyboard keyDown: dosKeyCode];
         }
 	}
 }
@@ -140,19 +140,19 @@
     
     //If this key was modified to a different mapping when it was was originally pressed,
     //then release its modified mapping too (e.g. numpad simulation).
-    if (modifiedKeys[OSXKeyCode])
+    if (_modifiedKeys[OSXKeyCode])
     {
         BXDOSKeyCode modifiedKeyCode = [self _simulatedNumpadKeyCodeForSystemKeyCode: OSXKeyCode];
         if (modifiedKeyCode != KBD_NONE)
-            [self._emulatedKeyboard keyUp: modifiedKeyCode];
+            [self.emulatedKeyboard keyUp: modifiedKeyCode];
         
-        modifiedKeys[OSXKeyCode] = NO;
+        _modifiedKeys[OSXKeyCode] = NO;
     }
 
     //Release the regular key mapping in any case.
     BXDOSKeyCode dosKeyCode = [self _DOSKeyCodeForSystemKeyCode: OSXKeyCode];
     if (dosKeyCode != KBD_NONE)
-        [self._emulatedKeyboard keyUp: dosKeyCode];
+        [self.emulatedKeyboard keyUp: dosKeyCode];
 }
 
 - (void) flagsChanged: (NSEvent *)theEvent
@@ -162,8 +162,8 @@
     NSUInteger currentModifiers = theEvent.modifierFlags;
     if ((currentModifiers & NSCommandKeyMask) == NSCommandKeyMask)
     {
-        [self._emulatedKeyboard clearInput];
-        lastModifiers = currentModifiers;
+        [self.emulatedKeyboard clearInput];
+        _lastModifiers = currentModifiers;
     }
     else
     {
@@ -175,7 +175,7 @@
 
 - (void) _notifyNumlockState
 {
-    BOOL numlockEnabled = self._emulatedKeyboard.numLockEnabled;
+    BOOL numlockEnabled = self.emulatedKeyboard.numLockEnabled;
     if (numlockEnabled)
     {
         [[BXBezelController controller] showNumlockActiveBezel];
@@ -189,33 +189,33 @@
 #pragma mark -
 #pragma mark Simulating keyboard events
 
-- (IBAction) sendF1:	(id)sender	{ [self._emulatedKeyboard keyPressed: KBD_f1]; }
-- (IBAction) sendF2:	(id)sender	{ [self._emulatedKeyboard keyPressed: KBD_f2]; }
-- (IBAction) sendF3:	(id)sender	{ [self._emulatedKeyboard keyPressed: KBD_f3]; }
-- (IBAction) sendF4:	(id)sender	{ [self._emulatedKeyboard keyPressed: KBD_f4]; }
-- (IBAction) sendF5:	(id)sender	{ [self._emulatedKeyboard keyPressed: KBD_f5]; }
-- (IBAction) sendF6:	(id)sender	{ [self._emulatedKeyboard keyPressed: KBD_f6]; }
-- (IBAction) sendF7:	(id)sender	{ [self._emulatedKeyboard keyPressed: KBD_f7]; }
-- (IBAction) sendF8:	(id)sender	{ [self._emulatedKeyboard keyPressed: KBD_f8]; }
-- (IBAction) sendF9:	(id)sender	{ [self._emulatedKeyboard keyPressed: KBD_f9]; }
-- (IBAction) sendF10:	(id)sender	{ [self._emulatedKeyboard keyPressed: KBD_f10]; }
-- (IBAction) sendF11:	(id)sender	{ [self._emulatedKeyboard keyPressed: KBD_f11]; }
-- (IBAction) sendF12:	(id)sender	{ [self._emulatedKeyboard keyPressed: KBD_f12]; }
+- (IBAction) sendF1:	(id)sender	{ [self.emulatedKeyboard keyPressed: KBD_f1]; }
+- (IBAction) sendF2:	(id)sender	{ [self.emulatedKeyboard keyPressed: KBD_f2]; }
+- (IBAction) sendF3:	(id)sender	{ [self.emulatedKeyboard keyPressed: KBD_f3]; }
+- (IBAction) sendF4:	(id)sender	{ [self.emulatedKeyboard keyPressed: KBD_f4]; }
+- (IBAction) sendF5:	(id)sender	{ [self.emulatedKeyboard keyPressed: KBD_f5]; }
+- (IBAction) sendF6:	(id)sender	{ [self.emulatedKeyboard keyPressed: KBD_f6]; }
+- (IBAction) sendF7:	(id)sender	{ [self.emulatedKeyboard keyPressed: KBD_f7]; }
+- (IBAction) sendF8:	(id)sender	{ [self.emulatedKeyboard keyPressed: KBD_f8]; }
+- (IBAction) sendF9:	(id)sender	{ [self.emulatedKeyboard keyPressed: KBD_f9]; }
+- (IBAction) sendF10:	(id)sender	{ [self.emulatedKeyboard keyPressed: KBD_f10]; }
+- (IBAction) sendF11:	(id)sender	{ [self.emulatedKeyboard keyPressed: KBD_f11]; }
+- (IBAction) sendF12:	(id)sender	{ [self.emulatedKeyboard keyPressed: KBD_f12]; }
 
-- (IBAction) sendHome:		(id)sender { [self._emulatedKeyboard keyPressed: KBD_home]; }
-- (IBAction) sendEnd:		(id)sender { [self._emulatedKeyboard keyPressed: KBD_end]; }
-- (IBAction) sendPageUp:	(id)sender { [self._emulatedKeyboard keyPressed: KBD_pageup]; }
-- (IBAction) sendPageDown:	(id)sender { [self._emulatedKeyboard keyPressed: KBD_pagedown]; }
+- (IBAction) sendHome:		(id)sender { [self.emulatedKeyboard keyPressed: KBD_home]; }
+- (IBAction) sendEnd:		(id)sender { [self.emulatedKeyboard keyPressed: KBD_end]; }
+- (IBAction) sendPageUp:	(id)sender { [self.emulatedKeyboard keyPressed: KBD_pageup]; }
+- (IBAction) sendPageDown:	(id)sender { [self.emulatedKeyboard keyPressed: KBD_pagedown]; }
 
-- (IBAction) sendInsert:	(id)sender { [self._emulatedKeyboard keyPressed: KBD_insert]; }
-- (IBAction) sendDelete:	(id)sender { [self._emulatedKeyboard keyPressed: KBD_delete]; }
-- (IBAction) sendPause:		(id)sender { [self._emulatedKeyboard keyPressed: KBD_pause]; }
+- (IBAction) sendInsert:	(id)sender { [self.emulatedKeyboard keyPressed: KBD_insert]; }
+- (IBAction) sendDelete:	(id)sender { [self.emulatedKeyboard keyPressed: KBD_delete]; }
+- (IBAction) sendPause:		(id)sender { [self.emulatedKeyboard keyPressed: KBD_pause]; }
 //TODO: should we be sending a key combo here?
-- (IBAction) sendBreak:		(id)sender { [self._emulatedKeyboard keyPressed: KBD_pause]; }
+- (IBAction) sendBreak:		(id)sender { [self.emulatedKeyboard keyPressed: KBD_pause]; }
 
-- (IBAction) sendNumLock:		(id)sender { [self._emulatedKeyboard keyPressed: KBD_numlock]; }
-- (IBAction) sendScrollLock:	(id)sender { [self._emulatedKeyboard keyPressed: KBD_scrolllock]; }
-- (IBAction) sendPrintScreen:	(id)sender { [self._emulatedKeyboard keyPressed: KBD_printscreen]; }
+- (IBAction) sendNumLock:		(id)sender { [self.emulatedKeyboard keyPressed: KBD_numlock]; }
+- (IBAction) sendScrollLock:	(id)sender { [self.emulatedKeyboard keyPressed: KBD_scrolllock]; }
+- (IBAction) sendPrintScreen:	(id)sender { [self.emulatedKeyboard keyPressed: KBD_printscreen]; }
 
 - (IBAction) sendBackslash:     (id)sender { [self.representedObject.emulator handlePastedString: @"\\"]; }
 - (IBAction) sendForwardSlash:  (id)sender { [self.representedObject.emulator handlePastedString: @"/"]; }
@@ -239,7 +239,7 @@
 	//The new implementation correctly handles multiple keys and can also be used to synchronise
 	//modifier-key states whenever we regain keyboard focus.
 	
-	if (newModifiers != lastModifiers)
+	if (newModifiers != _lastModifiers)
 	{
 #define NUM_FLAGS 7
 		
@@ -261,7 +261,7 @@
 			BXDOSKeyCode keyCode	= flagMappings[i][1];
 			  
 			BOOL isPressed	= (newModifiers & flag) == flag;
-			BOOL wasPressed	= (lastModifiers & flag) == flag;
+			BOOL wasPressed	= (_lastModifiers & flag) == flag;
 			
 			//If this flag has been toggled, then post a new keyboard event
 			//IMPLEMENTATION NOTE: we used to XOR newModifiers and lastModifiers together
@@ -277,21 +277,21 @@
                     //TWEAK: only toggle capslock if DOS’s capslock state doesn't already match
                     //the keyboard’s state. This ensures that we don’t get out of sync if we ever
                     //miss a capslock event or toggle the emulated capslock programmatically.
-                    if (isPressed != self._emulatedKeyboard.capsLockEnabled)
-                        [self._emulatedKeyboard keyPressed: keyCode];
+                    if (isPressed != self.emulatedKeyboard.capsLockEnabled)
+                        [self.emulatedKeyboard keyPressed: keyCode];
 				}
 				else if (isPressed)
 				{
-					[self._emulatedKeyboard keyDown: keyCode];
+					[self.emulatedKeyboard keyDown: keyCode];
 				}
 				else
 				{
-					[self._emulatedKeyboard keyUp: keyCode];
+					[self.emulatedKeyboard keyUp: keyCode];
 				}
 			}
 		}
         
-		lastModifiers = newModifiers;
+		_lastModifiers = newModifiers;
 	}
 }
 

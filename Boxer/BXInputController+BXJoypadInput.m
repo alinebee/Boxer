@@ -126,9 +126,9 @@
 
 - (void) _resetJoypadTrackingValues
 {
-    joypadFilteredAcceleration.x = 0.0f;
-    joypadFilteredAcceleration.y = 0.0f;
-    joypadFilteredAcceleration.z = 0.0f;
+    _joypadFilteredAcceleration.x = 0.0f;
+    _joypadFilteredAcceleration.y = 0.0f;
+    _joypadFilteredAcceleration.z = 0.0f;
 }
 
 
@@ -145,13 +145,13 @@
     //Copypasta from Apple's Event Handling Guide for iOS: Motion Events
     float   filterNew = BXJoypadAccelerationFilter,
             filterOld = 1.0f - filterNew;
-    joypadFilteredAcceleration.x = (accel.x * filterNew) + (joypadFilteredAcceleration.x * filterOld);
-    joypadFilteredAcceleration.y = (accel.y * filterNew) + (joypadFilteredAcceleration.y * filterOld);
-    joypadFilteredAcceleration.z = (accel.z * filterNew) + (joypadFilteredAcceleration.z * filterOld);
+    _joypadFilteredAcceleration.x = (accel.x * filterNew) + (_joypadFilteredAcceleration.x * filterOld);
+    _joypadFilteredAcceleration.y = (accel.y * filterNew) + (_joypadFilteredAcceleration.y * filterOld);
+    _joypadFilteredAcceleration.z = (accel.z * filterNew) + (_joypadFilteredAcceleration.z * filterOld);
     
     //These will have a range in radians from PI to -PI.
-    double roll_in_radians  = atan2(joypadFilteredAcceleration.y, -joypadFilteredAcceleration.x);
-    double pitch_in_radians = atan2(joypadFilteredAcceleration.z, -joypadFilteredAcceleration.x);
+    double roll_in_radians  = atan2(_joypadFilteredAcceleration.y, -_joypadFilteredAcceleration.x);
+    double pitch_in_radians = atan2(_joypadFilteredAcceleration.z, -_joypadFilteredAcceleration.x);
     
     //PI/2 (90 degrees counterclockwise) to -PI/2 (90 degrees clockwise)
     //is what we want to map to the -1.0 to 1.0 range of the emulated joystick.
@@ -160,7 +160,7 @@
     roll = -(float)(roll_in_radians / M_PI_2);
     pitch = -(float)(pitch_in_radians / M_PI_2);
     
-    id joystick = [self _emulatedJoystick];
+    id joystick = self.emulatedJoystick;
     
     //Map roll to steering
     if ([joystick conformsToProtocol: @protocol(BXEmulatedWheel)])
@@ -198,7 +198,7 @@
                  dPad: (JoyInputIdentifier)dpad
              buttonUp: (JoyDpadButton)dpadButton
 {
-    id joystick = [self _emulatedJoystick];
+    id joystick = self.emulatedJoystick;
     
     if ([joystick conformsToProtocol: @protocol(BXEmulatedFlightstick)])
     {
@@ -228,7 +228,7 @@
 {
     [self _warnIfJoystickInactive];
     
-    id joystick = [self _emulatedJoystick];
+    id joystick = self.emulatedJoystick;
     
     if ([joystick conformsToProtocol: @protocol(BXEmulatedFlightstick)])
     {
@@ -262,8 +262,8 @@
 - (void) joypadDevice: (JoypadDevice *)device
              buttonUp: (JoyInputIdentifier)button
 {
-    id joystick = [self _emulatedJoystick];
-    BXEmulatedKeyboard *keyboard = [self _emulatedKeyboard];
+    id joystick = self.emulatedJoystick;
+    BXEmulatedKeyboard *keyboard = self.emulatedKeyboard;
     
     BOOL isWheel = [joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
     switch (button)
@@ -320,8 +320,8 @@
 {
     [self _warnIfJoystickInactive];
 
-    id joystick = [self _emulatedJoystick];
-    BXEmulatedKeyboard *keyboard = [self _emulatedKeyboard];
+    id joystick = self.emulatedJoystick;
+    BXEmulatedKeyboard *keyboard = self.emulatedKeyboard;
     
     BOOL isWheel = [joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
     switch (button)
@@ -338,7 +338,7 @@
             
         case kJoyInputSelectButton:
             //Pause button
-            [[self representedObject] togglePaused: self];
+            [self.representedObject togglePaused: self];
             break;
             
         case kJoyInputStartButton:
@@ -365,7 +365,7 @@
 
         default:
         {
-            NSUInteger joyButton = [[self class] emulatedJoystickButtonForJoypadButton: button];
+            NSUInteger joyButton = [self.class emulatedJoystickButtonForJoypadButton: button];
             
             if (joyButton != NSNotFound)
                 [joystick buttonDown: joyButton];
@@ -379,7 +379,7 @@
 {
     [self _warnIfJoystickInactive];
 
-    id joystick = [self _emulatedJoystick];
+    id joystick = self.emulatedJoystick;
     
     if ([joystick supportsAxis: BXAxisX] && [joystick supportsAxis: BXAxisY])
     {

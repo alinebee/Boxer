@@ -274,13 +274,13 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (void) setRenderer: (BXBasicRenderer *)renderer
 {
-    if (self.renderer != renderer)
+    if (_renderer != renderer)
     {
         CGLLockContext(self.openGLContext.CGLContextObj);
             //Tell the old renderer to dispose of its assets immediately.
             [self.renderer tearDownContext];
             
-            [self.renderer release];
+            [_renderer release];
             _renderer = [renderer retain];
             
             //Tell the new renderer to configure its context.

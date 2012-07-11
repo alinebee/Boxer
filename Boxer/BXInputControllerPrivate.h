@@ -48,15 +48,21 @@
 @interface BXInputController ()
 
 #pragma mark -
-#pragma mark Convenience accessors
+#pragma mark Internal properties
 
 //Make the available types internally modifiable
 @property (readwrite, retain, nonatomic) NSArray *availableJoystickTypes;
 
-@property (readonly, nonatomic) BXDOSWindowController *_windowController;
-@property (readonly, nonatomic) BXEmulatedKeyboard *_emulatedKeyboard;
-@property (readonly, nonatomic) BXEmulatedMouse *_emulatedMouse;
-@property (readonly, nonatomic) id <BXEmulatedJoystick> _emulatedJoystick;
+@property (retain, nonatomic) BXCursorFadeAnimation *cursorFade;
+@property (retain, nonatomic) NSMutableDictionary *controllerProfiles;
+
+#pragma mark -
+#pragma mark Convenience accessors
+
+@property (readonly, nonatomic) BXDOSWindowController *windowController;
+@property (readonly, nonatomic) BXEmulatedKeyboard *emulatedKeyboard;
+@property (readonly, nonatomic) BXEmulatedMouse *emulatedMouse;
+@property (readonly, nonatomic) id <BXEmulatedJoystick> emulatedJoystick;
 
 
 #pragma mark -

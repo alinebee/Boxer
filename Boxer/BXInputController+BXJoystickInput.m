@@ -235,9 +235,9 @@
 
 - (void) _syncControllerProfiles
 {
-    id <BXEmulatedJoystick> joystick = [self _emulatedJoystick];
+    id <BXEmulatedJoystick> joystick = self.emulatedJoystick;
     
-    [controllerProfiles removeAllObjects];
+    [self.controllerProfiles removeAllObjects];
     if (joystick)
     {
         NSArray *controllers = [[[NSApp delegate] joystickController] joystickDevices];
@@ -246,8 +246,8 @@
             BXHIDControllerProfile *profile = [BXHIDControllerProfile profileForHIDController: controller
                                                                            toEmulatedJoystick: joystick];
             
-            NSNumber *locationID = [NSNumber numberWithLong: [controller locationId]];
-            [controllerProfiles setObject: profile forKey: locationID];
+            NSNumber *locationID = [NSNumber numberWithLong: controller.locationId];
+            [self.controllerProfiles setObject: profile forKey: locationID];
         }
     }
 }
@@ -271,23 +271,23 @@
     BXEmulator *emulator = [[self representedObject] emulator];
 
     //If the emulator isn't running anything, then no, the game isn't ignoring the joystick.
-    if (![emulator isRunningProcess]) return NO;
+    if (!emulator.isRunningProcess) return NO;
     
     //If we've received gameport read signals, then the game isn't ignoring the joystick.
-    if ([emulator joystickActive]) return NO;
+    if (emulator.joystickActive) return NO;
     
     //If joystick emulation is not active, there's no joystick to ignore.
-    if (![self _emulatedJoystick]) return NO;
+    if (!self.emulatedJoystick) return NO;
     
     //If the game doesn't seem to be loaded yet (i.e. is still in text mode),
     //don't consider joystick input as being ignored.
     //(This way we don't bug the user if they're just mucking around on the
     //controller while watching the game load.)
-    if ([[emulator videoHandler] isInTextMode]) return NO;
+    if (emulator.videoHandler.isInTextMode) return NO;
     
     //If there are known joystick/gamepad remapper tools running, assume
     //that they're handling joystick input on behalf of Boxer.
-    if ([[[[NSApp delegate] joystickController] recentHIDRemappers] count]) return NO;
+    if ([[NSApp delegate] joystickController].recentHIDRemappers.count) return NO;
     
     
     //If we get this far then yes, the current program does seem to be ignoring the joystick.
@@ -300,15 +300,15 @@
 {
     //If the game is not reading joystick input right now, and the user is making
     //'significant' controller input, show a notification that the game is ignoring them.
-    if ([self _activeProgramIsIgnoringJoystick] && [[self class] HIDEventIsDeliberate: event])
+    if ([self _activeProgramIsIgnoringJoystick] && [self.class HIDEventIsDeliberate: event])
     {
         [[BXBezelController controller] showJoystickIgnoredBezel];
     }
     
-	DDHidDevice *device = [event device];
-	NSNumber *locationID = [NSNumber numberWithLong: [device locationId]];
+	DDHidDevice *device = event.device;
+	NSNumber *locationID = [NSNumber numberWithLong: device.locationId];
 	
-	BXHIDControllerProfile *profile = [controllerProfiles objectForKey: locationID];
+	BXHIDControllerProfile *profile = [self.controllerProfiles objectForKey: locationID];
 	[profile dispatchHIDEvent: event];
 }
 

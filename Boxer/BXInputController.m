@@ -321,6 +321,13 @@
     if (![self.view mouse: locationInView inRect: self.view.bounds])
         return NO;
     
+    //Also check whether the mouse is over a hotzone that will trigger the menu
+    //bar or dock (mainly an issue in fullscreen mode.)
+    //FIXME: at least in 10.7 this doesn't seem to pick up on the dock hotzone
+    //at the bottom of the screen.
+    if (!NSPointInRect(locationOnScreen, window.screen.visibleFrame))
+        return NO;
+
     //If we got this far, then yippee! the mouse is over the view and has nothing in the way.
     return YES;
 }
@@ -873,12 +880,17 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 
 - (void) mouseExited: (NSEvent *)theEvent
 {
+    NSLog(@"MouseExited");
 	[self willChangeValueForKey: @"mouseInView"];
 	//Force a cursor update at this point: OS X 10.7 won't do so itself
     //if the mouse leaves the tracking area by moving into a floating panel.
 	[super mouseExited: theEvent];
     [self cursorUpdate: theEvent];
     [self didChangeValueForKey: @"mouseInView"];
+    
+    //If the mouse leaves the view while we're locked, unlock it immediately.
+    //This can happen if the user activates 
+    self.mouseLocked = NO;
 }
 
 - (void) mouseEntered: (NSEvent *)theEvent
@@ -1130,7 +1142,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	
 	CGPoint cgPointOnScreen = NSPointToCGPoint(pointOnScreen);
 	//Flip the coordinates to compensate for AppKit's bottom-left screen origin
-	NSRect screenFrame = [[[[self view] window] screen] frame];
+	NSRect screenFrame = self.view.window.screen.frame;
 	cgPointOnScreen.y = screenFrame.origin.y + screenFrame.size.height - cgPointOnScreen.y;
 	
 	//TODO: check that this behaves correctly across multiple displays.

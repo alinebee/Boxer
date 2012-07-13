@@ -57,28 +57,39 @@
 			animate:	performAnimation];
 }
 
-- (NSRect) fullyConstrainFrameRect: (NSRect)theRect
-                          toScreen: (NSScreen *)theScreen
+- (NSRect) fullyConstrainFrameRect: (NSRect)originalRect
+                          toScreen: (NSScreen *)screen
 {
-	NSRect screenRect = [theScreen visibleFrame];
+    NSRect constrainedRect = originalRect;
+	NSRect screenRect = screen.visibleFrame;
 	
 	//We're already constrained, don't bother with further checks
-	if (NSContainsRect(screenRect, theRect)) return theRect;
+	if (NSContainsRect(screenRect, originalRect)) return constrainedRect;
 	
 	//Try to keep the right edge from flowing off screen...
-	if (theRect.size.width < screenRect.size.width)
+	if (constrainedRect.size.width < screenRect.size.width)
 	{
-		CGFloat overflowRight = NSMaxX(theRect) - NSMaxX(screenRect);
-		if (overflowRight > 0)	theRect.origin.x -= overflowRight;
+		CGFloat overflowRight = NSMaxX(constrainedRect) - NSMaxX(screenRect);
+		if (overflowRight > 0)
+            constrainedRect.origin.x -= overflowRight;
 	}
-	//...but ensure left edge is always on screen
-	if (theRect.origin.x < screenRect.origin.x)	theRect.origin.x = screenRect.origin.x;
+	//...but ensure the left edge is always on screen.
+	if (constrainedRect.origin.x < screenRect.origin.x)
+        constrainedRect.origin.x = screenRect.origin.x;
 	
 	//Try to ensure bottom edge is above the Dock...
-	if (theRect.origin.y < screenRect.origin.y)	theRect.origin.y = screenRect.origin.y;
+	if (constrainedRect.origin.y < screenRect.origin.y)
+        constrainedRect.origin.y = screenRect.origin.y;
 	
-	//...but let NSWindow constrainRect make sure the titlebar is always visible for us
-	return [self constrainFrameRect: theRect toScreen: theScreen];
+	//...but let NSWindow constrainRect make sure the titlebar is always visible for us.
+    //IMPLEMENTATION NOTE: constrainFrameRect:toScreen: may try to resize the rect vertically
+    //if the screen is too small to accommodate the entire rect, and in doing so it may not
+    //respect our fixed aspect ratio, resulting in deformed/overlapping views.
+    //So, we only take the constrained origin from the method, and leave the size as it
+    //originally was.
+	constrainedRect.origin = [self constrainFrameRect: constrainedRect toScreen: screen].origin;
+    
+    return constrainedRect;
 }
 
 

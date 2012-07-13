@@ -296,19 +296,30 @@
 
 - (BOOL) mouseInView
 {
-	if ([self mouseLocked]) return YES;
+	if (self.mouseLocked) return YES;
 	
-    NSPoint mouseLocation = [NSEvent mouseLocation];
-    NSWindow *window = [[self view] window];
+    NSPoint locationOnScreen = [NSEvent mouseLocation];
+    BXDOSWindow *window = (BXDOSWindow *)self.view.window;
     
     //Check if that point is over our window to begin with
-    if ([NSWindow windowAtPoint: mouseLocation] != window) return NO;
+    if ([NSWindow windowAtPoint: locationOnScreen] != window) return NO;
     
     //If it is, check if the mouse is inside our view
-	NSPoint pointInWindow = [window convertScreenToBase: mouseLocation];
-	NSPoint pointInView = [[self view] convertPoint: pointInWindow fromView: nil];
+	NSPoint locationInWindow = [window convertScreenToBase: locationOnScreen];
+	NSPoint locationInView = [self.view convertPoint: locationInWindow fromView: nil];
     
-    return ([[self view] mouse: pointInView inRect: [[self view] bounds]]);
+    if (![self.view mouse: locationInView inRect: self.view.bounds])
+        return NO;
+    
+    //Also check whether the mouse is over a hotzone that will trigger the menu
+    //bar or dock (mainly an issue in fullscreen mode.)
+    //FIXME: at least in 10.7 this doesn't seem to pick up on the dock hotzone
+    //at the bottom of the screen.
+    if (!NSPointInRect(locationOnScreen, window.screen.visibleFrame))
+        return NO;
+    
+    //If we got this far, then yippee! the mouse is over the view and has nothing in the way.
+    return YES;
 }
 
 - (void) cursorUpdate: (NSEvent *)theEvent
@@ -860,6 +871,10 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	[super mouseExited: theEvent];
     [self cursorUpdate: theEvent];
     [self didChangeValueForKey: @"mouseInView"];
+    
+    //If the mouse leaves the view while we're locked, unlock it immediately.
+    //This can happen if the user activates Exposé or the Cmd-Tab bar.
+    self.mouseLocked = NO;
 }
 
 - (void) mouseEntered: (NSEvent *)theEvent

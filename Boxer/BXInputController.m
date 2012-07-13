@@ -880,7 +880,6 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 
 - (void) mouseExited: (NSEvent *)theEvent
 {
-    NSLog(@"MouseExited");
 	[self willChangeValueForKey: @"mouseInView"];
 	//Force a cursor update at this point: OS X 10.7 won't do so itself
     //if the mouse leaves the tracking area by moving into a floating panel.
@@ -889,7 +888,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
     [self didChangeValueForKey: @"mouseInView"];
     
     //If the mouse leaves the view while we're locked, unlock it immediately.
-    //This can happen if the user activates 
+    //This can happen if the user activates Exposé or the Cmd-Tab bar.
     self.mouseLocked = NO;
 }
 

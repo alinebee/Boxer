@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20120704.1</string>
+	<string>20120713.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
 		<dict>
@@ -965,14 +965,14 @@
 			<array>
 				<string>Ignition</string>
 				<string>The Pandora Directive</string>
-                <string>Alien Incident</string>
+				<string>Alien Incident</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>ign_dos.bat</string>
 				<string>ign_dos.btz</string>
 				<string>tex4.exe</string>
-                <string>aliphone.000</string>
+				<string>aliphone.000</string>
 			</array>
 			<key>BXRequiresCDROM</key>
 			<true/>

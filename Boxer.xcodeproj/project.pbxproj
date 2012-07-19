@@ -734,19 +734,19 @@
 		9FCA158B1597377B00C42D10 /* Keyboard@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA15891597377B00C42D10 /* Keyboard@2x.png */; };
 		9FCA158D15973A6D00C42D10 /* Display@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA158C15973A6D00C42D10 /* Display@2x.png */; };
 		9FCA702213DAE6F5006C5DF8 /* BXCoalfaceDrives.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */; };
-		9FCB7B0A15B8422000CC7CC7 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0915B8422000CC7CC7 /* DOS Toolkit */; };
 		9FCB7B0D15B842E000CC7CC7 /* BXStandaloneAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0C15B842E000CC7CC7 /* BXStandaloneAppController.m */; };
 		9FCB7B1015B844AB00CC7CC7 /* BXBaseAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0F15B844AA00CC7CC7 /* BXBaseAppController.m */; };
 		9FCB7B1115B844AB00CC7CC7 /* BXBaseAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0F15B844AA00CC7CC7 /* BXBaseAppController.m */; };
 		9FCB7B1215B856A300CC7CC7 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
-		9FCB7B1315B856DB00CC7CC7 /* BXInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F424206109D03F500111D28 /* BXInspectorController.m */; };
 		9FCB7B1415B856FC00CC7CC7 /* BXDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA6E0134A21A50092BF95 /* BXDriveImport.m */; };
 		9FCB7B1515B8570700CC7CC7 /* BXSimpleDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F44500112AEC0FC00A2D405 /* BXSimpleDriveImport.m */; };
 		9FCB7B1615B8570900CC7CC7 /* BXCDImageImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA6BC134A1A430092BF95 /* BXCDImageImport.m */; };
 		9FCB7B1715B8570C00CC7CC7 /* BXBinCueImageImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA877134A66C80092BF95 /* BXBinCueImageImport.m */; };
 		9FCB7B1815B8570E00CC7CC7 /* BXDriveBundleImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F444FFE12AEBE5200A2D405 /* BXDriveBundleImport.m */; };
 		9FCB7B1A15B8589B00CC7CC7 /* BXDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */; };
-		9FCB7B1B15B85B9500CC7CC7 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
+		9FCB7B2615B877A100CC7CC7 /* ProgramPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */; };
+		9FCB7B2715B877E500CC7CC7 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0915B8422000CC7CC7 /* DOS Toolkit */; };
+		9FCB7B2815B8782800CC7CC7 /* Bezel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F886FDD144CB6C30033CCD3 /* Bezel.xib */; };
 		9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
 		9FCBB2D110A61CA800C28B09 /* executable.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CE10A61CA800C28B09 /* executable.icns */; };
 		9FCBB2D210A61CA800C28B09 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
@@ -977,7 +977,7 @@
 		9F34BE5A142B76D800A69FAF /* MT32Emu.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MT32Emu.framework; sourceTree = "<group>"; };
 		9F34BE5D142B851700A69FAF /* BXEmulator+BXAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXAudio.h"; sourceTree = "<group>"; };
 		9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXAudio.mm"; sourceTree = "<group>"; };
-		9F34BE60142B917100A69FAF /* BXBaseAppController+BXSupportFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "BXBaseAppController+BXSupportFiles.h"; sourceTree = "<group>"; };
+		9F34BE60142B917100A69FAF /* BXBaseAppController+BXSupportFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXBaseAppController+BXSupportFiles.h"; sourceTree = "<group>"; };
 		9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXBaseAppController+BXSupportFiles.m"; sourceTree = "<group>"; };
 		9F39A4391452CE9100942D0F /* BXBezelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBezelView.h; sourceTree = "<group>"; };
 		9F39A43A1452CE9100942D0F /* BXBezelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBezelView.m; sourceTree = "<group>"; };
@@ -1374,7 +1374,7 @@
 		9F8F374714F91FEB00E482FB /* BXApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXApplication.h; sourceTree = "<group>"; };
 		9F8F374814F91FEB00E482FB /* BXApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXApplication.m; sourceTree = "<group>"; };
 		9F8F374B14F9366F00E482FB /* FastForwardTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = FastForwardTemplate.pdf; sourceTree = "<group>"; };
-		9F8F374D14F9442D00E482FB /* BXBaseAppController+BXHotKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "BXBaseAppController+BXHotKeys.h"; sourceTree = "<group>"; };
+		9F8F374D14F9442D00E482FB /* BXBaseAppController+BXHotKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXBaseAppController+BXHotKeys.h"; sourceTree = "<group>"; };
 		9F8F374E14F9442D00E482FB /* BXBaseAppController+BXHotKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXBaseAppController+BXHotKeys.m"; sourceTree = "<group>"; };
 		9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSShadow+BXShadowExtensions.h"; sourceTree = "<group>"; };
 		9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSShadow+BXShadowExtensions.m"; sourceTree = "<group>"; };
@@ -3407,7 +3407,6 @@
 				9FCA158A1597377B00C42D10 /* Audio@2x.png in Resources */,
 				9FCA158B1597377B00C42D10 /* Keyboard@2x.png in Resources */,
 				9FCA158D15973A6D00C42D10 /* Display@2x.png in Resources */,
-				9FCB7B0A15B8422000CC7CC7 /* DOS Toolkit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3464,7 +3463,9 @@
 				9F2D318815B826F300FAE848 /* About.xib in Resources */,
 				9F2D318915B826F600FAE848 /* DOSWindow.xib in Resources */,
 				9F2D318B15B826FE00FAE848 /* MainMenu.xib in Resources */,
-				9FCB7B1B15B85B9500CC7CC7 /* boxer.icns in Resources */,
+				9FCB7B2615B877A100CC7CC7 /* ProgramPanel.xib in Resources */,
+				9FCB7B2715B877E500CC7CC7 /* DOS Toolkit in Resources */,
+				9FCB7B2815B8782800CC7CC7 /* Bezel.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4100,7 +4101,6 @@
 				9FCB7B0D15B842E000CC7CC7 /* BXStandaloneAppController.m in Sources */,
 				9FCB7B1115B844AB00CC7CC7 /* BXBaseAppController.m in Sources */,
 				9FCB7B1215B856A300CC7CC7 /* BXBootlegCoverArt.m in Sources */,
-				9FCB7B1315B856DB00CC7CC7 /* BXInspectorController.m in Sources */,
 				9FCB7B1415B856FC00CC7CC7 /* BXDriveImport.m in Sources */,
 				9FCB7B1515B8570700CC7CC7 /* BXSimpleDriveImport.m in Sources */,
 				9FCB7B1615B8570900CC7CC7 /* BXCDImageImport.m in Sources */,

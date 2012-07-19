@@ -2,18 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>BugReportURL</key>
-	<string>http://boxerapp.com/report-an-issue</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleHelpBookFolder</key>
-	<string>BoxerHelp</string>
+	<string>Help</string>
 	<key>CFBundleHelpBookName</key>
-	<string>Boxer Help</string>
+	<string>${PRODUCT_NAME} Help</string>
 	<key>CFBundleIconFile</key>
-	<string>boxer.icns</string>
+	<string>app.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>net.washboardabs.boxer-standalone</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -40,6 +38,8 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>BXApplication</string>
+	<key>BXBundledGameboxName</key>
+	<string>Game</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
@@ -285,7 +285,5 @@
 			</dict>
 		</dict>
 	</array>
-	<key>WebsiteURL</key>
-	<string>http://boxerapp.com/</string>
 </dict>
 </plist>

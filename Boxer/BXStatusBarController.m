@@ -41,6 +41,11 @@
 	return (BXDOSWindowController *)self.view.window.windowController;
 }
 
+- (BXInspectorController *)inspector
+{
+    return [NSClassFromString(@"BXInspectorController") controller];
+}
+
 - (void) awakeFromNib
 {
 	//Give statusbar text an indented appearance
@@ -63,7 +68,7 @@
 {	
 	//Because we have no easy way of telling which segment was just toggled, just synchronise them all
 	
-	if ([sender isSelectedForSegment: BXStatusBarInspectorSegment] != [BXInspectorController controller].panelShown)
+	if ([sender isSelectedForSegment: BXStatusBarInspectorSegment] != self.inspector.panelShown)
 	{
 		[[NSApp delegate] toggleInspectorPanel: sender];
 	}
@@ -145,7 +150,7 @@
 
 - (void) _syncSegmentedButtonStates
 {	
-	[self.statusBarControls setSelected: [BXInspectorController controller].panelShown  forSegment: BXStatusBarInspectorSegment];
+	[self.statusBarControls setSelected: self.inspector.panelShown  forSegment: BXStatusBarInspectorSegment];
 	[self.statusBarControls setSelected: self.controller.programPanelShown              forSegment: BXStatusBarProgramPanelSegment];
 	[self.statusBarControls setSelected: self.controller.inputController.mouseLocked    forSegment: BXStatusBarMouseLockSegment];
 	
@@ -200,10 +205,10 @@
                          options: 0
                          context: nil];
 	
-	[[BXInspectorController controller] addObserver: self
-										 forKeyPath: @"panelShown"
-											options: 0
-											context: nil];
+	[self.inspector addObserver: self
+                     forKeyPath: @"panelShown"
+                        options: 0
+                        context: nil];
 	
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	
@@ -231,7 +236,7 @@
 	[self.controller removeObserver: self forKeyPath: @"document.isGamePackage"];
 	[self.controller removeObserver: self forKeyPath: @"programPanelShown"];
 	
-	[[BXInspectorController controller] removeObserver: self forKeyPath: @"panelShown"];
+	[self.inspector removeObserver: self forKeyPath: @"panelShown"];
 	
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 }

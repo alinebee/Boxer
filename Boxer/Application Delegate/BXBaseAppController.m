@@ -145,9 +145,9 @@
 	[super dealloc];
 }
 
+
 #pragma mark -
 #pragma mark Application lifecycle
-
 
 - (void) applicationWillFinishLaunching: (NSNotification *)notification
 {

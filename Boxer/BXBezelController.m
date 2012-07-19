@@ -265,7 +265,7 @@
 - (void) showCPUSpeedBezelForSpeed: (NSInteger)cpuSpeed
 {
     //Tweak: if the CPU inspector panel is visible, don’t bother showing the bezel.
-    BXInspectorController *inspector = [BXInspectorController controller];
+    BXInspectorController *inspector = [NSClassFromString(@"BXInspectorController") controller];
     if (inspector.panelShown && inspector.selectedTabViewItemIndex == BXCPUInspectorPanelTag)
         return;
     
@@ -370,7 +370,7 @@
 {
     //Suppress drive notifications while the Drive Inspector panel is open.
     
-    BXInspectorController *inspector = [BXInspectorController controller];
+    BXInspectorController *inspector = [NSClassFromString(@"BXInspectorController") controller];
     return !(inspector.panelShown && inspector.selectedTabViewItemIndex == BXDriveInspectorPanelTag);
 }
 

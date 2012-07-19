@@ -1,0 +1,983 @@
+
+
+                            þþþ  THE PROGRAM  þþþ
+
+This documentation file covers LOCATE.COM by Charles Dye, version v1.31,
+dated 2003-12-09.  At present, I can be reached as raster@highfiber.com.
+
+Locate is a freeware file finder for DOS.  It works similarly to the FL
+program included in the Norton Utilities, but may be freely distributed.
+Locate is copyright 1995-2003, Charles Dye.  (I include the copyright
+notice to protect my right to require free distribution.)
+
+
+                             þþþ  THE FILES  þþþ
+
+LOCATE.COM     The program file.  Put it somewhere in your search path.
+
+LOCATE.TXT     This documentation file.  Not required for program operation.
+
+LOCATE.S       Program source code.  If you're not planning to modify
+               Locate, you can delete it to save disk space.
+
+FILE_ID.DIZ    Descriptions of the archive's contents.  Not used by the
+LOCATE.LSM     program, and may be deleted.
+
+DESCRIPT.ION   4DOS file descriptions.  May be deleted.
+
+
+                           þþþ  THE BASIC IDEA  þþþ
+
+Type LOCATE followed by a filename, and Locate will search for the file:
+
+  c:\> locate attrib.exe
+
+  C:\DOS\
+     attrib.exe     Tue May 31 1994   6:22:00a  A....       11,208    10.95 K
+
+  1 item found:  1 file, 0 directories.
+     Total of file sizes:  11,208 bytes     10.95 K
+
+The file ATTRIB.EXE is in the C:\DOS directory.  As you can see, Locate
+provides a count of the number of items found.  It's also possible to search
+using wildcards:
+
+  c:\> locate disk*.com
+
+  C:\DOS\
+     diskcomp.com   Tue May 31 1994   6:22:00a  A....       10,748    10.50 K
+     diskcopy.com   Tue May 31 1994   6:22:00a  A....       13,335    13.02 K
+
+   2 items found:  2 files, 0 directories.
+      Total of file sizes:  24,083 bytes     23.52 K
+
+The column after the time stamps shows the files' attributes:  'A' indicates
+a file with the Archive attribute, 'S' marks a System file, 'H' a Hidden
+file, and 'R' a Read-only file.  A 'D' indicates that the item found is a
+subDirectory rather than a file:
+
+  c:\> locate windows
+
+  C:\
+     WINDOWS        Fri Nov 21 1997   6:52:04p  .D...       <Dir>
+
+  1 item found:  0 files, 1 directory.
+
+The word "item" refers to either a file or a subdirectory.  The summary line
+showing the file and directory counts may contain an extra notation to
+indicate the number of items with the Hidden or System attributes:
+
+  c:\> locate fonts
+
+  C:\WINDOWS\
+     FONTS          Sat Mar  8 2003   5:07:28p  .DS..       <Dir>
+
+  C:\WINDOWS\INF\
+     fonts.inf      Fri Apr 23 1999  10:22:00p  A....       54,859    53.57 K
+
+  C:\PROGRA~1\NETSCAPE\COMMUN~1\PROGRAM\DYNFONTS\
+     fonts.cat      Sun Dec  7 2003   9:25:22a  A....          898     0.88 K
+
+  3 items found:  2 files, 1 directory (1 H/S).
+     Total of file sizes:  55,757 bytes     54.45 K
+
+The (1 H/S) after the directories count means that one of the directories
+found has either the Hidden or the System attribute (or both.)  Looking at
+the attributes, you can see that the C:\WINDOWS\FONTS directory does have the
+System attribute.  This notation is actually more likely to appear in the
+files count, since files are hidden more often than directories.
+
+The sizes of large files are not only displayed in bytes, but in kilobytes or
+megabytes as well.  A kilobyte is 1,024 bytes; a megabyte is 1,048,576 bytes.
+The fractional part may be off by plus-or-minus one in the least significant
+digit.
+
+
+                           þþþ  PROGRAM SYNTAX  þþþ
+
+LOCATE [filespec] [options]
+
+Type LOCATE, followed by a filespec of the files to find, or options to
+modify the way Locate works, or both, or neither.  If you specify both a
+filespec and options, you must type a space between the filespec and the
+first option.  Some examples:
+
+    LOCATE                      find all files and directories ("items")
+    LOCATE *.SYS                find all items with a .SYS extension
+    LOCATE /H                   find all hidden or system items
+    LOCATE *.SYS /H             find hidden/system items with .SYS extension
+
+The /H option tells Locate to search for items with either the Hidden or the
+System attribute (or both.)  The default filespec is *.* , as the first and
+third examples demonstrate.  In the fourth example, notice the space between
+the *.SYS filespec and the first option, /H.
+
+
+                            þþþ  THE FILESPEC  þþþ
+
+If you do not specify an extension, Locate will automatically append .*
+(as DIR does.)  LOCATE T* is the same as LOCATE T*.*, only easier to type.
+If you want to find only files with no extension, end the filespec with a
+period:  LOCATE T*.
+
+A question mark will match any one character.  An asterisk will match any
+zero or more characters.  (The period separating the base filename from the
+extension is not a normal filename character; neither the asterisk nor the
+question mark will match it.)
+
+You can also use Unix-like character classes, enclosed in square brackets.
+Use [list] to match any character in list, or [^list] to match any that is
+not in the list.  You can specify ranges as well:  [a-z] would match any
+letter, and [^0-9a-z] would match any character which is not a letter or a
+digit.
+
+Some examples will make Locate's pattern matching clearer:
+
+This:       Would match these:                  But not these:
+
+FOO         FOO, FOO.COM, FOO.DAT, FOO.ZIP      FO, FOOBAR, FOONLY.EXE
+FOO.        FOO                                 FOO.COM, FOO.ZIP, FOONLY.EXE
+FOO*        FOO, FOO.COM, FOOBAR, FOONLY.EXE    FO, FO1, FOXPRO.EXE, F00
+FOO*.       FOO, FOOBAR, FOOTBALL               FOO.COM, FOONLY.EXE, FOOT.DAT
+FO?         FOO, FOX, FOO.COM                   FO, FOOT, FOONLY.EXE
+FOO.?*      FOO.COM, FOO.1, FOO.DB              FOO
+FOO.??      FOO.DB, FOO.EX                      FOO, FOO.COM, FOO.1
+*FOO        FOO.COM, SNAFOO.DOC                 FOOTBALL.DAT
+*FOO*       FOO.COM, SNAFOO.DOC, DAMNFOOL.BAT   FO.O
+*~*         PROGRA~1, STRAWM~1.BMP, ~FILE       FILENAME.~~~
+*1?8*       128, FILE168B.DOC                   1228, FILE18B.DOC
+S???COM     STARCOM, SPUDCOM                    SITCOM, SYS.COM
+F*O         FO, FOO, FIERO, FOXPRO.EXE          FOX.PRO, FOOBAR.BAZ
+*.*S*       CONFIG.SYS, LOCATE.S, FOO.RST       S, SYSTEM.CFG, STARCOM.DAT
+SP[AI]CE    SPACE.DOC, SPICE.EXE                SPOCE.DOC, SP1CE.EXE
+SP[^AI]CE   SPOCE.DOC, SP1CE.EXE                SPACE.DOC, SPICE.EXE
+*[0-9]*     11TEST, FILE4YOU, FINAL8.SCR        FILEFOR.YOU, FILEFORU.222
+*[^0-9]*    FILEFOR.YOU, FILE4YOU               12345.TXT, 6, 007.DOC
+
+The filespec may also contain a drive letter, directory name, or both.
+If a drive letter is specified, only that drive will be searched.  If no
+drive is specified, Locate will decide for itself which drives to search.
+
+Everything before the last backslash in the filespec is assumed to be the
+name of a directory to search; Locate will search that directory and any
+subdirectories it contains.  If a directory name is specified, but no drive
+letter, the directory is assumed to be on the current drive; only the current
+drive will be searched.  Wildcards are not permitted in the directory name.
+
+Some more examples:
+
+    LOCATE C:S*
+        looks for files beginning with 'S' on drive C: only
+
+    LOCATE C:\DOS\*.COM
+        looks for .COM files in C:\DOS, C:\DOS\DATA, C:\DOS\TOOLS, etc.
+        does not search other drives, or C:\DOS622, C:\BIN\DOS, etc.
+
+    LOCATE \DOS\
+        lists everything in the \DOS directory or below, on the current drive
+
+    LOCATE \DOS
+        looks for items named DOS on the current drive
+        (only the part before the \ is assumed to be a directory name!)
+
+    LOCATE DOS\
+        lists everything in the DOS directory within the current directory
+        does NOT look in \DOS directory, unless the current directory is root
+
+    LOCATE .
+        lists everything within the current directory or below
+
+    LOCATE ..
+        lists everything within the parent of the current directory, or below
+        (. and .. are DOS shorthand for 'current' and 'parent directory')
+
+    LOCATE C:\W*\*.EXE
+    LOCATE D?\LOCATE.COM
+        both illegal!  Wildcards are not permitted in directory names.
+
+Slashes within a filespec will automatically be converted to backslashes for
+the convenience of Unix thinkers.  So, C:/DOS/TOOLS/ means the same thing as
+C:\DOS\TOOLS\.  This is the reason that you must have a space between the
+filespec and the first option:  both option characters (minus and slash) are
+also legal within the filespec.  The first character of a filespec may not be
+a slash:  LOCATE /WINDOWS/ would be interpreted as LOCATE *.* /W.  Use either
+LOCATE \WINDOWS\ or LOCATE "/WINDOWS/" instead.
+
+You may specify more than one drive letter.  You may separate the drive
+letter(s) from the filespec with spaces, if you like.
+   
+    LOCATE C: *.FOO           (may separate drive from filespec with a space)
+    LOCATE C: D: E: FILE.TXT  (may specify more than one drive)
+    LOCATE C:D:E:*FOO*        (multiple drives; looks weird, but it works)
+    LOCATE CDE:TESTY.POO      (more than one drive, TARGET-style)
+    LOCATE :README            (search only the current drive)
+
+If you don't specify a drive letter, Locate will decide for itself which
+drives to search.  The rules are:  (1) if more than one drive letter refers
+to the same network drive, only the first will be searched.  (2) If drive
+letters A: and B: both refer to the same floppy drive, Locate will only
+search it once, and will call it A:.  (3) The search will start at drive C:
+and proceed to drive Z:, unless the current DOS default drive is either A: or
+B:, in which case the search will run from A: to Z:.
+
+
+                    þþþ  OPTIONS (BRIEF DESCRIPTION)  þþþ
+
+What to search for:
+/D              both files and subdirectories (the normal default)
+/D-             files only, no subdirectories (default with /B /K /X /S: /0)
+/D+             subdirectories only, no files
+/H              Hidden or system items only
+/X              executable files only (.COM .EXE .BAT)
+/0              empty (0-byte) files only
+/S:[min][,max]  files within a Size range
+/D:[min][,max]  items within a range of Dates
+/D:dowlist      items from specific Days of the week
+/T:[min][,max]  items within a range of Times
+/A:[a+][a-]     mask by Attributes
+
+Where to search:
+/T       current directory and search path only
+/NR      do Not Recurse into subdirectories
+/R       local fixed disks only
+/M       include duplicate network drive Mappings
+/E:var   directories listed in an Environment variable
+
+How to display found items:
+/P            Peter-style display, with dates, times, attributes, and sizes
+/I            with Index numbers, dates, times, attributes, sizes
+/W            Wide display
+/N            bare Naked display (file list)
+/B:"command"  as a Batch file
+/L            using Windows 95 Long filenames
+/O:"string"   formatted Output using macros
+/S            Summary info only
+/US           use United States  date and time format (Tue May 31 1994)
+/UK           use United Kingdom date and time format (Tue 31 May 1994)
+/UJ           use Japanese (ISO) date and time format (Tue  1994-05-31)
+/12           12-hour time format
+/24           24-hour time format
+/NP           No Paging
+
+What to do with found items:
+/G            Go to directory
+/K            Kill (delete) found items
+/C:"string"   execute Commands, using the same macros as /O
+/F:n          stop after First n items
+
+Other options:
+/Y    Yes -- don't prompt for /K or /C
+/NV   No Video BIOS calls
+/V    swap spacebar and Enter key when paging
+/NA   no not romanize letters for comparison
+
+
+                         þþþ  OPTIONS (IN DEPTH)  þþþ
+
+/D      Finds both files and subdirectories (the normal default behavior)
+/D-     Files only, not subdirectories (default with /B /K /X /S:range /0)
+/D+     Finds subdirectories only, not files
+
+   Locate, by default, finds both files and directories.  A few of the
+   options change the default behavior to finding files only.  See /B, /K,
+   /X, /S:range, and /0 for details.
+
+
+/H      Finds only items which have either the Hidden or System attribute
+        (or both.)  If you use /H, the (n H/S) notation will be suppressed
+   in the final summary as it would be redundant.
+
+
+/X      Finds only files with extensions of .COM, .EXE, or .BAT.  May be
+        used together with /T to find out what external commands are
+   available at the moment.  /X will only find files, not directories.
+   If Locate is run under 4DOS, .BTM is also considered an executable
+   extension.
+
+   Note that /X does NOT mimic COMMAND.COM's extension search order of .COM
+   first, then .EXE, and finally .BAT.  Locate always reports files in the
+   order in which it discovers them.
+
+
+/X:list    Finds only files with the specified extensions (separate them
+           with commas.)  LOCATE /X:TXT,DOC,ME will find all files ending
+   in .TXT, .DOC, or .ME.  Up to ten extensions may be specified.
+
+
+/0      Finds only empty (0-byte) files.  Useful for cleanup purposes -- see
+        /K, below.  Also note that COMMAND.COM's internal COPY command won't
+   copy empty files.  This option implies an automatic /D-.  It only finds
+   empty files, not subdirectories.  Actually, /0 is just syntactic sugar for
+   /S:0! or /S:,0
+
+
+/S:range    Size range.  The range may contain an optional minimum size,
+            optionally followed by a comma and a maximum size.  Or, the range
+   may be a single size followed by an exclamation point, to find only one
+   specific size -- that is, the minimum and maximum sizes are equal.
+
+      LOCATE /S:500            Find only files of 500 bytes or more.
+      LOCATE /S:5K             Only files of 5 kilobytes or more.
+      LOCATE /S:,1M            Only files of one megabyte or less
+      LOCATE /S:256K,1M        Only files of 256 kilobytes to one meg
+      LOCATE /S:4096!          Only files of 4096 bytes exactly
+
+   Note that /S: specifies a Size range, but /S displays only Summary info.
+   Use the colon to ensure that the progam does what you expect.  Also note
+   that /S: will only find files, not subdirectories.  Subdirectories do not
+   have a size per se.
+
+
+/D:range    Date range.  The range may contain an optional starting date,
+            optionally followed by a comma and an ending date.  Or, the
+   range may be a single date followed by an exclamation point, to match only
+   one specific date -- that is, the starting and ending dates are equal.
+
+      LOCATE /D:5-23-1995          Finds only items dated May 23, 1995, or
+                                   later.
+      LOCATE /D:5-23-1995,7-4-96   Finds only items dated from May 23, 1995
+                                   through July 4, 1996.
+      LOCATE /D:,7-4               Finds only items dated July 4 of this year
+                                   or earlier.
+      LOCATE /D:5-31-94,5-31-94    Finds only items dated May 31, 1994.
+      LOCATE /D:5-31-94!           Same as above, but easier to type.
+      LOCATE /D:T                  Finds only items dated Today (or later!)
+      LOCATE /D:T,T                Finds only items dated Today exactly
+      LOCATE /D:T!                 Finds only items dated Today exactly
+      LOCATE /D:T-10               Items dated ten days ago, or later
+      LOCATE /D:T-10D              Ten days old, or later; same as above
+      LOCATE /D:,T-10              Items dated ten days ago, or earlier
+      LOCATE /D:T-3W,T-1W          Items between one week and three weeks old
+      LOCATE /D:T-2Y,T-18M         Items from 18 months to two years old
+
+   Note that /D masks off files or Directories, but /D: checks Dates.  If you
+   want to check dates but omit the colon, the parser *might* figure out what
+   you mean and handle it correctly.  To be safe, always type the colon if
+   you want a date range.
+
+   The date should be entered either in the default local format set by the
+   COUNTRY= directive in your CONFIG.SYS file, or else using the ISO standard
+   date format YYYY-MM-DD.  If you elect to use the ISO format, you must use
+   a four-digit year.  If instead you use the local date format, the year may
+   be specified with either two or four digits; 00 through 79 are assumed to
+   mean 2000 through 2079, and 80 through 99 are treated as 1980 through
+   1999.  Date elements may be separated using hyphens, slashes or periods.
+   Only minimal validity checking is done on the date:  February 32 will be
+   rejected, but February 31 is accepted as legal.
+
+   It is possible to specify a time for either the starting or ending date.
+   Use an @ sign to separate the date and time.  For example, to list only
+   files modified between 8:00 AM on December 8, 2003, and 5:00 PM on
+   December 12, use:
+
+      LOCATE /D:2003-12-08@8:00,2003-12-12@17:00
+   
+
+/D:dowlist    Mask by day-of-the-week.
+
+      LOCATE /D:THURSDAY       Only find items dated from Thursdays
+      LOCATE /D:MON,WED,FRI    Only find items dated Monday, Wednesday, or
+                               Friday
+      LOCATE /D:SUN-TUE        Only find items dated Sunday, Monday, or
+                               Tuesday
+
+   This mask is separate from the normal Date range.  You can combine them:
+
+      LOCATE  /D:1-1-91,12-31-91  /D:SAT,SUN
+
+   will only find items dated from weekends in 1991.  Sunday and Saturday are
+   assumed to be the first and last days of the week, so SAT-SUN is not a
+   very useful range.  Only the first two letters are required.  Legal day
+   names are SUnday, MOnday, TUesday, WEdnesday, THursday, FRiday, SAturday,
+   and XX (which matches illegal dates like February 31.)
+
+
+/T:range    Time range.  The range may contain an optional earliest time,
+            optionally followed by a comma and a latest time.  Or, the range
+   may be a single time followed by an exclamation point, to find only a
+   specific time -- that is, the earliest and latest times are equal.
+
+      LOCATE /T:5:00,10:00     Finds only items marked 5 AM to 10 AM
+      LOCATE /T:9:00P          Items marked 9 PM or later
+      LOCATE /T:21.00          Items marked 9 PM or later, same as above
+      LOCATE /T:,8:27:36       Items marked 8:27:36 AM or earlier
+      LOCATE /T:6:22!          Items marked 6:22 AM exactly
+
+   The seconds value is optional; if not specified, seconds will default to
+   00 for the earliest time, 58 for the latest time.
+
+   Again, note that /T: checks Times, but /T searches the currect directory
+   and the path.  Use the colon to make certain you're checking Times.
+
+   The /T: time check is independent of the /D: date check.  If you combine
+   /D: and /T:, only items matching both criteria will be listed.  For
+   example, the command:
+
+      LOCATE  *.DOC  /D:2003-12-08,2003-12-12  /T:8:00,17:00
+
+   would not list a .DOC file modified at 6:32 PM on the 10th because 6:32 PM
+   does not fall between 8:00 AM and 5:00 PM.  To list all .DOC files which
+   were modified between 8:00 AM on December 8th and 5:00 PM on the 12th,
+   specify the times in the /D: date range:
+
+      LOCATE  *.DOC  /D:2003-12-08@8:00,2003-12-12@17:00
+
+
+/A:mask    Attributes mask.  Useful if you want to find only items with
+           certain attributes set or cleared.  Here are some examples:
+
+      LOCATE C: /A:R+     find only Read-only items on drive C:
+      LOCATE /A:DS+       find only Directories with the System attribute
+      LOCATE CD: /A:A+    find items with the Archive attribute on C: and D:
+      LOCATE /A:D-H+      find Hidden files (but not Directories)
+      LOCATE /A:S+H-      find only items which are System but not Hidden
+
+   /A:D+ and /A:D- function the same as /D+ and /D-.  However, /A:H+ is not
+   the same as /H.  /A:H+ will find only items with the Hidden attribute.  /H
+   will find items with either the System or the Hidden attribute, or both.
+   /A:SH+ will find only items with both the System and Hidden attributes.
+
+
+/T      Search only current directory and search path.  I provide this option
+        to be somewhat compatible with Norton FL.  Locate looks in the
+   current directory first, then searches each directory in the search path.
+   If the current directory is listed in the search path, it will be searched
+   before the rest of the path, but will not be searched twice.  This is
+   different from FL's behavior, but similar to the way COMMAND.COM works.
+   /T goes nicely with /X.
+
+
+/NR     No recursion.  Searches only the specified directory (or the current
+        directory) and not any child subdirectories.
+
+
+/R      Prevents Locate from searching Removable disks (floppy, CD-ROM, Zip)
+        or Remote drives (network or IFS drives.)  Useful if you want to
+   search only local hard drives.
+
+
+/M      Disable test for duplicate network drive Mappings.  Useless.
+
+   Unless /M is specified, Locate will eliminate duplicate drive mappings.
+   For example, on a Novell Netware network, drives F:, V:, W:, X:, Y:, and
+   Z: might all refer to the same share on the file server.  (V: through Z:
+   are 'search drives', used to keep the search path short.)  Normally,
+   Locate would search only drive F:.  LOCATE /M would search the shared
+   drive six times, reporting each found item six times, and taking
+   significantly longer to finish.
+
+
+/E:var    Search subdirectories listed in an environment variable.  Separate
+          multiple directories with semicolons, as in PATH.
+
+
+/P      Peter-style display, with file dates, times, attributes, and sizes.
+
+   Peter-style output is the default for Locate.  You can use /P to override
+   other options which alter the display.  For instance, if you have
+   SET LOCATE=W in your AUTOEXEC.BAT file, you could type LOCATE C:*.VXD /P
+   to see the files displayed with their dates, times and sizes.
+
+
+/I      Index.  This is a minor variation on the Peter-style display.  It
+        shows the index number of each found item, and omits the kilobyte or
+   megabyte display of file sizes.
+
+   If you want to use LOCATE /G:n to go the the nth found item, it's useful
+   to know in advance what n should be.  Use /I first to browse through a
+   large number of possible matches; when you spot the correct item, hit
+   ESC to exit, then LOCATE /G:n to go there.  Of course, either or both
+   steps could be simplified with a short batch file.  You could also do a
+   SET LOCATE=I to make this setting the default.
+
+
+/W      Wide display.  Displays filenames five to a line.  This option is
+        provided for compatibility with Norton FL and the DIR command.
+
+
+/N      Bare Naked listing.  Prints only fully justified filenames, not file
+        info or the final summary.  The output from LOCATE /N may be
+   redirected to a file, which will then contain a file list suitable for
+   manipulation or use by other programs.  Many of the DR/Novell/Caldera DOS
+   utilities can use file lists; so can recent versions of 4DOS.
+
+      LOCATE *.TMP /D- /R /N > TMPFILES.LST      create list of .TMP files
+      XDEL @TMPFILES.LST /P                      delete them, with prompt
+      DEL TMPFILES.LST                           clean up
+
+
+/B:"command"    Automatic Batch file creator.  Lists all files prefixed by
+                a command.  Redirect the output from Locate into a batch
+   file.  Here's an example:
+
+      LOCATE CD:CHKLIST /B:"Del" > C:\KILLSUMS.BAT
+
+   would result in a file C:\KILLSUMS.BAT, which might contain:
+
+      @echo off
+      Del C:\CHKLIST.MS
+      Del C:\CHKLIST.CPS
+      Del C:\DOS\CHKLIST.MS
+      Del C:\DOS\CHKLIST.CPS
+      Del C:\WINDOWS\CHKLIST.MS
+
+   and so forth.  Running this batch file would then delete all MSAV and CPAV
+   checksum files from drives C: and D:.  You may also specify a number of
+   replaceable arguments for the batch file.  Use LOCATE /Bn:"command", where
+   n is 1 to 9.  For instance,
+        
+      LOCATE C:*.TMP /B3:"ATTRIB" > CHANGEA.BAT
+
+   would produce a file CHANGEA.BAT, with lines like this:
+
+      @echo off
+      ATTRIB C:\TEMP\02134.TMP %1 %2 %3
+      ATTRIB C:\TEMP\87A540E2.TMP %1 %2 %3
+      ATTRIB C:\DOS\TMP\PIPEDATA.TMP %1 %2 %3
+
+   and so on.  /B implies an automatic /D-, so if you happen to have a
+   directory named D:\SHOPPING\CHKLIST and type LOCATE CD:CHKLIST /B:"DEL",
+   the resulting output will not contain a line DEL D:\SHOPPING\CHKLIST.  If
+   you want LOCATE /B to list directories as well as files, or instead of
+   files, you must specify /D or /D+ on the command line.
+
+
+/L      Display Windows 95 Long filenames.  This option will only work under
+        an operating system which provides the long-name API.  It will work
+   in a DOS box under Windows 95, but not in Win95 DOS mode (MS-DOS 7.x.)
+   It will work with DR-DOS only if you have Caldera's long-filename TSR
+   installed.
+
+   This option only affects the display!  Locate still searches for files
+   using the 8.3 DOS filenames.  If you want to search for a specific long
+   filename, I recommend that you type only the first five letters, followed
+   by an asterisk:  LOCATE BLUER* /L to find a file named "Blue Rivets.bmp".
+   (This file probably has a short filename of BLUERI~1.BMP, so BLUER* will
+   match it.)  To find all the short "aliases" which refer to non-8.3
+   filenames, try LOCATE *~*
+
+
+/O:"format"    Macro Output.  For each item found, Locate will print out the
+               string between quotes exactly as typed, except that certain
+   macros beginning with an ampersand (&) will be replaced.
+
+   macro  what it displays           width  example
+
+   &F     fully qualified filename      -   C:\DOS\DISKCOPY.COM
+   &D     directory name, canonical     -   C:\DOS
+   &P     directory name with \         -   C:\DOS\
+   &N     filename                      -   DISKCOPY.COM
+   &R     filename without extension    -   DISKCOPY
+   &X     extension only                -   COM
+   &S     filespec without drive        -   \DOS\DISKCOPY.COM
+   &L     drive letter                  -   C:
+   &G     copy target, no drive         -   \DOS
+   &J     right-padded with spaces     13   win.com      
+   &A     attributes, as for ATTRIB    11   +A -S -H -R
+   &B     attribute bits                5   A....
+   &W     Windows 95 long filename      -   "C:\Directory\Long Filename.html"
+   &Z     long filename only, no path   -   "Long Filename.html"
+   &Y     long directory name with \    -   "C:\Directory\"
+   &V     long filename base            -   Long Filename
+   &K     long filename extension       -   html
+   &1     date stamp, local format     11   May 31 1994
+   &2     time stamp, local format      9    6:22:00a
+   &3     file size                    10   13335
+   &4     day of the week               3   Tue
+   &5     pretty file size             13   13,335
+   &6     file size in KB or MB         9   13.02 K
+   &7     date stamp, ISO format       10   1994-05-31
+   &8     time stamp, 24-hour format    8   06:22:00
+   &U     show summary info at end      -
+
+   &T  terminate line    &&  ampersand     &E  escape    &Q  quote mark
+   &I  five-space tab    &C  conditional   &H  header    &# or &@  index
+
+   The directory name displayed by &D will not end in a backslash unless it
+   is the root directory.  The directory name displayed by &P will always end
+   with a backslash.  In either case, the name displayed will be the name of
+   the parent directory (containing the file or directory which was found.)
+
+   &W provides the long filename for &F.  &Z corresponds to &N, &Y to &P,
+   &V to &R, and &K to &X.  If these macros are used when Windows 95 is not
+   running, any of the long-filename macros will behave identically to the
+   corresponding short-name macro.  Since &V and &K display only part of the
+   filename, quotes will not be output; use &Q to show quotes where you wish.
+
+   &J displays the filename petercased (lowercase for filenames, uppercase
+   for subdirectories) and right-padded with spaces.  Unlike all the other
+   macros, &J will be colorized to indicate subdirectories, hidden items,
+   and so on.
+
+   The date and time produced by &1 and &2 will vary according to the country
+   code specified in CONFIG.SYS; you can use /US to force United States
+   format if required.  They may contain leading or trailing spaces to make
+   them line up neatly.  &7 and &8, on the other hand, are not affected by
+   the local country settings and never display leading or trailing spaces.
+
+   The index macros &# and &@ display the number of each found item:  1 for
+   the first, 2 for the second, etc.  You may follow the macro with a single
+   digit 0-9 to pad the number to at least n characters:  &# will left-pad
+   with spaces, and &@ will left-pad with zeros.  So &#4 might display
+   "  12" (without the quotes) while &@4 would show 0012 instead.
+
+   The 'header' macro, &H, allows you to print a header once per directory,
+   similar to the Peter-style display.  Anything preceding the &H will be
+   printed only once per directory.  This header string may contain other
+   macros -- &D, &P and &L are most likely to be useful in a header.  Two
+   examples using the header macro; try these to see what they do:
+
+      LOCATE C:*.TXT /O:"&P&H  &J&U"
+      LOCATE *.TXT /O:"&L&Tcd &D&Htype &N&Tpause"
+   
+   The 'conditional' macro, &C, allows you to print one of two different
+   strings depending on the value on an attribute bit.  It looks like this:
+   &Ca'true-string'false-string'   Both the true-string and the false-string
+   must be present, though they may be empty.  You can use most other macros
+   inside the true- and false-strings, but &C, &H and &U are not permitted
+   (you can't nest &Cs.)  The attribute letter may be any one of A, D, S, H,
+   or R.  Try this to see how the conditional macro works:
+
+      LOCATE /O:"&D&H   &J  &CD'--SUBDIR--'&3'"
+
+
+/S      Summary info only; don't list the actual names.  Use this option when
+        you're only interested in the final counts (not displaying the file-
+   names speeds the program up considerably.)
+        
+      LOCATE C: /H /S        How many Hidden or System items on drive C: ?
+      LOCATE C:\DOS\ /S      How many items in C:\DOS or below?
+      LOCATE C: /A:A+ /S     How many files on C: need to be backed up?
+      LOCATE D: /S           Count the files on my CD-ROM drive.
+      LOCATE F: /S           Count the files on a server share.
+
+   In short, LOCATE /S gives you the same kind of information that CHKDSK
+   does, but can be used in places where CHKDSK can't.  For the file server
+   example, remember to log in as supervisor first; otherwise, you may not be
+   permitted to 'see' all the files.
+
+
+/US     Use United States date and time format :  Jul 25 1999   9:32:00p
+/UK     Use United Kingdom date and time format:  25 Jul 1999  21:32:00
+/UJ     Use Japanese (ISO) date and time format:   1999-07-25  21:32:00
+
+   The /US and /UK formats spell out the month.  This is done to make it easy
+   to tell the month from the date.  The /UJ format uses numbers only, which
+   is convenient for sorting purposes.
+
+   These options also affect the parsing of dates which follow them on the
+   command line.  If /US appears before /D: on the command line, the date(s)
+   for /D: must be entered in United States format (or else YYYY-MM-DD.)  If
+   /D: comes before /US on the command line, the date(s) for the /D: must be
+   entered in the local date format (or YYYY-MM-DD.)  Likewise /UK and /UJ.
+
+   This is as good a place as any to mention a forgotten oddity of DOS:  the
+   null date stamp.  It's possible to mark files as having no date.  In the
+   /US and /UK formats, this strange stamp will be displayed as a blank,
+   which is how the DIR command shows it.  In /UJ mode, however, the null
+   stamp will be shown as 1980-00-00.
+
+
+/12     Display times in 12-hour format.
+/24     Display times in 24-hour format.
+
+
+/NP     No paging.  Default is to pause every 24 lines if output is to the
+        screen.  Not a terribly useful option.
+
+
+/G      Go there!  Change to drive and directory.
+
+   LOCATE ATTRIB /G will present all files and directories named ATTRIB, one
+   at a time, and ask if you want to go there.  Type 'Y' to change to the
+   drive and directory containing the file and exit from Locate.  Type 'N' to
+   continue the search.  (You may also press 'Q' to Quit the search, or 'C'
+   to Cease the /G prompt and just display items normally.)
+
+   LOCATE DOOM2 /D+ /F:1 /G (or just LOCATE DOOM2 /D+ /G:1) will go to the
+   first directory named DOOM2 which it finds.  LOCATE DOOM2 /D+ /G:3 will go
+   to the third DOOM2 directory found, assuming there are at least three;
+   otherwise, the drive and directory will not be changed.  Here is a short
+   batch file to find and change to a specified directory on your hard drive:
+
+      @echo off
+      rem  G.BAT   -- Go to specified directory
+      cd .
+      locate %1 /d+ /g:1 /r >nul
+
+   Incidentally, "go there" means something slightly different for files
+   versus directories.  If a file was found, Locate will go to the directory
+   containing the file.  However, if the item found was a directory, Locate
+   will go to the directory that was found, not to its parent.  This is
+   inconsistent, but seems intuitive to me.
+
+
+/K      Kill (delete) items.
+
+   LOCATE C:*.TMP /K will find all files with an extension of .TMP on your
+   C: drive and give you the option to delete each one.  Press 'Y' to delete
+   the file displayed.  Press 'N' to let it live.  (You may also press 'Q'
+   to Quit the search and exit the program, or 'C' to Cease the /K prompt and
+   just display items normally.)  You can use /K together with /Y to delete
+   files without a prompt.
+
+   /K implies an automatic /D-, to delete files only.  You can combine /K
+   with /D+ to find and remove empty subdirectories, or with /D to delete
+   both files and subdirectories.
+
+   /K deletes files regardless of attributes.  However, if the target file
+   is in use by another program then Locate may not be able to delete it.
+
+   /K cannot remove non-empty subdirectories.  If for some strange reason
+   you need to locate and remove non-empty subdirectories, you could use
+   /C:"DELTREE &F"  However, this is an Extremely Dangerous Idea and probably
+   a Very Bad Plan; avoid it if at all possible.
+
+   I do not allow the /K option in the LOCATE variable.  You may only use /K
+   on the command line.
+
+
+/C:"format"    Execute Commands.  This option supports all the same macros as
+               /O.  However, instead of simply displaying the output, Locate
+   passes each line to the command shell to be executed.  You will be
+   prompted first; use /Y to suppress the prompt.
+
+   You can put multiple commands in the string by separating them with the &T
+   end-of-line macro.  (You will be prompted for each command.)
+
+   Locate executes each command by starting a copy of the command shell.  It
+   uses the environment variable COMSPEC to find the shell.  If COMSPEC is
+   not defined, you'll get an error message.  Note that Locate launches a new
+   transient *copy* of the shell, which will exit after the command is
+   executed.  This fact has subtle implications which you might need to bear
+   in mind:  if a batch file is run, any changes it makes to the environment
+   will be lost when the child shell exits; a transient copy of 4DOS will
+   process any 4START and 4EXIT scripts....
+
+   Locate contains internal code to handle the SET command.  SET is not done
+   through the command shell.  It is possible to set environment variables
+   this way:  LOCATE C:VBRUN300.DLL /C:"SET VBRUN=&F" /Y /F
+
+
+/F:n    List only the First n items found.  Again, a Norton FL-like option.
+        LOCATE S* /F:12 will display the first twelve items it finds which
+   begin with S.  If twelve are found, a warning message is displayed (there
+   may be more than twelve files; only the first twelve were listed.)  If
+   fewer than twelve are found, the warning message is not displayed (you've
+   found all there are.)  The maximum value for n is 65,535, which should be
+   enough for anybody.
+
+   /F:n may appear in the LOCATE variable to provide a default 'finds' limit.
+   If so, you may override it by specifying a different /F:n on the command
+   line.  Or you can use /F- to disable the limit.
+
+
+/Y      Combine with /K or /C to disable prompting -- files will be deleted,
+        or commands will be executed, without any warning or chance to
+   intervene.  Useful, but dangerous!  Like /K, /Y is not permitted in the
+   environment variable.
+
+
+/NV     Do Not use the Video BIOS.  Display using DOS only.  This option is
+        mainly for debugging purposes, but it's also possible that Locate's
+   video calls might be incompatible with some strange system somewhere.
+   Redirecting Locate's output automatically disables the video-BIOS use, by
+   the way.  You don't need to use /NV for redirection.
+
+
+/V      Swaps the effects of the Enter key and the space bar when output is
+        paused.  Use according to taste.
+
+
+/NA     Normally, Locate strips off any accent mark from letters before
+        comparing them.  The letter E, E-acute, E-circumflex, E-umlaut, and
+   so forth are all considered to be the same letter for purposes of filename
+   matching.  Use /NA to defeat this behavior.
+
+
+With the options, as with the filespec, I permit the Unix way of life.
+LOCATE -T -X works just as well as LOCATE /T /X.  Only the first option after
+the filespec must be preceded by a space:  LOCATE S* /T/X is okay.  If you
+don't specify a filespec, the first option must be preceded by either a slash
+or a minus.
+
+A few options (/D, /F, /G, /L) may use the minus character as a modifier.
+A minus immediately following any of these options will be treated as a
+modifier, not an option character.  So,
+
+    LOCATE -D-W   will display files, but not directories, in wide format.
+    LOCATE -D -W  will display both files and directories, in wide format.
+
+Some of the options use a colon followed by parameters:  /S: /D: /T: /A: /B:
+/O: /C: /F:  You may use an equals sign instead of the colon (/S=10K!)
+
+Some of the options use a comma as a range separator:  /S:10,20  You may
+instead use a semicolon (/S:10;20) or a tilde (/S:10~20)  It can be difficult
+to pass commas and semicolons in arguments to a batch file; if you want to
+pass Locate's options via batch arguments, the tilde is a workaround.
+
+
+                            þþþ  OTHER NOTES  þþþ
+
+Locate is a DOS program.  It was written to work in MS-DOS, in compatible
+versions of DOS such as PC DOS and DR DOS, and in DOS-based Windows including
+Windows 95 and Windows 98.  In environments which emulate the DOS API, for
+instance Windows 2000 and XP, most of Locate's functions should work as
+expected, but a few will probably fail.  /G will not be able to change the
+current drive and directory; the internal SET handler in /C will not be able
+to alter CMD's environment.  There may be other issues of this type.  If you
+wish to use Locate in a non-DOS environment, you can probably work around
+these problems by using /B or /O to create a subsidiary batch file and
+calling it; such an approach will also be compatible with DOS.
+
+If a file or directory does not have any associated DOS-compatible filename,
+the traditional DOS FindFirst and FindNext API calls will not report it, and
+therefore Locate cannot list it.  Such files might be created, for example,
+by a Macintosh user saving files to a Windows NT file server.  Use programs
+created for your operating system to find and manipulate such files.
+JP Software's shareware command shell 4NT is an excellent Win32 tool and
+highly recommended.  Info and download links are at  http://jpsoft.com
+
+
+                        þþþ  ENVIRONMENT VARIABLE  þþþ
+
+It's possible to set up default options for Locate, using an environment
+variable named LOCATE.  For example, if you prefer the wide display format,
+just type SET LOCATE=W (or add it to your AUTOEXEC.BAT file.)
+
+Most of Locate's options are legal in the LOCATE variable; only /K and /Y
+are not permitted.  The rules are a little different, however.  You don't
+have to separate the options with slashes, minuses, spaces, or anything else,
+although you can if you really want to.
+
+
+                 þþþ  REDIRECTION, PAGING, AND SCROLLING  þþþ
+
+Locate is intended both for interactive use at the command line, and as a
+batch tool.  Locate's output can usually be redirected or piped.  The program
+checks its own output stream and deals appropriately with redirection.
+Locate does not read from the standard input channel:  the keyboard BIOS is
+used to fetch keystrokes, so you cannot pipe into Locate.  Error messages are
+sent to stderr, and /G /K and /C may force stdout to the screen.
+
+If Locate's output is not redirected, the program will pause every 24 lines
+or so (depending on the screen height.)  When output is paused, you can press
+the spacebar to scroll another screen's worth, Enter to scroll a single line,
+the slash key to scroll a half-screen, Esc to exit, or C to disable paging
+and scroll continuously (hit any key to resume paging.)  Hold down the
+Control key to slow scrolling.  Use /NP to disable paging (you can still hit
+a key to pause.)  Use /V to swap the Enter key and spacebar.
+
+If Locate's output is redirected, it will not be paged.  The the features
+described in the previous paragraph will be unavailable, and /NP and /V will
+have no effect.  A batch file can use Locate to create file lists or
+secondary batch files with no user intervention.
+
+Robert J. Bull has pointed out that if the Disaster Time options /K and /Y
+are used, automatic paging provides an opportunity to abort before more than
+about 20 files get toasted.  So:  /K /Y is Extremely Dangerous, but /K /Y /NP
+is Even More Extremely Dangerous.  Likewise /K /Y with output redirection.
+Always be extra careful whenever you use /K.
+
+
+                        þþþ  ERRORLEVEL RETURNS  þþþ
+
+0       One or more items found.
+1       No matching items found.
+2       Illegal filespec.
+3       User abort.  ESC, Control-C, Q, etc.
+4       Memory allocation error.  Not enough memory.
+5       Invalid operating system (DOS 3.2 or higher required.)
+7       Command buffer overflow.
+8       No COMSPEC variable.
+16      Syntax error.
+
+
+                          þþþ  DISTRIBUTION  þþþ
+
+Locate is free.  You aren't expected to register it or pay for it.  As with
+all free things, it comes with no guarantees or warranties.  I will not be
+liable for any damages, whether due to bugs in the code or user error or for
+any other reason.  And yes, Locate can wreak havoc.  For instance, /B: and
+/O: can both create batch files to perpetrate widespread carnage; /K or /C:
+can nuke files directly.
+
+You may distribute Locate if you like.  An archive file (ZIP, LHA, ARJ, RAR)
+is the preferred method, since it retains the file attributes and date-and-
+time stamps, and keeps related files together.  If you distribute LOCATE.COM,
+please keep this file LOCATE.TXT with it unless space is unusually limited.
+You may include the source file or not, as you choose.  The source is big and
+ugly, and most users will have no use for it.
+
+You may even distribute modified versions of Locate!  Say, you've added a
+bug fix or a new feature.  If you wish to distribute an altered Locate, I
+ask that you:  (1) retain my name and version number on all files, and (2)
+add your name, a summary of changes made, and possibly a revision number
+to all files.  In particular, please update the syntax display:
+
+    LOCATE.COM   v1.31   2003-12-09   C. Dye   raster@highfiber.com
+    Freeware.  Copyright 1995-2003, Charles Dye.  No warranty!
+    Recursive DWIM thunking support r1.1 by J. R. Hacker, 2004-04-01
+
+    Syntax:  (and so on, and so forth.)
+
+Also note changes in the source, if you choose to distribute that as well.
+
+Alternatively, you may instead distribute this program in accordance with the
+terms of version 2.0 of the GNU General Public License by the Free Software
+Foundation; or, at your option, any later version of the GNU General Public
+License.
+
+
+                           þþþ  SUNDRY CREDITS  þþþ
+
+Locate is developed using Eric Isaacson's elegant assembler A86.  Source in,
+program out... too simple!  http://eji.com/a86/
+
+I compress the executable using UPX, a freeware executable packer.  The UPX
+home page is:   http://upx.sourceforge.net/
+
+Thanks to Yves Bellefeuille for suggesting Polite Tourist enhancements.
+
+Howard Schwartz pointed out that my wildcards were too tame, and also
+revealed the need for the 'find' index.
+
+Donald Adaway suggested the /L revamp.  Yes, it was butt-ugly, wasn't it?
+
+Fidonet's Robert J. Bull has made numerous helpful suggestions regarding the
+program and documentation.
+
+Donald Adaway and Howard Schwartz both suggested documentation improvements.
+
+William G. Thompson found an obscure incompatibility with batch files.  It's
+tough to pass commas or semicolons as arguments to a batch, hence the need
+for another list separator.
+
+Mark Vinten and Dave Cochlin persuaded me to add some new macros, long after
+I'd resolved to abandon this Frankenstein's monster forever.
+
+The macros used by /O: and /C: borrow shamelessly from Keith Ledbetter's
+file-finder SST (alias Target), which also has /O and /C options with
+similar macros.
+
+Much of the basic syntax is borrowed from Norton FL, published by Symantec.
+I don't know who wrote it originally; might even have been ol' Peter himself.
+
+
+                           þþþ  WHAT'S NEW?  þþþ
+
+v1.31   2003-12-09   11,254 bytes                            DE7316B3  9260
+
+Many internal changes to accomodate larger volumes.  The tree buffer is now
+dynamically allocated 8K at a time.  File size totals are now 64-bit unsigned
+integers.  Tweaks to the internal SET handler to ignore trailing spaces and
+to reject variable names beginning with an equals sign.  Changes to /D:  if
+the first element in a date is 1980 or greater, the date is assumed to be in
+ISO format; also, times may now be specified for the start and/or end of the
+date range.  Option /E: from Norton FL is finally implemented.  For /T and
+/E:, if a drive letter with no path is listed in the environment variable,
+Locate now assumes the current directory on that drive.  Other minor tweaks.
+
+
+For a complete version history, see the end of the file LOCATE.S.
+

@@ -9,7 +9,7 @@
 #import "BXSession+BXEmulatorControls.h"
 #import "BXEmulator.h"
 #import "BXDrive.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 #import "BXValueTransformers.h"
 #import "NSWindow+BXWindowEffects.h"
 

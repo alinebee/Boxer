@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXAppController+BXSupportFiles.h"
+#import "BXBaseAppController+BXSupportFiles.h"
 #import "BXPathEnumerator.h"
 #import "RegexKitLite.h"
 #import "BXEmulatedMT32.h"
@@ -16,7 +16,7 @@ NSString * const MT32ControlROMFilenamePattern = @"control";
 NSString * const MT32PCMROMFilenamePattern = @"pcm";
 
 
-@implementation BXAppController (BXSupportFiles)
+@implementation BXBaseAppController (BXSupportFiles)
 
 - (NSString *) recordingsPathCreatingIfMissing: (BOOL)createIfMissing
 {
@@ -37,21 +37,6 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
 														error: NULL];
 	}
 	return supportPath;
-}
-
-- (NSString *) temporaryPathCreatingIfMissing: (BOOL)createIfMissing
-{
-	NSString *basePath = NSTemporaryDirectory();
-	NSString *tempPath = [basePath stringByAppendingPathComponent: @"Boxer"];
-	
-	if (createIfMissing)
-	{
-		[[NSFileManager defaultManager] createDirectoryAtPath: tempPath
-								  withIntermediateDirectories: YES
-												   attributes: nil
-														error: NULL];
-	}
-	return tempPath;
 }
 
 - (NSString *) MT32ROMPathCreatingIfMissing: (BOOL)createIfMissing

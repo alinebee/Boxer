@@ -10,7 +10,7 @@
 #import "BXEmulator+BXPaste.h"
 #import "BXEmulator+BXAudio.h"
 #import "BXValueTransformers.h"
-#import "BXAppController+BXSupportFiles.h"
+#import "BXBaseAppController+BXSupportFiles.h"
 #import "BXVideoHandler.h"
 #import "BXDOSWindow.h"
 

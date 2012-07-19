@@ -172,6 +172,9 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 //Whether this session represents a gamebox.
 @property (readonly, nonatomic) BOOL isGamePackage;
 
+//Whether this session is a game import. Returns NO by default.
+@property (readonly, nonatomic) BOOL isGameImport;
+
 //The display-ready title for the currently-executing DOS process.
 //Will be nil if there is currently no process executing.
 @property (readonly, nonatomic) NSString *processDisplayName;

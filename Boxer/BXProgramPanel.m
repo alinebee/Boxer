@@ -8,7 +8,7 @@
 
 #import "BXProgramPanel.h"
 #import "NSView+BXDrawing.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 #import "NSShadow+BXShadowExtensions.h"
 #import "NSBezierPath+MCAdditions.h"
 

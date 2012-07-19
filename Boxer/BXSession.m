@@ -12,7 +12,7 @@
 #import "BXGameProfile.h"
 #import "BXBootlegCoverArt.h"
 #import "BXDrive.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 #import "BXDOSWindowControllerLion.h"
 #import "BXDOSWindow.h"
 #import "BXEmulatorConfiguration.h"
@@ -704,6 +704,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (BOOL) isGamePackage
 {
     return (self.gamePackage != nil);
+}
+
+- (BOOL) isGameImport
+{
+    return NO;
 }
 
 - (NSImage *)representedIcon

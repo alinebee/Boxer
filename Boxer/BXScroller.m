@@ -9,7 +9,6 @@
 #import "BXScroller.h"
 #import "NSBezierPath+MCAdditions.h"
 #import "BXPostLeopardAPIs.h"
-#import "BXAppController.h"
 
 @implementation BXScroller
 

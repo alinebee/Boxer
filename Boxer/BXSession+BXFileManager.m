@@ -13,7 +13,6 @@
 #import "BXEmulatorErrors.h"
 #import "BXEmulator+BXShell.h"
 #import "UKFNSubscribeFileWatcher.h"
-#import "BXMountPanelController.h"
 #import "BXPackage.h"
 #import "BXDrive.h"
 #import "BXDrivesInUseAlert.h"
@@ -341,11 +340,6 @@
 
 #pragma mark -
 #pragma mark Drive mounting
-
-- (IBAction) showMountPanel: (id)sender
-{
-    [[BXMountPanelController controller] showMountPanelForSession: self];
-}
 
 - (void) _mountQueuedSiblingsAtOffset: (NSInteger)offset
 {

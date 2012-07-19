@@ -6,7 +6,7 @@
  */
 
 #import "BXBezelController.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 #import "NSWindow+BXWindowEffects.h"
 #import "BXSession+BXEmulatorControls.h"
 #import "BXDOSWindow.h"

@@ -5,14 +5,14 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 #import "BXKeyboardEventTap.h"
 
 //Dispatches media key events received by the application, which are otherwise unhandled by NSApplication.
 
 #define BXMediaKeyEventSubtype 8
 
-@interface BXAppController (BXHotKeys) <BXKeyboardEventTapDelegate>
+@interface BXBaseAppController (BXHotKeys) <BXKeyboardEventTapDelegate>
 
 - (void) mediaKeyPressed: (NSEvent *)theEvent;
 

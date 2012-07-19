@@ -7,7 +7,7 @@
 
 
 #import "BXDriveList.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 #import "BXDrive.h"
 #import "BXDrivePanelController.h"
 #import "BXGeometry.h"

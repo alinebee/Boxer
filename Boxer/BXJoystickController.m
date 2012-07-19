@@ -9,7 +9,6 @@
 #import "BXJoystickController.h"
 #import "BXHIDEvent.h"
 
-#import "BXAppController.h"
 #import "BXSession.h"
 #import "BXDOSWindowController.h"
 #import "BXInputController.h"

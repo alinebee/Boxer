@@ -7,7 +7,7 @@
 
 #import "BXHelpMenuController.h"
 #import "BXSession.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 
 @implementation BXHelpMenuController
 @synthesize mobygamesItem = _mobygamesItem;

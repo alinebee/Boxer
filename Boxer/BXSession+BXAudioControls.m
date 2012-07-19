@@ -7,7 +7,7 @@
 
 #import "BXSessionPrivate.h"
 #import "BXBezelController.h"
-#import "BXAppController+BXSupportFiles.h"
+#import "BXBaseAppController+BXSupportFiles.h"
 #import "BXEmulator+BXAudio.h"
 #import "BXMIDIDeviceMonitor.h"
 

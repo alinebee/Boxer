@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXAppController+BXHotKeys.h"
+#import "BXBaseAppController+BXHotKeys.h"
 #import "BXKeyboardEventTap.h"
 #import "BXSession+BXEmulatorControls.h"
 
@@ -16,7 +16,7 @@
 //Elements of this implementation were adapted from
 //http://joshua.nozzi.name/2010/10/catching-media-key-events/
 
-@implementation BXAppController (BXHotKeys)
+@implementation BXBaseAppController (BXHotKeys)
 
 + (NSUInteger) _mediaKeyCode: (NSEvent *)theEvent
 {

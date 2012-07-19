@@ -227,10 +227,6 @@ typedef NSUInteger BXDriveMountOptions;
               options: (BXDriveMountOptions)options
                 error: (NSError **)outError;
 
-
-//Display the mount-a-new-drive sheet in this session's window.
-- (IBAction) showMountPanel: (id)sender;
-
 //Returns the index of the currently mounted drive in the queue.
 //Returns the index of the specified drive within its queue.
 //Returns NSNotFound if the drive is not in a queue.

@@ -9,7 +9,7 @@
 
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 #import "BXEmulatedMT32.h"
 
 #import "shell.h"
@@ -353,7 +353,7 @@ nil];
     //If we got this far, we finally have a path we can reveal in OS X.
     //FIXME: we should never be talking directly to the app controller from this level.
     //Instead, pass this responsibility up to our delegate.
-	BXAppController *appController = [NSApp delegate];
+	BXBaseAppController *appController = [NSApp delegate];
     BOOL revealed = [appController revealPath: OSXPath];
     
     //The file did not exist in OS X so could not be revealed.

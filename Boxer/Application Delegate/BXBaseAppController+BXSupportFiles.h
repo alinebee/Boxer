@@ -9,9 +9,9 @@
 //The BXApplicationModes category extends BXAppController with functions
 //for managing Boxer's various Application Support files.
 
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 
-@interface BXAppController (BXSupportFiles)
+@interface BXBaseAppController (BXSupportFiles)
 
 #pragma mark -
 #pragma mark Supporting directories
@@ -23,11 +23,6 @@
 //Returns Boxer's application support path.
 //If createIfMissing is YES, the folder will be created if it does not exist.
 - (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing;
-
-//Returns Boxer's temporary folder path.
-//This will be automatically deleted when all Boxer processes exit.
-//If createIfMissing is YES, the folder will be created if it does not exist.
-- (NSString *) temporaryPathCreatingIfMissing: (BOOL)createIfMissing;
 
 //Returns the path to the application support folder where Boxer keeps MT-32 ROM files.
 //If createIfMissing is YES, the folder will be created if it does not exist.

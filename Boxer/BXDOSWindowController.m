@@ -8,7 +8,7 @@
 
 #import "BXDOSWindowControllerPrivate.h"
 #import "BXDOSWindow.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 #import "BXProgramPanelController.h"
 #import "BXInputController.h"
 #import "BXPackage.h"
@@ -225,7 +225,7 @@
 - (NSString *) windowTitleForDocumentDisplayName: (NSString *)displayName
 {
 	//If we're running an import session then modify the window title to reflect that
-	if ([self.document isKindOfClass: [BXImportSession class]])
+	if (self.document.isGameImport)
 	{
 		NSString *importWindowFormat = NSLocalizedString(@"Importing %@",
 														 @"Title for game import window. %@ is the name of the gamebox/source path being imported.");

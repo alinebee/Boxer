@@ -8,7 +8,7 @@
 
 
 #import "BXDockTileController.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 #import "BXSession.h"
 
 @implementation BXDockTileController

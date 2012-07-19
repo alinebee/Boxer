@@ -8,7 +8,7 @@
 #import "BXImageAwareFileScan.h"
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
-#import "BXAppController.h"
+#import "BXFileTypes.h"
 
 
 @implementation BXImageAwareFileScan

@@ -8,7 +8,7 @@
 #import "BXJoypadController.h"
 #import "JoypadSDK.h"
 #import "BXJoypadController.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 #import "BXSession.h"
 #import "BXDOSWindowController.h"
 #import "BXInputController+BXJoypadInput.h"

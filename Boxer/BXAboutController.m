@@ -6,7 +6,7 @@
  */
 
 #import "BXAboutController.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 
 
 @implementation BXAboutController

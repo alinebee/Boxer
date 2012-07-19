@@ -64,13 +64,360 @@
 		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9F2C28A2129D906600B172C8 /* BXFirstRunWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */; };
 		9F2C28B8129D924E00B172C8 /* FirstRunWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */; };
+		9F2D2F9915B8233800FAE848 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
+		9F2D2F9A15B8233800FAE848 /* BXAboutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC351D0F56C7B7001811F2 /* BXAboutController.m */; };
+		9F2D2F9C15B8233800FAE848 /* BXSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35210F56C7B7001811F2 /* BXSession.m */; };
+		9F2D2F9D15B8233800FAE848 /* BXEmulator+BXShell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */; };
+		9F2D2F9E15B8233800FAE848 /* BXDOSWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35240F56C7B7001811F2 /* BXDOSWindow.m */; };
+		9F2D2FA015B8233800FAE848 /* NSWindow+BXWindowDimensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowDimensions.m */; };
+		9F2D2FA115B8233800FAE848 /* BXGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35280F56C7B7001811F2 /* BXGeometry.m */; };
+		9F2D2FA215B8233800FAE848 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
+		9F2D2FA315B8233800FAE848 /* BXSession+BXEmulatorControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorControls.m */; };
+		9F2D2FA415B8233800FAE848 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
+		9F2D2FA515B8233800FAE848 /* NSAlert+BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */; };
+		9F2D2FA615B8233800FAE848 /* BXHelpMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6311080F70F54300AB1155 /* BXHelpMenuController.m */; };
+		9F2D2FA715B8233800FAE848 /* NSWorkspace+BXMountedVolumes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */; };
+		9F2D2FA815B8233800FAE848 /* BXPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573D380F8E69AF0089D8B7 /* BXPackage.m */; };
+		9F2D2FA915B8233800FAE848 /* BXEmulator+BXDOSFileSystem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */; };
+		9F2D2FAA15B8233800FAE848 /* NSString+BXPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */; };
+		9F2D2FAE15B8233800FAE848 /* BXValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */; };
+		9F2D2FAF15B8233800FAE848 /* BXDrive.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69133210A2F62A00EA78CD /* BXDrive.m */; };
+		9F2D2FB015B8233800FAE848 /* UKFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */; };
+		9F2D2FB115B8233800FAE848 /* UKFNSubscribeFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BA10A341F6007E8C0D /* UKFNSubscribeFileWatcher.m */; };
+		9F2D2FB215B8233800FAE848 /* UKKQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BD10A341F6007E8C0D /* UKKQueue.m */; };
+		9F2D2FB315B8233800FAE848 /* UKMainThreadProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BF10A341F6007E8C0D /* UKMainThreadProxy.m */; };
+		9F2D2FB415B8233800FAE848 /* BXSession+BXFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */; };
+		9F2D2FB515B8233800FAE848 /* BXThemes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F544A7F10AB44C40030FED5 /* BXThemes.m */; };
+		9F2D2FB615B8233800FAE848 /* NSBezierPath+MCAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DA1710AE22D8008DBBC1 /* NSBezierPath+MCAdditions.m */; };
+		9F2D2FB815B8233800FAE848 /* BXProgramPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DAD410AF1042008DBBC1 /* BXProgramPanel.m */; };
+		9F2D2FB915B8233800FAE848 /* BXProgramPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */; };
+		9F2D2FBD15B8233800FAE848 /* NSWorkspace+BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */; };
+		9F2D2FBE15B8233800FAE848 /* BXSession+BXDragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */; };
+		9F2D2FBF15B8233800FAE848 /* BXEmulator+BXPaste.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */; };
+		9F2D2FC015B8233800FAE848 /* BXGameProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */; };
+		9F2D2FC115B8233800FAE848 /* BXScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F438C5710E3D8C8007D30AD /* BXScroller.m */; };
+		9F2D2FC515B8233800FAE848 /* NSWorkspace+BXIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */; };
+		9F2D2FC615B8233800FAE848 /* BXDrivesInUseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */; };
+		9F2D2FC715B8233800FAE848 /* BXStatusBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F42D9DE1172481800AC6F1F /* BXStatusBarController.m */; };
+		9F2D2FC815B8233800FAE848 /* BXCoalface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */; };
+		9F2D2FC915B8233800FAE848 /* BXEmulatedMouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXEmulatedMouse.mm */; };
+		9F2D2FCA15B8233800FAE848 /* BXInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F765648119403520082A06A /* BXInputController.m */; };
+		9F2D2FCB15B8233800FAE848 /* BXVideoFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4F9E311957B55006C8AC9 /* BXVideoFrame.m */; };
+		9F2D2FCD15B8233800FAE848 /* BXCursorFadeAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */; };
+		9F2D2FCE15B8233800FAE848 /* BXBasicRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXBasicRenderer.m */; };
+		9F2D2FCF15B8233800FAE848 /* BXGLRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */; };
+		9F2D2FD015B8233800FAE848 /* BXInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1756C11B25F4E00D0FCDC /* BXInputView.m */; };
+		9F2D2FD115B8233800FAE848 /* BXVideoHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */; };
+		9F2D2FD215B8233800FAE848 /* BXEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */; };
+		9F2D2FD315B8233800FAE848 /* NSString+BXStringFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAA44A611EB24A90042B986 /* NSString+BXStringFormatting.m */; };
+		9F2D2FD415B8233800FAE848 /* BXLineEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA5D68211EB6CCC0012DFA5 /* BXLineEnumerator.m */; };
+		9F2D2FD515B8233800FAE848 /* BXDigest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE5411EC7E1700990E91 /* BXDigest.m */; };
+		9F2D2FD615B8233800FAE848 /* NSData+HexStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE9611EC932800990E91 /* NSData+HexStrings.m */; };
+		9F2D2FD715B8233800FAE848 /* BXSingleFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */; };
+		9F2D2FD815B8233800FAE848 /* NSFileManager+BXTemporaryFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */; };
+		9F2D2FD915B8233800FAE848 /* BXThemedSegmentedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27C411F8C003003EE8F3 /* BXThemedSegmentedCell.m */; };
+		9F2D2FDB15B8233800FAE848 /* BXDelegatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */; };
+		9F2D2FDC15B8233800FAE848 /* BXOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3EB1204595B0085F008 /* BXOperation.m */; };
+		9F2D2FDD15B8233800FAE848 /* NSWorkspace+BXExecutableTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */; };
+		9F2D2FE515B8233800FAE848 /* BXSessionError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9ED912108A9000ED7A64 /* BXSessionError.m */; };
+		9F2D2FE615B8233800FAE848 /* BXMountedVolumesError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */; };
+		9F2D2FE715B8233800FAE848 /* BXBottomBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD668F01215CDD6009E0118 /* BXBottomBar.m */; };
+		9F2D2FE815B8233800FAE848 /* NSView+BXDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */; };
+		9F2D2FED15B8233800FAE848 /* BXPathEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */; };
+		9F2D2FEE15B8233800FAE848 /* NDAlias+AliasFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */; };
+		9F2D2FEF15B8233800FAE848 /* NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9718123269D1009B5EE5 /* NDAlias.m */; };
+		9F2D2FF015B8233800FAE848 /* NDResourceFork+OtherSorces.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m */; };
+		9F2D2FF115B8233800FAE848 /* NDResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971C123269D1009B5EE5 /* NDResourceFork.m */; };
+		9F2D2FF215B8233800FAE848 /* NSOpenPanel+NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971F123269D1009B5EE5 /* NSOpenPanel+NDAlias.m */; };
+		9F2D2FF315B8233800FAE848 /* NSPathControl+NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9721123269D1009B5EE5 /* NSPathControl+NDAlias.m */; };
+		9F2D2FF415B8233800FAE848 /* NSSavePanel+NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9723123269D1009B5EE5 /* NSSavePanel+NDAlias.m */; };
+		9F2D2FF515B8233800FAE848 /* NSString+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9725123269D1009B5EE5 /* NSString+NDCarbonUtilities.m */; };
+		9F2D2FF615B8233800FAE848 /* NSURL+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */; };
+		9F2D2FF715B8233800FAE848 /* BXMultiPanelWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */; };
+		9F2D2FF815B8233800FAE848 /* BXTabbedWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */; };
+		9F2D2FFB15B8233800FAE848 /* YRKSpinningProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1812BD12996337009BC4B2 /* YRKSpinningProgressIndicator.m */; };
+		9F2D2FFD15B8233800FAE848 /* NSWindow+BXWindowEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD23D54129AE3B600B2100B /* NSWindow+BXWindowEffects.m */; };
+		9F2D2FFF15B8233800FAE848 /* BXFileTransferSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F2B9412AD3C8500CD7078 /* BXFileTransferSet.m */; };
+		9F2D300015B8233800FAE848 /* BXOperationSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F444FCB12AEA28700A2D405 /* BXOperationSet.m */; };
+		9F2D300515B8233800FAE848 /* NSImage+BXSaveImages.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2120FD1301597E002AB1B7 /* NSImage+BXSaveImages.m */; };
+		9F2D300B15B8233800FAE848 /* BXPostLeopardAPIs.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0497BF1334C5970001FEE4 /* BXPostLeopardAPIs.m */; };
+		9F2D300F15B8233800FAE848 /* BXTaskOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF865CE134DAB5A001CE857 /* BXTaskOperation.m */; };
+		9F2D301215B8233800FAE848 /* BXHIDMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F731B2D136323D2005E564F /* BXHIDMonitor.m */; };
+		9F2D301315B8233800FAE848 /* DDHidDevice+BXDeviceExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D6241364291600792011 /* DDHidDevice+BXDeviceExtensions.m */; };
+		9F2D301415B8233800FAE848 /* BXJoystickController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D7001364819E00792011 /* BXJoystickController.m */; };
+		9F2D301515B8233800FAE848 /* BXHIDEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D7891364991100792011 /* BXHIDEvent.m */; };
+		9F2D301615B8233800FAE848 /* BXInputController+BXJoystickInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */; };
+		9F2D301715B8233800FAE848 /* BXEmulatedKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FCC2F991366EF170013F083 /* BXEmulatedKeyboard.mm */; };
+		9F2D301815B8233800FAE848 /* BXInputController+BXKeyboardInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCC2FF31366FA820013F083 /* BXInputController+BXKeyboardInput.m */; };
+		9F2D301915B8233800FAE848 /* BXEmulatedJoystick.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FC9E4E0136725190095DCDE /* BXEmulatedJoystick.mm */; };
+		9F2D301A15B8233800FAE848 /* BXCHFlightstick.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */; };
+		9F2D301B15B8233800FAE848 /* callback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77209F12B38C4400072AE8 /* callback.cpp */; };
+		9F2D301C15B8233800FAE848 /* core_dyn_x86.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720A812B38C4400072AE8 /* core_dyn_x86.cpp */; };
+		9F2D301D15B8233800FAE848 /* core_dynrec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720BA12B38C4400072AE8 /* core_dynrec.cpp */; };
+		9F2D301E15B8233800FAE848 /* core_full.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720C412B38C4400072AE8 /* core_full.cpp */; };
+		9F2D301F15B8233800FAE848 /* core_normal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720CE12B38C4400072AE8 /* core_normal.cpp */; };
+		9F2D302015B8233800FAE848 /* core_prefetch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720CF12B38C4400072AE8 /* core_prefetch.cpp */; };
+		9F2D302115B8233800FAE848 /* core_simple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720D012B38C4400072AE8 /* core_simple.cpp */; };
+		9F2D302215B8233800FAE848 /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720D112B38C4400072AE8 /* cpu.cpp */; };
+		9F2D302315B8233800FAE848 /* flags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720D212B38C4400072AE8 /* flags.cpp */; };
+		9F2D302415B8233800FAE848 /* modrm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720D512B38C4400072AE8 /* modrm.cpp */; };
+		9F2D302515B8233800FAE848 /* paging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720D712B38C4400072AE8 /* paging.cpp */; };
+		9F2D302615B8233800FAE848 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720D912B38C4400072AE8 /* debug.cpp */; };
+		9F2D302715B8233800FAE848 /* debug_disasm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720DA12B38C4400072AE8 /* debug_disasm.cpp */; };
+		9F2D302815B8233800FAE848 /* debug_gui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720DB12B38C4400072AE8 /* debug_gui.cpp */; };
+		9F2D302915B8233800FAE848 /* debug_win32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720DD12B38C4400072AE8 /* debug_win32.cpp */; };
+		9F2D302A15B8233800FAE848 /* cdrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720E012B38C4400072AE8 /* cdrom.cpp */; };
+		9F2D302B15B8233800FAE848 /* cdrom_aspi_win32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720E212B38C4400072AE8 /* cdrom_aspi_win32.cpp */; };
+		9F2D302C15B8233800FAE848 /* cdrom_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720E312B38C4400072AE8 /* cdrom_image.cpp */; };
+		9F2D302D15B8233800FAE848 /* cdrom_ioctl_linux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720E412B38C4400072AE8 /* cdrom_ioctl_linux.cpp */; };
+		9F2D302E15B8233800FAE848 /* cdrom_ioctl_os2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720E512B38C4400072AE8 /* cdrom_ioctl_os2.cpp */; };
+		9F2D302F15B8233800FAE848 /* cdrom_ioctl_win32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720E612B38C4400072AE8 /* cdrom_ioctl_win32.cpp */; };
+		9F2D303015B8233800FAE848 /* dos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720E812B38C4400072AE8 /* dos.cpp */; };
+		9F2D303115B8233800FAE848 /* dos_classes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720E912B38C4400072AE8 /* dos_classes.cpp */; };
+		9F2D303215B8233800FAE848 /* dos_devices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720EB12B38C4400072AE8 /* dos_devices.cpp */; };
+		9F2D303315B8233800FAE848 /* dos_execute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720EC12B38C4400072AE8 /* dos_execute.cpp */; };
+		9F2D303415B8233800FAE848 /* dos_files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720ED12B38C4400072AE8 /* dos_files.cpp */; };
+		9F2D303515B8233800FAE848 /* dos_ioctl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720EE12B38C4400072AE8 /* dos_ioctl.cpp */; };
+		9F2D303615B8233800FAE848 /* dos_keyboard_layout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720EF12B38C4400072AE8 /* dos_keyboard_layout.cpp */; };
+		9F2D303715B8233800FAE848 /* dos_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F112B38C4400072AE8 /* dos_memory.cpp */; };
+		9F2D303815B8233800FAE848 /* dos_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F212B38C4400072AE8 /* dos_misc.cpp */; };
+		9F2D303915B8233800FAE848 /* dos_mscdex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F312B38C4400072AE8 /* dos_mscdex.cpp */; };
+		9F2D303A15B8233800FAE848 /* dos_programs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F412B38C4400072AE8 /* dos_programs.cpp */; };
+		9F2D303B15B8233800FAE848 /* dos_tables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F512B38C4400072AE8 /* dos_tables.cpp */; };
+		9F2D303C15B8233800FAE848 /* drive_cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F612B38C4400072AE8 /* drive_cache.cpp */; };
+		9F2D303D15B8233800FAE848 /* drive_fat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F712B38C4400072AE8 /* drive_fat.cpp */; };
+		9F2D303E15B8233800FAE848 /* drive_iso.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F812B38C4400072AE8 /* drive_iso.cpp */; };
+		9F2D303F15B8233800FAE848 /* drive_local.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F912B38C4400072AE8 /* drive_local.cpp */; };
+		9F2D304015B8233800FAE848 /* drive_physfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720FA12B38C4400072AE8 /* drive_physfs.cpp */; };
+		9F2D304115B8233800FAE848 /* drive_virtual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720FB12B38C4400072AE8 /* drive_virtual.cpp */; };
+		9F2D304215B8233800FAE848 /* drives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720FC12B38C4400072AE8 /* drives.cpp */; };
+		9F2D304315B8233800FAE848 /* dosbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210012B38C4400072AE8 /* dosbox.cpp */; };
+		9F2D304415B8233800FAE848 /* fpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210212B38C4400072AE8 /* fpu.cpp */; };
+		9F2D304515B8233800FAE848 /* midi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210812B38C4400072AE8 /* midi.cpp */; };
+		9F2D304615B8233800FAE848 /* render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210E12B38C4400072AE8 /* render.cpp */; };
+		9F2D304715B8233800FAE848 /* render_scalers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211012B38C4400072AE8 /* render_scalers.cpp */; };
+		9F2D304815B8233800FAE848 /* adlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211C12B38C4400072AE8 /* adlib.cpp */; };
+		9F2D304915B8233800FAE848 /* cmos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211E12B38C4400072AE8 /* cmos.cpp */; };
+		9F2D304A15B8233800FAE848 /* dbopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211F12B38C4400072AE8 /* dbopl.cpp */; };
+		9F2D304B15B8233800FAE848 /* disney.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212112B38C4400072AE8 /* disney.cpp */; };
+		9F2D304C15B8233800FAE848 /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212212B38C4400072AE8 /* dma.cpp */; };
+		9F2D304D15B8233800FAE848 /* gameblaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212312B38C4400072AE8 /* gameblaster.cpp */; };
+		9F2D304E15B8233800FAE848 /* gus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212412B38C4400072AE8 /* gus.cpp */; };
+		9F2D304F15B8233800FAE848 /* hardware.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212512B38C4400072AE8 /* hardware.cpp */; };
+		9F2D305015B8233800FAE848 /* iohandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212612B38C4400072AE8 /* iohandler.cpp */; };
+		9F2D305115B8233800FAE848 /* ipx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212712B38C4400072AE8 /* ipx.cpp */; };
+		9F2D305215B8233800FAE848 /* ipxserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212812B38C4400072AE8 /* ipxserver.cpp */; };
+		9F2D305315B8233800FAE848 /* joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212912B38C4400072AE8 /* joystick.cpp */; };
+		9F2D305415B8233800FAE848 /* keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212A12B38C4400072AE8 /* keyboard.cpp */; };
+		9F2D305515B8233800FAE848 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212B12B38C4400072AE8 /* memory.cpp */; };
+		9F2D305615B8233800FAE848 /* mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212C12B38C4400072AE8 /* mixer.cpp */; };
+		9F2D305715B8233800FAE848 /* mpu401.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212D12B38C4400072AE8 /* mpu401.cpp */; };
+		9F2D305815B8233800FAE848 /* opl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212E12B38C4400072AE8 /* opl.cpp */; };
+		9F2D305915B8233800FAE848 /* pcspeaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213012B38C4400072AE8 /* pcspeaker.cpp */; };
+		9F2D305A15B8233800FAE848 /* pic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213112B38C4400072AE8 /* pic.cpp */; };
+		9F2D305B15B8233800FAE848 /* sblaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213212B38C4400072AE8 /* sblaster.cpp */; };
+		9F2D305C15B8233800FAE848 /* directserial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213412B38C4400072AE8 /* directserial.cpp */; };
+		9F2D305D15B8233800FAE848 /* libserial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213612B38C4400072AE8 /* libserial.cpp */; };
+		9F2D305E15B8233800FAE848 /* misc_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213812B38C4400072AE8 /* misc_util.cpp */; };
+		9F2D305F15B8233800FAE848 /* nullmodem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213A12B38C4400072AE8 /* nullmodem.cpp */; };
+		9F2D306015B8233800FAE848 /* serialdummy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213C12B38C4400072AE8 /* serialdummy.cpp */; };
+		9F2D306115B8233800FAE848 /* serialport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213E12B38C4400072AE8 /* serialport.cpp */; };
+		9F2D306215B8233800FAE848 /* softmodem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213F12B38C4400072AE8 /* softmodem.cpp */; };
+		9F2D306315B8233800FAE848 /* tandy_sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214112B38C4400072AE8 /* tandy_sound.cpp */; };
+		9F2D306415B8233800FAE848 /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214212B38C4400072AE8 /* timer.cpp */; };
+		9F2D306515B8233800FAE848 /* vga.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214312B38C4400072AE8 /* vga.cpp */; };
+		9F2D306615B8233800FAE848 /* vga_attr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214412B38C4400072AE8 /* vga_attr.cpp */; };
+		9F2D306715B8233800FAE848 /* vga_crtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214512B38C4400072AE8 /* vga_crtc.cpp */; };
+		9F2D306815B8233800FAE848 /* vga_dac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214612B38C4400072AE8 /* vga_dac.cpp */; };
+		9F2D306915B8233800FAE848 /* vga_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214712B38C4400072AE8 /* vga_draw.cpp */; };
+		9F2D306A15B8233800FAE848 /* vga_gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214812B38C4400072AE8 /* vga_gfx.cpp */; };
+		9F2D306B15B8233800FAE848 /* vga_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214912B38C4400072AE8 /* vga_memory.cpp */; };
+		9F2D306C15B8233800FAE848 /* vga_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214A12B38C4400072AE8 /* vga_misc.cpp */; };
+		9F2D306D15B8233800FAE848 /* vga_other.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214B12B38C4400072AE8 /* vga_other.cpp */; };
+		9F2D306E15B8233800FAE848 /* vga_paradise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214C12B38C4400072AE8 /* vga_paradise.cpp */; };
+		9F2D306F15B8233800FAE848 /* vga_s3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214D12B38C4400072AE8 /* vga_s3.cpp */; };
+		9F2D307015B8233800FAE848 /* vga_seq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214E12B38C4400072AE8 /* vga_seq.cpp */; };
+		9F2D307115B8233800FAE848 /* vga_tseng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214F12B38C4400072AE8 /* vga_tseng.cpp */; };
+		9F2D307215B8233800FAE848 /* vga_xga.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215012B38C4400072AE8 /* vga_xga.cpp */; };
+		9F2D307315B8233800FAE848 /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215212B38C4400072AE8 /* bios.cpp */; };
+		9F2D307415B8233800FAE848 /* bios_disk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215312B38C4400072AE8 /* bios_disk.cpp */; };
+		9F2D307515B8233800FAE848 /* bios_keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215412B38C4400072AE8 /* bios_keyboard.cpp */; };
+		9F2D307615B8233800FAE848 /* ems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215512B38C4400072AE8 /* ems.cpp */; };
+		9F2D307715B8233800FAE848 /* int10.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215612B38C4400072AE8 /* int10.cpp */; };
+		9F2D307815B8233800FAE848 /* int10_char.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215812B38C4400072AE8 /* int10_char.cpp */; };
+		9F2D307915B8233800FAE848 /* int10_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215912B38C4400072AE8 /* int10_memory.cpp */; };
+		9F2D307A15B8233800FAE848 /* int10_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215A12B38C4400072AE8 /* int10_misc.cpp */; };
+		9F2D307B15B8233800FAE848 /* int10_modes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215B12B38C4400072AE8 /* int10_modes.cpp */; };
+		9F2D307C15B8233800FAE848 /* int10_pal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215C12B38C4400072AE8 /* int10_pal.cpp */; };
+		9F2D307D15B8233800FAE848 /* int10_put_pixel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215D12B38C4400072AE8 /* int10_put_pixel.cpp */; };
+		9F2D307E15B8233800FAE848 /* int10_vesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215E12B38C4400072AE8 /* int10_vesa.cpp */; };
+		9F2D307F15B8233800FAE848 /* int10_video_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215F12B38C4400072AE8 /* int10_video_state.cpp */; };
+		9F2D308015B8233800FAE848 /* int10_vptable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216012B38C4400072AE8 /* int10_vptable.cpp */; };
+		9F2D308115B8233800FAE848 /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216112B38C4400072AE8 /* mouse.cpp */; };
+		9F2D308215B8233800FAE848 /* xms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216212B38C4400072AE8 /* xms.cpp */; };
+		9F2D308315B8233800FAE848 /* cross.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216C12B38C4400072AE8 /* cross.cpp */; };
+		9F2D308415B8233800FAE848 /* messages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216D12B38C4400072AE8 /* messages.cpp */; };
+		9F2D308515B8233800FAE848 /* programs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216E12B38C4400072AE8 /* programs.cpp */; };
+		9F2D308615B8233800FAE848 /* setup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216F12B38C4400072AE8 /* setup.cpp */; };
+		9F2D308715B8233800FAE848 /* support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217012B38C4400072AE8 /* support.cpp */; };
+		9F2D308815B8233800FAE848 /* shell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217212B38C4400072AE8 /* shell.cpp */; };
+		9F2D308915B8233800FAE848 /* shell_batch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217312B38C4400072AE8 /* shell_batch.cpp */; };
+		9F2D308A15B8233800FAE848 /* shell_cmds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217412B38C4400072AE8 /* shell_cmds.cpp */; };
+		9F2D308B15B8233800FAE848 /* shell_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217512B38C4400072AE8 /* shell_misc.cpp */; };
+		9F2D308C15B8233800FAE848 /* BXThrustmasterFCS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */; };
+		9F2D308D15B8233800FAE848 /* BXHIDControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F06C6D213992E1F00B19DF1 /* BXHIDControllerProfile.m */; };
+		9F2D308E15B8233800FAE848 /* BXHIDInputBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F06C6E013993FB100B19DF1 /* BXHIDInputBinding.m */; };
+		9F2D308F15B8233800FAE848 /* BX360ControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD3A1E3139A358C00D0918E /* BX360ControllerProfile.m */; };
+		9F2D309015B8233800FAE848 /* BXSixaxisControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */; };
+		9F2D309115B8233800FAE848 /* BXCollectionItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F60B0DB13AA418300F06BB1 /* BXCollectionItemView.m */; };
+		9F2D309215B8233800FAE848 /* BXTemplateImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD012FA13AB87E500AF6FE8 /* BXTemplateImageCell.m */; };
+		9F2D309315B8233800FAE848 /* BXJoypadController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC637FF13C09B79004478A3 /* BXJoypadController.m */; };
+		9F2D309415B8233800FAE848 /* BX2ButtonJoystickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382113C0D54C004478A3 /* BX2ButtonJoystickLayout.m */; };
+		9F2D309515B8233800FAE848 /* BXJoypadLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382413C0D637004478A3 /* BXJoypadLayout.m */; };
+		9F2D309615B8233800FAE848 /* BX4ButtonJoystickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382813C0DB4F004478A3 /* BX4ButtonJoystickLayout.m */; };
+		9F2D309715B8233800FAE848 /* BX4ButtonWheelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382E13C0E01B004478A3 /* BX4ButtonWheelLayout.m */; };
+		9F2D309815B8233800FAE848 /* BX2ButtonWheelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6383113C0E244004478A3 /* BX2ButtonWheelLayout.m */; };
+		9F2D309915B8233800FAE848 /* BXFlightstickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */; };
+		9F2D309A15B8233800FAE848 /* BXInputController+BXJoypadInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6380C13C0A10E004478A3 /* BXInputController+BXJoypadInput.m */; };
+		9F2D309B15B8233800FAE848 /* BXG25ControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB446EA13D23BD900E69AF5 /* BXG25ControllerProfile.m */; };
+		9F2D309C15B8233800FAE848 /* DDHidUsage+BXUsageExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA0C9E213D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m */; };
+		9F2D309D15B8233800FAE848 /* BXDualActionControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */; };
+		9F2D309E15B8233800FAE848 /* BXBezelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70277A13D706CC00606B4C /* BXBezelController.m */; };
+		9F2D309F15B8233800FAE848 /* BXThemedControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70278313D72D8100606B4C /* BXThemedControls.m */; };
+		9F2D30A015B8233800FAE848 /* BXCoalfaceDrives.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */; };
+		9F2D30A115B8233800FAE848 /* NSShadow+BXShadowExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */; };
+		9F2D30A215B8233800FAE848 /* BXFileScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58BB5013DD975F00358512 /* BXFileScan.m */; };
+		9F2D30A315B8233800FAE848 /* BXExecutableScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58BB5313DDAC3A00358512 /* BXExecutableScan.m */; };
+		9F2D30A415B8233800FAE848 /* BXDOSWindowControllerLion.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0C0BD613E1751E0039C081 /* BXDOSWindowControllerLion.m */; };
+		9F2D30A515B8233800FAE848 /* BXFullScreenCapableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD95D6913E2A45C005EF2C0 /* BXFullScreenCapableWindow.m */; };
+		9F2D30A615B8233800FAE848 /* BXPrecisionProControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = B7900B3D13E47D9E00B37913 /* BXPrecisionProControllerProfile.m */; };
+		9F2D30A715B8233800FAE848 /* BXMOMORacingControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA1CF6713E5B43F00416D74 /* BXMOMORacingControllerProfile.m */; };
+		9F2D30A915B8233800FAE848 /* BXImageAwareFileScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61F78213EC2D5100505436 /* BXImageAwareFileScan.m */; };
+		9F2D30AA15B8233800FAE848 /* BXEmulatorErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */; };
+		9F2D30AB15B8233800FAE848 /* BXISOImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F81CFB813EEA3F4008F0265 /* BXISOImage.m */; };
+		9F2D30AC15B8233800FAE848 /* BXBinCueImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98589613EF71F600E66877 /* BXBinCueImage.m */; };
+		9F2D30AD15B8233800FAE848 /* NSImage+BXImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE1B61213FFBE430001640C /* NSImage+BXImageEffects.m */; };
+		9F2D30AE15B8233800FAE848 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F740BDD142A24A400BA66B4 /* RegexKitLite.m */; };
+		9F2D30AF15B8233800FAE848 /* BXCoalfaceAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE3E142B700100A69FAF /* BXCoalfaceAudio.mm */; };
+		9F2D30B015B8233800FAE848 /* BXEmulator+BXAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */; };
+		9F2D30B115B8233800FAE848 /* BXBaseAppController+BXSupportFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */; };
+		9F2D30B215B8233800FAE848 /* BXMT32LCDDisplay.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBEC4EF142CE8300016964A /* BXMT32LCDDisplay.m */; };
+		9F2D30B315B8233800FAE848 /* BXMIDISynth.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C23142E183500843B01 /* BXMIDISynth.m */; };
+		9F2D30B415B8233800FAE848 /* BXEmulatedMT32.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C26142E198100843B01 /* BXEmulatedMT32.mm */; };
+		9F2D30B515B8233800FAE848 /* BXExternalMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C29142E199100843B01 /* BXExternalMIDIDevice.m */; };
+		9F2D30B615B8233800FAE848 /* BXMIDIDeviceMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */; };
+		9F2D30B715B8233800FAE848 /* BXSession+BXAudioControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA161434A6E4009BFBA2 /* BXSession+BXAudioControls.m */; };
+		9F2D30B815B8233800FAE848 /* BXExternalMT32.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA1A1434B48D009BFBA2 /* BXExternalMT32.m */; };
+		9F2D30B915B8233800FAE848 /* BXDummyMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */; };
+		9F2D30BB15B8233800FAE848 /* CALayer+BXLayerAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */; };
+		9F2D30BC15B8233800FAE848 /* BXExternalMT32+BXMT32Sysexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */; };
+		9F2D30BD15B8233800FAE848 /* BXHUDProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562814506DBA00545317 /* BXHUDProgressIndicator.m */; };
+		9F2D30BE15B8233800FAE848 /* BXHUDLevelIndicatorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */; };
+		9F2D30BF15B8233800FAE848 /* BXKeyboardEventTap.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562F14506F5C00545317 /* BXKeyboardEventTap.m */; };
+		9F2D30C015B8233800FAE848 /* BXBezelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F39A43A1452CE9100942D0F /* BXBezelView.m */; };
+		9F2D30C115B8233800FAE848 /* BXThemedPopUpButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD7B6AF145745D800565CEB /* BXThemedPopUpButtonCell.m */; };
+		9F2D30C215B8233800FAE848 /* BXThemedButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD7B6B2145746CC00565CEB /* BXThemedButtonCell.m */; };
+		9F2D30C315B8233800FAE848 /* BXThemedSliderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F26A9AC1458678B000184D1 /* BXThemedSliderCell.m */; };
+		9F2D30C415B8233800FAE848 /* BXContinuousThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD1DFC14641ECD00C3074E /* BXContinuousThread.m */; };
+		9F2D30C515B8233800FAE848 /* BXTFlightControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F68919F14B0F6D800641C62 /* BXTFlightControllerProfile.m */; };
+		9F2D30C615B8233800FAE848 /* BXAppKitVersionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9AEE8814CB4AEA00728641 /* BXAppKitVersionHelpers.m */; };
+		9F2D30C715B8233800FAE848 /* BXApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F374814F91FEB00E482FB /* BXApplication.m */; };
+		9F2D30C815B8233800FAE848 /* BXBaseAppController+BXHotKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F374E14F9442D00E482FB /* BXBaseAppController+BXHotKeys.m */; };
+		9F2D30C915B8233800FAE848 /* NSObject+BXPerformExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1DE9B114FB7F3800F9C91E /* NSObject+BXPerformExtensions.m */; };
+		9F2D30CA15B8233800FAE848 /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD8BEE314FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m */; };
+		9F2D30CB15B8233800FAE848 /* BXKeyBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F9DF414153B058200233968 /* BXKeyBuffer.mm */; };
+		9F2D30CC15B8233800FAE848 /* BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F887104156F85F8006CDB5F /* BXFileTypes.m */; };
+		9F2D30CD15B8233800FAE848 /* BXShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE3237D157A42B3004492E8 /* BXShader.m */; };
+		9F2D30CE15B8233800FAE848 /* BXBSNESShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE32381157A7498004492E8 /* BXBSNESShader.m */; };
+		9F2D30CF15B8233800FAE848 /* BXTexture2D.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF68FF7157B9C6600F8B5BC /* BXTexture2D.m */; };
+		9F2D30D015B8233800FAE848 /* BXTexture2D+BXVideoFrameExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF68FFF157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m */; };
+		9F2D30D115B8233800FAE848 /* BXSupersamplingRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4FC1141592508100319428 /* BXSupersamplingRenderer.m */; };
+		9F2D30D215B8233800FAE848 /* BXShaderRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4FC117159253DA00319428 /* BXShaderRenderer.m */; };
+		9F2D30D315B8233800FAE848 /* NSKeyedArchiver+BXArchivingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5F12C515ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.m */; };
+		9F2D30D515B8233800FAE848 /* AboutBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D10F56C370001811F2 /* AboutBackground.png */; };
+		9F2D30D615B8233800FAE848 /* LockClosing.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DD0F56C383001811F2 /* LockClosing.aiff */; };
+		9F2D30D715B8233800FAE848 /* LockOpening.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DE0F56C383001811F2 /* LockOpening.aiff */; };
+		9F2D30D815B8233800FAE848 /* DOSBox.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC34480F56C5D1001811F2 /* DOSBox.strings */; };
+		9F2D30D915B8233800FAE848 /* Shell.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC344A0F56C5D1001811F2 /* Shell.strings */; };
+		9F2D30DB15B8233800FAE848 /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
+		9F2D30E815B8233800FAE848 /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
+		9F2D30E915B8233800FAE848 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
+		9F2D30F215B8233800FAE848 /* UserDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F466AFB11A92C4B00C50965 /* UserDefaults.plist */; };
+		9F2D30F415B8233800FAE848 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; };
+		9F2D30F515B8233800FAE848 /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */; };
+		9F2D311515B8233800FAE848 /* KeyboardLayouts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FCC303B13670F680013F083 /* KeyboardLayouts.plist */; };
+		9F2D311615B8233800FAE848 /* CHFlightstickPro.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0E610E139E1A05004A7A56 /* CHFlightstickPro.png */; };
+		9F2D311715B8233800FAE848 /* ThrustmasterFCS.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0E610F139E1A05004A7A56 /* ThrustmasterFCS.png */; };
+		9F2D311815B8233800FAE848 /* 4ButtonJoystick.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FA54098139E85D800999940 /* 4ButtonJoystick.png */; };
+		9F2D311915B8233800FAE848 /* RacingWheel.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7FC94B139EB38300D60320 /* RacingWheel.png */; };
+		9F2D311A15B8233800FAE848 /* GamepadTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */; };
+		9F2D311C15B8233800FAE848 /* BunnyTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278513D730D000606B4C /* BunnyTemplate.png */; };
+		9F2D311D15B8233800FAE848 /* TurtleTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278613D730D000606B4C /* TurtleTemplate.png */; };
+		9F2D311E15B8233800FAE848 /* NoJoystickTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */; };
+		9F2D311F15B8233800FAE848 /* HardDiskTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635914013F4D007E8B47 /* HardDiskTemplate.pdf */; };
+		9F2D312015B8233800FAE848 /* CDROMTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635A14013F4D007E8B47 /* CDROMTemplate.pdf */; };
+		9F2D312115B8233800FAE848 /* PauseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635B14013F4D007E8B47 /* PauseTemplate.pdf */; };
+		9F2D312215B8233800FAE848 /* PlayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635C14013F4D007E8B47 /* PlayTemplate.pdf */; };
+		9F2D312315B8233800FAE848 /* EjectTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635D14013F4D007E8B47 /* EjectTemplate.pdf */; };
+		9F2D312415B8233800FAE848 /* InsertTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635E14013F4D007E8B47 /* InsertTemplate.pdf */; };
+		9F2D312515B8233800FAE848 /* DisketteTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF636B140150C3007E8B47 /* DisketteTemplate.pdf */; };
+		9F2D312615B8233800FAE848 /* InsertFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */; };
+		9F2D312715B8233800FAE848 /* EjectFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */; };
+		9F2D312815B8233800FAE848 /* BundleFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FBDC590141A0E5D00171176 /* BundleFreestandingTemplate.pdf */; };
+		9F2D312915B8233800FAE848 /* MT32LCDFontTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBEC4F2142CEB770016964A /* MT32LCDFontTemplate.png */; };
+		9F2D312A15B8233800FAE848 /* MT32LCDGridTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBEC4F3142CEB770016964A /* MT32LCDGridTemplate.png */; };
+		9F2D312B15B8233800FAE848 /* MT32ROMTypes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */; };
+		9F2D313415B8233800FAE848 /* NumpadActiveTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD54A5914DE96B800FE350F /* NumpadActiveTemplate.pdf */; };
+		9F2D313515B8233800FAE848 /* NumpadInactiveTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD54A5C14DE979B00FE350F /* NumpadInactiveTemplate.pdf */; };
+		9F2D313615B8233800FAE848 /* NumlockActiveTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F3034B714E2C3F600BC572E /* NumlockActiveTemplate.pdf */; };
+		9F2D313715B8233800FAE848 /* NumlockInactiveTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F3034B814E2C3F600BC572E /* NumlockInactiveTemplate.pdf */; };
+		9F2D313815B8233800FAE848 /* FastForwardTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F8F374B14F9366F00E482FB /* FastForwardTemplate.pdf */; };
+		9F2D313915B8233800FAE848 /* Volume33PercentTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F27BD1314FAA4F5008EB0A1 /* Volume33PercentTemplate.pdf */; };
+		9F2D313A15B8233800FAE848 /* Volume66PercentTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F27BD1414FAA4F5008EB0A1 /* Volume66PercentTemplate.pdf */; };
+		9F2D313B15B8233800FAE848 /* Volume100PercentTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F27BD1514FAA4F5008EB0A1 /* Volume100PercentTemplate.pdf */; };
+		9F2D313C15B8233800FAE848 /* Volume0PercentCroppedTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F27BD1614FAA4F5008EB0A1 /* Volume0PercentCroppedTemplate.pdf */; };
+		9F2D313D15B8233800FAE848 /* Volume0PercentTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F27BD1714FAA4F5008EB0A1 /* Volume0PercentTemplate.pdf */; };
+		9F2D313E15B8233800FAE848 /* ScreenshotTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F839FB4150B81EF00337DD6 /* ScreenshotTemplate.pdf */; };
+		9F2D313F15B8233800FAE848 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = 9F84C86D157800DD00CCBCA7 /* Shaders */; };
+		9F2D314515B8233800FAE848 /* AboutBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA157A159721A300C42D10 /* AboutBackground@2x.png */; };
+		9F2D314F15B8233800FAE848 /* libJoypadCocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC6380913C09C5B004478A3 /* libJoypadCocoa.a */; };
+		9F2D315015B8233800FAE848 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC637FC13C09B10004478A3 /* CoreServices.framework */; };
+		9F2D315115B8233800FAE848 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		9F2D315215B8233800FAE848 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC32110F56C3E9001811F2 /* Carbon.framework */; };
+		9F2D315315B8233800FAE848 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; };
+		9F2D315415B8233800FAE848 /* SDL_net.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; };
+		9F2D315515B8233800FAE848 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C710F56E0AE001811F2 /* OpenGL.framework */; };
+		9F2D315615B8233800FAE848 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C760F56E0D7001811F2 /* AudioUnit.framework */; };
+		9F2D315715B8233800FAE848 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C770F56E0D7001811F2 /* CoreMIDI.framework */; };
+		9F2D315815B8233800FAE848 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F2140FE0F59F28000A5A183 /* QuartzCore.framework */; };
+		9F2D315915B8233800FAE848 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4E042B0F67E72300427D50 /* AudioToolbox.framework */; };
+		9F2D315A15B8233800FAE848 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
+		9F2D315C15B8233800FAE848 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
+		9F2D315D15B8233800FAE848 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F61942312340F5400F35AB4 /* ScriptingBridge.framework */; };
+		9F2D315E15B8233800FAE848 /* PhysFS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5CF183F128F81AF0065844A /* PhysFS.framework */; };
+		9F2D315F15B8233800FAE848 /* SDL_sound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
+		9F2D316015B8233800FAE848 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBAA8F3134AFABD0092BF95 /* DiskArbitration.framework */; };
+		9F2D316115B8233800FAE848 /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
+		9F2D316215B8233800FAE848 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731B51136331A9005E564F /* IOKit.framework */; };
+		9F2D316315B8233800FAE848 /* MT32Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
+		9F2D316415B8233800FAE848 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; };
+		9F2D316615B8233800FAE848 /* DDHidLib.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
+		9F2D316715B8233800FAE848 /* SDL_sound.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
+		9F2D316815B8233800FAE848 /* SDL_net.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; };
+		9F2D316915B8233800FAE848 /* PhysFS.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = E5CF183F128F81AF0065844A /* PhysFS.framework */; };
+		9F2D316B15B8233800FAE848 /* SDL.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; };
+		9F2D316C15B8233800FAE848 /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
+		9F2D316D15B8233800FAE848 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; };
+		9F2D318815B826F300FAE848 /* About.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2D317C15B826EF00FAE848 /* About.xib */; };
+		9F2D318915B826F600FAE848 /* DOSWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2D317E15B826EF00FAE848 /* DOSWindow.xib */; };
+		9F2D318B15B826FE00FAE848 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2D318215B826EF00FAE848 /* MainMenu.xib */; };
 		9F3034B914E2C3F600BC572E /* NumlockActiveTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F3034B714E2C3F600BC572E /* NumlockActiveTemplate.pdf */; };
 		9F3034BA14E2C3F600BC572E /* NumlockInactiveTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F3034B814E2C3F600BC572E /* NumlockInactiveTemplate.pdf */; };
 		9F34BE40142B700100A69FAF /* BXCoalfaceAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE3E142B700100A69FAF /* BXCoalfaceAudio.mm */; };
 		9F34BE5B142B76D800A69FAF /* MT32Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
 		9F34BE5C142B76F500A69FAF /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
 		9F34BE5F142B851800A69FAF /* BXEmulator+BXAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */; };
-		9F34BE62142B917100A69FAF /* BXAppController+BXSupportFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE61142B917100A69FAF /* BXAppController+BXSupportFiles.m */; };
+		9F34BE62142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */; };
 		9F39A43B1452CE9100942D0F /* BXBezelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F39A43A1452CE9100942D0F /* BXBezelView.m */; };
 		9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */; };
 		9F3EDA171434A6E4009BFBA2 /* BXSession+BXAudioControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA161434A6E4009BFBA2 /* BXSession+BXAudioControls.m */; };
@@ -78,7 +425,6 @@
 		9F3FB1AF1306F88800DB8FBE /* BXScriptablePreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1AE1306F88800DB8FBE /* BXScriptablePreferences.m */; };
 		9F3FB1B61306F9FB00DB8FBE /* NSApplication+BXScripting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1B51306F9FB00DB8FBE /* NSApplication+BXScripting.m */; };
 		9F3FB24E130714D700DB8FBE /* BXScriptableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB24D130714D700DB8FBE /* BXScriptableWindow.m */; };
-		9F4175F1119DCF7E00646B15 /* BXFrameRateCounterLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4175F0119DCF7E00646B15 /* BXFrameRateCounterLayer.m */; };
 		9F424207109D03F500111D28 /* BXInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F424206109D03F500111D28 /* BXInspectorController.m */; };
 		9F424222109D061000111D28 /* InspectorPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1C5109C3CB400593456 /* InspectorPanel.xib */; };
 		9F42D9DF1172481800AC6F1F /* BXStatusBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F42D9DE1172481800AC6F1F /* BXStatusBarController.m */; };
@@ -140,7 +486,6 @@
 		9F70278413D72D8100606B4C /* BXThemedControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70278313D72D8100606B4C /* BXThemedControls.m */; };
 		9F70278713D730D000606B4C /* BunnyTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278513D730D000606B4C /* BunnyTemplate.png */; };
 		9F70278813D730D000606B4C /* TurtleTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278613D730D000606B4C /* TurtleTemplate.png */; };
-		9F70A09512F7471E00D144D2 /* BXAppController+BXApplicationModes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70A09412F7471E00D144D2 /* BXAppController+BXApplicationModes.m */; };
 		9F70C19C129036C900A3627F /* Boxer.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 9F70C19B129036C900A3627F /* Boxer.sdef */; };
 		9F731AF513630820005E564F /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
 		9F731B1D13630B6D005E564F /* DDHidLib.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
@@ -275,7 +620,7 @@
 		9F8A9CD2143E120B00C37A93 /* MT32ROMTypes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */; };
 		9F8F374914F91FEB00E482FB /* BXApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F374814F91FEB00E482FB /* BXApplication.m */; };
 		9F8F374C14F9366F00E482FB /* FastForwardTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F8F374B14F9366F00E482FB /* FastForwardTemplate.pdf */; };
-		9F8F374F14F9442D00E482FB /* BXAppController+BXHotKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F374E14F9442D00E482FB /* BXAppController+BXHotKeys.m */; };
+		9F8F374F14F9442D00E482FB /* BXBaseAppController+BXHotKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F374E14F9442D00E482FB /* BXBaseAppController+BXHotKeys.m */; };
 		9F8F482513DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */; };
 		9F902C24142E183500843B01 /* BXMIDISynth.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C23142E183500843B01 /* BXMIDISynth.m */; };
 		9F902C27142E198100843B01 /* BXEmulatedMT32.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C26142E198100843B01 /* BXEmulatedMT32.mm */; };
@@ -389,6 +734,19 @@
 		9FCA158B1597377B00C42D10 /* Keyboard@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA15891597377B00C42D10 /* Keyboard@2x.png */; };
 		9FCA158D15973A6D00C42D10 /* Display@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA158C15973A6D00C42D10 /* Display@2x.png */; };
 		9FCA702213DAE6F5006C5DF8 /* BXCoalfaceDrives.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */; };
+		9FCB7B0A15B8422000CC7CC7 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0915B8422000CC7CC7 /* DOS Toolkit */; };
+		9FCB7B0D15B842E000CC7CC7 /* BXStandaloneAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0C15B842E000CC7CC7 /* BXStandaloneAppController.m */; };
+		9FCB7B1015B844AB00CC7CC7 /* BXBaseAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0F15B844AA00CC7CC7 /* BXBaseAppController.m */; };
+		9FCB7B1115B844AB00CC7CC7 /* BXBaseAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0F15B844AA00CC7CC7 /* BXBaseAppController.m */; };
+		9FCB7B1215B856A300CC7CC7 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
+		9FCB7B1315B856DB00CC7CC7 /* BXInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F424206109D03F500111D28 /* BXInspectorController.m */; };
+		9FCB7B1415B856FC00CC7CC7 /* BXDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA6E0134A21A50092BF95 /* BXDriveImport.m */; };
+		9FCB7B1515B8570700CC7CC7 /* BXSimpleDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F44500112AEC0FC00A2D405 /* BXSimpleDriveImport.m */; };
+		9FCB7B1615B8570900CC7CC7 /* BXCDImageImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA6BC134A1A430092BF95 /* BXCDImageImport.m */; };
+		9FCB7B1715B8570C00CC7CC7 /* BXBinCueImageImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA877134A66C80092BF95 /* BXBinCueImageImport.m */; };
+		9FCB7B1815B8570E00CC7CC7 /* BXDriveBundleImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F444FFE12AEBE5200A2D405 /* BXDriveBundleImport.m */; };
+		9FCB7B1A15B8589B00CC7CC7 /* BXDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */; };
+		9FCB7B1B15B85B9500CC7CC7 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
 		9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
 		9FCBB2D110A61CA800C28B09 /* executable.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CE10A61CA800C28B09 /* executable.icns */; };
 		9FCBB2D210A61CA800C28B09 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
@@ -476,6 +834,23 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		9F2D316515B8233800FAE848 /* Copy Bundled Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9F2D316615B8233800FAE848 /* DDHidLib.framework in Copy Bundled Frameworks */,
+				9F2D316715B8233800FAE848 /* SDL_sound.framework in Copy Bundled Frameworks */,
+				9F2D316815B8233800FAE848 /* SDL_net.framework in Copy Bundled Frameworks */,
+				9F2D316915B8233800FAE848 /* PhysFS.framework in Copy Bundled Frameworks */,
+				9F2D316B15B8233800FAE848 /* SDL.framework in Copy Bundled Frameworks */,
+				9F2D316C15B8233800FAE848 /* MT32Emu.framework in Copy Bundled Frameworks */,
+				9F2D316D15B8233800FAE848 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
+			);
+			name = "Copy Bundled Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9FBC3D5E0F56EA69001811F2 /* Copy Bundled Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -589,6 +964,11 @@
 		9F2C28A0129D906600B172C8 /* BXFirstRunWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFirstRunWindowController.h; sourceTree = "<group>"; };
 		9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFirstRunWindowController.m; sourceTree = "<group>"; };
 		9F2C28B7129D924E00B172C8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/FirstRunWindow.xib; sourceTree = "<group>"; };
+		9F2D317215B8233800FAE848 /* Boxer Standalone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Boxer Standalone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F2D317415B8233900FAE848 /* Boxer Standalone-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Boxer Standalone-Info.plist"; sourceTree = "<group>"; };
+		9F2D317D15B826EF00FAE848 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/About.xib; sourceTree = "<group>"; };
+		9F2D317F15B826EF00FAE848 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DOSWindow.xib; sourceTree = "<group>"; };
+		9F2D318315B826EF00FAE848 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		9F3034B714E2C3F600BC572E /* NumlockActiveTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = NumlockActiveTemplate.pdf; sourceTree = "<group>"; };
 		9F3034B814E2C3F600BC572E /* NumlockInactiveTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = NumlockInactiveTemplate.pdf; sourceTree = "<group>"; };
 		9F348A9D128F004A0034E780 /* BXWelcomeButtonDraggingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeButtonDraggingDelegate.h; sourceTree = "<group>"; };
@@ -597,8 +977,8 @@
 		9F34BE5A142B76D800A69FAF /* MT32Emu.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MT32Emu.framework; sourceTree = "<group>"; };
 		9F34BE5D142B851700A69FAF /* BXEmulator+BXAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXAudio.h"; sourceTree = "<group>"; };
 		9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXAudio.mm"; sourceTree = "<group>"; };
-		9F34BE60142B917100A69FAF /* BXAppController+BXSupportFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXAppController+BXSupportFiles.h"; sourceTree = "<group>"; };
-		9F34BE61142B917100A69FAF /* BXAppController+BXSupportFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXSupportFiles.m"; sourceTree = "<group>"; };
+		9F34BE60142B917100A69FAF /* BXBaseAppController+BXSupportFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "BXBaseAppController+BXSupportFiles.h"; sourceTree = "<group>"; };
+		9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXBaseAppController+BXSupportFiles.m"; sourceTree = "<group>"; };
 		9F39A4391452CE9100942D0F /* BXBezelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBezelView.h; sourceTree = "<group>"; };
 		9F39A43A1452CE9100942D0F /* BXBezelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBezelView.m; sourceTree = "<group>"; };
 		9F3E57A313F694B40070A14D /* BXEmulatorErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorErrors.h; sourceTree = "<group>"; };
@@ -718,8 +1098,6 @@
 		9F70278513D730D000606B4C /* BunnyTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BunnyTemplate.png; sourceTree = "<group>"; };
 		9F70278613D730D000606B4C /* TurtleTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TurtleTemplate.png; sourceTree = "<group>"; };
 		9F70A02212F731A800D144D2 /* SystemEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemEvents.h; sourceTree = "<group>"; };
-		9F70A09312F7471E00D144D2 /* BXAppController+BXApplicationModes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXAppController+BXApplicationModes.h"; sourceTree = "<group>"; };
-		9F70A09412F7471E00D144D2 /* BXAppController+BXApplicationModes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXApplicationModes.m"; sourceTree = "<group>"; };
 		9F70C19B129036C900A3627F /* Boxer.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Boxer.sdef; sourceTree = "<group>"; };
 		9F731AF413630820005E564F /* DDHidLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DDHidLib.framework; sourceTree = "<group>"; };
 		9F731B2C136323D2005E564F /* BXHIDMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHIDMonitor.h; sourceTree = "<group>"; };
@@ -996,8 +1374,8 @@
 		9F8F374714F91FEB00E482FB /* BXApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXApplication.h; sourceTree = "<group>"; };
 		9F8F374814F91FEB00E482FB /* BXApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXApplication.m; sourceTree = "<group>"; };
 		9F8F374B14F9366F00E482FB /* FastForwardTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = FastForwardTemplate.pdf; sourceTree = "<group>"; };
-		9F8F374D14F9442D00E482FB /* BXAppController+BXHotKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXAppController+BXHotKeys.h"; sourceTree = "<group>"; };
-		9F8F374E14F9442D00E482FB /* BXAppController+BXHotKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXHotKeys.m"; sourceTree = "<group>"; };
+		9F8F374D14F9442D00E482FB /* BXBaseAppController+BXHotKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "BXBaseAppController+BXHotKeys.h"; sourceTree = "<group>"; };
+		9F8F374E14F9442D00E482FB /* BXBaseAppController+BXHotKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXBaseAppController+BXHotKeys.m"; sourceTree = "<group>"; };
 		9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSShadow+BXShadowExtensions.h"; sourceTree = "<group>"; };
 		9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSShadow+BXShadowExtensions.m"; sourceTree = "<group>"; };
 		9F902C1F142E16C800843B01 /* BXMIDIDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMIDIDevice.h; sourceTree = "<group>"; };
@@ -1177,6 +1555,11 @@
 		9FCA158C15973A6D00C42D10 /* Display@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Display@2x.png"; sourceTree = "<group>"; };
 		9FCA702013DAE6B1006C5DF8 /* BXCoalfaceDrives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalfaceDrives.h; sourceTree = "<group>"; };
 		9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalfaceDrives.mm; sourceTree = "<group>"; };
+		9FCB7B0915B8422000CC7CC7 /* DOS Toolkit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "DOS Toolkit"; sourceTree = "<group>"; };
+		9FCB7B0B15B842E000CC7CC7 /* BXStandaloneAppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXStandaloneAppController.h; sourceTree = "<group>"; };
+		9FCB7B0C15B842E000CC7CC7 /* BXStandaloneAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXStandaloneAppController.m; sourceTree = "<group>"; };
+		9FCB7B0E15B844AA00CC7CC7 /* BXBaseAppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBaseAppController.h; sourceTree = "<group>"; };
+		9FCB7B0F15B844AA00CC7CC7 /* BXBaseAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBaseAppController.m; sourceTree = "<group>"; };
 		9FCBB2CD10A61CA800C28B09 /* boxer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = boxer.icns; sourceTree = "<group>"; };
 		9FCBB2CE10A61CA800C28B09 /* executable.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = executable.icns; sourceTree = "<group>"; };
 		9FCBB2CF10A61CA800C28B09 /* package.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = package.icns; sourceTree = "<group>"; };
@@ -1347,6 +1730,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9F2D314E15B8233800FAE848 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F2D314F15B8233800FAE848 /* libJoypadCocoa.a in Frameworks */,
+				9F2D315015B8233800FAE848 /* CoreServices.framework in Frameworks */,
+				9F2D315115B8233800FAE848 /* Cocoa.framework in Frameworks */,
+				9F2D315215B8233800FAE848 /* Carbon.framework in Frameworks */,
+				9F2D315315B8233800FAE848 /* SDL.framework in Frameworks */,
+				9F2D315415B8233800FAE848 /* SDL_net.framework in Frameworks */,
+				9F2D315515B8233800FAE848 /* OpenGL.framework in Frameworks */,
+				9F2D315615B8233800FAE848 /* AudioUnit.framework in Frameworks */,
+				9F2D315715B8233800FAE848 /* CoreMIDI.framework in Frameworks */,
+				9F2D315815B8233800FAE848 /* QuartzCore.framework in Frameworks */,
+				9F2D315915B8233800FAE848 /* AudioToolbox.framework in Frameworks */,
+				9F2D315A15B8233800FAE848 /* libicucore.dylib in Frameworks */,
+				9F2D315C15B8233800FAE848 /* QTKit.framework in Frameworks */,
+				9F2D315D15B8233800FAE848 /* ScriptingBridge.framework in Frameworks */,
+				9F2D315E15B8233800FAE848 /* PhysFS.framework in Frameworks */,
+				9F2D315F15B8233800FAE848 /* SDL_sound.framework in Frameworks */,
+				9F2D316015B8233800FAE848 /* DiskArbitration.framework in Frameworks */,
+				9F2D316115B8233800FAE848 /* DDHidLib.framework in Frameworks */,
+				9F2D316215B8233800FAE848 /* IOKit.framework in Frameworks */,
+				9F2D316315B8233800FAE848 /* MT32Emu.framework in Frameworks */,
+				9F2D316415B8233800FAE848 /* BGHUDAppKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -1365,6 +1776,8 @@
 				9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */,
 				9F53411612059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.h */,
 				9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */,
+				9F887103156F85F8006CDB5F /* BXFileTypes.h */,
+				9F887104156F85F8006CDB5F /* BXFileTypes.m */,
 				9F902C1D142E169800843B01 /* MIDI */,
 				9F1D50280F5C0ACD009F0AB9 /* Emulator */,
 				9F496E3D108EEB0700282261 /* DOS session */,
@@ -1381,8 +1794,6 @@
 				9F496E3F108EEBB200282261 /* UI helpers */,
 				9F496E3C108EEAD700282261 /* UI controllers */,
 				9F2AC6DB10EFFE2C00CFFF72 /* Artwork */,
-				9F887103156F85F8006CDB5F /* BXFileTypes.h */,
-				9F887104156F85F8006CDB5F /* BXFileTypes.m */,
 			);
 			path = Boxer;
 			sourceTree = "<group>";
@@ -1421,6 +1832,7 @@
 			isa = PBXGroup;
 			children = (
 				8D1107320486CEB800E47090 /* Boxer.app */,
+				9F2D317215B8233800FAE848 /* Boxer Standalone.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1429,6 +1841,7 @@
 			isa = PBXGroup;
 			children = (
 				080E96DDFE201D6D7F000001 /* Boxer */,
+				9F2D317915B823D300FAE848 /* Standalone */,
 				9FBC3A7A0F56CEA2001811F2 /* DOSBox */,
 				9FFF978412327D58009B5EE5 /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -1504,16 +1917,16 @@
 		9F160E6E1236B28900F8768E /* Application Delegate */ = {
 			isa = PBXGroup;
 			children = (
+				9FCB7B0E15B844AA00CC7CC7 /* BXBaseAppController.h */,
+				9FCB7B0F15B844AA00CC7CC7 /* BXBaseAppController.m */,
 				9FBC35110F56C7B7001811F2 /* BXAppController.h */,
 				9FBC351E0F56C7B7001811F2 /* BXAppController.m */,
-				9F70A09312F7471E00D144D2 /* BXAppController+BXApplicationModes.h */,
-				9F70A09412F7471E00D144D2 /* BXAppController+BXApplicationModes.m */,
 				9F160E6F1236B2A600F8768E /* BXAppController+BXGamesFolder.h */,
 				9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */,
-				9F34BE60142B917100A69FAF /* BXAppController+BXSupportFiles.h */,
-				9F34BE61142B917100A69FAF /* BXAppController+BXSupportFiles.m */,
-				9F8F374D14F9442D00E482FB /* BXAppController+BXHotKeys.h */,
-				9F8F374E14F9442D00E482FB /* BXAppController+BXHotKeys.m */,
+				9F34BE60142B917100A69FAF /* BXBaseAppController+BXSupportFiles.h */,
+				9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */,
+				9F8F374D14F9442D00E482FB /* BXBaseAppController+BXHotKeys.h */,
+				9F8F374E14F9442D00E482FB /* BXBaseAppController+BXHotKeys.m */,
 				9F2122E81301BDE1002AB1B7 /* BXShelfAppearanceOperation.h */,
 				9F2122E91301BDE1002AB1B7 /* BXShelfAppearanceOperation.m */,
 				9F2122ED1301BE6E002AB1B7 /* BXSampleGamesCopy.h */,
@@ -1521,7 +1934,7 @@
 				9F8F374714F91FEB00E482FB /* BXApplication.h */,
 				9F8F374814F91FEB00E482FB /* BXApplication.m */,
 			);
-			name = "Application Delegate";
+			path = "Application Delegate";
 			sourceTree = "<group>";
 		};
 		9F1812B812996308009BC4B2 /* YRKSpinningProgressIndicator */ = {
@@ -1715,6 +2128,26 @@
 				9F2120F713015653002AB1B7 /* BXShelfArt.m */,
 			);
 			name = Artwork;
+			sourceTree = "<group>";
+		};
+		9F2D317915B823D300FAE848 /* Standalone */ = {
+			isa = PBXGroup;
+			children = (
+				9F2D317A15B8240400FAE848 /* Resources */,
+				9F2D317415B8233900FAE848 /* Boxer Standalone-Info.plist */,
+				9FCB7B0B15B842E000CC7CC7 /* BXStandaloneAppController.h */,
+				9FCB7B0C15B842E000CC7CC7 /* BXStandaloneAppController.m */,
+			);
+			path = Standalone;
+			sourceTree = "<group>";
+		};
+		9F2D317A15B8240400FAE848 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9FCB7B0915B8422000CC7CC7 /* DOS Toolkit */,
+				9FCB7ACC15B8420800CC7CC7 /* XIBs */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		9F496E3C108EEAD700282261 /* UI controllers */ = {
@@ -2624,6 +3057,16 @@
 			name = "Controller profiles";
 			sourceTree = "<group>";
 		};
+		9FCB7ACC15B8420800CC7CC7 /* XIBs */ = {
+			isa = PBXGroup;
+			children = (
+				9F2D317C15B826EF00FAE848 /* About.xib */,
+				9F2D317E15B826EF00FAE848 /* DOSWindow.xib */,
+				9F2D318215B826EF00FAE848 /* MainMenu.xib */,
+			);
+			name = XIBs;
+			sourceTree = "<group>";
+		};
 		9FCBB2CB10A61C6D00C28B09 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
@@ -2787,6 +3230,27 @@
 			productReference = 8D1107320486CEB800E47090 /* Boxer.app */;
 			productType = "com.apple.product-type.application";
 		};
+		9F2D2F9715B8233800FAE848 /* Boxer Standalone */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F2D316F15B8233800FAE848 /* Build configuration list for PBXNativeTarget "Boxer Standalone" */;
+			buildPhases = (
+				9F2D2F9815B8233800FAE848 /* Sources */,
+				9F2D30D415B8233800FAE848 /* Resources */,
+				9F2D314E15B8233800FAE848 /* Frameworks */,
+				9F2D316515B8233800FAE848 /* Copy Bundled Frameworks */,
+				9F2D316E15B8233800FAE848 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			comments = "REGARDING --mstackrealign\nBoxer will crash with a dyld_misaligned_stack_error if dynamic core mode is on when the session starts.\n\ndyld is the dynamic linker, so this may be some peculiar interaction of threading and dynamically-loaded frameworks: the crash also happens in our non-XCode, SDL-framework-using build, and it *doesn't* happen if a sleep() delay is introduced before DOSBox_main is called, which implies a race condition.\n\nAdding -mstackrealign to the C flags for Intel seems to have made the problem go away. Which doesn't explain why it's happening in the first place.";
+			dependencies = (
+			);
+			name = "Boxer Standalone";
+			productInstallPath = "$(HOME)/Applications";
+			productName = Boxer;
+			productReference = 9F2D317215B8233800FAE848 /* Boxer Standalone.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2812,6 +3276,7 @@
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* Boxer */,
+				9F2D2F9715B8233800FAE848 /* Boxer Standalone */,
 			);
 		};
 /* End PBXProject section */
@@ -2942,12 +3407,84 @@
 				9FCA158A1597377B00C42D10 /* Audio@2x.png in Resources */,
 				9FCA158B1597377B00C42D10 /* Keyboard@2x.png in Resources */,
 				9FCA158D15973A6D00C42D10 /* Display@2x.png in Resources */,
+				9FCB7B0A15B8422000CC7CC7 /* DOS Toolkit in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F2D30D415B8233800FAE848 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F2D30D515B8233800FAE848 /* AboutBackground.png in Resources */,
+				9F2D30D615B8233800FAE848 /* LockClosing.aiff in Resources */,
+				9F2D30D715B8233800FAE848 /* LockOpening.aiff in Resources */,
+				9F2D30D815B8233800FAE848 /* DOSBox.strings in Resources */,
+				9F2D30D915B8233800FAE848 /* Shell.strings in Resources */,
+				9F2D30DB15B8233800FAE848 /* Snapshot.aiff in Resources */,
+				9F2D30E815B8233800FAE848 /* GameProfiles.plist in Resources */,
+				9F2D30E915B8233800FAE848 /* Configurations in Resources */,
+				9F2D30F215B8233800FAE848 /* UserDefaults.plist in Resources */,
+				9F2D30F415B8233800FAE848 /* Configuration.strings in Resources */,
+				9F2D30F515B8233800FAE848 /* GameDefaults.plist in Resources */,
+				9F2D311515B8233800FAE848 /* KeyboardLayouts.plist in Resources */,
+				9F2D311615B8233800FAE848 /* CHFlightstickPro.png in Resources */,
+				9F2D311715B8233800FAE848 /* ThrustmasterFCS.png in Resources */,
+				9F2D311815B8233800FAE848 /* 4ButtonJoystick.png in Resources */,
+				9F2D311915B8233800FAE848 /* RacingWheel.png in Resources */,
+				9F2D311A15B8233800FAE848 /* GamepadTemplate.pdf in Resources */,
+				9F2D311C15B8233800FAE848 /* BunnyTemplate.png in Resources */,
+				9F2D311D15B8233800FAE848 /* TurtleTemplate.png in Resources */,
+				9F2D311E15B8233800FAE848 /* NoJoystickTemplate.pdf in Resources */,
+				9F2D311F15B8233800FAE848 /* HardDiskTemplate.pdf in Resources */,
+				9F2D312015B8233800FAE848 /* CDROMTemplate.pdf in Resources */,
+				9F2D312115B8233800FAE848 /* PauseTemplate.pdf in Resources */,
+				9F2D312215B8233800FAE848 /* PlayTemplate.pdf in Resources */,
+				9F2D312315B8233800FAE848 /* EjectTemplate.pdf in Resources */,
+				9F2D312415B8233800FAE848 /* InsertTemplate.pdf in Resources */,
+				9F2D312515B8233800FAE848 /* DisketteTemplate.pdf in Resources */,
+				9F2D312615B8233800FAE848 /* InsertFreestandingTemplate.pdf in Resources */,
+				9F2D312715B8233800FAE848 /* EjectFreestandingTemplate.pdf in Resources */,
+				9F2D312815B8233800FAE848 /* BundleFreestandingTemplate.pdf in Resources */,
+				9F2D312915B8233800FAE848 /* MT32LCDFontTemplate.png in Resources */,
+				9F2D312A15B8233800FAE848 /* MT32LCDGridTemplate.png in Resources */,
+				9F2D312B15B8233800FAE848 /* MT32ROMTypes.plist in Resources */,
+				9F2D313415B8233800FAE848 /* NumpadActiveTemplate.pdf in Resources */,
+				9F2D313515B8233800FAE848 /* NumpadInactiveTemplate.pdf in Resources */,
+				9F2D313615B8233800FAE848 /* NumlockActiveTemplate.pdf in Resources */,
+				9F2D313715B8233800FAE848 /* NumlockInactiveTemplate.pdf in Resources */,
+				9F2D313815B8233800FAE848 /* FastForwardTemplate.pdf in Resources */,
+				9F2D313915B8233800FAE848 /* Volume33PercentTemplate.pdf in Resources */,
+				9F2D313A15B8233800FAE848 /* Volume66PercentTemplate.pdf in Resources */,
+				9F2D313B15B8233800FAE848 /* Volume100PercentTemplate.pdf in Resources */,
+				9F2D313C15B8233800FAE848 /* Volume0PercentCroppedTemplate.pdf in Resources */,
+				9F2D313D15B8233800FAE848 /* Volume0PercentTemplate.pdf in Resources */,
+				9F2D313E15B8233800FAE848 /* ScreenshotTemplate.pdf in Resources */,
+				9F2D313F15B8233800FAE848 /* Shaders in Resources */,
+				9F2D314515B8233800FAE848 /* AboutBackground@2x.png in Resources */,
+				9F2D318815B826F300FAE848 /* About.xib in Resources */,
+				9F2D318915B826F600FAE848 /* DOSWindow.xib in Resources */,
+				9F2D318B15B826FE00FAE848 /* MainMenu.xib in Resources */,
+				9FCB7B1B15B85B9500CC7CC7 /* boxer.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		9F2D316E15B8233800FAE848 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			comments = "This deletes the extraneous plugin resources from the BGHUDAppKit framework. See README.textile in the framework's source folder for details.";
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rm -fR \"${CONFIGURATION_BUILD_DIR}/${WRAPPER_NAME}/Contents/Frameworks/BGHUDAppKit.framework/Versions/Current/Resources/BGHUDAppKitPlugin.ibplugin\"";
+		};
 		9FA2E5DF109D257200E50623 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3020,7 +3557,6 @@
 				9FEF98011191E1EF002024DF /* BXEmulatedMouse.mm in Sources */,
 				9F765649119403520082A06A /* BXInputController.m in Sources */,
 				9FB4F9E411957B55006C8AC9 /* BXVideoFrame.m in Sources */,
-				9F4175F1119DCF7E00646B15 /* BXFrameRateCounterLayer.m in Sources */,
 				9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */,
 				9FECE19011A31B8B00E0EBB6 /* BXBasicRenderer.m in Sources */,
 				9FECE1C211A3244500E0EBB6 /* BXGLRenderingView.m in Sources */,
@@ -3075,7 +3611,6 @@
 				9F444FCC12AEA28700A2D405 /* BXOperationSet.m in Sources */,
 				9F444FFF12AEBE5200A2D405 /* BXDriveBundleImport.m in Sources */,
 				9F44500212AEC0FC00A2D405 /* BXSimpleDriveImport.m in Sources */,
-				9F70A09512F7471E00D144D2 /* BXAppController+BXApplicationModes.m in Sources */,
 				9F2120F813015653002AB1B7 /* BXShelfArt.m in Sources */,
 				9F2120FE1301597E002AB1B7 /* NSImage+BXSaveImages.m in Sources */,
 				9F2122EA1301BDE1002AB1B7 /* BXShelfAppearanceOperation.m in Sources */,
@@ -3249,7 +3784,7 @@
 				9F740BDE142A24A400BA66B4 /* RegexKitLite.m in Sources */,
 				9F34BE40142B700100A69FAF /* BXCoalfaceAudio.mm in Sources */,
 				9F34BE5F142B851800A69FAF /* BXEmulator+BXAudio.mm in Sources */,
-				9F34BE62142B917100A69FAF /* BXAppController+BXSupportFiles.m in Sources */,
+				9F34BE62142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m in Sources */,
 				9FBEC4F0142CE8300016964A /* BXMT32LCDDisplay.m in Sources */,
 				9F902C24142E183500843B01 /* BXMIDISynth.m in Sources */,
 				9F902C27142E198100843B01 /* BXEmulatedMT32.mm in Sources */,
@@ -3272,7 +3807,7 @@
 				9F6891A014B0F6D800641C62 /* BXTFlightControllerProfile.m in Sources */,
 				9F9AEE8914CB4AEA00728641 /* BXAppKitVersionHelpers.m in Sources */,
 				9F8F374914F91FEB00E482FB /* BXApplication.m in Sources */,
-				9F8F374F14F9442D00E482FB /* BXAppController+BXHotKeys.m in Sources */,
+				9F8F374F14F9442D00E482FB /* BXBaseAppController+BXHotKeys.m in Sources */,
 				9F1DE9B214FB7F3800F9C91E /* NSObject+BXPerformExtensions.m in Sources */,
 				9FD8BEE414FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m in Sources */,
 				9F9DF415153B058200233968 /* BXKeyBuffer.mm in Sources */,
@@ -3284,6 +3819,294 @@
 				9F4FC1151592508100319428 /* BXSupersamplingRenderer.m in Sources */,
 				9F4FC118159253DA00319428 /* BXShaderRenderer.m in Sources */,
 				9F5F12C615ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.m in Sources */,
+				9FCB7B1015B844AB00CC7CC7 /* BXBaseAppController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F2D2F9815B8233800FAE848 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F2D2F9915B8233800FAE848 /* main.m in Sources */,
+				9F2D2F9A15B8233800FAE848 /* BXAboutController.m in Sources */,
+				9F2D2F9C15B8233800FAE848 /* BXSession.m in Sources */,
+				9F2D2F9D15B8233800FAE848 /* BXEmulator+BXShell.mm in Sources */,
+				9F2D2F9E15B8233800FAE848 /* BXDOSWindow.m in Sources */,
+				9F2D2FA015B8233800FAE848 /* NSWindow+BXWindowDimensions.m in Sources */,
+				9F2D2FA115B8233800FAE848 /* BXGeometry.m in Sources */,
+				9F2D2FA215B8233800FAE848 /* BXEmulator.mm in Sources */,
+				9F2D2FA315B8233800FAE848 /* BXSession+BXEmulatorControls.m in Sources */,
+				9F2D2FA415B8233800FAE848 /* BXCloseAlert.m in Sources */,
+				9F2D2FA515B8233800FAE848 /* NSAlert+BXAlert.m in Sources */,
+				9F2D2FA615B8233800FAE848 /* BXHelpMenuController.m in Sources */,
+				9F2D2FA715B8233800FAE848 /* NSWorkspace+BXMountedVolumes.m in Sources */,
+				9F2D2FA815B8233800FAE848 /* BXPackage.m in Sources */,
+				9F2D2FA915B8233800FAE848 /* BXEmulator+BXDOSFileSystem.mm in Sources */,
+				9F2D2FAA15B8233800FAE848 /* NSString+BXPaths.m in Sources */,
+				9F2D2FAE15B8233800FAE848 /* BXValueTransformers.m in Sources */,
+				9F2D2FAF15B8233800FAE848 /* BXDrive.m in Sources */,
+				9F2D2FB015B8233800FAE848 /* UKFileWatcher.m in Sources */,
+				9F2D2FB115B8233800FAE848 /* UKFNSubscribeFileWatcher.m in Sources */,
+				9F2D2FB215B8233800FAE848 /* UKKQueue.m in Sources */,
+				9F2D2FB315B8233800FAE848 /* UKMainThreadProxy.m in Sources */,
+				9F2D2FB415B8233800FAE848 /* BXSession+BXFileManager.m in Sources */,
+				9F2D2FB515B8233800FAE848 /* BXThemes.m in Sources */,
+				9F2D2FB615B8233800FAE848 /* NSBezierPath+MCAdditions.m in Sources */,
+				9F2D2FB815B8233800FAE848 /* BXProgramPanel.m in Sources */,
+				9F2D2FB915B8233800FAE848 /* BXProgramPanelController.m in Sources */,
+				9F2D2FBD15B8233800FAE848 /* NSWorkspace+BXFileTypes.m in Sources */,
+				9F2D2FBE15B8233800FAE848 /* BXSession+BXDragDrop.m in Sources */,
+				9F2D2FBF15B8233800FAE848 /* BXEmulator+BXPaste.mm in Sources */,
+				9F2D2FC015B8233800FAE848 /* BXGameProfile.m in Sources */,
+				9F2D2FC115B8233800FAE848 /* BXScroller.m in Sources */,
+				9F2D2FC515B8233800FAE848 /* NSWorkspace+BXIcons.m in Sources */,
+				9F2D2FC615B8233800FAE848 /* BXDrivesInUseAlert.m in Sources */,
+				9F2D2FC715B8233800FAE848 /* BXStatusBarController.m in Sources */,
+				9F2D2FC815B8233800FAE848 /* BXCoalface.mm in Sources */,
+				9F2D2FC915B8233800FAE848 /* BXEmulatedMouse.mm in Sources */,
+				9F2D2FCA15B8233800FAE848 /* BXInputController.m in Sources */,
+				9F2D2FCB15B8233800FAE848 /* BXVideoFrame.m in Sources */,
+				9F2D2FCD15B8233800FAE848 /* BXCursorFadeAnimation.m in Sources */,
+				9F2D2FCE15B8233800FAE848 /* BXBasicRenderer.m in Sources */,
+				9F2D2FCF15B8233800FAE848 /* BXGLRenderingView.m in Sources */,
+				9F2D2FD015B8233800FAE848 /* BXInputView.m in Sources */,
+				9F2D2FD115B8233800FAE848 /* BXVideoHandler.mm in Sources */,
+				9F2D2FD215B8233800FAE848 /* BXEmulatorConfiguration.m in Sources */,
+				9F2D2FD315B8233800FAE848 /* NSString+BXStringFormatting.m in Sources */,
+				9F2D2FD415B8233800FAE848 /* BXLineEnumerator.m in Sources */,
+				9F2D2FD515B8233800FAE848 /* BXDigest.m in Sources */,
+				9F2D2FD615B8233800FAE848 /* NSData+HexStrings.m in Sources */,
+				9F2D2FD715B8233800FAE848 /* BXSingleFileTransfer.m in Sources */,
+				9F2D2FD815B8233800FAE848 /* NSFileManager+BXTemporaryFiles.m in Sources */,
+				9F2D2FD915B8233800FAE848 /* BXThemedSegmentedCell.m in Sources */,
+				9F2D2FDB15B8233800FAE848 /* BXDelegatedView.m in Sources */,
+				9F2D2FDC15B8233800FAE848 /* BXOperation.m in Sources */,
+				9F2D2FDD15B8233800FAE848 /* NSWorkspace+BXExecutableTypes.m in Sources */,
+				9F2D2FE515B8233800FAE848 /* BXSessionError.m in Sources */,
+				9F2D2FE615B8233800FAE848 /* BXMountedVolumesError.m in Sources */,
+				9F2D2FE715B8233800FAE848 /* BXBottomBar.m in Sources */,
+				9F2D2FE815B8233800FAE848 /* NSView+BXDrawing.m in Sources */,
+				9F2D2FED15B8233800FAE848 /* BXPathEnumerator.m in Sources */,
+				9F2D2FEE15B8233800FAE848 /* NDAlias+AliasFile.m in Sources */,
+				9F2D2FEF15B8233800FAE848 /* NDAlias.m in Sources */,
+				9F2D2FF015B8233800FAE848 /* NDResourceFork+OtherSorces.m in Sources */,
+				9F2D2FF115B8233800FAE848 /* NDResourceFork.m in Sources */,
+				9F2D2FF215B8233800FAE848 /* NSOpenPanel+NDAlias.m in Sources */,
+				9F2D2FF315B8233800FAE848 /* NSPathControl+NDAlias.m in Sources */,
+				9F2D2FF415B8233800FAE848 /* NSSavePanel+NDAlias.m in Sources */,
+				9F2D2FF515B8233800FAE848 /* NSString+NDCarbonUtilities.m in Sources */,
+				9F2D2FF615B8233800FAE848 /* NSURL+NDCarbonUtilities.m in Sources */,
+				9F2D2FF715B8233800FAE848 /* BXMultiPanelWindowController.m in Sources */,
+				9F2D2FF815B8233800FAE848 /* BXTabbedWindowController.m in Sources */,
+				9F2D2FFB15B8233800FAE848 /* YRKSpinningProgressIndicator.m in Sources */,
+				9F2D2FFD15B8233800FAE848 /* NSWindow+BXWindowEffects.m in Sources */,
+				9F2D2FFF15B8233800FAE848 /* BXFileTransferSet.m in Sources */,
+				9F2D300015B8233800FAE848 /* BXOperationSet.m in Sources */,
+				9F2D300515B8233800FAE848 /* NSImage+BXSaveImages.m in Sources */,
+				9F2D300B15B8233800FAE848 /* BXPostLeopardAPIs.m in Sources */,
+				9F2D300F15B8233800FAE848 /* BXTaskOperation.m in Sources */,
+				9F2D301215B8233800FAE848 /* BXHIDMonitor.m in Sources */,
+				9F2D301315B8233800FAE848 /* DDHidDevice+BXDeviceExtensions.m in Sources */,
+				9F2D301415B8233800FAE848 /* BXJoystickController.m in Sources */,
+				9F2D301515B8233800FAE848 /* BXHIDEvent.m in Sources */,
+				9F2D301615B8233800FAE848 /* BXInputController+BXJoystickInput.m in Sources */,
+				9F2D301715B8233800FAE848 /* BXEmulatedKeyboard.mm in Sources */,
+				9F2D301815B8233800FAE848 /* BXInputController+BXKeyboardInput.m in Sources */,
+				9F2D301915B8233800FAE848 /* BXEmulatedJoystick.mm in Sources */,
+				9F2D301A15B8233800FAE848 /* BXCHFlightstick.mm in Sources */,
+				9F2D301B15B8233800FAE848 /* callback.cpp in Sources */,
+				9F2D301C15B8233800FAE848 /* core_dyn_x86.cpp in Sources */,
+				9F2D301D15B8233800FAE848 /* core_dynrec.cpp in Sources */,
+				9F2D301E15B8233800FAE848 /* core_full.cpp in Sources */,
+				9F2D301F15B8233800FAE848 /* core_normal.cpp in Sources */,
+				9F2D302015B8233800FAE848 /* core_prefetch.cpp in Sources */,
+				9F2D302115B8233800FAE848 /* core_simple.cpp in Sources */,
+				9F2D302215B8233800FAE848 /* cpu.cpp in Sources */,
+				9F2D302315B8233800FAE848 /* flags.cpp in Sources */,
+				9F2D302415B8233800FAE848 /* modrm.cpp in Sources */,
+				9F2D302515B8233800FAE848 /* paging.cpp in Sources */,
+				9F2D302615B8233800FAE848 /* debug.cpp in Sources */,
+				9F2D302715B8233800FAE848 /* debug_disasm.cpp in Sources */,
+				9F2D302815B8233800FAE848 /* debug_gui.cpp in Sources */,
+				9F2D302915B8233800FAE848 /* debug_win32.cpp in Sources */,
+				9F2D302A15B8233800FAE848 /* cdrom.cpp in Sources */,
+				9F2D302B15B8233800FAE848 /* cdrom_aspi_win32.cpp in Sources */,
+				9F2D302C15B8233800FAE848 /* cdrom_image.cpp in Sources */,
+				9F2D302D15B8233800FAE848 /* cdrom_ioctl_linux.cpp in Sources */,
+				9F2D302E15B8233800FAE848 /* cdrom_ioctl_os2.cpp in Sources */,
+				9F2D302F15B8233800FAE848 /* cdrom_ioctl_win32.cpp in Sources */,
+				9F2D303015B8233800FAE848 /* dos.cpp in Sources */,
+				9F2D303115B8233800FAE848 /* dos_classes.cpp in Sources */,
+				9F2D303215B8233800FAE848 /* dos_devices.cpp in Sources */,
+				9F2D303315B8233800FAE848 /* dos_execute.cpp in Sources */,
+				9F2D303415B8233800FAE848 /* dos_files.cpp in Sources */,
+				9F2D303515B8233800FAE848 /* dos_ioctl.cpp in Sources */,
+				9F2D303615B8233800FAE848 /* dos_keyboard_layout.cpp in Sources */,
+				9F2D303715B8233800FAE848 /* dos_memory.cpp in Sources */,
+				9F2D303815B8233800FAE848 /* dos_misc.cpp in Sources */,
+				9F2D303915B8233800FAE848 /* dos_mscdex.cpp in Sources */,
+				9F2D303A15B8233800FAE848 /* dos_programs.cpp in Sources */,
+				9F2D303B15B8233800FAE848 /* dos_tables.cpp in Sources */,
+				9F2D303C15B8233800FAE848 /* drive_cache.cpp in Sources */,
+				9F2D303D15B8233800FAE848 /* drive_fat.cpp in Sources */,
+				9F2D303E15B8233800FAE848 /* drive_iso.cpp in Sources */,
+				9F2D303F15B8233800FAE848 /* drive_local.cpp in Sources */,
+				9F2D304015B8233800FAE848 /* drive_physfs.cpp in Sources */,
+				9F2D304115B8233800FAE848 /* drive_virtual.cpp in Sources */,
+				9F2D304215B8233800FAE848 /* drives.cpp in Sources */,
+				9F2D304315B8233800FAE848 /* dosbox.cpp in Sources */,
+				9F2D304415B8233800FAE848 /* fpu.cpp in Sources */,
+				9F2D304515B8233800FAE848 /* midi.cpp in Sources */,
+				9F2D304615B8233800FAE848 /* render.cpp in Sources */,
+				9F2D304715B8233800FAE848 /* render_scalers.cpp in Sources */,
+				9F2D304815B8233800FAE848 /* adlib.cpp in Sources */,
+				9F2D304915B8233800FAE848 /* cmos.cpp in Sources */,
+				9F2D304A15B8233800FAE848 /* dbopl.cpp in Sources */,
+				9F2D304B15B8233800FAE848 /* disney.cpp in Sources */,
+				9F2D304C15B8233800FAE848 /* dma.cpp in Sources */,
+				9F2D304D15B8233800FAE848 /* gameblaster.cpp in Sources */,
+				9F2D304E15B8233800FAE848 /* gus.cpp in Sources */,
+				9F2D304F15B8233800FAE848 /* hardware.cpp in Sources */,
+				9F2D305015B8233800FAE848 /* iohandler.cpp in Sources */,
+				9F2D305115B8233800FAE848 /* ipx.cpp in Sources */,
+				9F2D305215B8233800FAE848 /* ipxserver.cpp in Sources */,
+				9F2D305315B8233800FAE848 /* joystick.cpp in Sources */,
+				9F2D305415B8233800FAE848 /* keyboard.cpp in Sources */,
+				9F2D305515B8233800FAE848 /* memory.cpp in Sources */,
+				9F2D305615B8233800FAE848 /* mixer.cpp in Sources */,
+				9F2D305715B8233800FAE848 /* mpu401.cpp in Sources */,
+				9F2D305815B8233800FAE848 /* opl.cpp in Sources */,
+				9F2D305915B8233800FAE848 /* pcspeaker.cpp in Sources */,
+				9F2D305A15B8233800FAE848 /* pic.cpp in Sources */,
+				9F2D305B15B8233800FAE848 /* sblaster.cpp in Sources */,
+				9F2D305C15B8233800FAE848 /* directserial.cpp in Sources */,
+				9F2D305D15B8233800FAE848 /* libserial.cpp in Sources */,
+				9F2D305E15B8233800FAE848 /* misc_util.cpp in Sources */,
+				9F2D305F15B8233800FAE848 /* nullmodem.cpp in Sources */,
+				9F2D306015B8233800FAE848 /* serialdummy.cpp in Sources */,
+				9F2D306115B8233800FAE848 /* serialport.cpp in Sources */,
+				9F2D306215B8233800FAE848 /* softmodem.cpp in Sources */,
+				9F2D306315B8233800FAE848 /* tandy_sound.cpp in Sources */,
+				9F2D306415B8233800FAE848 /* timer.cpp in Sources */,
+				9F2D306515B8233800FAE848 /* vga.cpp in Sources */,
+				9F2D306615B8233800FAE848 /* vga_attr.cpp in Sources */,
+				9F2D306715B8233800FAE848 /* vga_crtc.cpp in Sources */,
+				9F2D306815B8233800FAE848 /* vga_dac.cpp in Sources */,
+				9F2D306915B8233800FAE848 /* vga_draw.cpp in Sources */,
+				9F2D306A15B8233800FAE848 /* vga_gfx.cpp in Sources */,
+				9F2D306B15B8233800FAE848 /* vga_memory.cpp in Sources */,
+				9F2D306C15B8233800FAE848 /* vga_misc.cpp in Sources */,
+				9F2D306D15B8233800FAE848 /* vga_other.cpp in Sources */,
+				9F2D306E15B8233800FAE848 /* vga_paradise.cpp in Sources */,
+				9F2D306F15B8233800FAE848 /* vga_s3.cpp in Sources */,
+				9F2D307015B8233800FAE848 /* vga_seq.cpp in Sources */,
+				9F2D307115B8233800FAE848 /* vga_tseng.cpp in Sources */,
+				9F2D307215B8233800FAE848 /* vga_xga.cpp in Sources */,
+				9F2D307315B8233800FAE848 /* bios.cpp in Sources */,
+				9F2D307415B8233800FAE848 /* bios_disk.cpp in Sources */,
+				9F2D307515B8233800FAE848 /* bios_keyboard.cpp in Sources */,
+				9F2D307615B8233800FAE848 /* ems.cpp in Sources */,
+				9F2D307715B8233800FAE848 /* int10.cpp in Sources */,
+				9F2D307815B8233800FAE848 /* int10_char.cpp in Sources */,
+				9F2D307915B8233800FAE848 /* int10_memory.cpp in Sources */,
+				9F2D307A15B8233800FAE848 /* int10_misc.cpp in Sources */,
+				9F2D307B15B8233800FAE848 /* int10_modes.cpp in Sources */,
+				9F2D307C15B8233800FAE848 /* int10_pal.cpp in Sources */,
+				9F2D307D15B8233800FAE848 /* int10_put_pixel.cpp in Sources */,
+				9F2D307E15B8233800FAE848 /* int10_vesa.cpp in Sources */,
+				9F2D307F15B8233800FAE848 /* int10_video_state.cpp in Sources */,
+				9F2D308015B8233800FAE848 /* int10_vptable.cpp in Sources */,
+				9F2D308115B8233800FAE848 /* mouse.cpp in Sources */,
+				9F2D308215B8233800FAE848 /* xms.cpp in Sources */,
+				9F2D308315B8233800FAE848 /* cross.cpp in Sources */,
+				9F2D308415B8233800FAE848 /* messages.cpp in Sources */,
+				9F2D308515B8233800FAE848 /* programs.cpp in Sources */,
+				9F2D308615B8233800FAE848 /* setup.cpp in Sources */,
+				9F2D308715B8233800FAE848 /* support.cpp in Sources */,
+				9F2D308815B8233800FAE848 /* shell.cpp in Sources */,
+				9F2D308915B8233800FAE848 /* shell_batch.cpp in Sources */,
+				9F2D308A15B8233800FAE848 /* shell_cmds.cpp in Sources */,
+				9F2D308B15B8233800FAE848 /* shell_misc.cpp in Sources */,
+				9F2D308C15B8233800FAE848 /* BXThrustmasterFCS.mm in Sources */,
+				9F2D308D15B8233800FAE848 /* BXHIDControllerProfile.m in Sources */,
+				9F2D308E15B8233800FAE848 /* BXHIDInputBinding.m in Sources */,
+				9F2D308F15B8233800FAE848 /* BX360ControllerProfile.m in Sources */,
+				9F2D309015B8233800FAE848 /* BXSixaxisControllerProfile.m in Sources */,
+				9F2D309115B8233800FAE848 /* BXCollectionItemView.m in Sources */,
+				9F2D309215B8233800FAE848 /* BXTemplateImageCell.m in Sources */,
+				9F2D309315B8233800FAE848 /* BXJoypadController.m in Sources */,
+				9F2D309415B8233800FAE848 /* BX2ButtonJoystickLayout.m in Sources */,
+				9F2D309515B8233800FAE848 /* BXJoypadLayout.m in Sources */,
+				9F2D309615B8233800FAE848 /* BX4ButtonJoystickLayout.m in Sources */,
+				9F2D309715B8233800FAE848 /* BX4ButtonWheelLayout.m in Sources */,
+				9F2D309815B8233800FAE848 /* BX2ButtonWheelLayout.m in Sources */,
+				9F2D309915B8233800FAE848 /* BXFlightstickLayout.m in Sources */,
+				9F2D309A15B8233800FAE848 /* BXInputController+BXJoypadInput.m in Sources */,
+				9F2D309B15B8233800FAE848 /* BXG25ControllerProfile.m in Sources */,
+				9F2D309C15B8233800FAE848 /* DDHidUsage+BXUsageExtensions.m in Sources */,
+				9F2D309D15B8233800FAE848 /* BXDualActionControllerProfile.m in Sources */,
+				9F2D309E15B8233800FAE848 /* BXBezelController.m in Sources */,
+				9F2D309F15B8233800FAE848 /* BXThemedControls.m in Sources */,
+				9F2D30A015B8233800FAE848 /* BXCoalfaceDrives.mm in Sources */,
+				9F2D30A115B8233800FAE848 /* NSShadow+BXShadowExtensions.m in Sources */,
+				9F2D30A215B8233800FAE848 /* BXFileScan.m in Sources */,
+				9F2D30A315B8233800FAE848 /* BXExecutableScan.m in Sources */,
+				9F2D30A415B8233800FAE848 /* BXDOSWindowControllerLion.m in Sources */,
+				9F2D30A515B8233800FAE848 /* BXFullScreenCapableWindow.m in Sources */,
+				9F2D30A615B8233800FAE848 /* BXPrecisionProControllerProfile.m in Sources */,
+				9F2D30A715B8233800FAE848 /* BXMOMORacingControllerProfile.m in Sources */,
+				9F2D30A915B8233800FAE848 /* BXImageAwareFileScan.m in Sources */,
+				9F2D30AA15B8233800FAE848 /* BXEmulatorErrors.m in Sources */,
+				9F2D30AB15B8233800FAE848 /* BXISOImage.m in Sources */,
+				9F2D30AC15B8233800FAE848 /* BXBinCueImage.m in Sources */,
+				9F2D30AD15B8233800FAE848 /* NSImage+BXImageEffects.m in Sources */,
+				9F2D30AE15B8233800FAE848 /* RegexKitLite.m in Sources */,
+				9F2D30AF15B8233800FAE848 /* BXCoalfaceAudio.mm in Sources */,
+				9F2D30B015B8233800FAE848 /* BXEmulator+BXAudio.mm in Sources */,
+				9F2D30B115B8233800FAE848 /* BXBaseAppController+BXSupportFiles.m in Sources */,
+				9F2D30B215B8233800FAE848 /* BXMT32LCDDisplay.m in Sources */,
+				9F2D30B315B8233800FAE848 /* BXMIDISynth.m in Sources */,
+				9F2D30B415B8233800FAE848 /* BXEmulatedMT32.mm in Sources */,
+				9F2D30B515B8233800FAE848 /* BXExternalMIDIDevice.m in Sources */,
+				9F2D30B615B8233800FAE848 /* BXMIDIDeviceMonitor.m in Sources */,
+				9F2D30B715B8233800FAE848 /* BXSession+BXAudioControls.m in Sources */,
+				9F2D30B815B8233800FAE848 /* BXExternalMT32.m in Sources */,
+				9F2D30B915B8233800FAE848 /* BXDummyMIDIDevice.m in Sources */,
+				9F2D30BB15B8233800FAE848 /* CALayer+BXLayerAdditions.m in Sources */,
+				9F2D30BC15B8233800FAE848 /* BXExternalMT32+BXMT32Sysexes.m in Sources */,
+				9F2D30BD15B8233800FAE848 /* BXHUDProgressIndicator.m in Sources */,
+				9F2D30BE15B8233800FAE848 /* BXHUDLevelIndicatorCell.m in Sources */,
+				9F2D30BF15B8233800FAE848 /* BXKeyboardEventTap.m in Sources */,
+				9F2D30C015B8233800FAE848 /* BXBezelView.m in Sources */,
+				9F2D30C115B8233800FAE848 /* BXThemedPopUpButtonCell.m in Sources */,
+				9F2D30C215B8233800FAE848 /* BXThemedButtonCell.m in Sources */,
+				9F2D30C315B8233800FAE848 /* BXThemedSliderCell.m in Sources */,
+				9F2D30C415B8233800FAE848 /* BXContinuousThread.m in Sources */,
+				9F2D30C515B8233800FAE848 /* BXTFlightControllerProfile.m in Sources */,
+				9F2D30C615B8233800FAE848 /* BXAppKitVersionHelpers.m in Sources */,
+				9F2D30C715B8233800FAE848 /* BXApplication.m in Sources */,
+				9F2D30C815B8233800FAE848 /* BXBaseAppController+BXHotKeys.m in Sources */,
+				9F2D30C915B8233800FAE848 /* NSObject+BXPerformExtensions.m in Sources */,
+				9F2D30CA15B8233800FAE848 /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m in Sources */,
+				9F2D30CB15B8233800FAE848 /* BXKeyBuffer.mm in Sources */,
+				9F2D30CC15B8233800FAE848 /* BXFileTypes.m in Sources */,
+				9F2D30CD15B8233800FAE848 /* BXShader.m in Sources */,
+				9F2D30CE15B8233800FAE848 /* BXBSNESShader.m in Sources */,
+				9F2D30CF15B8233800FAE848 /* BXTexture2D.m in Sources */,
+				9F2D30D015B8233800FAE848 /* BXTexture2D+BXVideoFrameExtensions.m in Sources */,
+				9F2D30D115B8233800FAE848 /* BXSupersamplingRenderer.m in Sources */,
+				9F2D30D215B8233800FAE848 /* BXShaderRenderer.m in Sources */,
+				9F2D30D315B8233800FAE848 /* NSKeyedArchiver+BXArchivingAdditions.m in Sources */,
+				9FCB7B0D15B842E000CC7CC7 /* BXStandaloneAppController.m in Sources */,
+				9FCB7B1115B844AB00CC7CC7 /* BXBaseAppController.m in Sources */,
+				9FCB7B1215B856A300CC7CC7 /* BXBootlegCoverArt.m in Sources */,
+				9FCB7B1315B856DB00CC7CC7 /* BXInspectorController.m in Sources */,
+				9FCB7B1415B856FC00CC7CC7 /* BXDriveImport.m in Sources */,
+				9FCB7B1515B8570700CC7CC7 /* BXSimpleDriveImport.m in Sources */,
+				9FCB7B1615B8570900CC7CC7 /* BXCDImageImport.m in Sources */,
+				9FCB7B1715B8570C00CC7CC7 /* BXBinCueImageImport.m in Sources */,
+				9FCB7B1815B8570E00CC7CC7 /* BXDriveBundleImport.m in Sources */,
+				9FCB7B1A15B8589B00CC7CC7 /* BXDOSWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3323,6 +4146,30 @@
 			);
 			name = FirstRunWindow.xib;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		9F2D317C15B826EF00FAE848 /* About.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F2D317D15B826EF00FAE848 /* English */,
+			);
+			name = About.xib;
+			sourceTree = "<group>";
+		};
+		9F2D317E15B826EF00FAE848 /* DOSWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F2D317F15B826EF00FAE848 /* English */,
+			);
+			name = DOSWindow.xib;
+			sourceTree = "<group>";
+		};
+		9F2D318215B826EF00FAE848 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F2D318315B826EF00FAE848 /* English */,
+			);
+			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
 		9F45A1BB109C3C3900593456 /* About.xib */ = {
@@ -3494,6 +4341,68 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		9F2D317015B8233800FAE848 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					BOXER_DEBUG,
+					USE_PRIVATE_APIS,
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "Standalone/Boxer Standalone-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
+				);
+				OTHER_CFLAGS = "-mstackrealign";
+				PRODUCT_NAME = "Boxer Standalone";
+				VALID_ARCHS = i386;
+			};
+			name = Debug;
+		};
+		9F2D317115B8233800FAE848 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "Standalone/Boxer Standalone-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
+				);
+				OTHER_CFLAGS = "-mstackrealign";
+				PRODUCT_NAME = "Boxer Standalone";
+				VALID_ARCHS = i386;
+			};
+			name = Release;
+		};
 		9FE76B331139A11A005EF7B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3501,7 +4410,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COMBINE_HIDPI_IMAGES = NO;
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.4pre;
-				CURRENT_PROJECT_VERSION = 20120711.1;
+				CURRENT_PROJECT_VERSION = 20120719.1;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
@@ -3580,7 +4489,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COMBINE_HIDPI_IMAGES = NO;
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.4pre;
-				CURRENT_PROJECT_VERSION = 20120711.1;
+				CURRENT_PROJECT_VERSION = 20120719.1;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
@@ -3592,6 +4501,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9F2D316F15B8233800FAE848 /* Build configuration list for PBXNativeTarget "Boxer Standalone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F2D317015B8233800FAE848 /* Debug */,
+				9F2D317115B8233800FAE848 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Boxer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

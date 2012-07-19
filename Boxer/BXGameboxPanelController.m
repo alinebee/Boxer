@@ -11,7 +11,7 @@
 #import "BXSession+BXFileManager.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXFileTypes.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 #import "BXPackage.h"
 #import "NSString+BXPaths.h"
 

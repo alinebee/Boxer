@@ -227,6 +227,11 @@
 #pragma mark -
 #pragma mark Window management
 
+- (BOOL) isGameImport
+{
+    return YES;
+}
+
 - (void) makeWindowControllers
 {
     BXDOSWindowController *controller;

@@ -6,7 +6,7 @@
  */
 
 #import "BXApplication.h"
-#import "BXAppController+BXHotKeys.h"
+#import "BXBaseAppController+BXHotKeys.h"
 
 @implementation BXApplication
 
@@ -15,7 +15,7 @@
     //Dispatch media key events.
     if (self.delegate && theEvent.type == NSSystemDefined && theEvent.subtype == 8)
     {
-        [(BXAppController *)self.delegate mediaKeyPressed: theEvent];
+        [(BXBaseAppController *)self.delegate mediaKeyPressed: theEvent];
         return;
     }
     

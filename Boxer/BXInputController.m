@@ -7,7 +7,7 @@
 
 
 #import "BXInputControllerPrivate.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 #import "BXSession.h"
 #import "BXJoystickController.h"
 #import "BXJoypadController.h"

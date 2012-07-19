@@ -7,7 +7,7 @@
 
 
 #import "BXDrivePanelController.h"
-#import "BXAppController.h"
+#import "BXBaseAppController.h"
 #import "BXSession+BXFileManager.h"
 #import "BXSession+BXDragDrop.h"
 #import "BXEmulator+BXDOSFileSystem.h"
@@ -346,8 +346,7 @@ enum {
 	
 	//Pass mount panel action upstream - this works around the fiddly separation of responder chains
 	//between the inspector panel and main DOS window.
-	BXSession *session = [[NSApp delegate] currentSession];
-	[NSApp sendAction: @selector(showMountPanel:) to: session from: self];
+	[NSApp sendAction: @selector(showMountPanel:) to: nil from: self];
 }
 
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem

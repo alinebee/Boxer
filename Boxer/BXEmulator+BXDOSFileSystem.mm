@@ -1193,7 +1193,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
         
         NSString *deletionMarkerPath = [shadowedPath stringByAppendingPathExtension: @"deleted"];
         
-        BOOL write, createIfMissing;
+        BOOL write, createIfMissing, truncate;
         NSUInteger modeLength = strlen(mode);
         BOOL hasPlus = (modeLength >= 2 && mode[1] == '+') || (modeLength >= 3 && mode[2] == '+');
         
@@ -1202,11 +1202,17 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
             case 'r':
                 write = hasPlus;
                 createIfMissing = NO;
+                truncate = NO;
                 break;
             case 'w':
+                write = YES;
+                createIfMissing = YES;
+                truncate = YES;
+                break;
             case 'a':
                 write = YES;
                 createIfMissing = YES;
+                truncate = NO;
                 break;
         }
         
@@ -1216,7 +1222,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
         //If the file has been marked as deleted in the shadow...
         if (deletionMarkerExists)
         {
-            //...but we'd create a new file anyway, then remove both the deletion marker
+            //...but we'd have created a new file anyway, then remove both the deletion marker
             //and any leftover shadow, and open a new file handle at the shadowed location.
             if (createIfMissing)
             {
@@ -1233,9 +1239,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
             }
         }
         
-        //If the shadow file exists or we're creating a new file anyway,
+        //If the shadow file exists or we're truncating the file anyway,
         //open a handle directly at the shadowed location.
-        else if (shadowExists || createIfMissing)
+        else if (shadowExists || truncate)
         {
             return fopen(shadowedPath.fileSystemRepresentation, mode);
         }
@@ -1289,15 +1295,15 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     
     if (shadowedPath)
     {
+        NSString *deletionMarkerPath = [shadowedPath stringByAppendingPathExtension: @"deleted"];
+        
         BOOL originalExists = [manager fileExistsAtPath: path];
         
         //If a file exists at the original path, we don't want to delete that;
-        //so instead we create a marker in the shadow path indicating that the file has been deleted.
-        //We also delete any shadowed version of the file.
+        //so instead we create a marker in the shadow path, indicating that the
+        //file has been deleted. We also delete any shadowed version of the file.
         if (originalExists)
-        {
-            NSString *deletionMarkerPath = [shadowedPath stringByAppendingPathExtension: @"deleted"];
-            
+        {   
             [manager createFileAtPath: deletionMarkerPath
                              contents: [NSData data]
                            attributes: nil];
@@ -1309,6 +1315,10 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
         }
         else
         {
+            //Clean up any leftover shadow files.
+            [manager removeItemAtPath: deletionMarkerPath error: NULL];
+            [manager removeItemAtPath: shadowedPath error: NULL];
+            
             //The file never existed in the first place, so this deletion operation would fail.
             return NO;
         }
@@ -1339,14 +1349,31 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
             return NO;
         }
         
+        //Remove any shadow of the destination before we begin.
         [manager removeItemAtPath: shadowedDestinationPath error: NULL];
-        BOOL succeeded = [manager copyItemAtPath: sourcePath toPath: shadowedDestinationPath error: NULL];
+        
+        //If the source file has been previously shadowed then we should use the shadowed
+        //version as the source instead.
+        BOOL shadowedSourceExists = [manager fileExistsAtPath: shadowedSourcePath];
+        
+        BOOL succeeded;
+        if (shadowedSourceExists)
+        {
+            succeeded = [manager copyItemAtPath: shadowedSourcePath toPath: shadowedDestinationPath error: NULL];
+        }
+        else
+        {
+            succeeded = [manager copyItemAtPath: sourcePath toPath: shadowedDestinationPath error: NULL];
+        }
         
         //If the copy succeeded, then flag the source as deleted (since it has ostensibly been moved)
         //and the destination as being properly in place.
         if (succeeded)
         {
-            [manager createFileAtPath: sourceDeletionMarkerPath contents: [NSData data] attributes: NULL];
+            BOOL originalExists = [manager fileExistsAtPath: sourcePath];
+            if (originalExists)
+                [manager createFileAtPath: sourceDeletionMarkerPath contents: [NSData data] attributes: NULL];
+            
             [manager removeItemAtPath: destinationDeletionMarkerPath error: NULL];
             
             return YES;
@@ -1374,24 +1401,46 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     NSFileManager *manager = [NSFileManager defaultManager];
     if (shadowedPath)
     {
-        BOOL createdDirectory = [manager createDirectoryAtPath: shadowedPath
-                                   withIntermediateDirectories: NO
-                                                    attributes: nil
-                                                         error: NULL];
+        BOOL originalExists = [manager fileExistsAtPath: path];
+        NSString *deletionMarkerPath = [shadowedPath stringByAppendingPathExtension: @"deleted"];
         
-        if (createdDirectory)
+        //If the original already exists...
+        if (originalExists)
         {
-            //Remove any deletion marker for this directory
-            NSString *deletionMarkerPath = [shadowedPath stringByAppendingPathExtension: @"deleted"];
-            [manager removeItemAtPath: deletionMarkerPath error: NULL];
+            //If the original has been marked as deleted, then undelete it.
+            //FIXME: this doesn't take into account if the original was actually a file, and not a directory.
+            if ([manager fileExistsAtPath: deletionMarkerPath])
+            {
+                [manager removeItemAtPath: deletionMarkerPath error: NULL];
+                return YES;
+            }
+            //Otherwise, the original still exists in the DOS filesystem and the attempt
+            //to create a new directory at the same location should fail.
+            else
+            {
+                return NO;
+            }
         }
-        
-        return createdDirectory;
+        //Otherwise, create a new shadow directory.
+        else
+        {
+            BOOL createdDirectory = [manager createDirectoryAtPath: shadowedPath
+                                       withIntermediateDirectories: NO
+                                                        attributes: nil
+                                                             error: NULL];
+            
+            if (createdDirectory)
+            {
+                //Remove any old deletion marker for this directory
+                [manager removeItemAtPath: deletionMarkerPath error: NULL];
+            }
+            return createdDirectory;
+        }
     }
     else
     {
         return [manager createDirectoryAtPath: path
-                  withIntermediateDirectories: YES
+                  withIntermediateDirectories: NO
                                    attributes: nil
                                         error: NULL];
     }

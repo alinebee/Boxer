@@ -68,6 +68,11 @@
     return [NSBundle mainBundle].bundleIdentifier;
 }
 
+- (BOOL) isStandaloneGameBundle
+{
+    return NO;
+}
+
 
 #pragma mark -
 #pragma mark Initialization and teardown

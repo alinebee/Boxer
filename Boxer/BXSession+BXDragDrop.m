@@ -27,8 +27,11 @@
 @implementation BXSession (BXDragDrop)
 
 //Return an array of all filetypes we will accept by drag-drop
-+ (NSSet *) droppableFileTypes
+- (NSSet *) droppableFileTypes
 {
+    if (!self.allowsDriveChanges)
+        return [NSSet set];
+    
 	return [[BXFileTypes mountableTypes] setByAddingObjectsFromSet: [BXFileTypes executableTypes]];
 }
 
@@ -103,7 +106,7 @@
 	BOOL isInProcess = self.emulator.isRunningProcess;
 	
 	//We wouldn't accept any files that aren't on our accepted formats list.
-	if (![workspace file: filePath matchesTypes: [self.class droppableFileTypes]]) return NSDragOperationNone;
+	if (![workspace file: filePath matchesTypes: self.droppableFileTypes]) return NSDragOperationNone;
 	
 	//We wouldn't accept any executables if the emulator is running a process already.
 	if (isInProcess && [self.class isExecutable: filePath]) return NSDragOperationNone;

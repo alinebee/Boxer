@@ -8,6 +8,7 @@
 #import "BXSession+BXFileManager.h"
 #import "BXSessionPrivate.h"
 #import "BXFileTypes.h"
+#import "BXBaseAppController.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulatorErrors.h"
@@ -213,6 +214,11 @@
 
 #pragma mark -
 #pragma mark Drive queuing
+
+- (BOOL) allowsDriveChanges
+{
+    return !([[NSApp delegate] isStandaloneGameBundle]);
+}
 
 - (NSArray *) allDrives
 {
@@ -818,6 +824,11 @@
     //If this drive is already mounted, don't bother retrying.
     if ([self driveIsMounted: drive]) return drive;
     
+    //TODO: return an operation-disabled error message also
+    if (!self.allowsDriveChanges && _hasConfigured)
+        return nil;
+    
+    
     //Sanity check: BXDriveReplaceWithSiblingFromQueue is not applicable
     //when mounting a new drive, so ensure it is not set.
     options &= ~BXDriveReplaceWithSiblingFromQueue;
@@ -1035,6 +1046,10 @@
               options: (BXDriveMountOptions)options
                 error: (NSError **)outError
 {
+    //TODO: populate an operation-disabled error message.
+    if (!self.allowsDriveChanges && _hasConfigured)
+        return NO;
+    
     if ([self driveIsMounted: drive])
     {
         BOOL force = NO;
@@ -1470,6 +1485,10 @@
 
 - (BOOL) emulator: (BXEmulator *)theEmulator shouldMountDriveFromShell: (NSString *)drivePath
 {
+    //TODO: show an error message
+    if (!self.allowsDriveChanges && _hasConfigured)
+        return NO;
+    
     NSError *validationError = nil;
     BOOL shouldMount = [self validateDrivePath: &drivePath error: &validationError];
     

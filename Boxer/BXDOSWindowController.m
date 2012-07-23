@@ -189,9 +189,16 @@
 
 - (void) synchronizeWindowTitleWithDocumentName
 {
-	if (self.document.isGamePackage)
+    //If this app is a standalone game bundle, display the name of the app
+    //and do not allow the user to browse to the bundled game's location.
+    if ([[NSApp delegate] isStandaloneGameBundle])
+    {
+        self.window.representedURL = nil;
+        self.window.title = [BXBaseAppController appName]; 
+    }
+    //If the session is a gamebox, always use the gamebox for the window title (like a regular NSDocument.)
+	else if (self.document.isGamePackage)
 	{
-		//If the session is a gamebox, always use the gamebox for the window title (like a regular NSDocument.)
 		[super synchronizeWindowTitleWithDocumentName];
         
         //Also make sure we adopt the current icon of the gamebox,

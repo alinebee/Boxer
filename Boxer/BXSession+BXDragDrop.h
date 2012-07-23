@@ -9,13 +9,12 @@
 //The BXDragDrop category extends BXSession with methods for responding to drag-drop events
 //into the session's main window.
 
-#import <Cocoa/Cocoa.h>
 #import "BXSession.h"
 
 @interface BXSession (BXDragDrop)
 
-//UTI filetypes that may be dropped onto a session to mount or launch them.
-+ (NSSet *) droppableFileTypes;
+//UTI filetypes that may be dropped onto this session to mount or launch them.
+- (NSSet *) droppableFileTypes;
 
 //Returns an NSDragOperation indicating what the session would do with the files were they dropped.
 - (NSDragOperation) responseToDroppedFiles: (NSArray *)filePaths;

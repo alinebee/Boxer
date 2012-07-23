@@ -677,9 +677,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (NSString *) displayName
 {
-	if (self.isGamePackage) return self.gamePackage.gameName;
-	else if (self.fileURL)	return [super displayName];
-	else					return self.processDisplayName;
+    if ([[NSApp delegate] isStandaloneGameBundle]) return [BXBaseAppController appName];
+	else if (self.isGamePackage)    return self.gamePackage.gameName;
+	else if (self.fileURL)          return [super displayName];
+	else                            return self.processDisplayName;
 }
 
 - (NSString *) processDisplayName
@@ -719,7 +720,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         
         //If the gamebox has no custom icon (or has lost it), then generate
         //a new one for it now and try to apply it to the gamebox.
-        if (!icon)
+        //IMPLEMENTATION NOTE: we don't do this if we're part of a standalone
+        //game bundle, because then we'll be using the app's own icon instead.
+        if (!icon && ![[NSApp delegate] isStandaloneGameBundle])
         {
             BXReleaseMedium medium = self.gameProfile.coverArtMedium;
             icon = [self.class bootlegCoverArtForGamePackage: self.gamePackage

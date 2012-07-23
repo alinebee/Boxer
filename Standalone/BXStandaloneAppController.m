@@ -73,6 +73,11 @@ NSString * const BXBundledGameboxNameInfoPlistKey = @"BXBundledGameboxName";
 #pragma mark -
 #pragma mark Application lifecycle
 
+- (BOOL) isStandaloneGameBundle
+{
+    return YES;
+}
+
 - (void) applicationWillFinishLaunching: (NSNotification *)notification
 {
     [super applicationWillFinishLaunching: notification];
@@ -132,9 +137,23 @@ NSString * const BXBundledGameboxNameInfoPlistKey = @"BXBundledGameboxName";
     }
 }
 
+//Suppress the automatic opening of untitled files when the user refocuses the application.
+- (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)sender
+{
+    return NO;
+}
+
+- (BOOL) applicationShouldHandleReopen: (NSApplication *)sender
+                     hasVisibleWindows: (BOOL)flag
+{
+    return NO;
+}
+
+//Close the entire application when the game window is closed.
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *)sender
 {
     return YES;
 }
+
 
 @end

@@ -68,6 +68,10 @@
 + (NSString *) appName;
 + (NSString *) appIdentifier;
 
+//Whether this is a standalone app bundled with a game.
+//Returns NO by default; overridden by BXStandaloneAppController.
+- (BOOL) isStandaloneGameBundle;
+
 
 #pragma mark -
 #pragma mark Initialization

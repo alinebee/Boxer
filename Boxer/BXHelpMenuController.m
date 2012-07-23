@@ -104,9 +104,20 @@
         
 		if (docs.count > 0)
 		{
-			NSString *format = NSLocalizedString(@"%@ Documentation:",
-												 @"Heading for game documentation in help menu. %@ is the display name of the current DOS session.");
-			NSString *heading = [NSString stringWithFormat:	format, session.displayName]; 
+            NSString *heading;
+            
+            if ([[NSApp delegate] isStandaloneGameBundle])
+            {
+                heading = NSLocalizedString(@"Game Documentation:",
+                                            @"Heading for game documentation in help menu for standalone game bundles.");
+            }
+            else
+            {
+                NSString *format = NSLocalizedString(@"%@ Documentation:",
+                                                     @"Heading for game documentation in help menu. %@ is the display name of the current DOS session.");
+                
+                heading = [NSString stringWithFormat:	format, session.displayName];
+            }
 			
             [self.documentationDivider setHidden: NO];
 			[menu addItemWithTitle: heading action: nil keyEquivalent: @""];

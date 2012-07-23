@@ -187,6 +187,10 @@ typedef NSUInteger BXDriveMountOptions;
 #pragma mark -
 #pragma mark Mounting and queuing drives
 
+//Whether we all drives to be added or removed.
+//This will return YES normally, or NO when part of a standalone game bundle.
+- (BOOL) allowsDriveChanges;
+
 //Adds the specified drive into the appropriate drive queue,
 //without mounting it.
 - (void) enqueueDrive: (BXDrive *)drive;

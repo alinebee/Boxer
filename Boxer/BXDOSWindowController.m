@@ -377,6 +377,24 @@
     [self.document userDidToggleProgramPanel];
 }
 
+#pragma mark -
+#pragma mark UI actions
+
+- (void) enterFullScreen
+{
+	[self.window setFullScreen: YES animate: YES];
+}
+
+- (void) exitFullScreen
+{
+	[self.window setFullScreen: NO animate: NO];
+}
+
+- (void) window: (NSWindow *)window didToggleFullScreenWithAnimation: (BOOL)animated
+{
+    [self.document userDidToggleFullScreen];
+}
+
 - (void) showProgramPanel: (id)sender
 {
 	[self setProgramPanelShown: YES animate: YES];

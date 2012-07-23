@@ -116,7 +116,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleRenderingStyle: (id)sender;
 
-
 #pragma mark -
 #pragma mark Toggling UI components
 
@@ -129,5 +128,10 @@ extern NSString * const BXViewDidLiveResizeNotification;
 - (BOOL) programPanelShown;
 - (void) setProgramPanelShown: (BOOL)show
                       animate: (BOOL)animate;
+
+//Convenience methods to programmatically enter/leave fullscreen mode.
+//Used by BXSession.
+- (void) enterFullScreen;
+- (void) exitFullScreen;
 
 @end

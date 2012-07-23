@@ -13,8 +13,8 @@
 #import "BXBootlegCoverArt.h"
 #import "BXDrive.h"
 #import "BXBaseAppController.h"
-#import "BXDOSWindowControllerLion.h"
 #import "BXDOSWindow.h"
+#import "BXDOSWindowControllerLion.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXCloseAlert.h"
 #import "NDAlias.h"
@@ -70,6 +70,7 @@ NSString * const BXGameboxSettingsProfileKey    = @"BXGameProfile";
 NSString * const BXGameboxSettingsProfileVersionKey = @"BXGameProfileVersion";
 NSString * const BXGameboxSettingsLastLocationKey = @"BXGameLastLocation";
 NSString * const BXGameboxSettingsShowProgramPanelKey = @"showProgramPanel";
+NSString * const BXGameboxSettingsStartUpInFullScreenKey = @"startUpInFullScreen";
 
 NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
 
@@ -459,6 +460,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         [self.gameSettings setObject: [NSNumber numberWithBool: panelShown]
                               forKey: BXGameboxSettingsShowProgramPanelKey];
     }
+}
+
+- (void) userDidToggleFullScreen
+{
+    BOOL isInFullscreen = self.DOSWindowController.window.isFullScreen;
+    [self.gameSettings setObject: [NSNumber numberWithBool: isInFullscreen]
+                          forKey: BXGameboxSettingsStartUpInFullScreenKey];
 }
 
 
@@ -939,9 +947,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         
         
         //If we're part of a standalone game bundle, switch into fullscreen immediately at this point.
-        if (!_userSkippedDefaultProgram && [[NSApp delegate] isStandaloneGameBundle] && [[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
+        BOOL startInFullScreen = [[self.gameSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey] boolValue];
+        if (!_userSkippedDefaultProgram && [[NSApp delegate] isStandaloneGameBundle] && startInFullScreen)
         {
-            [self.DOSWindowController.window enterFullScreen: self];
+            [self.DOSWindowController enterFullScreen];
         }
         
 		[self openFileAtPath: target];
@@ -1108,11 +1117,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                                        withObject: self
                                        afterDelay: BXShowProgramPanelDelay];
         
-        if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
+        BOOL didStartInFullScreen = [[self.gameSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey] boolValue];
+        if (didStartInFullScreen)
         {
             //If we automatically switched into fullscreen at startup, then drop out of
             //fullscreen mode when we return to the prompt in order to show the program panel.
-            [self.DOSWindowController.window exitFullScreen: self];
+            [self.DOSWindowController exitFullScreen];
         }
 	}
 
@@ -1126,26 +1136,26 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //at startup rather than when the app switches into graphics mode.
     if (![[NSApp delegate] isStandaloneGameBundle])
     {
+        BOOL startInFullScreen = [[self.gameSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey] boolValue];
         //Tweak: only switch into fullscreen mode if we don't need to prompt
         //the user about choosing a default program.
-        if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"] &&
-            ![self _shouldLeaveProgramPanelOpenAfterLaunch])
+        if (startInFullScreen && ![self _shouldLeaveProgramPanelOpenAfterLaunch])
         {
             //Switch to fullscreen mode automatically after a brief delay:
             //This will be cancelled if the context exits within that time,
             //in case of a program that crashes early.
-            [self.DOSWindowController.window performSelector: @selector(enterFullScreen:) 
-                                                  withObject: self
-                                                  afterDelay: BXAutoSwitchToFullScreenDelay];
+            [self.DOSWindowController performSelector: @selector(enterFullScreen) 
+                                           withObject: nil
+                                           afterDelay: BXAutoSwitchToFullScreenDelay];
         }
     }
 }
 
 - (void) emulatorDidFinishGraphicalContext: (NSNotification *)notification
 {
-	[NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController.window
-											 selector: @selector(enterFullScreen:)
-											   object: self];
+	[NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
+											 selector: @selector(enterFullScreen)
+											   object: nil];
 }
 
 - (void) emulatorDidChangeEmulationState: (NSNotification *)notification

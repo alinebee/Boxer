@@ -26,10 +26,4 @@
 //Return the current size of actualContentView.
 - (NSSize) actualContentViewSize;
 
-//Convenience methods to force a certain fullscreen state.
-//Enters fullscreen with an animation.
-- (IBAction) enterFullScreen: (id)sender;
-//Exits fullscreen without an animation.
-- (IBAction) exitFullScreen: (id)sender;
-
 @end

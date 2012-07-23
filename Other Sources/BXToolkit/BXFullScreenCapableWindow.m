@@ -57,11 +57,19 @@
 - (IBAction) toggleFullScreen: (id)sender
 {
     [self setFullScreen: ![self isFullScreen] animate: YES];
+    
+    if ([self.delegate respondsToSelector: @selector(window:didToggleFullScreenWithAnimation:)])
+        [(id <BXFullScreenCapableWindowDelegate>)self.delegate window: self
+                                     didToggleFullScreenWithAnimation: YES];
 }
 
 - (IBAction) toggleFullScreenWithoutAnimation: (id)sender
 {
     [self setFullScreen: ![self isFullScreen] animate: NO];
+    
+    if ([self.delegate respondsToSelector: @selector(window:didToggleFullScreenWithAnimation:)])
+        [(id <BXFullScreenCapableWindowDelegate>)self.delegate window: self
+                                     didToggleFullScreenWithAnimation: YES];
 }
 
 

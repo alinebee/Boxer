@@ -80,7 +80,7 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
-								<object class="NSMenuItem" id="66305983">
+								<object class="NSMenuItem" id="126465260">
 									<reference key="NSMenu" ref="135265988"/>
 									<string key="NSTitle">[OrganizationName] Store</string>
 									<string key="NSKeyEquiv"/>
@@ -1160,7 +1160,7 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
-								<object class="NSMenuItem" id="1002051311">
+								<object class="NSMenuItem" id="318665511">
 									<reference key="NSMenu" ref="632409172"/>
 									<string key="NSTitle">[AppName] Forums</string>
 									<string key="NSKeyEquiv"/>
@@ -1830,22 +1830,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleFullScreen:</string>
-						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="172822874"/>
-					</object>
-					<int key="connectionID">2162</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleFullScreenWithoutAnimation:</string>
-						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="1025646852"/>
-					</object>
-					<int key="connectionID">2163</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">toggleSimulatedNumpad:</string>
 						<reference key="source" ref="935372999"/>
 						<reference key="destination" ref="488448645"/>
@@ -1965,6 +1949,22 @@
 					<int key="connectionID">2252</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleFullScreenWithoutAnimation:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="1025646852"/>
+					</object>
+					<int key="connectionID">2510</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleFullScreen:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="172822874"/>
+					</object>
+					<int key="connectionID">2511</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
 						<reference key="source" ref="34920399"/>
@@ -2008,7 +2008,7 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">visitGameCatalogue:</string>
 						<reference key="source" ref="74086318"/>
-						<reference key="destination" ref="66305983"/>
+						<reference key="destination" ref="126465260"/>
 					</object>
 					<int key="connectionID">2505</int>
 				</object>
@@ -2016,7 +2016,7 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">visitGameForum:</string>
 						<reference key="source" ref="74086318"/>
-						<reference key="destination" ref="1002051311"/>
+						<reference key="destination" ref="318665511"/>
 					</object>
 					<int key="connectionID">2506</int>
 				</object>
@@ -2184,7 +2184,7 @@
 							<reference ref="999133000"/>
 							<reference ref="271411110"/>
 							<reference ref="168036105"/>
-							<reference ref="66305983"/>
+							<reference ref="126465260"/>
 						</object>
 						<reference key="parent" ref="251795308"/>
 					</object>
@@ -2236,7 +2236,7 @@
 							<reference ref="776334523"/>
 							<reference ref="110277672"/>
 							<reference ref="542359879"/>
-							<reference ref="1002051311"/>
+							<reference ref="318665511"/>
 						</object>
 						<reference key="parent" ref="34920399"/>
 					</object>
@@ -3116,12 +3116,12 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">2501</int>
-						<reference key="object" ref="1002051311"/>
+						<reference key="object" ref="318665511"/>
 						<reference key="parent" ref="632409172"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">2503</int>
-						<reference key="object" ref="66305983"/>
+						<reference key="object" ref="126465260"/>
 						<reference key="parent" ref="135265988"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -3498,7 +3498,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2507</int>
+			<int key="maxID">2511</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3636,9 +3636,13 @@
 							<string>toggleProgramPanelShown:</string>
 							<string>toggleRenderingStyle:</string>
 							<string>toggleStatusBarShown:</string>
+							<string>userToggleFullScreen:</string>
+							<string>userToggleFullScreenWithoutAnimation:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3655,6 +3659,8 @@
 							<string>toggleProgramPanelShown:</string>
 							<string>toggleRenderingStyle:</string>
 							<string>toggleStatusBarShown:</string>
+							<string>userToggleFullScreen:</string>
+							<string>userToggleFullScreenWithoutAnimation:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3676,6 +3682,14 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">toggleStatusBarShown:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">userToggleFullScreen:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">userToggleFullScreenWithoutAnimation:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 						</object>

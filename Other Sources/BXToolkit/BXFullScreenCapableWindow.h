@@ -71,4 +71,8 @@
 //a new window frame to use.
 - (NSRect) window: (NSWindow *)window willReturnToFrame: (NSRect)frame;
 
+//Called whenever the user themselves toggles fullscreen via one of our UI actions.
+//This is not called if fullscreen is toggled programmatically.
+- (void) window: (NSWindow *)window didToggleFullScreenWithAnimation: (BOOL)animated;
+
 @end

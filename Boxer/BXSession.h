@@ -225,4 +225,8 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 //Called when the user has manually changed the state of the program panel.
 //This records the state of the program panel to use next time the user starts up this gamebox.
 - (void) userDidToggleProgramPanel;
+
+//Called when the user has manually toggled full screen mode.
+//This records the fullscreen/windowed to use next time the user starts up this gamebox.
+- (void) userDidToggleFullScreen;
 @end

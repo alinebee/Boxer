@@ -91,7 +91,7 @@
         //Pressing ESC while in fullscreen mode and not running a program, will exit fullscreen mode.
         else if (self.windowController.window.isFullScreen && emulator.isAtPrompt)
         {
-            [NSApp sendAction: @selector(exitFullScreen:) to: nil from: self];
+            [self.windowController.window toggleFullScreen: self];
             return;
         }
     }

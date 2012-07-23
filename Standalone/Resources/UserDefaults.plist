@@ -18,8 +18,6 @@
 	<integer>1</integer>
 	<key>startupAction</key>
 	<integer>1</integer>
-	<key>startUpInFullScreen</key>
-	<true/>
 	<key>statusBarShown</key>
 	<true/>
 	<key>temporaryDriveLetter</key>

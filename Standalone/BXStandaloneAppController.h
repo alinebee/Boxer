@@ -13,8 +13,15 @@
 
 @interface BXStandaloneAppController : BXBaseAppController
 
+//The name of the organization producing the standalone app bundles.
++ (NSString *)organizationName;
+
 //Launches the gamebox bundled in the application and returns the resulting session.
 //Returns nil and populates outError if the bundled gamebox could not be launched.
 - (id) openBundledGameAndDisplay: (BOOL)display error: (NSError **)outError;
 
+//Custom menu actions for standalone games.
+- (IBAction) visitGameForum: (id)sender;
+- (IBAction) visitGameSupportPage: (id)sender;
+- (IBAction) visitGameCatalogue: (id)sender;
 @end

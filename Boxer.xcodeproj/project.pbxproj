@@ -346,24 +346,12 @@
 		9F2D30E915B8233800FAE848 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
 		9F2D30F415B8233800FAE848 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; };
 		9F2D311515B8233800FAE848 /* KeyboardLayouts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FCC303B13670F680013F083 /* KeyboardLayouts.plist */; };
-		9F2D311615B8233800FAE848 /* CHFlightstickPro.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0E610E139E1A05004A7A56 /* CHFlightstickPro.png */; };
-		9F2D311715B8233800FAE848 /* ThrustmasterFCS.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0E610F139E1A05004A7A56 /* ThrustmasterFCS.png */; };
-		9F2D311815B8233800FAE848 /* 4ButtonJoystick.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FA54098139E85D800999940 /* 4ButtonJoystick.png */; };
-		9F2D311915B8233800FAE848 /* RacingWheel.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7FC94B139EB38300D60320 /* RacingWheel.png */; };
-		9F2D311A15B8233800FAE848 /* GamepadTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */; };
 		9F2D311C15B8233800FAE848 /* BunnyTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278513D730D000606B4C /* BunnyTemplate.png */; };
 		9F2D311D15B8233800FAE848 /* TurtleTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278613D730D000606B4C /* TurtleTemplate.png */; };
-		9F2D311E15B8233800FAE848 /* NoJoystickTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */; };
-		9F2D311F15B8233800FAE848 /* HardDiskTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635914013F4D007E8B47 /* HardDiskTemplate.pdf */; };
-		9F2D312015B8233800FAE848 /* CDROMTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635A14013F4D007E8B47 /* CDROMTemplate.pdf */; };
 		9F2D312115B8233800FAE848 /* PauseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635B14013F4D007E8B47 /* PauseTemplate.pdf */; };
 		9F2D312215B8233800FAE848 /* PlayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635C14013F4D007E8B47 /* PlayTemplate.pdf */; };
 		9F2D312315B8233800FAE848 /* EjectTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635D14013F4D007E8B47 /* EjectTemplate.pdf */; };
 		9F2D312415B8233800FAE848 /* InsertTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635E14013F4D007E8B47 /* InsertTemplate.pdf */; };
-		9F2D312515B8233800FAE848 /* DisketteTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF636B140150C3007E8B47 /* DisketteTemplate.pdf */; };
-		9F2D312615B8233800FAE848 /* InsertFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */; };
-		9F2D312715B8233800FAE848 /* EjectFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */; };
-		9F2D312815B8233800FAE848 /* BundleFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FBDC590141A0E5D00171176 /* BundleFreestandingTemplate.pdf */; };
 		9F2D312915B8233800FAE848 /* MT32LCDFontTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBEC4F2142CEB770016964A /* MT32LCDFontTemplate.png */; };
 		9F2D312A15B8233800FAE848 /* MT32LCDGridTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBEC4F3142CEB770016964A /* MT32LCDGridTemplate.png */; };
 		9F2D312B15B8233800FAE848 /* MT32ROMTypes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */; };
@@ -3428,24 +3416,12 @@
 				9F2D30E915B8233800FAE848 /* Configurations in Resources */,
 				9F2D30F415B8233800FAE848 /* Configuration.strings in Resources */,
 				9F2D311515B8233800FAE848 /* KeyboardLayouts.plist in Resources */,
-				9F2D311615B8233800FAE848 /* CHFlightstickPro.png in Resources */,
-				9F2D311715B8233800FAE848 /* ThrustmasterFCS.png in Resources */,
-				9F2D311815B8233800FAE848 /* 4ButtonJoystick.png in Resources */,
-				9F2D311915B8233800FAE848 /* RacingWheel.png in Resources */,
-				9F2D311A15B8233800FAE848 /* GamepadTemplate.pdf in Resources */,
 				9F2D311C15B8233800FAE848 /* BunnyTemplate.png in Resources */,
 				9F2D311D15B8233800FAE848 /* TurtleTemplate.png in Resources */,
-				9F2D311E15B8233800FAE848 /* NoJoystickTemplate.pdf in Resources */,
-				9F2D311F15B8233800FAE848 /* HardDiskTemplate.pdf in Resources */,
-				9F2D312015B8233800FAE848 /* CDROMTemplate.pdf in Resources */,
 				9F2D312115B8233800FAE848 /* PauseTemplate.pdf in Resources */,
 				9F2D312215B8233800FAE848 /* PlayTemplate.pdf in Resources */,
 				9F2D312315B8233800FAE848 /* EjectTemplate.pdf in Resources */,
 				9F2D312415B8233800FAE848 /* InsertTemplate.pdf in Resources */,
-				9F2D312515B8233800FAE848 /* DisketteTemplate.pdf in Resources */,
-				9F2D312615B8233800FAE848 /* InsertFreestandingTemplate.pdf in Resources */,
-				9F2D312715B8233800FAE848 /* EjectFreestandingTemplate.pdf in Resources */,
-				9F2D312815B8233800FAE848 /* BundleFreestandingTemplate.pdf in Resources */,
 				9F2D312915B8233800FAE848 /* MT32LCDFontTemplate.png in Resources */,
 				9F2D312A15B8233800FAE848 /* MT32LCDGridTemplate.png in Resources */,
 				9F2D312B15B8233800FAE848 /* MT32ROMTypes.plist in Resources */,
@@ -4349,6 +4325,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",
@@ -4382,6 +4359,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",

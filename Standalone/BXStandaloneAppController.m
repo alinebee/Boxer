@@ -17,7 +17,8 @@ enum {
     BXHelpMenuTag = 2,
 };
 
-NSString * const BXAppMenuPlaceholderText = @"[Appname]";
+NSString * const BXMenuPlaceholderAppName            = @"[AppName]";
+NSString * const BXMenuPlaceholderOrganizationName   = @"[OrganizationName]";
 
 
 #pragma mark -
@@ -33,7 +34,11 @@ NSString * const BXStandaloneAppErrorDomain = @"BXStandaloneAppErrorDomain";
 #pragma mark -
 #pragma mark Info.plist and User-Defaults constants
 
+NSString * const BXOrganizationNameInfoPlistKey = @"BXOrganizationName";
 NSString * const BXBundledGameboxNameInfoPlistKey = @"BXBundledGameboxName";
+NSString * const BXGameForumURLInfoPlistKey = @"BXGameForumURL";
+NSString * const BXGameSupportURLInfoPlistKey = @"BXGameSupportURL";
+NSString * const BXOrganizationCatalogueURLInfoPlistKey = @"BXOrganizationCatalogueURL";
 
 
 #pragma mark -
@@ -57,6 +62,11 @@ NSString * const BXBundledGameboxNameInfoPlistKey = @"BXBundledGameboxName";
 #pragma mark -
 #pragma mark Custom menu handling
 
++ (NSString *) organizationName
+{
+    return [[NSBundle mainBundle] objectForInfoDictionaryKey: BXOrganizationNameInfoPlistKey];
+}
+
 - (void) _synchronizeTitlesForMainMenuItemWithTag: (NSInteger)tag
 {
     NSMenu *menu = [[NSApp mainMenu] itemWithTag: tag].submenu;
@@ -65,12 +75,20 @@ NSString * const BXBundledGameboxNameInfoPlistKey = @"BXBundledGameboxName";
 
 - (void) _synchronizeTitlesForMenu: (NSMenu *)menu
 {
-    NSString *appName = [[self class] appName];
+    NSString *appName = [self.class appName];
+    NSString *organizationName = [self.class organizationName];
     
     for (NSMenuItem *item in menu.itemArray)
     {
-        NSString *title = [item.title stringByReplacingOccurrencesOfString: BXAppMenuPlaceholderText 
-                                                                withString: appName];
+        NSString *title = item.title;
+        
+        if (appName.length)
+            title = [title stringByReplacingOccurrencesOfString: BXMenuPlaceholderAppName 
+                                                     withString: appName];
+        
+        if (organizationName.length)
+            title = [title stringByReplacingOccurrencesOfString: BXMenuPlaceholderOrganizationName 
+                                                     withString: organizationName];
         
         item.title = title;
     }
@@ -163,5 +181,11 @@ NSString * const BXBundledGameboxNameInfoPlistKey = @"BXBundledGameboxName";
     return YES;
 }
 
+#pragma mark -
+#pragma mark UI actions
+
+- (IBAction) visitGameForum: (id)sender         { [self openURLFromKey: BXGameForumURLInfoPlistKey]; }
+- (IBAction) visitGameSupportPage: (id)sender   { [self openURLFromKey: BXGameSupportURLInfoPlistKey]; }
+- (IBAction) visitGameCatalogue: (id)sender     { [self openURLFromKey: BXOrganizationCatalogueURLInfoPlistKey]; }
 
 @end

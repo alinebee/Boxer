@@ -54,7 +54,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSMenuItem" id="251795308">
 						<reference key="NSMenu" ref="605083824"/>
-						<string key="NSTitle">[Appname]</string>
+						<string key="NSTitle">[AppName]</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSKeyEquivModMask">1048576</int>
 						<int key="NSMnemonicLoc">2147483647</int>
@@ -69,20 +69,20 @@
 						<string key="NSAction">submenuAction:</string>
 						<int key="NSTag">1</int>
 						<object class="NSMenu" key="NSSubmenu" id="135265988">
-							<string key="NSTitle">[Appname]</string>
+							<string key="NSTitle">[AppName]</string>
 							<object class="NSMutableArray" key="NSMenuItems">
 								<bool key="EncodedWithXMLCoder">YES</bool>
 								<object class="NSMenuItem" id="434929495">
 									<reference key="NSMenu" ref="135265988"/>
-									<string key="NSTitle">About GOG.com</string>
+									<string key="NSTitle">About [OrganizationName]</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
-								<object class="NSMenuItem" id="354069942">
+								<object class="NSMenuItem" id="66305983">
 									<reference key="NSMenu" ref="135265988"/>
-									<string key="NSTitle">GOG.com Store</string>
+									<string key="NSTitle">[OrganizationName] Store</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
@@ -100,7 +100,7 @@
 								</object>
 								<object class="NSMenuItem" id="896494229">
 									<reference key="NSMenu" ref="135265988"/>
-									<string key="NSTitle">Hide [Appname]</string>
+									<string key="NSTitle">Hide [AppName]</string>
 									<string key="NSKeyEquiv">h</string>
 									<int key="NSKeyEquivModMask">1048576</int>
 									<int key="NSMnemonicLoc">2147483647</int>
@@ -138,7 +138,7 @@
 								</object>
 								<object class="NSMenuItem" id="959615354">
 									<reference key="NSMenu" ref="135265988"/>
-									<string key="NSTitle">Quit [Appname]</string>
+									<string key="NSTitle">Quit [AppName]</string>
 									<string key="NSKeyEquiv">q</string>
 									<int key="NSKeyEquivModMask">1048576</int>
 									<int key="NSMnemonicLoc">2147483647</int>
@@ -1160,9 +1160,9 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
-								<object class="NSMenuItem" id="884216212">
+								<object class="NSMenuItem" id="1002051311">
 									<reference key="NSMenu" ref="632409172"/>
-									<string key="NSTitle">Visit [Appname] Forums</string>
+									<string key="NSTitle">[AppName] Forums</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
@@ -1170,7 +1170,7 @@
 								</object>
 								<object class="NSMenuItem" id="776334523">
 									<reference key="NSMenu" ref="632409172"/>
-									<string key="NSTitle">Contact GOG.com Support</string>
+									<string key="NSTitle">[AppName] Support Page</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
@@ -1355,14 +1355,6 @@
 						<reference key="destination" ref="959615354"/>
 					</object>
 					<int key="connectionID">399</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">showWebsite:</string>
-						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="776334523"/>
-					</object>
-					<int key="connectionID">595</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -1966,22 +1958,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">showWebsite:</string>
-						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="884216212"/>
-					</object>
-					<int key="connectionID">2502</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">orderFrontAboutPanel:</string>
-						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="354069942"/>
-					</object>
-					<int key="connectionID">2504</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">toggleRenderingStyle:</string>
 						<reference key="source" ref="935372999"/>
 						<reference key="destination" ref="199720980"/>
@@ -2027,6 +2003,30 @@
 						<reference key="destination" ref="96241277"/>
 					</object>
 					<int key="connectionID">2159</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">visitGameCatalogue:</string>
+						<reference key="source" ref="74086318"/>
+						<reference key="destination" ref="66305983"/>
+					</object>
+					<int key="connectionID">2505</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">visitGameForum:</string>
+						<reference key="source" ref="74086318"/>
+						<reference key="destination" ref="1002051311"/>
+					</object>
+					<int key="connectionID">2506</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">visitGameSupportPage:</string>
+						<reference key="source" ref="74086318"/>
+						<reference key="destination" ref="776334523"/>
+					</object>
+					<int key="connectionID">2507</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -2184,7 +2184,7 @@
 							<reference ref="999133000"/>
 							<reference ref="271411110"/>
 							<reference ref="168036105"/>
-							<reference ref="354069942"/>
+							<reference ref="66305983"/>
 						</object>
 						<reference key="parent" ref="251795308"/>
 					</object>
@@ -2236,7 +2236,7 @@
 							<reference ref="776334523"/>
 							<reference ref="110277672"/>
 							<reference ref="542359879"/>
-							<reference ref="884216212"/>
+							<reference ref="1002051311"/>
 						</object>
 						<reference key="parent" ref="34920399"/>
 					</object>
@@ -3116,12 +3116,12 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">2501</int>
-						<reference key="object" ref="884216212"/>
+						<reference key="object" ref="1002051311"/>
 						<reference key="parent" ref="632409172"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">2503</int>
-						<reference key="object" ref="354069942"/>
+						<reference key="object" ref="66305983"/>
 						<reference key="parent" ref="135265988"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -3498,198 +3498,11 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2504</int>
+			<int key="maxID">2507</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXAppController</string>
-					<string key="superclassName">BXBaseAppController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>hideWelcomePanel:</string>
-							<string>orderFrontFirstRunPanel:</string>
-							<string>orderFrontFirstRunPanelWithTransition:</string>
-							<string>orderFrontImportGamePanel:</string>
-							<string>orderFrontInspectorPanel:</string>
-							<string>orderFrontPreferencesPanel:</string>
-							<string>orderFrontWelcomePanel:</string>
-							<string>orderFrontWelcomePanelWithTransition:</string>
-							<string>revealCurrentSessionPath:</string>
-							<string>revealGamesFolder:</string>
-							<string>sendEmail:</string>
-							<string>showBugReportPage:</string>
-							<string>showCPUPanel:</string>
-							<string>showDonationPage:</string>
-							<string>showDrivesPanel:</string>
-							<string>showGamePanel:</string>
-							<string>showJoypadDownloadPage:</string>
-							<string>showMountPanel:</string>
-							<string>showMousePanel:</string>
-							<string>showPerianDownloadPage:</string>
-							<string>showUniversalAccessPrefsPane:</string>
-							<string>showWebsite:</string>
-							<string>toggleInspectorPanel:</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>hideWelcomePanel:</string>
-							<string>orderFrontFirstRunPanel:</string>
-							<string>orderFrontFirstRunPanelWithTransition:</string>
-							<string>orderFrontImportGamePanel:</string>
-							<string>orderFrontInspectorPanel:</string>
-							<string>orderFrontPreferencesPanel:</string>
-							<string>orderFrontWelcomePanel:</string>
-							<string>orderFrontWelcomePanelWithTransition:</string>
-							<string>revealCurrentSessionPath:</string>
-							<string>revealGamesFolder:</string>
-							<string>sendEmail:</string>
-							<string>showBugReportPage:</string>
-							<string>showCPUPanel:</string>
-							<string>showDonationPage:</string>
-							<string>showDrivesPanel:</string>
-							<string>showGamePanel:</string>
-							<string>showJoypadDownloadPage:</string>
-							<string>showMountPanel:</string>
-							<string>showMousePanel:</string>
-							<string>showPerianDownloadPage:</string>
-							<string>showUniversalAccessPrefsPane:</string>
-							<string>showWebsite:</string>
-							<string>toggleInspectorPanel:</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">hideWelcomePanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">orderFrontFirstRunPanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">orderFrontFirstRunPanelWithTransition:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">orderFrontImportGamePanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">orderFrontInspectorPanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">orderFrontPreferencesPanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">orderFrontWelcomePanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">orderFrontWelcomePanelWithTransition:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">revealCurrentSessionPath:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">revealGamesFolder:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">sendEmail:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showBugReportPage:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showCPUPanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showDonationPage:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showDrivesPanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showGamePanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showJoypadDownloadPage:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showMountPanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showMousePanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showPerianDownloadPage:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showUniversalAccessPrefsPane:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showWebsite:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">toggleInspectorPanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXAppController.h</string>
-					</object>
-				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXBaseAppController</string>
 					<string key="superclassName">NSDocumentController</string>
@@ -4559,6 +4372,45 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">BXStandaloneAppController</string>
 					<string key="superclassName">BXBaseAppController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>visitGameCatalogue:</string>
+							<string>visitGameForum:</string>
+							<string>visitGameSupportPage:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>visitGameCatalogue:</string>
+							<string>visitGameForum:</string>
+							<string>visitGameSupportPage:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">visitGameCatalogue:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">visitGameForum:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">visitGameSupportPage:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXStandaloneAppController.h</string>

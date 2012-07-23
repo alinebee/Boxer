@@ -40,6 +40,14 @@
 	<string>BXApplication</string>
 	<key>BXBundledGameboxName</key>
 	<string>Game</string>
+	<key>BXOrganizationName</key>
+	<string></string>
+	<key>BXGameForumURL</key>
+	<string></string>
+	<key>BXGameSupportURL</key>
+	<string></string>
+	<key>BXOrganizationCatalogueURL</key>
+	<string></string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>

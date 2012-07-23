@@ -1170,19 +1170,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 - (BOOL) _shouldAllowWriteAccessToPath: (NSString *)filePath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {	
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-	
-	//Don't allow write access to files on drives marked as read-only
-	if ([drive readOnly]) return NO;
-	
-	//Don't allow write access to files inside Boxer's application bundle
-	filePath = [filePath stringByStandardizingPath];
-	NSString *boxerPath = [[NSBundle mainBundle] bundlePath];
-	if ([filePath isRootedInPath: boxerPath]) return NO;
-	
-	//TODO: don't allow write access to files in system directories
-	
-	//Let other files go through unmolested
-	return YES;
+    
+    return [self.delegate emulator: self shouldAllowWriteAccessToPath: filePath onDrive: drive];
 }
 
 @end

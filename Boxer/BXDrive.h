@@ -105,7 +105,7 @@ typedef NSInteger BXDriveType;
 @property (assign, nonatomic) BOOL usesCDAudio;
 
 //Whether to prevent writing to the OS X filesystem representing this drive: defaults to NO.
-@property (assign, nonatomic) BOOL readOnly;
+@property (assign, nonatomic, getter=isReadOnly) BOOL readOnly;
 
 //Whether to protect this drive from being unmounted from the drive manager UI: defaults to NO.
 //Ignored for DOSBox internal drives (which are always locked).

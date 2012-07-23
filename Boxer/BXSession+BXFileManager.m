@@ -1483,6 +1483,26 @@
 	return YES;
 }
 
+- (BOOL) emulator: (BXEmulator *)emulator shouldAllowWriteAccessToPath: (NSString *)filePath onDrive: (BXDrive *)drive
+{
+	//Don't allow write access to files on drives marked as read-only
+	if (drive.isReadOnly) return NO;
+    
+	//Don't allow write access to files inside Boxer's application bundle
+    //Disabled for now, because:
+    //1. our internal drives are flagged as read-only anyway, and
+    //2. standalone game bundles have all the game files inside the application, and so need to allow write access.
+    /*
+	filePath = filePath.stringByStandardizingPath;
+	NSString *boxerPath = [[NSBundle mainBundle] bundlePath];
+	if ([filePath isRootedInPath: boxerPath]) return NO;
+	*/
+	//TODO: don't allow write access to files in system directories
+	
+	//Let other files go through unmolested
+	return YES;
+}
+
 - (BOOL) emulator: (BXEmulator *)theEmulator shouldMountDriveFromShell: (NSString *)drivePath
 {
     //TODO: show an error message

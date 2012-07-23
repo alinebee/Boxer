@@ -44,6 +44,7 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 
 @class BXVideoFrame;
 @class BXEmulator;
+@class BXDrive;
 @protocol BXMIDIDevice;
 @protocol BXEmulatorDelegate <NSObject>
 
@@ -137,6 +138,9 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 //Called whenever a path is mounted from the DOS MOUNT command.
 //Return NO to prevent the mount.
 - (BOOL) emulator: (BXEmulator *)emulator shouldMountDriveFromShell: (NSString *)drive;
+
+//Whether the emulator should be allowed to open the file at the specified local filesystem path for writing.
+- (BOOL) emulator: (BXEmulator *)emulator shouldAllowWriteAccessToPath: (NSString *)path onDrive: (BXDrive *)drive;
 
 @optional
 //Notifies the delegate that a DOS drive has been added/removed.

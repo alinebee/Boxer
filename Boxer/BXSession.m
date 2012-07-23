@@ -936,6 +936,14 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		{
 			target = target.stringByDeletingLastPathComponent;
 		}
+        
+        
+        //If we're part of a standalone game bundle, switch into fullscreen immediately at this point.
+        if (!_userSkippedDefaultProgram && [[NSApp delegate] isStandaloneGameBundle] && [[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
+        {
+            [self.DOSWindowController.window enterFullScreen: self];
+        }
+        
 		[self openFileAtPath: target];
 	}
     
@@ -1114,18 +1122,23 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) emulatorDidBeginGraphicalContext: (NSNotification *)notification
 {
-	//Tweak: only switch into fullscreen mode if we don't need to prompt
-	//the user about choosing a default program.
-	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"] &&
-		![self _shouldLeaveProgramPanelOpenAfterLaunch])
-	{
-		//Switch to fullscreen mode automatically after a brief delay:
-		//This will be cancelled if the context exits within that time,
-		//in case of a program that crashes early.
-		[self.DOSWindowController.window performSelector: @selector(enterFullScreen:) 
-                                              withObject: self
-                                              afterDelay: BXAutoSwitchToFullScreenDelay];
-	}
+    //TWEAK: when we're part of a standalone game bundle, we'll switch into fullscreen immediately
+    //at startup rather than when the app switches into graphics mode.
+    if (![[NSApp delegate] isStandaloneGameBundle])
+    {
+        //Tweak: only switch into fullscreen mode if we don't need to prompt
+        //the user about choosing a default program.
+        if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"] &&
+            ![self _shouldLeaveProgramPanelOpenAfterLaunch])
+        {
+            //Switch to fullscreen mode automatically after a brief delay:
+            //This will be cancelled if the context exits within that time,
+            //in case of a program that crashes early.
+            [self.DOSWindowController.window performSelector: @selector(enterFullScreen:) 
+                                                  withObject: self
+                                                  afterDelay: BXAutoSwitchToFullScreenDelay];
+        }
+    }
 }
 
 - (void) emulatorDidFinishGraphicalContext: (NSNotification *)notification

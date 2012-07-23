@@ -303,7 +303,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 			NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, self.gamePackage.gameIdentifier];
 			
 			NSDictionary *gameboxSettings = [defaults objectForKey: defaultsKey];
-			
+            
 			//Merge the loaded values in, rather than replacing the default settings altogether.
 			[self.gameSettings addEntriesFromDictionary: gameboxSettings];
             
@@ -316,6 +316,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                 //Remove the old setting so that we don't import it again next time.
                 [self.gameSettings removeObjectForKey: @"closeOnExit"];
             }
+            
+            //TWEAK: transition the startUpInFullScreen flag from out of the application-wide
+            //user defaults and into the user-specific game settings. (v1.3->v1.4)
+            NSNumber *startUpInFullScreenFlag = [defaults objectForKey: @"startUpInFullScreen"];
+            if (startUpInFullScreenFlag && ![gameboxSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey])
+            {
+                [self.gameSettings setObject: startUpInFullScreenFlag
+                                      forKey: BXGameboxSettingsStartUpInFullScreenKey];
+            }
+            
             
             //If we don't already have a game profile assigned,
             //then load any previously detected game profile for this game

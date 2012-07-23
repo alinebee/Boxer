@@ -14,5 +14,7 @@
 	<integer>786432</integer>
 	<key>showProgramPanel</key>
 	<true/>
+	<key>startUpInFullScreen</key>
+	<false/>
 </dict>
 </plist>

@@ -7,7 +7,7 @@
 
 
 #import "BXAppController+BXGamesFolder.h"
-#import "BXAppController+BXSupportFiles.h"
+#import "BXBaseAppController+BXSupportFiles.h"
 
 #import "NDAlias+AliasFile.h"
 #import "NSWorkspace+BXFileTypes.h"

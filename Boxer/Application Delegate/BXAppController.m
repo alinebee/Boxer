@@ -6,7 +6,7 @@
  */
 
 
-#import "BXAppController+BXSupportFiles.h"
+#import "BXBaseAppController+BXSupportFiles.h"
 #import "BXAppController+BXGamesFolder.h"
 
 #import "BXAboutController.h"

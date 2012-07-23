@@ -11,7 +11,7 @@
 #import "BXValueTransformers.h"
 #import "BXGamesFolderPanelController.h"
 #import "BXAppController+BXGamesFolder.h"
-#import "BXAppController+BXSupportFiles.h"
+#import "BXBaseAppController+BXSupportFiles.h"
 #import "BXMT32ROMDropzone.h"
 #import "BXEmulatedMT32.h"
 #import "BXMIDIDeviceMonitor.h"

@@ -4414,9 +4414,10 @@
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -4447,6 +4448,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 				VALID_ARCHS = i386;
@@ -4476,6 +4478,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 				VALID_ARCHS = i386;
@@ -4493,8 +4496,9 @@
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};

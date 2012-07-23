@@ -22,6 +22,7 @@
 
 @implementation BXDrive
 @synthesize path = _path;
+@synthesize shadowPath = _shadowPath;
 @synthesize mountPoint = _mountPoint;
 @synthesize pathAliases = _pathAliases;
 @synthesize letter = _letter;
@@ -223,6 +224,10 @@
         NSString *volumeLabel = [aDecoder decodeObjectForKey: @"volumeLabel"];
         if (volumeLabel) self.volumeLabel = volumeLabel;
         
+        NDAlias *shadowPathAlias = [aDecoder decodeObjectForKey: @"shadowPath"];
+        if (shadowPathAlias.path != nil)
+            self.shadowPath = shadowPathAlias.path;
+        
         NDAlias *mountPointAlias = [aDecoder decodeObjectForKey: @"mountPoint"];
         if (mountPointAlias.path != nil)
             self.mountPoint = mountPointAlias.path;
@@ -261,6 +266,12 @@
     if (self.letter)
         [aCoder encodeObject: self.letter forKey: @"letter"];
     
+    if (self.shadowPath)
+    {
+        NDAlias *shadowPathAlias = [NDAlias aliasWithPath: self.shadowPath];
+        [aCoder encodeObject: shadowPathAlias forKey: @"shadowPath"];
+    }
+    
     //For other paths and strings, only bother recording them if they have been
     //manually changed from their autodetected versions.
     if (self.mountPoint && !_hasAutodetectedMountPoint)
@@ -270,7 +281,9 @@
     }
     
     if (self.title && !_hasAutodetectedTitle)
+    {
         [aCoder encodeObject: self.title forKey: @"title"];
+    }
     
     if (self.volumeLabel && !_hasAutodetectedVolumeLabel)
         [aCoder encodeObject: self.volumeLabel forKey: @"volumeLabel"];
@@ -314,6 +327,8 @@
 - (void) dealloc
 {
     self.path = nil;
+    self.shadowPath = nil;
+    self.mountPoint = nil;
     self.letter = nil;
     self.title = nil;
     self.volumeLabel = nil;
@@ -471,6 +486,17 @@
 		relativePath = [relativePath substringFromIndex: 1];
 	
 	return relativePath;
+}
+
+- (NSString *) shadowedPathForPath: (NSString *)path
+{
+	if (self.isInternal || !self.shadowPath) return nil;
+	
+    NSString *relativePath = [self relativeLocationOfPath: path];
+    if (relativePath)
+        return [self.shadowPath stringByAppendingPathComponent: relativePath];
+    else
+        return nil;
 }
 
 - (BOOL) isInternal	{ return (self.type == BXDriveInternal); }

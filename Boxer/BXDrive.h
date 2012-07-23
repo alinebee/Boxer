@@ -35,8 +35,10 @@ typedef NSInteger BXDriveType;
 @interface BXDrive : NSObject <NSCoding>
 {
 	NSString *_path;
+    NSString *_shadowPath;
 	NSString *_mountPoint;
 	NSMutableSet *_pathAliases;
+    
 	NSString *_letter;
 	NSString *_title;
 	NSString *_volumeLabel;
@@ -63,6 +65,12 @@ typedef NSInteger BXDriveType;
 //This may or may not be the same as the path that gets mounted in DOS:
 //see mountPoint below.
 @property (copy, nonatomic) NSString *path;
+
+//An optional absolute path on the OS X filesystem to which we will perform
+//shadow write operations for this drive. That is, any files that are
+//opened for modification on this drive will be silently written to this
+//location instead of creating/modifying files in the original path.
+@property (copy, nonatomic) NSString *shadowPath;
 
 //The absolute path to the source file or folder that will get mounted
 //in DOS for this drive. Usually this is the same as path, but may differ
@@ -203,6 +211,10 @@ typedef NSInteger BXDriveType;
 //or nil if the specified path was not present on this drive.
 //Used by BXDOSFileSystem for matching OS X filesystem paths with DOS filesystem paths.
 - (NSString *) relativeLocationOfPath: (NSString *)realPath;
+
+//Returns the shadow location for the specified path. This path may or may not yet exist.
+//Returns nil if the drive has no shadow path.
+- (NSString *) shadowedPathForPath: (NSString *)path;
 
 
 #pragma mark -

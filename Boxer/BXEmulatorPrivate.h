@@ -257,6 +257,38 @@ enum {
 - (void) _didCreateFileAtPath: (NSString *)filePath onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 - (void) _didRemoveFileAtPath: (NSString *)filePath onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
+
+#pragma mark -
+#pragma mark Local filesystem access
+
+- (FILE *) _openFileAtLocalPath: (NSString *)path
+                  onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+                         inMode: (const char *)mode;
+
+- (BOOL) _removeFileAtLocalPath: (NSString *)path
+                  onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+
+- (BOOL) _moveLocalPath: (NSString *)oldPath
+            toLocalPath: (NSString *)newPath
+          onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+
+- (BOOL) _createDirectoryAtLocalPath: (NSString *)path
+                       onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+
+- (BOOL) _removeDirectoryAtLocalPath: (NSString *)path
+                       onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+
+- (BOOL) _getAttributes: (struct stat *)status
+           forLocalPath: (NSString *)filePath
+          onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+
+- (BOOL) _testAccessToLocalPath: (NSString *)filePath
+                  onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+                        forMode: (int)accessMode;
+
+- (BOOL) localPathExists: (NSString *)filePath
+           onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+
 @end
 
 

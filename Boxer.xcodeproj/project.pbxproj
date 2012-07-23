@@ -40,6 +40,8 @@
 		9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */; };
 		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
 		9F1DE9B214FB7F3800F9C91E /* NSObject+BXPerformExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1DE9B114FB7F3800F9C91E /* NSObject+BXPerformExtensions.m */; };
+		9F1E959A15BD88D700C3C6A0 /* UserDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F1E959915BD88D700C3C6A0 /* UserDefaults.plist */; };
+		9F1E959C15BD899500C3C6A0 /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F1E959B15BD899500C3C6A0 /* GameDefaults.plist */; };
 		9F1F00AB143F091300FF163A /* Audio.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F00AA143F091300FF163A /* Audio.png */; };
 		9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
@@ -342,9 +344,7 @@
 		9F2D30DB15B8233800FAE848 /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9F2D30E815B8233800FAE848 /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9F2D30E915B8233800FAE848 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
-		9F2D30F215B8233800FAE848 /* UserDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F466AFB11A92C4B00C50965 /* UserDefaults.plist */; };
 		9F2D30F415B8233800FAE848 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; };
-		9F2D30F515B8233800FAE848 /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */; };
 		9F2D311515B8233800FAE848 /* KeyboardLayouts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FCC303B13670F680013F083 /* KeyboardLayouts.plist */; };
 		9F2D311615B8233800FAE848 /* CHFlightstickPro.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0E610E139E1A05004A7A56 /* CHFlightstickPro.png */; };
 		9F2D311715B8233800FAE848 /* ThrustmasterFCS.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0E610F139E1A05004A7A56 /* ThrustmasterFCS.png */; };
@@ -930,6 +930,8 @@
 		9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulator.mm; sourceTree = "<group>"; };
 		9F1DE9B014FB7F3800F9C91E /* NSObject+BXPerformExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+BXPerformExtensions.h"; sourceTree = "<group>"; };
 		9F1DE9B114FB7F3800F9C91E /* NSObject+BXPerformExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+BXPerformExtensions.m"; sourceTree = "<group>"; };
+		9F1E959915BD88D700C3C6A0 /* UserDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefaults.plist; sourceTree = "<group>"; };
+		9F1E959B15BD899500C3C6A0 /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
 		9F1F00AA143F091300FF163A /* Audio.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Audio.png; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = "/Volumes/Macintosh HD/System/Library/Frameworks/QTKit.framework"; sourceTree = "<absolute>"; };
@@ -2144,6 +2146,8 @@
 		9F2D317A15B8240400FAE848 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9F1E959B15BD899500C3C6A0 /* GameDefaults.plist */,
+				9F1E959915BD88D700C3C6A0 /* UserDefaults.plist */,
 				9FCB7B0915B8422000CC7CC7 /* DOS Toolkit */,
 				9FCB7ACC15B8420800CC7CC7 /* XIBs */,
 			);
@@ -3422,9 +3426,7 @@
 				9F2D30DB15B8233800FAE848 /* Snapshot.aiff in Resources */,
 				9F2D30E815B8233800FAE848 /* GameProfiles.plist in Resources */,
 				9F2D30E915B8233800FAE848 /* Configurations in Resources */,
-				9F2D30F215B8233800FAE848 /* UserDefaults.plist in Resources */,
 				9F2D30F415B8233800FAE848 /* Configuration.strings in Resources */,
-				9F2D30F515B8233800FAE848 /* GameDefaults.plist in Resources */,
 				9F2D311515B8233800FAE848 /* KeyboardLayouts.plist in Resources */,
 				9F2D311615B8233800FAE848 /* CHFlightstickPro.png in Resources */,
 				9F2D311715B8233800FAE848 /* ThrustmasterFCS.png in Resources */,
@@ -3466,6 +3468,8 @@
 				9FCB7B2615B877A100CC7CC7 /* ProgramPanel.xib in Resources */,
 				9FCB7B2715B877E500CC7CC7 /* DOS Toolkit in Resources */,
 				9FCB7B2815B8782800CC7CC7 /* Bezel.xib in Resources */,
+				9F1E959A15BD88D700C3C6A0 /* UserDefaults.plist in Resources */,
+				9F1E959C15BD899500C3C6A0 /* GameDefaults.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

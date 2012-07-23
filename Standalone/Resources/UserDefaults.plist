@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>applyShelfAppearance</key>
+	<true/>
+	<key>aspectCorrected</key>
+	<true/>
+	<key>showFirstRunPanel</key>
+	<false/>
+	<key>useVSync</key>
+	<true/>
+	<key>useCVDisplayLink</key>
+	<true/>
+	<key>renderingStyle</key>
+	<integer>0</integer>
+	<key>initialInspectorPanelIndex</key>
+	<integer>1</integer>
+	<key>startupAction</key>
+	<integer>1</integer>
+	<key>startUpInFullScreen</key>
+	<true/>
+	<key>statusBarShown</key>
+	<true/>
+	<key>temporaryDriveLetter</key>
+	<string>X</string>
+	<key>toolkitDriveLetter</key>
+	<string>Y</string>
+	<key>useBinCueErrorCorrection</key>
+	<false/>
+	<key>showMT32LCDMessages</key>
+	<true/>
+	<key>showFullscreenToggleMessage</key>
+	<true/>
+	<key>suppressSystemHotkeys</key>
+	<true/>
+	<key>muted</key>
+	<false/>
+	<key>masterVolume</key>
+	<real>1</real>
+	<key>useMultithreadedEmulation</key>
+	<false/>
+	<key>useMultithreadedEventTap</key>
+	<true/>
+</dict>
+</plist>

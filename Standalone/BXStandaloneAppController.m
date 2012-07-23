@@ -14,6 +14,7 @@
 
 enum {
     BXAppMenuTag = 1,
+    BXHelpMenuTag = 2,
 };
 
 NSString * const BXAppMenuPlaceholderText = @"[Appname]";
@@ -40,9 +41,10 @@ NSString * const BXBundledGameboxNameInfoPlistKey = @"BXBundledGameboxName";
 
 @interface BXStandaloneAppController ()
 
-//Update the main menu's options to reflect the actual application name.
+//Update the specified menu's options to reflect the actual application name.
 //Called during application loading.
-- (void) _synchronizeAppMenuItemTitles;
+- (void) _synchronizeTitlesForMenu: (NSMenu *)menu;
+- (void) _synchronizeTitlesForMainMenuItemWithTag: (NSInteger)tag;
 
 @end
 
@@ -55,12 +57,17 @@ NSString * const BXBundledGameboxNameInfoPlistKey = @"BXBundledGameboxName";
 #pragma mark -
 #pragma mark Custom menu handling
 
-- (void) _synchronizeAppMenuItemTitles
+- (void) _synchronizeTitlesForMainMenuItemWithTag: (NSInteger)tag
+{
+    NSMenu *menu = [[NSApp mainMenu] itemWithTag: tag].submenu;
+    [self _synchronizeTitlesForMenu: menu];
+}
+
+- (void) _synchronizeTitlesForMenu: (NSMenu *)menu
 {
     NSString *appName = [[self class] appName];
     
-    NSMenu *appMenu = [[NSApp mainMenu] itemWithTag: BXAppMenuTag].submenu;
-    for (NSMenuItem *item in appMenu.itemArray)
+    for (NSMenuItem *item in menu.itemArray)
     {
         NSString *title = [item.title stringByReplacingOccurrencesOfString: BXAppMenuPlaceholderText 
                                                                 withString: appName];
@@ -82,7 +89,8 @@ NSString * const BXBundledGameboxNameInfoPlistKey = @"BXBundledGameboxName";
 {
     [super applicationWillFinishLaunching: notification];
     
-    [self _synchronizeAppMenuItemTitles];
+    [self _synchronizeTitlesForMainMenuItemWithTag: BXAppMenuTag];
+    [self _synchronizeTitlesForMainMenuItemWithTag: BXHelpMenuTag];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification

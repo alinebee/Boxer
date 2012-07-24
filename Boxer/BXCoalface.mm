@@ -10,7 +10,8 @@
 #import "BXEmulatorPrivate.h"
 #import "setup.h"
 #import "mapper.h"
-
+#import "cross.h"
+#import "BXFilesystemManager.h"
 
 #pragma mark -
 #pragma mark Application state functions
@@ -188,13 +189,13 @@ void boxer_didExecuteFileAtDOSPath(const char *path, DOS_Drive *dosboxDrive)
 #pragma mark -
 #pragma mark Filesystem functions
 
+#define boxer_pathFromCPath(path) ([[NSFileManager defaultManager] stringWithFileSystemRepresentation: path length: strlen(path)])
+
 //Whether or not to allow the specified path to be mounted.
 //Called by MOUNT::Run in DOSBox's dos/dos_programs.cpp.
 bool boxer_shouldMountPath(const char *path)
 {
-	NSString *localPath = [[NSFileManager defaultManager]
-						   stringWithFileSystemRepresentation: path
-						   length: strlen(path)];
+	NSString *localPath = boxer_pathFromCPath(path);
 	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	return [emulator _shouldMountPath: localPath];
@@ -211,9 +212,7 @@ bool boxer_shouldShowFileWithName(const char *name)
 //Whether to allow write access to the file at the specified path on the local filesystem
 bool boxer_shouldAllowWriteAccessToPath(const char *path, DOS_Drive *dosboxDrive)
 {
-	NSString *localPath = [[NSFileManager defaultManager] 
-						   stringWithFileSystemRepresentation: path
-						   length: strlen(path)];
+	NSString *localPath = boxer_pathFromCPath(path);
 	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	return [emulator _shouldAllowWriteAccessToPath: localPath onDOSBoxDrive: dosboxDrive];
@@ -234,9 +233,7 @@ void boxer_driveDidUnmount(Bit8u driveIndex)
 
 void boxer_didCreateLocalFile(const char *path, DOS_Drive *dosboxDrive)
 {
-	NSString *localPath = [[NSFileManager defaultManager] 
-						   stringWithFileSystemRepresentation: path
-						   length: strlen(path)];	
+	NSString *localPath = boxer_pathFromCPath(path);	
 
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _didCreateFileAtPath: localPath onDOSBoxDrive: dosboxDrive];
@@ -244,12 +241,142 @@ void boxer_didCreateLocalFile(const char *path, DOS_Drive *dosboxDrive)
 
 void boxer_didRemoveLocalFile(const char *path, DOS_Drive *dosboxDrive)
 {
-	NSString *localPath = [[NSFileManager defaultManager] 
-						   stringWithFileSystemRepresentation: path
-						   length: strlen(path)];
+	NSString *localPath = boxer_pathFromCPath(path);
 	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _didRemoveFileAtPath: localPath onDOSBoxDrive: dosboxDrive];
+}
+
+
+
+FILE * boxer_openLocalFile(const char *path, DOS_Drive *drive, const char *mode)
+{
+    NSString *localPath = boxer_pathFromCPath(path);
+    
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    return [emulator _openFileAtLocalPath: localPath onDOSBoxDrive: drive inMode: mode];
+}
+
+bool boxer_removeLocalFile(const char *path, DOS_Drive *drive)
+{
+    NSString *localPath = boxer_pathFromCPath(path);
+    
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    return [emulator _removeFileAtLocalPath: localPath onDOSBoxDrive: drive];
+}
+
+bool boxer_moveLocalFile(const char *fromPath, const char *toPath, DOS_Drive *drive)
+{
+    NSString *localFromPath = boxer_pathFromCPath(fromPath);
+    NSString *localToPath = boxer_pathFromCPath(toPath);
+    
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    return [emulator _moveLocalPath: localFromPath toLocalPath: localToPath onDOSBoxDrive: drive];   
+}
+
+bool boxer_createLocalDir(const char *path, DOS_Drive *drive)
+{
+    NSString *localPath = boxer_pathFromCPath(path);
+    
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    return [emulator _createDirectoryAtLocalPath: localPath onDOSBoxDrive: drive];
+}
+
+bool boxer_removeLocalDir(const char *path, DOS_Drive *drive)
+{
+    NSString *localPath = boxer_pathFromCPath(path);
+    
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    return [emulator _removeDirectoryAtLocalPath: localPath onDOSBoxDrive: drive];
+}
+
+bool boxer_getLocalPathStats(const char *path, DOS_Drive *drive, struct stat *outStatus)
+{
+    NSString *localPath = boxer_pathFromCPath(path);
+    
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    return [emulator _getStats: outStatus forLocalPath: localPath onDOSBoxDrive: drive];
+}
+
+bool boxer_localDirectoryExists(const char *path, DOS_Drive *drive)
+{
+    NSString *localPath = boxer_pathFromCPath(path);
+    
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    return [emulator _localDirectoryExists: localPath onDOSBoxDrive: drive];
+}
+
+bool boxer_localFileExists(const char *path, DOS_Drive *drive)
+{
+    NSString *localPath = boxer_pathFromCPath(path);
+    
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    return [emulator _localFileExists: localPath onDOSBoxDrive: drive];
+}
+
+#pragma mark -
+#pragma mark Directory enumeration
+
+void *boxer_openLocalDirectory(const char *path, DOS_Drive *drive)
+{
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    NSString *localPath = boxer_pathFromCPath(path);
+    id <BXFilesystemEnumerator> enumerator = [emulator _directoryEnumeratorForLocalPath: localPath onDOSBoxDrive: drive];
+    
+    //Our fancy Cocoa enumerator doesn't include directory entries for . and ..,
+    //which are expected by DOSBox. So, we insert them ourselves during iteration.
+    NSMutableArray *fakeEntries = [NSMutableArray arrayWithObjects: @".", @"..", nil];
+    
+    //The dictionary will be released when the calling context calls boxer_closeLocalDirectory() with the pointer to the dictionary.
+    NSDictionary *enumeratorInfo = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                    enumerator, @"enumerator",
+                                    fakeEntries, @"fakeEntries",
+                                    nil];
+    
+    return enumeratorInfo;
+}
+
+void boxer_closeLocalDirectory(void *handle)
+{
+    NSDictionary *enumeratorInfo = (NSDictionary *)handle;
+    [enumeratorInfo release];
+}
+
+bool boxer_getNextDirectoryEntry(void *handle, char *outName, bool &isDirectory)
+{
+    NSDictionary *enumeratorInfo = (NSDictionary *)handle;
+    NSMutableArray *fakeEntries = [enumeratorInfo objectForKey: @"fakeEntries"];
+    
+    if (fakeEntries.count)
+    {
+        const char *nextFakeEntry = [[fakeEntries objectAtIndex: 0] fileSystemRepresentation];
+        strlcpy(outName, nextFakeEntry, CROSS_LEN);
+        
+        [fakeEntries removeObjectAtIndex: 0];
+        isDirectory = YES;
+        return true;
+    }
+    else
+    {
+        id <BXFilesystemEnumerator> enumerator = [enumeratorInfo objectForKey: @"enumerator"];
+        NSURL *nextURL = enumerator.nextObject;
+        if (nextURL != nil)
+        {
+            NSNumber *directoryFlag = nil;
+            NSString *fileName = nil;
+            BOOL hasDirFlag = [nextURL getResourceValue: &directoryFlag forKey: NSURLIsDirectoryKey error: NULL];
+            BOOL hasNameFlag = [nextURL getResourceValue: &fileName forKey: NSURLNameKey error: NULL];
+            
+            NSCAssert(hasNameFlag && hasDirFlag, @"Enumerator is missing directory and/or filename resources.");
+            
+            isDirectory = directoryFlag.boolValue;
+            const char *nextEntry = fileName.fileSystemRepresentation;
+            
+            strlcpy(outName, nextEntry, CROSS_LEN);
+            return true;
+        }
+        else return false;
+    }
 }
 
 

@@ -22,19 +22,25 @@
 
 
 @implementation BXPathEnumerator
-@synthesize enumerator;
-@synthesize fileTypes, skipHiddenFiles, skipSubdirectories, skipPackageContents, predicate;
-@synthesize basePath, currentPath, relativePath;
+@synthesize enumerator = _enumerator;
+@synthesize fileTypes = _fileTypes;
+@synthesize skipHiddenFiles = _skipHiddenFiles;
+@synthesize skipSubdirectories = _skipSubdirectories;
+@synthesize skipPackageContents = _skipPackageContents;
+@synthesize predicate = _predicate;
+@synthesize basePath = _basePath;
+@synthesize currentPath = _currentPath;
+@synthesize relativePath = _relativePath;
 
 - (id) init
 {
 	if ((self = [super init]))
 	{
-		workspace = [[NSWorkspace alloc] init];
-		manager	= [[NSFileManager alloc] init];
+		_workspace  = [[NSWorkspace alloc] init];
+		_manager	= [[NSFileManager alloc] init];
 		
 		//Skip hidden files by default
-		[self setSkipHiddenFiles: YES];
+		self.skipHiddenFiles = YES;
 	}
 	return self;
 }
@@ -43,7 +49,7 @@
 {
 	if ((self = [self init]))
 	{
-		[self setBasePath: filePath];
+        self.basePath = filePath;
 	}
 	return self;
 }
@@ -55,34 +61,34 @@
 
 - (void) dealloc
 {
-	[self setFileTypes: nil],	[fileTypes release];
-	[self setEnumerator: nil],	[enumerator release];
-	[self setBasePath: nil],	[basePath release];
-	[self setCurrentPath: nil],	[currentPath release];
-	[self setRelativePath: nil],	[relativePath release];
-    [self setPredicate: nil],   [predicate release];
+    self.fileTypes = nil;
+    self.enumerator = nil;
+    self.basePath = nil;
+    self.currentPath = nil;
+    self.relativePath = nil;
+    self.predicate = nil;
 	
-	[manager release], manager = nil;
-	[workspace release], workspace = nil;
+	[_manager release], _manager = nil;
+	[_workspace release], _workspace = nil;
 	
 	[super dealloc];
 }
 
 - (void) setBasePath: (NSString *)path
 {
-    if (basePath != path)
+    if (_basePath != path)
     {
-        [basePath release];
-        basePath = [path copy];
+        [_basePath release];
+        _basePath = [path copy];
         
         //Create an enumerator for the specified path
-        if (basePath)
+        if (_basePath)
         {
-            [self setEnumerator: [manager enumeratorAtPath: basePath]];
+            self.enumerator = [_manager enumeratorAtPath: _basePath];
         }
         else
         {
-            [self setEnumerator: nil];
+            self.enumerator = nil;
         }
     }
 }
@@ -90,28 +96,31 @@
 - (id) nextObject
 {
 	NSString *path;
-	while ((path = [[self enumerator] nextObject]))
+	while ((path = self.enumerator.nextObject) != nil)
 	{
-		if ([self skipSubdirectories]) [self skipDescendents];
+		if (self.skipSubdirectories)
+            [self skipDescendants];
 		
-		if ([self skipHiddenFiles] && [[path lastPathComponent] hasPrefix: @"."]) continue;
+		if (self.skipHiddenFiles && [path.lastPathComponent hasPrefix: @"."]) continue;
 		
 		//At this point, generate the full path for the item
-		NSString *fullPath = [[self basePath] stringByAppendingPathComponent: path];
+		NSString *fullPath = [self.basePath stringByAppendingPathComponent: path];
 		
 		//Skip files within packages
-		if ([self skipPackageContents] && [workspace isFilePackageAtPath: path]) [self skipDescendents];
+		if (self.skipPackageContents && [_workspace isFilePackageAtPath: fullPath])
+            [self skipDescendants];
 		
         
         //Skip files that don't match our predicate
-        if ([self predicate] && ![[self predicate] evaluateWithObject: fullPath]) continue;
+        if (self.predicate && ![self.predicate evaluateWithObject: fullPath])
+            continue;
         
 		//Skip files not on our filetype whitelist
-		if ([self fileTypes] && ![workspace file: fullPath matchesTypes: [self fileTypes]]) continue;
+		if (self.fileTypes && ![_workspace file: fullPath matchesTypes: self.fileTypes]) continue;
 								 
 		//If we got this far, hand the full path onwards to the calling context
-		[self setRelativePath: path];
-		[self setCurrentPath: fullPath];
+        self.relativePath = path;
+        self.currentPath = fullPath;
 		return fullPath;
 	}
 	return nil;
@@ -121,8 +130,9 @@
 #pragma mark -
 #pragma mark Passthrough methods
 
-- (void) skipDescendents				{ [[self enumerator] skipDescendents]; }
-- (NSDictionary *) fileAttributes		{ return [[self enumerator] fileAttributes]; }
-- (NSDictionary *) directoryAttributes	{ return [[self enumerator] directoryAttributes]; }
+- (void) skipDescendents				{ [self.enumerator skipDescendents]; }
+- (void) skipDescendants				{ [self.enumerator skipDescendents]; }
+- (NSDictionary *) fileAttributes		{ return self.enumerator.fileAttributes; }
+- (NSDictionary *) directoryAttributes	{ return self.enumerator.directoryAttributes; }
 
 @end

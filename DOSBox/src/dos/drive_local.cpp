@@ -70,14 +70,20 @@ bool localDrive::FileCreate(DOS_File * * file,const char * name,Bit16u /*attribu
 	}
 	//--End of modifications
 	
-	FILE * test=fopen(temp_name,"rb+");
+    //-- Modified 2012-07-24 by Alun Bestor to allow Boxer to shadow local file access
+	//FILE * test=fopen(temp_name,"rb+");
+    FILE * test=boxer_openLocalFile(temp_name, this, "rb+");
+    //--End of modifications
 	if(test) {
 		fclose(test);
 		existing_file=true;
 
 	}
 	
-	FILE * hand=fopen(temp_name,"wb+");
+    //-- Modified 2012-07-24 by Alun Bestor to allow Boxer to shadow local file access
+	//FILE * hand=fopen(temp_name,"wb+");
+    FILE * hand=boxer_openLocalFile(temp_name, this, "wb+");
+    //--End of modifications
 	if (!hand){
 		LOG_MSG("Warning: file creation failed: %s",newname);
 		return false;
@@ -133,12 +139,21 @@ bool localDrive::FileOpen(DOS_File * * file,const char * name,Bit32u flags) {
 		}
 	}
 	//--End of modifications
-
-	FILE * hand=fopen(newname,type);
+    
+    //-- Modified 2012-07-24 by Alun Bestor to allow Boxer to shadow local file access
+	//FILE * hand=fopen(newname,type);
+    FILE * hand=boxer_openLocalFile(newname, this, type);
+    //--End of modifications
+    
 //	Bit32u err=errno;
 	if (!hand) { 
 		if((flags&0xf) != OPEN_READ) {
-			FILE * hmm=fopen(newname,"rb");
+            
+            //-- Modified 2012-07-24 by Alun Bestor to allow Boxer to shadow local file access
+            //FILE * hmm=fopen(newname,"rb");
+            FILE * hmm=boxer_openLocalFile(newname, this, "rb");
+            //--End of modifications
+            
 			if (hmm) {
 				fclose(hmm);
 				LOG_MSG("Warning: file %s exists and failed to open in write mode.\nPlease Remove write-protection",newname);
@@ -160,8 +175,11 @@ FILE * localDrive::GetSystemFilePtr(char const * const name, char const * const 
 	strcat(newname,name);
 	CROSS_FILENAME(newname);
 	dirCache.ExpandName(newname);
-
-	return fopen(newname,type);
+    
+    //-- Modified 2012-07-24 by Alun Bestor to allow Boxer to shadow local file access
+	//return fopen(newname,type);
+    return boxer_openLocalFile(newname, this, type);
+    //--End of modifications
 }
 
 bool localDrive::GetSystemFilename(char *sysName, char const * const dosName) {
@@ -188,12 +206,17 @@ bool localDrive::FileUnlink(const char * name) {
 	}
 	//--End of modifications
 	
-	if (unlink(fullname)) {
+    //-- Modified 2012-07-24 by Alun Bestor to allow Boxer to shadow local file access
+	//if (unlink(fullname)) {
+    if (!boxer_removeLocalFile(fullname, this)) {
 		//Unlink failed for some reason try finding it.
 		struct stat buffer;
-		if(stat(fullname,&buffer)) return false; // File not found.
-
-		FILE* file_writable = fopen(fullname,"rb+");
+        //if(stat(fullname,&buffer)) return false; // File not found.
+        if (!boxer_getLocalPathStats(fullname, this, &buffer)) return false;
+		
+		//FILE* file_writable = fopen(fullname,"rb+");
+        FILE* file_writable = boxer_openLocalFile(fullname, this, "rb+");
+        
 		if(!file_writable) return false; //No acces ? ERROR MESSAGE NOT SET. FIXME ?
 		fclose(file_writable);
 
@@ -212,7 +235,8 @@ bool localDrive::FileUnlink(const char * name) {
 			}
 		}
 		if(!found_file) return false;
-		if (!unlink(fullname)) {
+		//if (!unlink(fullname)) {
+        if (boxer_removeLocalFile(fullname, this)) {
 			dirCache.DeleteEntry(newname);
 			
 			//--Added 2010-08-21 by Alun Bestor to let Boxer monitor DOSBox's file operations
@@ -220,7 +244,8 @@ bool localDrive::FileUnlink(const char * name) {
 			//--End of modifications
 			return true;
 		}
-		return false;
+		return false;        
+//--End of modifications
 	} else {
 		dirCache.DeleteEntry(newname);
 		
@@ -311,7 +336,10 @@ again:
 	//and due to its design dir_ent might be lost.)
 	//Copying dir_ent first
 	strcpy(dir_entcopy,dir_ent);
-	if (stat(dirCache.GetExpandName(full_name),&stat_block)!=0) { 
+    //Modified 2012-07-24 by Alun Bestor to wrap local file operations
+	//if (stat(dirCache.GetExpandName(full_name),&stat_block)!=0) { 
+    if (!boxer_getLocalPathStats(dirCache.GetExpandName(full_name), this, &stat_block)) {
+    //--End of modifications
 		goto again;//No symlinks and such
 	}	
 
@@ -348,7 +376,11 @@ bool localDrive::GetFileAttr(const char * name,Bit16u * attr) {
 	dirCache.ExpandName(newname);
 
 	struct stat status;
-	if (stat(newname,&status)==0) {
+    
+    //Modified 2012-07-24 by Alun Bestor to wrap local file operations
+	//if (stat(newname,&status)==0) { 
+    if (boxer_getLocalPathStats(newname, this, &status)) {
+    //--End of modifications
 		*attr=DOS_ATTR_ARCHIVE;
 		if(status.st_mode & S_IFDIR) *attr|=DOS_ATTR_DIRECTORY;
 		return true;
@@ -380,12 +412,15 @@ bool localDrive::MakeDir(const char * dir) {
 		return false;
 	}
 
-	int temp=mkdir(fullname, 0777);
+	//int temp=mkdir(fullname, 0777);
+	//if (temp==0) dirCache.CacheOut(newdir,true);
+	//return (temp==0);// || ((temp!=0) && (errno==EEXIST));
+    
+    bool created = boxer_createLocalDir(fullname, this);
+    if (created) dirCache.CacheOut(newdir,true);
+    return created;
 	//--End of modifications
 	
-	if (temp==0) dirCache.CacheOut(newdir,true);
-
-	return (temp==0);// || ((temp!=0) && (errno==EEXIST));
 }
 
 bool localDrive::RemoveDir(const char * dir) {
@@ -403,11 +438,14 @@ bool localDrive::RemoveDir(const char * dir) {
 		return false;
 	}
 	
-	int temp=rmdir(fullname);
-	//--End of modifications
-	
-	if (temp==0) dirCache.DeleteEntry(newdir,true);
-	return (temp==0);
+	//int temp=rmdir(fullname);
+	//if (temp==0) dirCache.DeleteEntry(newdir,true);
+    //return (temp==0);
+    
+    bool removed = boxer_removeLocalDir(fullname, this);
+	if (removed) dirCache.DeleteEntry(newdir,true);
+    return removed;
+    //--End of modifications
 }
 
 bool localDrive::TestDir(const char * dir) {
@@ -416,6 +454,9 @@ bool localDrive::TestDir(const char * dir) {
 	strcat(newdir,dir);
 	CROSS_FILENAME(newdir);
 	dirCache.ExpandName(newdir);
+    
+	//--Modified 2012-04-27 by Alun Bestor to wrap local file operations
+    /*
 	// Skip directory test, if "\"
 	size_t len = strlen(newdir);
 	if (len && (newdir[len-1]!='\\')) {
@@ -426,6 +467,9 @@ bool localDrive::TestDir(const char * dir) {
 	};
 	int temp=access(newdir,F_OK);
 	return (temp==0);
+     */
+    return boxer_localDirectoryExists(newdir, this);
+	//--End of modifications
 }
 
 bool localDrive::Rename(const char * oldname,const char * newname) {
@@ -441,18 +485,21 @@ bool localDrive::Rename(const char * oldname,const char * newname) {
 	CROSS_FILENAME(newnew);
 	char *fullname = dirCache.GetExpandName(newnew);
 	
-	//--Added 2010-12-29 by Alun Bestor to let Boxer selectively prevent file operations
+	//--Modified 2012-04-27 by Alun Bestor to wrap local file operations
 	if (!boxer_shouldAllowWriteAccessToPath((const char *)newold, this) ||
 		!boxer_shouldAllowWriteAccessToPath((const char *)fullname, this))
 	{
 		DOS_SetError(DOSERR_ACCESS_DENIED);
 		return false;
 	}
-	//End of modifications
 	
-	int temp=rename(newold,fullname);
-	if (temp==0) dirCache.CacheOut(newnew);
-	return (temp==0);
+	//int temp=rename(newold,fullname);
+    //if (temp==0) dirCache.CacheOut(newnew);
+	//return (temp==0);
+    bool moved = boxer_moveLocalFile(newold, fullname, this);
+    if (moved) dirCache.CacheOut(newnew);
+    return moved;
+	//End of modifications
 
 }
 
@@ -472,10 +519,14 @@ bool localDrive::FileExists(const char* name) {
 	strcat(newname,name);
 	CROSS_FILENAME(newname);
 	dirCache.ExpandName(newname);
-	FILE* Temp=fopen(newname,"rb");
-	if(Temp==NULL) return false;
-	fclose(Temp);
-	return true;
+    
+	//--Modified 2012-04-27 by Alun Bestor to wrap local file operations
+	//FILE* Temp=fopen(newname,"rb");
+	//if(Temp==NULL) return false;
+	//fclose(Temp);
+	//return true;
+    return boxer_localFileExists(newname, this);
+    //--End of modifications
 }
 
 bool localDrive::FileStat(const char* name, FileStat_Block * const stat_block) {
@@ -485,7 +536,12 @@ bool localDrive::FileStat(const char* name, FileStat_Block * const stat_block) {
 	CROSS_FILENAME(newname);
 	dirCache.ExpandName(newname);
 	struct stat temp_stat;
-	if(stat(newname,&temp_stat)!=0) return false;
+    
+	//--Modified 2012-04-27 by Alun Bestor to wrap local file operations
+	//if(stat(newname,&temp_stat)!=0) return false;
+    if (!boxer_getLocalPathStats(newname, this, &temp_stat)) return false;
+    //--End of modifications
+    
 	/* Convert the stat to a FileStat */
 	struct tm *time;
 	if((time=localtime(&temp_stat.st_mtime))!=0) {
@@ -517,21 +573,27 @@ Bits localDrive::UnMount(void) {
 }
 
 /* helper functions for drive cache */
+//--Modified 2012-07-25 by Alun Bestor to wrap local filesystem access
 void *localDrive::opendir(const char *name) {
-	return open_directory(name);
+	//return open_directory(name);
+    return boxer_openLocalDirectory(name, this);
 }
 
 void localDrive::closedir(void *handle) {
-	close_directory((dir_information*)handle);
+	//close_directory((dir_information*)handle);
+    boxer_closeLocalDirectory(handle);
 }
 
 bool localDrive::read_directory_first(void *handle, char* entry_name, bool& is_directory) {
-	return ::read_directory_first((dir_information*)handle, entry_name, is_directory);
+	//return ::read_directory_first((dir_information*)handle, entry_name, is_directory);
+    return boxer_getNextDirectoryEntry(handle, entry_name, is_directory);
 }
 
 bool localDrive::read_directory_next(void *handle, char* entry_name, bool& is_directory) {
-	return ::read_directory_next((dir_information*)handle, entry_name, is_directory);
+	//return ::read_directory_next((dir_information*)handle, entry_name, is_directory);
+    return boxer_getNextDirectoryEntry(handle, entry_name, is_directory);
 }
+//--End of modifications
 
 localDrive::localDrive(const char * startdir,Bit16u _bytes_sector,Bit8u _sectors_cluster,Bit16u _total_clusters,Bit16u _free_clusters,Bit8u _mediaid) {
 	strcpy(basedir,startdir);

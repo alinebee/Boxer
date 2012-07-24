@@ -154,6 +154,7 @@ enum {
 @end
 
 
+@protocol BXFilesystemEnumerator;
 @interface BXEmulator (BXDOSFileSystemInternals)
 
 #pragma mark -
@@ -278,16 +279,18 @@ enum {
 - (BOOL) _removeDirectoryAtLocalPath: (NSString *)path
                        onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-- (BOOL) _getAttributes: (struct stat *)status
-           forLocalPath: (NSString *)filePath
-          onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+- (BOOL) _getStats: (struct stat *)outStatus
+      forLocalPath: (NSString *)path
+     onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-- (BOOL) _testAccessToLocalPath: (NSString *)filePath
-                  onDOSBoxDrive: (DOS_Drive *)dosboxDrive
-                        forMode: (int)accessMode;
+- (BOOL) _localDirectoryExists: (NSString *)path
+                 onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-- (BOOL) localPathExists: (NSString *)filePath
-           onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+- (BOOL) _localFileExists: (NSString *)path
+            onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+
+- (id <BXFilesystemEnumerator>) _directoryEnumeratorForLocalPath: (NSString *)path
+                                                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
 @end
 

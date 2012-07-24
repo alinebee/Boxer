@@ -13,6 +13,7 @@
 #import "RegexKitLite.h"
 #import "NDAlias.h"
 #import "BXFileTypes.h"
+#import "BXShadowedFilesystemManager.h"
 
 @interface BXDrive ()
 
@@ -488,16 +489,16 @@
 	return relativePath;
 }
 
-- (NSString *) shadowedPathForPath: (NSString *)path
+- (id <BXFilesystemManager>) filesystemManager
 {
-	if (self.isInternal || !self.shadowPath) return nil;
-	
-    NSString *relativePath = [self relativeLocationOfPath: path];
-    if (relativePath)
-        return [self.shadowPath stringByAppendingPathComponent: relativePath];
-    else
-        return nil;
+    //TODO: return other manager types for drives without shadows, image-backed drives etc.
+    NSURL *sourceURL = [NSURL fileURLWithPath: self.mountPoint];
+    NSURL *shadowURL = (self.shadowPath) ? [NSURL fileURLWithPath: self.shadowPath] : nil;
+    return [BXShadowedFilesystemManager managerWithSourceURL: sourceURL
+                                                   shadowURL: shadowURL]; 
 }
+
+
 
 - (BOOL) isInternal	{ return (self.type == BXDriveInternal); }
 - (BOOL) isCDROM	{ return (self.type == BXDriveCDROM); }

@@ -12,6 +12,7 @@
 #import "BXGameProfile.h"
 #import "BXPackage.h"
 #import "RegexKitLite.h"
+#import "BXFilesystemManager.h"
 
 #import "dos_inc.h"
 #import "dos_system.h"
@@ -187,7 +188,10 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     }
     
     //If we got this far, then we're ready to let DOSBox have a crack at the drive.
-	
+    
+    //Record that we're currently mounting this drive, in case any of our drive lookups are called before
+    //we finish putting the drive in place.
+	_driveBeingMounted = drive;
 	
 	DOS_Drive *DOSBoxDrive = NULL;
 	NSUInteger index = [self _indexOfDriveLetter: driveLetter];
@@ -240,7 +244,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                 break;
         }
     }
-	
+    
 	//DOSBox successfully created the drive object
 	if (DOSBoxDrive)
 	{
@@ -268,6 +272,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 					   delegateSelector: @selector(emulatorDidMountDrive:)
 							   userInfo: userInfo];
 			
+            _driveBeingMounted = nil;
 			return drive;
 		}
 		else
@@ -278,6 +283,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
             if (outError) *outError = [BXEmulatorDriveLetterOccupiedError errorWithDrive: drive];
             
 			delete DOSBoxDrive;
+            
+            _driveBeingMounted = nil;
+            
 			return nil;
 		}
 	}
@@ -308,6 +316,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
             }
             else *outError = mountError;
         }
+        
+        _driveBeingMounted = nil;
         return nil;
     }
 }
@@ -715,6 +725,12 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 			return [driveCache objectForKey: [self _driveLetterForIndex: i]];
 		}
 	}
+    
+    //If we couldn't find the drive in the drives array, check if we're currently in the process
+    //of creating a new drive. If so, assume it's that drive.
+    if (_driveBeingMounted)
+        return _driveBeingMounted;
+    
     return nil;
 }
 
@@ -1183,150 +1199,19 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                          inMode: (const char *)mode
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    NSString *shadowedPath = [drive shadowedPathForPath: path];
     
-    //If this drive has a shadow path, open the file from there instead
-    //(creating a new shadow if necessary.)
-    if (shadowedPath)
-    {
-        NSFileManager *manager = [NSFileManager defaultManager];
-        
-        NSString *deletionMarkerPath = [shadowedPath stringByAppendingPathExtension: @"deleted"];
-        
-        BOOL write, createIfMissing, truncate;
-        NSUInteger modeLength = strlen(mode);
-        BOOL hasPlus = (modeLength >= 2 && mode[1] == '+') || (modeLength >= 3 && mode[2] == '+');
-        
-        switch (mode[0])
-        {
-            case 'r':
-                write = hasPlus;
-                createIfMissing = NO;
-                truncate = NO;
-                break;
-            case 'w':
-                write = YES;
-                createIfMissing = YES;
-                truncate = YES;
-                break;
-            case 'a':
-                write = YES;
-                createIfMissing = YES;
-                truncate = NO;
-                break;
-        }
-        
-        BOOL deletionMarkerExists = [manager fileExistsAtPath: deletionMarkerPath];
-        BOOL shadowExists = [manager fileExistsAtPath: shadowedPath];
-
-        //If the file has been marked as deleted in the shadow...
-        if (deletionMarkerExists)
-        {
-            //...but we'd have created a new file anyway, then remove both the deletion marker
-            //and any leftover shadow, and open a new file handle at the shadowed location.
-            if (createIfMissing)
-            {
-                [manager removeItemAtPath: deletionMarkerPath error: nil];
-                if (shadowExists)
-                    [manager removeItemAtPath: shadowedPath error: nil];
-                
-                return fopen(shadowedPath.fileSystemRepresentation, mode);
-            }
-            //Otherwise, pretend we can't open the file at all.
-            else
-            {
-                return NULL;
-            }
-        }
-        
-        //If the shadow file exists or we're truncating the file anyway,
-        //open a handle directly at the shadowed location.
-        else if (shadowExists || truncate)
-        {
-            return fopen(shadowedPath.fileSystemRepresentation, mode);
-        }
-        
-        //If we're opening the file for writing and we don't have a shadowed version of it yet,
-        //copy the original file to the shadowed location first (creating any necessary directories
-        //along the way) and open the newly-shadowed copy.
-        //This will fail if the original file does not exist.
-        else if (write)
-        {
-            BOOL originalExists = [manager fileExistsAtPath: path];
-            if (originalExists)
-            {
-                [manager createDirectoryAtPath: path.stringByDeletingLastPathComponent
-                   withIntermediateDirectories: YES
-                                    attributes: nil
-                                         error: NULL];
-                
-                [manager copyItemAtPath: path toPath: shadowedPath error: NULL];
-                
-                return fopen(shadowedPath.fileSystemRepresentation, mode);
-            }
-            else
-            {
-                return NULL;
-            }
-        }
-        
-        //If we don't have a shadow file but we're opening the file as read-only,
-        //it's safe to open a handle from the original location. This will return NULL
-        //if the original location doesn't exist.
-        else
-        {
-            return fopen(path.fileSystemRepresentation, mode);
-        }
-    }
-    //If this drive doesn't have any shadowing active, then just open it directly from the original path.
-    else
-    {
-        return fopen(path.fileSystemRepresentation, mode);
-    }
+    return [drive.filesystemManager openFileAtURL: [NSURL fileURLWithPath: path]
+                                           inMode: mode
+                                            error: NULL];
 }
 
 - (BOOL) _removeFileAtLocalPath: (NSString *)path
                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    NSString *shadowedPath = [drive shadowedPathForPath: path];
     
-    NSFileManager *manager = [NSFileManager defaultManager];
-    
-    if (shadowedPath)
-    {
-        NSString *deletionMarkerPath = [shadowedPath stringByAppendingPathExtension: @"deleted"];
-        
-        BOOL originalExists = [manager fileExistsAtPath: path];
-        
-        //If a file exists at the original path, we don't want to delete that;
-        //so instead we create a marker in the shadow path, indicating that the
-        //file has been deleted. We also delete any shadowed version of the file.
-        if (originalExists)
-        {   
-            [manager createFileAtPath: deletionMarkerPath
-                             contents: [NSData data]
-                           attributes: nil];
-            
-            [manager removeItemAtPath: shadowedPath error: NULL];
-            
-            //Pretend that the deletion operation actually happened.
-            return YES;
-        }
-        else
-        {
-            //Clean up any leftover shadow files.
-            [manager removeItemAtPath: deletionMarkerPath error: NULL];
-            [manager removeItemAtPath: shadowedPath error: NULL];
-            
-            //The file never existed in the first place, so this deletion operation would fail.
-            return NO;
-        }
-    }
-    else
-    {
-        return [manager removeItemAtPath: path error: NULL];
-    }
+    return [drive.filesystemManager removeItemAtURL: [NSURL fileURLWithPath: path]
+                                              error: NULL];
 }
 
 - (BOOL) _moveLocalPath: (NSString *)sourcePath
@@ -1334,203 +1219,77 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
           onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    NSString *shadowedDestinationPath = [drive shadowedPathForPath: destinationPath];
     
-    NSFileManager *manager = [NSFileManager defaultManager];
-    if (shadowedDestinationPath)
-    {
-        NSString *shadowedSourcePath = [drive shadowedPathForPath: sourcePath];
-        NSString *sourceDeletionMarkerPath = [shadowedSourcePath stringByAppendingPathExtension: @"deleted"];
-        NSString *destinationDeletionMarkerPath = [shadowedDestinationPath stringByAppendingPathExtension: @"deleted"];
-        
-        //If the source path has actually been marked as deleted, then the operation should fail.
-        if ([manager fileExistsAtPath: sourceDeletionMarkerPath])
-        {
-            return NO;
-        }
-        
-        //Remove any shadow of the destination before we begin.
-        [manager removeItemAtPath: shadowedDestinationPath error: NULL];
-        
-        //If the source file has been previously shadowed then we should use the shadowed
-        //version as the source instead.
-        BOOL shadowedSourceExists = [manager fileExistsAtPath: shadowedSourcePath];
-        
-        BOOL succeeded;
-        if (shadowedSourceExists)
-        {
-            succeeded = [manager copyItemAtPath: shadowedSourcePath toPath: shadowedDestinationPath error: NULL];
-        }
-        else
-        {
-            succeeded = [manager copyItemAtPath: sourcePath toPath: shadowedDestinationPath error: NULL];
-        }
-        
-        //If the copy succeeded, then flag the source as deleted (since it has ostensibly been moved)
-        //and the destination as being properly in place.
-        if (succeeded)
-        {
-            BOOL originalExists = [manager fileExistsAtPath: sourcePath];
-            if (originalExists)
-                [manager createFileAtPath: sourceDeletionMarkerPath contents: [NSData data] attributes: NULL];
-            
-            [manager removeItemAtPath: destinationDeletionMarkerPath error: NULL];
-            
-            return YES;
-        }
-        //If the copy failed, delete any partially-copied files.
-        else
-        {
-            [manager removeItemAtPath: shadowedDestinationPath error: NULL];
-            
-            return NO;
-        }
-    }
-    else
-    {
-        return [manager moveItemAtPath: sourcePath toPath: destinationPath error: NULL];
-    }
+    return [drive.filesystemManager moveItemAtURL: [NSURL fileURLWithPath: sourcePath]
+                                            toURL: [NSURL fileURLWithPath: destinationPath]
+                                            error: NULL];
 }
 
 - (BOOL) _createDirectoryAtLocalPath: (NSString *)path
                        onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    NSString *shadowedPath = [drive shadowedPathForPath: path];
     
-    NSFileManager *manager = [NSFileManager defaultManager];
-    if (shadowedPath)
-    {
-        BOOL originalExists = [manager fileExistsAtPath: path];
-        NSString *deletionMarkerPath = [shadowedPath stringByAppendingPathExtension: @"deleted"];
-        
-        //If the original already exists...
-        if (originalExists)
-        {
-            //If the original has been marked as deleted, then undelete it.
-            //FIXME: this doesn't take into account if the original was actually a file, and not a directory.
-            if ([manager fileExistsAtPath: deletionMarkerPath])
-            {
-                [manager removeItemAtPath: deletionMarkerPath error: NULL];
-                return YES;
-            }
-            //Otherwise, the original still exists in the DOS filesystem and the attempt
-            //to create a new directory at the same location should fail.
-            else
-            {
-                return NO;
-            }
-        }
-        //Otherwise, create a new shadow directory.
-        else
-        {
-            BOOL createdDirectory = [manager createDirectoryAtPath: shadowedPath
-                                       withIntermediateDirectories: NO
-                                                        attributes: nil
-                                                             error: NULL];
-            
-            if (createdDirectory)
-            {
-                //Remove any old deletion marker for this directory
-                [manager removeItemAtPath: deletionMarkerPath error: NULL];
-            }
-            return createdDirectory;
-        }
-    }
-    else
-    {
-        return [manager createDirectoryAtPath: path
-                  withIntermediateDirectories: NO
-                                   attributes: nil
-                                        error: NULL];
-    }
+    return [drive.filesystemManager createDirectoryAtURL: [NSURL fileURLWithPath: path]
+                             withIntermediateDirectories: NO
+                                                   error: NULL];
 }
 
 - (BOOL) _removeDirectoryAtLocalPath: (NSString *)path
                        onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    NSString *shadowedPath = [drive shadowedPathForPath: path];
     
-    NSFileManager *manager = [NSFileManager defaultManager];
-    if (shadowedPath)
+    return [drive.filesystemManager removeItemAtURL: [NSURL fileURLWithPath: path]
+                                              error: NULL];
+    
+}
+
+- (BOOL) _getStats: (struct stat *)outStatus
+      forLocalPath: (NSString *)path
+     onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+{
+    BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+    
+    const char *filesystemPath = [drive.filesystemManager filesystemRepresentationForURL: [NSURL fileURLWithPath: path]];
+    
+    if (filesystemPath)
     {
-        BOOL removedDirectory = [manager removeItemAtPath: shadowedPath error: NULL];
-        
-        if (removedDirectory)
-        {
-            NSString *deletionMarkerPath = [shadowedPath stringByAppendingPathExtension: @"deleted"];
-            [manager createFileAtPath: deletionMarkerPath contents: [NSData data] attributes: nil];
-        }
-        
-        return removedDirectory;
+        return stat(filesystemPath, outStatus) == 0;
     }
     else
     {
-        return [manager removeItemAtPath: path error: NULL];
+        return NO;
     }
 }
 
-- (BOOL) _getAttributes: (struct stat *)outStatus
-           forLocalPath: (NSString *)filePath
-          onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+- (BOOL) _localDirectoryExists: (NSString *)path
+                 onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    NSString *shadowedPath = [drive shadowedPathForPath: filePath];
     
-    if (shadowedPath)
-    {
-        //If the file has been flagged as deleted, pretend we cannot retrieve stat data for it.
-        NSString *deletionMarkerPath = [shadowedPath stringByAppendingPathExtension: @"deleted"];
-        if ([[NSFileManager defaultManager] fileExistsAtPath: deletionMarkerPath])
-            return NO;
-        
-        return stat(shadowedPath.fileSystemRepresentation, outStatus);
-    }
-    else
-    {
-        return stat(filePath.fileSystemRepresentation, outStatus);
-    }
+    BOOL isDirectory;
+    return [drive.filesystemManager fileExistsAtURL: [NSURL fileURLWithPath: path] isDirectory: &isDirectory] && isDirectory;
 }
 
-- (BOOL) _testAccessToLocalPath: (NSString *)filePath
-                  onDOSBoxDrive: (DOS_Drive *)dosboxDrive
-                        forMode: (int)accessMode
+- (BOOL) _localFileExists: (NSString *)path
+            onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    NSString *shadowedPath = [drive shadowedPathForPath: filePath];
     
-    if (shadowedPath)
-    {
-        //If the file has been flagged as deleted, pretend we cannot check access for it.
-        NSString *deletionMarkerPath = [shadowedPath stringByAppendingPathExtension: @"deleted"];
-        if ([[NSFileManager defaultManager] fileExistsAtPath: deletionMarkerPath])
-            return NO;
-        
-        return access(shadowedPath.fileSystemRepresentation, accessMode);
-    }
-    else
-    {
-        return access(filePath.fileSystemRepresentation, accessMode);
-    }
+    BOOL isDirectory;
+    return [drive.filesystemManager fileExistsAtURL: [NSURL fileURLWithPath: path] isDirectory: &isDirectory] && !isDirectory;
 }
 
-- (BOOL) localPathExists: (NSString *)filePath
-           onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+- (id <BXFilesystemEnumerator>) _directoryEnumeratorForLocalPath: (NSString *)path
+                                                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    NSString *shadowedPath = [drive shadowedPathForPath: filePath];
     
-    if (shadowedPath)
-    {
-        //If the file has been flagged as deleted, pretend the original doesn't exist.
-        NSString *deletionMarkerPath = [shadowedPath stringByAppendingPathExtension: @"deleted"];
-        if ([[NSFileManager defaultManager] fileExistsAtPath: deletionMarkerPath])
-            return NO;
-    }
-    
-    return [[NSFileManager defaultManager] fileExistsAtPath: filePath];
+    return [drive.filesystemManager enumeratorAtURL: [NSURL fileURLWithPath: path]
+                         includingPropertiesForKeys: [NSArray arrayWithObjects: NSURLIsDirectoryKey, NSURLNameKey, nil]
+                                            options: NSDirectoryEnumerationSkipsSubdirectoryDescendants
+                                       errorHandler: NULL];
 }
-
 
 @end

@@ -13,19 +13,19 @@
 
 @interface BXPathEnumerator : NSEnumerator
 {
-	NSDirectoryEnumerator *enumerator;
-	BOOL skipHiddenFiles;
-	BOOL skipSubdirectories;
-	BOOL skipPackageContents;
-	NSSet *fileTypes;
-    NSPredicate *predicate;
+	NSDirectoryEnumerator *_enumerator;
+	BOOL _skipHiddenFiles;
+	BOOL _skipSubdirectories;
+	BOOL _skipPackageContents;
+	NSSet *_fileTypes;
+    NSPredicate *_predicate;
     
-	NSString *basePath;
-	NSString *currentPath;
-	NSString *relativePath;
+	NSString *_basePath;
+	NSString *_currentPath;
+	NSString *_relativePath;
 	
-	NSFileManager *manager;
-	NSWorkspace *workspace;
+	NSFileManager *_manager;
+	NSWorkspace *_workspace;
 }
 
 #pragma mark -
@@ -75,5 +75,6 @@
 
 //Passthroughs for NSDirectoryEnumerator methods.
 - (void) skipDescendents;
+- (void) skipDescendants;
 
 @end

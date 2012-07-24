@@ -20,6 +20,7 @@ extern "C" {
 
 #import "config.h"
 #import "video.h"
+#import <stdio.h>
 	
 //Remapped replacements for DOSBox's old sdlmain functions
 #define GFX_Events boxer_processEvents
@@ -80,6 +81,20 @@ extern "C" {
 	void boxer_didCreateLocalFile(const char *path, DOS_Drive *dosboxDrive);
 	void boxer_didRemoveLocalFile(const char *path, DOS_Drive *dosboxDrive);
 	
+    //Called from drive_local.cpp to wrap local file access.
+    FILE * boxer_openLocalFile(const char *path, DOS_Drive *drive, const char *mode);
+    bool boxer_removeLocalFile(const char *path, DOS_Drive *drive);
+    bool boxer_moveLocalFile(const char *fromPath, const char *toPath, DOS_Drive *drive);
+    bool boxer_createLocalDir(const char *path, DOS_Drive *drive);
+    bool boxer_removeLocalDir(const char *path, DOS_Drive *drive);
+    bool boxer_getLocalPathStats(const char *path, DOS_Drive *drive, struct stat *outStatus);
+    bool boxer_localDirectoryExists(const char *path, DOS_Drive *drive);
+    bool boxer_localFileExists(const char *path, DOS_Drive *drive);
+    
+    void * boxer_openLocalDirectory(const char *path, DOS_Drive *drive);
+    void boxer_closeLocalDirectory(void *handle);
+    bool boxer_getNextDirectoryEntry(void *handle, char *outName, bool &isDirectory);
+    
 	//Called from shell_misc.cpp to notify Boxer when a program or batchfile is executed.
 	void boxer_willExecuteFileAtDOSPath(const char *dosPath, DOS_Drive *dosboxDrive);
 	void boxer_didExecuteFileAtDOSPath(const char *dosPath, DOS_Drive *dosboxDrive);

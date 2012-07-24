@@ -64,6 +64,7 @@ extern NSString * const shellProcessPath;
 @class BXEmulatedKeyboard;
 @class BXEmulatedMouse;
 @class BXKeyBuffer;
+@class BXDrive;
 
 @protocol BXEmulatedJoystick;
 @protocol BXEmulatorDelegate;
@@ -114,6 +115,9 @@ extern NSString * const shellProcessPath;
     NSDictionary *requestedMIDIDeviceDescription;
     NSMutableArray *pendingSysexMessages;
     BOOL autodetectsMT32;
+    
+    //Used by BXDOSFilesystem to track drives while they're being mounted.
+    BXDrive *_driveBeingMounted;
 }
 
 

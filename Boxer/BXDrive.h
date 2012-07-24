@@ -32,6 +32,8 @@ typedef NSInteger BXDriveType;
 #pragma mark -
 #pragma mark Interface
 
+@class BXShadowedFilesystemManager;
+@protocol BXFilesystemManager;
 @interface BXDrive : NSObject <NSCoding>
 {
 	NSString *_path;
@@ -212,9 +214,8 @@ typedef NSInteger BXDriveType;
 //Used by BXDOSFileSystem for matching OS X filesystem paths with DOS filesystem paths.
 - (NSString *) relativeLocationOfPath: (NSString *)realPath;
 
-//Returns the shadow location for the specified path. This path may or may not yet exist.
-//Returns nil if the drive has no shadow path.
-- (NSString *) shadowedPathForPath: (NSString *)path;
+//Returns a filesystem manager instance appropriate for the filesystem of this drive.
+- (id <BXFilesystemManager>) filesystemManager;
 
 
 #pragma mark -

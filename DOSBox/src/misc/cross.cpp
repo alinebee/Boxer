@@ -192,7 +192,7 @@ bool read_directory_first(dir_information* dirp, char* entry_name, bool& is_dire
 
 //	safe_strncpy(entry_name,dentry->d_name,(FILENAME_MAX<MAX_PATH)?FILENAME_MAX:MAX_PATH);	// [include stdio.h], maybe pathconf()
 	safe_strncpy(entry_name,dentry->d_name,CROSS_LEN);
-
+    
 #ifdef DIRENT_HAS_D_TYPE
 	if(dentry->d_type == DT_DIR) {
 		is_directory = true;
@@ -223,7 +223,7 @@ bool read_directory_next(dir_information* dirp, char* entry_name, bool& is_direc
 
 //	safe_strncpy(entry_name,dentry->d_name,(FILENAME_MAX<MAX_PATH)?FILENAME_MAX:MAX_PATH);	// [include stdio.h], maybe pathconf()
 	safe_strncpy(entry_name,dentry->d_name,CROSS_LEN);
-
+    
 #ifdef DIRENT_HAS_D_TYPE
 	if(dentry->d_type == DT_DIR) {
 		is_directory = true;

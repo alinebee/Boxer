@@ -24,7 +24,6 @@
 
 #import "BXDOSWindowControllerLion.h"
 #import "BXImportWindowController.h"
-#import "BXDOSWindow.h"
 
 #import "BXAppController+BXGamesFolder.h"
 #import "BXFileTypes.h"
@@ -1270,7 +1269,7 @@
 	
 	//Always drop out of fullscreen mode when we return to the prompt,
 	//so that users can see the "finish importing" option
-	[self.DOSWindowController.window exitFullScreen: self];
+	[self.DOSWindowController exitFullScreen];
 }
 
 - (void) emulatorDidFinish: (NSNotification *)notification

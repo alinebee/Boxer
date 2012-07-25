@@ -8,7 +8,7 @@
 #import "BXSession+BXFileManager.h"
 #import "BXSessionPrivate.h"
 #import "BXFileTypes.h"
-#import "BXBaseAppController.h"
+#import "BXBaseAppController+BXSupportFiles.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulatorErrors.h"
@@ -218,6 +218,57 @@
 - (BOOL) allowsDriveChanges
 {
     return !([[NSApp delegate] isStandaloneGameBundle]);
+}
+
+- (BOOL) shouldShadowDrive: (BXDrive *)drive
+{
+    //if (![[NSApp delegate] isStandaloneGameBundle])
+    //    return NO;
+    
+    //Don't shadow if we're not running a gamebox.
+    if (!self.isGamePackage)
+        return NO;
+    
+    //Don't shadow read-only drives or drives that are located outside the gamebox.
+    if (drive.isReadOnly || ![self driveIsBundled: drive])
+        return NO;
+    
+    return YES;
+}
+
+- (NSString *) pathToCurrentState
+{
+    if (!self.isGamePackage)
+        return nil;
+    
+    NSString *statePath = [[NSApp delegate] statesPathForGamePackage: self.gamePackage
+                                                   creatingIfMissing: NO];
+    
+    return [statePath stringByAppendingPathComponent: @"Current.boxerstate"];
+}
+
+- (NSString *) shadowPathForDrive: (BXDrive *)drive
+{
+    if ([self shouldShadowDrive: drive])
+    {
+        NSString *statePath = self.pathToCurrentState;
+        if (statePath)
+        {
+            NSString *driveName;
+            //If the drive is identical to the gamebox itself (old-style gameboxes)
+            //then map it to a different name.
+            if ([drive.path isEqualToString: self.gamePackage.bundlePath])
+                driveName = @"C.harddisk";
+            //Otherwise, use the original filename of the gamebox.
+            else
+                driveName = drive.path.lastPathComponent;
+            
+            NSString *shadowPath = [statePath stringByAppendingPathComponent: driveName];
+            
+            return shadowPath;
+        }
+    }
+    return nil;
 }
 
 - (NSArray *) allDrives
@@ -894,6 +945,16 @@
                 driveToMount = imageDrive;
                 fallbackDrive = drive;
             }
+        }
+    }
+    
+    if (options & BXDriveUseShadowingIfAvailable)
+    {
+        //Check if we should shadow this drive.
+        NSString *shadowPath = [self shadowPathForDrive: drive];
+        if (shadowPath)
+        {
+            drive.shadowPath = shadowPath;
         }
     }
     

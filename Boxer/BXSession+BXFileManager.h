@@ -36,28 +36,31 @@ enum {
                                                     //floppy drives, and will have no effect in
                                                     //combination with BXDriveReassign.
     
-    BXDriveUseBackingImageIfAvailable   = 1U << 1   //If the source path for this drive is a filesystem
+    BXDriveUseBackingImageIfAvailable   = 1U << 1,  //If the source path for this drive is a filesystem
                                                     //volume, then any backing image for that volume
                                                     //will be used instead of the volume itself.
+    
+    BXDriveUseShadowingIfAvailable      = 1U << 2,  //Shadow writes to this drive to a separate location
+                                                    //if appropriate.
 };
 
 //These options are applicable to both mountDrive:ifExists:options:error and unmountDrive:options:error:.
 enum {
-    BXDriveShowNotifications            = 1U << 2,  //Notification bezels will be shown when this drive
+    BXDriveShowNotifications            = 1U << 3,  //Notification bezels will be shown when this drive
                                                     //is added/ejected.
     
-    BXDriveRemoveExistingFromQueue      = 1U << 3,  //Forget about any unmounted/replaced drive altogether,
+    BXDriveRemoveExistingFromQueue      = 1U << 4,  //Forget about any unmounted/replaced drive altogether,
                                                     //rather than letting it remain in the queue to be
                                                     //remounted.
     
-    BXDriveReplaceWithSiblingFromQueue  = 1U << 4,  //When a drive is unmounted, replace it with the next
+    BXDriveReplaceWithSiblingFromQueue  = 1U << 5,  //When a drive is unmounted, replace it with the next
                                                     //drive in the same queue, if available.
                                                     //Only applicable to unmountDrive:options:error:.
     
-    BXDriveForceUnmounting              = 1U << 5,  //Force any unmounted/replaced drive to be unmounted
+    BXDriveForceUnmounting              = 1U << 6,  //Force any unmounted/replaced drive to be unmounted
                                                     //even if it appears to be in use.
     
-    BXDriveForceUnmountingIfRemovable   = 1U << 6,  //Act as BXDriveForceUnmounting if the drive in question
+    BXDriveForceUnmountingIfRemovable   = 1U << 7,  //Act as BXDriveForceUnmounting if the drive in question
                                                     //is a floppy-disk or CD-ROM. Has no effect for hard disks.
 
 };
@@ -68,12 +71,12 @@ enum {
     //Will queue floppy and CD drives with other drives of the same type,
     //unless a specific drive letter was assigned, and will push the drive
     //to the front of the queue to make it available immediately.
-    BXDefaultDriveMountOptions = BXDriveKeepWithSameType | BXDriveShowNotifications | BXDriveUseBackingImageIfAvailable | BXDriveForceUnmountingIfRemovable,
+    BXDefaultDriveMountOptions = BXDriveKeepWithSameType | BXDriveShowNotifications | BXDriveUseBackingImageIfAvailable | BXDriveForceUnmountingIfRemovable | BXDriveUseShadowingIfAvailable,
     
     //Behaviour when mounting the gamebox's drives at the start of emulation.
     //Disables notification and searching for backing images, and will queue
     //CD and floppy drives with others of their own kind.
-    BXBundledDriveMountOptions = BXDriveKeepWithSameType,
+    BXBundledDriveMountOptions = BXDriveKeepWithSameType | BXDriveUseShadowingIfAvailable,
     
     //Behaviour when mounting OS X floppy/CD volumes at the start of emulation.
     //Same as default behaviour, but will look for backing images also.
@@ -84,7 +87,7 @@ enum {
     BXBuiltinDriveMountOptions = BXDriveRemoveExistingFromQueue,
     
     //Options for automounting the target folder/executable of a DOS session.
-    BXTargetMountOptions = BXDriveKeepWithSameType | BXDriveUseBackingImageIfAvailable,
+    BXTargetMountOptions = BXDriveKeepWithSameType | BXDriveUseBackingImageIfAvailable | BXDriveUseShadowingIfAvailable,
     
     //Options for mounting the source path for a game import.
     BXImportSourceMountOptions = BXDriveKeepWithSameType | BXDriveUseBackingImageIfAvailable,
@@ -94,7 +97,6 @@ enum {
     
     //Options for regular drive unmounting.
     BXDefaultDriveUnmountOptions = BXDriveShowNotifications,
-    
     
     //Behaviour when unmounting drives as a result of a volume being ejected.
     BXVolumeUnmountingDriveUnmountOptions = BXDriveShowNotifications | BXDriveRemoveExistingFromQueue | BXDriveForceUnmounting | BXDriveReplaceWithSiblingFromQueue
@@ -185,11 +187,27 @@ typedef NSUInteger BXDriveMountOptions;
 
 
 #pragma mark -
+#pragma mark Managing drive shadowing
+
+//Returns the path to the bundle where we will store state data for the current gamebox.
+- (NSString *) pathToCurrentState;
+
+//Whether we should map writes from the specified drive to an external state bundle.
+//Will return NO if the drive is read-only or not part of the gamebox.
+- (BOOL) shouldShadowDrive: (BXDrive *)drive;
+
+//Returns an appropriate location to which we can shadow write operations for the specified drive.
+//This location may not exist yet, but will be created once it is needed.
+- (NSString *) shadowPathForDrive: (BXDrive *)drive;
+
+
+#pragma mark -
 #pragma mark Mounting and queuing drives
 
-//Whether we all drives to be added or removed.
+//Whether we allow drives to be added or removed.
 //This will return YES normally, or NO when part of a standalone game bundle.
 - (BOOL) allowsDriveChanges;
+
 
 //Adds the specified drive into the appropriate drive queue,
 //without mounting it.

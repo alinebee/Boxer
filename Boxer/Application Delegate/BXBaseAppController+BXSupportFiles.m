@@ -10,6 +10,7 @@
 #import "RegexKitLite.h"
 #import "BXEmulatedMT32.h"
 #import "BXPathEnumerator.h"
+#import "BXPackage.h"
 
 //Files matching these patterns will be assumed to be of the respective ROM type.
 NSString * const MT32ControlROMFilenamePattern = @"control";
@@ -17,6 +18,33 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
 
 
 @implementation BXBaseAppController (BXSupportFiles)
+
+- (NSString *) statesPathForGamePackage: (BXPackage *)package
+                      creatingIfMissing: (BOOL) createIfMissing
+{
+    if (package == nil)
+        return nil;
+    
+	NSString *supportPath = [self supportPathCreatingIfMissing: NO];
+    NSString *statesPath = [supportPath stringByAppendingPathComponent: @"Gamebox States"];
+    
+    NSString *packageIdentifier = package.gameIdentifier;
+    
+    //If the package lacks an identifier, we cannot assign it a path for state storage.
+    if (!packageIdentifier)
+        return nil;
+    
+    NSString *packageStatesPath = [statesPath stringByAppendingPathComponent: packageIdentifier];
+    if (createIfMissing)
+    {
+		[[NSFileManager defaultManager] createDirectoryAtPath: packageStatesPath
+								  withIntermediateDirectories: YES
+												   attributes: nil
+														error: NULL];
+    }
+    
+    return packageStatesPath;
+}
 
 - (NSString *) recordingsPathCreatingIfMissing: (BOOL)createIfMissing
 {

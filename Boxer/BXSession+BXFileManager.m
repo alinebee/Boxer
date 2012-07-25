@@ -828,7 +828,6 @@
     if (!self.allowsDriveChanges && _hasConfigured)
         return nil;
     
-    
     //Sanity check: BXDriveReplaceWithSiblingFromQueue is not applicable
     //when mounting a new drive, so ensure it is not set.
     options &= ~BXDriveReplaceWithSiblingFromQueue;
@@ -1329,6 +1328,8 @@
 	//Should already be standardized, but still
 	NSString *standardizedPath = volumePath.stringByStandardizingPath;
 	
+    //Scan our drive list to see which drives would be affected by this volume
+    //becoming unavailable.
 	for (BXDrive *drive in self.allDrives)
 	{
         //TODO: refactor this so that we can move the decision off to BXDrive itself
@@ -1393,6 +1394,8 @@
 		NSString *drivePath = drive.path;
 	
 		[self _startTrackingChangesAtPath: drivePath];
+        if (drive.shadowPath)
+            [self _startTrackingChangesAtPath: drive.shadowPath];
 		
 		//If this drive is part of the gamebox, scan it for executables
         //to display in the program panel
@@ -1419,6 +1422,9 @@
 		//Stop tracking for changes on the drive, if there are no other drives mapping to that path either.
 		if (![self.emulator pathIsDOSAccessible: path])
             [self _stopTrackingChangesAtPath: path];
+        
+        if (drive.shadowPath)
+            [self _stopTrackingChangesAtPath: drive.shadowPath];
 	}
 	
     //Remove the cached executable list when the drive is unmounted
@@ -1491,7 +1497,8 @@
 	//Don't allow write access to files inside Boxer's application bundle
     //Disabled for now, because:
     //1. our internal drives are flagged as read-only anyway, and
-    //2. standalone game bundles have all the game files inside the application, and so need to allow write access.
+    //2. standalone game bundles have all the game files inside the application,
+    //and so need to allow write access.
     /*
 	filePath = filePath.stringByStandardizingPath;
 	NSString *boxerPath = [[NSBundle mainBundle] bundlePath];

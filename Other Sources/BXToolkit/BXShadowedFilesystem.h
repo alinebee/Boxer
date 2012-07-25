@@ -1,25 +1,24 @@
-//
-//  BXShadowedFilesystemManager.h
-//  Boxer
-//
-//  Created by Alun Bestor on 24/07/2012.
-//  Copyright (c) 2012 Alun Bestor and contributors. All rights reserved.
-//
+/* 
+ Boxer is copyright 2011 Alun Bestor and contributors.
+ Boxer is released under the GNU General Public License 2.0. A full copy of this license can be
+ found in this XCode project at Resources/English.lproj/BoxerHelp/pages/legalese.html, or read
+ online at [http://www.gnu.org/licenses/gpl-2.0.txt].
+ */
 
 #import <Foundation/Foundation.h>
-#import "BXFilesystemManager.h"
+#import "BXFilesystem.h"
 
-//BXShadowedFilesystemManager mediates access to filesystem resources that
-//are write-shadowed to another location. Files are initially read from a source
-//path, but writes and deletions are applied to a separate shadowed path which
-//is then used in future for reads and writes of that file.
+//BXShadowedFilesystem mediates access to filesystem resources that are
+//write-shadowed to another location. Files are initially read from a source
+//path, but writes and deletions are applied to a separate shadowed path
+//which is then used in future for reads and writes of that file.
 
 //The file extension that will be used for flagging source files as deleted.
 extern NSString * const BXShadowedDeletionMarkerExtension;
 
          
 @class BXShadowedDirectoryEnumerator;
-@interface BXShadowedFilesystemManager : NSObject <BXFilesystemManager>
+@interface BXShadowedFilesystem : NSObject <BXFilesystem>
 {
     NSURL *_sourceURL;
     NSURL *_shadowURL;
@@ -40,7 +39,7 @@ extern NSString * const BXShadowedDeletionMarkerExtension;
 #pragma mark -
 #pragma mark Initialization and deallocation
 //Return a new filesystem manager initialised with the specified source and shadow URLs.
-+ (id) managerWithSourceURL: (NSURL *)sourceURL shadowURL: (NSURL *)shadowURL;
++ (id) filesystemWithSourceURL: (NSURL *)sourceURL shadowURL: (NSURL *)shadowURL;
 - (id) initWithSourceURL: (NSURL *)sourceURL shadowURL: (NSURL *)shadowURL;
 
 
@@ -55,6 +54,10 @@ extern NSString * const BXShadowedDeletionMarkerExtension;
 //The shadow URL corresponding to the specified URL, which may not exist yet.
 //This will return nil if URL is not located within the source URL.
 - (NSURL *) shadowedURLForURL: (NSURL *)URL;
+
+//The inverse of the above: converts a shadowed URL to the equivalent source URL
+//(which also may not exist yet.)
+- (NSURL *) sourceURLForURL: (NSURL *)URL;
 
 
 #pragma mark -
@@ -122,14 +125,17 @@ extern NSString * const BXShadowedDeletionMarkerExtension;
     NSURL *_sourceURL;
     NSURL *_shadowURL;
     
-    NSMutableSet *_shadowedURLs;
+    NSMutableSet *_shadowedPaths;
+    
+    BXShadowedFilesystem *_filesystem;
 }
 
-- (id) initWithSourceURL: (NSURL *)sourceURL
-               shadowURL: (NSURL *)shadowURL
+- (id) initWithFilesystem: (BXShadowedFilesystem *)filesystem
+                sourceURL: (NSURL *)sourceURL
+                shadowURL: (NSURL *)shadowURL
 includingPropertiesForKeys: (NSArray *)keys
-                 options: (NSDirectoryEnumerationOptions)mask
-            errorHandler: (BXDirectoryEnumeratorErrorHandler)errorHandler;
+                  options: (NSDirectoryEnumerationOptions)mask
+             errorHandler: (BXDirectoryEnumeratorErrorHandler)errorHandler;
 
 - (NSDictionary *) directoryAttributes;
 - (NSDictionary *) fileAttributes;

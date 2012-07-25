@@ -13,7 +13,7 @@
 #import "RegexKitLite.h"
 #import "NDAlias.h"
 #import "BXFileTypes.h"
-#import "BXShadowedFilesystemManager.h"
+#import "BXShadowedFilesystem.h"
 
 @interface BXDrive ()
 
@@ -489,13 +489,13 @@
 	return relativePath;
 }
 
-- (id <BXFilesystemManager>) filesystemManager
+- (id <BXFilesystem>) filesystem
 {
     //TODO: return other manager types for drives without shadows, image-backed drives etc.
-    NSURL *sourceURL = [NSURL fileURLWithPath: self.mountPoint];
-    NSURL *shadowURL = (self.shadowPath) ? [NSURL fileURLWithPath: self.shadowPath] : nil;
-    return [BXShadowedFilesystemManager managerWithSourceURL: sourceURL
-                                                   shadowURL: shadowURL]; 
+    NSURL *sourceURL = [NSURL fileURLWithPath: self.mountPoint isDirectory: YES];
+    NSURL *shadowURL = (self.shadowPath) ? [NSURL fileURLWithPath: self.shadowPath isDirectory: YES] : nil;
+    return [BXShadowedFilesystem filesystemWithSourceURL: sourceURL
+                                            shadowURL: shadowURL]; 
 }
 
 
@@ -504,6 +504,7 @@
 - (BOOL) isCDROM	{ return (self.type == BXDriveCDROM); }
 - (BOOL) isFloppy	{ return (self.type == BXDriveFloppyDisk); }
 - (BOOL) isHardDisk	{ return (self.type == BXDriveHardDisk); }
+- (BOOL) isReadOnly { return _readOnly || self.isCDROM || self.isInternal; }
 
 - (NSString *) typeDescription
 {

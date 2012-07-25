@@ -11,7 +11,7 @@
 #import "setup.h"
 #import "mapper.h"
 #import "cross.h"
-#import "BXFilesystemManager.h"
+#import "BXFilesystem.h"
 
 #pragma mark -
 #pragma mark Application state functions

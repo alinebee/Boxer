@@ -617,8 +617,8 @@
 		9F955B61141A05990068EF71 /* EjectFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */; };
 		9F960C7F12AAAB2900568AFD /* BlankShelves.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F960C7E12AAAB2900568AFD /* BlankShelves.png */; };
 		9F96969813E59CA100FB51EC /* NoJoystickTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */; };
-		9F98410215BEE64400B50CDA /* BXShadowedFilesystemManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98410115BEE64400B50CDA /* BXShadowedFilesystemManager.m */; };
-		9F98410315BEE64400B50CDA /* BXShadowedFilesystemManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98410115BEE64400B50CDA /* BXShadowedFilesystemManager.m */; };
+		9F98410215BEE64400B50CDA /* BXShadowedFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98410115BEE64400B50CDA /* BXShadowedFilesystem.m */; };
+		9F98410315BEE64400B50CDA /* BXShadowedFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98410115BEE64400B50CDA /* BXShadowedFilesystem.m */; };
 		9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */; };
 		9F9A4C9710F67A1F00E61965 /* GalleryHQx.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */; };
 		9F9A4C9810F67A1F00E61965 /* GalleryMAME.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9210F67A1F00E61965 /* GalleryMAME.png */; };
@@ -1381,9 +1381,9 @@
 		9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = EjectFreestandingTemplate.pdf; sourceTree = "<group>"; };
 		9F960C7E12AAAB2900568AFD /* BlankShelves.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BlankShelves.png; sourceTree = "<group>"; };
 		9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = NoJoystickTemplate.pdf; sourceTree = "<group>"; };
-		9F98410015BEE64400B50CDA /* BXShadowedFilesystemManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShadowedFilesystemManager.h; sourceTree = "<group>"; };
-		9F98410115BEE64400B50CDA /* BXShadowedFilesystemManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXShadowedFilesystemManager.m; sourceTree = "<group>"; };
-		9F98410415BF10B700B50CDA /* BXFilesystemManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BXFilesystemManager.h; sourceTree = "<group>"; };
+		9F98410015BEE64400B50CDA /* BXShadowedFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; path = BXShadowedFilesystem.h; sourceTree = "<group>"; };
+		9F98410115BEE64400B50CDA /* BXShadowedFilesystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXShadowedFilesystem.m; sourceTree = "<group>"; };
+		9F98410415BF10B700B50CDA /* BXFilesystem.h */ = {isa = PBXFileReference; path = BXFilesystem.h; sourceTree = "<group>"; };
 		9F98589513EF71F600E66877 /* BXBinCueImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBinCueImage.h; sourceTree = "<group>"; };
 		9F98589613EF71F600E66877 /* BXBinCueImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBinCueImage.m; sourceTree = "<group>"; };
 		9F98EF5814E80A0900095248 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -2912,9 +2912,9 @@
 		9F9840FE15BEE5F700B50CDA /* Filesystem */ = {
 			isa = PBXGroup;
 			children = (
-				9F98410015BEE64400B50CDA /* BXShadowedFilesystemManager.h */,
-				9F98410115BEE64400B50CDA /* BXShadowedFilesystemManager.m */,
-				9F98410415BF10B700B50CDA /* BXFilesystemManager.h */,
+				9F98410015BEE64400B50CDA /* BXShadowedFilesystem.h */,
+				9F98410115BEE64400B50CDA /* BXShadowedFilesystem.m */,
+				9F98410415BF10B700B50CDA /* BXFilesystem.h */,
 			);
 			name = Filesystem;
 			sourceTree = "<group>";
@@ -3817,7 +3817,7 @@
 				9F4FC118159253DA00319428 /* BXShaderRenderer.m in Sources */,
 				9F5F12C615ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.m in Sources */,
 				9FCB7B1015B844AB00CC7CC7 /* BXBaseAppController.m in Sources */,
-				9F98410215BEE64400B50CDA /* BXShadowedFilesystemManager.m in Sources */,
+				9F98410215BEE64400B50CDA /* BXShadowedFilesystem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4104,7 +4104,7 @@
 				9FCB7B1715B8570C00CC7CC7 /* BXBinCueImageImport.m in Sources */,
 				9FCB7B1815B8570E00CC7CC7 /* BXDriveBundleImport.m in Sources */,
 				9FCB7B1A15B8589B00CC7CC7 /* BXDOSWindowController.m in Sources */,
-				9F98410315BEE64400B50CDA /* BXShadowedFilesystemManager.m in Sources */,
+				9F98410315BEE64400B50CDA /* BXShadowedFilesystem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

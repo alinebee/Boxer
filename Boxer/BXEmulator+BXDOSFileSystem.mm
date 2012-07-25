@@ -12,7 +12,7 @@
 #import "BXGameProfile.h"
 #import "BXPackage.h"
 #import "RegexKitLite.h"
-#import "BXFilesystemManager.h"
+#import "BXFilesystem.h"
 
 #import "dos_inc.h"
 #import "dos_system.h"
@@ -1200,9 +1200,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [drive.filesystemManager openFileAtURL: [NSURL fileURLWithPath: path]
-                                           inMode: mode
-                                            error: NULL];
+    return [drive.filesystem openFileAtURL: [NSURL fileURLWithPath: path]
+                                    inMode: mode
+                                     error: NULL];
 }
 
 - (BOOL) _removeFileAtLocalPath: (NSString *)path
@@ -1210,8 +1210,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [drive.filesystemManager removeItemAtURL: [NSURL fileURLWithPath: path]
-                                              error: NULL];
+    return [drive.filesystem removeItemAtURL: [NSURL fileURLWithPath: path]
+                                       error: NULL];
 }
 
 - (BOOL) _moveLocalPath: (NSString *)sourcePath
@@ -1220,9 +1220,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [drive.filesystemManager moveItemAtURL: [NSURL fileURLWithPath: sourcePath]
-                                            toURL: [NSURL fileURLWithPath: destinationPath]
-                                            error: NULL];
+    return [drive.filesystem moveItemAtURL: [NSURL fileURLWithPath: sourcePath]
+                                     toURL: [NSURL fileURLWithPath: destinationPath]
+                                     error: NULL];
 }
 
 - (BOOL) _createDirectoryAtLocalPath: (NSString *)path
@@ -1230,9 +1230,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [drive.filesystemManager createDirectoryAtURL: [NSURL fileURLWithPath: path]
-                             withIntermediateDirectories: NO
-                                                   error: NULL];
+    return [drive.filesystem createDirectoryAtURL: [NSURL fileURLWithPath: path]
+                      withIntermediateDirectories: NO
+                                            error: NULL];
 }
 
 - (BOOL) _removeDirectoryAtLocalPath: (NSString *)path
@@ -1240,8 +1240,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [drive.filesystemManager removeItemAtURL: [NSURL fileURLWithPath: path]
-                                              error: NULL];
+    return [drive.filesystem removeItemAtURL: [NSURL fileURLWithPath: path]
+                                       error: NULL];
     
 }
 
@@ -1251,7 +1251,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    const char *filesystemPath = [drive.filesystemManager filesystemRepresentationForURL: [NSURL fileURLWithPath: path]];
+    const char *filesystemPath = [drive.filesystem filesystemRepresentationForURL: [NSURL fileURLWithPath: path]];
     
     if (filesystemPath)
     {
@@ -1269,7 +1269,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
     BOOL isDirectory;
-    return [drive.filesystemManager fileExistsAtURL: [NSURL fileURLWithPath: path] isDirectory: &isDirectory] && isDirectory;
+    return [drive.filesystem fileExistsAtURL: [NSURL fileURLWithPath: path] isDirectory: &isDirectory] && isDirectory;
 }
 
 - (BOOL) _localFileExists: (NSString *)path
@@ -1278,7 +1278,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
     BOOL isDirectory;
-    return [drive.filesystemManager fileExistsAtURL: [NSURL fileURLWithPath: path] isDirectory: &isDirectory] && !isDirectory;
+    return [drive.filesystem fileExistsAtURL: [NSURL fileURLWithPath: path] isDirectory: &isDirectory] && !isDirectory;
 }
 
 - (id <BXFilesystemEnumerator>) _directoryEnumeratorForLocalPath: (NSString *)path
@@ -1286,10 +1286,10 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [drive.filesystemManager enumeratorAtURL: [NSURL fileURLWithPath: path]
-                         includingPropertiesForKeys: [NSArray arrayWithObjects: NSURLIsDirectoryKey, NSURLNameKey, nil]
-                                            options: NSDirectoryEnumerationSkipsSubdirectoryDescendants
-                                       errorHandler: NULL];
+    return [drive.filesystem enumeratorAtURL: [NSURL fileURLWithPath: path]
+                  includingPropertiesForKeys: [NSArray arrayWithObjects: NSURLIsDirectoryKey, NSURLNameKey, nil]
+                                     options: NSDirectoryEnumerationSkipsSubdirectoryDescendants
+                                errorHandler: NULL];
 }
 
 @end

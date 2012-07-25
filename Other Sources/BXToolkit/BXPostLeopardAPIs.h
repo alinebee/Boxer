@@ -156,4 +156,16 @@ extern NSString * const NSWindowDidChangeBackingPropertiesNotification;
 
 @end
 
+
+#pragma mark -
+#pragma mark 10.7-only NSFileManager APIs
+
+@interface NSFileManager (BXPostLeopardFileManagerAPIs)
+
+- (BOOL) createDirectoryAtURL: (NSURL *)URL
+  withIntermediateDirectories: (BOOL)createIntermediates
+                   attributes: (NSDictionary *)attributes
+                        error: (NSError **)error;
+@end
+
 #endif

@@ -376,7 +376,7 @@ enum {
 	SEL action = theItem.action;
 	
 	if (action == @selector(revealSelectedDrivesInFinder:) ||
-        action == @selector(revealSelectedDriveShadowsInFinder:)) 
+        action == @selector(revealSelectedDriveShadowsInFinder:))
     {
         if (!hasSelection) return NO;
         

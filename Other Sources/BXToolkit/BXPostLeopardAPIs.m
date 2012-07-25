@@ -16,4 +16,20 @@ NSString * const NSWindowDidEnterFullScreenNotification = @"NSWindowDidEnterFull
 NSString * const NSWindowWillExitFullScreenNotification = @"NSWindowWillExitFullScreenNotification";
 NSString * const NSWindowDidExitFullScreenNotification = @"NSWindowDidExitFullScreenNotification";
 
+
+@implementation NSFileManager (BXPostLeopardFileManagerAPIs)
+
+- (BOOL) createDirectoryAtURL: (NSURL *)URL
+  withIntermediateDirectories: (BOOL)createIntermediates
+                   attributes: (NSDictionary *)attributes
+                        error: (NSError **)error
+{
+    return [self createDirectoryAtPath: URL.path
+           withIntermediateDirectories: createIntermediates
+                            attributes: attributes
+                                 error: error];
+}
+
+@end
+
 #endif

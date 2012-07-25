@@ -103,6 +103,20 @@ extern NSString * const BXShadowedDeletionMarkerExtension;
   withIntermediateDirectories: (BOOL)createIntermediates
                         error: (NSError **)outError;
 
+
+#pragma mark -
+#pragma mark Housekeeping
+
+//Clean up the shadow location to remove redundant deletion markers
+//and empty folders that exist in the source location.
+- (void) tidyShadowContents;
+
+//Merge the shadowed changes back into the original source location.
+//Returns YES if the merge was successful, or NO and populates outError
+//if one or more files could not be merged.
+//(This halts the merge operation immediately.)
+- (BOOL) mergeShadowContentsWithError: (NSError **)outError;
+
 @end
 
 

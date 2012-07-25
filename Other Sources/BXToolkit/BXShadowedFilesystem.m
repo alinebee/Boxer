@@ -7,6 +7,7 @@
 
 #import "BXShadowedFilesystem.h"
 #import "NSString+BXPaths.h"
+#import "BXPostLeopardAPIs.h"
 
 #pragma mark -
 #pragma mark Private constants
@@ -550,6 +551,138 @@ typedef NSUInteger BXFileOpenOptions;
                       withIntermediateDirectories: NO
                                        attributes: nil
                                             error: NULL];
+    }
+}
+
+
+#pragma mark -
+#pragma mark Housekeeping
+
+- (void) tidyShadowContents
+{
+    if (self.shadowURL)
+    {
+        NSMutableSet *emptyDirectories = [NSMutableSet setWithCapacity: 10];
+        
+        NSArray *properties = [NSArray arrayWithObjects:
+                               NSURLIsDirectoryKey,
+                               NSURLParentDirectoryURLKey,
+                               nil];
+        
+        NSDirectoryEnumerator *shadowEnumerator = [self.manager enumeratorAtURL: self.shadowURL
+                                                     includingPropertiesForKeys: properties
+                                                                        options: 0
+                                                                   errorHandler: nil];
+
+        for (NSURL *shadowedURL in shadowEnumerator)
+        {
+            //Clean up deletion markers that don't have a corresponding source URL.
+            if ([shadowedURL.pathExtension isEqualToString: BXShadowedDeletionMarkerExtension])
+            {
+                NSURL *sourceURL = [self sourceURLForURL: shadowedURL];
+                if (![sourceURL checkResourceIsReachableAndReturnError: NULL])
+                {
+                    [self.manager removeItemAtURL: shadowedURL error: NULL];
+                }
+            }
+            else
+            {
+                //Put together a list of directories...
+                NSNumber *isDirFlag = nil;
+                [shadowedURL getResourceValue: &isDirFlag
+                                       forKey: NSURLIsDirectoryKey
+                                        error: NULL];
+                
+                if (isDirFlag.boolValue)
+                {
+                    [emptyDirectories addObject: shadowedURL];
+                }
+                
+                //...but remove directories from the list that have contents of their own. 
+                NSURL *parentURL = nil;
+                [shadowedURL getResourceValue: &parentURL
+                                       forKey: NSURLParentDirectoryURLKey
+                                        error: NULL];
+                
+                [emptyDirectories removeObject: parentURL];
+            }
+        }
+        
+        //What's left is a list of empty directories. Check each one to see if it exists
+        //in the original location: if it does, we don't need to keep the shadow.
+        for (NSURL *shadowDirectoryURL in emptyDirectories)
+        {
+            NSURL *sourceDirectoryURL = [self sourceURLForURL: shadowDirectoryURL];
+            
+            BOOL sourceIsDirectory;
+            BOOL sourceExists = [self.manager fileExistsAtPath: sourceDirectoryURL.path
+                                                   isDirectory: &sourceIsDirectory];
+            
+            if (sourceExists && sourceIsDirectory)
+                [self.manager removeItemAtURL: shadowDirectoryURL error: NULL];
+        }
+    }
+}
+
+//FIXME: this does not yet perform error-checking. In some cases,
+//file-merge errors should be ignored without failing and passing the error on:
+//e.g. when deleting a source file that doesn't exist.
+- (BOOL) mergeShadowContentsWithError: (NSError **)outError
+{
+    if (self.shadowURL)
+    {
+        NSArray *properties = [NSArray arrayWithObjects:
+                               NSURLIsDirectoryKey,
+                               nil];
+        
+        NSDirectoryEnumerator *shadowEnumerator = [self.manager enumeratorAtURL: self.shadowURL
+                                                     includingPropertiesForKeys: properties
+                                                                        options: 0
+                                                                   errorHandler: nil];
+        
+        for (NSURL *shadowedURL in shadowEnumerator)
+        {
+            NSURL *sourceURL = [self sourceURLForURL: shadowedURL];
+            
+            //Delete files and folders from the source that have been marked as deleted
+            //in the shadow. 
+            if ([shadowedURL.pathExtension isEqualToString: BXShadowedDeletionMarkerExtension])
+            {
+                [self.manager removeItemAtURL: sourceURL error: NULL];
+                [self.manager removeItemAtURL: shadowedURL error: NULL];
+            }
+            else
+            {
+                NSNumber *isDirFlag = nil;
+                [shadowedURL getResourceValue: &isDirFlag
+                                       forKey: NSURLIsDirectoryKey
+                                        error: NULL];
+                
+                //If the file is a directory, simply ensure that it exists in the source.
+                //We'll merge its contents later, one by one.
+                if (isDirFlag.boolValue)
+                {
+                    [self.manager createDirectoryAtURL: sourceURL
+                           withIntermediateDirectories: YES
+                                            attributes: nil
+                                                 error: NULL];
+                    [self.manager removeItemAtURL: shadowedURL error: NULL];
+                }
+                //If the file is a regular file, then move it to the source
+                //and replace any existing file or folder.
+                else
+                {
+                    [self.manager removeItemAtURL: sourceURL error: NULL];
+                    [self.manager moveItemAtURL: shadowedURL toURL: sourceURL error: NULL];
+                }
+            }
+        }
+        
+        return YES;
+    }
+    else
+    {
+        return YES;
     }
 }
 

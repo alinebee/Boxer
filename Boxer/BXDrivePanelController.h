@@ -52,6 +52,9 @@
 //Reveal the selected drives each in a new Finder window.
 - (IBAction) revealSelectedDrivesInFinder: (id)sender;
 
+//Reveal the shadowed files for the specified drives, each in a new Finder window.
+- (IBAction) revealSelectedDriveShadowsInFinder: (id)sender;
+
 //Change to the first selected drive in DOS. This action is disabled if a process is running.
 - (IBAction) openSelectedDrivesInDOS: (id)sender; 
 

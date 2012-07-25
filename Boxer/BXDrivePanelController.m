@@ -222,6 +222,17 @@ enum {
 	for (BXDrive *drive in selection) [NSApp sendAction: @selector(revealInFinder:) to: nil from: drive];
 }
 
+- (IBAction) revealSelectedDriveShadowsInFinder: (id)sender
+{
+	NSArray *selection = self.selectedDrives;
+	for (BXDrive *drive in selection)
+    {
+        NSString *shadowPath = drive.shadowPath;
+        [[NSApp delegate] revealPath: shadowPath];
+    }
+}
+
+
 - (IBAction) openSelectedDrivesInDOS: (id)sender
 {
 	//Only bother grabbing the last drive selected
@@ -362,9 +373,42 @@ enum {
 	BXEmulator *theEmulator = [session emulator];
 
     
-	SEL action = [theItem action];
+	SEL action = theItem.action;
 	
-	if (action == @selector(revealSelectedDrivesInFinder:)) return hasSelection;
+	if (action == @selector(revealSelectedDrivesInFinder:) ||
+        action == @selector(revealSelectedDriveShadowsInFinder:)) 
+    {
+        if (!hasSelection) return NO;
+        
+        BOOL hasShadows = NO;
+        //Check if any of the selected drives have shadowed files.
+		for (BXDrive *drive in selectedDrives)
+		{
+            if (drive.shadowPath && [[NSFileManager defaultManager] fileExistsAtPath: drive.shadowPath])
+            {
+                hasShadows = YES;
+                break;
+            }
+		}
+        
+        //Update the show-in-Finder menu item title to reflect that the drive is shadowed.
+        if (action == @selector(revealSelectedDrivesInFinder:))
+        {   
+            if (hasShadows)
+                theItem.title = NSLocalizedString(@"Show Original in Finder", @"Label for drive panel menu item to show the drive in Finder, if a shadowed drive is selected.");
+            else
+                theItem.title = NSLocalizedString(@"Show in Finder", @"Label for drive panel menu item to show the drive in Finder, if a shadowed drive is selected.");
+            return YES;
+        }
+        else
+        {
+            //Hide the show-changes item unless there are shadowed drives.
+            theItem.hidden = !hasShadows;
+            return hasShadows;
+        }
+        
+    }
+    
 	if (action == @selector(removeSelectedDrives:))
 	{
         if (!hasSelection) return NO;

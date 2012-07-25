@@ -194,28 +194,29 @@
 																			<string key="NSKeyEquivalent"/>
 																			<int key="NSPeriodicDelay">400</int>
 																			<int key="NSPeriodicInterval">75</int>
-																			<nil key="NSMenuItem"/>
+																			<object class="NSMenuItem" key="NSMenuItem" id="982671684">
+																				<reference key="NSMenu" ref="1016659417"/>
+																				<string key="NSTitle">Nothing (show a DOS prompt)</string>
+																				<string key="NSKeyEquiv"/>
+																				<int key="NSMnemonicLoc">2147483647</int>
+																				<int key="NSState">1</int>
+																				<object class="NSCustomResource" key="NSOnImage" id="100641205">
+																					<string key="NSClassName">NSImage</string>
+																					<string key="NSResourceName">NSMenuCheckmark</string>
+																				</object>
+																				<object class="NSCustomResource" key="NSMixedImage" id="714035138">
+																					<string key="NSClassName">NSImage</string>
+																					<string key="NSResourceName">NSMenuMixedState</string>
+																				</object>
+																				<string key="NSAction">_popUpItemAction:</string>
+																				<reference key="NSTarget" ref="756233006"/>
+																			</object>
 																			<bool key="NSMenuItemRespectAlignment">YES</bool>
 																			<object class="NSMenu" key="NSMenu" id="1016659417">
 																				<string key="NSTitle">OtherViews</string>
 																				<object class="NSMutableArray" key="NSMenuItems">
 																					<bool key="EncodedWithXMLCoder">YES</bool>
-																					<object class="NSMenuItem" id="982671684">
-																						<reference key="NSMenu" ref="1016659417"/>
-																						<string key="NSTitle">Nothing (show a DOS prompt)</string>
-																						<string key="NSKeyEquiv"/>
-																						<int key="NSMnemonicLoc">2147483647</int>
-																						<object class="NSCustomResource" key="NSOnImage" id="100641205">
-																							<string key="NSClassName">NSImage</string>
-																							<string key="NSResourceName">NSMenuCheckmark</string>
-																						</object>
-																						<object class="NSCustomResource" key="NSMixedImage" id="714035138">
-																							<string key="NSClassName">NSImage</string>
-																							<string key="NSResourceName">NSMenuMixedState</string>
-																						</object>
-																						<string key="NSAction">_popUpItemAction:</string>
-																						<reference key="NSTarget" ref="756233006"/>
-																					</object>
+																					<reference ref="982671684"/>
 																					<object class="NSMenuItem" id="60063623">
 																						<reference key="NSMenu" ref="1016659417"/>
 																						<bool key="NSIsDisabled">YES</bool>
@@ -1372,7 +1373,7 @@ dG8gdGhlIHdpbmRvdy4</string>
 																						<int key="NSvFlags">4370</int>
 																						<string key="NSFrameSize">{296, 267}</string>
 																						<reference key="NSSuperview" ref="923987479"/>
-																						<reference key="NSNextKeyView" ref="807352969"/>
+																						<reference key="NSNextKeyView" ref="336170015"/>
 																						<string key="NSMinGridSize">{0, 0}</string>
 																						<string key="NSMaxGridSize">{0, 0}</string>
 																						<int key="NSMaxNumberOfGridRows">0</int>
@@ -1426,7 +1427,7 @@ dG8gdGhlIHdpbmRvdy4</string>
 																		</object>
 																		<string key="NSFrameSize">{296, 267}</string>
 																		<reference key="NSSuperview" ref="763376923"/>
-																		<reference key="NSNextKeyView" ref="336170015"/>
+																		<reference key="NSNextKeyView" ref="923987479"/>
 																		<int key="NSsFlags">133648</int>
 																		<reference key="NSVScroller" ref="807352969"/>
 																		<reference key="NSHScroller" ref="336170015"/>
@@ -2040,6 +2041,14 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 						<reference key="NSOnImage" ref="100641205"/>
 						<reference key="NSMixedImage" ref="714035138"/>
 					</object>
+					<object class="NSMenuItem" id="744013005">
+						<reference key="NSMenu" ref="983218472"/>
+						<string key="NSTitle">Show Changes in Finder</string>
+						<string key="NSKeyEquiv"/>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="100641205"/>
+						<reference key="NSMixedImage" ref="714035138"/>
+					</object>
 					<object class="NSMenuItem" id="873959370">
 						<reference key="NSMenu" ref="983218472"/>
 						<bool key="NSIsDisabled">YES</bool>
@@ -2114,6 +2123,14 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					<object class="NSMenuItem" id="555822503">
 						<reference key="NSMenu" ref="29208252"/>
 						<string key="NSTitle">Show in Finder</string>
+						<string key="NSKeyEquiv"/>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="100641205"/>
+						<reference key="NSMixedImage" ref="714035138"/>
+					</object>
+					<object class="NSMenuItem" id="343637916">
+						<reference key="NSMenu" ref="29208252"/>
+						<string key="NSTitle">Show Changes in Finder</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="100641205"/>
@@ -2281,7 +2298,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 			<object class="NSViewController" id="589277066"/>
 			<object class="NSCollectionViewItem" id="527118087"/>
 			<object class="NSCustomView" id="101756917">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">266</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2528,6 +2545,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{284, 48}</string>
+				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="1059830828"/>
 				<bool key="NSViewIsLayerTreeHost">YES</bool>
 				<int key="NSViewLayerContentsRedrawPolicy">2</int>
@@ -3036,6 +3054,22 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 						<reference key="destination" ref="999628827"/>
 					</object>
 					<int key="connectionID">2227</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">revealSelectedDriveShadowsInFinder:</string>
+						<reference key="source" ref="589277066"/>
+						<reference key="destination" ref="343637916"/>
+					</object>
+					<int key="connectionID">2239</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">revealSelectedDriveShadowsInFinder:</string>
+						<reference key="source" ref="589277066"/>
+						<reference key="destination" ref="744013005"/>
+					</object>
+					<int key="connectionID">2243</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -4163,6 +4197,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<reference ref="916758188"/>
 							<reference ref="945493302"/>
 							<reference ref="893173085"/>
+							<reference ref="744013005"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Mounted Drive Context Menu</string>
@@ -4228,6 +4263,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<reference ref="49584240"/>
 							<reference ref="307750003"/>
 							<reference ref="226163202"/>
+							<reference ref="343637916"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Drive Panel Context Menu</string>
@@ -5673,6 +5709,16 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 						<reference key="object" ref="974006281"/>
 						<reference key="parent" ref="471382001"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2237</int>
+						<reference key="object" ref="343637916"/>
+						<reference key="parent" ref="29208252"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2242</int>
+						<reference key="object" ref="744013005"/>
+						<reference key="parent" ref="983218472"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -5947,6 +5993,8 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					<string>2225.CustomClassName</string>
 					<string>2225.IBPluginDependency</string>
 					<string>2226.IBPluginDependency</string>
+					<string>2237.IBPluginDependency</string>
+					<string>2242.IBPluginDependency</string>
 					<string>246.IBPluginDependency</string>
 					<string>246.IBUserGuides</string>
 					<string>323.IBPluginDependency</string>
@@ -6254,6 +6302,8 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableArray">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 					</object>
@@ -6292,7 +6342,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2236</int>
+			<int key="maxID">2243</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -6339,18 +6389,12 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXAppController</string>
-					<string key="superclassName">NSDocumentController</string>
+					<string key="superclassName">BXBaseAppController</string>
 					<object class="NSMutableDictionary" key="actions">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>decrementVolume:</string>
 							<string>hideWelcomePanel:</string>
-							<string>incrementVolume:</string>
-							<string>maximizeVolume:</string>
-							<string>minimizeVolume:</string>
-							<string>openInDefaultApplication:</string>
-							<string>orderFrontAboutPanel:</string>
 							<string>orderFrontFirstRunPanel:</string>
 							<string>orderFrontFirstRunPanelWithTransition:</string>
 							<string>orderFrontImportGamePanel:</string>
@@ -6360,7 +6404,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<string>orderFrontWelcomePanelWithTransition:</string>
 							<string>revealCurrentSessionPath:</string>
 							<string>revealGamesFolder:</string>
-							<string>revealInFinder:</string>
 							<string>sendEmail:</string>
 							<string>showBugReportPage:</string>
 							<string>showCPUPanel:</string>
@@ -6368,22 +6411,15 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<string>showDrivesPanel:</string>
 							<string>showGamePanel:</string>
 							<string>showJoypadDownloadPage:</string>
+							<string>showMountPanel:</string>
 							<string>showMousePanel:</string>
 							<string>showPerianDownloadPage:</string>
 							<string>showUniversalAccessPrefsPane:</string>
 							<string>showWebsite:</string>
 							<string>toggleInspectorPanel:</string>
-							<string>toggleMuted:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -6413,13 +6449,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>decrementVolume:</string>
 							<string>hideWelcomePanel:</string>
-							<string>incrementVolume:</string>
-							<string>maximizeVolume:</string>
-							<string>minimizeVolume:</string>
-							<string>openInDefaultApplication:</string>
-							<string>orderFrontAboutPanel:</string>
 							<string>orderFrontFirstRunPanel:</string>
 							<string>orderFrontFirstRunPanelWithTransition:</string>
 							<string>orderFrontImportGamePanel:</string>
@@ -6429,7 +6459,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<string>orderFrontWelcomePanelWithTransition:</string>
 							<string>revealCurrentSessionPath:</string>
 							<string>revealGamesFolder:</string>
-							<string>revealInFinder:</string>
 							<string>sendEmail:</string>
 							<string>showBugReportPage:</string>
 							<string>showCPUPanel:</string>
@@ -6437,41 +6466,17 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<string>showDrivesPanel:</string>
 							<string>showGamePanel:</string>
 							<string>showJoypadDownloadPage:</string>
+							<string>showMountPanel:</string>
 							<string>showMousePanel:</string>
 							<string>showPerianDownloadPage:</string>
 							<string>showUniversalAccessPrefsPane:</string>
 							<string>showWebsite:</string>
 							<string>toggleInspectorPanel:</string>
-							<string>toggleMuted:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
-								<string key="name">decrementVolume:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
 								<string key="name">hideWelcomePanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">incrementVolume:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">maximizeVolume:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">minimizeVolume:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">openInDefaultApplication:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">orderFrontAboutPanel:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -6511,10 +6516,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">revealInFinder:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
 								<string key="name">sendEmail:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -6543,6 +6544,10 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">showMountPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">showMousePanel:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -6560,6 +6565,91 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">toggleInspectorPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXAppController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXBaseAppController</string>
+					<string key="superclassName">NSDocumentController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>decrementVolume:</string>
+							<string>incrementVolume:</string>
+							<string>maximizeVolume:</string>
+							<string>minimizeVolume:</string>
+							<string>openInDefaultApplication:</string>
+							<string>orderFrontAboutPanel:</string>
+							<string>relaunch:</string>
+							<string>revealInFinder:</string>
+							<string>toggleMuted:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>decrementVolume:</string>
+							<string>incrementVolume:</string>
+							<string>maximizeVolume:</string>
+							<string>minimizeVolume:</string>
+							<string>openInDefaultApplication:</string>
+							<string>orderFrontAboutPanel:</string>
+							<string>relaunch:</string>
+							<string>revealInFinder:</string>
+							<string>toggleMuted:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">decrementVolume:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">incrementVolume:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">maximizeVolume:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">minimizeVolume:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openInDefaultApplication:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">orderFrontAboutPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">relaunch:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">revealInFinder:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -6602,7 +6692,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXAppController.h</string>
+						<string key="minorKey">./Classes/BXBaseAppController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -6791,6 +6881,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<string>mountSelectedDrives:</string>
 							<string>openSelectedDrivesInDOS:</string>
 							<string>removeSelectedDrives:</string>
+							<string>revealSelectedDriveShadowsInFinder:</string>
 							<string>revealSelectedDrivesInFinder:</string>
 							<string>showMountPanel:</string>
 							<string>toggleSelectedDrives:</string>
@@ -6802,6 +6893,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<string>id</string>
 							<string>id</string>
 							<string>NSSegmentedControl</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -6822,6 +6914,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<string>mountSelectedDrives:</string>
 							<string>openSelectedDrivesInDOS:</string>
 							<string>removeSelectedDrives:</string>
+							<string>revealSelectedDriveShadowsInFinder:</string>
 							<string>revealSelectedDrivesInFinder:</string>
 							<string>showMountPanel:</string>
 							<string>toggleSelectedDrives:</string>
@@ -6855,6 +6948,10 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">removeSelectedDrives:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">revealSelectedDriveShadowsInFinder:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -7251,13 +7348,11 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
 							<string>saveScreenshot:</string>
-							<string>showMountPanel:</string>
 							<string>toggleFastForward:</string>
 							<string>togglePaused:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -7294,7 +7389,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
 							<string>saveScreenshot:</string>
-							<string>showMountPanel:</string>
 							<string>toggleFastForward:</string>
 							<string>togglePaused:</string>
 						</object>
@@ -7354,10 +7448,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">saveScreenshot:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showMountPanel:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -7549,10 +7639,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
 			<integer value="1050" key="NS.object.0"/>
-		</object>
-		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
-			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
-			<integer value="1060" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDevelopmentDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3</string>

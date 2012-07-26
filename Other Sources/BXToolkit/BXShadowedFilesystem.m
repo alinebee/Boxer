@@ -619,9 +619,10 @@ typedef NSUInteger BXFileOpenOptions;
 #pragma mark -
 #pragma mark Housekeeping
 
-- (void) tidyShadowContents
+- (void) tidyShadowContentsForURL: (NSURL *)baseURL
 {
-    if (self.shadowURL)
+    NSURL *baseShadowURL = [self shadowedURLForURL: baseURL];
+    if (baseShadowURL)
     {
         NSMutableSet *emptyDirectories = [NSMutableSet setWithCapacity: 10];
         
@@ -630,7 +631,7 @@ typedef NSUInteger BXFileOpenOptions;
                                NSURLParentDirectoryURLKey,
                                nil];
         
-        NSDirectoryEnumerator *shadowEnumerator = [self.manager enumeratorAtURL: self.shadowURL
+        NSDirectoryEnumerator *shadowEnumerator = [self.manager enumeratorAtURL: baseShadowURL
                                                      includingPropertiesForKeys: properties
                                                                         options: 0
                                                                    errorHandler: nil];
@@ -685,18 +686,26 @@ typedef NSUInteger BXFileOpenOptions;
     }
 }
 
-//FIXME: this does not yet perform error-checking. In some cases,
-//file-merge errors should be ignored without failing and passing the error on:
-//e.g. when deleting a source file that doesn't exist.
-- (BOOL) mergeShadowContentsWithError: (NSError **)outError
+- (void) clearShadowContentsForURL: (NSURL *)baseURL
 {
-    if (self.shadowURL)
+    NSURL *baseShadowURL = [self shadowedURLForURL: baseURL];
+    if (baseShadowURL)
+    {
+        //Simply delete the shadow URL altogether.
+        [self.manager removeItemAtURL: baseShadowURL error: NULL];
+    }
+}
+
+- (BOOL) mergeShadowContentsForURL: (NSURL *)baseURL error: (NSError **)outError
+{
+    NSURL *baseShadowedURL = [self shadowedURLForURL: baseURL];
+    if (baseShadowedURL)
     {
         NSArray *properties = [NSArray arrayWithObjects:
                                NSURLIsDirectoryKey,
                                nil];
         
-        NSDirectoryEnumerator *shadowEnumerator = [self.manager enumeratorAtURL: self.shadowURL
+        NSDirectoryEnumerator *shadowEnumerator = [self.manager enumeratorAtURL: baseShadowedURL
                                                      includingPropertiesForKeys: properties
                                                                         options: 0
                                                                    errorHandler: nil];
@@ -705,12 +714,29 @@ typedef NSUInteger BXFileOpenOptions;
         {
             NSURL *sourceURL = [self sourceURLForURL: shadowedURL];
             
-            //Delete files and folders from the source that have been marked as deleted
-            //in the shadow. 
+            //Delete files and folders from the source that have been marked
+            //as deleted in the shadow. 
             if ([shadowedURL.pathExtension isEqualToString: BXShadowedDeletionMarkerExtension])
             {
-                [self.manager removeItemAtURL: sourceURL error: NULL];
-                [self.manager removeItemAtURL: shadowedURL error: NULL];
+                NSError *deletionError;
+                BOOL deleted = [self.manager removeItemAtURL: sourceURL error: &deletionError];
+                
+                //Work out why the deletion of the original failed: if it was just that
+                //the original didn't exist then treat this as successful, otherwise fail.
+                if (!deleted)
+                {
+                    if ([deletionError.domain isEqualToString: NSCocoaErrorDomain] &&
+                        deletionError.code == NSFileNoSuchFileError)
+                    {
+                        deleted = YES;
+                    }
+                    else
+                    {
+                        if (outError)
+                            *outError = deletionError;
+                        return NO;
+                    }
+                }
             }
             else
             {
@@ -719,25 +745,43 @@ typedef NSUInteger BXFileOpenOptions;
                                        forKey: NSURLIsDirectoryKey
                                         error: NULL];
                 
-                //If the file is a directory, simply ensure that it exists in the source.
-                //We'll merge its contents later, one by one.
+                //If the shadow is a directory, simply ensure that it exists
+                //in the source. (We'll merge its contents later, one by one.)
                 if (isDirFlag.boolValue)
                 {
-                    [self.manager createDirectoryAtURL: sourceURL
-                           withIntermediateDirectories: YES
-                                            attributes: nil
-                                                 error: NULL];
-                    [self.manager removeItemAtURL: shadowedURL error: NULL];
+                    BOOL createdDir = [self.manager createDirectoryAtURL: sourceURL
+                                             withIntermediateDirectories: YES
+                                                              attributes: nil
+                                                                   error: outError];
+                    
+                    //If we couldn't recreate the directory in the source location,
+                    //fail out.
+                    if (!createdDir)
+                    {
+                        return NO;
+                    }
                 }
-                //If the file is a regular file, then move it to the source
-                //and replace any existing file or folder.
+                //If the shadow is a regular file, then remove the original
+                //and replace it with the shadowed version.
                 else
                 {
-                    [self.manager removeItemAtURL: sourceURL error: NULL];
-                    [self.manager moveItemAtURL: shadowedURL toURL: sourceURL error: NULL];
+                    BOOL removedSource = [self.manager removeItemAtURL: sourceURL
+                                                                 error: outError];
+                    if (!removedSource)
+                        return NO;
+                    
+                    BOOL replacedSource = [self.manager moveItemAtURL: shadowedURL
+                                                                toURL: sourceURL
+                                                                error: outError];
+                    if (!replacedSource)
+                        return NO;
                 }
             }
         }
+        
+        //If we got this far, then the shadow contents were merged successfully.
+        //Remove the shadow altogether.
+        [self.manager removeItemAtURL: baseShadowedURL error: NULL];
         
         return YES;
     }

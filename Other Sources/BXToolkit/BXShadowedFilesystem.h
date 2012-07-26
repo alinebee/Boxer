@@ -107,15 +107,24 @@ extern NSString * const BXShadowedDeletionMarkerExtension;
 #pragma mark -
 #pragma mark Housekeeping
 
-//Clean up the shadow location to remove redundant deletion markers
-//and empty folders that exist in the source location.
-- (void) tidyShadowContents;
+//Cleans up the shadow contents for the specified URL: this removes any redundant
+//deletion markers for files that don't exist in the source location, and any empty
+//folders that already exist in the source location.
+//FIXME: currently this assumes the source is a file rather than a folder.
+- (void) tidyShadowContentsForURL: (NSURL *)baseURL;
 
-//Merge the shadowed changes back into the original source location.
+//Removes the shadowed version for the specified URL, and its contents
+//if it is a directory.
+- (void) clearShadowContentsForURL: (NSURL *)baseURL;
+
+//Merge any shadowed changes for the specified URL and its subdirectories
+//back into the original source location, and deletes the merged shadow files.
 //Returns YES if the merge was successful, or NO and populates outError
-//if one or more files could not be merged.
-//(This halts the merge operation immediately.)
-- (BOOL) mergeShadowContentsWithError: (NSError **)outError;
+//if one or more files or folders could not be merged. (The merge operation
+//will be halted as soon as an error is encountered, leaving behind any
+//unmerged files in the shadow location.)
+//FIXME: currently this assumes the source is a file rather than a folder.
+- (BOOL) mergeShadowContentsForURL: (NSURL *)baseURL error: (NSError **)outError;
 
 @end
 

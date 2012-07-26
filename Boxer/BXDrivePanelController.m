@@ -219,16 +219,12 @@ enum {
 - (IBAction) revealSelectedDrivesInFinder: (id)sender
 {
 	NSArray *selection = [self selectedDrives];
-	for (BXDrive *drive in selection) [NSApp sendAction: @selector(revealInFinder:) to: nil from: drive];
-}
-
-- (IBAction) revealSelectedDriveShadowsInFinder: (id)sender
-{
-	NSArray *selection = self.selectedDrives;
 	for (BXDrive *drive in selection)
     {
-        NSString *shadowPath = drive.shadowPath;
-        [[NSApp delegate] revealPath: shadowPath];
+        [[NSApp delegate] revealPath: drive.path];
+        //Also reveal the drive's shadow files, if it has one.
+        if (drive.shadowPath)
+            [[NSApp delegate] revealPath: drive.shadowPath];
     }
 }
 
@@ -375,38 +371,9 @@ enum {
     
 	SEL action = theItem.action;
 	
-	if (action == @selector(revealSelectedDrivesInFinder:) ||
-        action == @selector(revealSelectedDriveShadowsInFinder:))
+	if (action == @selector(revealSelectedDrivesInFinder:))
     {
-        if (!hasSelection) return NO;
-        
-        BOOL hasShadows = NO;
-        //Check if any of the selected drives have shadowed files.
-		for (BXDrive *drive in selectedDrives)
-		{
-            if (drive.shadowPath && [[NSFileManager defaultManager] fileExistsAtPath: drive.shadowPath])
-            {
-                hasShadows = YES;
-                break;
-            }
-		}
-        
-        //Update the show-in-Finder menu item title to reflect that the drive is shadowed.
-        if (action == @selector(revealSelectedDrivesInFinder:))
-        {   
-            if (hasShadows)
-                theItem.title = NSLocalizedString(@"Show Original in Finder", @"Label for drive panel menu item to show the drive in Finder, if a shadowed drive is selected.");
-            else
-                theItem.title = NSLocalizedString(@"Show in Finder", @"Label for drive panel menu item to show the drive in Finder, if a shadowed drive is selected.");
-            return YES;
-        }
-        else
-        {
-            //Hide the show-changes item unless there are shadowed drives.
-            theItem.hidden = !hasShadows;
-            return hasShadows;
-        }
-        
+        return hasSelection;
     }
     
 	if (action == @selector(removeSelectedDrives:))

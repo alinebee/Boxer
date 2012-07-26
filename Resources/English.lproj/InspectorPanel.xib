@@ -2041,14 +2041,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 						<reference key="NSOnImage" ref="100641205"/>
 						<reference key="NSMixedImage" ref="714035138"/>
 					</object>
-					<object class="NSMenuItem" id="744013005">
-						<reference key="NSMenu" ref="983218472"/>
-						<string key="NSTitle">Show Changes in Finder</string>
-						<string key="NSKeyEquiv"/>
-						<int key="NSMnemonicLoc">2147483647</int>
-						<reference key="NSOnImage" ref="100641205"/>
-						<reference key="NSMixedImage" ref="714035138"/>
-					</object>
 					<object class="NSMenuItem" id="873959370">
 						<reference key="NSMenu" ref="983218472"/>
 						<bool key="NSIsDisabled">YES</bool>
@@ -2123,14 +2115,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					<object class="NSMenuItem" id="555822503">
 						<reference key="NSMenu" ref="29208252"/>
 						<string key="NSTitle">Show in Finder</string>
-						<string key="NSKeyEquiv"/>
-						<int key="NSMnemonicLoc">2147483647</int>
-						<reference key="NSOnImage" ref="100641205"/>
-						<reference key="NSMixedImage" ref="714035138"/>
-					</object>
-					<object class="NSMenuItem" id="343637916">
-						<reference key="NSMenu" ref="29208252"/>
-						<string key="NSTitle">Show Changes in Finder</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="100641205"/>
@@ -2298,7 +2282,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 			<object class="NSViewController" id="589277066"/>
 			<object class="NSCollectionViewItem" id="527118087"/>
 			<object class="NSCustomView" id="101756917">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">266</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2545,7 +2529,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{284, 48}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="1059830828"/>
 				<bool key="NSViewIsLayerTreeHost">YES</bool>
 				<int key="NSViewLayerContentsRedrawPolicy">2</int>
@@ -3054,22 +3037,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 						<reference key="destination" ref="999628827"/>
 					</object>
 					<int key="connectionID">2227</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">revealSelectedDriveShadowsInFinder:</string>
-						<reference key="source" ref="589277066"/>
-						<reference key="destination" ref="343637916"/>
-					</object>
-					<int key="connectionID">2239</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">revealSelectedDriveShadowsInFinder:</string>
-						<reference key="source" ref="589277066"/>
-						<reference key="destination" ref="744013005"/>
-					</object>
-					<int key="connectionID">2243</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -4197,7 +4164,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<reference ref="916758188"/>
 							<reference ref="945493302"/>
 							<reference ref="893173085"/>
-							<reference ref="744013005"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Mounted Drive Context Menu</string>
@@ -4263,7 +4229,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<reference ref="49584240"/>
 							<reference ref="307750003"/>
 							<reference ref="226163202"/>
-							<reference ref="343637916"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Drive Panel Context Menu</string>
@@ -5709,16 +5674,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 						<reference key="object" ref="974006281"/>
 						<reference key="parent" ref="471382001"/>
 					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">2237</int>
-						<reference key="object" ref="343637916"/>
-						<reference key="parent" ref="29208252"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">2242</int>
-						<reference key="object" ref="744013005"/>
-						<reference key="parent" ref="983218472"/>
-					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -5993,8 +5948,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					<string>2225.CustomClassName</string>
 					<string>2225.IBPluginDependency</string>
 					<string>2226.IBPluginDependency</string>
-					<string>2237.IBPluginDependency</string>
-					<string>2242.IBPluginDependency</string>
 					<string>246.IBPluginDependency</string>
 					<string>246.IBUserGuides</string>
 					<string>323.IBPluginDependency</string>
@@ -6299,8 +6252,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					<string>BXHUDScroller</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXHUDLabel</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -6881,7 +6832,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<string>mountSelectedDrives:</string>
 							<string>openSelectedDrivesInDOS:</string>
 							<string>removeSelectedDrives:</string>
-							<string>revealSelectedDriveShadowsInFinder:</string>
 							<string>revealSelectedDrivesInFinder:</string>
 							<string>showMountPanel:</string>
 							<string>toggleSelectedDrives:</string>
@@ -6893,7 +6843,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<string>id</string>
 							<string>id</string>
 							<string>NSSegmentedControl</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -6914,7 +6863,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<string>mountSelectedDrives:</string>
 							<string>openSelectedDrivesInDOS:</string>
 							<string>removeSelectedDrives:</string>
-							<string>revealSelectedDriveShadowsInFinder:</string>
 							<string>revealSelectedDrivesInFinder:</string>
 							<string>showMountPanel:</string>
 							<string>toggleSelectedDrives:</string>
@@ -6948,10 +6896,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">removeSelectedDrives:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">revealSelectedDriveShadowsInFinder:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -7639,6 +7583,10 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
 			<integer value="1050" key="NS.object.0"/>
+		</object>
+		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
+			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
+			<real value="1060" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDevelopmentDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3</string>

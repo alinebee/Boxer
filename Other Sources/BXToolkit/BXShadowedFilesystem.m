@@ -45,6 +45,12 @@ typedef NSUInteger BXFileOpenOptions;
 //Create a 0-byte deletion marker at the specified URL.
 - (void) _createDeletionMarkerAtURL: (NSURL *)markerURL;
 
+//Returns a file pointer for the specified absolute filesystem URL.
+//No original->shadow mapping is performed on the specified URL.
+- (FILE *) _openFileAtCanonicalFilesystemURL: (NSURL *)URL
+                                      inMode: (const char *)accessMode
+                                       error: (NSError **)outError;
+
 @end
 
 
@@ -215,10 +221,11 @@ typedef NSUInteger BXFileOpenOptions;
 {
     NSURL *shadowedURL = [self shadowedURLForURL: URL];
     if (shadowedURL)
-    {
+    {   
         NSURL *deletionMarkerURL = [shadowedURL URLByAppendingPathExtension: BXShadowedDeletionMarkerExtension];
         
         BXFileOpenOptions accessOptions = [self.class optionsFromAccessMode: accessMode];
+        BOOL createIfMissing = (accessOptions & BXFileCreateIfMissing) == BXFileCreateIfMissing;
         
         BOOL deletionMarkerExists = [deletionMarkerURL checkResourceIsReachableAndReturnError: NULL];
         BOOL shadowExists = [shadowedURL checkResourceIsReachableAndReturnError: NULL];
@@ -226,75 +233,129 @@ typedef NSUInteger BXFileOpenOptions;
         //If the file has been marked as deleted in the shadow...
         if (deletionMarkerExists)
         {
-            //...but we are able to create a new file anyway, then remove both the deletion marker
+            //...but we are able to create a new file, then remove both the deletion marker
             //and any leftover shadow, and open a new file handle at the shadowed location.
-            if ((accessOptions & BXFileCreateIfMissing))
-            {
-                [self.manager removeItemAtURL: deletionMarkerURL error: nil];
-                if (shadowExists)
-                    [self.manager removeItemAtURL: shadowedURL error: nil];
+            if (createIfMissing)
+            {   
+                //TODO: it should be a failure state if we cannot remove the deletion marker.
+                [self.manager removeItemAtURL: deletionMarkerURL error: NULL];
+                [self.manager removeItemAtURL: shadowedURL error: NULL];
                 
-                return fopen(shadowedURL.path.fileSystemRepresentation, accessMode);
+                return [self _openFileAtCanonicalFilesystemURL: shadowedURL
+                                                        inMode: accessMode
+                                                         error: outError];
             }
             //Otherwise, pretend we can't open the file at all.
             else
             {
-                //TODO: populate outError
+                if (outError)
+                {
+                    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              URL, NSURLErrorKey,
+                                              nil];
+                    
+                    *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
+                                                    code: ENOENT //No such file or directory
+                                                userInfo: userInfo];
+                }
                 return NULL;
             }
         }
         
-        //If the shadow file exists or we're truncating the file to 0 bytes anyway,
-        //open a handle directly at the shadowed location.
-        else if (shadowExists || (accessOptions & BXFileTruncate))
+        //If the shadow file already exists, open the shadow with whatever
+        //access mode was requested.
+        //IMPLEMENTATION NOTE: conventional wisdom dictates we should just try to open it
+        //and see if that worked without checking for file existence first, then use fallbacks
+        //if it does fail; however this is undesirable in the case where we want to modify
+        //the file's existing contents *or* create the file if it doesn't exist.
+        else if (shadowExists)
         {
-            //Ensure the in-between directories also exist.
-            if (!shadowExists)
-            {
-                [self.manager createDirectoryAtURL: shadowedURL.URLByDeletingLastPathComponent
-                       withIntermediateDirectories: YES
-                                        attributes: nil
-                                             error: NULL];
-            }
-            return fopen(shadowedURL.path.fileSystemRepresentation, accessMode);
+            return [self _openFileAtCanonicalFilesystemURL: shadowedURL
+                                                    inMode: accessMode
+                                                     error: outError];
         }
         
-        //If we're opening the file for writing and we don't have a shadowed version of it yet,
-        //copy the original file to the shadowed location first (creating any necessary directories
-        //along the way) and open the newly-shadowed copy.
-        //This will fail if the original file does not exist.
+        //If we're opening the file for writing and we don't have a shadowed version of it,
+        //copy any original version to the shadowed location first (creating any necessary
+        //directories along the way) and then open the newly-shadowed copy.
         else if ((accessOptions & BXFileOpenForWriting))
         {
-            BOOL originalExists = [URL checkResourceIsReachableAndReturnError: NULL];
-            if (originalExists)
+            //Ensure the necessary path exists for the shadow file to be stored in.
+            //IMPLEMENTATION NOTE: this ignores failure because the directories may already
+            //exist. If there was another reason for failure then we'll fail later anyway
+            //when trying to open the file handle.
+            [self.manager createDirectoryAtURL: shadowedURL.URLByDeletingLastPathComponent
+                   withIntermediateDirectories: YES
+                                    attributes: nil
+                                         error: NULL];
+            
+            //If we'll be truncating the file anyway, don't bother copying the original.
+            BOOL truncateExistingFile = (accessOptions & BXFileTruncate) == BXFileTruncate;
+            if (!truncateExistingFile)
             {
-                [self.manager createDirectoryAtURL: shadowedURL.URLByDeletingLastPathComponent
-                       withIntermediateDirectories: YES
-                                        attributes: nil
-                                             error: NULL];
+                NSError *copyError = nil;
+                BOOL copied = [self.manager copyItemAtURL: URL toURL: shadowedURL error: &copyError];
                 
-                [self.manager copyItemAtURL: URL toURL: shadowedURL error: NULL];
-                
-                return fopen(shadowedURL.path.fileSystemRepresentation, accessMode);
+                //IMPLEMENTATION NOTE: if we couldn't copy the original (e.g. because
+                //it didn't exist) but we're allowed to create the file if it's missing,
+                //then don't treat this as a failure.
+                //Only fail if we do require the original file to exist.
+                if (!copied && !createIfMissing)
+                {
+                    if (outError)
+                        *outError = copyError;
+                    return NULL;
+                }
             }
-            else
-            {
-                //TODO: populate outError
-                return NULL;
-            }
+            
+            return [self _openFileAtCanonicalFilesystemURL: shadowedURL
+                                                    inMode: accessMode
+                                                     error: outError];
         }
         
-        //If we don't have a shadow file but we're opening the file as read-only,
-        //it's safe to open a handle from the original location. This will return NULL
-        //if the original location doesn't exist.
+        //If we don't have a shadow file, but we're opening the file as read-only,
+        //it's safe to try and open a handle from the original location.
+        //This will fail if the original location doesn't exist.
         else
         {
-            return fopen(URL.path.fileSystemRepresentation, accessMode);
+            return [self _openFileAtCanonicalFilesystemURL: URL
+                                                    inMode: accessMode
+                                                     error: outError];
         }
     }
     else
     {
-        return fopen(URL.path.fileSystemRepresentation, accessMode);
+        return [self _openFileAtCanonicalFilesystemURL: URL
+                                                inMode: accessMode
+                                                 error: outError];
+    }
+}
+
+- (FILE *) _openFileAtCanonicalFilesystemURL: (NSURL *)URL
+                                      inMode: (const char *)accessMode
+                                       error: (NSError **)outError
+{
+    const char *rep = URL.path.fileSystemRepresentation;
+    FILE *handle = fopen(rep, accessMode);
+    
+    if (handle)
+    {
+        return handle;
+    }
+    else
+    {
+        if (outError)
+        {
+            NSInteger posixError = errno;
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      URL, NSURLErrorKey,
+                                      nil];
+            
+            *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
+                                            code: posixError
+                                        userInfo: userInfo];
+        }
+        return NULL;
     }
 }
 

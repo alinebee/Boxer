@@ -99,7 +99,10 @@ enum {
     BXDefaultDriveUnmountOptions = BXDriveShowNotifications,
     
     //Behaviour when unmounting drives as a result of a volume being ejected.
-    BXVolumeUnmountingDriveUnmountOptions = BXDriveShowNotifications | BXDriveRemoveExistingFromQueue | BXDriveForceUnmounting | BXDriveReplaceWithSiblingFromQueue
+    BXVolumeUnmountingDriveUnmountOptions = BXDriveShowNotifications | BXDriveRemoveExistingFromQueue | BXDriveForceUnmounting | BXDriveReplaceWithSiblingFromQueue,
+    
+    //Behaviour when unmounting drive temporarily to remove/merge shadow files.
+    BXShadowOperationDriveUnmountOptions = BXDriveForceUnmounting,
 };
 
 typedef NSUInteger BXDriveMountOptions;
@@ -178,19 +181,20 @@ typedef NSUInteger BXDriveMountOptions;
 //Open the represented object of the sender in DOS.
 - (IBAction) openInDOS: (id)sender;
 
-//Relaunch the default program.
-- (IBAction) relaunch: (id)sender;
+//Relaunch the target program for this session.
+- (IBAction) relaunchTargetProgram: (id)sender;
 
 //Open the file at the specified path in DOS.
 //If path is an executable, it will be launched; otherwise, we'll just change the working directory to it.
 - (BOOL) openFileAtPath: (NSString *)path;
 
 
+
 #pragma mark -
 #pragma mark Managing drive shadowing
 
 //Returns the path to the bundle where we will store state data for the current gamebox.
-- (NSString *) pathToCurrentState;
+- (NSURL *) currentStateURL;
 
 //Whether we should map writes from the specified drive to an external state bundle.
 //Will return NO if the drive is read-only or not part of the gamebox.
@@ -198,7 +202,27 @@ typedef NSUInteger BXDriveMountOptions;
 
 //Returns an appropriate location to which we can shadow write operations for the specified drive.
 //This location may not exist yet, but will be created once it is needed.
-- (NSString *) shadowPathForDrive: (BXDrive *)drive;
+- (NSURL *) shadowURLForDrive: (BXDrive *)drive;
+
+//Revert the contents of the specified drive/all drives to their original values by deleting
+//the shadowed data. Reverting will fail if one or more of the drives are currently in use by DOS.
+//Returns YES on success, or NO and populates outError on failure.
+- (BOOL) revertChangesForDrive: (BXDrive *)drive error: (NSError **)outError;
+- (BOOL) revertChangesForAllDrivesAndReturnError: (NSError **)outError;
+
+//Merges any shadowed data for the specified drive/all drives back into the original location.
+//Merging will fail if one or more of the drives are currently in use by DOS.
+//Returns YES on success, or NO and populates outError on failure.
+- (BOOL) mergeChangesForDrive: (BXDrive *)drive error: (NSError **)outError;
+- (BOOL) mergeChangesForAllDrivesAndReturnError: (NSError **)outError;
+
+//Whether the session has shadowed data for any of its drives.
+//This is used to toggle the availability of the merge/revert options. 
+- (BOOL) hasShadowedChanges;
+
+//Overridden to discard shadowed files for each drive.
+//If a program is running, it will be shut down before continuing.
+- (IBAction) revertDocumentToSaved: (id)sender;
 
 
 #pragma mark -

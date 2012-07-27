@@ -14,6 +14,7 @@
 #import "BXEmulatorErrors.h"
 #import "BXEmulator+BXShell.h"
 #import "UKFNSubscribeFileWatcher.h"
+#import "BXShadowedFilesystem.h"
 #import "BXPackage.h"
 #import "BXDrive.h"
 #import "BXDrivesInUseAlert.h"
@@ -187,7 +188,7 @@
 #pragma mark -
 #pragma mark Miscellaneous file and folder methods
 
-- (IBAction) relaunch: (id)sender
+- (IBAction) relaunchTargetProgram: (id)sender
 {
 	if ([self targetPath]) [self openFileAtPath: [self targetPath]];
 }
@@ -211,14 +212,8 @@
 }
 
 
-
 #pragma mark -
-#pragma mark Drive queuing
-
-- (BOOL) allowsDriveChanges
-{
-    return !([[NSApp delegate] isStandaloneGameBundle]);
-}
+#pragma mark Drive shadowing
 
 - (BOOL) shouldShadowDrive: (BXDrive *)drive
 {
@@ -236,7 +231,7 @@
     return YES;
 }
 
-- (NSString *) pathToCurrentState
+- (NSURL *) currentStateURL
 {
     if (!self.isGamePackage)
         return nil;
@@ -244,15 +239,17 @@
     NSString *statePath = [[NSApp delegate] statesPathForGamePackage: self.gamePackage
                                                    creatingIfMissing: NO];
     
-    return [statePath stringByAppendingPathComponent: @"Current.boxerstate"];
+    NSURL *stateURL = [NSURL fileURLWithPath: statePath isDirectory: YES];
+    
+    return [stateURL URLByAppendingPathComponent: @"Current.boxerstate"];
 }
 
-- (NSString *) shadowPathForDrive: (BXDrive *)drive
+- (NSURL *) shadowURLForDrive: (BXDrive *)drive
 {
     if ([self shouldShadowDrive: drive])
     {
-        NSString *statePath = self.pathToCurrentState;
-        if (statePath)
+        NSURL *stateURL = self.currentStateURL;
+        if (stateURL)
         {
             NSString *driveName;
             //If the drive is identical to the gamebox itself (old-style gameboxes)
@@ -263,12 +260,101 @@
             else
                 driveName = drive.path.lastPathComponent;
             
-            NSString *shadowPath = [statePath stringByAppendingPathComponent: driveName];
+            NSURL *driveShadowURL = [stateURL URLByAppendingPathComponent: driveName];
             
-            return shadowPath;
+            return driveShadowURL;
         }
     }
     return nil;
+}
+
+- (BOOL) revertChangesForDrive: (BXDrive *)drive error: (NSError **)outError
+{
+    BXShadowedFilesystem *filesystem = (BXShadowedFilesystem *)drive.filesystem;
+    if ([filesystem respondsToSelector: @selector(clearShadowContentsForURL:error:)])
+    {
+        //We can't alter the contents of a drive that's currently in use.
+        if ([self driveIsMounted: drive] && [self.emulator driveInUseAtLetter: drive.letter])
+        {
+            if (outError)
+                *outError = [BXEmulatorDriveInUseError errorWithDrive: drive];
+            return NO;
+        }
+        
+        return [filesystem clearShadowContentsForURL: filesystem.sourceURL error: outError];
+    }
+    //If the drive does not support reversion, pretend the operation was successful.
+    else
+    {
+        return YES;
+    }
+}
+
+- (BOOL) hasShadowedChanges
+{
+    NSFileManager *manager = [NSFileManager defaultManager];
+    for (BXDrive *drive in self.allDrives)
+    {
+        if (drive.shadowPath != nil && [manager fileExistsAtPath: drive.shadowPath])
+            return YES;
+    }
+    return NO;
+}
+
+- (BOOL) revertChangesForAllDrivesAndReturnError: (NSError **)outError
+{
+    for (BXDrive *drive in self.allDrives)
+    {
+        BOOL reverted = [self revertChangesForDrive: drive error: outError];
+        if (!reverted) return NO;
+    }
+    return YES;
+}
+
+- (BOOL) mergeChangesForDrive: (BXDrive *)drive error: (NSError **)outError
+{
+    BXShadowedFilesystem *filesystem = (BXShadowedFilesystem *)drive.filesystem;
+    if ([filesystem respondsToSelector: @selector(mergeShadowContentsForURL:error:)])
+    {
+        //If the drive is currently mounted and in use, we can't alter its contents.
+        if ([self driveIsMounted: drive] && [self.emulator driveInUseAtLetter: drive.letter])
+        {
+            if (outError)
+                *outError = [BXEmulatorDriveInUseError errorWithDrive: drive];
+            return NO;
+        }
+        
+        return [filesystem mergeShadowContentsForURL: filesystem.sourceURL error: outError];
+    }
+    //If the drive does not support merging, pretend the operation was successful.
+    else
+    {
+        return YES;
+    }
+}
+
+- (BOOL) mergeChangesForAllDrivesAndReturnError: (NSError **)outError
+{
+    for (BXDrive *drive in self.allDrives)
+    {
+        BOOL merged = [self mergeChangesForDrive: drive error: outError];
+        if (!merged) return NO;
+    }
+    return YES;
+}
+
+- (IBAction) revertDocumentToSaved: (id)sender
+{
+    //First confirm that the user does want to revert their changes,
+    //and warn them that this entails restarting their game.
+}
+
+#pragma mark -
+#pragma mark Drive status
+
+- (BOOL) allowsDriveChanges
+{
+    return !([[NSApp delegate] isStandaloneGameBundle]);
 }
 
 - (NSArray *) allDrives
@@ -302,6 +388,10 @@
 {
     return ([self.mountedDrives containsObject: drive]);
 }
+
+
+#pragma mark -
+#pragma mark Drive queuing
 
 - (void) enqueueDrive: (BXDrive *)drive
 {
@@ -951,10 +1041,10 @@
     if (options & BXDriveUseShadowingIfAvailable)
     {
         //Check if we should shadow this drive.
-        NSString *shadowPath = [self shadowPathForDrive: drive];
-        if (shadowPath)
+        NSURL *shadowURL = [self shadowURLForDrive: drive];
+        if (shadowURL)
         {
-            drive.shadowPath = shadowPath;
+            drive.shadowPath = shadowURL.path;
         }
     }
     
@@ -1853,7 +1943,7 @@
                 NSError *mountError = nil;
                 BXDrive *mountedDrive = [self mountDrive: importedDrive
                                                 ifExists: BXDriveReplace
-                                                 options: 0
+                                                 options: BXBundledDriveMountOptions
                                                    error: &mountError];
                 
                 //Remove the old drive from the queue, once we've mounted the new one.
@@ -1884,7 +1974,7 @@
             NSError *mountError = nil;
             [self mountDrive: originalDrive
                     ifExists: BXDriveReplace
-                     options: 0
+                     options: 0 //TODO: write this up as a proper constant
                        error: &mountError];
         }
 		

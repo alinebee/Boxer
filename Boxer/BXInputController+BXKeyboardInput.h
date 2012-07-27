@@ -48,7 +48,7 @@
 - (IBAction) sendInsert:	(id)sender;
 - (IBAction) sendDelete:	(id)sender;
 - (IBAction) sendPause:		(id)sender;
-- (IBAction) sendBreak:		(id)sender;
+- (IBAction) sendCtrlBreak: (id)sender;
 
 - (IBAction) sendNumLock:		(id)sender;
 - (IBAction) sendScrollLock:	(id)sender;

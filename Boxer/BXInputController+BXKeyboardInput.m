@@ -210,8 +210,13 @@
 - (IBAction) sendInsert:	(id)sender { [self.emulatedKeyboard keyPressed: KBD_insert]; }
 - (IBAction) sendDelete:	(id)sender { [self.emulatedKeyboard keyPressed: KBD_delete]; }
 - (IBAction) sendPause:		(id)sender { [self.emulatedKeyboard keyPressed: KBD_pause]; }
-//TODO: should we be sending a key combo here?
-- (IBAction) sendBreak:		(id)sender { [self.emulatedKeyboard keyPressed: KBD_pause]; }
+
+- (IBAction) sendCtrlBreak: (id)sender
+{
+    [self.emulatedKeyboard keyDown: KBD_leftctrl];
+    [self.emulatedKeyboard keyPressed: KBD_pause];
+    [self.emulatedKeyboard keyUp: KBD_leftctrl];
+}
 
 - (IBAction) sendNumLock:		(id)sender { [self.emulatedKeyboard keyPressed: KBD_numlock]; }
 - (IBAction) sendScrollLock:	(id)sender { [self.emulatedKeyboard keyPressed: KBD_scrolllock]; }

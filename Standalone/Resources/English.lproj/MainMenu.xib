@@ -953,7 +953,7 @@
 											</object>
 											<object class="NSMenuItem" id="353354076">
 												<reference key="NSMenu" ref="503647851"/>
-												<string key="NSTitle">Break</string>
+												<string key="NSTitle">Ctrl+Break</string>
 												<string key="NSKeyEquiv"/>
 												<int key="NSMnemonicLoc">2147483647</int>
 												<reference key="NSOnImage" ref="569538535"/>
@@ -1734,14 +1734,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">sendBreak:</string>
-						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="353354076"/>
-					</object>
-					<int key="connectionID">2093</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">sendF7:</string>
 						<reference key="source" ref="935372999"/>
 						<reference key="destination" ref="528819913"/>
@@ -1963,6 +1955,14 @@
 						<reference key="destination" ref="172822874"/>
 					</object>
 					<int key="connectionID">2511</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">sendCtrlBreak:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="353354076"/>
+					</object>
+					<int key="connectionID">2512</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -3498,7 +3498,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2511</int>
+			<int key="maxID">2512</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3636,13 +3636,9 @@
 							<string>toggleProgramPanelShown:</string>
 							<string>toggleRenderingStyle:</string>
 							<string>toggleStatusBarShown:</string>
-							<string>userToggleFullScreen:</string>
-							<string>userToggleFullScreenWithoutAnimation:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3659,8 +3655,6 @@
 							<string>toggleProgramPanelShown:</string>
 							<string>toggleRenderingStyle:</string>
 							<string>toggleStatusBarShown:</string>
-							<string>userToggleFullScreen:</string>
-							<string>userToggleFullScreenWithoutAnimation:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3682,14 +3676,6 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">toggleStatusBarShown:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">userToggleFullScreen:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">userToggleFullScreenWithoutAnimation:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 						</object>
@@ -3900,8 +3886,8 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>sendBackslash:</string>
-							<string>sendBreak:</string>
 							<string>sendColon:</string>
+							<string>sendCtrlBreak:</string>
 							<string>sendDash:</string>
 							<string>sendDelete:</string>
 							<string>sendEnd:</string>
@@ -3969,8 +3955,8 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>sendBackslash:</string>
-							<string>sendBreak:</string>
 							<string>sendColon:</string>
+							<string>sendCtrlBreak:</string>
 							<string>sendDash:</string>
 							<string>sendDelete:</string>
 							<string>sendEnd:</string>
@@ -4006,11 +3992,11 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">sendBreak:</string>
+								<string key="name">sendColon:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">sendColon:</string>
+								<string key="name">sendCtrlBreak:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -4262,15 +4248,19 @@
 							<string>openInDOS:</string>
 							<string>paste:</string>
 							<string>pause:</string>
-							<string>relaunch:</string>
+							<string>relaunchTargetProgram:</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
+							<string>revertDocumentToSaved:</string>
 							<string>saveScreenshot:</string>
+							<string>terminateRunningProcess:</string>
 							<string>toggleFastForward:</string>
 							<string>togglePaused:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4303,10 +4293,12 @@
 							<string>openInDOS:</string>
 							<string>paste:</string>
 							<string>pause:</string>
-							<string>relaunch:</string>
+							<string>relaunchTargetProgram:</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
+							<string>revertDocumentToSaved:</string>
 							<string>saveScreenshot:</string>
+							<string>terminateRunningProcess:</string>
 							<string>toggleFastForward:</string>
 							<string>togglePaused:</string>
 						</object>
@@ -4353,7 +4345,7 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">relaunch:</string>
+								<string key="name">relaunchTargetProgram:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -4365,7 +4357,15 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">revertDocumentToSaved:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">saveScreenshot:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">terminateRunningProcess:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -4548,6 +4548,10 @@
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
 			<integer value="1050" key="NS.object.0"/>
+		</object>
+		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
+			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
+			<real value="1060" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDevelopmentDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3</string>

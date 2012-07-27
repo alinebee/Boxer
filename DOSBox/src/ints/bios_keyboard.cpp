@@ -376,7 +376,6 @@ static Bitu IRQ1_Handler(void) {
             if((flags3&0x02) || (!(flags3&0x10) && (flags1&0x04))) {				/* Ctrl-Break? */
                 /* remove 0xe0-prefix */
                 flags3 &=~0x02;
-                printf("Triggering honest-to-god Ctrl+Break.\n");
                 mem_writeb(BIOS_KEYBOARD_FLAGS3,flags3);
                 mem_writeb(BIOS_CTRL_BREAK_FLAG,0x80);
                 empty_keyboard_buffer();

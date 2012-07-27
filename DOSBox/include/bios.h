@@ -63,7 +63,7 @@
 /* 0x467-0x468 is reserved */
 #define BIOS_TIMER                      0x46c
 #define BIOS_24_HOURS_FLAG              0x470
-#define BIOS_KEYBOARD_FLAGS             0x471
+#define BIOS_CTRL_BREAK_FLAG            0x471
 #define BIOS_CTRL_ALT_DEL_FLAG          0x472
 #define BIOS_HARDDISK_COUNT		0x475
 /* 0x474, 0x476, 0x477 is reserved */

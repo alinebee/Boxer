@@ -257,6 +257,20 @@ Bitu CALLBACK_SetupExtra(Bitu callback, Bitu type, PhysPt physAddress, bool use_
 		phys_writeb(physAddress+0x0d,(Bit8u)0x58);			// pop ax
 		phys_writeb(physAddress+0x0e,(Bit8u)0xcf);			//An IRET Instruction
 		return (use_cb?0x15:0x0f);
+	case CB_IRQ1_BREAK:	// return from int9, when Ctrl-Break is detected; invokes int 1b
+		phys_writew(physAddress+0x00,(Bit16u)0x1bcd);		// int 1b
+		phys_writeb(physAddress+0x02,(Bit8u)0xfa);		// cli
+		if (use_cb) {
+			phys_writeb(physAddress+0x03,(Bit8u)0xFE);	//GRP 4
+			phys_writeb(physAddress+0x04,(Bit8u)0x38);	//Extra Callback instruction
+			phys_writew(physAddress+0x05,(Bit16u)callback);		//The immediate word
+			physAddress+=4;
+		}
+		phys_writew(physAddress+0x03,(Bit16u)0x20b0);		// mov al, 0x20
+		phys_writew(physAddress+0x05,(Bit16u)0x20e6);		// out 0x20, al
+		phys_writeb(physAddress+0x07,(Bit8u)0x58);			// pop ax
+		phys_writeb(physAddress+0x08,(Bit8u)0xcf);			//An IRET Instruction
+		return (use_cb?0x0d:0x09);
 	case CB_IRQ9:	// pic cascade interrupt
 		if (use_cb) {
 			phys_writeb(physAddress+0x00,(Bit8u)0xFE);	//GRP 4

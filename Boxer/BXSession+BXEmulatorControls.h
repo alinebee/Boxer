@@ -144,4 +144,19 @@ enum
 
 //Save a screenshot to the desktop.
 - (IBAction) saveScreenshot: (id)sender;
+
+
+//Cycle forward/backward through all drive queues.
+- (IBAction) mountNextDrivesInQueues: (id)sender;
+- (IBAction) mountPreviousDrivesInQueues: (id)sender;
+
+//Overridden to discard shadowed files for each drive.
+//If a program is running, it will be shut down before continuing.
+- (IBAction) revertShadowedChanges: (id)sender;
+- (IBAction) mergeShadowedChanges: (id)sender;
+
+//Restart the emulation by closing and reopening the document.
+//This will show a confirmation first if there are programs running or drives being imported.
+- (IBAction) performRestart: (id)sender;
+
 @end

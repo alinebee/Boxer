@@ -196,6 +196,9 @@ enum {
 //TODO: should populate an optional NSError object for cases like this.
 - (BOOL) _unmountDOSBoxDriveAtIndex: (NSUInteger)driveIndex error: (NSError **)outError;
 
+//Force-close any open file resources for the specified DOSBox drive.
+- (void) _closeFilesForDOSBoxDriveAtIndex: (NSUInteger)index;
+
 //Generates a Boxer drive object for a drive at the specified drive index.
 - (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)driveIndex;
 

@@ -75,6 +75,12 @@
                 force: (BOOL)force
                 error: (NSError **)outError;
 
+//Release any open resources for the specified drive, without unmounting the drive itself.
+//Returns YES if successful, NO and populates outError on failure.
+//Note that doing this may cause DOS programs that are using those resources to crash:
+//this should only be called as a prelude to terminating or restarting the DOS session.
+- (BOOL) releaseResourcesForDrive: (BXDrive *)drive error: (NSError **)outError;
+
 //Flush the DOS filesystem cache and rescan to synchronise it with the local filesystem state.
 - (void) refreshMountedDrives;
 
@@ -84,13 +90,23 @@
 
 
 #pragma mark -
-#pragma mark Converting paths to/from DOSBox
+#pragma mark Drive introspection
+
+//Returns whether the specified drive is currently mounted in DOS.
+- (BOOL) driveIsMounted: (BXDrive *)drive;
+
+//Returns whether the specified drive is currently in use in DOS.
+- (BOOL) driveInUse: (BXDrive *)drive;
 
 //Returns the drive mounted at the specified letter, or nil if no drive is mounted at that letter.
 - (BXDrive *)driveAtLetter: (NSString *)driveLetter;
 
 //Returns whether the drive at the specified letter is being actively used by DOS.
 - (BOOL) driveInUseAtLetter: (NSString *)driveLetter;
+
+
+#pragma mark -
+#pragma mark Converting paths to/from DOSBox
 
 //Returns YES if the specified OS X path is explicitly mounted as its own DOS drive; NO otherwise.
 //Use pathIsDOSAccessible below if you want to know if a path is accessible on any DOS drive.

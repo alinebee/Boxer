@@ -220,10 +220,6 @@ typedef NSUInteger BXDriveMountOptions;
 //This is used to toggle the availability of the merge/revert options. 
 - (BOOL) hasShadowedChanges;
 
-//Overridden to discard shadowed files for each drive.
-//If a program is running, it will be shut down before continuing.
-- (IBAction) revertDocumentToSaved: (id)sender;
-
 
 #pragma mark -
 #pragma mark Mounting and queuing drives
@@ -282,10 +278,6 @@ typedef NSUInteger BXDriveMountOptions;
 //at the specified offset from the specified drive.
 - (BXDrive *) siblingOfQueuedDrive: (BXDrive *)drive
                           atOffset: (NSInteger)offset;
-
-//Cycle forward/backward through all drive queues.
-- (IBAction) mountNextDrivesInQueues: (id)sender;
-- (IBAction) mountPreviousDrivesInQueues: (id)sender;
 
 
 //Automount all ISO9660 CD-ROM volumes that are currently mounted in OS X.

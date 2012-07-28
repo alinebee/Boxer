@@ -13,6 +13,8 @@
 #import "BXBaseAppController+BXSupportFiles.h"
 #import "BXVideoHandler.h"
 #import "BXDOSWindow.h"
+#import "BXCloseAlert.h"
+#import "NSAlert+BXAlert.h"
 
 #import "BXDOSWindowController.h"
 #import "BXInputController.h"
@@ -400,8 +402,10 @@
 
 	//Defined in BXFileManager
 	if (theAction == @selector(openInDOS:))				return self.emulator.isAtPrompt;
-	if (theAction == @selector(relaunch:))				return self.emulator.isAtPrompt;
-	
+	if (theAction == @selector(performRestart:))		return self.isEmulating;
+	if (theAction == @selector(revertShadowedChanges:)) return self.hasShadowedChanges;
+	if (theAction == @selector(mergeShadowedChanges:))  return self.hasShadowedChanges;
+    
 	if (theAction == @selector(paste:))
 		return [self canPasteFromPasteboard: [NSPasteboard generalPasteboard]];
 	
@@ -648,6 +652,204 @@
             [[BXBezelController controller] showScreenshotBezel];
         }
     }
+}
+
+
+#pragma mark -
+#pragma mark Filesystem and emulation operations
+
+- (IBAction) performRestart: (id)sender
+{
+    BOOL hasActiveImports = self.isImportingDrives;
+    
+	//We confirm the close if a process is running and if we're not already shutting down
+	BOOL shouldConfirm = hasActiveImports ||
+    (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"]
+     && self.emulator.isRunningProcess
+     && !self.emulator.isCancelled);
+    
+    if (shouldConfirm)
+    {
+        BXCloseAlert *confirmation;
+        if (hasActiveImports)
+            confirmation = [BXCloseAlert restartAlertWhileImportingDrives: self];
+        else
+            confirmation = [BXCloseAlert restartAlertWhileSessionIsEmulating: self];
+        
+        [confirmation beginSheetModalForWindow: self.windowForSheet
+                                 modalDelegate: self
+                                didEndSelector: @selector(_restartConfirmationDidEnd:returnCode:contextInfo:)
+                                   contextInfo: nil];
+    }
+    //If we're already at the DOS prompt then go ahead and restart already.
+    else
+    {
+        [self restart];
+    }
+}
+
+- (void) _restartConfirmationDidEnd: (NSAlert *)alert
+                         returnCode: (NSInteger)returnCode
+                        contextInfo: (void *)contextInfo
+{
+    if (returnCode == NSAlertFirstButtonReturn)
+    {
+        [self restart];
+    }
+}
+
+
+- (IBAction) revertShadowedChanges: (id)sender
+{
+    //Only proceed if we actually have something to revert.
+    if (self.hasShadowedChanges)
+    {
+        NSAlert *confirmation = [[NSAlert alloc] init];
+        
+        NSString *messageFormat = NSLocalizedString(@"Reverting “%@” to its original state will discard your savegames and any other changes you have made.",
+                                                    @"Bold text of confirmation when reverting the current session to its original state. %@ is the display name of the session.");
+        
+        confirmation.messageText = [NSString stringWithFormat: messageFormat, self.displayName];
+        
+        confirmation.informativeText = NSLocalizedString(@"The game will be restarted after the action is complete. You can’t undo this action.",
+                                                         @"Informative text of confirmation when reverting the current session to its original state.");
+        
+		NSString *closeLabel	= NSLocalizedString(@"Revert",	@"Label for button to confirm that the user wants to revert the current session to its original state.");
+		NSString *cancelLabel	= NSLocalizedString(@"Cancel",	@"Cancel the current action and return to what the user was doing");
+        
+        [confirmation addButtonWithTitle: closeLabel];
+        //Ensure the cancel button always uses Escape
+		[confirmation addButtonWithTitle: cancelLabel].keyEquivalent = @"\e";
+        
+        [confirmation adoptIconFromWindow: self.windowForSheet];
+        
+        [confirmation beginSheetModalForWindow: self.windowForSheet
+                                 modalDelegate: self
+                                didEndSelector: @selector(_revertConfirmationDidEnd:returnCode:contextInfo:)
+                                   contextInfo: NULL];
+        
+        [confirmation release];
+    }
+}
+
+- (IBAction) mergeShadowedChanges: (id)sender
+{
+    //Only proceed if we actually have something to revert.
+    if (self.hasShadowedChanges)
+    {
+        NSAlert *confirmation = [[NSAlert alloc] init];
+        
+        NSString *messageFormat = NSLocalizedString(@"Applying your changes to “%@” will make your savegames and any other changes permanent for all users.",
+                                                    @"Bold text of confirmation when merging shadowed changes for the current session. %@ is the display name of the session.");
+        
+        confirmation.messageText = [NSString stringWithFormat: messageFormat, self.displayName];
+        
+        confirmation.informativeText = NSLocalizedString(@"The game will be restarted after the action is complete. You can’t undo this action.",
+                                                         @"Informative text of confirmation when merging shadowed changes for the current session.");
+        
+		NSString *closeLabel	= NSLocalizedString(@"Apply Changes", @"Label for button to confirm that the user wants to merge their shadowed changes for the current session.");
+		NSString *cancelLabel	= NSLocalizedString(@"Cancel", @"Cancel the current action and return to what the user was doing");
+        
+        [confirmation addButtonWithTitle: closeLabel];
+        //Ensure the cancel button always uses Escape
+		[confirmation addButtonWithTitle: cancelLabel].keyEquivalent = @"\e";
+        
+        [confirmation adoptIconFromWindow: self.windowForSheet];
+        
+        [confirmation beginSheetModalForWindow: self.windowForSheet
+                                 modalDelegate: self
+                                didEndSelector: @selector(_mergeConfirmationDidEnd:returnCode:contextInfo:)
+                                   contextInfo: NULL];
+        
+        [confirmation release];
+    }
+}
+
+- (void) _revertConfirmationDidEnd: (NSAlert *)alert
+                        returnCode: (NSInteger)returnCode
+                       contextInfo: (void *)contextInfo
+{
+    if (returnCode == NSAlertFirstButtonReturn)
+    {
+        //The user has given their OK, so go ahead with the reversion.
+        NSError *revertError;
+        BOOL reverted = [self revertChangesForAllDrivesAndReturnError: &revertError];
+        
+        //Once reversion is completed, restart the session to complete the operation.
+        if (reverted)
+        {
+            [self restart];
+        }
+        
+        //If reversion failed, tell the user the reason and restart the app afterward.
+        else
+        {
+            if (revertError)
+            {
+                //In order to display the error to the user,
+                //we need to get the confirmation sheet out of the way.
+                [self.windowForSheet.attachedSheet orderOut: self];
+                
+                [self presentError: revertError
+                    modalForWindow: self.windowForSheet
+                          delegate: self
+                didPresentSelector: @selector(_didPresentShadowOperationErrorWithRecovery:contextInfo:)
+                       contextInfo: NULL];
+            }
+        }
+    }
+}
+
+- (void) _mergeConfirmationDidEnd: (NSAlert *)alert
+                       returnCode: (NSInteger)returnCode
+                      contextInfo: (void *)contextInfo
+{
+    if (returnCode == NSAlertFirstButtonReturn)
+    {
+        //The user has given their OK, so go ahead with the merge.
+        NSError *mergeError;
+        BOOL merged = [self mergeChangesForAllDrivesAndReturnError: &mergeError];
+        
+        //Once merging is completed, restart the app to complete the operation.
+        if (merged)
+        {
+            [self restart];
+        }
+        
+        //If the merge failed, tell the user the reason and restart the app afterward.
+        else
+        {
+            if (mergeError)
+            {
+                //In order to display the error to the user,
+                //we need to get the confirmation sheet out of the way.
+                [alert.window orderOut: self];
+                
+                [self presentError: mergeError
+                    modalForWindow: self.windowForSheet
+                          delegate: self
+                didPresentSelector: @selector(_didPresentShadowOperationErrorWithRecovery:contextInfo:)
+                       contextInfo: NULL];
+            }
+        }
+    }
+}
+
+- (void) _didPresentShadowOperationErrorWithRecovery: (BOOL)didRecover
+                                         contextInfo: (void *)contextInfo
+{
+    [self restart];
+}
+
+
+- (IBAction) mountNextDrivesInQueues: (id)sender
+{
+    [self _mountQueuedSiblingsAtOffset: 1];
+}
+
+- (IBAction) mountPreviousDrivesInQueues: (id)sender
+{
+    [self _mountQueuedSiblingsAtOffset: -1];
 }
 
 @end

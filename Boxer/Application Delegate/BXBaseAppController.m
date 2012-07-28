@@ -197,14 +197,6 @@
 	[self.generalQueue waitUntilAllOperationsAreFinished];
 }
 
-- (IBAction) relaunch: (id)sender
-{
-	NSString *executablePath = [NSBundle mainBundle].executablePath;
-	[NSTask launchedTaskWithLaunchPath: executablePath arguments: nil];
-    
-    [NSApp terminate: self];
-}
-
 
 #pragma mark -
 #pragma mark Responding to application mode changes

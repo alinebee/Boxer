@@ -161,6 +161,24 @@
 							<string key="NSTitle">File</string>
 							<object class="NSMutableArray" key="NSMenuItems">
 								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSMenuItem" id="734016876">
+									<reference key="NSMenu" ref="176076355"/>
+									<string key="NSTitle">Revert to Original…</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+								<object class="NSMenuItem" id="696314613">
+									<reference key="NSMenu" ref="176076355"/>
+									<bool key="NSIsDisabled">YES</bool>
+									<bool key="NSIsSeparator">YES</bool>
+									<string key="NSTitle"/>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
 								<object class="NSMenuItem" id="254874267">
 									<reference key="NSMenu" ref="176076355"/>
 									<string key="NSTitle">Close Window</string>
@@ -762,6 +780,24 @@
 							<string key="NSTitle">Emulation</string>
 							<object class="NSMutableArray" key="NSMenuItems">
 								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSMenuItem" id="643680314">
+									<reference key="NSMenu" ref="67815420"/>
+									<string key="NSTitle">Restart</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+								<object class="NSMenuItem" id="731734615">
+									<reference key="NSMenu" ref="67815420"/>
+									<bool key="NSIsDisabled">YES</bool>
+									<bool key="NSIsSeparator">YES</bool>
+									<string key="NSTitle"/>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
 								<object class="NSMenuItem" id="633388051">
 									<reference key="NSMenu" ref="67815420"/>
 									<string key="NSTitle">Fast Forward</string>
@@ -1207,7 +1243,7 @@
 				<string key="NSClassName">BXJoypadController</string>
 			</object>
 			<object class="NSCustomView" id="178359719">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1216,8 +1252,6 @@
 						<int key="NSvFlags">265</int>
 						<string key="NSFrame">{{174, 0}, {27, 17}}</string>
 						<reference key="NSSuperview" ref="178359719"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="946362292">
@@ -1248,7 +1282,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{3, 1}, {19, 17}}</string>
 						<reference key="NSSuperview" ref="178359719"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="476757021"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -1276,7 +1309,6 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{22, -1}, {152, 21}}</string>
 						<reference key="NSSuperview" ref="178359719"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="174934595"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -1298,8 +1330,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{204, 20}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="312072832"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<string key="NSClassName">NSView</string>
@@ -1965,6 +1995,22 @@
 					<int key="connectionID">2512</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">performRestart:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="643680314"/>
+					</object>
+					<int key="connectionID">2515</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">revertShadowedChanges:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="734016876"/>
+					</object>
+					<int key="connectionID">2518</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
 						<reference key="source" ref="34920399"/>
@@ -2294,6 +2340,8 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="254874267"/>
+							<reference ref="696314613"/>
+							<reference ref="734016876"/>
 						</object>
 						<reference key="parent" ref="848222553"/>
 					</object>
@@ -2744,6 +2792,8 @@
 							<reference ref="665114175"/>
 							<reference ref="488448645"/>
 							<reference ref="633388051"/>
+							<reference ref="731734615"/>
+							<reference ref="643680314"/>
 						</object>
 						<reference key="parent" ref="466028025"/>
 					</object>
@@ -3129,6 +3179,26 @@
 						<reference key="object" ref="199720980"/>
 						<reference key="parent" ref="124940089"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2513</int>
+						<reference key="object" ref="731734615"/>
+						<reference key="parent" ref="67815420"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2514</int>
+						<reference key="object" ref="643680314"/>
+						<reference key="parent" ref="67815420"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2516</int>
+						<reference key="object" ref="696314613"/>
+						<reference key="parent" ref="176076355"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2517</int>
+						<reference key="object" ref="734016876"/>
+						<reference key="parent" ref="176076355"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3277,6 +3347,10 @@
 					<string>2489.IBPluginDependency</string>
 					<string>2501.IBPluginDependency</string>
 					<string>2503.IBPluginDependency</string>
+					<string>2513.IBPluginDependency</string>
+					<string>2514.IBPluginDependency</string>
+					<string>2516.IBPluginDependency</string>
+					<string>2517.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>284.IBPluginDependency</string>
 					<string>285.IBPluginDependency</string>
@@ -3484,6 +3558,10 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -3498,7 +3576,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2512</int>
+			<int key="maxID">2518</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3516,13 +3594,11 @@
 							<string>minimizeVolume:</string>
 							<string>openInDefaultApplication:</string>
 							<string>orderFrontAboutPanel:</string>
-							<string>relaunch:</string>
 							<string>revealInFinder:</string>
 							<string>toggleMuted:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3543,7 +3619,6 @@
 							<string>minimizeVolume:</string>
 							<string>openInDefaultApplication:</string>
 							<string>orderFrontAboutPanel:</string>
-							<string>relaunch:</string>
 							<string>revealInFinder:</string>
 							<string>toggleMuted:</string>
 						</object>
@@ -3571,10 +3646,6 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">orderFrontAboutPanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">relaunch:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -4243,22 +4314,24 @@
 							<string>fastForward:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
+							<string>mergeShadowedChanges:</string>
 							<string>mountNextDrivesInQueues:</string>
 							<string>mountPreviousDrivesInQueues:</string>
 							<string>openInDOS:</string>
 							<string>paste:</string>
 							<string>pause:</string>
+							<string>performRestart:</string>
 							<string>relaunchTargetProgram:</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
-							<string>revertDocumentToSaved:</string>
+							<string>revertShadowedChanges:</string>
 							<string>saveScreenshot:</string>
-							<string>terminateRunningProcess:</string>
 							<string>toggleFastForward:</string>
 							<string>togglePaused:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4288,17 +4361,18 @@
 							<string>fastForward:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
+							<string>mergeShadowedChanges:</string>
 							<string>mountNextDrivesInQueues:</string>
 							<string>mountPreviousDrivesInQueues:</string>
 							<string>openInDOS:</string>
 							<string>paste:</string>
 							<string>pause:</string>
+							<string>performRestart:</string>
 							<string>relaunchTargetProgram:</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
-							<string>revertDocumentToSaved:</string>
+							<string>revertShadowedChanges:</string>
 							<string>saveScreenshot:</string>
-							<string>terminateRunningProcess:</string>
 							<string>toggleFastForward:</string>
 							<string>togglePaused:</string>
 						</object>
@@ -4325,6 +4399,10 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">mergeShadowedChanges:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">mountNextDrivesInQueues:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -4345,6 +4423,10 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">performRestart:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">relaunchTargetProgram:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -4357,15 +4439,11 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">revertDocumentToSaved:</string>
+								<string key="name">revertShadowedChanges:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">saveScreenshot:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">terminateRunningProcess:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

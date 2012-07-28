@@ -329,6 +329,11 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     //This is not permitted and indicates a programming error
     NSAssert([self isExecuting], @"unmountDrive:error: called while emulator is not running.");
     
+    //If the drive isn't mounted to start with, bail out already.
+    //TODO: make this an error?
+    if (![self driveIsMounted: drive])
+        return YES;
+    
 	if ([drive isInternal] || [drive isLocked])
     {
         if (outError) *outError = [BXEmulatorDriveLockedError errorWithDrive: drive];
@@ -336,7 +341,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     }
     
     //If the drive is a hard disk and is in use, prevent it being ejected
-    if (!force && [self driveInUseAtLetter: [drive letter]])
+    if (!force && [self driveInUse: drive])
     {
         if (outError) *outError = [BXEmulatorDriveInUseError errorWithDrive: drive];
         return NO;
@@ -385,6 +390,18 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	return unmounted;
 }
 
+- (BOOL) releaseResourcesForDrive: (BXDrive *)drive error: (NSError **)outError
+{
+    if ([self driveIsMounted: drive])
+    {
+        NSUInteger driveIndex = [self _indexOfDriveLetter: drive.letter];
+        [self _closeFilesForDOSBoxDriveAtIndex: driveIndex];
+        
+        //TODO: hook into ISO file handling to close file handles for image-backed drives.
+    }
+    return YES;
+}
+
 - (void) refreshMountedDrives
 {
 	if ([self isExecuting])
@@ -420,6 +437,19 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 - (NSArray *) mountedDrives
 {
 	return [driveCache allValues];
+}
+
+- (BOOL) driveIsMounted: (BXDrive *)drive
+{
+    return ([drive isEqual: [self driveAtLetter: drive.letter]]);
+}
+
+- (BOOL) driveInUse: (BXDrive *)drive
+{
+    if ([self driveIsMounted: drive])
+        return [self driveInUseAtLetter: drive.letter];
+    else
+        return NO;
 }
 
 - (BXDrive *) driveAtLetter: (NSString *)driveLetter
@@ -799,35 +829,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     NSInteger result = DriveManager::UnmountDrive(index);
 	if (result == BXDOSBoxUnmountSuccess)
 	{
-        //Close any files that DOSBox had open on this drive after unmounting, and
-        //replace them with dummy file handles. This cleans up any real filesystem
-        //resources (i.e. POSIX file handles) that were opened by the file, while
-        //ensuring that any program that still expects its file to be open will
-        //get a file that won't give them back any data.
-        
-        //IMPLEMENTATION NOTE: previously, this cleaned up all open files regardless
-        //of whether the drive was local or not. This was breaking Broken Sword when
-        //switching CDs, because the game would leave file handles open on the previous
-        //disc and expect them to still be open after the swap. So, in order that at
-        //least ISO copies of the game will work, we leave the file handles be unless
-        //the drive is local.
-        int i;
-        //BOOL driveIsLocal = (dynamic_cast<localDrive *>(Drives[index]) != NULL);
-        for (i=0; i<DOS_FILES; i++)
-        {
-            if (Files[i] && Files[i]->GetDrive() == index)
-            {
-                DOS_File *origFile = Files[i];
-                //DOS_File->GetDrive() returns 0 for the special CON system file,
-                //which also corresponds to the drive index for A, so ignore this file.
-                if (index == 0 && origFile->IsName("CON")) continue;
-                
-                //Tell the file that its backing media may become unavailable.
-                //(Currently only necessary for files with a folder or volume backing,
-                //but harmless for others.)
-                origFile->willBecomeUnavailable();
-            }
-        }
+        [self _closeFilesForDOSBoxDriveAtIndex: index];
         
 		Drives[index] = NULL;
 		return YES;
@@ -838,6 +840,31 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                                                       code: result
                                                   userInfo: nil];
         return NO;
+    }
+}
+
+- (void) _closeFilesForDOSBoxDriveAtIndex: (NSUInteger)index
+{
+    //Force-close any files that DOSBox had open on this drive and replace
+    //them with dummy file handles. This cleans up any real filesystem
+    //resources (i.e. POSIX file handles) that were opened by the file, while
+    //ensuring that any program that still expects its file to be open will
+    //get a file that won't give them back any data.
+    int i;
+    for (i=0; i<DOS_FILES; i++)
+    {
+        if (Files[i] && Files[i]->GetDrive() == index)
+        {
+            DOS_File *origFile = Files[i];
+            //DOS_File->GetDrive() returns 0 for the special CON system file,
+            //which also corresponds to the drive index for A, so ignore this file.
+            if (index == 0 && origFile->IsName("CON")) continue;
+            
+            //Tell the file that its backing media may become unavailable.
+            //(Currently only necessary for files with a folder or volume backing,
+            //but harmless for others.)
+            origFile->willBecomeUnavailable();
+        }
     }
 }
 

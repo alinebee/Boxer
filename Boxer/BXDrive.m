@@ -491,11 +491,15 @@
 
 - (id <BXFilesystem>) filesystem
 {
-    //TODO: return other manager types for drives without shadows, image-backed drives etc.
-    NSURL *sourceURL = [NSURL fileURLWithPath: self.mountPoint isDirectory: YES];
-    NSURL *shadowURL = (self.shadowPath) ? [NSURL fileURLWithPath: self.shadowPath isDirectory: YES] : nil;
-    return [BXShadowedFilesystem filesystemWithSourceURL: sourceURL
-                                            shadowURL: shadowURL]; 
+    if (self.mountPoint)
+    {
+        //TODO: return other manager types for drives without shadows, image-backed drives etc.
+        NSURL *sourceURL = [NSURL fileURLWithPath: self.mountPoint isDirectory: YES];
+        NSURL *shadowURL = (self.shadowPath) ? [NSURL fileURLWithPath: self.shadowPath isDirectory: YES] : nil;
+        return [BXShadowedFilesystem filesystemWithSourceURL: sourceURL
+                                                shadowURL: shadowURL];
+    }
+    else return nil;
 }
 
 

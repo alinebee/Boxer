@@ -140,7 +140,9 @@ NSString * const BXOrganizationCatalogueURLInfoPlistKey = @"BXOrganizationCatalo
     
     if (bundledGameboxURL)
     {
-        BXSession *session = [[BXSession alloc] initWithContentsOfURL: bundledGameboxURL ofType: typeName error: outError];
+        BXSession *session = [[BXSession alloc] initWithContentsOfURL: bundledGameboxURL
+                                                               ofType: typeName
+                                                                error: outError];
         return session;
     }
     else
@@ -161,6 +163,16 @@ NSString * const BXOrganizationCatalogueURLInfoPlistKey = @"BXOrganizationCatalo
         
         return nil;
     }
+}
+
+//This should never be called: we do not support
+- (id) makeDocumentWithContentsOfURL: (NSURL *)absoluteURL
+                              ofType: (NSString *)typeName
+                               error: (NSError **)outError
+{
+    NSAssert(NO, @"makeDocumentWithContentsOfURL:ofType:error: is not supported.");
+    
+    return NO;
 }
 
 //Suppress the automatic opening of untitled files when the user refocuses the application.

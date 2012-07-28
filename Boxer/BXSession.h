@@ -215,6 +215,10 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 //as soon as the session window appears.
 - (void) start;
 
+//Restart the DOS emulator. Currently this involves closing and reopening the document,
+//which will usually trigger an application restart.
+- (void) restart;
+
 //Shut down the DOS emulator.
 - (void) cancel;
 

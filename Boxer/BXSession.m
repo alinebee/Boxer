@@ -528,6 +528,14 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	}
 }
 
+- (void) restart
+{
+    NSURL *reopenURL = self.fileURL;
+    
+    [self close];
+    [[NSApp delegate] openDocumentWithContentsOfURL: reopenURL display: YES error: NULL];
+}
+
 //Overridden solely so that NSDocumentController will call canCloseDocumentWithDelegate:
 //in the first place. This otherwise should have no effect and should not show up in the UI.
 - (BOOL) isDocumentEdited

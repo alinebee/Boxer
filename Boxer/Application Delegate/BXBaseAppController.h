@@ -26,6 +26,8 @@
     BXKeyboardEventTap *_hotkeySuppressionTap;
 	
     BXMIDIDeviceMonitor *_MIDIDeviceMonitor;
+    
+    BOOL _relaunching;
 }
 
 #pragma mark -
@@ -81,13 +83,6 @@
 
 //Create common value transformers used throughout the application. Called from +initialize.
 + (void) prepareValueTransformers;
-
-
-#pragma mark -
-#pragma mark Application lifecycle
-
-//Restart the application.
-- (IBAction) relaunch: (id)sender;
 
 
 #pragma mark -

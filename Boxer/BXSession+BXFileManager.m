@@ -9,6 +9,8 @@
 #import "BXSessionPrivate.h"
 #import "BXFileTypes.h"
 #import "BXBaseAppController+BXSupportFiles.h"
+#import "NSAlert+BXAlert.h"
+#import "BXCloseAlert.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulatorErrors.h"
@@ -217,9 +219,6 @@
 
 - (BOOL) shouldShadowDrive: (BXDrive *)drive
 {
-    //if (![[NSApp delegate] isStandaloneGameBundle])
-    //    return NO;
-    
     //Don't shadow if we're not running a gamebox.
     if (!self.isGamePackage)
         return NO;
@@ -268,28 +267,6 @@
     return nil;
 }
 
-- (BOOL) revertChangesForDrive: (BXDrive *)drive error: (NSError **)outError
-{
-    BXShadowedFilesystem *filesystem = (BXShadowedFilesystem *)drive.filesystem;
-    if ([filesystem respondsToSelector: @selector(clearShadowContentsForURL:error:)])
-    {
-        //We can't alter the contents of a drive that's currently in use.
-        if ([self driveIsMounted: drive] && [self.emulator driveInUseAtLetter: drive.letter])
-        {
-            if (outError)
-                *outError = [BXEmulatorDriveInUseError errorWithDrive: drive];
-            return NO;
-        }
-        
-        return [filesystem clearShadowContentsForURL: filesystem.sourceURL error: outError];
-    }
-    //If the drive does not support reversion, pretend the operation was successful.
-    else
-    {
-        return YES;
-    }
-}
-
 - (BOOL) hasShadowedChanges
 {
     NSFileManager *manager = [NSFileManager defaultManager];
@@ -299,6 +276,26 @@
             return YES;
     }
     return NO;
+}
+
+- (BOOL) revertChangesForDrive: (BXDrive *)drive error: (NSError **)outError
+{
+    BXShadowedFilesystem *filesystem = (BXShadowedFilesystem *)drive.filesystem;
+    if ([filesystem respondsToSelector: @selector(clearShadowContentsForURL:error:)])
+    {
+        //Release the file resources of any drive that we're about to revert.
+        //If we can't let go of them, bail out.
+        BOOL releasedResources = [self.emulator releaseResourcesForDrive: drive error: outError];
+        if (!releasedResources)
+            return NO;
+        
+        return [filesystem clearShadowContentsForURL: filesystem.sourceURL error: outError];
+    }
+    //If the drive does not support reversion, pretend the operation was successful.
+    else
+    {
+        return YES;
+    }
 }
 
 - (BOOL) revertChangesForAllDrivesAndReturnError: (NSError **)outError
@@ -316,13 +313,11 @@
     BXShadowedFilesystem *filesystem = (BXShadowedFilesystem *)drive.filesystem;
     if ([filesystem respondsToSelector: @selector(mergeShadowContentsForURL:error:)])
     {
-        //If the drive is currently mounted and in use, we can't alter its contents.
-        if ([self driveIsMounted: drive] && [self.emulator driveInUseAtLetter: drive.letter])
-        {
-            if (outError)
-                *outError = [BXEmulatorDriveInUseError errorWithDrive: drive];
+        //Release the file resources of any drive that we're about to merge.
+        //If we can't let go of them, bail out.
+        BOOL releasedResources = [self.emulator releaseResourcesForDrive: drive error: outError];
+        if (!releasedResources)
             return NO;
-        }
         
         return [filesystem mergeShadowContentsForURL: filesystem.sourceURL error: outError];
     }
@@ -343,11 +338,6 @@
     return YES;
 }
 
-- (IBAction) revertDocumentToSaved: (id)sender
-{
-    //First confirm that the user does want to revert their changes,
-    //and warn them that this entails restarting their game.
-}
 
 #pragma mark -
 #pragma mark Drive status
@@ -516,16 +506,6 @@
     }
 }
 
-- (IBAction) mountNextDrivesInQueues: (id)sender
-{
-    [self _mountQueuedSiblingsAtOffset: 1];
-}
-
-- (IBAction) mountPreviousDrivesInQueues: (id)sender
-{
-    [self _mountQueuedSiblingsAtOffset: -1];
-}
-
 - (BOOL) shouldUnmountDrives: (NSArray *)selectedDrives 
                 usingOptions: (BXDriveMountOptions)options
                       sender: (id)sender
@@ -534,7 +514,7 @@
 	NSUInteger optionKeyDown = ([NSApp currentEvent].modifierFlags & NSAlternateKeyMask) == NSAlternateKeyMask;
 	if (optionKeyDown) return YES;
 
-	NSMutableArray *drivesInUse = [[[NSMutableArray alloc] initWithCapacity: [selectedDrives count]] autorelease];
+	NSMutableArray *drivesInUse = [[[NSMutableArray alloc] initWithCapacity: selectedDrives.count] autorelease];
 	for (BXDrive *drive in selectedDrives)
 	{
         //If the drive is importing, refuse to unmount/dequeue it altogether.
@@ -548,11 +528,11 @@
 		if (drive.isLocked) return NO;
 		
 		//If a program is running and the drive is in use, then warn about it
-		if (!self.emulator.isAtPrompt && [self.emulator driveInUseAtLetter: drive.letter])
+		if (!self.emulator.isAtPrompt && [self.emulator driveInUse: drive])
 			[drivesInUse addObject: drive];
 	}
 	
-	if ([drivesInUse count] > 0)
+	if (drivesInUse.count > 0)
 	{
 		//Note that alert stays retained - it is released by the didEndSelector
 		BXDrivesInUseAlert *alert = [[BXDrivesInUseAlert alloc] initWithDrives: drivesInUse forSession: self];
@@ -1923,7 +1903,7 @@
 	{
 		//Once the drive has successfully imported, replace the old drive
 		//with the newly-imported version (as long as the old one is not currently in use)
-		if (![self.emulator driveInUseAtLetter: originalDrive.letter])
+		if (![self.emulator driveInUse: originalDrive])
 		{
             NSString *destinationPath	= [import importedDrivePath];
 			BXDrive *importedDrive		= [BXDrive driveFromPath: destinationPath

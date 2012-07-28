@@ -144,6 +144,9 @@ static Bitu Normal_Loop(void) {
 #endif
 		} else {
 			GFX_Events();
+            //--Check again at this point in case our own events have cancelled the emulation.
+            if (!boxer_runLoopShouldContinue()) return 1;
+            //--End of modifications
 			if (ticksRemain>0) {
 				TIMER_AddTick();
 				ticksRemain--;

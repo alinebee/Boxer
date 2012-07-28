@@ -422,34 +422,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 #pragma mark -
 #pragma mark Spawning document processes
 
-- (IBAction) relaunch: (id)sender
-{
-    if (self.currentSession)
-    {
-        NSURL *sessionURL = self.currentSession.fileURL;
-        
-        BOOL isImporting = ([self.currentSession isKindOfClass: [BXImportSession class]] && ((BXImportSession *)self.currentSession).importStage != BXImportSessionFinished);
-        
-        if (isImporting)
-        {
-            if (sessionURL)
-                [self _launchProcessWithImportSessionAtURL: sessionURL];
-            else
-                [self _launchProcessWithImportPanel];
-        }
-        else if (sessionURL)
-            [self _launchProcessWithDocumentAtURL: sessionURL];
-        else
-            [self _launchProcessWithUntitledDocument];
-        
-        [NSApp terminate: self];
-    }
-    else
-    {
-        [super relaunch: self];
-    }
-}
-
 - (void) _launchProcessWithDocumentAtURL: (NSURL *)URL
 {	
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];

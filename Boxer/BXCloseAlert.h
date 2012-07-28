@@ -15,14 +15,14 @@
 
 @interface BXCloseAlert : NSAlert
 
-//Shown after exiting a DOS game and returning to the DOS prompt. Asks the user if they
-//want to close the window or return to DOS.
+//Shown after exiting a DOS game and returning to the DOS prompt.
+//Asks the user if they want to close the window or return to DOS.
 //(Not currently used.)
-+ (BXCloseAlert *) closeAlertAfterSessionExited:	(BXSession *)theSession;
++ (BXCloseAlert *) closeAlertAfterSessionExited: (BXSession *)theSession;
 
-//Shown when closing the window while a DOSBox process is running. Warns the user that
-//any unsaved data will be lost if they continue.
-+ (BXCloseAlert *) closeAlertWhileSessionIsEmulating:	(BXSession *)theSession;
+//Shown when closing the window while a DOSBox process is running.
+//Warns the user that any unsaved data will be lost if they continue.
++ (BXCloseAlert *) closeAlertWhileSessionIsEmulating: (BXSession *)theSession;
 
 //Shown when closing the window while one or more drive import operations are in progress.
 + (BXCloseAlert *) closeAlertWhileImportingDrives: (BXSession *)theSession;
@@ -35,5 +35,12 @@
 
 //Shown after a windows-only program has failed to run and exited.
 + (BXCloseAlert *) closeAlertAfterWindowsOnlyProgramExited: (NSString *)programPath;
+
+//Shown when restarting the session while a DOSBox process is running.
+//Warns the user that any unsaved data will be lost if they continue.
++ (BXCloseAlert *) restartAlertWhileSessionIsEmulating: (BXSession *)theSession;
+
+//Shown when restarting the session while one or more drive import operations are in progress.
++ (BXCloseAlert *) restartAlertWhileImportingDrives: (BXSession *)theSession;
 
 @end

@@ -121,6 +121,10 @@ typedef NSUInteger BXFileOpenOptions;
     
     NSString *relativePath = [URL.path pathRelativeToPath: self.shadowURL.path];
     
+    //If this is a deletion marker, map it back to the original file
+    if ([relativePath.pathExtension isEqualToString: BXShadowedDeletionMarkerExtension])
+        relativePath = relativePath.stringByDeletingPathExtension;
+    
     return [self.sourceURL URLByAppendingPathComponent: relativePath];
 }
 
@@ -739,6 +743,7 @@ typedef NSUInteger BXFileOpenOptions;
     if ([shadowedURL.pathExtension isEqualToString: BXShadowedDeletionMarkerExtension])
     {
         NSError *deletionError;
+        
         BOOL deleted = [self.manager removeItemAtURL: sourceURL error: &deletionError];
         
         //Work out why the deletion of the original failed: if it was just that

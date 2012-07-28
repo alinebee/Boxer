@@ -318,7 +318,7 @@
 								</object>
 								<object class="NSMenuItem" id="860203119">
 									<reference key="NSMenu" ref="176076355"/>
-									<string key="NSTitle">Apply Changes…</string>
+									<string key="NSTitle">Merge Changes…</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
@@ -336,7 +336,7 @@
 								</object>
 								<object class="NSMenuItem" id="254874267">
 									<reference key="NSMenu" ref="176076355"/>
-									<string key="NSTitle">Close Window</string>
+									<string key="NSTitle">Close</string>
 									<string key="NSKeyEquiv">w</string>
 									<int key="NSKeyEquivModMask">1048576</int>
 									<int key="NSMnemonicLoc">2147483647</int>
@@ -4591,15 +4591,11 @@
 							<string>minimizeVolume:</string>
 							<string>openInDefaultApplication:</string>
 							<string>orderFrontAboutPanel:</string>
-							<string>relaunch:</string>
 							<string>revealInFinder:</string>
-							<string>terminateAfterClosingActiveWindows:</string>
 							<string>toggleMuted:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4620,9 +4616,7 @@
 							<string>minimizeVolume:</string>
 							<string>openInDefaultApplication:</string>
 							<string>orderFrontAboutPanel:</string>
-							<string>relaunch:</string>
 							<string>revealInFinder:</string>
-							<string>terminateAfterClosingActiveWindows:</string>
 							<string>toggleMuted:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
@@ -4652,15 +4646,7 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">relaunch:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
 								<string key="name">revealInFinder:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">terminateAfterClosingActiveWindows:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -5614,6 +5600,7 @@
 							<string>openInDOS:</string>
 							<string>paste:</string>
 							<string>pause:</string>
+							<string>performRestart:</string>
 							<string>relaunchTargetProgram:</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
@@ -5624,6 +5611,7 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -5659,6 +5647,7 @@
 							<string>openInDOS:</string>
 							<string>paste:</string>
 							<string>pause:</string>
+							<string>performRestart:</string>
 							<string>relaunchTargetProgram:</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
@@ -5711,6 +5700,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">pause:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">performRestart:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

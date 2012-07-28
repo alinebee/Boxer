@@ -706,15 +706,15 @@
     {
         NSAlert *confirmation = [[NSAlert alloc] init];
         
-        NSString *messageFormat = NSLocalizedString(@"Reverting “%@” to its original state will discard your savegames and any other changes you have made.",
+        NSString *messageFormat = NSLocalizedString(@"Do you want to revert to the original version of “%@”?",
                                                     @"Bold text of confirmation when reverting the current session to its original state. %@ is the display name of the session.");
         
         confirmation.messageText = [NSString stringWithFormat: messageFormat, self.displayName];
         
-        confirmation.informativeText = NSLocalizedString(@"The game will be restarted after the action is complete. You can’t undo this action.",
+        confirmation.informativeText = NSLocalizedString(@"Your savegames and file modifications will be lost.",
                                                          @"Informative text of confirmation when reverting the current session to its original state.");
         
-		NSString *closeLabel	= NSLocalizedString(@"Revert",	@"Label for button to confirm that the user wants to revert the current session to its original state.");
+		NSString *closeLabel	= NSLocalizedString(@"Revert and Relaunch", @"Label for button to confirm that the user wants to revert the current session to its original state.");
 		NSString *cancelLabel	= NSLocalizedString(@"Cancel",	@"Cancel the current action and return to what the user was doing");
         
         [confirmation addButtonWithTitle: closeLabel];
@@ -739,15 +739,15 @@
     {
         NSAlert *confirmation = [[NSAlert alloc] init];
         
-        NSString *messageFormat = NSLocalizedString(@"Applying your changes to “%@” will make your savegames and any other changes permanent for all users.",
+        NSString *messageFormat = NSLocalizedString(@"Do you want to merge your changes into “%@”?",
                                                     @"Bold text of confirmation when merging shadowed changes for the current session. %@ is the display name of the session.");
         
         confirmation.messageText = [NSString stringWithFormat: messageFormat, self.displayName];
         
-        confirmation.informativeText = NSLocalizedString(@"The game will be restarted after the action is complete. You can’t undo this action.",
+        confirmation.informativeText = NSLocalizedString(@"Your savegames and file modifications will become a permanent part of the gamebox for all users.",
                                                          @"Informative text of confirmation when merging shadowed changes for the current session.");
         
-		NSString *closeLabel	= NSLocalizedString(@"Apply Changes", @"Label for button to confirm that the user wants to merge their shadowed changes for the current session.");
+		NSString *closeLabel	= NSLocalizedString(@"Merge and Relaunch", @"Label for button to confirm that the user wants to merge their shadowed changes for the current session.");
 		NSString *cancelLabel	= NSLocalizedString(@"Cancel", @"Cancel the current action and return to what the user was doing");
         
         [confirmation addButtonWithTitle: closeLabel];

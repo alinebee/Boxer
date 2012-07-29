@@ -657,6 +657,7 @@
 		9FB60E8F15C5552F00CD0D63 /* NSURL+BXFilePaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */; };
 		9FB60E9215C5643200CD0D63 /* NSError+BXErrorHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E9115C5643200CD0D63 /* NSError+BXErrorHelpers.m */; };
 		9FB60E9315C5643200CD0D63 /* NSError+BXErrorHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E9115C5643200CD0D63 /* NSError+BXErrorHelpers.m */; };
+		9FB60E9415C573C100CD0D63 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
 		9FB642A313FEB71D00385DD3 /* BXISOImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F81CFB813EEA3F4008F0265 /* BXISOImage.m */; };
 		9FB642A413FEB71D00385DD3 /* BXBinCueImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98589613EF71F600E66877 /* BXBinCueImage.m */; };
 		9FBA48C01450B73900F9BBDE /* Keyboard.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBA48BF1450B73900F9BBDE /* Keyboard.png */; };
@@ -3466,6 +3467,7 @@
 				9FCB7B2815B8782800CC7CC7 /* Bezel.xib in Resources */,
 				9F1E959A15BD88D700C3C6A0 /* UserDefaults.plist in Resources */,
 				9F1E959C15BD899500C3C6A0 /* GameDefaults.plist in Resources */,
+				9FB60E9415C573C100CD0D63 /* package.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

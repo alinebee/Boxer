@@ -48,6 +48,39 @@
 	<string></string>
 	<key>BXOrganizationCatalogueURL</key>
 	<string></string>
+    <key>CFBundleDocumentTypes</key>
+	<array>
+        <dict>
+			<key>CFBundleTypeIconFile</key>
+			<string>package.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Gamebox</string>
+			<key>CFBundleTypeRole</key>
+			<string>None</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>net.washboardabs.boxer-game-package</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<true/>
+			<key>NSDocumentClass</key>
+			<string>BXSession</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeIconFile</key>
+			<string>package.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Game state</string>
+			<key>CFBundleTypeRole</key>
+			<string>None</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>net.washboardabs.boxer-game-state</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<true/>
+		</dict>
+    </array>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
@@ -156,6 +189,25 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>cdmedia</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.apple.package</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Boxer game state</string>
+			<key>UTTypeIconFile</key>
+			<string>package.icns</string>
+			<key>UTTypeIdentifier</key>
+			<string>net.washboardabs.boxer-game-state</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>boxerstate</string>
 				</array>
 			</dict>
 		</dict>

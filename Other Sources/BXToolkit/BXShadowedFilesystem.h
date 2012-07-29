@@ -148,6 +148,7 @@ extern NSString * const BXShadowedDeletionMarkerExtension;
     NSURL *_shadowURL;
     
     NSMutableSet *_shadowedPaths;
+    NSMutableSet *_deletedPaths;
     
     BXShadowedFilesystem *_filesystem;
 }

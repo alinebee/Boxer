@@ -881,6 +881,8 @@ typedef NSUInteger BXFileOpenOptions;
 @property (retain, nonatomic) NSDirectoryEnumerator *shadowEnumerator;
 @property (assign, nonatomic) NSDirectoryEnumerator *currentEnumerator;
 @property (retain, nonatomic) NSMutableSet *shadowedPaths;
+@property (retain, nonatomic) NSMutableSet *deletedPaths;
+
 
 @property (retain, nonatomic) BXShadowedFilesystem *filesystem;
 @property (retain, nonatomic) NSArray *propertyKeys;
@@ -899,6 +901,7 @@ typedef NSUInteger BXFileOpenOptions;
 @synthesize shadowEnumerator = _shadowEnumerator;
 @synthesize currentEnumerator = _currentEnumerator;
 @synthesize shadowedPaths = _shadowedPaths;
+@synthesize deletedPaths = _deletedPaths;
 @synthesize filesystem = _filesystem;
 
 @synthesize propertyKeys = _propertyKeys;
@@ -937,6 +940,7 @@ includingPropertiesForKeys: (NSArray *)keys
     self.shadowEnumerator = nil;
     self.currentEnumerator = nil;
     self.shadowedPaths = nil;
+    self.deletedPaths = nil;
     
     self.propertyKeys = nil;
     self.errorHandler = nil;
@@ -985,13 +989,15 @@ includingPropertiesForKeys: (NSArray *)keys
                                             errorHandler: self.errorHandler];
         
         self.currentEnumerator = self.shadowEnumerator;
-        self.shadowedPaths = [NSMutableSet setWithCapacity: 10];
+        self.shadowedPaths = [NSMutableSet set];
+        self.deletedPaths = [NSMutableSet set];
     }
     else
     {
         self.shadowEnumerator = nil;
         self.currentEnumerator = self.sourceEnumerator;
         self.shadowedPaths = nil;
+        self.deletedPaths = nil;
     }
 }
 
@@ -1028,7 +1034,15 @@ includingPropertiesForKeys: (NSArray *)keys
     {
         NSString *relativePath = [nextURL.path pathRelativeToPath: self.sourceURL.path];
         
-        //If this path was already enumerated by the shadow or was deleted in the shadow, ignore it.
+        //If this path was marked as deleted in the shadow, ignore it
+        //and skip any descendants if it was a directory.
+        if ([self.deletedPaths containsObject: relativePath])
+        {
+            [self skipDescendants];
+            continue;
+        }
+        
+        //If this path was already enumerated by the shadow, ignore it.
         if ([self.shadowedPaths containsObject: relativePath]) continue;
         
         return nextURL;
@@ -1048,7 +1062,7 @@ includingPropertiesForKeys: (NSArray *)keys
         //the 'deleted' version when enumerating the original source location.
         if ([nextURL.pathExtension isEqualToString: BXShadowedDeletionMarkerExtension])
         {
-            [self.shadowedPaths addObject: relativePath.stringByDeletingPathExtension];
+            [self.deletedPaths addObject: relativePath.stringByDeletingPathExtension];
             continue;
         }
         

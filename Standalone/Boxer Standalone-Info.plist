@@ -26,8 +26,6 @@
 	<string>Boxr</string>
 	<key>CFBundleVersion</key>
 	<string>${CURRENT_PROJECT_VERSION}</string>
-	<key>ContactEmail</key>
-	<string>support@boxerapp.com</string>
 	<key>JoypadURL</key>
 	<string>http://getjoypad.com/</string>
 	<key>LSMinimumSystemVersion</key>

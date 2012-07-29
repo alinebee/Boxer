@@ -2,23 +2,23 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">11D50b</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2177</string>
-		<string key="IBDocument.AppKitVersion">1138.32</string>
-		<string key="IBDocument.HIToolboxVersion">568.00</string>
+		<string key="IBDocument.SystemVersion">11E53</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2549</string>
+		<string key="IBDocument.AppKitVersion">1138.47</string>
+		<string key="IBDocument.HIToolboxVersion">569.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2177</string>
+			<string key="NS.object.0">2549</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<string>NSTextField</string>
 			<string>NSCustomObject</string>
-			<string>NSLevelIndicatorCell</string>
 			<string>NSCustomView</string>
 			<string>NSImageCell</string>
-			<string>NSLevelIndicator</string>
 			<string>NSImageView</string>
+			<string>NSLevelIndicator</string>
+			<string>NSLevelIndicatorCell</string>
+			<string>NSTextField</string>
 			<string>NSTextFieldCell</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -89,7 +89,7 @@ YmFyLg</string>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="262078921">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -113,7 +113,7 @@ YmFyLg</string>
 						<reference key="NSNextKeyView" ref="48927340"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="222996761">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
@@ -146,7 +146,7 @@ YmFyLg</string>
 						<reference key="NSNextKeyView" ref="613313033"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="30691410">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
@@ -188,7 +188,6 @@ YmFyLg</string>
 						<int key="NSvFlags">290</int>
 						<string key="NSFrame">{{20, 12}, {260, 22}}</string>
 						<reference key="NSSuperview" ref="262078921"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">3</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="639055398">
@@ -203,12 +202,11 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{300, 80}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="433158987"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="486365284">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -237,7 +235,6 @@ YmFyLg</string>
 						<int key="NSvFlags">290</int>
 						<string key="NSFrame">{{20, 15}, {200, 22}}</string>
 						<reference key="NSSuperview" ref="486365284"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">3</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="533750479">
@@ -252,12 +249,11 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{240, 80}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="319377139"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="759628227">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -278,11 +274,12 @@ YmFyLg</string>
 						</object>
 						<string key="NSFrame">{{59, 75}, {102, 102}}</string>
 						<reference key="NSSuperview" ref="759628227"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="386939600"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="1032065341">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<int key="NSAlign">0</int>
 							<int key="NSScale">3</int>
@@ -296,6 +293,8 @@ YmFyLg</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{17, 24}, {186, 18}}</string>
 						<reference key="NSSuperview" ref="759628227"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSTag">5</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="900668893">
@@ -317,6 +316,7 @@ YmFyLg</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{17, 45}, {186, 22}}</string>
 						<reference key="NSSuperview" ref="759628227"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="309836734"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
@@ -332,11 +332,13 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{220, 200}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="457239935"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="962612140">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -345,6 +347,8 @@ YmFyLg</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{17, 24}, {186, 18}}</string>
 						<reference key="NSSuperview" ref="962612140"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSTag">5</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="600400520">
@@ -374,11 +378,12 @@ YmFyLg</string>
 						</object>
 						<string key="NSFrame">{{59, 75}, {102, 102}}</string>
 						<reference key="NSSuperview" ref="962612140"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="30954813"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="962030114">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
@@ -396,6 +401,7 @@ YmFyLg</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{17, 45}, {186, 22}}</string>
 						<reference key="NSSuperview" ref="962612140"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="253389134"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
@@ -411,11 +417,13 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{220, 200}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="237268684"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="271727742">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -424,6 +432,8 @@ YmFyLg</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{17, 24}, {186, 18}}</string>
 						<reference key="NSSuperview" ref="271727742"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSTag">5</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="302054429">
@@ -453,16 +463,13 @@ YmFyLg</string>
 						</object>
 						<string key="NSFrame">{{59, 75}, {102, 102}}</string>
 						<reference key="NSSuperview" ref="271727742"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="160133539"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="166234175">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
-							<object class="NSCustomResource" key="NSContents">
-								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">CDROMTemplate</string>
-							</object>
 							<int key="NSAlign">0</int>
 							<int key="NSScale">3</int>
 							<int key="NSStyle">0</int>
@@ -475,6 +482,7 @@ YmFyLg</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{17, 45}, {186, 22}}</string>
 						<reference key="NSSuperview" ref="271727742"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="216362529"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
@@ -490,6 +498,8 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{220, 200}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="938304970"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -537,7 +547,7 @@ YmFyLg</string>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="522861424">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -558,11 +568,10 @@ YmFyLg</string>
 						</object>
 						<string key="NSFrame">{{29, 29}, {102, 102}}</string>
 						<reference key="NSSuperview" ref="522861424"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="63342060">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
@@ -577,7 +586,6 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{160, 160}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="450901117"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -606,7 +614,7 @@ YmFyLg</string>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="32039733">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
@@ -625,7 +633,7 @@ YmFyLg</string>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="791075297">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -646,10 +654,11 @@ YmFyLg</string>
 						</object>
 						<string key="NSFrame">{{100, 115}, {24, 24}}</string>
 						<reference key="NSSuperview" ref="791075297"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="64309072"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="839484894">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
@@ -679,11 +688,12 @@ YmFyLg</string>
 						</object>
 						<string key="NSFrame">{{129, 92}, {70, 70}}</string>
 						<reference key="NSSuperview" ref="791075297"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="399942024"/>
 						<int key="NSTag">6</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="73303814">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<int key="NSAlign">0</int>
 							<int key="NSScale">3</int>
@@ -709,11 +719,12 @@ YmFyLg</string>
 						</object>
 						<string key="NSFrame">{{21, 92}, {70, 70}}</string>
 						<reference key="NSSuperview" ref="791075297"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="808261380"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="56604813">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<int key="NSAlign">0</int>
 							<int key="NSScale">3</int>
@@ -727,6 +738,7 @@ YmFyLg</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{17, 24}, {186, 18}}</string>
 						<reference key="NSSuperview" ref="791075297"/>
+						<reference key="NSWindow"/>
 						<int key="NSTag">5</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="866123429">
@@ -744,6 +756,7 @@ YmFyLg</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{17, 45}, {186, 22}}</string>
 						<reference key="NSSuperview" ref="791075297"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="135259700"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
@@ -759,6 +772,8 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{220, 200}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="908266419"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -857,7 +872,7 @@ YmFyLg</string>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="577372552">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
@@ -918,7 +933,7 @@ YmFyLg</string>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="641992703">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
@@ -980,7 +995,7 @@ YmFyLg</string>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="152662608">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
@@ -1041,7 +1056,7 @@ YmFyLg</string>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="877365512">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
@@ -1101,7 +1116,7 @@ YmFyLg</string>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="979445244">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
@@ -1120,7 +1135,7 @@ YmFyLg</string>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="741825127">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1141,11 +1156,10 @@ YmFyLg</string>
 						</object>
 						<string key="NSFrame">{{29, 29}, {102, 102}}</string>
 						<reference key="NSSuperview" ref="741825127"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="104566578">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
@@ -1160,7 +1174,6 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{160, 160}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="65153907"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -1191,7 +1204,7 @@ YmFyLg</string>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="71231709">
-							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags">134348288</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSCustomResource" key="NSContents">
 								<string key="NSClassName">NSImage</string>
@@ -2732,10 +2745,6 @@ YmFyLg</string>
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
 			<real value="1050" key="NS.object.0"/>
 		</object>
-		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
-			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
-			<real value="1060" key="NS.object.0"/>
-		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDevelopmentDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3</string>
 			<integer value="3000" key="NS.object.0"/>
@@ -2747,7 +2756,6 @@ YmFyLg</string>
 			<object class="NSArray" key="dict.sortedKeys">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>BunnyTemplate</string>
-				<string>CDROMTemplate</string>
 				<string>EjectTemplate</string>
 				<string>FastForwardTemplate</string>
 				<string>NSRightFacingTriangleTemplate</string>
@@ -2763,7 +2771,6 @@ YmFyLg</string>
 			</object>
 			<object class="NSArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<string>{128, 128}</string>
 				<string>{128, 128}</string>
 				<string>{128, 128}</string>
 				<string>{128, 128}</string>

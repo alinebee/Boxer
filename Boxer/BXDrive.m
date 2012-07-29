@@ -18,6 +18,7 @@
 @interface BXDrive ()
 
 @property (readwrite, retain, nonatomic) NSMutableSet *pathAliases;
+@property (readwrite, retain, nonatomic) id <BXFilesystem> filesystem;
 
 @end
 
@@ -36,6 +37,7 @@
 @synthesize locked = _locked;
 @synthesize hidden = _hidden;
 @synthesize mounted = _mounted;
+@synthesize filesystem = _filesystem;
 
 #pragma mark -
 #pragma mark Class methods
@@ -334,6 +336,7 @@
     self.title = nil;
     self.volumeLabel = nil;
     self.pathAliases = nil;
+    self.filesystem = nil;
     
 	[super dealloc];
 }
@@ -413,16 +416,56 @@
 	}
 }
 
-- (void) setMountPoint: (NSString *)mountPoint
+- (void) setMountPoint: (NSString *)path
 {
-    if (![_mountPoint isEqualToString: mountPoint])
+    if (![_mountPoint isEqualToString: path])
 	{
 		[_mountPoint release];
-		_mountPoint = [mountPoint copy];
+		_mountPoint = [path copy];
 		
         _hasAutodetectedMountPoint = NO;
+        
+        //Update our filesystem object to point to the new mount point
+        if (self.mountPoint && [_filesystem respondsToSelector: @selector(setSourceURL:)])
+        {
+            [(id)_filesystem setSourceURL: [NSURL fileURLWithPath: self.mountPoint]];
+        }
 	}
 }
+
+- (void) setShadowPath: (NSString *)path
+{
+    if (![_shadowPath isEqualToString: path])
+	{
+		[_shadowPath release];
+		_shadowPath = [path copy];
+        
+        //Update our filesystem object to point to the new mount point
+        if (self.shadowPath && [_filesystem respondsToSelector: @selector(setShadowURL:)])
+        {
+            [(id)_filesystem setShadowURL: [NSURL fileURLWithPath: self.shadowPath]];
+        }
+	}
+}
+
+- (id <BXFilesystem>) filesystem
+{
+    if (self.mountPoint)
+    {
+        if (!_filesystem)
+        {
+            //TODO: return other manager types for drives without shadows, image-backed drives etc.
+            NSURL *sourceURL = [NSURL fileURLWithPath: self.mountPoint];
+            NSURL *shadowURL = (self.shadowPath) ? [NSURL fileURLWithPath: self.shadowPath] : nil;
+            self.filesystem = [BXShadowedFilesystem filesystemWithSourceURL: sourceURL
+                                                                  shadowURL: shadowURL];
+        }
+    }
+    return [[_filesystem retain] autorelease];
+}
+
+#pragma mark -
+#pragma mark Introspecting file paths
 
 - (BOOL) representsPath: (NSString *)basePath
 {
@@ -488,21 +531,6 @@
 	
 	return relativePath;
 }
-
-- (id <BXFilesystem>) filesystem
-{
-    if (self.mountPoint)
-    {
-        //TODO: return other manager types for drives without shadows, image-backed drives etc.
-        NSURL *sourceURL = [NSURL fileURLWithPath: self.mountPoint isDirectory: YES];
-        NSURL *shadowURL = (self.shadowPath) ? [NSURL fileURLWithPath: self.shadowPath isDirectory: YES] : nil;
-        return [BXShadowedFilesystem filesystemWithSourceURL: sourceURL
-                                                shadowURL: shadowURL];
-    }
-    else return nil;
-}
-
-
 
 - (BOOL) isInternal	{ return (self.type == BXDriveInternal); }
 - (BOOL) isCDROM	{ return (self.type == BXDriveCDROM); }

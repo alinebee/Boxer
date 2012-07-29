@@ -56,6 +56,8 @@ typedef NSInteger BXDriveType;
     BOOL _hasAutodetectedTitle;
     BOOL _hasAutodetectedVolumeLabel;
     BOOL _hasAutodetectedType;
+    
+    id <BXFilesystem> _filesystem;
 }
 
 
@@ -133,6 +135,9 @@ typedef NSInteger BXDriveType;
 #pragma mark -
 #pragma mark Immutable properties
 
+//A filesystem instance appropriate for the backing medium of this drive.
+@property (readonly, retain, nonatomic) id <BXFilesystem> filesystem;
+
 //A friendly OS X title for the drive's type.
 @property (readonly, nonatomic) NSString *typeDescription;
 
@@ -177,6 +182,7 @@ typedef NSInteger BXDriveType;
 //This is usually the same as the path itself, but may differ for disk bundles.
 + (NSString *) mountPointForPath: (NSString *)filePath;
 
+
 #pragma mark -
 #pragma mark Initializers
 
@@ -212,9 +218,6 @@ typedef NSInteger BXDriveType;
 //or nil if the specified path was not present on this drive.
 //Used by BXDOSFileSystem for matching OS X filesystem paths with DOS filesystem paths.
 - (NSString *) relativeLocationOfPath: (NSString *)realPath;
-
-//Returns a filesystem instance appropriate for the backing medium of this drive.
-- (id <BXFilesystem>) filesystem;
 
 
 #pragma mark -

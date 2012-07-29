@@ -207,7 +207,7 @@ This means that this file has had too many modifications to be safely replaceabl
 /* #undef OS2 */
 
 /* Compile with PhysicalFS support */
-#define C_HAVE_PHYSFS 1
+#define C_HAVE_PHYSFS 0
 
 //--Note 2009-02-26 by Alun Bestor: I'm assuming (hoping) these lines are unused by everything except make install
 

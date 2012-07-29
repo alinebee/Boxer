@@ -382,7 +382,6 @@
 		9F2D315A15B8233800FAE848 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
 		9F2D315C15B8233800FAE848 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
 		9F2D315D15B8233800FAE848 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F61942312340F5400F35AB4 /* ScriptingBridge.framework */; };
-		9F2D315E15B8233800FAE848 /* PhysFS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5CF183F128F81AF0065844A /* PhysFS.framework */; };
 		9F2D315F15B8233800FAE848 /* SDL_sound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
 		9F2D316015B8233800FAE848 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBAA8F3134AFABD0092BF95 /* DiskArbitration.framework */; };
 		9F2D316115B8233800FAE848 /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
@@ -392,7 +391,6 @@
 		9F2D316615B8233800FAE848 /* DDHidLib.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
 		9F2D316715B8233800FAE848 /* SDL_sound.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
 		9F2D316815B8233800FAE848 /* SDL_net.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; };
-		9F2D316915B8233800FAE848 /* PhysFS.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = E5CF183F128F81AF0065844A /* PhysFS.framework */; };
 		9F2D316B15B8233800FAE848 /* SDL.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; };
 		9F2D316C15B8233800FAE848 /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
 		9F2D316D15B8233800FAE848 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; };
@@ -819,8 +817,6 @@
 		9FFF9730123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */; };
 		9FFF97951232B718009B5EE5 /* BXMultiPanelWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */; };
 		B7900B3E13E47D9E00B37913 /* BXPrecisionProControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = B7900B3D13E47D9E00B37913 /* BXPrecisionProControllerProfile.m */; };
-		E5CF1840128F81AF0065844A /* PhysFS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5CF183F128F81AF0065844A /* PhysFS.framework */; };
-		E5CF1899128F81FE0065844A /* PhysFS.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = E5CF183F128F81AF0065844A /* PhysFS.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -833,7 +829,6 @@
 				9F2D316615B8233800FAE848 /* DDHidLib.framework in Copy Bundled Frameworks */,
 				9F2D316715B8233800FAE848 /* SDL_sound.framework in Copy Bundled Frameworks */,
 				9F2D316815B8233800FAE848 /* SDL_net.framework in Copy Bundled Frameworks */,
-				9F2D316915B8233800FAE848 /* PhysFS.framework in Copy Bundled Frameworks */,
 				9F2D316B15B8233800FAE848 /* SDL.framework in Copy Bundled Frameworks */,
 				9F2D316C15B8233800FAE848 /* MT32Emu.framework in Copy Bundled Frameworks */,
 				9F2D316D15B8233800FAE848 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
@@ -850,7 +845,6 @@
 				9F731B1D13630B6D005E564F /* DDHidLib.framework in Copy Bundled Frameworks */,
 				9F19E7E112B3F48200496BCF /* SDL_sound.framework in Copy Bundled Frameworks */,
 				9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */,
-				E5CF1899128F81FE0065844A /* PhysFS.framework in Copy Bundled Frameworks */,
 				9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */,
 				9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */,
 				9F34BE5C142B76F500A69FAF /* MT32Emu.framework in Copy Bundled Frameworks */,
@@ -1715,7 +1709,6 @@
 				9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */,
 				9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */,
 				9F61942412340F5400F35AB4 /* ScriptingBridge.framework in Frameworks */,
-				E5CF1840128F81AF0065844A /* PhysFS.framework in Frameworks */,
 				9FCEDF3312B3DFFC00E856A4 /* SDL_sound.framework in Frameworks */,
 				9FBAA8F4134AFABD0092BF95 /* DiskArbitration.framework in Frameworks */,
 				9F731AF513630820005E564F /* DDHidLib.framework in Frameworks */,
@@ -1743,7 +1736,6 @@
 				9F2D315A15B8233800FAE848 /* libicucore.dylib in Frameworks */,
 				9F2D315C15B8233800FAE848 /* QTKit.framework in Frameworks */,
 				9F2D315D15B8233800FAE848 /* ScriptingBridge.framework in Frameworks */,
-				9F2D315E15B8233800FAE848 /* PhysFS.framework in Frameworks */,
 				9F2D315F15B8233800FAE848 /* SDL_sound.framework in Frameworks */,
 				9F2D316015B8233800FAE848 /* DiskArbitration.framework in Frameworks */,
 				9F2D316115B8233800FAE848 /* DDHidLib.framework in Frameworks */,
@@ -4417,7 +4409,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -4498,7 +4489,6 @@
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				SDKROOT = macosx10.6;
 			};
 			name = Release;
 		};

@@ -14,4 +14,9 @@
     return (self.code == errorCode && [self.domain isEqualToString: errorDomain]);
 }
 
+- (BOOL) isUserCancelledError
+{
+    return [self matchesDomain: NSCocoaErrorDomain code: NSUserCancelledError];
+}
+
 @end

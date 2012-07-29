@@ -10,6 +10,7 @@
 #import "BXFileTypes.h"
 #import "BXBaseAppController+BXSupportFiles.h"
 #import "NSAlert+BXAlert.h"
+#import "NSError+BXErrorHelpers.h"
 #import "BXCloseAlert.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
@@ -1040,11 +1041,8 @@
         //If mounting fails, check what the failure was and try to recover.
         if (!mountedDrive)
         {
-            NSInteger errCode = mountError.code;
-            BOOL isDOSFilesystemError = [mountError.domain isEqualToString: BXDOSFilesystemErrorDomain];
-            
             //The drive letter was already taken: decide what to do based on our conflict behaviour.
-            if (isDOSFilesystemError && errCode == BXDOSFilesystemDriveLetterOccupied)
+            if ([mountError matchesDomain: BXDOSFilesystemErrorDomain code: BXDOSFilesystemDriveLetterOccupied])
             {
                 switch (conflictBehaviour)
                 {
@@ -1093,7 +1091,7 @@
             //Disc image couldn't be recognised: if we have a fallback volume,
             //switch to that instead and continue mounting.
             //(If we don't, we'll continue bailing out.)
-            else if (isDOSFilesystemError && errCode == BXDOSFilesystemInvalidImage && fallbackDrive)
+            else if ([mountError matchesDomain: BXDOSFilesystemErrorDomain code: BXDOSFilesystemInvalidImage] && fallbackDrive)
             {
                 driveToMount = fallbackDrive;
                 fallbackDrive = nil;
@@ -1106,8 +1104,8 @@
                 //Tweak: if we failed because we couldn't read the source file/volume,
                 //check if this could be because of an import operation.
                 //If so, rephrase the error with a more helpful description.
-                if (isDOSFilesystemError && errCode == BXDOSFilesystemCouldNotReadDrive &&
-                    [[[self activeImportOperationForDrive: driveToMount] class] driveUnavailableDuringImport])
+                if ([mountError matchesDomain: BXDOSFilesystemErrorDomain code: BXDOSFilesystemCouldNotReadDrive] &&
+                    [[self activeImportOperationForDrive: driveToMount].class driveUnavailableDuringImport])
                 {
                     NSString *descriptionFormat = NSLocalizedString(@"The drive “%1$@” is unavailable while it is being imported.",
                                                                     @"Error shown when a drive cannot be mounted because it is busy being imported.");
@@ -1959,11 +1957,9 @@
         }
 		
         //Display a sheet for the error, unless it was just the user cancelling
-		NSError *importError = import.error;
-		if (!([importError.domain isEqualToString: NSCocoaErrorDomain] &&
-              importError.code == NSUserCancelledError))
+		if (import.error && !import.error.isUserCancelledError)
 		{
-			[self presentError: importError
+			[self presentError: import.error
 				modalForWindow: self.windowForSheet
 					  delegate: nil
 			didPresentSelector: NULL

@@ -45,6 +45,7 @@
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXExecutableTypes.h"
 #import "NSString+BXPaths.h"
+#import "NSError+BXErrorHelpers.h"
 
 #import "BXInstallerScan.h"
 #import "BXEmulatorConfiguration.h"
@@ -211,7 +212,7 @@
         
         //If there was an error that wasn't just that the operation was cancelled,
         //display it to the user now as an alert sheet.
-        if (scan.error && !([scan.error.domain isEqualToString: NSCocoaErrorDomain] && scan.error.code == NSUserCancelledError))
+        if (scan.error && !scan.error.isUserCancelledError)
         {
             [self presentError: scan.error
                 modalForWindow: self.windowForSheet

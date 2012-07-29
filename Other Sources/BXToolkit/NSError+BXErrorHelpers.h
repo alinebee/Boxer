@@ -14,4 +14,7 @@
 //Returns YES if the error has the specified error domain and code, NO otherwise.
 - (BOOL) matchesDomain: (NSString *)errorDomain code: (NSInteger)errorCode;
 
+//Whether this is a standard Cocoa user-cancelled-operation error.
+- (BOOL) isUserCancelledError;
+
 @end

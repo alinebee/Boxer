@@ -927,9 +927,14 @@
 	else if (drive.isCDROM)     letters = [BXEmulator CDROMDriveLetters];
 	else                        letters = [BXEmulator hardDriveLetters];
     
+    BOOL avoidDriveC =  (options & BXDriveAvoidAssigningDriveC) == BXDriveAvoidAssigningDriveC;
 	for (NSString *letter in letters)
     {
-        if (![[self.drives objectForKey: letter] count]) return letter;
+        if (avoidDriveC && [letter isEqualToString: @"C"])
+            continue;
+        
+        NSArray *drivesAtLetter = [self.drives objectForKey: letter];
+        if (!drivesAtLetter.count) return letter;
     }
     
     //Uh-oh, looks like all suitable drive letters are taken! Bummer.

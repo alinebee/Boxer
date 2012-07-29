@@ -1344,68 +1344,58 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 }
 
 - (void) _mountDrivesForSession
-{
-	BXPackage *package = [self gamePackage];
-    
-    if (package)
+{   
+    if (self.gamePackage)
 	{
         //TODO: deal with any mounting errors that occurred. Since all this happens automatically
         //during startup, we can't give errors straight to the user as they will seem cryptic.
-        
-		//Mount the game package as a new hard drive, at drive C.
-		//(This may get replaced below by a custom bundled C volume;
-        //we do it now to reserve drive C so that it doesn't get autoassigned.)
-		BXDrive *packageDrive = [BXDrive hardDriveFromPath: package.gamePath atLetter: @"C"];
-        packageDrive.title = NSLocalizedString(@"Game Drive", @"The display title for the gamebox’s C drive.");
-        
-		packageDrive = [self mountDrive: packageDrive
-                               ifExists: BXDriveReplace
-                                options: BXBundledDriveMountOptions
-                                  error: nil];
         		
-		//Then, mount any extra volumes included in the game package
+        //First, mount any bundled drives from the gamebox.
 		NSMutableArray *packageVolumes = [NSMutableArray arrayWithCapacity: 10];
-		[packageVolumes addObjectsFromArray: package.floppyVolumes];
-		[packageVolumes addObjectsFromArray: package.hddVolumes];
-		[packageVolumes addObjectsFromArray: package.cdVolumes];
+		[packageVolumes addObjectsFromArray: self.gamePackage.floppyVolumes];
+		[packageVolumes addObjectsFromArray: self.gamePackage.hddVolumes];
+		[packageVolumes addObjectsFromArray: self.gamePackage.cdVolumes];
 		
 		BOOL hasProperDriveC = NO;
+        NSString *titleForDriveC = NSLocalizedString(@"Game Drive", @"The display title for the gamebox’s C drive.");
+        
         for (NSString *volumePath in packageVolumes)
 		{
 			BXDrive *bundledDrive = [BXDrive driveFromPath: volumePath atLetter: nil];
             
-			//If a bundled drive was explicitly set to use drive C,
-            //then replace our original C package-drive with it
-			if (!hasProperDriveC && [bundledDrive.letter isEqualToString: packageDrive.letter])
-			{
-                bundledDrive.title = packageDrive.title;
-                
-                BXDrive *mountedDrive = [self mountDrive: bundledDrive
-                                                ifExists: BXDriveReplace
-                                                 options: BXDriveForceUnmounting | BXDriveRemoveExistingFromQueue
-                                                   error: nil];
-                
-                if (mountedDrive)
-                {
-				    //Rewrite our target to point to the new C drive, if it was pointing to the old one
-                    if ([self.targetPath isEqualToString: packageDrive.path])
-                        self.targetPath = volumePath;
-                    
-                    //Don't look any further for a C drive
-                    hasProperDriveC = YES;
-                    
-                    //Aaand use this as our package drive from here on
-                    packageDrive = bundledDrive;
-				}
-			}
-            else
+            //If this will be our C drive, give it a custom title.
+            if ([bundledDrive.letter isEqualToString: @"C"])
             {
-                [self mountDrive: bundledDrive
-                        ifExists: BXDriveQueue
-                         options: BXBundledDriveMountOptions
-                           error: nil];
+                hasProperDriveC = YES;
+                bundledDrive.title = titleForDriveC;
+                
+                //If our target was the gamebox itself, rewrite it to point to this C drive
+                //so that we'll start up at drive C.
+                if ([self.targetPath isEqualToString: self.gamePackage.gamePath])
+                    self.targetPath = volumePath;
             }
+            
+            [self mountDrive: bundledDrive
+                    ifExists: BXDriveQueue
+                     options: BXBundledDriveMountOptions
+                       error: nil];
 		}
+        
+        //If we don't have a drive C after mounting all of the gamebox's drives,
+        //that means it's an old-style gamebox without an explicit drive C of its own.
+        //In this case, mount the gamebox itself as drive C.
+        if (!hasProperDriveC)
+        {
+            BXDrive *packageDrive = [BXDrive hardDriveFromPath: self.gamePackage.gamePath
+                                                      atLetter: @"C"];
+            
+            packageDrive.title = titleForDriveC;
+            
+            packageDrive = [self mountDrive: packageDrive
+                                   ifExists: BXDriveReplace
+                                    options: BXBundledDriveMountOptions
+                                      error: nil];
+        }
 	}
 	
 	//Automount all currently mounted floppy and CD-ROM volumes.
@@ -1458,26 +1448,23 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	
 	//Once all regular drives are in place, check if our target program/folder
     //is now accessible in DOS: if not, add another drive allowing access to it.
-	if (self.targetPath)
+	if (self.targetPath && [self shouldMountNewDriveForPath: self.targetPath])
 	{
-        if ([self shouldMountNewDriveForPath: self.targetPath])
+        //Unlike the drives built into the gamebox, we do actually
+        //want to show errors if something goes wrong here.
+        NSError *mountError = nil;
+        [self mountDriveForPath: self.targetPath
+                       ifExists: BXDriveReplace
+                        options: BXTargetMountOptions
+                          error: &mountError];
+        
+        if (mountError)
         {
-            //Unlike the drives built into the gamebox, we do actually
-            //want to show errors if something goes wrong here.
-		    NSError *mountError = nil;
-            [self mountDriveForPath: self.targetPath
-                           ifExists: BXDriveReplace
-                            options: BXTargetMountOptions
-                              error: &mountError];
-            
-            if (mountError)
-            {
-                [self presentError: mountError
-                    modalForWindow: [self windowForSheet]
-                          delegate: nil
-                didPresentSelector: NULL
-                       contextInfo: NULL];
-            }
+            [self presentError: mountError
+                modalForWindow: self.windowForSheet
+                      delegate: nil
+            didPresentSelector: NULL
+                   contextInfo: NULL];
         }
 	}
 }

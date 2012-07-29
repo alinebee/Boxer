@@ -36,31 +36,37 @@ enum {
                                                     //floppy drives, and will have no effect in
                                                     //combination with BXDriveReassign.
     
-    BXDriveUseBackingImageIfAvailable   = 1U << 1,  //If the source path for this drive is a filesystem
+    BXDriveAvoidAssigningDriveC         = 1U << 1,  //When mounting a drive that doesn't have a specific
+                                                    //drive letter, avoid giving it drive C. This is used
+                                                    //during gamebox drive mounting to keep drive C free
+                                                    //of auto-assigned drives.
+                                                    
+    
+    BXDriveUseBackingImageIfAvailable   = 1U << 2,  //If the source path for this drive is a filesystem
                                                     //volume, then any backing image for that volume
                                                     //will be used instead of the volume itself.
     
-    BXDriveUseShadowingIfAvailable      = 1U << 2,  //Shadow writes to this drive to a separate location
+    BXDriveUseShadowingIfAvailable      = 1U << 3,  //Shadow writes to this drive to a separate location
                                                     //if appropriate.
 };
 
 //These options are applicable to both mountDrive:ifExists:options:error and unmountDrive:options:error:.
 enum {
-    BXDriveShowNotifications            = 1U << 3,  //Notification bezels will be shown when this drive
+    BXDriveShowNotifications            = 1U << 4,  //Notification bezels will be shown when this drive
                                                     //is added/ejected.
     
-    BXDriveRemoveExistingFromQueue      = 1U << 4,  //Forget about any unmounted/replaced drive altogether,
+    BXDriveRemoveExistingFromQueue      = 1U << 5,  //Forget about any unmounted/replaced drive altogether,
                                                     //rather than letting it remain in the queue to be
                                                     //remounted.
     
-    BXDriveReplaceWithSiblingFromQueue  = 1U << 5,  //When a drive is unmounted, replace it with the next
+    BXDriveReplaceWithSiblingFromQueue  = 1U << 6,  //When a drive is unmounted, replace it with the next
                                                     //drive in the same queue, if available.
                                                     //Only applicable to unmountDrive:options:error:.
     
-    BXDriveForceUnmounting              = 1U << 6,  //Force any unmounted/replaced drive to be unmounted
+    BXDriveForceUnmounting              = 1U << 7,  //Force any unmounted/replaced drive to be unmounted
                                                     //even if it appears to be in use.
     
-    BXDriveForceUnmountingIfRemovable   = 1U << 7,  //Act as BXDriveForceUnmounting if the drive in question
+    BXDriveForceUnmountingIfRemovable   = 1U << 8,  //Act as BXDriveForceUnmounting if the drive in question
                                                     //is a floppy-disk or CD-ROM. Has no effect for hard disks.
 
 };
@@ -74,9 +80,10 @@ enum {
     BXDefaultDriveMountOptions = BXDriveKeepWithSameType | BXDriveShowNotifications | BXDriveUseBackingImageIfAvailable | BXDriveForceUnmountingIfRemovable | BXDriveUseShadowingIfAvailable,
     
     //Behaviour when mounting the gamebox's drives at the start of emulation.
-    //Disables notification and searching for backing images, and will queue
-    //CD and floppy drives with others of their own kind.
-    BXBundledDriveMountOptions = BXDriveKeepWithSameType | BXDriveUseShadowingIfAvailable,
+    //Disables notification and searching for backing images, tries to keep
+    //drive C free for specific C drives, and will queue CD and floppy drives
+    //with others of their own kind.
+    BXBundledDriveMountOptions = BXDriveKeepWithSameType | BXDriveUseShadowingIfAvailable | BXDriveAvoidAssigningDriveC,
     
     //Behaviour when mounting OS X floppy/CD volumes at the start of emulation.
     //Same as default behaviour, but will look for backing images also.

@@ -259,7 +259,7 @@ typedef NSUInteger BXFileOpenOptions;
 {
     NSURL *shadowedURL = [self shadowedURLForURL: URL];
     if (shadowedURL)
-    {   
+    {
         NSURL *deletionMarkerURL = [shadowedURL URLByAppendingPathExtension: BXShadowedDeletionMarkerExtension];
         
         BXFileOpenOptions accessOptions = [self.class optionsFromAccessMode: accessMode];

@@ -653,6 +653,10 @@
 		9FB4F9E411957B55006C8AC9 /* BXVideoFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4F9E311957B55006C8AC9 /* BXVideoFrame.m */; };
 		9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
 		9FB554220F6EAC5F00A33017 /* NSAlert+BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */; };
+		9FB60E8E15C5552F00CD0D63 /* NSURL+BXFilePaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */; };
+		9FB60E8F15C5552F00CD0D63 /* NSURL+BXFilePaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */; };
+		9FB60E9215C5643200CD0D63 /* NSError+BXErrorHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E9115C5643200CD0D63 /* NSError+BXErrorHelpers.m */; };
+		9FB60E9315C5643200CD0D63 /* NSError+BXErrorHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E9115C5643200CD0D63 /* NSError+BXErrorHelpers.m */; };
 		9FB642A313FEB71D00385DD3 /* BXISOImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F81CFB813EEA3F4008F0265 /* BXISOImage.m */; };
 		9FB642A413FEB71D00385DD3 /* BXBinCueImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98589613EF71F600E66877 /* BXBinCueImage.m */; };
 		9FBA48C01450B73900F9BBDE /* Keyboard.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBA48BF1450B73900F9BBDE /* Keyboard.png */; };
@@ -1438,6 +1442,10 @@
 		9FB553E00F6EA30900A33017 /* BXCloseAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCloseAlert.m; sourceTree = "<group>"; };
 		9FB554200F6EAC5F00A33017 /* NSAlert+BXAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAlert+BXAlert.h"; sourceTree = "<group>"; };
 		9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAlert+BXAlert.m"; sourceTree = "<group>"; };
+		9FB60E8C15C5552F00CD0D63 /* NSURL+BXFilePaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+BXFilePaths.h"; sourceTree = "<group>"; };
+		9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+BXFilePaths.m"; sourceTree = "<group>"; };
+		9FB60E9015C5643200CD0D63 /* NSError+BXErrorHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+BXErrorHelpers.h"; sourceTree = "<group>"; };
+		9FB60E9115C5643200CD0D63 /* NSError+BXErrorHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+BXErrorHelpers.m"; sourceTree = "<group>"; };
 		9FBA48BF1450B73900F9BBDE /* Keyboard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Keyboard.png; sourceTree = "<group>"; };
 		9FBAA6BB134A1A430092BF95 /* BXCDImageImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCDImageImport.h; sourceTree = "<group>"; };
 		9FBAA6BC134A1A430092BF95 /* BXCDImageImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCDImageImport.m; sourceTree = "<group>"; };
@@ -2701,6 +2709,8 @@
 				9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */,
 				9FC8F50A10934F3400AD6307 /* NSString+BXPaths.h */,
 				9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */,
+				9FB60E8C15C5552F00CD0D63 /* NSURL+BXFilePaths.h */,
+				9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */,
 				9FAA44A511EB24A90042B986 /* NSString+BXStringFormatting.h */,
 				9FAA44A611EB24A90042B986 /* NSString+BXStringFormatting.m */,
 				9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */,
@@ -2729,6 +2739,8 @@
 				9F1DE9B114FB7F3800F9C91E /* NSObject+BXPerformExtensions.m */,
 				9F5F12C415ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.h */,
 				9F5F12C515ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.m */,
+				9FB60E9015C5643200CD0D63 /* NSError+BXErrorHelpers.h */,
+				9FB60E9115C5643200CD0D63 /* NSError+BXErrorHelpers.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -3810,6 +3822,8 @@
 				9F5F12C615ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.m in Sources */,
 				9FCB7B1015B844AB00CC7CC7 /* BXBaseAppController.m in Sources */,
 				9F98410215BEE64400B50CDA /* BXShadowedFilesystem.m in Sources */,
+				9FB60E8E15C5552F00CD0D63 /* NSURL+BXFilePaths.m in Sources */,
+				9FB60E9215C5643200CD0D63 /* NSError+BXErrorHelpers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4097,6 +4111,8 @@
 				9FCB7B1815B8570E00CC7CC7 /* BXDriveBundleImport.m in Sources */,
 				9FCB7B1A15B8589B00CC7CC7 /* BXDOSWindowController.m in Sources */,
 				9F98410315BEE64400B50CDA /* BXShadowedFilesystem.m in Sources */,
+				9FB60E8F15C5552F00CD0D63 /* NSURL+BXFilePaths.m in Sources */,
+				9FB60E9315C5643200CD0D63 /* NSError+BXErrorHelpers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

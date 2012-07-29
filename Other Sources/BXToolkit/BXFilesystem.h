@@ -14,8 +14,8 @@ typedef BOOL (^BXDirectoryEnumeratorErrorHandler)(NSURL *url, NSError *error);
 @protocol BXFilesystem <NSObject>
 
 //Resolves a URL to/from a filesystem representation.
-- (const char *) filesystemRepresentationForURL: (NSURL *)URL;
-- (NSURL *) URLFromFilesystemRepresentation: (const char *)representation;
+- (const char *) fileSystemRepresentationForURL: (NSURL *)URL;
+- (NSURL *) URLFromFileSystemRepresentation: (const char *)representation;
 
 //Returns an enumerator for the specified URL, that will return NSURL objects.
 //This enumerator should respect the same parameters as NSFileManager's
@@ -68,7 +68,7 @@ typedef BOOL (^BXDirectoryEnumeratorErrorHandler)(NSURL *url, NSError *error);
 - (NSURL *) nextObject;
 
 //Returns the filesystem representation of the specified URL, or NULL if this is not applicable.
-- (const char *) filesystemRepresentationForURL: (NSURL *)URL;
+- (const char *) fileSystemRepresentationForURL: (NSURL *)URL;
 
 //Reset the enumerator back to the first entry.
 - (void) reset;

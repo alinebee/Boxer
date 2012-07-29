@@ -823,7 +823,7 @@
             {
                 //In order to display the error to the user,
                 //we need to get the confirmation sheet out of the way.
-                [alert.window orderOut: self];
+                [self.windowForSheet.attachedSheet orderOut: self];
                 
                 [self presentError: mergeError
                     modalForWindow: self.windowForSheet

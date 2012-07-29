@@ -6,7 +6,8 @@
  */
 
 #import "BXShadowedFilesystem.h"
-#import "NSString+BXPaths.h"
+#import "NSURL+BXFilePaths.h"
+#import "NSError+BXErrorHelpers.h"
 #import "BXPostLeopardAPIs.h"
 
 #pragma mark -
@@ -96,6 +97,39 @@ typedef NSUInteger BXFileOpenOptions;
     [super dealloc];
 }
 
+- (void) setSourceURL: (NSURL *)URL
+{
+    if (URL != nil)
+    {
+        //Derive a canonical version of the URL, ensuring it is fully-resolved
+        //and marked as a directory.
+        URL = [NSURL fileURLWithPath: URL.path.stringByResolvingSymlinksInPath
+                         isDirectory: YES];
+    }
+    
+    if (![URL isEqual: self.sourceURL])
+    {
+        [_sourceURL release];
+        _sourceURL = [URL copy];
+    }
+}
+
+- (void) setShadowURL: (NSURL *)URL
+{
+    if (URL != nil)
+    {
+        //Derive a canonical version of the URL, ensuring it is fully-resolved
+        //and marked as a directory.
+        URL = [NSURL fileURLWithPath: URL.path.stringByResolvingSymlinksInPath
+                         isDirectory: YES];
+    }
+    
+    if (![URL isEqual: self.shadowURL])
+    {
+        [_shadowURL release];
+        _shadowURL = [URL copy];
+    }
+}
 
 #pragma mark -
 #pragma mark Path translation
@@ -104,10 +138,10 @@ typedef NSUInteger BXFileOpenOptions;
 {
     //If we don't have a shadow, or the specified URL isn't located within
     //our source URL, there is no shadow URL that would be applicable.
-    if (!self.shadowURL || ![URL.path isRootedInPath: self.sourceURL.path])
+    if (!self.shadowURL || ![URL isBasedInURL: self.sourceURL])
         return nil;
     
-    NSString *relativePath = [URL.path pathRelativeToPath: self.sourceURL.path];
+    NSString *relativePath = [URL pathRelativeToURL: self.sourceURL];
     
     return [self.shadowURL URLByAppendingPathComponent: relativePath];
 }
@@ -116,10 +150,10 @@ typedef NSUInteger BXFileOpenOptions;
 {
     //If we don't have a shadow, or the specified URL isn't located within
     //our shadow URL, there is no source URL that would be applicable.
-    if (!self.shadowURL || ![URL.path isRootedInPath: self.shadowURL.path])
+    if (!self.shadowURL || ![URL isBasedInURL: self.shadowURL])
         return nil;
     
-    NSString *relativePath = [URL.path pathRelativeToPath: self.shadowURL.path];
+    NSString *relativePath = [URL pathRelativeToURL: self.shadowURL];
     
     //If this is a deletion marker, map it back to the original file
     if ([relativePath.pathExtension isEqualToString: BXShadowedDeletionMarkerExtension])
@@ -149,27 +183,23 @@ typedef NSUInteger BXFileOpenOptions;
     else return nil;
 }
 
-- (const char *) filesystemRepresentationForURL: (NSURL *)URL
+- (const char *) fileSystemRepresentationForURL: (NSURL *)URL
 {
     NSURL *canonicalURL = [self canonicalFilesystemURL: URL];
-    return canonicalURL.path.fileSystemRepresentation;
+    return canonicalURL.fileSystemRepresentation;
 }
 
-- (NSURL *) URLFromFilesystemRepresentation: (const char *)representation
+- (NSURL *) URLFromFileSystemRepresentation: (const char *)representation
 {
-    NSString *path = [self.manager stringWithFileSystemRepresentation: representation
-                                                               length: strlen(representation)];
+    NSURL *originalURL = [NSURL URLFromFileSystemRepresentation: representation];
     
-    //If the path is within the shadow, convert it to the equivalent URL within the source instead.
-    if ([path isRootedInPath: self.shadowURL.path])
-    {
-        NSString *relativePath = [path pathRelativeToPath: self.shadowURL.path];
-        return [self.sourceURL URLByAppendingPathComponent: relativePath];
-    }
+    NSURL *sourceURL = [self sourceURLForURL: originalURL];
+    //If the URL was located within the shadow, return the equivalent URL within the source.
+    if (sourceURL)
+        return sourceURL;
+    //Otherwise, return the URL as-is.
     else
-    {
-        return [NSURL fileURLWithPath: path];
-    }
+        return originalURL;
 }
 
 #pragma mark -
@@ -345,7 +375,7 @@ typedef NSUInteger BXFileOpenOptions;
                                       inMode: (const char *)accessMode
                                        error: (NSError **)outError
 {
-    const char *rep = URL.path.fileSystemRepresentation;
+    const char *rep = URL.fileSystemRepresentation;
     FILE *handle = fopen(rep, accessMode);
     
     if (handle)
@@ -446,7 +476,6 @@ typedef NSUInteger BXFileOpenOptions;
         [self.manager removeItemAtURL: shadowedToURL error: NULL];
         
         
-        NSLog(@"Transferring from %@ to %@", shadowedFromURL, shadowedToURL);
         //If the source file has a shadow, try using that as the source initially,
         //falling back on the original source if that fails.
         BOOL succeeded = [self.manager copyItemAtURL: shadowedFromURL
@@ -455,7 +484,6 @@ typedef NSUInteger BXFileOpenOptions;
         
         if (!succeeded)
         {
-            NSLog(@"Transferring from %@ to %@", fromURL, shadowedToURL);
             succeeded = [self.manager copyItemAtURL: fromURL
                                               toURL: shadowedToURL
                                               error: outError];
@@ -463,7 +491,6 @@ typedef NSUInteger BXFileOpenOptions;
         
         if (succeeded)
         {
-            NSLog(@"Transfer succeeded!");
             //If the initial copy succeeded, then remove any shadowed source and flag
             //the original source as deleted (since it has ostensibly been moved.)
             if (!copy)
@@ -488,7 +515,6 @@ typedef NSUInteger BXFileOpenOptions;
         //to leave a partially-copied file?
         else
         {
-            NSLog(@"Transfer failed!");
             [self.manager removeItemAtURL: shadowedToURL error: NULL];
             
             return NO;
@@ -545,7 +571,7 @@ typedef NSUInteger BXFileOpenOptions;
 
 - (void) _createDeletionMarkerAtURL: (NSURL *)markerURL
 {
-    //Ensure the filesystem tructure leading up to this URL also exists
+    //Ensure the filesystem structure leading up to this URL also exists
     [self.manager createDirectoryAtURL: markerURL.URLByDeletingLastPathComponent
            withIntermediateDirectories: YES
                             attributes: nil
@@ -692,6 +718,9 @@ typedef NSUInteger BXFileOpenOptions;
             BOOL sourceExists = [self.manager fileExistsAtPath: sourceDirectoryURL.path
                                                    isDirectory: &sourceIsDirectory];
             
+            //NOTE: we make sure also that the original is also a directory: if the shadowed
+            //filesystem has replaced a file with a directory, then we should keep the
+            //shadowed directory around.
             if (sourceExists && sourceIsDirectory)
             {
                 BOOL cleanedUpDirectory = [self.manager removeItemAtURL: shadowDirectoryURL error: outError];
@@ -717,8 +746,7 @@ typedef NSUInteger BXFileOpenOptions;
         //Ignore failure if the shadow simply didn't exist.
         if (!removedShadow)
         {
-            if ([removalError.domain isEqualToString: NSCocoaErrorDomain] &&
-                removalError.code == NSFileNoSuchFileError)
+            if ([removalError matchesDomain: NSCocoaErrorDomain code: NSFileNoSuchFileError])
             {
                 removedShadow = YES;
             }
@@ -752,8 +780,7 @@ typedef NSUInteger BXFileOpenOptions;
         //the original didn't exist then treat this as successful, otherwise fail.
         if (!deleted)
         {
-            if ([deletionError.domain isEqualToString: NSCocoaErrorDomain] &&
-                deletionError.code == NSFileNoSuchFileError)
+            if ([deletionError matchesDomain: NSCocoaErrorDomain code: NSFileNoSuchFileError])
             {
                 deleted = YES;
             }
@@ -794,17 +821,42 @@ typedef NSUInteger BXFileOpenOptions;
         //FIXME: this suffers from race conditions and should be rephrased
         //to use the atomic replaceItemAtURL:withItemAtURL: method or similar.
         else
-        {
-            BOOL removedSource = [self.manager removeItemAtURL: sourceURL
-                                                         error: outError];
-            if (!removedSource)
-                return NO;
+        {   
+            NSError *replacementError;
+            BOOL movedToSource = [self.manager moveItemAtURL: shadowedURL
+                                                       toURL: sourceURL
+                                                       error: &replacementError];
             
-            BOOL replacedSource = [self.manager moveItemAtURL: shadowedURL
-                                                        toURL: sourceURL
-                                                        error: outError];
-            if (!replacedSource)
-                return NO;
+            if (!movedToSource)
+            {
+                //If the move failed because the source already existed,
+                //then try deleting the source and reattempt the move.
+                //If that fails, give up entirely.
+                if ([replacementError matchesDomain: NSCocoaErrorDomain
+                                               code: NSFileWriteFileExistsError])
+                {
+                    BOOL removedSource = [self.manager removeItemAtURL: sourceURL
+                                                                 error: outError];
+                    
+                    if (!removedSource)
+                        return NO;
+                    
+                    BOOL replacedSource = [self.manager moveItemAtURL: shadowedURL
+                                                                toURL: sourceURL
+                                                                error: outError];
+                    
+                    if (!replacedSource)
+                        return NO;
+                }
+                //If the move failed for some other reason, bail out altogether.
+                else
+                {
+                    if (outError)
+                        *outError = replacementError;
+                    return NO;
+                }
+                
+            }
         }
         
         return YES;
@@ -1032,7 +1084,7 @@ includingPropertiesForKeys: (NSArray *)keys
     NSURL *nextURL;
     while ((nextURL = [self.sourceEnumerator nextObject]) != nil)
     {
-        NSString *relativePath = [nextURL.path pathRelativeToPath: self.sourceURL.path];
+        NSString *relativePath = [nextURL pathRelativeToURL: self.sourceURL];
         
         //If this path was marked as deleted in the shadow, ignore it
         //and skip any descendants if it was a directory.
@@ -1056,11 +1108,11 @@ includingPropertiesForKeys: (NSArray *)keys
     NSURL *nextURL;
     while ((nextURL = [self.shadowEnumerator nextObject]) != nil)
     {
-        NSString *relativePath = [nextURL.path pathRelativeToPath: self.shadowURL.path];
+        NSString *relativePath = [nextURL pathRelativeToURL: self.shadowURL];
         
         //Skip over shadow deletion markers, but mark the filename so that we'll also skip
         //the 'deleted' version when enumerating the original source location.
-        if ([nextURL.pathExtension isEqualToString: BXShadowedDeletionMarkerExtension])
+        if ([relativePath.pathExtension isEqualToString: BXShadowedDeletionMarkerExtension])
         {
             [self.deletedPaths addObject: relativePath.stringByDeletingPathExtension];
             continue;
@@ -1075,9 +1127,9 @@ includingPropertiesForKeys: (NSArray *)keys
     return nil;
 }
 
-- (const char *) filesystemRepresentationForURL: (NSURL *)URL
+- (const char *) fileSystemRepresentationForURL: (NSURL *)URL
 {
-    return [self.filesystem filesystemRepresentationForURL: URL];
+    return [self.filesystem fileSystemRepresentationForURL: URL];
 }
 
 @end

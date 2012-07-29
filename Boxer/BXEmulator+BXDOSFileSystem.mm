@@ -1278,7 +1278,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    const char *filesystemPath = [drive.filesystem filesystemRepresentationForURL: [NSURL fileURLWithPath: path]];
+    const char *filesystemPath = [drive.filesystem fileSystemRepresentationForURL: [NSURL fileURLWithPath: path]];
     
     if (filesystemPath)
     {

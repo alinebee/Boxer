@@ -302,7 +302,9 @@ typedef NSUInteger BXFileOpenOptions;
             if (!truncateExistingFile)
             {
                 NSError *copyError = nil;
-                BOOL copied = [self.manager copyItemAtURL: URL toURL: shadowedURL error: &copyError];
+                //Ensure we're copying the actual file and not a symlink.
+                NSURL *resolvedURL = [URL URLByResolvingSymlinksInPath];
+                BOOL copied = [self.manager copyItemAtURL: resolvedURL toURL: shadowedURL error: &copyError];
                 
                 //IMPLEMENTATION NOTE: if we couldn't copy the original (e.g. because
                 //it didn't exist) but we're allowed to create the file if it's missing,

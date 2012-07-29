@@ -577,7 +577,7 @@
 	NSRect renderFrame		= [theWindow contentRectForFrameRect: proposedFrame];
 	
 	CGFloat snappedWidth	= roundf(renderFrame.size.width / snapIncrement.width) * snapIncrement.width;
-	CGFloat widthDiff		= abs(snappedWidth - renderFrame.size.width);
+	CGFloat widthDiff		= ABS(snappedWidth - renderFrame.size.width);
 	if (widthDiff > 0 && widthDiff <= snapThreshold)
 	{
 		renderFrame.size.width = snappedWidth;

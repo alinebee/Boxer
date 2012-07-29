@@ -64,6 +64,8 @@ NSString * const BXBSNESShaderErrorDomain = @"BXBSNESShaderErrorDomain";
         return [self shadersWithDefinition: definition
                                  inContext: context
                                      error: outError];
+        
+        [definition release];
     }
     else return nil;
 }

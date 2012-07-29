@@ -938,6 +938,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	
 	//Clean up after DOSBox finishes
 	[[self videoHandler] shutdown];
+    control = NULL;
 }
 
 @end

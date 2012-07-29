@@ -8,6 +8,7 @@
 
 #import "BXStandaloneAppController.h"
 #import "BXSession.h"
+#import "BXEmulator.h"
 
 #pragma mark -
 #pragma mark App-menu replacement constants
@@ -113,6 +114,8 @@ NSString * const BXOrganizationCatalogueURLInfoPlistKey = @"BXOrganizationCatalo
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
 {
+    [NSApp activateIgnoringOtherApps: YES];
+    
     NSError *launchError = nil;
     BXSession *session = [self openBundledGameAndDisplay: YES error: &launchError];
     
@@ -134,45 +137,58 @@ NSString * const BXOrganizationCatalogueURLInfoPlistKey = @"BXOrganizationCatalo
 
 - (id) makeUntitledDocumentOfType: (NSString *)typeName error: (NSError **)outError
 {
-    NSString *bundledGameboxName = [[NSBundle mainBundle] objectForInfoDictionaryKey: BXBundledGameboxNameInfoPlistKey];
-    NSURL *bundledGameboxURL = [[NSBundle mainBundle] URLForResource: bundledGameboxName
-                                                       withExtension: @"boxer"];
-    
-    if (bundledGameboxURL)
+    if ([BXEmulator canLaunchEmulator])
     {
-        BXSession *session = [[BXSession alloc] initWithContentsOfURL: bundledGameboxURL
-                                                               ofType: typeName
-                                                                error: outError];
-        return session;
+        NSString *bundledGameboxName = [[NSBundle mainBundle] objectForInfoDictionaryKey: BXBundledGameboxNameInfoPlistKey];
+        NSURL *bundledGameboxURL = [[NSBundle mainBundle] URLForResource: bundledGameboxName
+                                                           withExtension: @"boxer"];
+        
+        if (bundledGameboxURL)
+        {
+            BXSession *session = [[BXSession alloc] initWithContentsOfURL: bundledGameboxURL
+                                                                   ofType: typeName
+                                                                    error: outError];
+            return session;
+        }
+        else
+        {
+            if (outError)
+            {
+                NSString *errorTitle = @"This application does not contain a bundled gamebox.";
+                NSString *errorSuggestion = @"Ensure that the gamebox is placed in the Resources folder of the application, and that the Info.plist contains a “BXBundledGameboxName” key specifying the name of the gamebox without an extension.";
+                NSDictionary *errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                           errorTitle, NSLocalizedDescriptionKey,
+                                           errorSuggestion, NSLocalizedRecoverySuggestionErrorKey,
+                                           nil];
+                
+                *outError = [NSError errorWithDomain: BXStandaloneAppErrorDomain
+                                                code: BXStandaloneAppMissingGameboxError
+                                            userInfo: errorInfo];
+            }
+            
+            return nil;
+        }
     }
+    //If we've already launched the emulator once (i.e. if we're restarting the game)
+    //then we'll need to replace ourselves with a separate process to handle it.
     else
     {
-        if (outError)
-        {
-            NSString *errorTitle = @"This application does not contain a bundled gamebox.";
-            NSString *errorSuggestion = @"Ensure that the gamebox is placed in the Resources folder of the application, and that the Info.plist contains a “BXBundledGameboxName” key specifying the name of the gamebox without an extension.";
-            NSDictionary *errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                       errorTitle, NSLocalizedDescriptionKey,
-                                       errorSuggestion, NSLocalizedRecoverySuggestionErrorKey,
-                                       nil];
-            
-            *outError = [NSError errorWithDomain: BXStandaloneAppErrorDomain
-                                            code: BXStandaloneAppMissingGameboxError
-                                        userInfo: errorInfo];
-        }
+        NSString *executablePath = [[NSBundle mainBundle] executablePath];
+        [NSTask launchedTaskWithLaunchPath: executablePath arguments: [NSArray array]];
         
+        if (outError)
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                            code: NSUserCancelledError
+                                        userInfo: nil];
         return nil;
     }
 }
 
-//This should never be called: we do not support
 - (id) makeDocumentWithContentsOfURL: (NSURL *)absoluteURL
                               ofType: (NSString *)typeName
                                error: (NSError **)outError
 {
-    NSAssert(NO, @"makeDocumentWithContentsOfURL:ofType:error: is not supported.");
-    
-    return NO;
+    return [self makeUntitledDocumentOfType: typeName error: outError];
 }
 
 //Suppress the automatic opening of untitled files when the user refocuses the application.

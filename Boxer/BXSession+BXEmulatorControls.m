@@ -706,20 +706,43 @@
     {
         NSAlert *confirmation = [[NSAlert alloc] init];
         
-        NSString *messageFormat = NSLocalizedString(@"Do you want to revert to the original version of “%@”?",
-                                                    @"Bold text of confirmation when reverting the current session to its original state. %@ is the display name of the session.");
+        //We use slightly different terms to refer to the operation depending on whether we’re
+        //a standalone game-app or not.
+        if ([[NSApp delegate] isStandaloneGameBundle])
+        {
+            NSString *messageFormat = NSLocalizedString(@"Do you want to reset %@ to its original state?",
+                                                        @"Bold text of confirmation when reverting a standalone game app to its original state. %@ is the name of the app.");
+            
+            confirmation.messageText = [NSString stringWithFormat: messageFormat, self.displayName];
+            
+            confirmation.informativeText = NSLocalizedString(@"Your savegames and player data will be lost.",
+                                                             @"Informative text of confirmation when reverting a standalone game app to its original state.");
+            
+            NSString *closeLabel	= NSLocalizedString(@"Reset and Relaunch", @"Label for button to confirm that the user wants to revert a standalone game app to its original state.");
+            NSString *cancelLabel	= NSLocalizedString(@"Cancel",	@"Cancel the current action and return to what the user was doing");
+            
+            [confirmation addButtonWithTitle: closeLabel];
+            //Ensure the cancel button always uses Escape
+            [confirmation addButtonWithTitle: cancelLabel].keyEquivalent = @"\e";
+        }
+        else
+        {
+            NSString *messageFormat = NSLocalizedString(@"Do you want to revert %@ to its original state?",
+                                                        @"Bold text of confirmation when reverting the current session to its original state. %@ is the display name of the session.");
+            
+            confirmation.messageText = [NSString stringWithFormat: messageFormat, self.displayName];
+            
+            confirmation.informativeText = NSLocalizedString(@"Your savegames and file modifications will be lost.",
+                                                             @"Informative text of confirmation when reverting the current session to its original state.");
+            
+            NSString *closeLabel	= NSLocalizedString(@"Revert and Relaunch", @"Label for button to confirm that the user wants to revert the current session to its original state.");
+            NSString *cancelLabel	= NSLocalizedString(@"Cancel",	@"Cancel the current action and return to what the user was doing");
+            
+            [confirmation addButtonWithTitle: closeLabel];
+            //Ensure the cancel button always uses Escape
+            [confirmation addButtonWithTitle: cancelLabel].keyEquivalent = @"\e";
+        }
         
-        confirmation.messageText = [NSString stringWithFormat: messageFormat, self.displayName];
-        
-        confirmation.informativeText = NSLocalizedString(@"Your savegames and file modifications will be lost.",
-                                                         @"Informative text of confirmation when reverting the current session to its original state.");
-        
-		NSString *closeLabel	= NSLocalizedString(@"Revert and Relaunch", @"Label for button to confirm that the user wants to revert the current session to its original state.");
-		NSString *cancelLabel	= NSLocalizedString(@"Cancel",	@"Cancel the current action and return to what the user was doing");
-        
-        [confirmation addButtonWithTitle: closeLabel];
-        //Ensure the cancel button always uses Escape
-		[confirmation addButtonWithTitle: cancelLabel].keyEquivalent = @"\e";
         
         [confirmation adoptIconFromWindow: self.windowForSheet];
         
@@ -739,7 +762,7 @@
     {
         NSAlert *confirmation = [[NSAlert alloc] init];
         
-        NSString *messageFormat = NSLocalizedString(@"Do you want to merge your changes into “%@”?",
+        NSString *messageFormat = NSLocalizedString(@"Do you want to merge your changes into %@?",
                                                     @"Bold text of confirmation when merging shadowed changes for the current session. %@ is the display name of the session.");
         
         confirmation.messageText = [NSString stringWithFormat: messageFormat, self.displayName];

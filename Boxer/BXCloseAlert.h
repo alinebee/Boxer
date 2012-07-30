@@ -15,11 +15,6 @@
 
 @interface BXCloseAlert : NSAlert
 
-//Shown after exiting a DOS game and returning to the DOS prompt.
-//Asks the user if they want to close the window or return to DOS.
-//(Not currently used.)
-+ (BXCloseAlert *) closeAlertAfterSessionExited: (BXSession *)theSession;
-
 //Shown when closing the window while a DOSBox process is running.
 //Warns the user that any unsaved data will be lost if they continue.
 + (BXCloseAlert *) closeAlertWhileSessionIsEmulating: (BXSession *)theSession;

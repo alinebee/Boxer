@@ -9,6 +9,7 @@
 #import "BXCloseAlert.h"
 #import "NSAlert+BXAlert.h"
 #import "BXImportSession.h"
+#import "BXBaseAppController.h"
 
 @implementation BXCloseAlert
 
@@ -28,36 +29,35 @@
 #pragma mark -
 #pragma mark Close alerts
 
-+ (BXCloseAlert *) closeAlertAfterSessionExited: (BXSession *)theSession
-{
-	BXCloseAlert *alert = [self alert];
-
-	NSString *sessionName	= theSession.displayName;
-	NSString *messageFormat	= NSLocalizedString(@"%@ has now finished.",
-												@"Title of confirmation sheet after a game exits. %@ is the display name of the current DOS session.)");
-
-	alert.messageText = [NSString stringWithFormat: messageFormat, sessionName];
-	alert.informativeText = NSLocalizedString(@"If the program quit unexpectedly, you can return to DOS to examine any error messages.",
-												@"Informative text of confirmation sheet after a game exits.");
-
-    NSButton *closeButton = alert.buttons.lastObject;
-	closeButton.title = NSLocalizedString(@"Return to DOS",
-                                          @"Cancel button for confirmation sheet after game exits: will return user to the DOS prompt.");
-	return alert;
-}
-
 + (BXCloseAlert *) closeAlertWhileSessionIsEmulating: (BXSession *)theSession
 {	
 	BXCloseAlert *alert = [self alert];
 	
-	NSString *sessionName	= theSession.displayName;
-	NSString *messageFormat	= NSLocalizedString(@"Do you want to close %@ while it is still running?",
-												@"Title of confirmation sheet when closing an active DOS session. %@ is the display name of the current DOS session.");
+    if ([[NSApp delegate] isStandaloneGameBundle])
+    {
+        NSString *sessionName	= theSession.displayName;
+        NSString *messageFormat	= NSLocalizedString(@"Do you want to quit %@?",
+                                                    @"Title of confirmation sheet when quitting a standalone game app while the game is still running. %@ is the display name of the app.");
+        
+        alert.messageText = [NSString stringWithFormat: messageFormat, sessionName];
+        alert.informativeText = NSLocalizedString(@"Any unsaved progress will be lost.",
+                                                  @"Informative text of confirmation sheet when quitting a standalone game app while the game is still running.");
+        
+        NSButton *closeButton = [alert.buttons objectAtIndex: 0];
+        closeButton.title = NSLocalizedString(@"Quit",
+                                              @"Close button for confirmation sheet when quitting a standalone game app.");
+    }
+    else
+    {
+        NSString *sessionName	= theSession.displayName;
+        NSString *messageFormat	= NSLocalizedString(@"Do you want to close %@ while it is still running?",
+                                                    @"Title of confirmation sheet when closing an active DOS session. %@ is the display name of the current DOS session.");
 
-	alert.messageText = [NSString stringWithFormat: messageFormat, sessionName];
-	alert.informativeText = NSLocalizedString(@"Any unsaved data will be lost.",
-                                              @"Informative text of confirmation sheet when closing an active DOS session.");
-
+        alert.messageText = [NSString stringWithFormat: messageFormat, sessionName];
+        alert.informativeText = NSLocalizedString(@"Any unsaved data will be lost.",
+                                                  @"Informative text of confirmation sheet when closing an active DOS session.");
+    }
+    
 	return alert;
 }
 
@@ -155,16 +155,29 @@
 + (BXCloseAlert *) restartAlertWhileSessionIsEmulating: (BXSession *)theSession
 {	
 	BXCloseAlert *alert = [self alert];
-	
-	NSString *sessionName	= theSession.displayName;
-	NSString *messageFormat	= NSLocalizedString(@"Do you want to restart %@ while it is still running?",
-												@"Title of confirmation sheet when restarting an active DOS session. %@ is the display name of the current DOS session.");
     
-	alert.messageText = [NSString stringWithFormat: messageFormat, sessionName];
-	alert.informativeText = NSLocalizedString(@"Any unsaved data will be lost.",
-                                              @"Informative text of confirmation sheet when closing an active DOS session.");
+	if ([[NSApp delegate] isStandaloneGameBundle])
+    {
+        NSString *sessionName	= theSession.displayName;
+        NSString *messageFormat	= NSLocalizedString(@"Do you want to restart %@?",
+                                                    @"Title of confirmation sheet when restarting a standalone game app. %@ is the display name of the app.");
+        
+        alert.messageText = [NSString stringWithFormat: messageFormat, sessionName];
+        alert.informativeText = NSLocalizedString(@"Any unsaved progress will be lost.",
+                                                  @"Informative text of confirmation sheet when restarting a standalone game app.");
+	}
+    else
+    {
+        NSString *sessionName	= theSession.displayName;
+        NSString *messageFormat	= NSLocalizedString(@"Do you want to restart %@ while it is still running?",
+                                                    @"Title of confirmation sheet when restarting an active DOS session. %@ is the display name of the current DOS session.");
+        
+        alert.messageText = [NSString stringWithFormat: messageFormat, sessionName];
+        alert.informativeText = NSLocalizedString(@"Any unsaved data will be lost.",
+                                                  @"Informative text of confirmation sheet when closing an active DOS session.");
+    }
     
-	NSButton *closeButton = [alert.buttons objectAtIndex: 0];
+    NSButton *closeButton = [alert.buttons objectAtIndex: 0];
 	closeButton.title = NSLocalizedString(@"Restart",
                                           @"Close button for confirmation sheet when restarting a game session.");
     

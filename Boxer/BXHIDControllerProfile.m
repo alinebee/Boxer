@@ -7,6 +7,7 @@
 
 #import "BXHIDControllerProfilePrivate.h"
 #import "BXBezelController.h"
+#import "DDHIDUsage+BXUsageExtensions.h"
 
 
 @implementation BXHIDControllerProfile

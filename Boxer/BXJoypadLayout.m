@@ -18,12 +18,13 @@ static NSMutableDictionary *layoutClasses = nil;
 	if (!layoutClasses)
 		layoutClasses = [[NSMutableDictionary alloc] initWithCapacity: 10];
 	
-	[layoutClasses setObject: layoutClass forKey: joystickType];
+	[layoutClasses setObject: layoutClass
+                      forKey: NSStringFromClass(joystickType)];
 }
 
 + (Class) layoutClassForJoystickType: (Class)joystickType
 {
-    return [layoutClasses objectForKey: joystickType];
+    return [layoutClasses objectForKey: NSStringFromClass(joystickType)];
 }
 
 + (JoypadControllerLayout *) layoutForJoystickType: (Class)joystickType

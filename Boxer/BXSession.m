@@ -1252,6 +1252,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 #pragma mark -
 #pragma mark Behavioural modifiers
 
+- (BOOL) _shouldAutoMountExternalVolumes
+{
+    //If this is a standalone game app, assume it has everything it needs
+    //and ignore external volumes.
+    if ([[NSApp delegate] isStandaloneGameBundle])
+        return NO;
+    else
+        return YES;
+}
 - (BOOL) _shouldPersistGameProfile: (BXGameProfile *)profile
 {
     return YES;
@@ -1398,10 +1407,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         }
 	}
 	
-	//Automount all currently mounted floppy and CD-ROM volumes.
-	[self mountFloppyVolumesWithError: nil];
-	[self mountCDVolumesWithError: nil];
-	
+	//Automount all currently mounted floppy and CD-ROM volumes if desired.
+    if ([self _shouldAutoMountExternalVolumes])
+    {
+        [self mountFloppyVolumesWithError: nil];
+        [self mountCDVolumesWithError: nil];
+	}
+    
 	//Mount our internal DOS toolkit and temporary drives
 	[self mountToolkitDriveWithError: nil];
     if (!self.gameProfile || [self.gameProfile shouldMountTempDrive])

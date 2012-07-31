@@ -1315,40 +1315,43 @@
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSNotificationCenter *center = [workspace notificationCenter];
 	
-	[center addObserver: self
-			   selector: @selector(volumeDidMount:)
-				   name: NSWorkspaceDidMountNotification
-				 object: workspace];
-	
-	[center addObserver: self
-			   selector: @selector(volumeWillUnmount:)
-				   name: NSWorkspaceWillUnmountNotification
-				 object: workspace];
+    if ([self _shouldAutoMountExternalVolumes])
+    {
+        [center addObserver: self
+                   selector: @selector(volumeDidMount:)
+                       name: NSWorkspaceDidMountNotification
+                     object: workspace];
+        
+        [center addObserver: self
+                   selector: @selector(volumeWillUnmount:)
+                       name: NSWorkspaceWillUnmountNotification
+                     object: workspace];
 
-	[center addObserver: self
-			   selector: @selector(volumeWillUnmount:)
-				   name: NSWorkspaceDidUnmountNotification
-				 object: workspace];
-	
-	[center addObserver: self
-			   selector: @selector(filesystemDidChange:)
-				   name: UKFileWatcherWriteNotification
-				 object: self.watcher];
-	
-	[center addObserver: self
-			   selector: @selector(filesystemDidChange:)
-				   name: UKFileWatcherDeleteNotification
-				 object: self.watcher];
-	
-	[center addObserver: self
-			   selector: @selector(filesystemDidChange:)
-				   name: UKFileWatcherRenameNotification
-				 object: self.watcher];
-	
-	[center addObserver: self
-			   selector: @selector(filesystemDidChange:)
-				   name: UKFileWatcherAccessRevocationNotification
-				 object: self.watcher];
+        [center addObserver: self
+                   selector: @selector(volumeWillUnmount:)
+                       name: NSWorkspaceDidUnmountNotification
+                     object: workspace];
+	}
+    
+    [center addObserver: self
+               selector: @selector(filesystemDidChange:)
+                   name: UKFileWatcherWriteNotification
+                 object: self.watcher];
+    
+    [center addObserver: self
+               selector: @selector(filesystemDidChange:)
+                   name: UKFileWatcherDeleteNotification
+                 object: self.watcher];
+    
+    [center addObserver: self
+               selector: @selector(filesystemDidChange:)
+                   name: UKFileWatcherRenameNotification
+                 object: self.watcher];
+    
+    [center addObserver: self
+               selector: @selector(filesystemDidChange:)
+                   name: UKFileWatcherAccessRevocationNotification
+                 object: self.watcher];
 }
 
 - (void) _deregisterForFilesystemNotifications

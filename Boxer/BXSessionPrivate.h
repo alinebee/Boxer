@@ -122,6 +122,8 @@
 - (void) _interruptionWillBegin: (NSNotification *)notification;
 - (void) _interruptionDidFinish: (NSNotification *)notification;
 
+- (BOOL) _shouldAutoMountExternalVolumes;
+
 - (BOOL) _shouldSuppressDisplaySleep;
 - (void) _syncSuppressesDisplaySleep;
 

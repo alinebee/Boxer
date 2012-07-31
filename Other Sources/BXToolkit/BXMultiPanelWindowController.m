@@ -10,23 +10,23 @@
 
 
 @implementation BXMultiPanelWindowController
-@synthesize panelContainer;
+@synthesize panelContainer = _panelContainer;
 
 - (void) dealloc
 {
-	[self setPanelContainer: nil], [panelContainer release];
-	
+    self.panelContainer = nil;
+    
 	[super dealloc];
 }
 
 - (NSView *) currentPanel
 {
-	return [[[self panelContainer] subviews] lastObject];
+	return self.panelContainer.subviews.lastObject;
 }
 
 - (void) setCurrentPanel: (NSView *)newPanel
 {
-	NSView *oldPanel = [self currentPanel];
+	NSView *oldPanel = self.currentPanel;
 	
 	//If no panel was specified, then just remove the old panel and don't resize at all
 	if (!newPanel)
@@ -36,16 +36,16 @@
 	
 	else if (oldPanel != newPanel)
 	{
-		NSRect newFrame, oldFrame = [[self window] frame];
+		NSRect newFrame, oldFrame = self.window.frame;
 		
-		NSSize newSize	= [newPanel frame].size;
-		NSSize oldSize	= [[self panelContainer] frame].size;
+		NSSize newSize	= newPanel.frame.size;
+		NSSize oldSize	= self.panelContainer.frame.size;
 		
 		NSSize difference = NSMakeSize(newSize.width - oldSize.width,
 									   newSize.height - oldSize.height);
 		
 		//Generate a new window frame that can contain the new panel,
-		//Ensuring that the top left corner stays put
+		//Ensuring that the top left corner stays put.
 		newFrame.origin = NSMakePoint(oldFrame.origin.x,
 									  oldFrame.origin.y - difference.height);
 		newFrame.size	= NSMakeSize(oldFrame.size.width + difference.width,
@@ -53,36 +53,45 @@
 		
 		
 		//Animate the transition from one panel to the next, if we have a previous panel and the window is actually on screen
-		if (oldPanel && [[self window] isVisible])
+		if (oldPanel && self.window.isVisible)
 		{
 			//Resize the new panel to the same size as the old one, in preparation for window resizing
 			//FIXME: this doesn't actually work properly
 			//[newPanel setFrame: [oldPanel frame]];
 			
 			//Add the new panel beneath the old one
-			[[self panelContainer] addSubview: newPanel positioned: NSWindowBelow relativeTo: oldPanel];
+			[self.panelContainer addSubview: newPanel
+                                 positioned: NSWindowBelow
+                                 relativeTo: oldPanel];
 			
-			NSViewAnimation *animation = [[self transitionFromPanel: oldPanel toPanel: newPanel] retain];
-			NSDictionary *resize = [NSDictionary dictionaryWithObjectsAndKeys:
-									[self window], NSViewAnimationTargetKey,
+			NSViewAnimation *animation = [self transitionFromPanel: oldPanel
+                                                           toPanel: newPanel];
+            
+            NSDictionary *resize = [NSDictionary dictionaryWithObjectsAndKeys:
+									self.window, NSViewAnimationTargetKey,
 									[NSValue valueWithRect: newFrame], NSViewAnimationEndFrameKey,
 									nil];
 			
-			[animation setViewAnimations: [[animation viewAnimations] arrayByAddingObject: resize]];
+            animation.viewAnimations = [animation.viewAnimations arrayByAddingObject: resize];
+            
+            animation.animationBlockingMode = NSAnimationBlocking;
 			[animation setAnimationBlockingMode: NSAnimationBlocking];
+            
+            [animation retain];
 			[animation startAnimation];
 			[animation release];
 			
 			//Reset the properties of the original panel once the animation is complete
 			[oldPanel removeFromSuperview];
-			[oldPanel setFrameSize: oldSize];
-			[oldPanel setHidden: NO];
+            oldPanel.frameSize = oldSize;
+			oldPanel.hidden = NO;
 			
-			//Fixes a weird bug whereby scrollers would drag the window with them after switching panels
-			if ([[self window] isMovableByWindowBackground])
+			//Fixes a weird bug in 10.5 (and 10.6?) whereby scrollers would drag the window
+            //with them after switching panels
+			if (self.window.isMovableByWindowBackground)
 			{
-				[[self window] setMovableByWindowBackground: NO];
-				[[self window] setMovableByWindowBackground: YES];
+				self.window.movableByWindowBackground = NO;
+				self.window.movableByWindowBackground = YES;
 			}
 			
 			//Fixes infinite-redraw bug caused by animated fade
@@ -92,13 +101,13 @@
 		else
 		{
 			[oldPanel removeFromSuperview];
-			[[self window] setFrame: newFrame display: YES];
-			[[self panelContainer] addSubview: newPanel];
+			[self.window setFrame: newFrame display: YES];
+			[self.panelContainer addSubview: newPanel];
 		}
 		
 		//Activate the designated first responder for this panel after switching
 		//(Currently this is piggybacking off NSView's nextKeyView, which is kinda not good)
-		[[self window] makeFirstResponder: [newPanel nextKeyView]];
+		[self.window makeFirstResponder: newPanel.nextKeyView];
 	}
 }
 
@@ -110,27 +119,29 @@
 							 nil];
 	
 	NSViewAnimation *animation = [[NSViewAnimation alloc] init];
-	[animation setViewAnimations: [NSArray arrayWithObject: fadeOut]];
+	animation.viewAnimations = [NSArray arrayWithObject: fadeOut];
 	return [animation autorelease];
 }
 
-- (NSViewAnimation *) hidePanel: (NSView *)oldPanel andFadeInPanel: (NSView *)newPanel
+- (NSViewAnimation *) hidePanel: (NSView *)oldPanel
+                 andFadeInPanel: (NSView *)newPanel
 {
 	NSDictionary *fadeIn = [NSDictionary dictionaryWithObjectsAndKeys:
 							newPanel, NSViewAnimationTargetKey,
 							NSViewAnimationFadeInEffect, NSViewAnimationEffectKey,
 							nil];
 	
-	[oldPanel setHidden: YES];
+    oldPanel.hidden = YES;
 	NSViewAnimation *animation = [[NSViewAnimation alloc] init];
-	[animation setViewAnimations: [NSArray arrayWithObject: fadeIn]];
+	animation.viewAnimations = [NSArray arrayWithObject: fadeIn];
 	return [animation autorelease];
 }
 
-- (NSViewAnimation *) transitionFromPanel: (NSView *)oldPanel toPanel: (NSView *)newPanel
+- (NSViewAnimation *) transitionFromPanel: (NSView *)oldPanel
+                                  toPanel: (NSView *)newPanel
 {
 	NSViewAnimation *animation = [self hidePanel: oldPanel andFadeInPanel: newPanel];
-	[animation setDuration: 0.25];
+    animation.duration = 0.25;
 	return animation;
 }
 

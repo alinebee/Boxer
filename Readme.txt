@@ -1,38 +1,25 @@
 Some notes on building Boxer
 ============================
 
-The Boxer XCode project is designed to be a painless one-click build, but there are a few caveats explained below, so please read this before you get to work.
-
+The Boxer XCode project is designed to be a painless one-click build. Here's a quick rundown of how it's set up:
 
 Requirements
 ------------
 
-To build the Boxer project you will need OS X 10.6 or higher and XCode 3.2 or higher. (See below for notes about XCode 4 compatibility.)
+To build the Boxer project you will need OS X 10.7 or higher and XCode 4.3 or higher.
+All necessary frameworks are included in the Boxer project, so the project itself is all you need.
 
-All required frameworks are included in the Boxer project, so the project itself is all you need.
+Build Targets
+-------------
 
+The Boxer project has two targets: "Boxer" and "Standalone Boxer". "Boxer" is the standard emulator you know and love. "Standalone Boxer" is a cut-down version of Boxer meant for wrapping up existing gameboxes into a single unified app. Game importing and settings UI have been stripped out of this version and it will only launch the gamebox that you bundle inside it (which you currently have to do manually).
 
 Build Configurations
 --------------------
 
-The Boxer project has 3 build configurations: Legacy Release, Release and Debug.
-- Legacy Release compiles an optimized 32-bit universal binary for PowerPC and i386 using LLVM in GCC 4.2 mode.
-- Release compiles an optimized 32-bit binary for i386 using the LLVM 3 compiler.
-- Debug does the same as Release but also turns on console debug messages and additional error-checking.
+The Boxer project has 2 build configurations: Release and Debug. Both of them compile fully optimized 32-bit binaries using the LLVM compiler. Debug works almost exactly the same as Release but turns on console debug messages and additional OpenGL error-checking.
 
-Unless you want to distribute your build to others, you should stick with Release or Debug rather than Legacy Release, since a Universal binary takes twice as long to build.
-
-
-XCode 4 Caveats
----------------
-
-XCode versions 4.0 and later do not come with PowerPC compilers, which will normally prevent you from building the Legacy Release configuration. However: if you are still using OS X 10.6, then you can install XCode 3.2.x alongside XCode 4.x and compile the Legacy Release configuration using that. (XCode 3.2 cannot be installed on Lion, so you're out of luck there.)
-
-
-Other things to be aware of
----------------------------
-Boxer's OS X hotkey override option ("Reserve function keys and arrow keys for games") relies on a keyboard event tap, and these *do not play nice at all* with the XCode debugger. I strongly recommend turning off that option in Boxer's preferences if you're testing through XCode: Otherwise, when pausing in the debugger or hitting a breakpoint, the mouse and keyboard may stop responding altogether and you'll have to restart your Mac to get them back.
-
+Boxer currently does not compile for 64-bit because DOSBox is not fully 64-bit compatible. Boxer's bundled frameworks have also been stripped down to 32-bit-only to save space.
 
 Having trouble?
 ---------------

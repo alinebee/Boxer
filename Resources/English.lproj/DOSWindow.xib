@@ -322,7 +322,7 @@
 											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="707454198"/>
 											<string key="NSReuseIdentifierKey">_NS:76</string>
-											<int key="NSsFlags">150032</int>
+											<int key="NSsFlags">133648</int>
 											<reference key="NSVScroller" ref="71412926"/>
 											<reference key="NSHScroller" ref="707454198"/>
 											<reference key="NSContentView" ref="299863135"/>
@@ -381,7 +381,6 @@
 				<string key="NSFrameAutosaveName"/>
 				<bool key="NSAutorecalculatesContentBorderThicknessMinY">NO</bool>
 				<double key="NSContentBorderThicknessMinY">26</double>
-				<int key="NSWindowCollectionBehavior">128</int>
 				<bool key="NSWindowIsRestorable">NO</bool>
 			</object>
 			<object class="NSViewController" id="819309219"/>
@@ -397,7 +396,6 @@
 						<int key="NSvFlags">298</int>
 						<string key="NSFrame">{{14, 4}, {452, 48}}</string>
 						<reference key="NSSuperview" ref="1058351658"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -428,7 +426,6 @@
 				</array>
 				<string key="NSFrameSize">{480, 56}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="391807345"/>
 			</object>
 		</array>

@@ -156,7 +156,11 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	return keyPaths;
 }
 
-+ (NSSet *) keyPathsForValuesAffectingIsAtPrompt		{ return [NSSet setWithObjects: @"isRunningProcess", @"isInBatchScript", @"isInitialized", nil]; }
++ (NSSet *) keyPathsForValuesAffectingIsAtPrompt
+{
+    return [NSSet setWithObjects: @"isRunningProcess", @"isInBatchScript", @"isInitialized", nil];
+}
+
 + (NSSet *) keyPathsForValuesAffectingIsRunningProcess	{ return [NSSet setWithObjects: @"processName", @"processPath", nil]; }
 + (NSSet *) keyPathsForValuesAffectingProcessIsInternal	{ return [NSSet setWithObject: @"processName"]; }
 
@@ -905,11 +909,11 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		DOSBOX_Init();
 
 		//Ask our delegate for the configuration files we should be loading today.
-        NSArray *configPaths = [[self delegate] configurationPathsForEmulator: self];
+        NSArray *configPaths = [self.delegate configurationPathsForEmulator: self];
 		for (NSString *configPath in configPaths)
 		{
-			configPath = [configPath stringByStandardizingPath];
-			const char *encodedConfigPath = [configPath fileSystemRepresentation];
+			configPath = configPath.stringByStandardizingPath;
+			const char *encodedConfigPath = configPath.fileSystemRepresentation;
 			control->ParseConfigFile(encodedConfigPath);
 		}
 
@@ -937,7 +941,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	
 	
 	//Clean up after DOSBox finishes
-	[[self videoHandler] shutdown];
+	[self.videoHandler shutdown];
     control = NULL;
 }
 

@@ -158,7 +158,7 @@
 {
     [self drawBezelWithFrame: frame inView: controlView];
     
-    if (self.image && (self.isHighlighted || self.mouseIsInside))
+    if (self.image && self.isEnabled && (self.isHighlighted || self.mouseIsInside))
         [self drawImage: self.image withFrame: frame inView: controlView];
     
     [self drawTitle: self.attributedTitle withFrame: frame inView: self.controlView];
@@ -210,7 +210,7 @@
         innerGlow = nil;
     }
     //Hovered state
-    else if (self.mouseIsInside)
+    else if (self.mouseIsInside && self.isEnabled)
     {
         bezelColor = [NSColor alternateSelectedControlColor];
         bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
@@ -275,7 +275,7 @@
 
 - (NSRect) imageRectForBounds: (NSRect)theRect
 {
-    return NSInsetRect(theRect, 8.0f, 8.0f);
+    return NSInsetRect(theRect, 12.0f, 12.0f);
 }
 
 - (void) drawImage: (NSImage *)image withFrame: (NSRect)frame inView: (NSView *)controlView

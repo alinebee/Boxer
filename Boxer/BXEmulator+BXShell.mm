@@ -96,12 +96,28 @@ nil];
 		  withArguments: (NSArray *)arguments
 			   encoding: (NSStringEncoding)encoding
 {
-	NSString *argumentString	= [arguments componentsJoinedByString:@" "];
-	NSString *fullCommand		= [NSString stringWithFormat: @"%@ %@", command, argumentString];
+    NSString *fullCommand;
+    if (arguments.count)
+    {
+        NSString *argumentString = [arguments componentsJoinedByString: @" "];
+        fullCommand = [NSString stringWithFormat: @"%@ %@", command, argumentString];
+    }
+    else
+    {
+        fullCommand = command;
+    }
+    
 	[self executeCommand: fullCommand encoding: encoding];
 }
 
-- (void) executeProgramAtPath: (NSString *)dosPath changingDirectory: (BOOL)changeDir
+- (void) executeProgramAtDOSPath: (NSString *)dosPath changingDirectory: (BOOL)changeDir
+{
+    [self executeProgramAtDOSPath: dosPath withArguments: nil changingDirectory: changeDir];
+}
+
+- (void) executeProgramAtDOSPath: (NSString *)dosPath
+                   withArguments: (NSArray *)arguments
+               changingDirectory: (BOOL)changeDir
 {
 	if (changeDir)
 	{
@@ -111,13 +127,17 @@ nil];
 		NSString *parentFolder	= [[cocoafiedDOSPath stringByDeletingLastPathComponent] stringByAppendingString: @"/"];
 		NSString *programName	= [cocoafiedDOSPath lastPathComponent];
 		
-		[self changeWorkingDirectoryToPath: parentFolder];
-		[self executeCommand: programName encoding: BXDirectStringEncoding];
+		[self changeWorkingDirectoryToDOSPath: parentFolder];
+		[self executeCommand: programName
+               withArguments: arguments
+                    encoding: BXDirectStringEncoding];
 	}
 	else
 	{
 		dosPath = [dosPath stringByReplacingOccurrencesOfString: @"/" withString: @"\\"];
-		[self executeCommand: dosPath encoding: BXDirectStringEncoding];
+		[self executeCommand: dosPath
+               withArguments: arguments
+                    encoding: BXDirectStringEncoding];
 	}
 }
 
@@ -146,7 +166,7 @@ nil];
 
 
 
-- (BOOL) changeWorkingDirectoryToPath: (NSString *)dosPath
+- (BOOL) changeWorkingDirectoryToDOSPath: (NSString *)dosPath
 {
 	BOOL changedPath = NO;
 
@@ -580,15 +600,18 @@ nil];
         
     //Indicate the session has stopped listening for mouse and joystick
     //input now that it has returned to the DOS prompt.
-	[[self mouse] setActive: NO];
-    [self setJoystickActive: NO];
+	self.mouse.active = NO;
+    self.joystickActive = NO;
+    
+    //Fire off a manual update for the isInBatchScript flag, since we won't know about this change automatically.
+    [self willChangeValueForKey: @"isInBatchScript"];
+    [self didChangeValueForKey: @"isInBatchScript"];
     
     //Clear our autodetected MIDI music device now, so that we can redetect
     //it next time we run a program. (This lets users try out different
     //music options in the game's setup, without the emulation staying locked
     //to a particular MIDI mode.)
     [self _resetMIDIDevice];
-
     
 	[self _postNotificationName: BXEmulatorDidReturnToShellNotification
 			   delegateSelector: @selector(emulatorDidReturnToShell:)

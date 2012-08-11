@@ -8,6 +8,7 @@
 #import "BXLaunchPanelController.h"
 #import "BXSession+BXFileManager.h"
 #import "BXDrive.h"
+#import "BXPackage.h"
 #import "BXEmulator+BXDOSFilesystem.h"
 #import "BXValueTransformers.h"
 #import "BXCollectionItemView.h"
@@ -43,7 +44,7 @@
                                         forKeyPath: @"executables"];
             
             [self.representedObject removeObserver: self
-                                        forKeyPath: @"gamePackage"];
+                                        forKeyPath: @"gamePackage.launchers"];
         }
         
         [super setRepresentedObject: representedObject];
@@ -56,7 +57,7 @@
                                         context: nil];
             
             [self.representedObject addObserver: self
-                                     forKeyPath: @"gamePackage"
+                                     forKeyPath: @"gamePackage.launchers"
                                         options: NSKeyValueObservingOptionInitial
                                         context: nil];
         }
@@ -86,16 +87,13 @@
 {
     if ([keyPath isEqualToString: @"executables"])
     {
-        [self _syncFavoriteProgramRows];
-        //[self _syncAllProgramRows];
+        [self _syncAllProgramRows];
     }
     
-    /*
-    else if ([keyPath isEqualToString: @"gamePackage"])
+    else if ([keyPath isEqualToString: @"gamePackage.launchers"])
     {
         [self _syncFavoriteProgramRows];
     }
-     */
 }
 
 - (void) _syncAllProgramRows
@@ -156,35 +154,24 @@
     [mutableRows removeAllObjects];
     
     BXSession *session = (BXSession *)self.representedObject;
+    BXPackage *gamePackage = session.gamePackage;
     
-    NSDictionary *executablePathsByDrive = session.executables;
-    NSArray *sortedLetters = [executablePathsByDrive.allKeys sortedArrayUsingSelector: @selector(compare:)];
-    
-    NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
-    
-    for (NSString *driveLetter in sortedLetters)
+    for (NSDictionary *launcher in gamePackage.launchers)
     {
-        BXDrive *drive = [session.emulator driveAtLetter: driveLetter];
-        NSArray *executablePathsOnDrive = [executablePathsByDrive objectForKey: driveLetter];
+        NSString *path = [launcher objectForKey: BXLauncherPathKey];
+        NSString *dosPath = [session.emulator DOSPathForPath: path];
+        NSString *title = [launcher objectForKey: BXLauncherTitleKey];
+        NSString *arguments = [launcher objectForKey: BXLauncherArgsKey];
         
-        if (drive && executablePathsOnDrive.count)
-        {
-            //Now, add items for each program on that drive.
-            for (NSString *path in executablePathsOnDrive)
-            {
-                NSString *dosPath = [session.emulator DOSPathForPath: path onDrive: drive];
-                NSString *programTitle = [programNameFormatter transformedValue: path];
-                NSDictionary *programRow = [NSDictionary dictionaryWithObjectsAndKeys:
-                                            programTitle, @"title",
-                                            path, @"path",
-                                            dosPath, @"dosPath",
-                                            nil];
-                [mutableRows addObject: programRow];
-            }
-        }
+        NSDictionary *launcherRow = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    title, @"title",
+                                    path, @"path",
+                                    dosPath, @"dosPath",
+                                    arguments, @"arguments",
+                                    nil];
+        
+        [mutableRows addObject: launcherRow];
     }
-    
-    [programNameFormatter release];
 }
 
 
@@ -193,13 +180,13 @@
 
 + (NSSet *) keyPathsForValuesAffectingCanLaunchPrograms
 {
-    return [NSSet setWithObject: @"representedObject.isAtPrompt"];
+    return [NSSet setWithObjects: @"representedObject.isEmulating", @"representedObject.emulator.isAtPrompt", nil];
 }
 
 - (BOOL) canLaunchPrograms
 {
     BXSession *session = self.representedObject;
-    return session.emulator.isAtPrompt;
+    return session.isEmulating && session.emulator.isAtPrompt;
 }
 
 - (IBAction) launchFavoriteProgram: (NSButton *)sender
@@ -211,11 +198,14 @@
     NSDictionary *programDetails = item.representedObject;
     
     NSString *programPath = [programDetails objectForKey: @"path"];
+    NSString *arguments = [programDetails objectForKey: @"arguments"];
     
 	if (programPath)
     {
         BXSession *session = (BXSession *)self.representedObject;
-        [session openFileAtPath: programPath];
+        NSArray *args = (arguments) ? [NSArray arrayWithObject: arguments] : nil;
+        
+        [session openFileAtPath: programPath withArguments: args];
     }
 }
 

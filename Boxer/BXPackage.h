@@ -26,28 +26,48 @@ enum {
 
 
 #pragma mark -
-#pragma mark Constants
+#pragma mark Game Info plist constants
 
 //The gameInfo key under which we store the game's identifier.
 //Will be an NSString.
-extern NSString * const BXGameIdentifierKey;
+extern NSString * const BXGameIdentifierGameInfoKey;
 
 //The gameInfo key under which we store the type of the game's identifier.
 //Will be an NSNumber of BXGameIdentifierTypes.
-extern NSString * const BXGameIdentifierTypeKey;
+extern NSString * const BXGameIdentifierTypeGameInfoKey;
 
 //The gameInfo key under which we store the default program path,
 //relative to the base folder of the gamebox.
-extern NSString * const BXTargetProgramKey;
+extern NSString * const BXTargetProgramGameInfoKey;
+
+//The gameInfo key under which we store an array of launcher shortcuts.
+//Each entry in the array is an NSDictionary whose keys are listed under
+//"Launcher dictionary constants".
+extern NSString * const BXLaunchersGameInfoKey;
 
 //The gameInfo key under which we store the close-on-exit toggle flag as an NSNumber.
-extern NSString * const BXCloseOnExitKey;
+extern NSString * const BXCloseOnExitGameInfoKey;
+
+
+#pragma mark -
+#pragma mark Launcher dictionary constants.
+
+//The display name for the launcher item.
+extern NSString * const BXLauncherTitleKey;
+
+//The path of the program for the launcher, relative to the base folder of the gamebox.
+extern NSString * const BXLauncherPathKey;
+
+//Launch-time parameters to pass to the launched program at startup.
+extern NSString * const BXLauncherArgsKey;
+
+
+#pragma mark -
+#pragma mark Filename constants
 
 //The filename of the symlink pointing to the gamebox's target executable.
 //No longer used.
 extern NSString * const BXTargetSymlinkName;
-
-
 
 //The filename and extension of the gamebox configuration file.
 extern NSString * const BXConfigurationFileName;
@@ -76,6 +96,7 @@ typedef NSUInteger BXGameIdentifierType;
 @interface BXPackage : NSBundle
 {
 	NSMutableDictionary *_gameInfo;
+    NSMutableArray *_launchers;
 }
 
 #pragma mark -
@@ -123,6 +144,9 @@ typedef NSUInteger BXGameIdentifierType;
 //The cover art image for this gamebox. Will be nil if the gamebox has no custom cover art.
 //This is stored internally as the gamebox's OS X icon resource.
 @property (copy, nonatomic) NSImage *coverArt;
+
+//Program launchers for this gamebox, displayed as favorites in the launch panel.
+@property (readonly, nonatomic) NSArray *launchers;
 
 
 #pragma mark -

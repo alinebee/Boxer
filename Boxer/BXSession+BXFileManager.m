@@ -701,7 +701,7 @@
     }
 }
 
-- (BOOL) openFileAtPath: (NSString *)path
+- (BOOL) openFileAtPath: (NSString *)path withArguments: (NSArray *)arguments
 {
 	if (!self.emulator.isInitialized || self.emulator.isRunningProcess) return NO;
     
@@ -716,14 +716,21 @@
 	{
 		//If an executable was specified, execute it
         self.lastLaunchedProgramPath = path;
-		[self.emulator executeProgramAtPath: dosPath changingDirectory: YES];
+		[self.emulator executeProgramAtDOSPath: dosPath
+                                 withArguments: arguments
+                             changingDirectory: YES];
 	}
 	else
 	{
 		//Otherwise, just switch to the specified path
-		[self.emulator changeWorkingDirectoryToPath: dosPath];
+		[self.emulator changeWorkingDirectoryToDOSPath: dosPath];
 	}
 	return YES;
+}
+
+- (BOOL) openFileAtPath: (NSString *)path
+{
+    return [self openFileAtPath: path withArguments: nil];
 }
 
 

@@ -18,11 +18,11 @@
 #pragma mark -
 #pragma mark Constants
 
-//Application-wide constants.
-NSString * const BXGameIdentifierKey        = @"BXGameIdentifier";
-NSString * const BXGameIdentifierTypeKey    = @"BXGameIdentifierType";
-NSString * const BXTargetProgramKey         = @"BXDefaultProgramPath";
-NSString * const BXCloseOnExitKey           = @"BXCloseAfterDefaultProgram";
+NSString * const BXGameIdentifierGameInfoKey        = @"BXGameIdentifier";
+NSString * const BXGameIdentifierTypeGameInfoKey    = @"BXGameIdentifierType";
+NSString * const BXTargetProgramGameInfoKey         = @"BXDefaultProgramPath";
+NSString * const BXLaunchersGameInfoKey             = @"BXLaunchers";
+NSString * const BXCloseOnExitGameInfoKey           = @"BXCloseAfterDefaultProgram";
 
 NSString * const BXTargetSymlinkName			= @"DOSBox Target";
 NSString * const BXConfigurationFileName		= @"DOSBox Preferences";
@@ -31,8 +31,13 @@ NSString * const BXGameInfoFileName				= @"Game Info";
 NSString * const BXGameInfoFileExtension		= @"plist";
 NSString * const BXDocumentationFolderName		= @"Documentation";
 
-NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
+NSString * const BXLauncherTitleKey  = @"BXLauncherTitle";
+NSString * const BXLauncherPathKey   = @"BXLauncherPath";
+NSString * const BXLauncherArgsKey   = @"BXLauncherArguments";
+
+
+NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 //When calculating a digest from the gamebox's EXEs, read only the first 64kb of each EXE.
 #define BXGameIdentifierEXEDigestStubLength 65536
@@ -119,6 +124,9 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 - (void) dealloc
 {
     self.gameInfo = nil;
+    
+    [_launchers release], _launchers = nil;
+    
 	[super dealloc];
 }
 
@@ -138,7 +146,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 - (NSString *) targetPath
 {
-    NSString *targetPath = [self gameInfoForKey: BXTargetProgramKey];
+    NSString *targetPath = [self gameInfoForKey: BXTargetProgramGameInfoKey];
     
 	//Resolve the path from a gamebox-relative path into an absolute path
     if (targetPath)
@@ -175,11 +183,11 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
         NSString *basePath		= self.resourcePath;
         NSString *relativePath	= [path pathRelativeToPath: basePath];
     
-        [self setGameInfo: relativePath forKey: BXTargetProgramKey];
+        [self setGameInfo: relativePath forKey: BXTargetProgramGameInfoKey];
     }
     else
     {
-        [self setGameInfo: nil forKey: BXTargetProgramKey];
+        [self setGameInfo: nil forKey: BXTargetProgramGameInfoKey];
         
         //Delete any leftover symlink
 		NSString *symlinkPath = [self pathForResource: BXTargetSymlinkName ofType: nil];
@@ -241,15 +249,57 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	return YES;
 }
 
+- (NSArray *) launchers
+{
+    if (!_launchers)
+    {
+        NSArray *recordedLaunchers = [self gameInfoForKey: BXLaunchersGameInfoKey];
+        if (recordedLaunchers)
+        {
+            _launchers = [[NSMutableArray alloc] initWithCapacity: recordedLaunchers.count];
+            
+            //Resolve each relative launcher path to an absolute path before storing it.
+            for (NSDictionary *launcher in recordedLaunchers)
+            {
+                NSString *relativePath = [launcher objectForKey: BXLauncherPathKey];
+                NSString *absolutePath = [self.resourcePath stringByAppendingPathComponent: relativePath];
+                
+                NSMutableDictionary *resolvedLauncher = [launcher mutableCopy];
+                [resolvedLauncher setObject: absolutePath forKey: BXLauncherPathKey];
+                
+                [_launchers addObject: resolvedLauncher];
+                
+                [resolvedLauncher release];
+            }
+        }
+        //If no launchers have been defined for this gamebox, create a launcher item
+        //based on the target program of the gamebox.
+        else
+        {
+            NSString *targetProgram = self.targetPath;
+            NSString *programName = targetProgram.lastPathComponent;
+            
+            NSDictionary *targetProgramLauncher = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                   targetProgram, BXLauncherPathKey,
+                                                   programName, BXLauncherTitleKey,
+                                                   nil];
+            
+            _launchers = [[NSMutableArray alloc] initWithObjects: targetProgramLauncher, nil];
+        }
+    }
+
+    return _launchers;
+}
+
 - (BOOL) closeOnExit
 {
-    return [[self gameInfoForKey: BXCloseOnExitKey] boolValue];
+    return [[self gameInfoForKey: BXCloseOnExitGameInfoKey] boolValue];
 }
 
 - (void) setCloseOnExit: (BOOL)closeOnExit
 {
     [self setGameInfo: [NSNumber numberWithBool: closeOnExit]
-               forKey: BXCloseOnExitKey];
+               forKey: BXCloseOnExitGameInfoKey];
 }
 
 - (NSString *) configurationFile
@@ -339,7 +389,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 - (NSString *) gameIdentifier
 {
-	NSString *identifier = [self gameInfoForKey: BXGameIdentifierKey];
+	NSString *identifier = [self gameInfoForKey: BXGameIdentifierGameInfoKey];
 	
 	//If we don't have an identifier yet, generate a new one and add it to the game's metadata.
 	if (!identifier)
@@ -347,9 +397,9 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 		BXGameIdentifierType generatedType = 0;
 		identifier = [self _generatedIdentifierOfType: &generatedType];
 
-		[(NSMutableDictionary *)self.gameInfo setObject: identifier forKey: BXGameIdentifierKey];
+		[(NSMutableDictionary *)self.gameInfo setObject: identifier forKey: BXGameIdentifierGameInfoKey];
 		[(NSMutableDictionary *)self.gameInfo setObject: [NSNumber numberWithUnsignedInteger: generatedType]
-                                                 forKey: BXGameIdentifierTypeKey];
+                                                 forKey: BXGameIdentifierTypeGameInfoKey];
         
 		[self _persistGameInfo];
 	}
@@ -359,9 +409,9 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 - (void) setGameIdentifier: (NSString *)identifier
 {
-	[(NSMutableDictionary *)self.gameInfo setObject: identifier forKey: BXGameIdentifierKey];
+	[(NSMutableDictionary *)self.gameInfo setObject: identifier forKey: BXGameIdentifierGameInfoKey];
 	[(NSMutableDictionary *)self.gameInfo setObject: [NSNumber numberWithUnsignedInteger: BXGameIdentifierUserSpecified]
-                                             forKey: BXGameIdentifierTypeKey];
+                                             forKey: BXGameIdentifierTypeGameInfoKey];
 }
 
 - (NSString *) gameName

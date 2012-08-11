@@ -29,7 +29,14 @@
 //Launch the program at the specified DOS path.
 //If changingDirectory is true, first switches the working directory to the program's containing directory;
 //Otherwise the command will be executed as an absolute path, using the current directory as the working directory.
-- (void) executeProgramAtPath: (NSString *)dosPath changingDirectory: (BOOL)changeDir;
+- (void) executeProgramAtDOSPath: (NSString *)dosPath changingDirectory: (BOOL)changeDir;
+
+//Launch the program at the specified DOS path, optionally with the specified arguments.
+//If changingDirectory is true, first switches the working directory to the program's containing directory;
+//Otherwise the command will be executed as an absolute path, using the current directory as the working directory.
+- (void) executeProgramAtDOSPath: (NSString *)dosPath
+                   withArguments: (NSArray *)arguments
+               changingDirectory: (BOOL)changeDir;
 
 
 //Prints the specified string to the DOS stdout, using DOS Latin-1 encoding.
@@ -44,7 +51,7 @@
 - (BOOL) changeToDriveLetter: (NSString *)driveLetter;
 
 //Change directory to the specified DOS path, which may include a drive letter.
-- (BOOL) changeWorkingDirectoryToPath: (NSString *)dosPath;
+- (BOOL) changeWorkingDirectoryToDOSPath: (NSString *)dosPath;
 
 
 //DOS environment and configuration variables

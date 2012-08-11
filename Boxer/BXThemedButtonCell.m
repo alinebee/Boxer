@@ -91,35 +91,11 @@
     return radioFrame;
 }
 
-- (NSRect) imageRectForBounds: (NSRect)frame
-{
-    NSRect paddedFrame = frame;
-    
-    //FIXME: these numbers are fudged. Also, we should use the entire frame
-    //if the button is set to not draw its background.
-    switch (self.controlSize)
-    {
-        case NSSmallControlSize:
-            paddedFrame = NSInsetRect(frame, 2, 2);
-            break;
-            
-        case NSMiniControlSize:
-            paddedFrame = NSInsetRect(frame, 4, 4);
-            break;
-            
-        case NSRegularControlSize:
-        default:
-            paddedFrame = NSInsetRect(frame, 6, 6);
-            break;
-    }
-    return paddedFrame;
-}
-
 - (NSRect) imageRectForImage: (NSImage *)image forBounds: (NSRect)frame
 {   
-    NSRect paddedFrame = [self imageRectForBounds: frame];
+    NSRect insetFrame = [self imageRectForBounds: frame];
     
-    NSRect imageFrame = [image imageRectAlignedInRect: paddedFrame
+    NSRect imageFrame = [image imageRectAlignedInRect: insetFrame
                                             alignment: self.imagePosition
                                               scaling: self.imageScaling];
     
@@ -348,13 +324,20 @@
 
 - (void) drawImage: (NSImage *)image withFrame: (NSRect)frame inView: (NSView *)controlView
 {
+    //Radio buttons and switch buttons use a different code path which is handled upstream.
+    if (buttonType == NSRadioButton || buttonType == NSSwitchButton)
+    {
+        [super drawImage: image withFrame: frame inView: controlView];
+        return;
+    }
+    
     BGTheme *theme = [[BGThemeManager keyedManager] themeForKey: self.themeKey];
     
     NSRect imageRect = [self imageRectForImage: image
                                      forBounds: frame];
     
     CGFloat opacity = (self.isEnabled) ? theme.alphaValue : theme.disabledAlphaValue;
-    
+
     if (image.isTemplate)
     {       
         NSColor *tint = (self.isEnabled) ? theme.textColor : theme.disabledTextColor;
@@ -380,5 +363,4 @@
            respectFlipped: YES];
     }
 }
-
 @end

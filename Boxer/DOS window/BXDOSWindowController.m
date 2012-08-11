@@ -140,10 +140,6 @@
 	//Hide the program panel by default - our parent session decides when it's appropriate to display this
 	[self setProgramPanelShown: NO
                        animate: NO];
-	
-	//Apply a border to the window matching the size of the statusbar
-	CGFloat borderThickness = self.statusBar.frame.size.height + 1.0f;
-	[self.window setContentBorderThickness: borderThickness forEdge: NSMinYEdge];
     
 	self.window.preservesContentDuringLiveResize = NO;
 	self.window.acceptsMouseMovedEvents = YES;
@@ -648,7 +644,7 @@
     [self.window setFrameAutosaveName: @""];
     
     self.renderingView.managesAspectRatio = YES;
-    [self.inputController setMouseLocked: YES force: YES];
+    //[self.inputController setMouseLocked: YES force: YES];
     
     _renderingViewSizeBeforeFullScreen = self.window.actualContentViewSize;
 }

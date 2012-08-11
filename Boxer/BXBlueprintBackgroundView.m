@@ -15,26 +15,25 @@
 - (void) _drawBlueprintInRect: (NSRect)dirtyRect
 {	
 	NSColor *blueprintColor = [NSColor colorWithPatternImage: [NSImage imageNamed: @"Blueprint.jpg"]];
-	NSSize patternSize		= [[blueprintColor patternImage] size];
-	NSSize viewSize			= [self bounds].size;
-	NSPoint patternOffset	= [self offsetFromWindowOrigin];
+	NSSize patternSize		= blueprintColor.patternImage.size;
+	NSSize viewSize			= self.bounds.size;
+	NSPoint patternOffset	= self.offsetFromWindowOrigin;
 	NSPoint patternPhase	= NSMakePoint(patternOffset.x + ((viewSize.width - patternSize.width) / 2),
 										  patternOffset.y + ((viewSize.height - patternSize.height) / 2));
 	
 	[NSGraphicsContext saveGraphicsState];
 		[[NSGraphicsContext currentContext] setPatternPhase: patternPhase];
 		[blueprintColor set];
-		[NSBezierPath fillRect: [self bounds]];
+		[NSBezierPath fillRect: self.bounds];
 	[NSGraphicsContext restoreGraphicsState];
 }
 
 - (void) _drawBlueprintBrandInRect: (NSRect)dirtyRect
 {
 	NSImage *brand = [NSImage imageNamed: @"BrandWatermark"];
-	[brand setFlipped: YES];
 	NSRect brandRegion = NSZeroRect;
-	brandRegion.size = [brand size];
-	brandRegion = NSIntegralRect(centerInRect(brandRegion, [self bounds]));
+	brandRegion.size = brand.size;
+	brandRegion = NSIntegralRect(centerInRect(brandRegion, self.bounds));
 	
 	if ([self needsToDrawRect: brandRegion])
 	{
@@ -50,7 +49,7 @@
 	NSGradient *lighting = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f]
 														 endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.4f]];
 	
-	NSRect backgroundRect = [self bounds];
+	NSRect backgroundRect = self.bounds;
 	NSPoint startPoint	= NSMakePoint(NSMidX(backgroundRect), NSMinY(backgroundRect));
 	NSPoint endPoint	= NSMakePoint(NSMidX(backgroundRect), NSMidY(backgroundRect));
 	CGFloat startRadius = NSWidth(backgroundRect) * 0.1f;
@@ -65,7 +64,7 @@
 
 - (void) _drawShadowInRect: (NSRect)dirtyRect
 {
-	NSRect shadowRect = [self bounds];
+	NSRect shadowRect = self.bounds;
 	shadowRect.size.height = 6.0f;
 	
 	if ([self needsToDrawRect: shadowRect])
@@ -73,7 +72,7 @@
 		NSGradient *topShadow = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.2f]
 															  endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.0f]];
 		
-		[topShadow drawInRect: shadowRect angle: 90.0f];
+		[topShadow drawInRect: shadowRect angle: 270.0f];
 		[topShadow release];
 	}
 }

@@ -22,23 +22,23 @@
 
 - (void) _drawGradientInRect: (NSRect)dirtyRect
 {
-	NSColor *backgroundColor = [NSColor colorWithCalibratedRed: 0.86f green: 0.87f blue: 0.88f alpha: 1.0f];
+	NSColor *backgroundColor = [NSColor colorWithCalibratedRed: 119 / 255.0 green: 120 / 255.0 blue: 125 / 255.0 alpha: 1.0f];
 	NSGradient *background = [[NSGradient alloc] initWithColorsAndLocations:
 							  backgroundColor,							0.0f,
-							  [backgroundColor shadowWithLevel: 0.25f],	0.9f,
-							  [backgroundColor shadowWithLevel: 0.75f],	1.0f,
+							  backgroundColor,	0.9f,
+							  backgroundColor,	1.0f,
 							  nil];
 	
     [NSBezierPath clipRect: dirtyRect];
-	[background drawInRect: [self bounds] angle: 90.0f];
+	[background drawInRect: self.bounds angle: 90.0f];
 	[background release];
 }
 
 - (void) _drawGrilleInRect: (NSRect)dirtyRect
 {
 	NSImage *grille		= [NSImage imageNamed: @"Grille"];
-	NSSize patternSize	= [grille size];
-	NSRect panelRegion	= [self bounds];
+	NSSize patternSize	= grille.size;
+	NSRect panelRegion	= self.bounds;
 	
 	//Next, calculate our top and bottom grille strips
 	NSRect grilleStrip		= panelRegion;
@@ -48,7 +48,7 @@
 	//Only bother drawing the grille if it intersects with the region being drawn
 	if ([self needsToDrawRect: grilleStrip])
 	{
-		NSPoint patternOffset	= [self offsetFromWindowOrigin];
+		NSPoint patternOffset	= self.offsetFromWindowOrigin;
         
         NSPoint grillePhase		= NSMakePoint(patternOffset.x + ((panelRegion.size.width - patternSize.width) / 2),																patternOffset.y + grilleStrip.origin.y);
 		
@@ -57,7 +57,7 @@
 		
 		//Finally, draw the grille strip.
 		[NSGraphicsContext saveGraphicsState];
-            [[NSGraphicsContext currentContext] setPatternPhase: grillePhase];
+            [NSGraphicsContext currentContext].patternPhase = grillePhase;
             [grillePattern set];
             [grillePath fill];
 		[NSGraphicsContext restoreGraphicsState];
@@ -66,7 +66,7 @@
 
 - (void) _drawBevelInRect: (NSRect)dirtyRect
 {
-    NSRect bevelRect = [self bounds];
+    NSRect bevelRect = self.bounds;
     bevelRect.size.height = 1.0f;
     
     if ([self needsToDrawRect: bevelRect])
@@ -80,15 +80,15 @@
 - (void) drawRect: (NSRect)dirtyRect
 {
 	[self _drawGradientInRect: dirtyRect];
-	[self _drawGrilleInRect: dirtyRect];
+	//[self _drawGrilleInRect: dirtyRect];
     [self _drawBevelInRect: dirtyRect];
     
     //If we contain a title then redraw the gradient behind the title
     //and over the grille, to create a knockout effect
     NSView *title = [self viewWithTag: BXProgramPanelTitle];
-    if (title && ![title isHiddenOrHasHiddenAncestor])
+    if (title && !title.isHiddenOrHasHiddenAncestor)
     {
-        NSRect titleMask = [title frame];
+        NSRect titleMask = title.frame;
         
         if ([self needsToDrawRect: titleMask])
             [self _drawGradientInRect: titleMask];
@@ -102,18 +102,19 @@
 
 - (void) viewDidLoad
 {
-    [self setProgramButton: [[self view] viewWithTag: BXProgramPanelButtons]];
+    self.programButton = [self.view viewWithTag: BXProgramPanelButtons];
     
-    [[[self programButton] cell] bind: @"programIsDefault"
-                             toObject: self
-                          withKeyPath: @"representedObject.isDefault"
-                              options: nil];
+    [self.programButton.cell bind: @"programIsDefault"
+                         toObject: self
+                      withKeyPath: @"representedObject.isDefault"
+                          options: nil];
 }
 
 - (void) dealloc
 {
-    [[[self programButton] cell] unbind: @"programIsDefault"];
-    [self setProgramButton: nil], [programButton release];
+    [self.programButton.cell unbind: @"programIsDefault"];
+    self.programButton = nil;
+    
     [super dealloc];
 }
 @end
@@ -129,15 +130,15 @@
     //However, updateTrackingAreas *does* get called when scrolling: so we check
     //mouse location by hand and synthesize mouseEntered/exited events to our
     //button cell here instead.
-    NSPoint location = [[self window] mouseLocationOutsideOfEventStream];
+    NSPoint location = self.window.mouseLocationOutsideOfEventStream;
     NSPoint locationInView = [self convertPoint: location fromView: nil];
     if ([self hitTest: locationInView] != nil)
     {
-        [[self cell] mouseEntered: nil];
+        [self.cell mouseEntered: nil];
     }
     else
     {
-        [[self cell] mouseExited: nil];
+        [self.cell mouseExited: nil];
     }
 }
 
@@ -155,7 +156,8 @@
         //Expand the control view to compensate for regular recessed
         //buttons being so damn teeny. TODO: find some other more AppKitty
         //way to do this.
-        [[self controlView] setFrame: NSInsetRect([[self controlView] frame], 0, -1.0f)];
+        NSRect expandedRect = NSInsetRect(self.controlView.frame, 0, -1.0f);
+        [self.controlView setFrame: expandedRect];
     }
     return self;
 }
@@ -165,7 +167,7 @@
     if (flag != mouseIsInside)
     {
         mouseIsInside = flag;
-        [[self controlView] setNeedsDisplay: YES];
+        [self.controlView setNeedsDisplay: YES];
     }
 }
 
@@ -174,18 +176,18 @@
     if (flag != programIsDefault)
     {
         programIsDefault = flag;
-        [[self controlView] setNeedsDisplay: YES];
+        [self.controlView setNeedsDisplay: YES];
     }
 }
 
 - (void) mouseEntered: (NSEvent *)event
 {
-    [self setMouseIsInside: YES];
+    self.mouseIsInside = YES;
 }
 
 - (void) mouseExited: (NSEvent *)event
 {
-    [self setMouseIsInside: NO];
+    self.mouseIsInside = NO;
 }
 
 -(NSRect) drawTitle: (NSAttributedString *)title
@@ -196,20 +198,20 @@
 
 	NSRect textRect = NSInsetRect(frame, 5.0f, 2.0f);
 	
-	if ([title length])
+	if (title.length)
     {
         NSMutableAttributedString *newTitle = [title mutableCopy];
         
         NSColor *textColor;
         NSShadow *textShadow;
         
-        if (![self isEnabled])
+        if (!self.isEnabled)
         {
-            textColor = [theme disabledTextColor];
-            textShadow = [theme textShadow];
+            textColor = theme.disabledTextColor;
+            textShadow = theme.textShadow;
         }
         //Use white text to stand out against blue background
-        else if ([self programIsDefault])
+        else if (self.programIsDefault)
         {
             textColor = [NSColor whiteColor];
             textShadow = [NSShadow shadowWithBlurRadius: 2.0f
@@ -217,18 +219,18 @@
                                                   color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.75f]];
         }
         //Darken text when pressed in
-        else if ([self isHighlighted])
+        else if (self.isHighlighted)
         {
             textColor = [NSColor colorWithCalibratedWhite: 0.15f alpha: 1];
-            textShadow = [theme textShadow];
+            textShadow = theme.textShadow;
         }
         else
         {
-            textColor = [theme textColor];
-            textShadow = [theme textShadow];
+            textColor = theme.textColor;
+            textShadow = theme.textShadow;
         }
 		
-        NSRange range = NSMakeRange(0, [newTitle length]);
+        NSRange range = NSMakeRange(0, newTitle.length);
         
         [newTitle beginEditing];
             [newTitle addAttribute: NSForegroundColorAttributeName
@@ -253,96 +255,104 @@
 
 - (void) drawWithFrame: (NSRect)frame inView: (NSView *)controlView
 {
-    if ([self isEnabled] && ([self isHighlighted] || [self programIsDefault] || [self mouseIsInside]))
+    //Only draw the button bezel while we're hovered or being pressed or while we're the default program.
+    if (self.isEnabled && (self.isHighlighted || self.programIsDefault || self.mouseIsInside))
     {
-        NSShadow *innerShadow = [NSShadow shadowWithBlurRadius: 3.0f
-                                                        offset: NSMakeSize(0, -1.0f)
-                                                         color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.25f]];
-        NSShadow *outerBevel = [NSShadow shadowWithBlurRadius: 1.0f
-                                                       offset: NSMakeSize(0, -1.0f)
-                                                        color: [NSColor colorWithCalibratedWhite: 1 alpha: 0.75f]];
+        [self drawBezelWithFrame: frame inView: controlView];
+    }
+    
+    [self drawTitle: self.attributedTitle withFrame: frame inView: self.controlView];
+}
+
+- (void) drawBezelWithFrame: (NSRect)frame inView: (NSView *)controlView
+{
+    NSShadow *innerShadow = [NSShadow shadowWithBlurRadius: 3.0f
+                                                    offset: NSMakeSize(0, -1.0f)
+                                                     color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.25f]];
+    NSShadow *outerBevel = [NSShadow shadowWithBlurRadius: 1.0f
+                                                   offset: NSMakeSize(0, -1.0f)
+                                                    color: [NSColor colorWithCalibratedWhite: 1 alpha: 0.75f]];
+    
+    NSRect insetFrame = [outerBevel insetRectForShadow: frame
+                                               flipped: controlView.isFlipped];
+    
+    NSBezierPath *bezel = [NSBezierPath bezierPathWithRoundedRect: insetFrame
+                                                          xRadius: insetFrame.size.height / 2.0f
+                                                          yRadius: insetFrame.size.height / 2.0f];
+    
+    NSGradient *bezelGradient;
+    NSColor *bezelColor;
+    NSColor *strokeColor;
+    
+    if (self.programIsDefault)
+    {
+        strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.3f];
+        bezelColor  = [NSColor alternateSelectedControlColor];
         
-        NSRect insetFrame = [outerBevel insetRectForShadow: frame flipped: [controlView isFlipped]];
-        
-        NSBezierPath *bezel = [NSBezierPath bezierPathWithRoundedRect: insetFrame
-                                                              xRadius: insetFrame.size.height / 2.0f
-                                                              yRadius: insetFrame.size.height / 2.0f];
-        
-        NSGradient *bezelGradient;
-        NSColor *bezelColor;
-        NSColor *strokeColor;
-        
-        if ([self programIsDefault])
+        if (self.isHighlighted)
         {
-            strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.3f];
-            bezelColor  = [NSColor alternateSelectedControlColor];
-            
-            if ([self isHighlighted])
-            {
-                bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
-                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.33f], 0.0f,
-                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.0f], 0.8f,
-                                 [NSColor colorWithCalibratedWhite: 1 alpha: 0.3f], 1.0f,
-                                 nil];
-            }
-            else if ([self mouseIsInside])
-            {
-                bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
-                                 [NSColor colorWithCalibratedWhite: 1 alpha: 0.15f], 0.0f,
-                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f], 1.0f,
-                                 nil];
-            }
-            else
-            {
-                bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
-                                 [NSColor colorWithCalibratedWhite: 1 alpha: 0.1f], 0.0f,
-                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.05f], 1.0f,
-                                 nil];
-            }
+            bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
+                             [NSColor colorWithCalibratedWhite: 0 alpha: 0.33f], 0.0f,
+                             [NSColor colorWithCalibratedWhite: 0 alpha: 0.0f], 0.8f,
+                             [NSColor colorWithCalibratedWhite: 1 alpha: 0.3f], 1.0f,
+                             nil];
+        }
+        else if (self.mouseIsInside)
+        {
+            bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
+                             [NSColor colorWithCalibratedWhite: 1 alpha: 0.15f], 0.0f,
+                             [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f], 1.0f,
+                             nil];
         }
         else
         {
-            if ([self isHighlighted])
-            {
-                strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.2f];
-                bezelColor  = [NSColor colorWithCalibratedWhite: 0.6f alpha: 1];
-                bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
-                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.33f], 0.0f,
-                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.0f], 0.8f,
-                                 [NSColor colorWithCalibratedWhite: 1 alpha: 0.3f], 1.0f,
-                                 nil];
-            }
-            else
-            {
-                strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.05f];
-                bezelColor  = [NSColor colorWithCalibratedWhite: 0.8f alpha: 1];
-                bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
-                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.05f], 0.0f,
-                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f], 1.0f,
-                                 nil];
-            }
+            bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
+                             [NSColor colorWithCalibratedWhite: 1 alpha: 0.1f], 0.0f,
+                             [NSColor colorWithCalibratedWhite: 0 alpha: 0.05f], 1.0f,
+                             nil];
         }
-        
-        [NSGraphicsContext saveGraphicsState];
-            if ([self isHighlighted] || [self programIsDefault])
-            {
-                [outerBevel set];
-                [bezelColor set];
-                [bezel fill];
-            }
-            [bezelGradient drawInBezierPath: bezel angle: 90];
-        [NSGraphicsContext restoreGraphicsState];
-        
-        [NSGraphicsContext saveGraphicsState];
-            [strokeColor set];
-            [bezel strokeInside];
-            if ([self isHighlighted]) [bezel fillWithInnerShadow: innerShadow];
-        [NSGraphicsContext restoreGraphicsState];
-        
-        [bezelGradient release];
+    }
+    else
+    {
+        if (self.isHighlighted)
+        {
+            strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.2f];
+            bezelColor  = [NSColor colorWithCalibratedWhite: 0.6f alpha: 1];
+            bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
+                             [NSColor colorWithCalibratedWhite: 0 alpha: 0.33f], 0.0f,
+                             [NSColor colorWithCalibratedWhite: 0 alpha: 0.0f], 0.8f,
+                             [NSColor colorWithCalibratedWhite: 1 alpha: 0.3f], 1.0f,
+                             nil];
+        }
+        else
+        {
+            strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.05f];
+            bezelColor  = [NSColor colorWithCalibratedWhite: 0.8f alpha: 1];
+            bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
+                             [NSColor colorWithCalibratedWhite: 0 alpha: 0.05f], 0.0f,
+                             [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f], 1.0f,
+                             nil];
+        }
     }
     
-    [self drawTitle: [self attributedTitle] withFrame: frame inView: [self controlView]];
+    [NSGraphicsContext saveGraphicsState];
+        if (self.isHighlighted || self.programIsDefault)
+        {
+            [outerBevel set];
+            [bezelColor set];
+            [bezel fill];
+        }
+        [bezelGradient drawInBezierPath: bezel angle: 90];
+    [NSGraphicsContext restoreGraphicsState];
+    
+    [NSGraphicsContext saveGraphicsState];
+        [strokeColor set];
+        [bezel strokeInside];
+        if (self.isHighlighted)
+            [bezel fillWithInnerShadow: innerShadow];
+    [NSGraphicsContext restoreGraphicsState];
+    
+    [bezelGradient release];
 }
 
 @end
@@ -368,7 +378,7 @@
 - (void) _syncPendingContent
 {
 	[NSObject cancelPreviousPerformRequestsWithTarget: self selector: _cmd object: nil];
-	if ([self canDraw])
+	if (self.canDraw)
 	{
 		[super setContent: _pendingContent];
 		[_pendingContent release];

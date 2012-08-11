@@ -6,6 +6,8 @@
  */
 
 #import "BXThemedButtonCell.h"
+#import "BXGeometry.h"
+#import "NSImage+BXImageEffects.h"
 
 @implementation BXThemedButtonCell
 
@@ -17,7 +19,7 @@
 	checkboxFrame.origin.x += 0.5f;
 	checkboxFrame.origin.y += 0.5f;
     
-    switch ([self controlSize])
+    switch (self.controlSize)
     {
         case NSSmallControlSize:
             checkboxFrame.size.height = 10;
@@ -40,22 +42,22 @@
     }
     
     //Adjust for image placement
-    switch ([self imagePosition])
+    switch (self.imagePosition)
     {
         case NSImageLeft:
-            switch ([self controlSize])
-        {
-            case NSSmallControlSize:
-                checkboxFrame.origin.x += 3;
-                break;
-            case NSMiniControlSize:
-                checkboxFrame.origin.x += 4;
-                break;
-            case NSRegularControlSize:
-            default:
-                checkboxFrame.origin.x += 2;
-                break;
-        }
+            switch (self.controlSize)
+            {
+                case NSSmallControlSize:
+                    checkboxFrame.origin.x += 3;
+                    break;
+                case NSMiniControlSize:
+                    checkboxFrame.origin.x += 4;
+                    break;
+                case NSRegularControlSize:
+                default:
+                    checkboxFrame.origin.x += 2;
+                    break;
+            }
 			break;
 			
 		case NSImageRight:
@@ -63,11 +65,11 @@
             break;
             
 		case NSImageOnly:
-			if ([self controlSize] == NSRegularControlSize)
+			if (self.controlSize == NSRegularControlSize)
             {
 				checkboxFrame.origin.x -= .5f;
 			}
-            else if([self controlSize] == NSMiniControlSize)
+            else if (self.controlSize == NSMiniControlSize)
             {
 				checkboxFrame.origin.x += .5f;
 			}
@@ -89,15 +91,51 @@
     return radioFrame;
 }
 
+- (NSRect) imageRectForBounds: (NSRect)frame
+{
+    NSRect paddedFrame = frame;
+    
+    //FIXME: these numbers are fudged. Also, we should use the entire frame
+    //if the button is set to not draw its background.
+    switch (self.controlSize)
+    {
+        case NSSmallControlSize:
+            paddedFrame = NSInsetRect(frame, 2, 2);
+            break;
+            
+        case NSMiniControlSize:
+            paddedFrame = NSInsetRect(frame, 4, 4);
+            break;
+            
+        case NSRegularControlSize:
+        default:
+            paddedFrame = NSInsetRect(frame, 6, 6);
+            break;
+    }
+    return paddedFrame;
+}
+
+- (NSRect) imageRectForImage: (NSImage *)image forBounds: (NSRect)frame
+{   
+    NSRect paddedFrame = [self imageRectForBounds: frame];
+    
+    NSRect imageFrame = [image imageRectAlignedInRect: paddedFrame
+                                            alignment: self.imagePosition
+                                              scaling: self.imageScaling];
+    
+    return imageFrame;
+}
+
+
 - (NSRect) titleRectForBounds: (NSRect)frame
              withCheckboxRect: (NSRect)checkboxFrame
 {
     NSRect textFrame = frame;
     
-    switch ([self imagePosition])
+    switch (self.imagePosition)
     {
 		case NSImageLeft:
-            switch ([self controlSize])
+            switch (self.controlSize)
             {
                 case NSSmallControlSize:
                     textFrame.size.width -= (NSMaxX(checkboxFrame) + 6);
@@ -118,7 +156,7 @@
 			break;
             
 		case NSImageRight:
-			switch ([self controlSize])
+			switch (self.controlSize)
             {
                 case NSSmallControlSize:
                     textFrame.origin.x += 2;
@@ -145,6 +183,11 @@
     return textFrame;
 }
 
+- (NSRect) titleRectForBounds: (NSRect)frame withImageRect: (NSRect)imageFrame
+{
+    return [self titleRectForBounds: frame withCheckboxRect: imageFrame];
+}
+
 - (NSBezierPath *) checkboxBezelForRect: (NSRect)rect
 {
     return [NSBezierPath bezierPathWithRoundedRect: rect xRadius: 2 yRadius: 2];
@@ -158,10 +201,10 @@
 - (NSBezierPath *) radioButtonGlyphForRect: (NSRect)frame
 {
     NSBezierPath *path = nil;
-    if ([self state] == NSOnState)
+    if (self.state == NSOnState)
     {
         NSRect dotFrame;
-        switch ([self controlSize])
+        switch (self.controlSize)
         {
             case NSSmallControlSize:
                 dotFrame = NSInsetRect(frame, 3.5f, 3.5f);
@@ -182,7 +225,7 @@
         
         //Indicates to the drawing context that this must be filled,
         //not stroked
-        [path setLineWidth: 0.0f];
+        path.lineWidth = 0.0f;
     }
     return path;
 }
@@ -191,35 +234,35 @@
 {
     NSBezierPath *path;
     
-    switch ([self state])
+    switch (self.state)
     {
 		case NSMixedState:
             {
-            path = [[[NSBezierPath alloc] init] autorelease];
-            NSPoint pointsMixed[2];
-            
-            pointsMixed[0] = NSMakePoint(NSMinX(frame) + 3, NSMidY(frame));
-            pointsMixed[1] = NSMakePoint(NSMaxX(frame) - 3, NSMidY(frame));
-            
-            [path appendBezierPathWithPoints: pointsMixed count: 2];
-            [path setLineWidth: 2.0f];
+                path = [[[NSBezierPath alloc] init] autorelease];
+                NSPoint pointsMixed[2];
+                
+                pointsMixed[0] = NSMakePoint(NSMinX(frame) + 3, NSMidY(frame));
+                pointsMixed[1] = NSMakePoint(NSMaxX(frame) - 3, NSMidY(frame));
+                
+                [path appendBezierPathWithPoints: pointsMixed count: 2];
+                
+                path.lineWidth = 2.0f;
             }
             break;
 			
 		case NSOnState:
             {
-            path = [[[NSBezierPath alloc] init] autorelease];
-            NSPoint points[4];
-            
-            points[0] = NSMakePoint(NSMinX(frame) + 3, NSMidY(frame) - 2);
-            points[1] = NSMakePoint(NSMidX(frame), NSMidY(frame) + 2);
-            points[2] = NSMakePoint(NSMidX(frame), NSMidY(frame) + 2);
-            points[3] = NSMakePoint(NSMinX(frame) + NSWidth(frame) - 1, NSMinY(frame) - 2);
-            
-            [path appendBezierPathWithPoints: points count: 4];
-            
-            CGFloat lineWidth = ([self controlSize] == NSMiniControlSize) ? 1.5f : 2.0f;
-            [path setLineWidth: lineWidth];
+                path = [[[NSBezierPath alloc] init] autorelease];
+                NSPoint points[4];
+                
+                points[0] = NSMakePoint(NSMinX(frame) + 3, NSMidY(frame) - 2);
+                points[1] = NSMakePoint(NSMidX(frame), NSMidY(frame) + 2);
+                points[2] = NSMakePoint(NSMidX(frame), NSMidY(frame) + 2);
+                points[3] = NSMakePoint(NSMinX(frame) + NSWidth(frame) - 1, NSMinY(frame) - 2);
+                
+                [path appendBezierPathWithPoints: points count: 4];
+                
+                path.lineWidth = (self.controlSize == NSMiniControlSize) ? 1.5f : 2.0f;
             }
             break;
             
@@ -253,38 +296,38 @@
         bezelPath = [self checkboxBezelForRect: bezelRect];
         glyphPath = [self checkboxGlyphForRect: bezelRect];
     }
-    [bezelPath setLineWidth: 1.0f];
+    bezelPath.lineWidth = 1.0f;
 	
     //First draw the shadow
     [NSGraphicsContext saveGraphicsState];
-        [[theme dropShadow] set];
-        [[theme darkStrokeColor] set];
+        [theme.dropShadow set];
+        [theme.darkStrokeColor set];
         [bezelPath stroke];
 	[NSGraphicsContext restoreGraphicsState];
     
     //Then fill the bezel
     NSGradient *fillGradient;
-    if (![self isEnabled])          fillGradient = [theme disabledNormalGradient];
-    else if ([self isHighlighted])  fillGradient = [theme highlightGradient];
-    else                            fillGradient = [theme normalGradient];
+    if (!self.isEnabled)            fillGradient = theme.disabledNormalGradient;
+    else if (self.isHighlighted)    fillGradient = theme.highlightGradient;
+    else                            fillGradient = theme.normalGradient;
     
     [fillGradient drawInBezierPath: bezelPath
-                             angle: [theme gradientAngle]];
+                             angle: theme.gradientAngle];
     
     //Then stroke the outside of the bezel
 	[NSGraphicsContext saveGraphicsState];
-        [[theme strokeColor] set];
+        [theme.strokeColor set];
         [bezelPath stroke];
 	[NSGraphicsContext restoreGraphicsState];
 	
     //Now finally draw the glyph
 	[NSGraphicsContext saveGraphicsState];
-        if ([self isEnabled])
-            [[theme textColor] set];
+        if (self.isEnabled)
+            [theme.textColor set];
         else
-            [[theme disabledTextColor] set];
+            [theme.disabledTextColor set];
         
-        if ([glyphPath lineWidth])
+        if (glyphPath.lineWidth)
             [glyphPath stroke];
         else
             [glyphPath fill];
@@ -292,15 +335,50 @@
     
     
     //Finally, draw the text label (if we need to)
-	if ([self imagePosition] != NSImageOnly && [self attributedTitle])
+	if (self.imagePosition != NSImageOnly && self.attributedTitle)
     {
         NSRect titleRect = [self titleRectForBounds: frame
                                    withCheckboxRect: bezelRect];
         
-        [self drawTitle: [self attributedTitle]
+        [self drawTitle: self.attributedTitle
               withFrame: titleRect
-                 inView: [self controlView]];
+                 inView: self.controlView];
 	}
+}
+
+- (void) drawImage: (NSImage *)image withFrame: (NSRect)frame inView: (NSView *)controlView
+{
+    BGTheme *theme = [[BGThemeManager keyedManager] themeForKey: self.themeKey];
+    
+    NSRect imageRect = [self imageRectForImage: image
+                                     forBounds: frame];
+    
+    CGFloat opacity = (self.isEnabled) ? theme.alphaValue : theme.disabledAlphaValue;
+    
+    if (image.isTemplate)
+    {       
+        NSColor *tint = (self.isEnabled) ? theme.textColor : theme.disabledTextColor;
+        NSShadow *shadow = theme.textShadow;
+        
+        NSImage *tintedImage = [image imageFilledWithColor: tint atSize: imageRect.size];
+        
+        [NSGraphicsContext saveGraphicsState];
+            [shadow set];
+            [tintedImage drawInRect: imageRect
+                           fromRect: NSZeroRect
+                          operation: NSCompositeSourceOver
+                           fraction: opacity
+                     respectFlipped: YES];
+        [NSGraphicsContext restoreGraphicsState];
+    }
+    else
+    {
+        [image drawInRect: imageRect
+                 fromRect: NSZeroRect
+                operation: NSCompositeSourceOver
+                 fraction: opacity
+           respectFlipped: YES];
+    }
 }
 
 @end

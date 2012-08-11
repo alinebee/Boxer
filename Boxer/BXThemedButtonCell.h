@@ -17,6 +17,7 @@
 //in which to draw the checkbox/radio button.
 - (NSRect) checkboxRectForBounds: (NSRect)frame;
 - (NSRect) radioButtonRectForBounds: (NSRect)frame;
+- (NSRect) imageRectForImage: (NSImage *)image forBounds: (NSRect)frame;
 
 //Returns the rect into which to render a checkbox
 //or radio button label.
@@ -25,6 +26,10 @@
 //checkbox or radio button.
 - (NSRect) titleRectForBounds: (NSRect)frame
              withCheckboxRect: (NSRect)checkboxFrame;
+
+//Same as above, but for the specified image rectangle.
+- (NSRect) titleRectForBounds: (NSRect)frame
+                withImageRect: (NSRect)imageFrame;
 
 //Returns a bezel path to render for the checkbox/radio
 //button's outer bezel.

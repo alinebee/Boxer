@@ -265,7 +265,10 @@
 + (Class) transformedValueClass			{ return [NSString class]; }
 + (BOOL) allowsReverseTransformation	{ return NO; }
 
-- (NSString *) transformedValue: (NSString *)path	{ return [[path lastPathComponent] lowercaseString]; }
+- (NSString *) transformedValue: (NSString *)path
+{
+    return path.lastPathComponent.uppercaseString;
+}
 @end
 
 

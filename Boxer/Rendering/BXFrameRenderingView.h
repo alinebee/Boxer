@@ -25,6 +25,12 @@ typedef enum {
 
 @protocol BXFrameRenderingView
 
+//Called to indicate to the rendering view that it is about to be faded in or out.
+//This permits e.g. OpenGL-based rendering contexts, which are otherwise opaque,
+//to change rendering mode temporarily.
+- (void) fadeWillStart;
+- (void) fadeDidEnd;
+
 //Set/get the current rendering style of the view.
 - (void) setRenderingStyle: (BXRenderingStyle)style;
 - (BXRenderingStyle) renderingStyle;

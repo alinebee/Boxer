@@ -16,6 +16,7 @@
 #import "BXFrameRenderingView.h"
 #import "BXVideoFrame.h"
 #import "BXInputView.h"
+#import "BXGLRenderingView.h"
 
 #import "BXEmulator.h"
 
@@ -35,7 +36,9 @@
 @synthesize inputView = _inputView;
 @synthesize statusBar = _statusBar;
 @synthesize programPanel = _programPanel;
+@synthesize launchPanel = _launchPanel;
 @synthesize programPanelController = _programPanelController;
+@synthesize launchPanelController = _launchPanelController;
 @synthesize inputController = _inputController;
 @synthesize statusBarController = _statusBarController;
 @synthesize autosaveNameBeforeFullScreen = _autosaveNameBeforeFullScreen;
@@ -77,12 +80,14 @@
     self.programPanelController = nil;
     self.inputController = nil;
     self.statusBarController = nil;
+    self.launchPanelController = nil;
     
     self.inputView = nil;
     self.renderingView = nil;
     
     self.programPanel = nil;
     self.statusBar = nil;
+    self.launchPanel = nil;
     
     self.autosaveNameBeforeFullScreen = nil;
     
@@ -140,6 +145,8 @@
 	//Hide the program panel by default - our parent session decides when it's appropriate to display this
 	[self setProgramPanelShown: NO
                        animate: NO];
+    
+    //[self setLaunchPanelShown: YES animate: NO];
     
 	self.window.preservesContentDuringLiveResize = NO;
 	self.window.acceptsMouseMovedEvents = YES;
@@ -401,6 +408,16 @@
 	[self setProgramPanelShown: NO animate: YES];
 }
 
+- (void) showLaunchPanel: (id)sender
+{
+	[self setLaunchPanelShown: YES animate: YES];
+}
+
+- (void) hideLaunchPanel: (id)sender
+{
+	[self setLaunchPanelShown: NO animate: YES];
+}
+
 - (IBAction) toggleRenderingStyle: (id <NSValidatedUserInterfaceItem>)sender
 {
 	BXRenderingStyle style = sender.tag;
@@ -451,6 +468,134 @@
     }
 }
 
+- (void) switchToView: (NSView *)view animate: (BOOL)animate
+{
+    
+}
+
+- (void) setLaunchPanelShown: (BOOL)showLauncher animate: (BOOL)animate
+{
+    //Disable animation if the view we would be animating from is not currently visible.
+    if (animate)
+    {
+        //If we don't actually have a view to animate from, then perform the animation as a fade instead.
+        if ((showLauncher && self.inputView.isHidden) ||
+            (!showLauncher && self.launchPanel.isHidden))
+        {
+            NSView *viewToFade = (showLauncher) ? self.launchPanel : self.inputView;
+            
+            NSDictionary *fadeIn = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    viewToFade, NSViewAnimationTargetKey,
+                                    NSViewAnimationFadeInEffect, NSViewAnimationEffectKey,
+                                    nil];
+            
+            NSViewAnimation *animation = [[NSViewAnimation alloc] init];
+            animation.viewAnimations = [NSArray arrayWithObject: fadeIn];
+            animation.duration = 0.25f;
+            animation.frameRate = 60.0f;
+            animation.animationBlockingMode = NSAnimationBlocking;
+            animation.animationCurve = NSAnimationEaseIn;
+            
+            if (!showLauncher)
+                [self.renderingView fadeWillStart];
+            
+            [animation startAnimation];
+            
+            if (!showLauncher)
+                [self.renderingView fadeDidEnd];
+            
+            [animation release];
+        }
+        else
+        {
+            //Disable window flushes to prevent partial redraws while we're setting up the views.
+            [self.window disableFlushWindow];
+            
+            //We reveal the launcher by sliding the parent view along horizontally:
+            //So we resize the parent view to accommodate both views side-by-side.
+            NSView *wrapperView = self.launchPanel.superview;
+            
+            NSRect originalFrame = wrapperView.frame;
+            NSRect originalBounds = wrapperView.bounds;
+            
+            //Disable autoresizing so we don't screw up the subviews while we're arranging things.
+            wrapperView.autoresizesSubviews = NO;
+            
+            wrapperView.frame = NSMakeRect(originalFrame.origin.x, originalFrame.origin.y,
+                                           originalFrame.size.width * 2, originalFrame.size.height);
+            
+            self.launchPanel.frame = originalBounds;
+            self.inputView.frame = NSMakeRect(originalBounds.origin.x + originalBounds.size.width,
+                                              originalBounds.origin.y,
+                                              originalBounds.size.width,
+                                              originalBounds.size.height);
+            
+            self.launchPanel.hidden = NO;
+            self.inputView.hidden = NO;
+            
+            //Now, decide where we'll start and where we'll end up.
+            NSPoint launcherShown = originalFrame.origin;
+            NSPoint DOSViewShown = NSMakePoint(originalFrame.origin.x - originalFrame.size.width,
+                                               originalFrame.origin.y);
+            
+            NSPoint startingPoint   = (showLauncher) ? DOSViewShown : launcherShown;
+            NSPoint destination     = (showLauncher) ? launcherShown : DOSViewShown;
+            
+            NSRect startingFrame = wrapperView.frame, endingFrame = wrapperView.frame;
+            startingFrame.origin = startingPoint;
+            endingFrame.origin = destination;
+            
+            NSDictionary *slide = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   wrapperView, NSViewAnimationTargetKey,
+                                   [NSValue valueWithRect: startingFrame], NSViewAnimationStartFrameKey,
+                                   [NSValue valueWithRect: endingFrame], NSViewAnimationEndFrameKey,
+                                   nil];
+            
+            NSViewAnimation *animation = [[NSViewAnimation alloc] init];
+            animation.viewAnimations = [NSArray arrayWithObject: slide];
+            animation.duration = 0.75f;
+            animation.frameRate = 60.0f;
+            animation.animationBlockingMode = NSAnimationBlocking;
+            animation.animationCurve = NSAnimationEaseInOut;
+            
+            [self.window enableFlushWindow];
+            
+            [animation startAnimation];
+            
+            [animation release];
+            
+            //Once we're done, restore the view frames to what they were
+            self.launchPanel.frame = originalBounds;
+            self.inputView.frame = originalBounds;
+            
+            wrapperView.frame = originalFrame;
+                
+            wrapperView.autoresizesSubviews = YES;
+        }
+    }
+    
+    if (showLauncher)
+    {
+        //Ensure the mouse is unlocked when switching to the launcher panel
+        self.inputController.mouseLocked = NO;
+        
+        self.launchPanel.hidden = NO;
+        self.inputView.hidden = YES;
+        
+        [self.window makeFirstResponder: self.launchPanel];
+    }
+    else
+    {
+        //Re-lock the mouse when switching to the DOS view, if we're in fullscreen
+        if (self.window.isFullScreen)
+            [self.inputController setMouseLocked: YES force: YES];
+        
+        self.launchPanel.hidden = YES;
+        self.inputView.hidden = NO;
+        
+        [self.window makeFirstResponder: self.inputView];
+    }
+}
 
 #pragma mark -
 #pragma mark DOSBox frame rendering

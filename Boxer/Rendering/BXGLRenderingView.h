@@ -26,12 +26,15 @@
     BXRenderingStyle _renderingStyle;
     
     BOOL _needsRendererUpdate;
+    
+    BOOL _fillWithBlackForFade;
 }
 @property (retain, nonatomic) BXBasicRenderer *renderer;
 @property (assign, nonatomic) BOOL managesAspectRatio;
 @property (assign, nonatomic) NSSize maxViewportSize;
 @property (assign, nonatomic) NSRect viewportRect;
 @property (assign, nonatomic) BXRenderingStyle renderingStyle;
+
 
 //Returns the rectangular region of the view into which the specified frame will be drawn.
 //This will be equal to the view bounds if managesAspectRatio is NO; otherwise, it will

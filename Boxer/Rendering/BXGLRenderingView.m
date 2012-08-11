@@ -25,6 +25,10 @@
 
 @property (retain) BXVideoFrame *currentFrame;
 
+//Whether to render black using Quartz instead of rendering the current video frame using OpenGL.
+//This toggle allows calling contexts to fade in the view.
+@property (assign) BOOL fillWithBlackForFade;
+
 //Whether we should redraw in the next display-link cycle.
 //Set to YES upon receiving a new frame, then back to NO after rendering it.
 @property (assign) BOOL needsCVLinkDisplay;
@@ -60,6 +64,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @synthesize viewportRect = _viewportRect;
 @synthesize maxViewportSize = _maxViewportSize;
 @synthesize renderingStyle = _renderingStyle;
+@synthesize fillWithBlackForFade = _fillWithBlackForFade;
 
 - (void) awakeFromNib
 {
@@ -366,26 +371,44 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     [self _applyViewportToRenderer: self.renderer];
 }
 
+- (void) fadeWillStart
+{
+    self.fillWithBlackForFade = YES;
+}
+
+- (void) fadeDidEnd
+{
+    self.fillWithBlackForFade = NO;
+}
+
 - (void) drawRect: (NSRect)dirtyRect
 {
-    self.needsCVLinkDisplay = NO;
-    
-    CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
-    
-    CGLLockContext(cgl_ctx);
-    
-    if (_needsRendererUpdate)
+    if (self.fillWithBlackForFade)
     {
-        self.renderer = [self rendererForStyle: self.renderingStyle inContext: cgl_ctx];
-        _needsRendererUpdate = NO;
+        [[NSColor blackColor] set];
+        NSRectFill(dirtyRect);
     }
-    
-    if ([self.renderer canRender])
+    else
     {
-        [self.renderer render];
-        CGLFlushDrawable(cgl_ctx);
+        self.needsCVLinkDisplay = NO;
+        
+        CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
+        
+        CGLLockContext(cgl_ctx);
+        
+        if (_needsRendererUpdate)
+        {
+            self.renderer = [self rendererForStyle: self.renderingStyle inContext: cgl_ctx];
+            _needsRendererUpdate = NO;
+        }
+        
+        if ([self.renderer canRender])
+        {
+            [self.renderer render];
+            CGLFlushDrawable(cgl_ctx);
+        }
+        CGLUnlockContext(cgl_ctx);
     }
-    CGLUnlockContext(cgl_ctx);
 }
 
 CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
@@ -400,7 +423,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	
 	BXGLRenderingView *view = (BXGLRenderingView *)displayLinkContext;
     
-    if (view.needsCVLinkDisplay)
+    if (view.needsCVLinkDisplay && !view.fillWithBlackForFade)
         [view display];
     
 	[pool drain];

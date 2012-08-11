@@ -20,6 +20,7 @@
 @class BXProgramPanelController;
 @class BXInputController;
 @class BXStatusBarController;
+@class BXLaunchPanelController;
 @class BXEmulator;
 @class BXVideoFrame;
 @class BXInputView;
@@ -36,10 +37,12 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	BXInputView *_inputView;
 	NSView *_statusBar;
 	NSView *_programPanel;
+    NSView *_launchPanel;
 
 	BXProgramPanelController *_programPanelController;
 	BXInputController *_inputController;
 	BXStatusBarController *_statusBarController;
+    BXLaunchPanelController *_launchPanelController;
 	
     NSSize _currentScaledSize;
 	NSSize _currentScaledResolution;
@@ -58,15 +61,19 @@ extern NSString * const BXViewDidLiveResizeNotification;
 @property (retain, nonatomic) IBOutlet BXProgramPanelController *programPanelController;
 @property (retain, nonatomic) IBOutlet BXInputController *inputController;
 @property (retain, nonatomic) IBOutlet BXStatusBarController *statusBarController;
+@property (retain, nonatomic) IBOutlet BXLaunchPanelController *launchPanelController;
 
 //The view which displays the emulator's graphical output.
 @property (retain, nonatomic) IBOutlet NSView <BXFrameRenderingView> *renderingView;
 
-//The view that tracks user input. This is also be the view we use for fullscreen.
+//The view that tracks user input.
 @property (retain, nonatomic) IBOutlet BXInputView *inputView;
 
 //The slide-out program picker panel.
 @property (retain, nonatomic) IBOutlet NSView *programPanel;
+
+//The alternate program launcher panel.
+@property (retain, nonatomic) IBOutlet NSView *launchPanel;
 
 //The status bar at the bottom of the window.
 @property (retain, nonatomic) IBOutlet NSView *statusBar;
@@ -112,6 +119,10 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //Unconditionally show/hide the program panel.
 - (IBAction) showProgramPanel: (id)sender;
 - (IBAction) hideProgramPanel: (id)sender;
+
+//Unconditionally show/hide the launch panel.
+- (IBAction) showLaunchPanel: (id)sender;
+- (IBAction) hideLaunchPanel: (id)sender;
 
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleRenderingStyle: (id)sender;

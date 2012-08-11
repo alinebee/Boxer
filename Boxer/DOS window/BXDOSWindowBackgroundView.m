@@ -126,7 +126,6 @@
     }
 }
 
-/*
 - (void) _drawBrandInRect: (NSRect)dirtyRect
 {
 	NSImage *brand = [NSImage imageNamed: @"Brand"];
@@ -147,7 +146,6 @@
 				 fraction: 0.5f];
 	}
 }
- */
 
 - (void) drawRect: (NSRect)dirtyRect
 {

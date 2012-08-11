@@ -1020,6 +1020,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             self.lastExecutedProgramPath = programPath;
 		}
         
+        [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
+                                                 selector: @selector(showLaunchPanel:)
+                                                   object: self];
+        
+        [self.DOSWindowController performSelector: @selector(hideLaunchPanel:)
+                                       withObject: self
+                                       afterDelay: BXHideProgramPanelDelay];
+        
+        /*
 		//If we don't need to ask the user what to do with this program,
         //then automatically hide the program panel shortly after launching.
 		if (![self _shouldLeaveProgramPanelOpenAfterLaunch])
@@ -1032,6 +1041,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 											 withObject: self
 											 afterDelay: BXHideProgramPanelDelay];
 		}
+         */
 	}
 	
 	//Track how long this program has run for
@@ -1127,14 +1137,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if ([self _shouldShowProgramPanelAtPrompt])
 	{
 		[NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
-												 selector: @selector(hideProgramPanel:)
+												 selector: @selector(hideLaunchPanel:)
 												   object: self];
 		
 		//Show only after a delay, so that the window has time to resize after quitting the game
-		[self.DOSWindowController performSelector: @selector(showProgramPanel:)
+		[self.DOSWindowController performSelector: @selector(showLaunchPanel:)
                                        withObject: self
                                        afterDelay: BXShowProgramPanelDelay];
         
+        /*
         BOOL didStartInFullScreen = [[self.gameSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey] boolValue];
         if (didStartInFullScreen)
         {
@@ -1142,6 +1153,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             //fullscreen mode when we return to the prompt in order to show the program panel.
             [self.DOSWindowController exitFullScreen];
         }
+         */
 	}
 
     //Enable/disable display-sleep suppression

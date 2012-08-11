@@ -625,7 +625,7 @@
 		[self _resizeToAccommodateFrame: frame];
 	}
     
-    [self.renderingView setHidden: !hasFrame];
+    //[self.renderingView setHidden: !hasFrame];
 }
 
 - (BOOL) _shouldCorrectAspectRatioOfFrame: (BXVideoFrame *)frame
@@ -1097,7 +1097,7 @@
 
     if (show)
     {
-        [view setHidden: NO];	//Unhide before sliding out
+        view.hidden = NO;
     }
     
 	NSRect currentFrame	= self.window.frame;
@@ -1121,7 +1121,7 @@
 	
 	if (!show)
     {
-        [view setHidden: YES]; //Hide after sliding in
+        view.hidden = YES;
     }
 }
 

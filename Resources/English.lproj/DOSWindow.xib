@@ -242,12 +242,12 @@
 							<reference key="NSNextResponder" ref="1006"/>
 							<int key="NSvFlags">274</int>
 							<array class="NSMutableArray" key="NSSubviews">
-								<object class="NSCustomView" id="333999473">
+								<object class="NSCustomView" id="601818829">
 									<reference key="NSNextResponder" ref="89453087"/>
 									<int key="NSvFlags">274</int>
 									<array class="NSMutableArray" key="NSSubviews">
 										<object class="NSCustomView" id="223608717">
-											<reference key="NSNextResponder" ref="333999473"/>
+											<reference key="NSNextResponder" ref="601818829"/>
 											<int key="NSvFlags">-2147483374</int>
 											<array class="NSMutableArray" key="NSSubviews">
 												<object class="NSScrollView" id="485892903">
@@ -336,19 +336,19 @@
 												</object>
 											</array>
 											<string key="NSFrameSize">{640, 400}</string>
-											<reference key="NSSuperview" ref="333999473"/>
+											<reference key="NSSuperview" ref="601818829"/>
 											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="485892903"/>
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<string key="NSClassName">NSView</string>
 										</object>
 										<object class="NSCustomView" id="450603396">
-											<reference key="NSNextResponder" ref="333999473"/>
+											<reference key="NSNextResponder" ref="601818829"/>
 											<int key="NSvFlags">-2147483374</int>
 											<array class="NSMutableArray" key="NSSubviews">
 												<object class="NSOpenGLView" id="511833091">
 													<reference key="NSNextResponder" ref="450603396"/>
-													<int key="NSvFlags">-2147478254</int>
+													<int key="NSvFlags">5394</int>
 													<string key="NSFrameSize">{640, 400}</string>
 													<reference key="NSSuperview" ref="450603396"/>
 													<reference key="NSWindow"/>
@@ -362,7 +362,7 @@
 												</object>
 											</array>
 											<string key="NSFrameSize">{640, 400}</string>
-											<reference key="NSSuperview" ref="333999473"/>
+											<reference key="NSSuperview" ref="601818829"/>
 											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="511833091"/>
 											<string key="NSClassName">BXInputView</string>
@@ -379,7 +379,7 @@
 							<string key="NSFrame">{{0, 26}, {640, 400}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="333999473"/>
+							<reference key="NSNextKeyView" ref="601818829"/>
 							<string key="NSClassName">BXDOSWindowBackgroundView</string>
 						</object>
 					</array>
@@ -783,7 +783,7 @@
 						<int key="objectID">924</int>
 						<reference key="object" ref="89453087"/>
 						<array class="NSMutableArray" key="children">
-							<reference ref="333999473"/>
+							<reference ref="601818829"/>
 						</array>
 						<reference key="parent" ref="1006"/>
 						<string key="objectName">Window Content Wrapper</string>
@@ -896,7 +896,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1244</int>
-						<reference key="object" ref="333999473"/>
+						<reference key="object" ref="601818829"/>
 						<array class="NSMutableArray" key="children">
 							<reference ref="223608717"/>
 							<reference ref="450603396"/>
@@ -909,7 +909,7 @@
 						<array class="NSMutableArray" key="children">
 							<reference ref="511833091"/>
 						</array>
-						<reference key="parent" ref="333999473"/>
+						<reference key="parent" ref="601818829"/>
 						<string key="objectName">DOS Input View</string>
 					</object>
 					<object class="IBObjectRecord">
@@ -923,7 +923,7 @@
 						<array class="NSMutableArray" key="children">
 							<reference ref="485892903"/>
 						</array>
-						<reference key="parent" ref="333999473"/>
+						<reference key="parent" ref="601818829"/>
 						<string key="objectName">Launch Panel</string>
 					</object>
 					<object class="IBObjectRecord">

@@ -740,14 +740,14 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                 lastArguments   = self.lastLaunchedProgramArguments;
             }
             
-            //If we were running a program when we were shut down, then record it;
-            //otherwise, clear any recorded startup program.
+            //If we were running a program when we were shut down, then record that;
+            //otherwise, record the last directory we were in when we were at the DOS prompt.
+            NSString *basePath = self.gamePackage.resourcePath;
             if (lastProgramPath)
             {
                 //Make the program path relative to the gamebox.
                 //TODO: if the program was located outside the gamebox,
                 //record it as an alias instead.
-                NSString *basePath = self.gamePackage.resourcePath;
                 NSString *relativePath = [lastProgramPath pathRelativeToPath: basePath];
                 
                 [self.gameSettings setObject: relativePath
@@ -762,12 +762,21 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             }
             else
             {
-                [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramPathKey];
+                NSString *currentDOSPath = self.emulator.pathOfCurrentDirectory;
+                if (currentDOSPath)
+                {
+                    NSString *relativePath = [currentDOSPath pathRelativeToPath: basePath];
+                    [self.gameSettings setObject: relativePath
+                                          forKey: BXGameboxSettingsLastProgramPathKey];
+                }
+                else
+                {
+                    [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramPathKey];
+                }
                 [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
             }
         }
 
-        
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, self.gamePackage.gameIdentifier];
         [defaults setObject: self.gameSettings forKey: defaultsKey];
@@ -1084,6 +1093,18 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //Flag that the program the user launched is now executing.
     _executingLaunchedProgram = YES;
     
+    //If we've finished the startup process, then show the DOS view at this point.
+    if (_hasLaunched)
+    {
+        [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
+                                                 selector: @selector(showLaunchPanel:)
+                                                   object: self];
+        
+        [self.DOSWindowController performSelector: @selector(showDOSView:)
+                                       withObject: self
+                                       afterDelay: BXSwitchToDOSViewDelay];
+    }
+    
 	//Don't set the active program if we already have one: this way, we keep
 	//track of when a user launches a batch file and don't immediately discard
 	//it in favour of the next program the batch-file runs
@@ -1097,29 +1118,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             self.lastExecutedProgramPath = programPath;
             self.lastExecutedProgramArguments = arguments;
 		}
-        
-        [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
-                                                 selector: @selector(showLaunchPanel:)
-                                                   object: self];
-        
-        [self.DOSWindowController performSelector: @selector(showDOSView:)
-                                       withObject: self
-                                       afterDelay: BXSwitchToDOSViewDelay];
-        
-        /*
-		//If we don't need to ask the user what to do with this program,
-        //then automatically hide the program panel shortly after launching.
-		if (![self _shouldLeaveProgramPanelOpenAfterLaunch])
-		{
-			[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
-													 selector: @selector(showProgramPanel:)
-													   object: self];
-			
-			[[self DOSWindowController] performSelector: @selector(hideProgramPanel:)
-											 withObject: self
-											 afterDelay: BXHideProgramPanelDelay];
-		}
-         */
 	}
 	
 	//Track how long this program has run for
@@ -1215,7 +1213,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     
         
 	//Show the program chooser after returning to the DOS prompt if appropriate.
-	if ([self _shouldShowProgramPanelAtPrompt])
+	if ([self _shouldShowLaunchPanelAtPrompt])
 	{
 		[NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
 												 selector: @selector(showDOSView:)
@@ -1336,6 +1334,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (BOOL) _shouldCloseOnProgramExit
 {
+    //If we're in standalone mode and there is more than one game launcher, don't close on exit
+    //(we'll return to the launcher panel instead.)
+    if ([[NSApp delegate] isStandaloneGameBundle] && self.gamePackage.launchers.count > 1)
+        return NO;
+    
 	//Don't close if the auto-close preference is disabled for this gamebox
 	if (!self.gamePackage.closeOnExit) return NO;
 	
@@ -1372,10 +1375,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         return NO;
 }
 
-- (BOOL) _shouldShowProgramPanelAtPrompt
+- (BOOL) _shouldShowLaunchPanelAtPrompt
 {
+    if ([[NSApp delegate] isStandaloneGameBundle])
+        return YES;
+    
     if (!self.gamePackage)
+    {
         return NO;
+    }
     else
     {
         NSNumber *showProgramPanel = [self.gameSettings objectForKey: BXGameboxSettingsShowProgramPanelKey];
@@ -1724,7 +1732,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         //IMPLEMENTATION NOTE: we used to toggle this when the DOS window was hidden (not visible),
         //but that gave rise to corner cases if shouldAutoPause was called just before the window
         //was to appear.
-        if (self.DOSWindowController.window.isMiniaturized) return YES;
+        if (self.DOSWindowController.window.isMiniaturized)
+            return YES;
     }
 	
     return NO;

@@ -701,7 +701,7 @@
     }
 }
 
-- (BOOL) openFileAtPath: (NSString *)path withArguments: (NSArray *)arguments
+- (BOOL) openFileAtPath: (NSString *)path withArguments: (NSString *)arguments
 {
 	if (!self.emulator.isInitialized || self.emulator.isRunningProcess) return NO;
     

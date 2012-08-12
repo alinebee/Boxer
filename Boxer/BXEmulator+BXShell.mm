@@ -93,14 +93,13 @@ nil];
 }
 
 - (void) executeCommand: (NSString *)command
-		  withArguments: (NSArray *)arguments
+		  withArguments: (NSString *)arguments
 			   encoding: (NSStringEncoding)encoding
 {
     NSString *fullCommand;
-    if (arguments.count)
+    if (arguments.length)
     {
-        NSString *argumentString = [arguments componentsJoinedByString: @" "];
-        fullCommand = [NSString stringWithFormat: @"%@ %@", command, argumentString];
+        fullCommand = [NSString stringWithFormat: @"%@ %@", command, arguments];
     }
     else
     {
@@ -116,7 +115,7 @@ nil];
 }
 
 - (void) executeProgramAtDOSPath: (NSString *)dosPath
-                   withArguments: (NSArray *)arguments
+                   withArguments: (NSString *)arguments
                changingDirectory: (BOOL)changeDir
 {
 	if (changeDir)
@@ -533,7 +532,7 @@ nil];
 
 - (void) _willExecuteFileAtDOSPath: (const char *)dosPath
                      onDOSBoxDrive: (DOS_Drive *)dosboxDrive
-                     withArguments: (NSArray *)arguments
+                     withArguments: (const char *)arguments
 {
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
 	NSUInteger driveIndex = [self _indexOfDOSBoxDrive: dosboxDrive];
@@ -542,6 +541,8 @@ nil];
 	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\\%@",
 							   [self _driveLetterForIndex: driveIndex],
 							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding]];
+    
+    NSString *argumentString = [[NSString stringWithCString: arguments encoding: BXDirectStringEncoding] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 	
     //TWEAK: if this is another instance of the DOS session, do not change our state.
     if ([fullDOSPath isEqualToString: shellProcessPath]) return;
@@ -561,8 +562,8 @@ nil];
     if (localPath)
         [userInfo setObject: localPath forKey: BXEmulatorLocalPathKey];
     
-    if (arguments)
-        [userInfo setObject: arguments forKey: BXEmulatorLaunchArgumentsKey];
+    if (argumentString.length)
+        [userInfo setObject: argumentString forKey: BXEmulatorLaunchArgumentsKey];
 	
 	[self _postNotificationName: BXEmulatorWillStartProgramNotification
 			   delegateSelector: @selector(emulatorWillStartProgram:)
@@ -572,7 +573,7 @@ nil];
 
 - (void) _didExecuteFileAtDOSPath: (const char *)dosPath
                     onDOSBoxDrive: (DOS_Drive *)dosboxDrive
-                    withArguments: (NSArray *)arguments
+                    withArguments: (const char *)arguments
 {
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
 	NSUInteger driveIndex = [self _indexOfDOSBoxDrive: dosboxDrive];
@@ -581,6 +582,8 @@ nil];
 	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\\%@",
 							   [self _driveLetterForIndex: driveIndex],
 							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding]];
+    
+    NSString *argumentString = [[NSString stringWithCString: arguments encoding: BXDirectStringEncoding] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 	
 	NSMutableDictionary *userInfo	= [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                        fullDOSPath, BXEmulatorDOSPathKey,
@@ -590,8 +593,8 @@ nil];
     if (localPath)
         [userInfo setObject: localPath forKey: BXEmulatorLocalPathKey];
     
-    if (arguments)
-        [userInfo setObject: arguments forKey: BXEmulatorLaunchArgumentsKey];
+    if (argumentString.length)
+        [userInfo setObject: argumentString forKey: BXEmulatorLaunchArgumentsKey];
 	
     self.processPath = nil;
     self.processLocalPath = nil;

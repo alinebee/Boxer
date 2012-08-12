@@ -329,12 +329,12 @@ enum {
 //Called by DOSBox just before a program will start. Sends a delegate notification.
 - (void) _willExecuteFileAtDOSPath: (const char *)dosPath
                      onDOSBoxDrive: (DOS_Drive *)dosboxDrive
-                     withArguments: (NSArray *)arguments;
+                     withArguments: (const char *)arguments;
 
 //Called by DOSBox just after a program finishes executing and exits. Sends a delegate notification.
 - (void) _didExecuteFileAtDOSPath: (const char *)dosPath
                     onDOSBoxDrive: (DOS_Drive *)dosboxDrive
-                    withArguments: (NSArray *)arguments;
+                    withArguments: (const char *)arguments;
 
 @end
 

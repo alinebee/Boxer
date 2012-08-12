@@ -120,11 +120,11 @@
             NSString *groupRowFormat = NSLocalizedString(@"Drive %1$@ (%2$@)",
                                                    @"Format for grouping rows in All Programs list. %1$@ is the drive letter, and %2$@ is the drive's title.");
             
-            NSString *title = [NSString stringWithFormat: groupRowFormat, drive.letter, drive.title];
+            NSString *driveTitle = [NSString stringWithFormat: groupRowFormat, drive.letter, drive.title];
             NSDictionary *groupRow = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      title, @"title",
-                                      drive.path, @"path",
                                       [NSNumber numberWithBool: YES], @"isDriveRow",
+                                      driveTitle, @"title",
+                                      drive.path, @"path",
                                       nil];
             
             [mutableRows addObject: groupRow];
@@ -132,10 +132,11 @@
             //Now, add items for each program on that drive.
             for (NSString *path in executablePathsOnDrive)
             {
-                NSString *dosPath = [session.emulator DOSPathForPath: path onDrive: drive];
-                NSString *programTitle = [programNameFormatter transformedValue: path];
+                NSString *dosPath   = [session.emulator DOSPathForPath: path onDrive: drive];
+                NSString *title     = [programNameFormatter transformedValue: path];
+                
                 NSDictionary *programRow = [NSDictionary dictionaryWithObjectsAndKeys:
-                                            programTitle, @"title",
+                                            title, @"title",
                                             path, @"path",
                                             dosPath, @"dosPath",
                                             nil];
@@ -156,12 +157,18 @@
     BXSession *session = (BXSession *)self.representedObject;
     BXPackage *gamePackage = session.gamePackage;
     
+    NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
+    
     for (NSDictionary *launcher in gamePackage.launchers)
     {
-        NSString *path = [launcher objectForKey: BXLauncherPathKey];
-        NSString *dosPath = [session.emulator DOSPathForPath: path];
-        NSString *title = [launcher objectForKey: BXLauncherTitleKey];
+        NSString *path      = [launcher objectForKey: BXLauncherPathKey];
+        NSString *title     = [launcher objectForKey: BXLauncherTitleKey];
         NSString *arguments = [launcher objectForKey: BXLauncherArgsKey];
+        NSString *dosPath   = [session.emulator DOSPathForPath: path];
+        
+        //If no title was provided, use the program's filename.
+        if (!title.length)
+            title = [programNameFormatter transformedValue: path];
         
         NSDictionary *launcherRow = [NSDictionary dictionaryWithObjectsAndKeys:
                                     title, @"title",
@@ -172,6 +179,8 @@
         
         [mutableRows addObject: launcherRow];
     }
+    
+    [programNameFormatter release];
 }
 
 
@@ -203,9 +212,7 @@
 	if (programPath)
     {
         BXSession *session = (BXSession *)self.representedObject;
-        NSArray *args = (arguments) ? [NSArray arrayWithObject: arguments] : nil;
-        
-        [session openFileAtPath: programPath withArguments: args];
+        [session openFileAtPath: programPath withArguments: arguments];
     }
 }
 

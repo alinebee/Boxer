@@ -18,12 +18,13 @@
 #pragma mark -
 #pragma mark Command handling
 
-//Runs the specified command string as if it had been typed on the commandline. Encoding should be either BXDirectStringEncoding or BXDisplayStringEncoding.
+//Runs the specified command string as if it had been typed on the commandline.
+//Encoding should be either BXDirectStringEncoding or BXDisplayStringEncoding.
 - (void) executeCommand: (NSString *)theString
 			   encoding: (NSStringEncoding)encoding;
 
 - (void) executeCommand: (NSString *)command
-		  withArguments: (NSArray *)arguments
+		  withArguments: (NSString *)arguments
 			   encoding: (NSStringEncoding)encoding;
 
 //Launch the program at the specified DOS path.
@@ -35,7 +36,7 @@
 //If changingDirectory is true, first switches the working directory to the program's containing directory;
 //Otherwise the command will be executed as an absolute path, using the current directory as the working directory.
 - (void) executeProgramAtDOSPath: (NSString *)dosPath
-                   withArguments: (NSArray *)arguments
+                   withArguments: (NSString *)arguments
                changingDirectory: (BOOL)changeDir;
 
 

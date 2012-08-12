@@ -75,11 +75,11 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 	BXDOSWindowController *_DOSWindowController;
 	
 	NSString *_targetPath;
-    NSArray *_targetArguments;
+    NSString *_targetArguments;
 	NSString *_lastExecutedProgramPath;
-    NSArray *_lastExecutedProgramArguments;
+    NSString *_lastExecutedProgramArguments;
     NSString *_lastLaunchedProgramPath;
-    NSArray *_lastLaunchedProgramArguments;
+    NSString *_lastLaunchedProgramArguments;
     
 	NSString *_temporaryFolderPath;
 	
@@ -137,20 +137,19 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 //The OS X path of the executable to launch (or folder to switch to) when the emulator starts,
 //and any arguments to pass to that executable.
 @property (copy, nonatomic) NSString *targetPath;
-@property (copy, nonatomic) NSArray *targetArguments;
-
+@property (copy, nonatomic) NSString *targetArguments;
 
 //The OS X path of the last DOS program or batch file that was executed from the DOS prompt,
 //and any arguments it was launched with. Will be nil if the emulator is at the DOS prompt,
 //or if Boxer is unable to locate the program within the local filesystem.
 @property (readonly, copy, nonatomic) NSString *lastExecutedProgramPath;
-@property (readonly, copy, nonatomic) NSArray *lastExecutedProgramArguments;
+@property (readonly, copy, nonatomic) NSString *lastExecutedProgramArguments;
 
 //The OS X path of the last program the user launched through Boxer, and any arguments it was
 //launched with. Will be nil when the emulator is at the DOS prompt or if the user has launched
 //a program manually from the DOS prompt.
 @property (readonly, copy, nonatomic) NSString *lastLaunchedProgramPath;
-@property (readonly, copy, nonatomic) NSArray *lastLaunchedProgramArguments;
+@property (readonly, copy, nonatomic) NSString *lastLaunchedProgramArguments;
 
 //The OS X path of Boxer's 'best guess' at the currently active program.
 //This corresponds to lastExecutedProgramPath if available, falling back on lastLaunchedProgramPath.

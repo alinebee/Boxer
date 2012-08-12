@@ -174,31 +174,15 @@ void boxer_autoexecDidFinish()
 }
 
 void boxer_willExecuteFileAtDOSPath(const char *path, const char *arguments, DOS_Drive *dosboxDrive)
-{
-	NSArray *argList = nil;
-    if (strlen(arguments) > 0)
-    {
-        NSString *stringArgs = [[NSString stringWithCString: arguments encoding: BXDirectStringEncoding] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
-        if (stringArgs.length)
-            argList = [stringArgs componentsSeparatedByString: @" "];
-    }
-	
+{	
     BXEmulator *emulator = [BXEmulator currentEmulator];
-    [emulator _willExecuteFileAtDOSPath: path onDOSBoxDrive: dosboxDrive withArguments: argList];
+    [emulator _willExecuteFileAtDOSPath: path onDOSBoxDrive: dosboxDrive withArguments: arguments];
 }
 
 void boxer_didExecuteFileAtDOSPath(const char *path, const char *arguments, DOS_Drive *dosboxDrive)
 {
-	NSArray *argList = nil;
-    if (strlen(arguments) > 0)
-    {
-        NSString *stringArgs = [[NSString stringWithCString: arguments encoding: BXDirectStringEncoding] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
-        if (stringArgs.length)
-            argList = [stringArgs componentsSeparatedByString: @" "];
-    }
-	
     BXEmulator *emulator = [BXEmulator currentEmulator];
-    [emulator _didExecuteFileAtDOSPath: path onDOSBoxDrive: dosboxDrive withArguments: argList];
+    [emulator _didExecuteFileAtDOSPath: path onDOSBoxDrive: dosboxDrive withArguments: arguments];
 }
 
 

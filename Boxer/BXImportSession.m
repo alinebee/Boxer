@@ -1245,7 +1245,7 @@
         NSString *programPath = [notification.userInfo objectForKey: BXEmulatorLocalPathKey];
         if (programPath)
         {
-            NSArray *arguments = [notification.userInfo objectForKey: BXEmulatorLaunchArgumentsKey];
+            NSString *arguments = [notification.userInfo objectForKey: BXEmulatorLaunchArgumentsKey];
             self.lastExecutedProgramPath = programPath;
             self.lastExecutedProgramArguments = arguments;
         }

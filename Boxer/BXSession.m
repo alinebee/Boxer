@@ -950,7 +950,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//After all preflight configuration has finished, go ahead and open whatever
     //file or folder we're pointing at.
 	NSString *target = self.targetPath;
-    NSArray *arguments = self.targetArguments;
+    NSString *arguments = self.targetArguments;
     
 	if (target)
 	{
@@ -1025,7 +1025,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         
         if (programPath.length)
         {
-            NSArray *arguments = [notification.userInfo objectForKey: BXEmulatorLaunchArgumentsKey];
+            NSString *arguments = [notification.userInfo objectForKey: BXEmulatorLaunchArgumentsKey];
             self.lastExecutedProgramPath = programPath;
             self.lastExecutedProgramArguments = arguments;
 		}

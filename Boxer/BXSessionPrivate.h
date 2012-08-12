@@ -28,9 +28,9 @@
 @property (readwrite, retain, nonatomic) NSMutableDictionary *gameSettings;
 
 @property (readwrite, copy, nonatomic) NSString *lastExecutedProgramPath;
-@property (readwrite, copy, nonatomic) NSArray *lastExecutedProgramArguments;
+@property (readwrite, copy, nonatomic) NSString *lastExecutedProgramArguments;
 @property (readwrite, copy, nonatomic) NSString *lastLaunchedProgramPath;
-@property (readwrite, copy, nonatomic) NSArray *lastLaunchedProgramArguments;
+@property (readwrite, copy, nonatomic) NSString *lastLaunchedProgramArguments;
 
 @property (readwrite, retain, nonatomic) NSDictionary *drives;
 @property (readwrite, retain, nonatomic) NSDictionary *executables;

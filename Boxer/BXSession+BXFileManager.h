@@ -194,7 +194,7 @@ typedef NSUInteger BXDriveMountOptions;
 //Open the file at the specified path in DOS with the (optional) specified arguments.
 //If path is an executable, it will be launched with any specified arguments;
 //otherwise, we'll just change the working directory to the path.
-- (BOOL) openFileAtPath: (NSString *)path withArguments: (NSArray *)arguments;
+- (BOOL) openFileAtPath: (NSString *)path withArguments: (NSString *)arguments;
 - (BOOL) openFileAtPath: (NSString *)path;
 
 

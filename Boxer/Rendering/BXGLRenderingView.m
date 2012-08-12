@@ -383,7 +383,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-    if (self.fillWithBlackForFade)
+    if (self.fillWithBlackForFade || ![self.renderer canRender])
     {
         [[NSColor blackColor] set];
         NSRectFill(dirtyRect);
@@ -396,17 +396,15 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         
         CGLLockContext(cgl_ctx);
         
-        if (_needsRendererUpdate)
-        {
-            self.renderer = [self rendererForStyle: self.renderingStyle inContext: cgl_ctx];
-            _needsRendererUpdate = NO;
-        }
-        
-        if ([self.renderer canRender])
-        {
+            if (_needsRendererUpdate)
+            {
+                self.renderer = [self rendererForStyle: self.renderingStyle inContext: cgl_ctx];
+                _needsRendererUpdate = NO;
+            }
+            
             [self.renderer render];
             CGLFlushDrawable(cgl_ctx);
-        }
+        
         CGLUnlockContext(cgl_ctx);
     }
 }

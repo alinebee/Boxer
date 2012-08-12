@@ -96,8 +96,8 @@ extern "C" {
     bool boxer_getNextDirectoryEntry(void *handle, char *outName, bool &isDirectory);
     
 	//Called from shell_misc.cpp to notify Boxer when a program or batchfile is executed.
-	void boxer_willExecuteFileAtDOSPath(const char *dosPath, DOS_Drive *dosboxDrive);
-	void boxer_didExecuteFileAtDOSPath(const char *dosPath, DOS_Drive *dosboxDrive);
+	void boxer_willExecuteFileAtDOSPath(const char *dosPath, const char *arguments, DOS_Drive *dosboxDrive);
+	void boxer_didExecuteFileAtDOSPath(const char *dosPath, const char *arguments, DOS_Drive *dosboxDrive);
 	
 	void boxer_handleDOSBoxTitleChange(Bit32s cycles, Bits frameskip, bool paused);
 	

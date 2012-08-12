@@ -716,6 +716,7 @@
 	{
 		//If an executable was specified, execute it
         self.lastLaunchedProgramPath = path;
+        self.lastLaunchedProgramArguments = arguments;
 		[self.emulator executeProgramAtDOSPath: dosPath
                                  withArguments: arguments
                              changingDirectory: YES];

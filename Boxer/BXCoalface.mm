@@ -173,16 +173,32 @@ void boxer_autoexecDidFinish()
 	[emulator _didRunStartupCommands];
 }
 
-void boxer_willExecuteFileAtDOSPath(const char *path, DOS_Drive *dosboxDrive)
+void boxer_willExecuteFileAtDOSPath(const char *path, const char *arguments, DOS_Drive *dosboxDrive)
 {
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _willExecuteFileAtDOSPath: path onDOSBoxDrive: dosboxDrive];
+	NSArray *argList = nil;
+    if (strlen(arguments) > 0)
+    {
+        NSString *stringArgs = [[NSString stringWithCString: arguments encoding: BXDirectStringEncoding] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+        if (stringArgs.length)
+            argList = [stringArgs componentsSeparatedByString: @" "];
+    }
+	
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    [emulator _willExecuteFileAtDOSPath: path onDOSBoxDrive: dosboxDrive withArguments: argList];
 }
 
-void boxer_didExecuteFileAtDOSPath(const char *path, DOS_Drive *dosboxDrive)
+void boxer_didExecuteFileAtDOSPath(const char *path, const char *arguments, DOS_Drive *dosboxDrive)
 {
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _didExecuteFileAtDOSPath: path onDOSBoxDrive: dosboxDrive];
+	NSArray *argList = nil;
+    if (strlen(arguments) > 0)
+    {
+        NSString *stringArgs = [[NSString stringWithCString: arguments encoding: BXDirectStringEncoding] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+        if (stringArgs.length)
+            argList = [stringArgs componentsSeparatedByString: @" "];
+    }
+	
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    [emulator _didExecuteFileAtDOSPath: path onDOSBoxDrive: dosboxDrive withArguments: argList];
 }
 
 

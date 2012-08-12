@@ -531,7 +531,9 @@ nil];
 					   userInfo: nil];
 }
 
-- (void) _willExecuteFileAtDOSPath: (const char *)dosPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+- (void) _willExecuteFileAtDOSPath: (const char *)dosPath
+                     onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+                     withArguments: (NSArray *)arguments
 {
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
 	NSUInteger driveIndex = [self _indexOfDOSBoxDrive: dosboxDrive];
@@ -552,11 +554,15 @@ nil];
 	self.processLocalPath = localPath;
 	
 	NSMutableDictionary *userInfo	= [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                       fullDOSPath, @"DOSPath",
-                                       drive,       @"drive",
+                                       fullDOSPath, BXEmulatorDOSPathKey,
+                                       drive,       BXEmulatorDriveKey,
                                        nil];
     
-    if (localPath) [userInfo setObject: localPath forKey: @"localPath"];
+    if (localPath)
+        [userInfo setObject: localPath forKey: BXEmulatorLocalPathKey];
+    
+    if (arguments)
+        [userInfo setObject: arguments forKey: BXEmulatorLaunchArgumentsKey];
 	
 	[self _postNotificationName: BXEmulatorWillStartProgramNotification
 			   delegateSelector: @selector(emulatorWillStartProgram:)
@@ -564,7 +570,9 @@ nil];
 	
 }
 
-- (void) _didExecuteFileAtDOSPath: (const char *)dosPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+- (void) _didExecuteFileAtDOSPath: (const char *)dosPath
+                    onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+                    withArguments: (NSArray *)arguments
 {
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
 	NSUInteger driveIndex = [self _indexOfDOSBoxDrive: dosboxDrive];
@@ -575,15 +583,19 @@ nil];
 							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding]];
 	
 	NSMutableDictionary *userInfo	= [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                       fullDOSPath, @"DOSPath",
-                                       drive,       @"drive",
+                                       fullDOSPath, BXEmulatorDOSPathKey,
+                                       drive,       BXEmulatorDriveKey,
                                        nil];
     
-    if (localPath) [userInfo setObject: localPath forKey: @"localPath"];
+    if (localPath)
+        [userInfo setObject: localPath forKey: BXEmulatorLocalPathKey];
+    
+    if (arguments)
+        [userInfo setObject: arguments forKey: BXEmulatorLaunchArgumentsKey];
 	
-	[self setProcessPath: nil];
-	[self setProcessLocalPath: nil];
-	
+    self.processPath = nil;
+    self.processLocalPath = nil;
+    
 	[self _postNotificationName: BXEmulatorDidFinishProgramNotification
 			   delegateSelector: @selector(emulatorDidFinishProgram:)
 					   userInfo: userInfo];

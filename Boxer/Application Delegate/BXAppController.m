@@ -259,7 +259,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 			if ([session.gamePackage.bundlePath isEqualToString: path])
 			{
 				NSString *defaultTarget = session.gamePackage.targetPath;
-				if (defaultTarget) [session openFileAtPath: defaultTarget];
+				if (defaultTarget)
+                    [session openFileAtPath: defaultTarget];
 				
 				[session showWindows];
 				return session;

@@ -122,7 +122,7 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 //Unconditionally show/hide the launch panel.
 - (IBAction) showLaunchPanel: (id)sender;
-- (IBAction) hideLaunchPanel: (id)sender;
+- (IBAction) showDOSView: (id)sender;
 
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleRenderingStyle: (id)sender;

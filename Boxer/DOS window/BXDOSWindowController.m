@@ -20,6 +20,7 @@
 
 #import "BXEmulator.h"
 
+#import "BXSession+BXEmulatorControls.h"
 #import "BXSession+BXDragDrop.h"
 #import "BXImportSession.h"
 
@@ -145,8 +146,6 @@
 	//Hide the program panel by default - our parent session decides when it's appropriate to display this
 	[self setProgramPanelShown: NO
                        animate: NO];
-    
-    //[self setLaunchPanelShown: YES animate: NO];
     
 	self.window.preservesContentDuringLiveResize = NO;
 	self.window.acceptsMouseMovedEvents = YES;
@@ -413,7 +412,7 @@
 	[self setLaunchPanelShown: YES animate: YES];
 }
 
-- (void) hideLaunchPanel: (id)sender
+- (void) showDOSView: (id)sender
 {
 	[self setLaunchPanelShown: NO animate: YES];
 }
@@ -468,11 +467,6 @@
     }
 }
 
-- (void) switchToView: (NSView *)view animate: (BOOL)animate
-{
-    
-}
-
 - (void) setLaunchPanelShown: (BOOL)showLauncher animate: (BOOL)animate
 {
     //Disable animation if the view we would be animating from is not currently visible.
@@ -492,7 +486,6 @@
             NSViewAnimation *animation = [[NSViewAnimation alloc] init];
             animation.viewAnimations = [NSArray arrayWithObject: fadeIn];
             animation.duration = 0.25f;
-            animation.frameRate = 60.0f;
             animation.animationBlockingMode = NSAnimationBlocking;
             animation.animationCurve = NSAnimationEaseIn;
             
@@ -554,7 +547,6 @@
             NSViewAnimation *animation = [[NSViewAnimation alloc] init];
             animation.viewAnimations = [NSArray arrayWithObject: slide];
             animation.duration = 0.75f;
-            animation.frameRate = 60.0f;
             animation.animationBlockingMode = NSAnimationBlocking;
             animation.animationCurve = NSAnimationEaseInOut;
             
@@ -576,7 +568,8 @@
     
     if (showLauncher)
     {
-        //Ensure the mouse is unlocked when switching to the launcher panel
+        //When switching to the launcher panel,
+        //ensure the mouse is unlocked.
         self.inputController.mouseLocked = NO;
         
         self.launchPanel.hidden = NO;
@@ -586,7 +579,7 @@
     }
     else
     {
-        //Re-lock the mouse when switching to the DOS view, if we're in fullscreen
+        //Re-lock the mouse when switching to the DOS view, if we're in fullscreen.
         if (self.window.isFullScreen)
             [self.inputController setMouseLocked: YES force: YES];
         

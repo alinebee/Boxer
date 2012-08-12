@@ -53,6 +53,11 @@ NSString * const BXEmulatorDidCreateFileNotification				= @"BXEmulatorDidCreateF
 NSString * const BXEmulatorDidRemoveFileNotification				= @"BXEmulatorDidRemoveFileNotification";
 
 
+NSString * const BXEmulatorDOSPathKey           = @"DOSPath";
+NSString * const BXEmulatorDriveKey             = @"drive";
+NSString * const BXEmulatorLocalPathKey         = @"localPath";
+NSString * const BXEmulatorLaunchArgumentsKey   = @"arguments";
+
 
 //Use for strings that should be displayed to the user
 NSStringEncoding BXDisplayStringEncoding	= CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSLatin1);

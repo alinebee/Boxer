@@ -50,13 +50,12 @@
 //is enabled. The delay gives the program time to crash and our program panel time to hide.
 #define BXAutoSwitchToFullScreenDelay 0.5
 
-//How soon after launching a program to auto-hide the program panel.
-//This gives the program time to fail miserably.
-#define BXHideProgramPanelDelay 0.1
+//How soon after launching a program to hide the launch panel.
+//This gives the program time to start up/fail miserably.
+#define BXSwitchToDOSViewDelay 0.25
 
-//How soon after returning to the DOS prompt to display the program panel.
-//The delay gives the window time to resize or return from fullscreen mode.
-#define BXShowProgramPanelDelay 0.25
+//How soon after returning to the DOS prompt to display the launch panel.
+#define BXSwitchToLaunchPanelDelay 0.5
 
 
 #pragma mark -
@@ -99,8 +98,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 @synthesize gamePackage = _gamePackage;
 @synthesize emulator = _emulator;
 @synthesize targetPath = _targetPath;
+@synthesize targetArguments = _targetArguments;
 @synthesize lastExecutedProgramPath = _lastExecutedProgramPath;
-@synthesize lastLaunchedProgramPath = _lastLaunchedProgramPath;;
+@synthesize lastExecutedProgramArguments = _lastExecutedProgramArguments;
+@synthesize lastLaunchedProgramPath = _lastLaunchedProgramPath;
+@synthesize lastLaunchedProgramArguments = _lastLaunchedProgramArguments;
 @synthesize gameProfile = _gameProfile;
 @synthesize gameSettings = _gameSettings;
 @synthesize drives = _drives;
@@ -230,8 +232,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     self.gameSettings = nil;
     
     self.targetPath = nil;
+    self.targetArguments = nil;
     self.lastExecutedProgramPath = nil;
+    self.lastExecutedProgramArguments = nil;
     self.lastLaunchedProgramPath = nil;
+    self.lastLaunchedProgramArguments = nil;
     
     self.drives = nil;
     self.executables = nil;
@@ -416,14 +421,18 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (NSString *) activeProgramPath
 {
-    if (self.lastExecutedProgramPath) return self.lastExecutedProgramPath;
-    else return self.lastLaunchedProgramPath;
+    if (self.lastExecutedProgramPath)
+        return self.lastExecutedProgramPath;
+    else
+        return self.lastLaunchedProgramPath;
 }
 
 - (NSString *) currentPath
 {
-	if (self.activeProgramPath) return self.activeProgramPath;
-	else return self.emulator.pathOfCurrentDirectory;
+	if (self.activeProgramPath)
+        return self.activeProgramPath;
+	else
+        return self.emulator.pathOfCurrentDirectory;
 }
 
 #pragma mark -
@@ -850,10 +859,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     
     //Turn off display-sleep suppression
     [self _syncSuppressesDisplaySleep];
-    
-	//Clear our program caches
-	self.lastExecutedProgramPath = nil;
-    self.lastLaunchedProgramPath = nil;
 
 	//Clear the final rendered frame
 	[self.DOSWindowController updateWithFrame: nil];
@@ -945,6 +950,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//After all preflight configuration has finished, go ahead and open whatever
     //file or folder we're pointing at.
 	NSString *target = self.targetPath;
+    NSArray *arguments = self.targetArguments;
+    
 	if (target)
 	{
         //If the Option key is held down during the startup process, skip the default program.
@@ -961,17 +968,18 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		if (_userSkippedDefaultProgram && [self.class isExecutable: target])
 		{
 			target = target.stringByDeletingLastPathComponent;
+            arguments = nil;
 		}
         
-        
-        //If we're part of a standalone game bundle, switch into fullscreen immediately at this point.
+        //Switch into fullscreen if the user had previously quit while in fullscreen
+        //and if they haven't skipped the startup program.
         BOOL startInFullScreen = [[self.gameSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey] boolValue];
-        if (!_userSkippedDefaultProgram && [[NSApp delegate] isStandaloneGameBundle] && startInFullScreen)
+        if (_userSkippedDefaultProgram && startInFullScreen)
         {
             [self.DOSWindowController enterFullScreen];
         }
         
-		[self openFileAtPath: target];
+		[self openFileAtPath: target withArguments: arguments];
 	}
     
     //Clear the program-skipping flag for next launch.
@@ -1013,20 +1021,22 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//it in favour of the next program the batch-file runs
 	if (!self.lastExecutedProgramPath)
 	{
-		NSString *programPath = [notification.userInfo objectForKey: @"localPath"];
+		NSString *programPath = [notification.userInfo objectForKey: BXEmulatorLocalPathKey];
         
         if (programPath.length)
         {
+            NSArray *arguments = [notification.userInfo objectForKey: BXEmulatorLaunchArgumentsKey];
             self.lastExecutedProgramPath = programPath;
+            self.lastExecutedProgramArguments = arguments;
 		}
         
         [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
                                                  selector: @selector(showLaunchPanel:)
                                                    object: self];
         
-        [self.DOSWindowController performSelector: @selector(hideLaunchPanel:)
+        [self.DOSWindowController performSelector: @selector(showDOSView:)
                                        withObject: self
-                                       afterDelay: BXHideProgramPanelDelay];
+                                       afterDelay: BXSwitchToDOSViewDelay];
         
         /*
 		//If we don't need to ask the user what to do with this program,
@@ -1066,6 +1076,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if (!executedPathCanBeDefault)
 	{
 		self.lastExecutedProgramPath = nil;
+        self.lastExecutedProgramArguments = nil;
 	}
 	
 	//Check the running time of the program. If it was suspiciously short,
@@ -1121,7 +1132,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	{
         _executingLaunchedProgram = NO;
         self.lastExecutedProgramPath = nil;
+        self.lastExecutedProgramArguments = nil;
         self.lastLaunchedProgramPath = nil;
+        self.lastLaunchedProgramArguments = nil;
 	}
     
     //Clear our cache of sent MT-32 messages on behalf of BXAudioControls.
@@ -1137,55 +1150,17 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if ([self _shouldShowProgramPanelAtPrompt])
 	{
 		[NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
-												 selector: @selector(hideLaunchPanel:)
+												 selector: @selector(showDOSView:)
 												   object: self];
 		
 		//Show only after a delay, so that the window has time to resize after quitting the game
 		[self.DOSWindowController performSelector: @selector(showLaunchPanel:)
                                        withObject: self
-                                       afterDelay: BXShowProgramPanelDelay];
-        
-        /*
-        BOOL didStartInFullScreen = [[self.gameSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey] boolValue];
-        if (didStartInFullScreen)
-        {
-            //If we automatically switched into fullscreen at startup, then drop out of
-            //fullscreen mode when we return to the prompt in order to show the program panel.
-            [self.DOSWindowController exitFullScreen];
-        }
-         */
+                                       afterDelay: BXSwitchToLaunchPanelDelay];
 	}
 
     //Enable/disable display-sleep suppression
     [self _syncSuppressesDisplaySleep];
-}
-
-- (void) emulatorDidBeginGraphicalContext: (NSNotification *)notification
-{
-    //TWEAK: when we're part of a standalone game bundle, we'll switch into fullscreen immediately
-    //at startup rather than when the app switches into graphics mode.
-    if (![[NSApp delegate] isStandaloneGameBundle])
-    {
-        BOOL startInFullScreen = [[self.gameSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey] boolValue];
-        //Tweak: only switch into fullscreen mode if we don't need to prompt
-        //the user about choosing a default program.
-        if (startInFullScreen && ![self _shouldLeaveProgramPanelOpenAfterLaunch])
-        {
-            //Switch to fullscreen mode automatically after a brief delay:
-            //This will be cancelled if the context exits within that time,
-            //in case of a program that crashes early.
-            [self.DOSWindowController performSelector: @selector(enterFullScreen) 
-                                           withObject: nil
-                                           afterDelay: BXAutoSwitchToFullScreenDelay];
-        }
-    }
-}
-
-- (void) emulatorDidFinishGraphicalContext: (NSNotification *)notification
-{
-	[NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
-											 selector: @selector(enterFullScreen)
-											   object: nil];
 }
 
 - (void) emulatorDidChangeEmulationState: (NSNotification *)notification

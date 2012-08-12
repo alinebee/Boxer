@@ -26,8 +26,12 @@
 
 //These have been overridden to make them internally writeable
 @property (readwrite, retain, nonatomic) NSMutableDictionary *gameSettings;
+
 @property (readwrite, copy, nonatomic) NSString *lastExecutedProgramPath;
+@property (readwrite, copy, nonatomic) NSArray *lastExecutedProgramArguments;
 @property (readwrite, copy, nonatomic) NSString *lastLaunchedProgramPath;
+@property (readwrite, copy, nonatomic) NSArray *lastLaunchedProgramArguments;
+
 @property (readwrite, retain, nonatomic) NSDictionary *drives;
 @property (readwrite, retain, nonatomic) NSDictionary *executables;
 @property (readwrite, retain, nonatomic) NSArray *documentation;

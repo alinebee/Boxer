@@ -36,7 +36,14 @@ extern NSString * const BXEmulatorDidRemoveFileNotification;
 extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 
 
-//TODO: define and document user info dictionary keys for each of these notifications.
+#pragma mark -
+#pragma mark Notification userinfo dictionary keys
+
+//Keys provided in the userinfo dictionary for program execution notifications.
+extern NSString * const BXEmulatorDOSPathKey;
+extern NSString * const BXEmulatorDriveKey;
+extern NSString * const BXEmulatorLocalPathKey;
+extern NSString * const BXEmulatorLaunchArgumentsKey;
 
 
 #pragma mark -

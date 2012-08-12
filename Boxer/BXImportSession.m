@@ -1242,10 +1242,12 @@
     //a batch file, and don't immediately discard it in favour of the next program the batch-file runs
 	if (!self.lastExecutedProgramPath)
 	{
-        NSString *programPath = [notification.userInfo objectForKey: @"localPath"];
+        NSString *programPath = [notification.userInfo objectForKey: BXEmulatorLocalPathKey];
         if (programPath)
         {
+            NSArray *arguments = [notification.userInfo objectForKey: BXEmulatorLaunchArgumentsKey];
             self.lastExecutedProgramPath = programPath;
+            self.lastExecutedProgramArguments = arguments;
         }
         
 		[self.DOSWindowController performSelector: @selector(showProgramPanel:)
@@ -1260,7 +1262,10 @@
 {
 	//Clear the active program
 	self.lastExecutedProgramPath = nil;
+    self.lastExecutedProgramArguments = nil;
+    
     self.lastLaunchedProgramPath = nil;
+    self.lastLaunchedProgramArguments = nil;
 	
 	//Show the program chooser after returning to the DOS prompt
 	//(Show only after a delay, so that the window has time to resize after quitting the game)

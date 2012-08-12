@@ -69,8 +69,8 @@ NSString * const BXGameboxSettingsProfileKey    = @"BXGameProfile";
 NSString * const BXGameboxSettingsProfileVersionKey = @"BXGameProfileVersion";
 NSString * const BXGameboxSettingsLastLocationKey = @"BXGameLastLocation";
 
-NSString * const BXGameboxSettingsShowProgramPanelKey = @"BXShowProgramPanel";
-NSString * const BXGameboxSettingsStartUpInFullScreenKey = @"BXStartUpInFullScreen";
+NSString * const BXGameboxSettingsShowProgramPanelKey = @"showProgramPanel";
+NSString * const BXGameboxSettingsStartUpInFullScreenKey = @"startUpInFullScreen";
 
 NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
 
@@ -1048,10 +1048,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             arguments = nil;
 		}
         
-        //Switch into fullscreen if the user had previously quit while in fullscreen
+        //Switch into fullscreen now, if the user had previously quit while in fullscreen
         //and if they haven't skipped the startup program.
         BOOL startInFullScreen = [[self.gameSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey] boolValue];
-        if (_userSkippedDefaultProgram && startInFullScreen)
+        if (startInFullScreen && !_userSkippedDefaultProgram)
         {
             [self.DOSWindowController enterFullScreen];
         }

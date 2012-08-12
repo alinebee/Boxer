@@ -12,8 +12,6 @@
 	<integer>262144</integer>
 	<key>mouseButtonModifierBoth</key>
 	<integer>786432</integer>
-	<key>showProgramPanel</key>
-	<true/>
 	<key>startUpInFullScreen</key>
 	<true/>
 </dict>

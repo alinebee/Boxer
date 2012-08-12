@@ -782,7 +782,9 @@
     [self.window setFrameAutosaveName: @""];
     
     self.renderingView.managesAspectRatio = YES;
-    //[self.inputController setMouseLocked: YES force: YES];
+    
+    if (!self.inputView.isHidden)
+        [self.inputController setMouseLocked: YES force: YES];
     
     _renderingViewSizeBeforeFullScreen = self.window.actualContentViewSize;
 }

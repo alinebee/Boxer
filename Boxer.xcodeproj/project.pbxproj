@@ -421,6 +421,10 @@
 		9F44C75315A0A38800F6A9ED /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; };
 		9F44C75415A0A3AA00F6A9ED /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; };
 		9F44E5E410D17A4C0081B8D2 /* BXEmulator+BXPaste.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */; };
+		9F458D9A15D83A1600DF9102 /* DOSImportWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34111351DCDB000DCE44 /* DOSImportWindow.xib */; };
+		9F458D9C15D83B8800DF9102 /* BXLaunchPanelButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */; };
+		9F458D9D15D83B8C00DF9102 /* BXLaunchPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCA6D9515C85D8500E1650C /* BXLaunchPanelController.m */; };
+		9F458D9E15D83B9000DF9102 /* BXDOSWindowBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA2C09115C8409000380261 /* BXDOSWindowBackgroundView.m */; };
 		9F45A1BD109C3C3900593456 /* About.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1BB109C3C3900593456 /* About.xib */; };
 		9F45A1C9109C3D1100593456 /* DOSWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1C7109C3D1100593456 /* DOSWindow.xib */; };
 		9F45A1CD109C3D3400593456 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1CB109C3D3400593456 /* MainMenu.xib */; };
@@ -3495,6 +3499,7 @@
 				9FB60E9415C573C100CD0D63 /* package.icns in Resources */,
 				9FAEBE5315D678C800C9AC5F /* DOSWindowBackground.png in Resources */,
 				9FAEBE5615D67C3A00C9AC5F /* DOSWindowGrille.png in Resources */,
+				9F458D9A15D83A1600DF9102 /* DOSImportWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4145,6 +4150,9 @@
 				9F98410315BEE64400B50CDA /* BXShadowedFilesystem.m in Sources */,
 				9FB60E8F15C5552F00CD0D63 /* NSURL+BXFilePaths.m in Sources */,
 				9FB60E9315C5643200CD0D63 /* NSError+BXErrorHelpers.m in Sources */,
+				9F458D9C15D83B8800DF9102 /* BXLaunchPanelButtonCell.m in Sources */,
+				9F458D9D15D83B8C00DF9102 /* BXLaunchPanelController.m in Sources */,
+				9F458D9E15D83B9000DF9102 /* BXDOSWindowBackgroundView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -148,6 +148,10 @@ typedef NSUInteger BXGameIdentifierType;
 //Program launchers for this gamebox, displayed as favorites in the launch panel.
 @property (readonly, nonatomic) NSArray *launchers;
 
+//The default launcher for this gamebox, which should be launched the first time the gamebox is run.
+//This will be nil if the gamebox has no default launcher.
+@property (readonly, nonatomic) NSDictionary *defaultLauncher;
+
 
 #pragma mark -
 #pragma mark Class methods

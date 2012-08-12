@@ -291,6 +291,14 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     return _launchers;
 }
 
+- (NSDictionary *) defaultLauncher
+{
+    if (self.launchers.count)
+        return [self.launchers objectAtIndex: 0];
+    else
+        return nil;
+}
+
 - (BOOL) closeOnExit
 {
     return [[self gameInfoForKey: BXCloseOnExitGameInfoKey] boolValue];

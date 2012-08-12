@@ -68,10 +68,14 @@ NSString * const BXGameboxSettingsNameKey       = @"BXGameName";
 NSString * const BXGameboxSettingsProfileKey    = @"BXGameProfile";
 NSString * const BXGameboxSettingsProfileVersionKey = @"BXGameProfileVersion";
 NSString * const BXGameboxSettingsLastLocationKey = @"BXGameLastLocation";
-NSString * const BXGameboxSettingsShowProgramPanelKey = @"showProgramPanel";
-NSString * const BXGameboxSettingsStartUpInFullScreenKey = @"startUpInFullScreen";
+
+NSString * const BXGameboxSettingsShowProgramPanelKey = @"BXShowProgramPanel";
+NSString * const BXGameboxSettingsStartUpInFullScreenKey = @"BXStartUpInFullScreen";
 
 NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
+
+NSString * const BXGameboxSettingsLastProgramPathKey = @"BXLastProgramPath";
+NSString * const BXGameboxSettingsLastProgramLaunchArgumentsKey = @"BXLastProgramLaunchArguments";
 
 
 #pragma mark -
@@ -277,12 +281,34 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		BXPackage *package = [[BXPackage alloc] initWithPath: packagePath];
         self.gamePackage = package;
 		
-		//If we opened the package directly, check if it has a target of its own;
-		//if so, use that as our target path instead.
-		if ([[self targetPath] isEqualToString: packagePath])
+		//If we opened the gamebox directly, try to find a program to launch for it.
+        if ([self.targetPath isEqualToString: packagePath])
 		{
-			NSString *packageTarget = package.targetPath;
-			if (packageTarget) self.targetPath = packageTarget;
+            //By default, launch the previous program that the user was running when they quit last time.
+		    NSString *previousProgramPath = [self.gameSettings objectForKey: BXGameboxSettingsLastProgramPathKey];
+            if (previousProgramPath)
+            {
+                //If the program path is relative, resolve it relative to the gamebox.
+                if (!previousProgramPath.isAbsolutePath)
+                {
+                    NSString *basePath = package.resourcePath;
+                    previousProgramPath = [basePath stringByAppendingPathComponent: previousProgramPath];
+                }
+                self.targetPath = previousProgramPath;
+                self.targetArguments = [self.gameSettings objectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
+            }
+            //If the user hasn't launched any program yet, then launch the gamebox's
+            //default program (if it has one.)
+            else
+            {
+                NSDictionary *defaultLauncher = package.defaultLauncher;
+                
+                if (defaultLauncher)
+                {
+                    self.targetPath = [defaultLauncher objectForKey: BXLauncherPathKey];
+                    self.targetArguments = [defaultLauncher objectForKey: BXLauncherArgsKey];
+                }
+            }
         }
 		[package release];
 		
@@ -697,6 +723,48 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             }
             
             [self.gameSettings setObject: queuedDrives forKey: BXGameboxSettingsDrivesKey];
+        }
+        
+        //Record the last-launched program for next time we launch this gamebox.
+        if ([self _shouldPersistPreviousProgram])
+        {
+            NSString *lastProgramPath, *lastArguments;
+            if (self.lastExecutedProgramPath)
+            {
+                lastProgramPath = self.lastExecutedProgramPath;
+                lastArguments   = self.lastExecutedProgramArguments;
+            }
+            else
+            {
+                lastProgramPath = self.lastLaunchedProgramPath;
+                lastArguments   = self.lastLaunchedProgramArguments;
+            }
+            
+            //If we were running a program when we were shut down, then record it;
+            //otherwise, clear any recorded startup program.
+            if (lastProgramPath)
+            {
+                //Make the program path relative to the gamebox.
+                //TODO: if the program was located outside the gamebox,
+                //record it as an alias instead.
+                NSString *basePath = self.gamePackage.resourcePath;
+                NSString *relativePath = [lastProgramPath pathRelativeToPath: basePath];
+                
+                [self.gameSettings setObject: relativePath
+                                      forKey: BXGameboxSettingsLastProgramPathKey];
+                
+                if (lastArguments)
+                    [self.gameSettings setObject: lastArguments
+                                          forKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
+                else
+                    [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
+                    
+            }
+            else
+            {
+                [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramPathKey];
+                [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
+            }
         }
 
         
@@ -1254,6 +1322,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 }
 
 - (BOOL) _shouldPersistQueuedDrives
+{
+    return YES;
+}
+
+- (BOOL) _shouldPersistPreviousProgram
 {
     return YES;
 }

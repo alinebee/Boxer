@@ -13,7 +13,7 @@
 #import "BXDOSWindowController.h"
 #import "BXGeometry.h"
 #import "BXDrive.h"
-#import "BXPackage.h"
+#import "BXGamebox.h"
 #import "BXValueTransformers.h"
 #import "BXInspectorController.h"
 #import "NSString+BXStringFormatting.h"
@@ -446,7 +446,7 @@
 }
 
 - (void) showDriveImportedBezelForDrive: (BXDrive *)drive
-                              toPackage: (BXPackage *)package
+                              toPackage: (BXGamebox *)package
 {
     if (![self shouldShowDriveNotifications]) return;
     

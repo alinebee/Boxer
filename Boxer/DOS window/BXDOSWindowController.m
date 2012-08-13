@@ -11,7 +11,7 @@
 #import "BXBaseAppController.h"
 #import "BXProgramPanelController.h"
 #import "BXInputController.h"
-#import "BXPackage.h"
+#import "BXGamebox.h"
 
 #import "BXFrameRenderingView.h"
 #import "BXVideoFrame.h"

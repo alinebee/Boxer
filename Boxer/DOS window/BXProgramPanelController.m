@@ -10,7 +10,7 @@
 #import "BXValueTransformers.h"
 #import "BXSession+BXFileManager.h"
 #import "BXProgramPanel.h"
-#import "BXPackage.h"
+#import "BXGamebox.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "NSString+BXPaths.h"
 #import "BXDOSWindowController.h"
@@ -287,7 +287,7 @@
 {	
 	BXSession *session = [self representedObject];
     
-	BXPackage *gamePackage	= [session gamePackage];
+	BXGamebox *gamePackage	= [session gamePackage];
 	NSString *activeProgram	= [session activeProgramPath];
     
 	if (!gamePackage || !activeProgram) return;

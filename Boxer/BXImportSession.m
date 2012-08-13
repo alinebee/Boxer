@@ -29,7 +29,7 @@
 #import "BXFileTypes.h"
 #import "BXInspectorController.h"
 #import "BXGameProfile.h"
-#import "BXPackage.h"
+#import "BXGamebox.h"
 #import "BXDrive.h"
 #import "BXCloseAlert.h"
 
@@ -491,7 +491,7 @@
 		
 		if (moved)
 		{
-			BXPackage *movedPackage = [BXPackage bundleWithPath: newPath];
+			BXGamebox *movedPackage = [BXGamebox bundleWithPath: newPath];
 			self.gamePackage = movedPackage;
 			
 			if ([self.fileURL.path isEqualToString: currentPath])
@@ -1413,7 +1413,7 @@
 	
 	NSString *gameboxPath	= [[gamesFolder stringByAppendingPathComponent: gameName] stringByAppendingPathExtension: @"boxer"];
 	
-	BXPackage *gamebox = [self.class createGameboxAtPath: gameboxPath error: outError];
+	BXGamebox *gamebox = [self.class createGameboxAtPath: gameboxPath error: outError];
 	if (gamebox)
 	{
 		//Prep the gamebox by creating an empty C drive in it

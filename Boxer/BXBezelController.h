@@ -35,7 +35,7 @@ enum {
 };
 
 @class BXDrive;
-@class BXPackage;
+@class BXGamebox;
 @interface BXBezelController : NSWindowController
 {
     NSView *driveAddedBezel;
@@ -134,7 +134,7 @@ enum {
 - (void) showDriveSwappedBezelFromDrive: (BXDrive *)fromDrive
                                 toDrive: (BXDrive *)toDrive;
 - (void) showDriveImportedBezelForDrive: (BXDrive *)drive
-                              toPackage: (BXPackage *)package;
+                              toPackage: (BXGamebox *)package;
 
 - (void) showPauseBezel;
 - (void) showPlayBezel;

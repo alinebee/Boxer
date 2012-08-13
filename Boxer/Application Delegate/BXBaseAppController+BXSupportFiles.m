@@ -10,7 +10,7 @@
 #import "RegexKitLite.h"
 #import "BXEmulatedMT32.h"
 #import "BXPathEnumerator.h"
-#import "BXPackage.h"
+#import "BXGamebox.h"
 
 //Files matching these patterns will be assumed to be of the respective ROM type.
 NSString * const MT32ControlROMFilenamePattern = @"control";
@@ -19,7 +19,7 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
 
 @implementation BXBaseAppController (BXSupportFiles)
 
-- (NSString *) statesPathForGamePackage: (BXPackage *)package
+- (NSString *) statesPathForGamePackage: (BXGamebox *)package
                       creatingIfMissing: (BOOL) createIfMissing
 {
     if (package == nil)

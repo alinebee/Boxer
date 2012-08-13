@@ -18,7 +18,7 @@
 #import "BXEmulator+BXShell.h"
 #import "UKFNSubscribeFileWatcher.h"
 #import "BXShadowedFilesystem.h"
-#import "BXPackage.h"
+#import "BXGamebox.h"
 #import "BXDrive.h"
 #import "BXDrivesInUseAlert.h"
 #import "BXGameProfile.h"
@@ -1515,7 +1515,7 @@
         [self.emulator refreshMountedDrives];
 	
 	//Also check if the file was inside our gamebox - if so, flush the gamebox's caches
-	BXPackage *package = self.gamePackage;
+	BXGamebox *package = self.gamePackage;
 	if (package && [path hasPrefix: package.gamePath])
         [package refresh];
 }

@@ -8,7 +8,7 @@
 #import "BXLaunchPanelController.h"
 #import "BXSession+BXFileManager.h"
 #import "BXDrive.h"
-#import "BXPackage.h"
+#import "BXGamebox.h"
 #import "BXEmulator+BXDOSFilesystem.h"
 #import "BXValueTransformers.h"
 #import "BXCollectionItemView.h"
@@ -155,7 +155,7 @@
     [mutableRows removeAllObjects];
     
     BXSession *session = (BXSession *)self.representedObject;
-    BXPackage *gamePackage = session.gamePackage;
+    BXGamebox *gamePackage = session.gamePackage;
     
     NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
     

@@ -22,7 +22,7 @@ static const NSInteger BXCDROMSizeThreshold  = 100 * 1024 * 1024;
 //The free disk space in MB to allow on drive C when installing games from CD-ROM.
 static const NSInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 
-@class BXPackage;
+@class BXGamebox;
 @class BXEmulatorConfiguration;
 @interface BXImportSession (BXImportPolicies)
 
@@ -115,7 +115,7 @@ static const NSInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 
 //Creates a new empty gamebox at the specified path. Returns a newly-generated gamebox if successful,
 //or returns nil and populates outError with failure reason if unsuccessful.
-+ (BXPackage *) createGameboxAtPath: (NSString *)path
++ (BXGamebox *) createGameboxAtPath: (NSString *)path
 							  error: (NSError **)outError;
 
 //Returns an (attempt at an) OSX-safe filename from the provided name.

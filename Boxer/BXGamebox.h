@@ -6,7 +6,7 @@
  */
 
 
-//BXPackage represents a single Boxer gamebox and offers methods for retrieving and persisting
+//BXGamebox represents a single Boxer gamebox and offers methods for retrieving and persisting
 //bundled drives, configuration files and documentation. It is based on NSBundle but does not
 //require that Boxer gameboxes use any standard OS X bundle folder structure.
 //(and indeed, gameboxes with an OS X bundle structure haven't been tested.)
@@ -93,7 +93,7 @@ typedef NSUInteger BXGameIdentifierType;
 #pragma mark -
 #pragma mark Interface
 
-@interface BXPackage : NSBundle
+@interface BXGamebox : NSBundle
 {
 	NSMutableDictionary *_gameInfo;
     NSMutableArray *_launchers;
@@ -156,8 +156,8 @@ typedef NSUInteger BXGameIdentifierType;
 #pragma mark -
 #pragma mark Class methods
 
-//Re-casts the return value as a BXPackage instead of an NSBundle
-+ (BXPackage *)bundleWithPath: (NSString *)path;
+//Re-casts the return value as a BXGamebox instead of an NSBundle
++ (BXGamebox *)bundleWithPath: (NSString *)path;
 
 
 + (NSSet *) documentationTypes;			//UTIs recognised as documentation files.

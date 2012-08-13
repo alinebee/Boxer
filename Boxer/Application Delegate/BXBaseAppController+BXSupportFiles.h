@@ -11,7 +11,7 @@
 
 #import "BXBaseAppController.h"
 
-@class BXPackage;
+@class BXGamebox;
 @interface BXBaseAppController (BXSupportFiles)
 
 #pragma mark -
@@ -28,7 +28,7 @@
 //Returns the path to the application support folder where Boxer should
 //store state data for the specified gamebox.
 //If createIfMissing is YES, the folder will be created if it does not exist.
-- (NSString *) statesPathForGamePackage: (BXPackage *)package
+- (NSString *) statesPathForGamePackage: (BXGamebox *)package
                       creatingIfMissing: (BOOL) createIfMissing;
 
 //Returns the path to the application support folder where Boxer keeps MT-32 ROM files.

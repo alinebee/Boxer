@@ -59,14 +59,14 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 #pragma mark Interface
 
 @class BXEmulator;
-@class BXPackage;
+@class BXGamebox;
 @class BXDOSWindowController;
 @class UKFNSubscribeFileWatcher;
 
 @interface BXSession : NSDocument <BXEmulatorDelegate>
 {	
 	BXEmulator *_emulator;
-	BXPackage *_gamePackage;
+	BXGamebox *_gamePackage;
 	BXGameProfile *_gameProfile;
 	NSMutableDictionary *_gameSettings;
 	
@@ -127,7 +127,7 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 //The gamebox for this session. BXSession retrieves bundled drives, configuration files and
 //target program from this during emulator configuration.
 //Will be nil if an executable file or folder was opened outside of a gamebox.
-@property (retain, nonatomic) BXPackage *gamePackage;
+@property (retain, nonatomic) BXGamebox *gamePackage;
 
 //The autodetected game profile for this session. Used for various emulator configuration tasks.
 @property (retain, nonatomic) BXGameProfile *gameProfile;
@@ -214,7 +214,7 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 //Generates and returns a new bootleg cover-art image for the specified package,
 //using the specified game era. If era is BXUnknownEra, a suitable era will be
 //autodetected based on the size and age of the game's files.
-+ (NSImage *) bootlegCoverArtForGamePackage: (BXPackage *)package
++ (NSImage *) bootlegCoverArtForGamePackage: (BXGamebox *)package
                                  withMedium: (BXReleaseMedium)medium;
 
 

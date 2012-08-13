@@ -12,7 +12,7 @@
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXFileTypes.h"
 #import "BXBaseAppController.h"
-#import "BXPackage.h"
+#import "BXGamebox.h"
 #import "NSString+BXPaths.h"
 
 

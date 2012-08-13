@@ -13,7 +13,7 @@
 #import "BXEmulator+BXShell.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "BXDrive.h"
-#import "BXPackage.h"
+#import "BXGamebox.h"
 
 
 @implementation BXMountPanelController

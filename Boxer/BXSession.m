@@ -8,7 +8,7 @@
 #import "BXSessionPrivate.h"
 
 #import "BXFileTypes.h"
-#import "BXPackage.h"
+#import "BXGamebox.h"
 #import "BXGameProfile.h"
 #import "BXBootlegCoverArt.h"
 #import "BXDrive.h"
@@ -154,7 +154,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	return nil;
 }
 
-+ (NSImage *) bootlegCoverArtForGamePackage: (BXPackage *)package withMedium: (BXReleaseMedium)medium
++ (NSImage *) bootlegCoverArtForGamePackage: (BXGamebox *)package withMedium: (BXReleaseMedium)medium
 {
 	Class <BXBootlegCoverArt> coverArtClass;
 	if (medium == BXUnknownMedium)
@@ -278,7 +278,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//list will likewise show the gamebox instead.
 	if (packagePath)
 	{
-		BXPackage *package = [[BXPackage alloc] initWithPath: packagePath];
+		BXGamebox *package = [[BXGamebox alloc] initWithPath: packagePath];
         self.gamePackage = package;
 		
 		//If we opened the gamebox directly, try to find a program to launch for it.
@@ -320,7 +320,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	return YES;
 }
 
-- (void) setGamePackage: (BXPackage *)package
+- (void) setGamePackage: (BXGamebox *)package
 {	
 	if (package != self.gamePackage)
 	{

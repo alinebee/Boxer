@@ -18,7 +18,7 @@
 #import "BXBezelController.h"
 
 #import "BXSession+BXFileManager.h"
-#import "BXPackage.h"
+#import "BXGamebox.h"
 #import "BXImportSession.h"
 #import "BXEmulator.h"
 #import "BXMIDIDeviceMonitor.h"

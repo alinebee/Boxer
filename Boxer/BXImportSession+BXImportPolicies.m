@@ -13,7 +13,7 @@
 #import "RegexKitLite.h"
 #import "NSString+BXPaths.h"
 
-#import "BXPackage.h"
+#import "BXGamebox.h"
 #import "BXFileTypes.h"
 #import "BXPathEnumerator.h"
 #import "BXEmulatorConfiguration.h"
@@ -389,7 +389,7 @@
 	return filename;
 }
 
-+ (BXPackage *) createGameboxAtPath: (NSString *)path
++ (BXGamebox *) createGameboxAtPath: (NSString *)path
 							  error: (NSError **)outError
 {
 	NSFileManager *manager = [NSFileManager defaultManager];
@@ -414,13 +414,13 @@
 	
 	if (success)
 	{
-		BXPackage *gamebox = [BXPackage bundleWithPath: path];
+		BXGamebox *gamebox = [BXGamebox bundleWithPath: path];
 		return gamebox;
 	}
 	else return nil;	
 }
 
-//TODO: move this into BXPackage?
+//TODO: move this into BXGamebox?
 + (NSString *) validGameboxNameFromName: (NSString *)name
 {
 	//Remove all leading dots, to prevent gameboxes from being hidden

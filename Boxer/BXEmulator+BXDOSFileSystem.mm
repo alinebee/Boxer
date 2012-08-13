@@ -10,16 +10,15 @@
 #import "BXDrive.h"
 #import "NSString+BXPaths.h"
 #import "BXGameProfile.h"
-#import "BXPackage.h"
 #import "RegexKitLite.h"
 #import "BXFilesystem.h"
+#import "NSWorkspace+BXMountedVolumes.h"
 
 #import "dos_inc.h"
 #import "dos_system.h"
 #import "drives.h"
 #import "cdrom.h"
 
-#import "NSWorkspace+BXMountedVolumes.h"
 
 
 

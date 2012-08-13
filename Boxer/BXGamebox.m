@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXPackage.h"
+#import "BXGamebox.h"
 #import "NSString+BXPaths.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSWorkspace+BXIcons.h"
@@ -46,11 +46,11 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 #pragma mark -
 #pragma mark Private method declarations
 
-@interface BXPackage ()
+@interface BXGamebox ()
 @property (readwrite, retain, nonatomic) NSDictionary *gameInfo;
 
 //Arrays of paths to discovered files of particular types within the gamebox.
-//BXPackage's documentation and executables accessors call these internal methods and cache the results.
+//BXGamebox's documentation and executables accessors call these internal methods and cache the results.
 - (NSArray *) _foundDocumentation;
 - (NSArray *) _foundExecutables;
 - (NSArray *) _foundResourcesOfTypes: (NSSet *)fileTypes startingIn: (NSString *)basePath;
@@ -64,7 +64,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 @end
 
 
-@implementation BXPackage
+@implementation BXGamebox
 @synthesize gameInfo = _gameInfo;
 
 + (NSSet *) documentationTypes
@@ -116,7 +116,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	return exclusions;
 }
 
-+ (BXPackage *)bundleWithPath: (NSString *)path
++ (BXGamebox *)bundleWithPath: (NSString *)path
 {
 	return [[[self alloc] initWithPath: path] autorelease];
 }

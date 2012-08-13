@@ -44,7 +44,7 @@
                                         forKeyPath: @"executables"];
             
             [self.representedObject removeObserver: self
-                                        forKeyPath: @"gamePackage.launchers"];
+                                        forKeyPath: @"gamebox.launchers"];
         }
         
         [super setRepresentedObject: representedObject];
@@ -57,7 +57,7 @@
                                         context: nil];
             
             [self.representedObject addObserver: self
-                                     forKeyPath: @"gamePackage.launchers"
+                                     forKeyPath: @"gamebox.launchers"
                                         options: NSKeyValueObservingOptionInitial
                                         context: nil];
         }
@@ -90,7 +90,7 @@
         [self _syncAllProgramRows];
     }
     
-    else if ([keyPath isEqualToString: @"gamePackage.launchers"])
+    else if ([keyPath isEqualToString: @"gamebox.launchers"])
     {
         [self _syncFavoriteProgramRows];
     }
@@ -155,11 +155,10 @@
     [mutableRows removeAllObjects];
     
     BXSession *session = (BXSession *)self.representedObject;
-    BXGamebox *gamePackage = session.gamePackage;
     
     NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
     
-    for (NSDictionary *launcher in gamePackage.launchers)
+    for (NSDictionary *launcher in session.gamebox.launchers)
     {
         NSString *path      = [launcher objectForKey: BXLauncherPathKey];
         NSString *title     = [launcher objectForKey: BXLauncherTitleKey];

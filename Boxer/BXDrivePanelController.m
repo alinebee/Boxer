@@ -363,10 +363,10 @@ enum {
 	if (!session) return NO;
     
 	
-	NSArray *selectedDrives = [self selectedDrives];
-	BOOL isGamebox = [session isGamePackage];
-    BOOL hasSelection = [selectedDrives count] > 0;
-	BXEmulator *theEmulator = [session emulator];
+	NSArray *selectedDrives = self.selectedDrives;
+	BOOL hasGamebox = session.hasGamebox;
+    BOOL hasSelection = selectedDrives.count > 0;
+	BXEmulator *theEmulator = session.emulator;
 
     
 	SEL action = theItem.action;
@@ -430,8 +430,8 @@ enum {
 		[theItem setTitle: NSLocalizedString(@"Import into Gamebox", @"Menu item title/tooltip for importing drive into gamebox.")];
 		
 		//Hide this item altogether if we're not running a session
-		[theItem setHidden: !isGamebox];
-		if (!isGamebox || !hasSelection) return NO;
+		[theItem setHidden: !hasGamebox];
+		if (!hasGamebox || !hasSelection) return NO;
 		 
 		//Check if any of the selected drives are being imported, already imported, or otherwise cannot be imported
 		for (BXDrive *drive in selectedDrives)
@@ -456,7 +456,7 @@ enum {
 	{
         if (!hasSelection) return NO;
         
-		if (isGamebox) for (BXDrive *drive in selectedDrives)
+		if (hasGamebox) for (BXDrive *drive in selectedDrives)
 		{	
 			//If any of the selected drives are being imported, then enable and unhide the item
 			if ([session activeImportOperationForDrive: drive])

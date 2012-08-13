@@ -28,8 +28,8 @@
 //Returns the path to the application support folder where Boxer should
 //store state data for the specified gamebox.
 //If createIfMissing is YES, the folder will be created if it does not exist.
-- (NSString *) statesPathForGamePackage: (BXGamebox *)package
-                      creatingIfMissing: (BOOL) createIfMissing;
+- (NSString *) statesPathForGamebox: (BXGamebox *)gamebox
+                  creatingIfMissing: (BOOL) createIfMissing;
 
 //Returns the path to the application support folder where Boxer keeps MT-32 ROM files.
 //If createIfMissing is YES, the folder will be created if it does not exist.

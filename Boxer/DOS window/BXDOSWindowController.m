@@ -152,9 +152,9 @@
 	
 	//Now that we can retrieve the game's identifier from the session,
 	//use the autosaved window size for that game
-	if (self.document.isGamePackage)
+	if (self.document.hasGamebox)
 	{
-		NSString *gameIdentifier = self.document.gamePackage.gameIdentifier;
+		NSString *gameIdentifier = self.document.gamebox.gameIdentifier;
 		if (gameIdentifier)
             [self setFrameAutosaveName: gameIdentifier];
     }
@@ -199,7 +199,7 @@
         self.window.title = [self windowTitleForDocumentDisplayName: [BXBaseAppController appName]]; 
     }
     //If the session is a gamebox, always use the gamebox for the window title (like a regular NSDocument.)
-	else if (self.document.isGamePackage)
+	else if (self.document.hasGamebox)
 	{
 		[super synchronizeWindowTitleWithDocumentName];
         
@@ -334,7 +334,7 @@
 - (void) setProgramPanelShown: (BOOL)show animate: (BOOL)animate
 {
 	//Don't open the program panel if we're not running a gamebox
-	if (show && !self.document.isGamePackage) return;
+	if (show && !self.document.hasGamebox) return;
 	
     //IMPLEMENTATION NOTE: see note above for setStatusBarShown:animate:.
 	if (show == self.programPanel.isHidden)
@@ -449,7 +449,7 @@
 		else
 			theItem.title = NSLocalizedString(@"Hide Programs Panel", @"View menu option for hiding the program panel.");
 			
-		return (self.document.isGamePackage && !self.window.isFullScreen && self.window.isVisible);
+		return (self.document.hasGamebox && !self.window.isFullScreen && self.window.isVisible);
 	}
 	
 	else if (theAction == @selector(toggleStatusBarShown:))

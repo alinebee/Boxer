@@ -89,7 +89,12 @@
 //runPreflightCommands at the start of AUTOEXEC.BAT, before any other commands or settings are run.
 - (void) _mountDrivesForSession;
 
+//Populates the session's game settings from the specified dictionary.
+//This will also load any game profile previously recorded in the settings.
+- (void) _loadGameSettings: (NSDictionary *)gameSettings;
 
+//Populates the session's game settings with the settings stored for the specified gamebox.
+- (void) _loadGameSettingsForGamebox: (BXGamebox *)gamebox;
 
 //Called once the session has exited to save any DOSBox settings we have changed to the gamebox conf.
 - (void) _saveConfiguration: (BXEmulatorConfiguration *)configuration toFile: (NSString *)filePath;

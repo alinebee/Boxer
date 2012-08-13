@@ -70,7 +70,7 @@
 	if ([self representedObject])
 	{
 		[[self representedObject] removeObserver: self forKeyPath: @"programPathsOnPrincipalDrive"];
-		[[self representedObject] removeObserver: self forKeyPath: @"gamePackage.targetPath"];
+		[[self representedObject] removeObserver: self forKeyPath: @"gamebox.targetPath"];
 		[[self representedObject] removeObserver: self forKeyPath: @"activeProgramPath"];
 		[[self representedObject] removeObserver: self forKeyPath: @"isScanningForExecutables"];
 	}
@@ -80,7 +80,7 @@
 	if (session)
 	{
 		[session addObserver: self forKeyPath: @"programPathsOnPrincipalDrive" options: 0 context: nil];
-		[session addObserver: self forKeyPath: @"gamePackage.targetPath" options: 0 context: nil];
+		[session addObserver: self forKeyPath: @"gamebox.targetPath" options: 0 context: nil];
 		[session addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
 		[session addObserver: self forKeyPath: @"isScanningForExecutables" options: 0 context: nil];
 	}
@@ -92,7 +92,7 @@
 						change: (NSDictionary *)change
 					   context: (void *)context
 {
-	if ([keyPath isEqualToString: @"programPathsOnPrincipalDrive"] || [keyPath isEqualToString: @"gamePackage.targetPath"])
+	if ([keyPath isEqualToString: @"programPathsOnPrincipalDrive"] || [keyPath isEqualToString: @"gamebox.targetPath"])
 	{
 		[self syncPanelExecutables];
 	}
@@ -271,7 +271,7 @@
     
 	NSString *activeProgram = [self lastActiveProgramPath];
 
-    NSString *defaultProgram = [[session gamePackage] targetPath];
+    NSString *defaultProgram = session.gamebox.targetPath;
     return [activeProgram isEqualToString: defaultProgram];
 }
 
@@ -279,7 +279,7 @@
 {
 	return [NSSet setWithObjects:
 			@"lastActiveProgramPath",
-			@"representedObject.gamePackage.targetPath",
+			@"representedObject.gamebox.targetPath",
 			nil];
 }
 
@@ -287,13 +287,13 @@
 {	
 	BXSession *session = [self representedObject];
     
-	BXGamebox *gamePackage	= [session gamePackage];
-	NSString *activeProgram	= [session activeProgramPath];
+	BXGamebox *gamebox	= session.gamebox;
+	NSString *activeProgram	= session.activeProgramPath;
     
-	if (!gamePackage || !activeProgram) return;
+	if (!gamebox || !activeProgram) return;
 	
-	if (isDefault)							[gamePackage setTargetPath: activeProgram];
-	else if ([self activeProgramIsDefault])	[gamePackage setTargetPath: nil];
+	if (isDefault)							gamebox.targetPath = activeProgram;
+	else if (self.activeProgramIsDefault)	gamebox.targetPath = nil;
 }
 
 - (BOOL) canSetActiveProgramToDefault
@@ -301,13 +301,13 @@
  	BXSession *session = [self representedObject];
 	NSString *activeProgram = [session activeProgramPath];
     
-	return (activeProgram != nil) && [[session gamePackage] validateTargetPath: &activeProgram error: NULL];
+	return (activeProgram != nil) && [[session gamebox] validateTargetPath: &activeProgram error: NULL];
 }
 
 - (BOOL) hasDefaultTarget
 {
 	BXSession *session = [self representedObject];
-	return ([[session gamePackage] targetPath] != nil);
+	return ([[session gamebox] targetPath] != nil);
 }
 
 
@@ -327,7 +327,7 @@
 {
 	BXSession *session = [self representedObject];
 	
-	NSString *defaultTarget	= [[session gamePackage] targetPath];
+	NSString *defaultTarget	= [[session gamebox] targetPath];
 	NSArray *programPaths	= [session programPathsOnPrincipalDrive];
 	
 	//Filter the program list to just the topmost files

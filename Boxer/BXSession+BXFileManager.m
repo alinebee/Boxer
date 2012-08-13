@@ -221,7 +221,7 @@
 - (BOOL) shouldShadowDrive: (BXDrive *)drive
 {
     //Don't shadow if we're not running a gamebox.
-    if (!self.isGamePackage)
+    if (!self.hasGamebox)
         return NO;
     
     //Don't shadow read-only drives or drives that are located outside the gamebox.
@@ -233,11 +233,11 @@
 
 - (NSURL *) currentStateURL
 {
-    if (!self.isGamePackage)
+    if (!self.hasGamebox)
         return nil;
     
-    NSString *statePath = [[NSApp delegate] statesPathForGamePackage: self.gamePackage
-                                                   creatingIfMissing: NO];
+    NSString *statePath = [[NSApp delegate] statesPathForGamebox: self.gamebox
+                                               creatingIfMissing: NO];
     
     NSURL *stateURL = [NSURL fileURLWithPath: statePath isDirectory: YES];
     
@@ -254,7 +254,7 @@
             NSString *driveName;
             //If the drive is identical to the gamebox itself (old-style gameboxes)
             //then map it to a different name.
-            if ([drive.path isEqualToString: self.gamePackage.bundlePath])
+            if ([drive.path isEqualToString: self.gamebox.bundlePath])
                 driveName = @"C.harddisk";
             //Otherwise, use the original filename of the gamebox.
             else
@@ -1515,7 +1515,7 @@
         [self.emulator refreshMountedDrives];
 	
 	//Also check if the file was inside our gamebox - if so, flush the gamebox's caches
-	BXGamebox *package = self.gamePackage;
+	BXGamebox *package = self.gamebox;
 	if (package && [path hasPrefix: package.gamePath])
         [package refresh];
 }
@@ -1785,9 +1785,9 @@
 
 - (BOOL) driveIsBundled: (BXDrive *)drive
 {
-	if (drive.path && self.isGamePackage)
+	if (drive.path && self.hasGamebox)
 	{
-		NSString *bundlePath = self.gamePackage.resourcePath;
+		NSString *bundlePath = self.gamebox.resourcePath;
 		NSString *drivePath = drive.path;
 
 		if ([drivePath isEqualToString: bundlePath] ||
@@ -1799,11 +1799,11 @@
 
 - (BOOL) equivalentDriveIsBundled: (BXDrive *)drive
 {
-	if (drive.path && self.isGamePackage)
+	if (drive.path && self.hasGamebox)
 	{
 		Class importClass		= [BXDriveImport importClassForDrive: drive];
 		NSString *importedName	= [importClass nameForDrive: drive];
-		NSString *importedPath	= [self.gamePackage.resourcePath stringByAppendingPathComponent: importedName];
+		NSString *importedPath	= [self.gamebox.resourcePath stringByAppendingPathComponent: importedName];
 	
 		//A file already exists with the same name as we would import it with,
 		//which probably means the drive was bundled earlier
@@ -1827,7 +1827,7 @@
 {
 	//Don't import drives if:
 	//...we're not running a gamebox
-	if (!self.isGamePackage) return NO;
+	if (!self.hasGamebox) return NO;
 	
 	//...the drive is DOSBox-internal or hidden (which means it's a Boxer-internal drive)
 	if (drive.isInternal || drive.isHidden) return NO;
@@ -1846,7 +1846,7 @@
 {
 	if ([self canImportDrive: drive])
 	{
-		NSString *destinationFolder = self.gamePackage.resourcePath;
+		NSString *destinationFolder = self.gamebox.resourcePath;
 		
 		BXOperation <BXDriveImport> *driveImport = [BXDriveImport importOperationForDrive: drive
                                                                             toDestination: destinationFolder
@@ -1957,7 +1957,7 @@
 		
 		//Display a notification that this drive was successfully imported.
         [[BXBezelController controller] showDriveImportedBezelForDrive: originalDrive
-                                                             toPackage: self.gamePackage];
+                                                             toGamebox: self.gamebox];
 	}
     
 	else if (import.error)

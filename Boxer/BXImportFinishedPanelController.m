@@ -18,8 +18,8 @@
 
 - (void) dealloc
 {
-	[self setIconView: nil], [iconView release];
-	[self setNameField: nil], [nameField release];
+    self.iconView = nil;
+    self.nameField = nil;
 	[super dealloc];
 }
 
@@ -30,16 +30,16 @@
 
 - (IBAction) addCoverArt: (id)sender
 {
-	NSImage *icon = [sender image];
-	if (icon != [self gameboxIcon])
+	NSImage *icon = sender.image;
+	if (icon != self.gameboxIcon)
 	{
 		if (icon)
 		{
-			[[controller document] setRepresentedIcon: [BXCoverArt coverArtWithImage: icon]];
+            controller.document.representedIcon = [BXCoverArt coverArtWithImage: icon];
 		}
 		else
 		{
-			[[controller document] generateBootlegIcon];
+			[controller.document generateBootlegIcon];
 		}		
 	}
 }
@@ -56,7 +56,7 @@
 
 - (NSImage *) gameboxIcon
 {
-	NSImage *icon = [[controller document] representedIcon];
+	NSImage *icon = controller.document.representedIcon;
 	if (!icon) icon = [NSImage imageNamed: @"package"];
 	return icon;
 }
@@ -67,8 +67,8 @@
 
 - (IBAction) revealGamebox: (id)sender
 {
-	NSString *packagePath = [[[controller document] gamePackage] bundlePath];
-	[[NSApp delegate] revealInFinder: packagePath];
+	NSString *gameboxPath = controller.document.gamebox.bundlePath;
+	[[NSApp delegate] revealInFinder: gameboxPath];
 }
 
 - (IBAction) launchGamebox: (id)sender
@@ -77,13 +77,13 @@
 	//If the first responder refuses to give it up (because there was a validation error) then
 	//don't continue launching.
 	
-	NSWindow *window = [[self nameField] window];
-	if (![window firstResponder] || [window makeFirstResponder: nil])
+	NSWindow *window = self.nameField.window;
+	if (!window.firstResponder || [window makeFirstResponder: nil])
 	{
-		NSURL *packageURL = [NSURL fileURLWithPath: [[[controller document] gamePackage] bundlePath]];
+		NSURL *packageURL = controller.document.gamebox.bundleURL;
 		
 		//Close down the import process.
-		[[controller document] close];
+		[controller.document close];
 		
 		//Open the newly-minted gamebox in a DOS session.
 		[[NSApp delegate] openDocumentWithContentsOfURL: packageURL display: YES error: NULL];		
@@ -97,7 +97,7 @@
 
 - (IBAction) searchForCoverArt: (id)sender
 {
-	NSString *search = [[controller document] displayName];
+	NSString *search = controller.document.displayName;
 	[[NSApp delegate] searchURLFromKey: @"CoverArtSearchURL" withSearchString: search];
 }
 
@@ -117,15 +117,15 @@
 	//Commit editing if the user presses Enter or Tab
 	else if (command == @selector(insertNewline:) || command == @selector(insertTab:))
 	{
-		if ([[textView string] length])
+		if (textView.string.length)
 		{
 			[control validateEditing];
 			
 			//If the user tabbed, move focus to the next view; otherwise, clear the focus
 			NSView *nextView = nil;
-			if (command == @selector(insertTab:)) nextView = [control nextKeyView];
+			if (command == @selector(insertTab:)) nextView = control.nextKeyView;
 			
-			[[control window] makeFirstResponder: nextView];
+			[control.window makeFirstResponder: nextView];
 		}
 		else
 		{
@@ -147,9 +147,9 @@
 	//This makes the dropzone behave like an icon in Finder.
 	//FIXME: Well, almost: icons in Finder only open on mouseUp, not mouseDown.
 	//But NSImageView's drag-drop handling prevents us from catching mouseUp events.
-	if ([[self window] firstResponder] == self && [theEvent clickCount] > 1)
+	if (self.window.firstResponder == self && theEvent.clickCount > 1)
 	{
-		[self sendAction: @selector(launchGamebox:) to: [self target]];
+		[self sendAction: @selector(launchGamebox:) to: self.target];
 	}
 	else
 	{
@@ -160,7 +160,7 @@
 
 - (BOOL) isHighlighted
 {
-	return isDragTarget || [[self window] firstResponder] == self;
+	return isDragTarget || self.window.firstResponder == self;
 }
 
 - (NSDragOperation) draggingEntered: (id < NSDraggingInfo >)sender
@@ -201,10 +201,10 @@
 - (void) drawRect: (NSRect)dirtyRect
 {
 	[NSGraphicsContext saveGraphicsState];
-	if ([self isHighlighted])
+	if (self.isHighlighted)
 	{
 		CGFloat borderRadius = 8.0f;
-		NSBezierPath *background = [NSBezierPath bezierPathWithRoundedRect: [self bounds]
+		NSBezierPath *background = [NSBezierPath bezierPathWithRoundedRect: self.bounds
 																   xRadius: borderRadius
 																   yRadius: borderRadius];
 		
@@ -217,10 +217,10 @@
 		[background fill];
 	}
 
-	[[self image] drawInRect: [self bounds]
-					fromRect: NSZeroRect
-				   operation: NSCompositeSourceOver
-					fraction: 1.0f];
+	[self.image drawInRect: self.bounds
+                  fromRect: NSZeroRect
+                 operation: NSCompositeSourceOver
+                  fraction: 1.0f];
 	 
 	[NSGraphicsContext restoreGraphicsState];
 }

@@ -99,7 +99,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 @implementation BXSession
 
 @synthesize DOSWindowController = _DOSWindowController;
-@synthesize gamePackage = _gamePackage;
+@synthesize gamebox = _gamebox;
 @synthesize emulator = _emulator;
 @synthesize targetPath = _targetPath;
 @synthesize targetArguments = _targetArguments;
@@ -154,11 +154,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	return nil;
 }
 
-+ (NSImage *) bootlegCoverArtForGamePackage: (BXGamebox *)package withMedium: (BXReleaseMedium)medium
++ (NSImage *) bootlegCoverArtForGamebox: (BXGamebox *)gamebox withMedium: (BXReleaseMedium)medium
 {
 	Class <BXBootlegCoverArt> coverArtClass;
 	if (medium == BXUnknownMedium)
-        medium = [BXGameProfile mediumOfGameAtPath: [package bundlePath]];
+        medium = [BXGameProfile mediumOfGameAtPath: gamebox.bundlePath];
     
 	switch (medium)
 	{
@@ -166,7 +166,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		case BX525DisketteMedium:	coverArtClass = [BX525Diskette class];	break;
 		default:                    coverArtClass = [BX35Diskette class];	break;
 	}
-	NSString *iconTitle = package.gameName;
+	NSString *iconTitle = gamebox.gameName;
 	NSImage *icon = [coverArtClass coverArtWithTitle: iconTitle];
 	return icon;
 }
@@ -231,7 +231,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     
     self.DOSWindowController = nil;
     self.emulator = nil;
-    self.gamePackage = nil;
+    self.gamebox = nil;
     self.gameProfile = nil;
     self.gameSettings = nil;
     
@@ -270,19 +270,18 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         self.targetPath = filePath;
     
 	//Check if the chosen file is located inside a gamebox
-	NSString *packagePath = [workspace parentOfFile: filePath
+	NSString *gameboxPath = [workspace parentOfFile: filePath
                                       matchingTypes: [NSSet setWithObject: BXGameboxType]];
 	
 	//If the fileURL is located inside a gamebox, load the gamebox and use the gamebox itself as the fileURL.
 	//This way, the DOS window will show the gamebox as the represented file, and our Recent Documents
 	//list will likewise show the gamebox instead.
-	if (packagePath)
+	if (gameboxPath)
 	{
-		BXGamebox *package = [[BXGamebox alloc] initWithPath: packagePath];
-        self.gamePackage = package;
+		self.gamebox = [[[BXGamebox alloc] initWithPath: gameboxPath] autorelease];
 		
 		//If we opened the gamebox directly, try to find a program to launch for it.
-        if ([self.targetPath isEqualToString: packagePath])
+        if ([self.targetPath isEqualToString: gameboxPath])
 		{
             //By default, launch the previous program that the user was running when they quit last time.
 		    NSString *previousProgramPath = [self.gameSettings objectForKey: BXGameboxSettingsLastProgramPathKey];
@@ -291,7 +290,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                 //If the program path is relative, resolve it relative to the gamebox.
                 if (!previousProgramPath.isAbsolutePath)
                 {
-                    NSString *basePath = package.resourcePath;
+                    NSString *basePath = self.gamebox.resourcePath;
                     previousProgramPath = [basePath stringByAppendingPathComponent: previousProgramPath];
                 }
                 self.targetPath = previousProgramPath;
@@ -301,7 +300,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             //default program (if it has one.)
             else
             {
-                NSDictionary *defaultLauncher = package.defaultLauncher;
+                NSDictionary *defaultLauncher = self.gamebox.defaultLauncher;
                 
                 if (defaultLauncher)
                 {
@@ -310,83 +309,94 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                 }
             }
         }
-		[package release];
 		
 		//FIXME: move the fileURL reset out of here and into a later step: we can't rely on the order
 		//in which NSDocument's setFileURL/readFromURL methods are called.
-		self.fileURL = [NSURL fileURLWithPath: packagePath];
+		self.fileURL = [NSURL fileURLWithPath: gameboxPath];
 	}
     
 	return YES;
 }
 
-- (void) setGamePackage: (BXGamebox *)package
+- (void) setGamebox: (BXGamebox *)gamebox
 {	
-	if (package != self.gamePackage)
+	if (gamebox != self.gamebox)
 	{
-		[_gamePackage release];
-		_gamePackage = [package retain];
+		[_gamebox release];
+		_gamebox = [gamebox retain];
 		
-		//Also load up the settings and game profile for this gamebox
-		if (self.gamePackage)
+		//Load up the settings and game profile for this gamebox while we're at it.
+		if (self.gamebox)
 		{
-			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-			NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, self.gamePackage.gameIdentifier];
-			
-			NSDictionary *gameboxSettings = [defaults objectForKey: defaultsKey];
-            
-			//Merge the loaded values in, rather than replacing the default settings altogether.
-			[self.gameSettings addEntriesFromDictionary: gameboxSettings];
-            
-            //TWEAK: transition the closeOnExit flag from out of the user-specific
-            //game settings and into the gamebox itself (v1.3 -> v1.3.1.)
-            NSNumber *closeOnExitFlag = [self.gameSettings objectForKey: @"closeOnExit"];
-            if (closeOnExitFlag != nil)
-            {
-                self.gamePackage.closeOnExit = closeOnExitFlag.boolValue;
-                //Remove the old setting so that we don't import it again next time.
-                [self.gameSettings removeObjectForKey: @"closeOnExit"];
-            }
-            
-            //TWEAK: transition the startUpInFullScreen flag from out of the application-wide
-            //user defaults and into the user-specific game settings. (v1.3->v1.4)
-            NSNumber *startUpInFullScreenFlag = [defaults objectForKey: @"startUpInFullScreen"];
-            if (startUpInFullScreenFlag && ![gameboxSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey])
-            {
-                [self.gameSettings setObject: startUpInFullScreenFlag
-                                      forKey: BXGameboxSettingsStartUpInFullScreenKey];
-            }
-            
-            
-            //If we don't already have a game profile assigned,
-            //then load any previously detected game profile for this game
-            if (!self.gameProfile)
-            {
-                NSString *identifier        = [self.gameSettings objectForKey: BXGameboxSettingsProfileKey];
-                NSString *profileVersion    = [self.gameSettings objectForKey: BXGameboxSettingsProfileVersionKey];
-                
-                if (identifier && profileVersion)
-                {
-                    //Check if the profile catalogue version under which the detected profile was saved
-                    //is older than the current catalogue version. If it is, then we'll redetect rather
-                    //than use a profile detected from a previous version.
-                    BOOL profileOutdated = [profileVersion compare: [BXGameProfile catalogueVersion]
-                                                           options: NSNumericSearch] == NSOrderedAscending;
-
-                    if (!profileOutdated)
-                    {
-                        //Tweak: don't use saved profiles in debug mode, as this interferes with development
-                        //of detection rules.
-#ifndef BOXER_DEBUG
-                        BXGameProfile *profile = [BXGameProfile profileWithIdentifier: identifier];
-                        //NSLog(@"Reusing existing profile with identifier: %@, %@", identifier, profile);
-                        self.gameProfile = profile;
-#endif
-                    }
-                }
-            }
+			[self _loadGameSettingsForGamebox: self.gamebox];
 		}
 	}
+}
+
+- (void) _loadGameSettingsForGamebox: (BXGamebox *)gamebox
+{
+    if (gamebox)
+    {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, gamebox.gameIdentifier];
+        
+        NSDictionary *gameboxSettings = [defaults objectForKey: defaultsKey];
+        
+        [self _loadGameSettings: gameboxSettings];
+    }
+}
+
+- (void) _loadGameSettings: (NSDictionary *)gameSettings
+{
+    //Merge the loaded values in, rather than replacing the default settings altogether.
+    [self.gameSettings addEntriesFromDictionary: gameSettings];
+    
+    //UPDATE: transition the closeOnExit flag from out of the user-specific
+    //game settings and into the gamebox itself (v1.3 -> v1.3.1.)
+    NSNumber *closeOnExitFlag = [self.gameSettings objectForKey: @"closeOnExit"];
+    if (closeOnExitFlag != nil)
+    {
+        self.gamebox.closeOnExit = closeOnExitFlag.boolValue;
+        //Remove the old setting so that we don't import it again next time.
+        [self.gameSettings removeObjectForKey: @"closeOnExit"];
+    }
+    
+    //UPDATE: transition the startUpInFullScreen flag from out of the application-wide
+    //user defaults and into the user-specific game settings. (v1.3->v1.4)
+    NSNumber *startUpInFullScreenFlag = [[NSUserDefaults standardUserDefaults] objectForKey: @"startUpInFullScreen"];
+    if (startUpInFullScreenFlag && ![gameSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey])
+    {
+        [self.gameSettings setObject: startUpInFullScreenFlag
+                              forKey: BXGameboxSettingsStartUpInFullScreenKey];
+    }
+    
+    //If we don't already have a game profile assigned,
+    //then load any previously detected game profile from the game settings
+    if (!self.gameProfile)
+    {
+        NSString *identifier        = [self.gameSettings objectForKey: BXGameboxSettingsProfileKey];
+        NSString *profileVersion    = [self.gameSettings objectForKey: BXGameboxSettingsProfileVersionKey];
+        
+        if (identifier && profileVersion)
+        {
+            //Check if the profile catalogue version under which the detected profile was saved
+            //is older than the current catalogue version. If it is, then we'll redetect rather
+            //than use a profile detected from a previous version.
+            BOOL profileOutdated = [profileVersion compare: [BXGameProfile catalogueVersion]
+                                                   options: NSNumericSearch] == NSOrderedAscending;
+            
+            if (!profileOutdated)
+            {
+                //Tweak: don't use saved profiles in debug mode, as this interferes with development
+                //of detection rules.
+#ifndef BOXER_DEBUG
+                BXGameProfile *profile = [BXGameProfile profileWithIdentifier: identifier];
+                //NSLog(@"Reusing existing profile with identifier: %@, %@", identifier, profile);
+                self.gameProfile = profile;
+#endif
+            }
+        }
+    }
 }
 
 - (void) setGameProfile: (BXGameProfile *)profile
@@ -651,7 +661,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 //Save our configuration changes to disk before exiting
 - (void) synchronizeSettings
 {
-	if (self.isGamePackage)
+	if (self.hasGamebox)
 	{
 		//Go through the settings working out which ones we should store in user defaults,
 		//and which ones we should store in the gamebox's configuration file.
@@ -689,7 +699,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		[self.gameSettings removeObjectsForKeys: confSettings];
 
 		//Persist these gamebox-specific configuration into the gamebox's configuration file.
-		NSString *configPath = self.gamePackage.configurationFilePath;
+		NSString *configPath = self.gamebox.configurationFilePath;
 		[self _saveConfiguration: runtimeConf toFile: configPath];
 		
         //Now that we've saved those settings to the gamebox conf,
@@ -698,10 +708,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         
         //Add the gamebox name into the settings, to make it easier
         //to identify to which gamebox the record belongs.
-        [self.gameSettings setObject: self.gamePackage.gameName forKey: BXGameboxSettingsNameKey];
+        [self.gameSettings setObject: self.gamebox.gameName forKey: BXGameboxSettingsNameKey];
         
         //While we're here, update the game settings to reflect the current location of the gamebox.
-        NDAlias *packageLocation = [NDAlias aliasWithPath: self.gamePackage.bundlePath];
+        NDAlias *packageLocation = [NDAlias aliasWithPath: self.gamebox.bundlePath];
         if (packageLocation)
             [self.gameSettings setObject: packageLocation.data
                                   forKey: BXGameboxSettingsLastLocationKey];
@@ -742,7 +752,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             
             //If we were running a program when we were shut down, then record that;
             //otherwise, record the last directory we were in when we were at the DOS prompt.
-            NSString *basePath = self.gamePackage.resourcePath;
+            NSString *basePath = self.gamebox.resourcePath;
             if (lastProgramPath)
             {
                 //Make the program path relative to the gamebox.
@@ -778,7 +788,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         }
 
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, self.gamePackage.gameIdentifier];
+        NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, self.gamebox.gameIdentifier];
         [defaults setObject: self.gameSettings forKey: defaultsKey];
 	}
 }
@@ -790,7 +800,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (NSString *) displayName
 {
     if ([[NSApp delegate] isStandaloneGameBundle]) return [BXBaseAppController appName];
-	else if (self.isGamePackage)    return self.gamePackage.gameName;
+	else if (self.hasGamebox)       return self.gamebox.gameName;
 	else if (self.fileURL)          return [super displayName];
 	else                            return self.processDisplayName;
 }
@@ -814,9 +824,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 #pragma mark -
 #pragma mark Introspecting the gamebox
 
-- (BOOL) isGamePackage
+- (BOOL) hasGamebox
 {
-    return (self.gamePackage != nil);
+    return (self.gamebox != nil);
 }
 
 - (BOOL) isGameImport
@@ -826,9 +836,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (NSImage *)representedIcon
 {
-    if (!self.cachedIcon && self.isGamePackage)
+    if (!self.cachedIcon && self.hasGamebox)
     {
-        NSImage *icon = self.gamePackage.coverArt;
+        NSImage *icon = self.gamebox.coverArt;
         
         //If the gamebox has no custom icon (or has lost it), then generate
         //a new one for it now and try to apply it to the gamebox.
@@ -837,13 +847,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         if (!icon && ![[NSApp delegate] isStandaloneGameBundle])
         {
             BXReleaseMedium medium = self.gameProfile.coverArtMedium;
-            icon = [self.class bootlegCoverArtForGamePackage: self.gamePackage
-                                                  withMedium: medium];
+            icon = [self.class bootlegCoverArtForGamebox: self.gamebox
+                                              withMedium: medium];
             
             //This may fail, if the game package is on a read-only medium.
             //We don't care about this though, since we now have cached the
             //generated icon and will use that for the lifetime of the session.
-            self.gamePackage.coverArt = icon;
+            self.gamebox.coverArt = icon;
         }
         
         self.cachedIcon = icon;
@@ -855,12 +865,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 {
     //Note: this equality check is fairly feeble, since we cannot
     //(and should not) compare image data for equality.
-    if (self.gamePackage)
+    if (self.gamebox)
     {
         if (![self.cachedIcon isEqual: icon])
         {
             self.cachedIcon = icon;
-            self.gamePackage.coverArt = icon;
+            self.gamebox.coverArt = icon;
         
             //Force the window's icon to update to account for the new icon.
             [self.DOSWindowController synchronizeWindowTitleWithDocumentName];
@@ -875,7 +885,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	{
 		NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 		
-		NSArray *docPaths = [self.gamePackage.documentation sortedArrayUsingSelector: @selector(pathDepthCompare:)];
+		NSArray *docPaths = [self.gamebox.documentation sortedArrayUsingSelector: @selector(pathDepthCompare:)];
 		
 		NSMutableSet *docNames = [[NSMutableSet alloc] initWithCapacity: docPaths.count];
 
@@ -905,8 +915,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	return [[_documentation retain] autorelease];
 }
 
-+ (NSSet *) keyPathsForValuesAffectingIsGamePackage		{ return [NSSet setWithObject: @"gamePackage"]; }
-+ (NSSet *) keyPathsForValuesAffectingRepresentedIcon	{ return [NSSet setWithObjects: @"gamePackage", @"gamePackage.coverArt", nil]; }
++ (NSSet *) keyPathsForValuesAffectingHasGamebox        { return [NSSet setWithObject: @"gamebox"]; }
++ (NSSet *) keyPathsForValuesAffectingRepresentedIcon	{ return [NSSet setWithObjects: @"gamebox", @"gamebox.coverArt", nil]; }
 + (NSSet *) keyPathsForValuesAffectingCurrentPath       { return [NSSet setWithObjects: @"activeProgramPath", @"emulator.pathOfCurrentDirectory", nil]; }
 + (NSSet *) keyPathsForValuesAffectingActiveProgramPath { return [NSSet setWithObjects: @"lastExecutedProgramPath", @"lastLaunchedProgramPath", nil]; }
 
@@ -979,7 +989,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     }
 	
 	//Next, load the gamebox's own configuration file if it has one.
-    NSString *packageConf = self.gamePackage.configurationFile;
+    NSString *packageConf = self.gamebox.configurationFile;
     if (packageConf)
         [configPaths addObject: packageConf];
     
@@ -1138,7 +1148,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //of which program the user themselves actually launched. Both the last executed
     //and the last launched program are always cleared down in didReturnToShell:.
 	NSString *executedPath = self.lastExecutedProgramPath;
-    BOOL executedPathCanBeDefault = (executedPath && _hasLaunched && [self.gamePackage validateTargetPath: &executedPath error: nil]);
+    BOOL executedPathCanBeDefault = (executedPath && _hasLaunched && [self.gamebox validateTargetPath: &executedPath error: nil]);
 	if (!executedPathCanBeDefault)
 	{
 		self.lastExecutedProgramPath = nil;
@@ -1336,14 +1346,14 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 {
     //If we're in standalone mode and there is more than one game launcher, don't close on exit
     //(we'll return to the launcher panel instead.)
-    if ([[NSApp delegate] isStandaloneGameBundle] && self.gamePackage.launchers.count > 1)
+    if ([[NSApp delegate] isStandaloneGameBundle] && self.gamebox.launchers.count > 1)
         return NO;
     
 	//Don't close if the auto-close preference is disabled for this gamebox
-	if (!self.gamePackage.closeOnExit) return NO;
+	if (!self.gamebox.closeOnExit) return NO;
 	
 	//Don't close if we launched a program other than the default program for the gamebox
-	if (![self.lastLaunchedProgramPath isEqualToString: self.gamePackage.targetPath]) return NO;
+	if (![self.lastLaunchedProgramPath isEqualToString: self.gamebox.targetPath]) return NO;
 	
 	//Don't close if there are drive imports in progress
 	if (self.isImportingDrives) return NO;
@@ -1366,10 +1376,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 //we can ask the user what they want to do with the program.
 - (BOOL) _shouldLeaveProgramPanelOpenAfterLaunch
 {
-    if (!self.gamePackage.targetPath)
+    if (!self.gamebox.targetPath)
     {
         NSString *activePath = [[self.activeProgramPath copy] autorelease];
-        return [self.gamePackage validateTargetPath: &activePath error: NULL];
+        return [self.gamebox validateTargetPath: &activePath error: NULL];
     }
     else
         return NO;
@@ -1380,7 +1390,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     if ([[NSApp delegate] isStandaloneGameBundle])
         return YES;
     
-    if (!self.gamePackage)
+    if (!self.gamebox)
     {
         return NO;
     }
@@ -1422,16 +1432,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) _mountDrivesForSession
 {   
-    if (self.gamePackage)
+    if (self.gamebox)
 	{
         //TODO: deal with any mounting errors that occurred. Since all this happens automatically
         //during startup, we can't give errors straight to the user as they will seem cryptic.
         		
         //First, mount any bundled drives from the gamebox.
 		NSMutableArray *packageVolumes = [NSMutableArray arrayWithCapacity: 10];
-		[packageVolumes addObjectsFromArray: self.gamePackage.floppyVolumes];
-		[packageVolumes addObjectsFromArray: self.gamePackage.hddVolumes];
-		[packageVolumes addObjectsFromArray: self.gamePackage.cdVolumes];
+		[packageVolumes addObjectsFromArray: self.gamebox.floppyVolumes];
+		[packageVolumes addObjectsFromArray: self.gamebox.hddVolumes];
+		[packageVolumes addObjectsFromArray: self.gamebox.cdVolumes];
 		
 		BOOL hasProperDriveC = NO;
         NSString *titleForDriveC = NSLocalizedString(@"Game Drive", @"The display title for the gamebox’s C drive.");
@@ -1448,7 +1458,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                 
                 //If our target was the gamebox itself, rewrite it to point to this C drive
                 //so that we'll start up at drive C.
-                if ([self.targetPath isEqualToString: self.gamePackage.gamePath])
+                if ([self.targetPath isEqualToString: self.gamebox.gamePath])
                     self.targetPath = volumePath;
             }
             
@@ -1463,7 +1473,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         //In this case, mount the gamebox itself as drive C.
         if (!hasProperDriveC)
         {
-            BXDrive *packageDrive = [BXDrive hardDriveFromPath: self.gamePackage.gamePath
+            BXDrive *packageDrive = [BXDrive hardDriveFromPath: self.gamebox.gamePath
                                                       atLetter: @"C"];
             
             packageDrive.title = titleForDriveC;

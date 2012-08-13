@@ -55,7 +55,7 @@
 	
     openPanel.accessoryView = self.view;
     openPanel.allowedFileTypes = [BXFileTypes mountableTypes].allObjects;
-    openPanel.directoryURL = theSession.gamePackage.resourceURL;
+    openPanel.directoryURL = theSession.gamebox.resourceURL;
 	
 	[self populateDrivesFromSession: theSession];
     

@@ -150,11 +150,11 @@
 
 - (void) _syncSegmentedButtonStates
 {	
-	[self.statusBarControls setSelected: self.inspector.panelShown  forSegment: BXStatusBarInspectorSegment];
+	[self.statusBarControls setSelected: self.inspector.panelShown                      forSegment: BXStatusBarInspectorSegment];
 	[self.statusBarControls setSelected: self.controller.programPanelShown              forSegment: BXStatusBarProgramPanelSegment];
 	[self.statusBarControls setSelected: self.controller.inputController.mouseLocked    forSegment: BXStatusBarMouseLockSegment];
 	
-	[self.statusBarControls setEnabled:	self.controller.document.isGamePackage          forSegment: BXStatusBarProgramPanelSegment];
+	[self.statusBarControls setEnabled:	self.controller.document.hasGamebox             forSegment: BXStatusBarProgramPanelSegment];
 	[self.statusBarControls setEnabled:	self.controller.inputController.mouseActive     forSegment: BXStatusBarMouseLockSegment];
 	
 	NSString *panelImageName;
@@ -181,7 +181,7 @@
                          context: nil];
 	
 	[self.controller addObserver: self
-                      forKeyPath: @"document.isGamePackage"
+                      forKeyPath: @"document.hasGamebox"
                          options: 0
                          context: nil];
 	
@@ -233,7 +233,7 @@
 	[self.controller removeObserver: self forKeyPath: @"inputController.mouseLocked"];
 	[self.controller removeObserver: self forKeyPath: @"inputController.mouseInView"];
 	[self.controller removeObserver: self forKeyPath: @"inputController.trackMouseWhileUnlocked"];
-	[self.controller removeObserver: self forKeyPath: @"document.isGamePackage"];
+	[self.controller removeObserver: self forKeyPath: @"document.hasGamebox"];
 	[self.controller removeObserver: self forKeyPath: @"programPanelShown"];
 	
 	[self.inspector removeObserver: self forKeyPath: @"panelShown"];

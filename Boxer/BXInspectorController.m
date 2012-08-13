@@ -99,18 +99,18 @@
 			
 			//Find the panel selector segment whose tag corresponds to the game inspector panel
 			//(This charade is necessary because NSSegmentedControl has an awful interface)
-			NSInteger i;
-			for (i = 0; i < [[self panelSelector] segmentCount]; i++)
+			NSInteger segmentIndex, numSegments = self.panelSelector.segmentCount;
+			for (segmentIndex = 0; i < numSegments; segmentIndex++)
 			{
-				if ([[[self panelSelector] cell] tagForSegment: i] == BXGameInspectorPanelTag)
-					[[self panelSelector] setEnabled: [session isGamePackage] forSegment: i];
+				if ([self.panelSelector.cell tagForSegment: segmentIndex] == BXGameInspectorPanelTag)
+					[self.panelSelector setEnabled: session.hasGamebox forSegment: i];
 			}
 			
 			//If the gamebox tab was already selected, then switch to the next tab
-			if (![session isGamePackage] &&
-				[[self tabView] indexOfTabViewItem: [[self tabView] selectedTabViewItem]] == BXGameInspectorPanelTag)
+			if (!session.hasGamebox &&
+				[self.tabView indexOfTabViewItem: self.tabView.selectedTabViewItem] == BXGameInspectorPanelTag)
 			{
-				[[self tabView] selectTabViewItemAtIndex: BXCPUInspectorPanelTag];
+				[self.tabView selectTabViewItemAtIndex: BXCPUInspectorPanelTag];
 			}
 		}
 	}
@@ -222,7 +222,7 @@
 - (BOOL) tabView: (NSTabView *)tabView shouldSelectTabViewItem: (NSTabViewItem *)tabViewItem
 {
 	return ([tabView indexOfTabViewItem: tabViewItem] != BXGameInspectorPanelTag ||
-			[[[NSApp delegate] currentSession] isGamePackage]);
+			[[NSApp delegate] currentSession].hasGamebox);
 }
 
 - (BOOL) shouldSyncWindowTitleToTabLabel: (NSString *)label

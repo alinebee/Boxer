@@ -134,7 +134,7 @@ enum {
 - (void) showDriveSwappedBezelFromDrive: (BXDrive *)fromDrive
                                 toDrive: (BXDrive *)toDrive;
 - (void) showDriveImportedBezelForDrive: (BXDrive *)drive
-                              toPackage: (BXGamebox *)package;
+                              toGamebox: (BXGamebox *)gamebox;
 
 - (void) showPauseBezel;
 - (void) showPlayBezel;

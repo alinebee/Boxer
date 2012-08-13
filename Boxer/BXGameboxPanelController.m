@@ -62,7 +62,7 @@ enum {
 	{
 		NSArray *observePaths = [NSArray arrayWithObjects:
 			@"content.executables",
-			@"content.gamePackage.targetPath",
+			@"content.gamebox.targetPath",
 		nil];
 		
 		for (NSString *path in observePaths)
@@ -86,8 +86,8 @@ enum {
 	//instead, we could optimize and only synchronize when the menu is displayed.
 	//This could lead the popup button title to become out of date, but in that case syncSelection
 	//could create a 'dummy' item just for the target path.
-	if		([keyPath isEqualToString: @"content.executables"])				[self syncMenuItems];
-	else if ([keyPath isEqualToString: @"content.gamePackage.targetPath"])	[self syncSelection];
+	if		([keyPath isEqualToString: @"content.executables"])			[self syncMenuItems];
+	else if ([keyPath isEqualToString: @"content.gamebox.targetPath"])	[self syncSelection];
 }
 
 
@@ -108,7 +108,7 @@ enum {
 - (IBAction) changeDefaultProgram: (NSPopUpButton *)sender
 {
 	NSString *selectedPath = sender.selectedItem.representedObject;
-    self.session.gamePackage.targetPath = selectedPath;
+    self.session.gamebox.targetPath = selectedPath;
 }
 
 - (IBAction) launchDefaultProgram: (id)sender
@@ -119,7 +119,7 @@ enum {
 
 - (IBAction) revealGamebox: (id)sender
 {
-	[[NSApp delegate] revealPath: self.session.gamePackage.bundlePath];
+	[[NSApp delegate] revealPath: self.session.gamebox.bundlePath];
 }
 
 - (IBAction) searchForCoverArt: (id)sender
@@ -145,11 +145,11 @@ enum {
     //Start the panel with the current target selected.
     //If we don't have one, then start it up in the folder of the main drive (usually drive C.)
     //If we don't have one of *those*, then start it up in the root folder of the gamebox.
-    NSString *initialPath = self.session.gamePackage.targetPath;
+    NSString *initialPath = self.session.gamebox.targetPath;
     if (!initialPath)
         initialPath = self.session.principalDrive.path;
     if (!initialPath)
-        initialPath = self.session.gamePackage.gamePath;
+        initialPath = self.session.gamebox.gamePath;
     
     openPanel.directoryURL = [NSURL fileURLWithPath: initialPath];
     
@@ -193,7 +193,7 @@ enum {
     NSString *path = URL.path;
     
 	//Disable files that are outside the gamebox or that aren't accessible in DOS.
-	if (![path isRootedInPath: session.gamePackage.gamePath]) return NO;
+	if (![path isRootedInPath: session.gamebox.gamePath]) return NO;
     
 	if (![session.emulator pathIsDOSAccessible: path]) return NO;
     
@@ -235,7 +235,7 @@ enum {
 - (void) syncSelection
 {
 	NSMenu *menu = self.programSelector.menu;
-	NSString *targetPath = self.session.gamePackage.targetPath;
+	NSString *targetPath = self.session.gamebox.targetPath;
 	NSInteger pathIndex = (targetPath != nil) ? [menu indexOfItemWithRepresentedObject: targetPath] : 0;
     
     if (pathIndex != -1)
@@ -249,7 +249,7 @@ enum {
 - (NSArray *) _programMenuItems
 {	
 	NSDictionary *allPrograms	= self.session.executables;
-    NSString *currentTarget     = self.session.gamePackage.targetPath;
+    NSString *currentTarget     = self.session.gamebox.targetPath;
 	NSMutableArray *items		= [NSMutableArray arrayWithCapacity: allPrograms.count];
 	
 	NSArray *driveLetters = [allPrograms.allKeys sortedArrayUsingSelector: @selector(compare:)];

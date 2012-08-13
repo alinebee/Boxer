@@ -256,9 +256,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	{
 		for (BXSession *session in self.sessions)
 		{
-			if ([session.gamePackage.bundlePath isEqualToString: path])
+			if ([session.gamebox.bundlePath isEqualToString: path])
 			{
-				NSString *defaultTarget = session.gamePackage.targetPath;
+				NSString *defaultTarget = session.gamebox.targetPath;
 				if (defaultTarget)
                     [session openFileAtPath: defaultTarget];
 				
@@ -590,7 +590,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	SEL theAction = theItem.action;
 	
 	if (theAction == @selector(revealCurrentSessionPath:))
-		return (self.currentSession.isGamePackage || self.currentSession.currentPath != nil);
+		return (self.currentSession.hasGamebox || self.currentSession.currentPath != nil);
 		
 	//Don't allow any of the following actions while a modal window is active.
 	if ([NSApp modalWindow]) return NO;
@@ -621,7 +621,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if (session)
 	{
 		//When running a gamebox, offer up the gamebox itself
-		if (session.isGamePackage) path = session.fileURL.path;
+		if (session.hasGamebox)
+            path = session.gamebox.bundlePath;
+        
 		//Otherwise, offer up the current DOS program or directory
 		else path = session.currentPath;
 	}

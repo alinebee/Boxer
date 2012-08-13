@@ -446,7 +446,7 @@
 }
 
 - (void) showDriveImportedBezelForDrive: (BXDrive *)drive
-                              toPackage: (BXGamebox *)package
+                              toGamebox: (BXGamebox *)gamebox
 {
     if (![self shouldShowDriveNotifications]) return;
     

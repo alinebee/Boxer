@@ -119,7 +119,7 @@
 - (void) setProgramPanelShown: (BOOL)show animate: (BOOL)animate
 {
 	//Don't open the program panel if we're not running a gamebox
-	if (show && ![[self document] isGamePackage]) return;
+	if (show && !self.document.hasGamebox) return;
 	
     programPanelShownBeforeFullScreen = show;
 	

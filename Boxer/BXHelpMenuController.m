@@ -18,7 +18,7 @@
 {
 	BXSession *session = [[NSApp delegate] currentSession];
 	
-	if (session.isGamePackage)
+	if (session.hasGamebox)
 	{
 		NSString *format = NSLocalizedString(@"Find %@ at Mobygames",
 											 @"Help menu item for searching Mobygames: %@ is the display name of the current DOS session.");
@@ -34,7 +34,7 @@
 {
 	BXSession *session = [[NSApp delegate] currentSession];
 	
-	if ([session isGamePackage])
+	if (session.hasGamebox)
 	{
 		NSString *format = NSLocalizedString(@"Find %@ at ReplacementDocs",
 											 @"Help menu item for searching ReplacementDocs: %@ is the display name of the current DOS session.");
@@ -55,7 +55,7 @@
 {
 	BXSession *session = [[NSApp delegate] currentSession];
 	
-	if (session.isGamePackage)
+	if (session.hasGamebox)
 	{
 		NSString *search = session.displayName;
 		[[NSApp delegate] searchURLFromKey: @"MobygamesSearchURL" withSearchString: search];
@@ -70,7 +70,7 @@
 {
 	BXSession *session = [[NSApp delegate] currentSession];
 
-	if (session.isGamePackage)
+	if (session.hasGamebox)
 	{
 		NSString *search = session.displayName;
 		[[NSApp delegate] searchURLFromKey: @"ReplacementDocsSearchURL" withSearchString: search];

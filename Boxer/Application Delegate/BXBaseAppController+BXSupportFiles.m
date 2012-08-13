@@ -19,31 +19,31 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
 
 @implementation BXBaseAppController (BXSupportFiles)
 
-- (NSString *) statesPathForGamePackage: (BXGamebox *)package
-                      creatingIfMissing: (BOOL) createIfMissing
+- (NSString *) statesPathForGamebox: (BXGamebox *)gamebox
+                  creatingIfMissing: (BOOL) createIfMissing
 {
-    if (package == nil)
+    if (gamebox == nil)
         return nil;
     
 	NSString *supportPath = [self supportPathCreatingIfMissing: NO];
     NSString *statesPath = [supportPath stringByAppendingPathComponent: @"Gamebox States"];
     
-    NSString *packageIdentifier = package.gameIdentifier;
+    NSString *identifier = gamebox.gameIdentifier;
     
     //If the package lacks an identifier, we cannot assign it a path for state storage.
-    if (!packageIdentifier)
+    if (!identifier)
         return nil;
     
-    NSString *packageStatesPath = [statesPath stringByAppendingPathComponent: packageIdentifier];
+    NSString *gameboxStatesPath = [statesPath stringByAppendingPathComponent: identifier];
     if (createIfMissing)
     {
-		[[NSFileManager defaultManager] createDirectoryAtPath: packageStatesPath
+		[[NSFileManager defaultManager] createDirectoryAtPath: gameboxStatesPath
 								  withIntermediateDirectories: YES
 												   attributes: nil
 														error: NULL];
     }
     
-    return packageStatesPath;
+    return gameboxStatesPath;
 }
 
 - (NSString *) recordingsPathCreatingIfMissing: (BOOL)createIfMissing

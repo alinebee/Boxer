@@ -35,6 +35,7 @@
 
 @synthesize renderingView = _renderingView;
 @synthesize inputView = _inputView;
+@synthesize currentPanel = _currentPanel;
 @synthesize statusBar = _statusBar;
 @synthesize programPanel = _programPanel;
 @synthesize launchPanel = _launchPanel;
@@ -409,12 +410,14 @@
 
 - (void) showLaunchPanel: (id)sender
 {
-	[self setLaunchPanelShown: YES animate: YES];
+    [self switchToPanel: BXDOSWindowLaunchPanel
+                animate: self.window.isVisible];
 }
 
 - (void) showDOSView: (id)sender
 {
-	[self setLaunchPanelShown: NO animate: YES];
+    [self switchToPanel: BXDOSWindowDOSView
+                animate: self.window.isVisible];
 }
 
 - (IBAction) toggleRenderingStyle: (id <NSValidatedUserInterfaceItem>)sender
@@ -467,21 +470,41 @@
     }
 }
 
-- (void) setLaunchPanelShown: (BOOL)showLauncher animate: (BOOL)animate
+- (NSView *) _viewForPanel: (BXDOSWindowPanel)panel
 {
-    //Disable animation if the view we would be animating from is not currently visible.
+    switch (panel)
+    {
+        case BXDOSWindowNoPanel:
+            return nil;
+        case BXDOSWindowLaunchPanel:
+            return self.launchPanel;
+        case BXDOSWindowDOSView:
+            return self.inputView;
+    }
+}
+
+- (void) switchToPanel: (BXDOSWindowPanel)newPanel animate: (BOOL)animate
+{
+    //Don't bother if we're already displaying this panel.
+    if (newPanel == self.currentPanel)
+        return;
+    
+    [self willChangeValueForKey: @"currentPanel"];
+    
+    NSView *viewForNewPanel = [self _viewForPanel: newPanel];
+    NSView *viewForOldPanel = [self _viewForPanel: self.currentPanel];
+    
     if (animate)
     {
-        //If we don't actually have a view to animate from, then perform the animation as a fade instead.
-        if ((showLauncher && self.inputView.isHidden) ||
-            (!showLauncher && self.launchPanel.isHidden))
+        //If there's no panel yet, then fade in the new panel.
+        if (self.currentPanel == BXDOSWindowNoPanel)
         {
-            NSView *viewToFade = (showLauncher) ? self.launchPanel : self.inputView;
-            
             NSDictionary *fadeIn = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    viewToFade, NSViewAnimationTargetKey,
+                                    viewForNewPanel, NSViewAnimationTargetKey,
                                     NSViewAnimationFadeInEffect, NSViewAnimationEffectKey,
                                     nil];
+            
+            
             
             NSViewAnimation *animation = [[NSViewAnimation alloc] init];
             animation.viewAnimations = [NSArray arrayWithObject: fadeIn];
@@ -489,16 +512,17 @@
             animation.animationBlockingMode = NSAnimationBlocking;
             animation.animationCurve = NSAnimationEaseIn;
             
-            if (!showLauncher)
+            if (newPanel == BXDOSWindowDOSView)
                 [self.renderingView fadeWillStart];
             
             [animation startAnimation];
             
-            if (!showLauncher)
+            if (newPanel == BXDOSWindowDOSView)
                 [self.renderingView fadeDidEnd];
             
             [animation release];
         }
+        //If there is a panel, then slide the panels horizontally from one to the other.
         else
         {
             //Disable window flushes to prevent partial redraws while we're setting up the views.
@@ -517,6 +541,8 @@
             wrapperView.frame = NSMakeRect(originalFrame.origin.x, originalFrame.origin.y,
                                            originalFrame.size.width * 2, originalFrame.size.height);
             
+            //FIXME: hardcoding views here.
+            //We should switch based on which panels we're transitioning to and from.
             self.launchPanel.frame = originalBounds;
             self.inputView.frame = NSMakeRect(originalBounds.origin.x + originalBounds.size.width,
                                               originalBounds.origin.y,
@@ -531,8 +557,8 @@
             NSPoint DOSViewShown = NSMakePoint(originalFrame.origin.x - originalFrame.size.width,
                                                originalFrame.origin.y);
             
-            NSPoint startingPoint   = (showLauncher) ? DOSViewShown : launcherShown;
-            NSPoint destination     = (showLauncher) ? launcherShown : DOSViewShown;
+            NSPoint startingPoint   = (newPanel == BXDOSWindowLaunchPanel) ? DOSViewShown : launcherShown;
+            NSPoint destination     = (newPanel == BXDOSWindowLaunchPanel) ? launcherShown : DOSViewShown;
             
             NSRect startingFrame = wrapperView.frame, endingFrame = wrapperView.frame;
             startingFrame.origin = startingPoint;
@@ -556,7 +582,7 @@
             
             [animation release];
             
-            //Once we're done, restore the view frames to what they were
+            //Once we're done, restore the views to what they were.
             self.launchPanel.frame = originalBounds;
             self.inputView.frame = originalBounds;
             
@@ -566,14 +592,15 @@
         }
     }
     
-    if (showLauncher)
+    _currentPanel = newPanel;
+    viewForNewPanel.hidden = NO;
+    viewForOldPanel.hidden = YES;
+    
+    if (newPanel == BXDOSWindowLaunchPanel)
     {
         //When switching to the launcher panel,
         //ensure the mouse is unlocked.
         self.inputController.mouseLocked = NO;
-        
-        self.launchPanel.hidden = NO;
-        self.inputView.hidden = YES;
         
         [self.window makeFirstResponder: self.launchPanel];
     }
@@ -583,11 +610,10 @@
         if (self.window.isFullScreen)
             [self.inputController setMouseLocked: YES force: YES];
         
-        self.launchPanel.hidden = YES;
-        self.inputView.hidden = NO;
-        
         [self.window makeFirstResponder: self.inputView];
     }
+    
+    [self didChangeValueForKey: @"currentPanel"];
 }
 
 #pragma mark -
@@ -783,7 +809,7 @@
     
     self.renderingView.managesAspectRatio = YES;
     
-    if (!self.inputView.isHidden)
+    if (self.currentPanel == BXDOSWindowDOSView)
         [self.inputController setMouseLocked: YES force: YES];
     
     _renderingViewSizeBeforeFullScreen = self.window.actualContentViewSize;

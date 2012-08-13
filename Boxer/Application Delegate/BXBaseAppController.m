@@ -233,35 +233,74 @@
 
 - (void) syncApplicationPresentationMode
 {
-    //Lion does the right thing with fullscreen modes anyway,
-    //and the UI modes below seem to have changed in Lion such
-    //that they don't Do The Right Thing.
-    if (isRunningOnLionOrAbove())
+    BOOL suppressProcessSwitching = [[NSUserDefaults standardUserDefaults] boolForKey: @"suppressProcessSwitching"];
+    
+    BXDOSWindowController *currentController = self.currentSession.DOSWindowController;
+    
+    NSApplicationPresentationOptions currentOptions = [NSApp presentationOptions], newOptions = currentOptions;
+    
+    //On SL, we need to manage the fullscreen application state ourselves.
+    if (isRunningOnSnowLeopard())
     {
-        return;
+        if (currentController.window.isFullScreen)
+        {
+            if (currentController.inputController.mouseLocked)
+            {
+                //When the session is fullscreen and mouse-locked, hide all UI components completely.
+                newOptions |= NSApplicationPresentationHideDock | NSApplicationPresentationHideMenuBar | NSApplicationPresentationFullScreen;
+                newOptions &= ~(NSApplicationPresentationAutoHideDock | NSApplicationPresentationAutoHideMenuBar);
+            }
+            else
+            {
+                //When the session is fullscreen but the mouse is unlocked,
+                //show the OS X menu but hide the Dock until it is moused over
+                newOptions |= NSApplicationPresentationAutoHideDock | NSApplicationPresentationFullScreen;
+                newOptions &= ~(NSApplicationPresentationHideDock | NSApplicationPresentationHideMenuBar | NSApplicationPresentationAutoHideMenuBar);
+            }
+        }
+        else
+        {
+            //When there is no fullscreen session, show all UI components normally.
+            newOptions = NSApplicationPresentationDefault;
+        }
     }
     
-	BXDOSWindowController *currentController = self.currentSession.DOSWindowController;
-	
-	if (currentController.window.isFullScreen)
-	{
-		if (currentController.inputController.mouseLocked)
-		{
-			//When the session is fullscreen and mouse-locked, hide all UI components
-			SetSystemUIMode(kUIModeAllHidden, 0);
-		}
-		else
-		{
-			//When the session is fullscreen but the mouse is unlocked,
-			//show the OS X menu but hide the Dock until it is moused over
-			SetSystemUIMode(kUIModeContentSuppressed, 0);
-		}
-	}
-	else
-	{
-		//When there is no fullscreen session, show all UI components normally.
-		SetSystemUIMode(kUIModeNormal, 0);
-	}
+    //Disable process-switching while the mouse is locked, and enable it again when unlocked.
+    if (suppressProcessSwitching && currentController.inputController.mouseLocked)
+    {
+        newOptions |= NSApplicationPresentationDisableProcessSwitching;
+        
+        //The disable process-switching flag requires that the dock be hidden also.
+        if (!(currentOptions & NSApplicationPresentationAutoHideDock) && !(currentOptions & NSApplicationPresentationHideDock))
+            newOptions |= NSApplicationPresentationAutoHideDock;
+    }
+    else
+    {
+        newOptions &= ~NSApplicationPresentationDisableProcessSwitching;
+        
+        //We want to unset any auto-hiding we did upstream, but only if we're not in fullscreen and don't have the menu-bar hidden (as these options insist on the dock remaining auto-hidden.
+        if (!(currentOptions & NSApplicationPresentationAutoHideMenuBar) && !(currentOptions & NSApplicationPresentationFullScreen))
+            newOptions &= NSApplicationPresentationAutoHideDock;
+    }
+    
+    if (newOptions != currentOptions)
+    {
+        @try
+        {
+            [NSApp setPresentationOptions: newOptions];
+        }
+        @catch (NSException *exception)
+        {
+            if ([exception.name isEqualToString: NSInvalidArgumentException])
+            {
+                NSLog(@"Incompatible presentation options: %@", exception);
+            }
+            else
+            {
+                @throw exception;
+            }
+        }
+    }
 }
 
 - (void) sessionDidUnlockMouse: (NSNotification *)notification

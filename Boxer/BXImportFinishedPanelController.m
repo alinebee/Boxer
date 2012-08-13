@@ -11,6 +11,7 @@
 #import "BXImportWindowController.h"
 #import "BXImportSession.h"
 #import "BXCoverArt.h"
+#import "BXGamebox.h"
 #import "NSWorkspace+BXFileTypes.h"
 
 @implementation BXImportFinishedPanelController
@@ -28,7 +29,7 @@
 	return [NSSet setWithObject: @"controller.document.representedIcon"];
 }
 
-- (IBAction) addCoverArt: (id)sender
+- (IBAction) addCoverArt: (NSImageView *)sender
 {
 	NSImage *icon = sender.image;
 	if (icon != self.gameboxIcon)

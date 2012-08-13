@@ -11,6 +11,17 @@
 //and passing frames to the emulator to the rendering view.
 
 
+#pragma mark -
+#pragma mark Constants
+
+//Used by currentPanel and switchToPanel:animate:.
+typedef enum {
+    BXDOSWindowNoPanel,
+    BXDOSWindowLaunchPanel,
+    BXDOSWindowDOSView
+} BXDOSWindowPanel;
+
+
 #import <Cocoa/Cocoa.h>
 #import "BXFullScreenCapableWindow.h"
 
@@ -52,6 +63,8 @@ extern NSString * const BXViewDidLiveResizeNotification;
     
     NSSize _renderingViewSizeBeforeFullScreen;
     NSString *_autosaveNameBeforeFullScreen;
+    
+    BXDOSWindowPanel _currentPanel;
 }
 
 #pragma mark -
@@ -62,6 +75,9 @@ extern NSString * const BXViewDidLiveResizeNotification;
 @property (retain, nonatomic) IBOutlet BXInputController *inputController;
 @property (retain, nonatomic) IBOutlet BXStatusBarController *statusBarController;
 @property (retain, nonatomic) IBOutlet BXLaunchPanelController *launchPanelController;
+
+//The current panel being displayed in the content area of the window.
+@property (readonly, nonatomic) BXDOSWindowPanel currentPanel;
 
 //The view which displays the emulator's graphical output.
 @property (retain, nonatomic) IBOutlet NSView <BXFrameRenderingView> *renderingView;
@@ -120,7 +136,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 - (IBAction) showProgramPanel: (id)sender;
 - (IBAction) hideProgramPanel: (id)sender;
 
-//Unconditionally show/hide the launch panel.
 - (IBAction) showLaunchPanel: (id)sender;
 - (IBAction) showDOSView: (id)sender;
 
@@ -129,6 +144,8 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 #pragma mark -
 #pragma mark Toggling UI components
+
+- (void) switchToPanel: (BXDOSWindowPanel)panel animate: (BOOL)animate;
 
 //Get/set whether the statusbar should be shown.
 - (BOOL) statusBarShown;

@@ -1104,6 +1104,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     _executingLaunchedProgram = YES;
     
     //If we've finished the startup process, then show the DOS view at this point.
+    //(We won't show the DOS view before then, because we don't want startup programs
+    //to trigger a switch of view: we don't know at that point yet whether the user is
+    //overriding the startup program to show the launch panel.
     if (_hasLaunched)
     {
         [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
@@ -1116,8 +1119,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     }
     
 	//Don't set the active program if we already have one: this way, we keep
-	//track of when a user launches a batch file and don't immediately discard
-	//it in favour of the next program the batch-file runs
+	//track of which program the user manually launched, and won't glom onto
+    //other programs spawned by the original program (e.g. if it was a batch file.)
 	if (!self.lastExecutedProgramPath)
 	{
 		NSString *programPath = [notification.userInfo objectForKey: BXEmulatorLocalPathKey];
@@ -1147,6 +1150,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //passing control on to another program afterwards and we want to maintain a record
     //of which program the user themselves actually launched. Both the last executed
     //and the last launched program are always cleared down in didReturnToShell:.
+    
+    //FIXME: this is a really convoluted heuristic and we really should redesign this
+    //behaviour to better express what we're trying to do (which is: track the programs
+    //that the user has chosen to launch themselves.)
 	NSString *executedPath = self.lastExecutedProgramPath;
     BOOL executedPathCanBeDefault = (executedPath && _hasLaunched && [self.gamebox validateTargetPath: &executedPath error: nil]);
 	if (!executedPathCanBeDefault)
@@ -1219,21 +1226,26 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //Explicitly disable numpad simulation upon returning to the DOS prompt.
     //Disabled for now until we can record that the user has toggled the option while at the DOS prompt,
     //and conditionally leave it on in that case, to prevent it switching off when executing commands. 
-    //[[[self DOSWindowController] inputController] setSimulatedNumpadActive: NO];
+    //self DOSWindowController.inputController.simulatedNumpadActive = NO;
     
         
-	//Show the program chooser after returning to the DOS prompt if appropriate.
+	//Show the program chooser after returning to the DOS prompt, if appropriate.
 	if ([self _shouldShowLaunchPanelAtPrompt])
 	{
 		[NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
 												 selector: @selector(showDOSView:)
 												   object: self];
 		
-		//Show only after a delay, so that the window has time to resize after quitting the game
+		//Switch to the launch panel only after a delay.
 		[self.DOSWindowController performSelector: @selector(showLaunchPanel:)
                                        withObject: self
                                        afterDelay: BXSwitchToLaunchPanelDelay];
 	}
+    //Otherwise, ensure we're displaying the DOS view.
+    else
+    {
+        [self.DOSWindowController showDOSView: self];
+    }
 
     //Enable/disable display-sleep suppression
     [self _syncSuppressesDisplaySleep];

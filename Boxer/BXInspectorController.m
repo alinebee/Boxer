@@ -100,10 +100,10 @@
 			//Find the panel selector segment whose tag corresponds to the game inspector panel
 			//(This charade is necessary because NSSegmentedControl has an awful interface)
 			NSInteger segmentIndex, numSegments = self.panelSelector.segmentCount;
-			for (segmentIndex = 0; i < numSegments; segmentIndex++)
+			for (segmentIndex = 0; segmentIndex < numSegments; segmentIndex++)
 			{
 				if ([self.panelSelector.cell tagForSegment: segmentIndex] == BXGameInspectorPanelTag)
-					[self.panelSelector setEnabled: session.hasGamebox forSegment: i];
+					[self.panelSelector setEnabled: session.hasGamebox forSegment: segmentIndex];
 			}
 			
 			//If the gamebox tab was already selected, then switch to the next tab

@@ -32,6 +32,8 @@
 	<true/>
 	<key>suppressSystemHotkeys</key>
 	<true/>
+	<key>suppressProcessSwitching</key>
+	<true/>
 	<key>muted</key>
 	<false/>
 	<key>masterVolume</key>

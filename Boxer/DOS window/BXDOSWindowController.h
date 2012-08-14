@@ -148,6 +148,7 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 - (IBAction) showLaunchPanel: (id)sender;
 - (IBAction) showDOSView: (id)sender;
+- (IBAction) showLoadingPanel: (id)sender;
 
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleRenderingStyle: (id)sender;

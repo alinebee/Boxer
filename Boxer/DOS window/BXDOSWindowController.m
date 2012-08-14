@@ -153,6 +153,7 @@
 	[self setProgramPanelShown: NO
                        animate: NO];
     
+    //Display the loading panel by default.
     [self switchToPanel: BXDOSWindowLoadingPanel animate: NO];
     
 	self.window.preservesContentDuringLiveResize = NO;
@@ -171,9 +172,12 @@
         [self setFrameAutosaveName: @"DOSWindow"];
 	}
 	
-	//Ensure we get frame resize notifications from the rendering view
+	//Ensure we get frame resize notifications from the rendering view.
 	self.renderingView.postsFrameChangedNotifications = YES;
 	
+    //Ensure our loading spinner runs on a separate thread.
+    self.loadingSpinner.usesThreadedAnimation = YES;
+    
 	//Reassign the document to ensure we've set up our view controllers with references the document/emulator
 	//This is necessary because the order of windowDidLoad/setDocument: differs between OS X releases, and some
 	//of our members may have been nil when setDocument: was first called
@@ -427,6 +431,12 @@
                 animate: self.window.isVisible];
 }
 
+- (void) showLoadingPanel: (id)sender
+{
+    [self switchToPanel: BXDOSWindowLoadingPanel
+                animate: self.window.isVisible];
+}
+
 - (IBAction) toggleRenderingStyle: (id <NSValidatedUserInterfaceItem>)sender
 {
 	BXRenderingStyle style = sender.tag;
@@ -506,7 +516,6 @@
     //If we're switching to the loading panel, fire up the spinning animation before the transition begins.
     if (newPanel == BXDOSWindowLoadingPanel)
     {
-        self.loadingSpinner.usesThreadedAnimation = YES;
         [self.loadingSpinner startAnimation: self];
     }
     else

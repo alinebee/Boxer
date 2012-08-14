@@ -166,13 +166,12 @@
 
 - (void) drawBezelWithFrame: (NSRect)frame inView: (NSView *)controlView
 {
-    //The border and indent stay consistent between all modes.
-    NSColor *borderColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.5];
+    NSColor *borderColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.5f];
     
-    NSColor *outerBevelColor = [NSColor colorWithCalibratedWhite: 1
-                                                           alpha: 0.1f / borderColor.alphaComponent];
+    NSColor *outerBevelColor = [NSColor colorWithCalibratedWhite: 0
+                                                           alpha: 0.5f];
     
-    NSShadow *outerBevel = [NSShadow shadowWithBlurRadius: 1.0f
+    NSShadow *outerBevel = [NSShadow shadowWithBlurRadius: 3.0f
                                                    offset: NSMakeSize(0, -1.0f)
                                                     color: outerBevelColor];
     
@@ -206,6 +205,13 @@
         innerBevel = [NSShadow shadowWithBlurRadius: 3.0f
                                              offset: NSMakeSize(0, -1.0f)
                                               color: innerBevelColor];
+        
+        //Use a different bevel when we're in our pressed-in state.
+        outerBevelColor = [NSColor colorWithCalibratedWhite: 1 alpha: 0.1f];
+        
+        outerBevel = [NSShadow shadowWithBlurRadius: 1.0f
+                                             offset: NSMakeSize(0, -1.0f)
+                                              color: outerBevelColor];
         
         innerGlow = nil;
     }
@@ -287,11 +293,11 @@
     
     if (self.isHighlighted)
     {
-        tint = [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.6];
+        tint = [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.7];
     }
     else
     {
-        tint = [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5];
+        tint = [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.6];
     }
     
     NSColor *indentColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.33f];

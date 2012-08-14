@@ -66,12 +66,6 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @synthesize renderingStyle = _renderingStyle;
 @synthesize fillWithBlackForFade = _fillWithBlackForFade;
 
-- (void) awakeFromNib
-{
-    [super awakeFromNib];
-    //self.renderingStyle = BXRenderingStyleCRT;
-}
-
 - (void) dealloc
 {
     self.currentFrame = nil;
@@ -471,14 +465,18 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 {
 	GLenum channelOrder, byteType;
     
+    //Account for high-resolution displays when filling the bitmap context.
+    if ([self respondsToSelector: @selector(convertRectToBacking:)])
+        theRect = [self convertRectToBacking: theRect];
+    
 	//Ensure the rectangle isn't fractional
 	theRect = NSIntegralRect(theRect);
+    
     
 	//Now, do the OpenGL calls to rip off the image data
     CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
     
     CGLLockContext(cgl_ctx);
-        
         //Grab what's in the front buffer
         glReadBuffer(GL_FRONT);
         //Back up current settings

@@ -28,4 +28,15 @@
 {
     return (self.window.isMainWindow || !self.window.canBecomeMainWindow);
 }
+
+- (NSImage *) imageWithContentsOfRect: (NSRect)rect
+{
+    NSBitmapImageRep *rep = [self bitmapImageRepForCachingDisplayInRect: rect];
+    [self cacheDisplayInRect: rect toBitmapImageRep: rep];
+    
+    NSImage *capture = [[NSImage alloc] init];
+    [capture addRepresentation: rep];
+    
+    return [capture autorelease];
+}
 @end

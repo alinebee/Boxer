@@ -21,4 +21,8 @@
 //and thus whether controls within it should draw an active or inactive appearance.
 - (BOOL) windowIsActive;
 
+//Returns a bitmap image snapshot of the specified area of the view,
+//expressed in the view's coordinates.
+- (NSImage *) imageWithContentsOfRect: (NSRect)rect;
+
 @end

@@ -19,6 +19,7 @@
 #import "BXInputView.h"
 #import "BXGLRenderingView.h"
 #import "YRKSpinningProgressIndicator.h"
+#import "NSView+BXDrawing.h"
 
 #import "BXEmulator.h"
 
@@ -741,14 +742,10 @@
 {
     NSImage *screenshot = nil;
     
-    if (self.renderingView.currentFrame)
+    if (self.currentPanel == BXDOSWindowDOSView && self.renderingView.currentFrame)
     {
         NSRect visibleRect = self.renderingView.viewportRect;
-        NSBitmapImageRep *rep = [self.renderingView bitmapImageRepForCachingDisplayInRect: visibleRect];
-        [self.renderingView cacheDisplayInRect: visibleRect toBitmapImageRep: rep];
-        
-        screenshot = [[[NSImage alloc] init] autorelease];
-        [screenshot addRepresentation: rep];
+        screenshot = [self.renderingView imageWithContentsOfRect: visibleRect];
     }
     
     return screenshot;

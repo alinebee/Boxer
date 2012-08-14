@@ -21,7 +21,6 @@
 - (id) openBundledGameAndDisplay: (BOOL)display error: (NSError **)outError;
 
 //Custom menu actions for standalone games.
-- (IBAction) visitGameForum: (id)sender;
-- (IBAction) visitGameSupportPage: (id)sender;
-- (IBAction) visitGameCatalogue: (id)sender;
+- (IBAction) visitOrganizationWebsite: (id)sender;
+
 @end

@@ -393,21 +393,24 @@
 	if (!self.isEmulating) return NO;
 	
 	SEL theAction = theItem.action;
+    
+    BOOL isShowingDOSView = (self.DOSWindowController.currentPanel == BXDOSWindowDOSView);
         
-	if (theAction == @selector(incrementSpeed:))		return !self.speedAtMaximum;
-	if (theAction == @selector(decrementSpeed:))		return !self.speedAtMinimum;
+	if (theAction == @selector(incrementSpeed:))		return isShowingDOSView && !self.speedAtMaximum;
+	if (theAction == @selector(decrementSpeed:))		return isShowingDOSView && !self.speedAtMinimum;
 
-	if (theAction == @selector(incrementFrameSkip:))	return !self.frameskipAtMaximum;
-	if (theAction == @selector(decrementFrameSkip:))	return !self.frameskipAtMinimum;
-
+	if (theAction == @selector(incrementFrameSkip:))	return isShowingDOSView && !self.frameskipAtMaximum;
+	if (theAction == @selector(decrementFrameSkip:))	return isShowingDOSView && !self.frameskipAtMinimum;
+    
+	if (theAction == @selector(saveScreenshot:))		return isShowingDOSView;
+    
 	//Defined in BXFileManager
 	if (theAction == @selector(openInDOS:))				return self.emulator.isAtPrompt;
-	if (theAction == @selector(performRestart:))		return self.isEmulating;
 	if (theAction == @selector(revertShadowedChanges:)) return self.hasShadowedChanges;
 	if (theAction == @selector(mergeShadowedChanges:))  return self.hasShadowedChanges;
     
 	if (theAction == @selector(paste:))
-		return [self canPasteFromPasteboard: [NSPasteboard generalPasteboard]];
+		return isShowingDOSView && [self canPasteFromPasteboard: [NSPasteboard generalPasteboard]];
 	
 	return [super validateUserInterfaceItem: theItem];
 }
@@ -447,6 +450,8 @@
 {
 	SEL theAction = theItem.action;
 	
+    BOOL isShowingDOSView = (self.DOSWindowController.currentPanel == BXDOSWindowDOSView);
+    
     NSString *title;
     //Pause menu item
 	if (theAction == @selector(togglePaused:))
@@ -458,7 +463,7 @@
 		
         theItem.title = title;
         
-		return self.isEmulating;
+		return self.isEmulating && isShowingDOSView;
 	}
     //Menu item to switch to next disc in queue
     else if (theAction == @selector(mountNextDrivesInQueues:))
@@ -528,7 +533,7 @@
         
         //TWEAK: disable the menu item while we're waiting for the user to release the key.
         //That will break out of the menu's own key-event loop, which would otherwise block.
-		return self.isEmulating && !_waitingForFastForwardRelease;
+		return self.isEmulating && isShowingDOSView && !_waitingForFastForwardRelease;
     }
     return [super validateMenuItem: theItem];
 }

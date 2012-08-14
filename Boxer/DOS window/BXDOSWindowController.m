@@ -525,6 +525,8 @@
     
     if (animate)
     {
+        [[NSNotificationCenter defaultCenter] postNotificationName: BXWillBeginInterruptionNotification object: self];
+        
         //Slide horizontally between the launcher panel and the DOS view.
         if ((self.currentPanel == BXDOSWindowDOSView && newPanel == BXDOSWindowLaunchPanel) ||
             (self.currentPanel == BXDOSWindowLaunchPanel && newPanel == BXDOSWindowDOSView))
@@ -636,6 +638,8 @@
             
             [animation release];
         }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName: BXDidFinishInterruptionNotification object: self];
     }
     
     _currentPanel = newPanel;

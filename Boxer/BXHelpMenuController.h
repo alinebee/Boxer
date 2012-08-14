@@ -16,13 +16,17 @@
 
 @interface BXHelpMenuController : NSObject
 {
-	BXSession *_sessionForDisplayedDocs;
 	NSMenuItem *_mobygamesItem;
 	NSMenuItem *_replacementDocsItem;
+    NSMenuItem *_helpLinksDivider;
     NSMenuItem *_documentationDivider;
+    
+    BOOL _needsHelpLinksRefresh;
+    BOOL _needsSessionDocsRefresh;
 }
 @property (retain, nonatomic) IBOutlet NSMenuItem *mobygamesItem;
 @property (retain, nonatomic) IBOutlet NSMenuItem *replacementDocsItem;
+@property (retain, nonatomic) IBOutlet NSMenuItem *helpLinksDivider;
 @property (retain, nonatomic) IBOutlet NSMenuItem *documentationDivider;
 
 //The array of sort descriptors we use to order documentation in the doc list.
@@ -42,8 +46,8 @@
 - (IBAction) showGameAtMobygames: (id)sender;
 - (IBAction) showGameAtReplacementDocs: (id)sender;
 
-//Used internally to populate the help menu with items for the paths in BXHelpMenuController documentaiton.
-//While this can be called manually to add to the menu, any such items you add will be deleted when the active
-//session changes and the menu is repopulated. So, don't do it.
-- (NSMenuItem *) addItemForDocument: (NSDictionary *)docPath toMenu: (NSMenu *)menu;
+//Opens the URL corresponding to the specified menu item.
+- (IBAction) openLinkFromMenuItem: (NSMenuItem *)sender;
+- (IBAction) openDocumentFromMenuItem: (NSMenuItem *)sender;
+
 @end

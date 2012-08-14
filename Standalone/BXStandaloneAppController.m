@@ -37,9 +37,7 @@ NSString * const BXStandaloneAppErrorDomain = @"BXStandaloneAppErrorDomain";
 
 NSString * const BXOrganizationNameInfoPlistKey = @"BXOrganizationName";
 NSString * const BXBundledGameboxNameInfoPlistKey = @"BXBundledGameboxName";
-NSString * const BXGameForumURLInfoPlistKey = @"BXGameForumURL";
-NSString * const BXGameSupportURLInfoPlistKey = @"BXGameSupportURL";
-NSString * const BXOrganizationCatalogueURLInfoPlistKey = @"BXOrganizationCatalogueURL";
+NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteURL";
 
 
 #pragma mark -
@@ -212,8 +210,9 @@ NSString * const BXOrganizationCatalogueURLInfoPlistKey = @"BXOrganizationCatalo
 #pragma mark -
 #pragma mark UI actions
 
-- (IBAction) visitGameForum: (id)sender         { [self openURLFromKey: BXGameForumURLInfoPlistKey]; }
-- (IBAction) visitGameSupportPage: (id)sender   { [self openURLFromKey: BXGameSupportURLInfoPlistKey]; }
-- (IBAction) visitGameCatalogue: (id)sender     { [self openURLFromKey: BXOrganizationCatalogueURLInfoPlistKey]; }
+- (IBAction) visitOrganizationWebsite: (id)sender
+{
+    [self openURLFromKey: BXOrganizationWebsiteURLInfoPlistKey];
+}
 
 @end

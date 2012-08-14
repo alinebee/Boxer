@@ -39,13 +39,18 @@
 	<key>BXBundledGameboxName</key>
 	<string>Game</string>
 	<key>BXOrganizationName</key>
-	<string></string>
-	<key>BXGameForumURL</key>
-	<string></string>
-	<key>BXGameSupportURL</key>
-	<string></string>
-	<key>BXOrganizationCatalogueURL</key>
-	<string></string>
+	<string>Your Name Here</string>
+	<key>BXOrganizationWebsiteURL</key>
+	<string>http://your.website.here.com/</string>
+    <key>BXHelpLinks</key>
+    <array>
+        <dict>
+            <key>BXHelpLinkTitle</key>
+            <string>Boxer Website</string>
+            <key>BXHelpLinkURL</key>
+            <string>http://boxerapp.com/</string>
+        </dict>
+    </array>
     <key>CFBundleDocumentTypes</key>
 	<array>
         <dict>

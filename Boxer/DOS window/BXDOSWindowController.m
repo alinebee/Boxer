@@ -17,6 +17,7 @@
 #import "BXVideoFrame.h"
 #import "BXInputView.h"
 #import "BXGLRenderingView.h"
+#import "YRKSpinningProgressIndicator.h"
 
 #import "BXEmulator.h"
 
@@ -45,6 +46,8 @@
 @synthesize statusBarController = _statusBarController;
 @synthesize autosaveNameBeforeFullScreen = _autosaveNameBeforeFullScreen;
 @synthesize aspectCorrected = _aspectCorrected;
+@synthesize loadingPanel = _loadingPanel;
+@synthesize loadingSpinner = _loadingSpinner;
 
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
@@ -90,6 +93,8 @@
     self.programPanel = nil;
     self.statusBar = nil;
     self.launchPanel = nil;
+    self.loadingPanel = nil;
+    self.loadingSpinner = nil;
     
     self.autosaveNameBeforeFullScreen = nil;
     
@@ -147,6 +152,8 @@
 	//Hide the program panel by default - our parent session decides when it's appropriate to display this
 	[self setProgramPanelShown: NO
                        animate: NO];
+    
+    [self switchToPanel: BXDOSWindowLoadingPanel animate: NO];
     
 	self.window.preservesContentDuringLiveResize = NO;
 	self.window.acceptsMouseMovedEvents = YES;
@@ -476,6 +483,8 @@
     {
         case BXDOSWindowNoPanel:
             return nil;
+        case BXDOSWindowLoadingPanel:
+            return self.loadingPanel;
         case BXDOSWindowLaunchPanel:
             return self.launchPanel;
         case BXDOSWindowDOSView:
@@ -494,36 +503,22 @@
     NSView *viewForNewPanel = [self _viewForPanel: newPanel];
     NSView *viewForOldPanel = [self _viewForPanel: self.currentPanel];
     
+    //If we're switching to the loading panel, fire up the spinning animation before the transition begins.
+    if (newPanel == BXDOSWindowLoadingPanel)
+    {
+        self.loadingSpinner.usesThreadedAnimation = YES;
+        [self.loadingSpinner startAnimation: self];
+    }
+    else
+    {
+        [self.loadingSpinner stopAnimation: self];
+    }
+    
     if (animate)
     {
-        //If there's no panel yet, then fade in the new panel.
-        if (self.currentPanel == BXDOSWindowNoPanel)
-        {
-            NSDictionary *fadeIn = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    viewForNewPanel, NSViewAnimationTargetKey,
-                                    NSViewAnimationFadeInEffect, NSViewAnimationEffectKey,
-                                    nil];
-            
-            
-            
-            NSViewAnimation *animation = [[NSViewAnimation alloc] init];
-            animation.viewAnimations = [NSArray arrayWithObject: fadeIn];
-            animation.duration = 0.25f;
-            animation.animationBlockingMode = NSAnimationBlocking;
-            animation.animationCurve = NSAnimationEaseIn;
-            
-            if (newPanel == BXDOSWindowDOSView)
-                [self.renderingView fadeWillStart];
-            
-            [animation startAnimation];
-            
-            if (newPanel == BXDOSWindowDOSView)
-                [self.renderingView fadeDidEnd];
-            
-            [animation release];
-        }
-        //If there is a panel, then slide the panels horizontally from one to the other.
-        else
+        //Slide horizontally between the launcher panel and the DOS view.
+        if ((self.currentPanel == BXDOSWindowDOSView && newPanel == BXDOSWindowLaunchPanel) ||
+            (self.currentPanel == BXDOSWindowLaunchPanel && newPanel == BXDOSWindowDOSView))
         {
             //Disable window flushes to prevent partial redraws while we're setting up the views.
             [self.window disableFlushWindow];
@@ -541,8 +536,6 @@
             wrapperView.frame = NSMakeRect(originalFrame.origin.x, originalFrame.origin.y,
                                            originalFrame.size.width * 2, originalFrame.size.height);
             
-            //FIXME: hardcoding views here.
-            //We should switch based on which panels we're transitioning to and from.
             self.launchPanel.frame = originalBounds;
             self.inputView.frame = NSMakeRect(originalBounds.origin.x + originalBounds.size.width,
                                               originalBounds.origin.y,
@@ -578,6 +571,8 @@
             
             [self.window enableFlushWindow];
             
+            [wrapperView display];
+            
             [animation startAnimation];
             
             [animation release];
@@ -590,27 +585,71 @@
                 
             wrapperView.autoresizesSubviews = YES;
         }
+        //For all other transitions, crossfade the current panel and the new panel.
+        else
+        {
+            NSMutableArray *animations = [NSMutableArray arrayWithCapacity: 2];
+            
+            if (viewForNewPanel)
+            {
+                NSDictionary *fadeIn = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        viewForNewPanel, NSViewAnimationTargetKey,
+                                        NSViewAnimationFadeInEffect, NSViewAnimationEffectKey,
+                                        nil];
+                
+                [animations addObject: fadeIn];
+            }
+            
+            if (viewForOldPanel)
+            {
+                NSDictionary *fadeOut = [NSDictionary dictionaryWithObjectsAndKeys:
+                                         viewForOldPanel, NSViewAnimationTargetKey,
+                                         NSViewAnimationFadeOutEffect, NSViewAnimationEffectKey,
+                                         nil];
+                
+                [animations addObject: fadeOut];
+            }
+            
+            
+            NSViewAnimation *animation = [[NSViewAnimation alloc] init];
+            animation.viewAnimations = animations;
+            animation.duration = 0.25f;
+            animation.animationBlockingMode = NSAnimationBlocking;
+            animation.animationCurve = NSAnimationEaseIn;
+            
+            if (newPanel == BXDOSWindowDOSView || self.currentPanel == BXDOSWindowDOSView)
+                [self.renderingView fadeWillStart];
+            
+            [animation startAnimation];
+            
+            if (newPanel == BXDOSWindowDOSView || self.currentPanel == BXDOSWindowDOSView)
+                [self.renderingView fadeDidEnd];
+            
+            [animation release];
+        }
     }
     
     _currentPanel = newPanel;
     viewForNewPanel.hidden = NO;
     viewForOldPanel.hidden = YES;
     
-    if (newPanel == BXDOSWindowLaunchPanel)
-    {
-        //When switching to the launcher panel,
-        //ensure the mouse is unlocked.
-        self.inputController.mouseLocked = NO;
-        
-        [self.window makeFirstResponder: self.launchPanel];
-    }
-    else
+    //Sync the mouse-locked state when switching to/away from the DOS view.
+    if (newPanel == BXDOSWindowDOSView)
     {
         //Re-lock the mouse when switching to the DOS view, if we're in fullscreen.
         if (self.window.isFullScreen)
             [self.inputController setMouseLocked: YES force: YES];
         
         [self.window makeFirstResponder: self.inputView];
+    }
+    else
+    {
+        [self.inputController setMouseLocked: NO force: YES];
+        
+        if (newPanel == BXDOSWindowLaunchPanel)
+        {
+            [self.window makeFirstResponder: self.launchPanel];
+        }
     }
     
     [self didChangeValueForKey: @"currentPanel"];
@@ -688,17 +727,17 @@
 {
     NSImage *screenshot = nil;
     
-    if ([self.renderingView currentFrame])
+    if (self.renderingView.currentFrame)
     {
-        NSRect visibleRect = [self.renderingView viewportRect];
+        NSRect visibleRect = self.renderingView.viewportRect;
         NSBitmapImageRep *rep = [self.renderingView bitmapImageRepForCachingDisplayInRect: visibleRect];
         [self.renderingView cacheDisplayInRect: visibleRect toBitmapImageRep: rep];
         
-        screenshot = [[NSImage alloc] init];
+        screenshot = [[[NSImage alloc] init] autorelease];
         [screenshot addRepresentation: rep];
     }
     
-    return [screenshot autorelease];
+    return screenshot;
 }
 
 
@@ -726,8 +765,6 @@
 //Snap to multiples of the base render size as we scale
 - (NSSize) windowWillResize: (NSWindow *)theWindow toSize: (NSSize) proposedFrameSize
 {
-	//Used to be: [[NSUserDefaults standardUserDefaults] integerForKey: @"windowSnapDistance"];
-	//But is now constant while developing to find the ideal default value
 	NSInteger snapThreshold	= BXWindowSnapThreshold;
 	
 	NSSize snapIncrement	= [self.renderingView currentFrame].scaledResolution;

@@ -18,6 +18,9 @@
 
 
 @implementation YRKSpinningProgressIndicator
+@synthesize lineWidth = _lineWidth;
+@synthesize lineStartOffset = _lineStartOffset;
+@synthesize lineEndOffset = _lineEndOffset;
 
 - (id) initWithFrame:(NSRect)frame
 {
@@ -31,6 +34,9 @@
         _currentValue = 0.0;
         _maxValue = 100.0;
         _foreColor = [[NSColor blackColor] copy];
+        _lineWidth = 2.75f;
+        _lineStartOffset = 7.5f;
+        _lineEndOffset = 13.5f;
     }
     return self;
 }
@@ -80,14 +86,14 @@
 
     if (_isIndeterminate)
 	{
-		CGFloat anglePerFin = 3.14159f*2 / _numFins;
+		CGFloat anglePerFin = M_PI*2 / _numFins;
 		
         // do initial rotation to start place
         CGContextRotateCTM(currentContext, anglePerFin * _position);
 
-        CGFloat lineWidth	= 2.75f * scale;
-		CGFloat lineStart	= 7.5f * scale;
-		CGFloat lineEnd		= 13.5f * scale;
+        CGFloat lineWidth	= _lineWidth * scale;
+		CGFloat lineStart	= _lineStartOffset * scale;
+		CGFloat lineEnd		= _lineEndOffset * scale;
 
         NSBezierPath *path = [[NSBezierPath alloc] init];
 		[path setLineWidth: lineWidth];
@@ -216,7 +222,7 @@
 {
     // Just to be safe kill any existing timer.
     [self actuallyStopAnimation];
-
+    
     if ([self window]) {
         // Why animate if not visible?  viewDidMoveToWindow will re-call this method when needed.
         if (_usesThreadedAnimation) {

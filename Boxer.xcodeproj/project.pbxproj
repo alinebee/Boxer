@@ -444,6 +444,8 @@
 		9F550669121B057C0042614A /* 525Diskette.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F550666121B057C0042614A /* 525Diskette.icns */; };
 		9F573C5A0F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */; };
 		9F573D390F8E69AF0089D8B7 /* BXGamebox.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573D380F8E69AF0089D8B7 /* BXGamebox.m */; };
+		9F57684915DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57684815DA27A300B50500 /* BXDOSWindowLoadingSpinner.m */; };
+		9F57684A15DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57684815DA27A300B50500 /* BXDOSWindowLoadingSpinner.m */; };
 		9F586CEB143E41C200E840C8 /* BXMT32ROMDropzone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F586CEA143E41C200E840C8 /* BXMT32ROMDropzone.m */; };
 		9F586CEE143E4A0100E840C8 /* CALayer+BXLayerAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */; };
 		9F586CF1143E51DD00E840C8 /* CM32L.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F586CEF143E51DD00E840C8 /* CM32L.png */; };
@@ -1046,6 +1048,8 @@
 		9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXMountedVolumes.m"; sourceTree = "<group>"; };
 		9F573D370F8E69AF0089D8B7 /* BXGamebox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGamebox.h; sourceTree = "<group>"; };
 		9F573D380F8E69AF0089D8B7 /* BXGamebox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGamebox.m; sourceTree = "<group>"; };
+		9F57684715DA27A300B50500 /* BXDOSWindowLoadingSpinner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDOSWindowLoadingSpinner.h; sourceTree = "<group>"; };
+		9F57684815DA27A300B50500 /* BXDOSWindowLoadingSpinner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDOSWindowLoadingSpinner.m; sourceTree = "<group>"; };
 		9F586CE9143E41C200E840C8 /* BXMT32ROMDropzone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMT32ROMDropzone.h; sourceTree = "<group>"; };
 		9F586CEA143E41C200E840C8 /* BXMT32ROMDropzone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMT32ROMDropzone.m; sourceTree = "<group>"; };
 		9F586CEC143E4A0100E840C8 /* CALayer+BXLayerAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CALayer+BXLayerAdditions.h"; sourceTree = "<group>"; };
@@ -2105,6 +2109,8 @@
 				9FCA6D9515C85D8500E1650C /* BXLaunchPanelController.m */,
 				9FAEBE4D15D669AF00C9AC5F /* BXLaunchPanelButtonCell.h */,
 				9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */,
+				9F57684715DA27A300B50500 /* BXDOSWindowLoadingSpinner.h */,
+				9F57684815DA27A300B50500 /* BXDOSWindowLoadingSpinner.m */,
 			);
 			path = "DOS window";
 			sourceTree = "<group>";
@@ -3861,6 +3867,7 @@
 				9FA2C09215C8409000380261 /* BXDOSWindowBackgroundView.m in Sources */,
 				9FCA6D9615C85D8500E1650C /* BXLaunchPanelController.m in Sources */,
 				9FAEBE4F15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m in Sources */,
+				9F57684915DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4153,6 +4160,7 @@
 				9F458D9C15D83B8800DF9102 /* BXLaunchPanelButtonCell.m in Sources */,
 				9F458D9D15D83B8C00DF9102 /* BXLaunchPanelController.m in Sources */,
 				9F458D9E15D83B9000DF9102 /* BXDOSWindowBackgroundView.m in Sources */,
+				9F57684A15DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

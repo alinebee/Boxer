@@ -17,6 +17,7 @@
 //Used by currentPanel and switchToPanel:animate:.
 typedef enum {
     BXDOSWindowNoPanel,
+    BXDOSWindowLoadingPanel,
     BXDOSWindowLaunchPanel,
     BXDOSWindowDOSView
 } BXDOSWindowPanel;
@@ -35,6 +36,7 @@ typedef enum {
 @class BXEmulator;
 @class BXVideoFrame;
 @class BXInputView;
+@class YRKSpinningProgressIndicator;
 
 @protocol BXFrameRenderingView;
 
@@ -49,6 +51,8 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	NSView *_statusBar;
 	NSView *_programPanel;
     NSView *_launchPanel;
+    NSView *_loadingPanel;
+    YRKSpinningProgressIndicator *_loadingSpinner;
 
 	BXProgramPanelController *_programPanelController;
 	BXInputController *_inputController;
@@ -88,11 +92,17 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //The slide-out program picker panel.
 @property (retain, nonatomic) IBOutlet NSView *programPanel;
 
-//The alternate program launcher panel.
+//The full-window program launcher panel.
 @property (retain, nonatomic) IBOutlet NSView *launchPanel;
+
+//The loading spinner panel.
+@property (retain, nonatomic) IBOutlet NSView *loadingPanel;
 
 //The status bar at the bottom of the window.
 @property (retain, nonatomic) IBOutlet NSView *statusBar;
+
+//Our loading indicator.
+@property (retain, nonatomic) IBOutlet YRKSpinningProgressIndicator *loadingSpinner;
 
 //The maximum BXFrameBuffer size we can render.
 @property (readonly, nonatomic) NSSize maxFrameSize;

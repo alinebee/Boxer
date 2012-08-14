@@ -26,6 +26,9 @@
     BOOL _isIndeterminate;
     double _currentValue;
     double _maxValue;
+    CGFloat _lineWidth;
+    CGFloat _lineStartOffset;
+    CGFloat _lineEndOffset;
     
     BOOL _usesThreadedAnimation;
 }
@@ -40,6 +43,9 @@
 @property (assign) double doubleValue;
 @property (assign) double maxValue;
 @property (assign) BOOL usesThreadedAnimation;
+@property (assign) CGFloat lineWidth;
+@property (assign) CGFloat lineStartOffset;
+@property (assign) CGFloat lineEndOffset;
 
 - (void)stopAnimation: (id)sender;
 - (void)startAnimation: (id)sender;

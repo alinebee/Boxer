@@ -14,6 +14,7 @@
 #import "BXGamebox.h"
 
 #import "BXFrameRenderingView.h"
+#import "BXBezelController.h"
 #import "BXVideoFrame.h"
 #import "BXInputView.h"
 #import "BXGLRenderingView.h"
@@ -651,8 +652,11 @@
     {
         //Re-lock the mouse when switching to the DOS view, if we're in fullscreen.
         if (self.window.isFullScreen)
+        {
             [self.inputController setMouseLocked: YES force: YES];
-        
+            //TODO: let the app controller handle this, the way it handles the standard fullscreen notifications.
+            [[BXBezelController controller] showFullscreenBezel];
+        }
         [self.window makeFirstResponder: self.inputView];
     }
     else

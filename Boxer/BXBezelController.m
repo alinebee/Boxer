@@ -247,7 +247,10 @@
 
 - (void) showFullscreenBezel
 {
-    if ([[NSUserDefaults standardUserDefaults] boolForKey: @"showFullscreenToggleMessage"])
+    BXSession *currentSession = [[NSApp delegate] currentSession];
+    BOOL isInDOSView = (currentSession.DOSWindowController.currentPanel == BXDOSWindowDOSView);
+    BOOL fullscreenMessageEnabled = [[NSUserDefaults standardUserDefaults] boolForKey: @"showFullscreenToggleMessage"];
+    if (fullscreenMessageEnabled && isInDOSView)
     {
         [self showBezel: self.fullscreenBezel
             forDuration: BXFullscreenBezelDuration

@@ -217,6 +217,60 @@
 									<reference key="NSNextResponder" ref="89453087"/>
 									<int key="NSvFlags">274</int>
 									<array class="NSMutableArray" key="NSSubviews">
+										<object class="NSCustomView" id="61771778">
+											<reference key="NSNextResponder" ref="601818829"/>
+											<int key="NSvFlags">274</int>
+											<array class="NSMutableArray" key="NSSubviews">
+												<object class="NSButton" id="291075443">
+													<reference key="NSNextResponder" ref="61771778"/>
+													<int key="NSvFlags">293</int>
+													<string key="NSFrame">{{268, 28}, {104, 24}}</string>
+													<reference key="NSSuperview" ref="61771778"/>
+													<reference key="NSWindow"/>
+													<string key="NSReuseIdentifierKey">_NS:9</string>
+													<bool key="NSEnabled">YES</bool>
+													<object class="NSButtonCell" key="NSCell" id="597566440">
+														<int key="NSCellFlags">67108864</int>
+														<int key="NSCellFlags2">134217728</int>
+														<string key="NSContents"/>
+														<object class="NSFont" key="NSSupport" id="697431282">
+															<string key="NSName">LucidaGrande</string>
+															<double key="NSSize">13</double>
+															<int key="NSfFlags">1044</int>
+														</object>
+														<string key="NSCellIdentifier">_NS:9</string>
+														<reference key="NSControlView" ref="291075443"/>
+														<int key="NSButtonFlags">-2042347520</int>
+														<int key="NSButtonFlags2">134</int>
+														<object class="NSCustomResource" key="NSNormalImage" id="1039287229">
+															<string key="NSClassName">NSImage</string>
+															<string key="NSResourceName">StandaloneLogo</string>
+														</object>
+														<string key="NSAlternateContents"/>
+														<string key="NSKeyEquivalent"/>
+														<int key="NSPeriodicDelay">400</int>
+														<int key="NSPeriodicInterval">75</int>
+													</object>
+													<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+												</object>
+												<object class="NSCustomView" id="226214778">
+													<reference key="NSNextResponder" ref="61771778"/>
+													<int key="NSvFlags">301</int>
+													<string key="NSFrame">{{242, 120}, {156, 160}}</string>
+													<reference key="NSSuperview" ref="61771778"/>
+													<reference key="NSWindow"/>
+													<reference key="NSNextKeyView" ref="223608717"/>
+													<string key="NSReuseIdentifierKey">_NS:9</string>
+													<string key="NSClassName">BXDOSWindowLoadingSpinner</string>
+												</object>
+											</array>
+											<string key="NSFrameSize">{640, 400}</string>
+											<reference key="NSSuperview" ref="601818829"/>
+											<reference key="NSWindow"/>
+											<reference key="NSNextKeyView" ref="226214778"/>
+											<string key="NSReuseIdentifierKey">_NS:9</string>
+											<string key="NSClassName">NSView</string>
+										</object>
 										<object class="NSCustomView" id="223608717">
 											<reference key="NSNextResponder" ref="601818829"/>
 											<int key="NSvFlags">-2147483374</int>
@@ -234,19 +288,12 @@
 														<int key="NSCellFlags">67108864</int>
 														<int key="NSCellFlags2">134217728</int>
 														<string key="NSContents"/>
-														<object class="NSFont" key="NSSupport">
-															<string key="NSName">LucidaGrande</string>
-															<double key="NSSize">13</double>
-															<int key="NSfFlags">1044</int>
-														</object>
+														<reference key="NSSupport" ref="697431282"/>
 														<string key="NSCellIdentifier">_NS:9</string>
 														<reference key="NSControlView" ref="843071725"/>
 														<int key="NSButtonFlags">-2042347520</int>
 														<int key="NSButtonFlags2">134</int>
-														<object class="NSCustomResource" key="NSNormalImage">
-															<string key="NSClassName">NSImage</string>
-															<string key="NSResourceName">StandaloneLogo</string>
-														</object>
+														<reference key="NSNormalImage" ref="1039287229"/>
 														<string key="NSAlternateContents"/>
 														<string key="NSKeyEquivalent"/>
 														<int key="NSPeriodicDelay">400</int>
@@ -346,28 +393,6 @@
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<string key="NSClassName">NSView</string>
 										</object>
-										<object class="NSCustomView" id="61771778">
-											<reference key="NSNextResponder" ref="601818829"/>
-											<int key="NSvFlags">274</int>
-											<array class="NSMutableArray" key="NSSubviews">
-												<object class="NSCustomView" id="226214778">
-													<reference key="NSNextResponder" ref="61771778"/>
-													<int key="NSvFlags">301</int>
-													<string key="NSFrame">{{242, 120}, {156, 160}}</string>
-													<reference key="NSSuperview" ref="61771778"/>
-													<reference key="NSWindow"/>
-													<reference key="NSNextKeyView" ref="223608717"/>
-													<string key="NSReuseIdentifierKey">_NS:9</string>
-													<string key="NSClassName">BXDOSWindowLoadingSpinner</string>
-												</object>
-											</array>
-											<string key="NSFrameSize">{640, 400}</string>
-											<reference key="NSSuperview" ref="601818829"/>
-											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="226214778"/>
-											<string key="NSReuseIdentifierKey">_NS:9</string>
-											<string key="NSClassName">NSView</string>
-										</object>
 										<object class="NSCustomView" id="450603396">
 											<reference key="NSNextResponder" ref="601818829"/>
 											<int key="NSvFlags">-2147483374</int>
@@ -435,7 +460,6 @@
 						<array class="NSMutableArray" key="NSSubviews"/>
 						<string key="NSFrame">{{14, 4}, {452, 48}}</string>
 						<reference key="NSSuperview" ref="1058351658"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -466,7 +490,6 @@
 				</array>
 				<string key="NSFrameSize">{480, 56}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="391807345"/>
 			</object>
 		</array>
@@ -575,6 +598,14 @@
 						<reference key="destination" ref="843071725"/>
 					</object>
 					<int key="connectionID">1261</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">visitOrganizationWebsite:</string>
+						<reference key="source" ref="1003"/>
+						<reference key="destination" ref="291075443"/>
+					</object>
+					<int key="connectionID">1264</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -989,6 +1020,7 @@
 						<reference key="object" ref="61771778"/>
 						<array class="NSMutableArray" key="children">
 							<reference ref="226214778"/>
+							<reference ref="291075443"/>
 						</array>
 						<reference key="parent" ref="601818829"/>
 						<string key="objectName">Loading view</string>
@@ -1010,6 +1042,19 @@
 						<int key="objectID">1258</int>
 						<reference key="object" ref="106427879"/>
 						<reference key="parent" ref="843071725"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1262</int>
+						<reference key="object" ref="291075443"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="597566440"/>
+						</array>
+						<reference key="parent" ref="61771778"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1263</int>
+						<reference key="object" ref="597566440"/>
+						<reference key="parent" ref="291075443"/>
 					</object>
 				</array>
 			</object>
@@ -1048,6 +1093,9 @@
 				<string key="1257.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="1258.CustomClassName">BXLaunchPanelLogoCell</string>
 				<string key="1258.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="1262.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="1263.CustomClassName">BXLaunchPanelLogoCell</string>
+				<string key="1263.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="2.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="3.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="909.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1072,7 +1120,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1261</int>
+			<int key="maxID">1264</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">

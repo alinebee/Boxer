@@ -27,7 +27,7 @@
 //pass the decision upstream to BXInputController (which deserves a delegate relationship.)
 - (BOOL) resignFirstResponder
 {
-    return NO;
+    return self.isHiddenOrHasHiddenAncestor;
 }
 
 //Use flipped coordinates to make input handling easier

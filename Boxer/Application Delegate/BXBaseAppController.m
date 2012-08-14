@@ -327,8 +327,8 @@
 {
     //Hide the fullscreen notification if it's still visible
     BXBezelController *bezel = [BXBezelController controller];
-    if ([bezel currentBezel] == [bezel fullscreenBezel])
-        [[bezel window] orderOut: self];
+    if (bezel.currentBezel == bezel.fullscreenBezel)
+        [bezel.window orderOut: self];
 }
 
 - (void) sessionDidExitFullScreenMode: (NSNotification *)notification

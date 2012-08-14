@@ -166,10 +166,10 @@
 
 - (void) drawBezelWithFrame: (NSRect)frame inView: (NSView *)controlView
 {
-    NSColor *borderColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.5f];
+    NSColor *borderColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.25f];
     
     NSColor *outerBevelColor = [NSColor colorWithCalibratedWhite: 0
-                                                           alpha: 0.5f];
+                                                           alpha: 0.75f];
     
     NSShadow *outerBevel = [NSShadow shadowWithBlurRadius: 3.0f
                                                    offset: NSMakeSize(0, -1.0f)
@@ -315,6 +315,17 @@
                        fraction: 1.0f
                  respectFlipped: YES];
     [NSGraphicsContext restoreGraphicsState];
+}
+
+@end
+
+
+@implementation BXLaunchPanelLogoCell
+
+- (void) awakeFromNib
+{
+    self.showsStateBy = NSNoCellMask;
+    self.highlightsBy = NSNoCellMask;
 }
 
 @end

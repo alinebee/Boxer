@@ -246,28 +246,6 @@
 									<reference key="NSNextResponder" ref="89453087"/>
 									<int key="NSvFlags">274</int>
 									<array class="NSMutableArray" key="NSSubviews">
-										<object class="NSCustomView" id="1007541872">
-											<reference key="NSNextResponder" ref="601818829"/>
-											<int key="NSvFlags">274</int>
-											<array class="NSMutableArray" key="NSSubviews">
-												<object class="NSCustomView" id="283042456">
-													<reference key="NSNextResponder" ref="1007541872"/>
-													<int key="NSvFlags">301</int>
-													<string key="NSFrame">{{242, 120}, {156, 160}}</string>
-													<reference key="NSSuperview" ref="1007541872"/>
-													<reference key="NSWindow"/>
-													<reference key="NSNextKeyView" ref="773857734"/>
-													<string key="NSReuseIdentifierKey">_NS:9</string>
-													<string key="NSClassName">BXDOSWindowLoadingSpinner</string>
-												</object>
-											</array>
-											<string key="NSFrameSize">{640, 400}</string>
-											<reference key="NSSuperview" ref="601818829"/>
-											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="283042456"/>
-											<string key="NSReuseIdentifierKey">_NS:9</string>
-											<string key="NSClassName">NSView</string>
-										</object>
 										<object class="NSCustomView" id="223608717">
 											<reference key="NSNextResponder" ref="601818829"/>
 											<int key="NSvFlags">-2147483374</int>
@@ -320,7 +298,7 @@
 															<string key="NSFrame">{{234, 1}, {15, 143}}</string>
 															<reference key="NSSuperview" ref="485892903"/>
 															<reference key="NSWindow"/>
-															<reference key="NSNextKeyView" ref="1007541872"/>
+															<reference key="NSNextKeyView"/>
 															<string key="NSReuseIdentifierKey">_NS:82</string>
 															<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 															<reference key="NSTarget" ref="485892903"/>
@@ -364,6 +342,28 @@
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<string key="NSClassName">NSView</string>
 										</object>
+										<object class="NSCustomView" id="653019913">
+											<reference key="NSNextResponder" ref="601818829"/>
+											<int key="NSvFlags">274</int>
+											<array class="NSMutableArray" key="NSSubviews">
+												<object class="NSCustomView" id="750629320">
+													<reference key="NSNextResponder" ref="653019913"/>
+													<int key="NSvFlags">301</int>
+													<string key="NSFrame">{{242, 120}, {156, 160}}</string>
+													<reference key="NSSuperview" ref="653019913"/>
+													<reference key="NSWindow"/>
+													<reference key="NSNextKeyView" ref="223608717"/>
+													<string key="NSReuseIdentifierKey">_NS:9</string>
+													<string key="NSClassName">BXDOSWindowLoadingSpinner</string>
+												</object>
+											</array>
+											<string key="NSFrameSize">{640, 400}</string>
+											<reference key="NSSuperview" ref="601818829"/>
+											<reference key="NSWindow"/>
+											<reference key="NSNextKeyView" ref="750629320"/>
+											<string key="NSReuseIdentifierKey">_NS:9</string>
+											<string key="NSClassName">NSView</string>
+										</object>
 										<object class="NSCustomView" id="450603396">
 											<reference key="NSNextResponder" ref="601818829"/>
 											<int key="NSvFlags">-2147483374</int>
@@ -374,7 +374,7 @@
 													<string key="NSFrameSize">{640, 400}</string>
 													<reference key="NSSuperview" ref="450603396"/>
 													<reference key="NSWindow"/>
-													<reference key="NSNextKeyView" ref="223608717"/>
+													<reference key="NSNextKeyView" ref="653019913"/>
 													<bool key="NSViewWantsBestResolutionOpenGLSurface">YES</bool>
 													<object class="NSOpenGLPixelFormat" key="NSPixelFormat">
 														<object class="NSMutableData" key="NSPixelAttributes">
@@ -536,7 +536,7 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">loadingPanel</string>
 						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="1007541872"/>
+						<reference key="destination" ref="653019913"/>
 					</object>
 					<int key="connectionID">1252</int>
 				</object>
@@ -544,7 +544,7 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">loadingSpinner</string>
 						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="283042456"/>
+						<reference key="destination" ref="750629320"/>
 					</object>
 					<int key="connectionID">1254</int>
 				</object>
@@ -941,7 +941,7 @@
 						<array class="NSMutableArray" key="children">
 							<reference ref="223608717"/>
 							<reference ref="450603396"/>
-							<reference ref="1007541872"/>
+							<reference ref="653019913"/>
 						</array>
 						<reference key="parent" ref="89453087"/>
 					</object>
@@ -995,17 +995,17 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1251</int>
-						<reference key="object" ref="1007541872"/>
+						<reference key="object" ref="653019913"/>
 						<array class="NSMutableArray" key="children">
-							<reference ref="283042456"/>
+							<reference ref="750629320"/>
 						</array>
 						<reference key="parent" ref="601818829"/>
 						<string key="objectName">Loading view</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1253</int>
-						<reference key="object" ref="283042456"/>
-						<reference key="parent" ref="1007541872"/>
+						<reference key="object" ref="750629320"/>
+						<reference key="parent" ref="653019913"/>
 					</object>
 				</array>
 			</object>
@@ -1067,7 +1067,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1254</int>
+			<int key="maxID">1257</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1349,6 +1349,7 @@
 						<string key="hideProgramPanel:">id</string>
 						<string key="showDOSView:">id</string>
 						<string key="showLaunchPanel:">id</string>
+						<string key="showLoadingPanel:">id</string>
 						<string key="showProgramPanel:">id</string>
 						<string key="toggleProgramPanelShown:">id</string>
 						<string key="toggleRenderingStyle:">id</string>
@@ -1365,6 +1366,10 @@
 						</object>
 						<object class="IBActionInfo" key="showLaunchPanel:">
 							<string key="name">showLaunchPanel:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="showLoadingPanel:">
+							<string key="name">showLoadingPanel:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="showProgramPanel:">

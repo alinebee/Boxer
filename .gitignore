@@ -13,3 +13,7 @@ build
 *.mode2v3
 xcuserdata
 project.xcworkspace
+
+#Ignore standalone assets that are meant to be provided downstream
+Standalone/Resources/StandaloneLogo.*
+Standalone/Resources/StandaloneLogo@2x.*

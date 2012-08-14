@@ -346,8 +346,6 @@
 		9F2D30E915B8233800FAE848 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
 		9F2D30F415B8233800FAE848 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; };
 		9F2D311515B8233800FAE848 /* KeyboardLayouts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FCC303B13670F680013F083 /* KeyboardLayouts.plist */; };
-		9F2D311C15B8233800FAE848 /* BunnyTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278513D730D000606B4C /* BunnyTemplate.png */; };
-		9F2D311D15B8233800FAE848 /* TurtleTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278613D730D000606B4C /* TurtleTemplate.png */; };
 		9F2D312115B8233800FAE848 /* PauseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635B14013F4D007E8B47 /* PauseTemplate.pdf */; };
 		9F2D312215B8233800FAE848 /* PlayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635C14013F4D007E8B47 /* PlayTemplate.pdf */; };
 		9F2D312315B8233800FAE848 /* EjectTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635D14013F4D007E8B47 /* EjectTemplate.pdf */; };
@@ -421,7 +419,6 @@
 		9F44C75315A0A38800F6A9ED /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; };
 		9F44C75415A0A3AA00F6A9ED /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; };
 		9F44E5E410D17A4C0081B8D2 /* BXEmulator+BXPaste.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */; };
-		9F458D9A15D83A1600DF9102 /* DOSImportWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34111351DCDB000DCE44 /* DOSImportWindow.xib */; };
 		9F458D9C15D83B8800DF9102 /* BXLaunchPanelButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */; };
 		9F458D9D15D83B8C00DF9102 /* BXLaunchPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCA6D9515C85D8500E1650C /* BXLaunchPanelController.m */; };
 		9F458D9E15D83B9000DF9102 /* BXDOSWindowBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA2C09115C8409000380261 /* BXDOSWindowBackgroundView.m */; };
@@ -446,6 +443,12 @@
 		9F573D390F8E69AF0089D8B7 /* BXGamebox.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573D380F8E69AF0089D8B7 /* BXGamebox.m */; };
 		9F57684915DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57684815DA27A300B50500 /* BXDOSWindowLoadingSpinner.m */; };
 		9F57684A15DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57684815DA27A300B50500 /* BXDOSWindowLoadingSpinner.m */; };
+		9F57684D15DA3DA600B50500 /* DOSWindowBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F57684C15DA3DA600B50500 /* DOSWindowBackground@2x.png */; };
+		9F57684E15DA3DA600B50500 /* DOSWindowBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F57684C15DA3DA600B50500 /* DOSWindowBackground@2x.png */; };
+		9F57685015DA3DAF00B50500 /* DOSWindowGrille@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F57684F15DA3DAF00B50500 /* DOSWindowGrille@2x.png */; };
+		9F57685115DA3DAF00B50500 /* DOSWindowGrille@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F57684F15DA3DAF00B50500 /* DOSWindowGrille@2x.png */; };
+		9F57685B15DA3DFC00B50500 /* StandaloneLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F57685915DA3DFC00B50500 /* StandaloneLogo.png */; };
+		9F57685C15DA3DFC00B50500 /* StandaloneLogo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F57685A15DA3DFC00B50500 /* StandaloneLogo@2x.png */; };
 		9F586CEB143E41C200E840C8 /* BXMT32ROMDropzone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F586CEA143E41C200E840C8 /* BXMT32ROMDropzone.m */; };
 		9F586CEE143E4A0100E840C8 /* CALayer+BXLayerAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */; };
 		9F586CF1143E51DD00E840C8 /* CM32L.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F586CEF143E51DD00E840C8 /* CM32L.png */; };
@@ -750,7 +753,6 @@
 		9FCB7B1715B8570C00CC7CC7 /* BXBinCueImageImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA877134A66C80092BF95 /* BXBinCueImageImport.m */; };
 		9FCB7B1815B8570E00CC7CC7 /* BXDriveBundleImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F444FFE12AEBE5200A2D405 /* BXDriveBundleImport.m */; };
 		9FCB7B1A15B8589B00CC7CC7 /* BXDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */; };
-		9FCB7B2615B877A100CC7CC7 /* ProgramPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */; };
 		9FCB7B2715B877E500CC7CC7 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0915B8422000CC7CC7 /* DOS Toolkit */; };
 		9FCB7B2815B8782800CC7CC7 /* Bezel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F886FDD144CB6C30033CCD3 /* Bezel.xib */; };
 		9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
@@ -1050,6 +1052,10 @@
 		9F573D380F8E69AF0089D8B7 /* BXGamebox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGamebox.m; sourceTree = "<group>"; };
 		9F57684715DA27A300B50500 /* BXDOSWindowLoadingSpinner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDOSWindowLoadingSpinner.h; sourceTree = "<group>"; };
 		9F57684815DA27A300B50500 /* BXDOSWindowLoadingSpinner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDOSWindowLoadingSpinner.m; sourceTree = "<group>"; };
+		9F57684C15DA3DA600B50500 /* DOSWindowBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DOSWindowBackground@2x.png"; sourceTree = "<group>"; };
+		9F57684F15DA3DAF00B50500 /* DOSWindowGrille@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DOSWindowGrille@2x.png"; sourceTree = "<group>"; };
+		9F57685915DA3DFC00B50500 /* StandaloneLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = StandaloneLogo.png; sourceTree = "<group>"; };
+		9F57685A15DA3DFC00B50500 /* StandaloneLogo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "StandaloneLogo@2x.png"; sourceTree = "<group>"; };
 		9F586CE9143E41C200E840C8 /* BXMT32ROMDropzone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMT32ROMDropzone.h; sourceTree = "<group>"; };
 		9F586CEA143E41C200E840C8 /* BXMT32ROMDropzone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMT32ROMDropzone.m; sourceTree = "<group>"; };
 		9F586CEC143E4A0100E840C8 /* CALayer+BXLayerAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CALayer+BXLayerAdditions.h"; sourceTree = "<group>"; };
@@ -2171,6 +2177,7 @@
 		9F2D317A15B8240400FAE848 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9F57685815DA3DDE00B50500 /* Images */,
 				9F1E959B15BD899500C3C6A0 /* GameDefaults.plist */,
 				9F1E959915BD88D700C3C6A0 /* UserDefaults.plist */,
 				9FCB7B0915B8422000CC7CC7 /* DOS Toolkit */,
@@ -2305,6 +2312,15 @@
 				9F3FB24D130714D700DB8FBE /* BXScriptableWindow.m */,
 			);
 			name = Scripting;
+			sourceTree = "<group>";
+		};
+		9F57685815DA3DDE00B50500 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				9F57685915DA3DFC00B50500 /* StandaloneLogo.png */,
+				9F57685A15DA3DFC00B50500 /* StandaloneLogo@2x.png */,
+			);
+			name = Images;
 			sourceTree = "<group>";
 		};
 		9F59DA1410AE22B9008DBBC1 /* MCAdditions */ = {
@@ -2986,8 +3002,6 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				9FAEBE5415D67C3A00C9AC5F /* DOSWindowGrille.png */,
-				9FAEBE5115D678C800C9AC5F /* DOSWindowBackground.png */,
 				9F27BD1114FAA4EE008EB0A1 /* Volume */,
 				9F9606EE14F65B5F0072E90C /* Icons */,
 				9F9606EB14F65AF10072E90C /* Shelves */,
@@ -3001,6 +3015,10 @@
 				9FCA157C1597222D00C42D10 /* WelcomeSpotlight@2x.png */,
 				9FA9E27F121FD874006E20C4 /* PanelExpandTemplate.pdf */,
 				9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */,
+				9FAEBE5415D67C3A00C9AC5F /* DOSWindowGrille.png */,
+				9F57684F15DA3DAF00B50500 /* DOSWindowGrille@2x.png */,
+				9FAEBE5115D678C800C9AC5F /* DOSWindowBackground.png */,
+				9F57684C15DA3DA600B50500 /* DOSWindowBackground@2x.png */,
 				9FBD321610E5144C00031CB6 /* Brand.png */,
 				9F59DD2210AF6129008DBBC1 /* Grille.png */,
 				9FCA157E1597223C00C42D10 /* Grille@2x.png */,
@@ -3455,6 +3473,8 @@
 				9FCA158D15973A6D00C42D10 /* Display@2x.png in Resources */,
 				9FAEBE5215D678C800C9AC5F /* DOSWindowBackground.png in Resources */,
 				9FAEBE5515D67C3A00C9AC5F /* DOSWindowGrille.png in Resources */,
+				9F57684D15DA3DA600B50500 /* DOSWindowBackground@2x.png in Resources */,
+				9F57685015DA3DAF00B50500 /* DOSWindowGrille@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3472,8 +3492,6 @@
 				9F2D30E915B8233800FAE848 /* Configurations in Resources */,
 				9F2D30F415B8233800FAE848 /* Configuration.strings in Resources */,
 				9F2D311515B8233800FAE848 /* KeyboardLayouts.plist in Resources */,
-				9F2D311C15B8233800FAE848 /* BunnyTemplate.png in Resources */,
-				9F2D311D15B8233800FAE848 /* TurtleTemplate.png in Resources */,
 				9F2D312115B8233800FAE848 /* PauseTemplate.pdf in Resources */,
 				9F2D312215B8233800FAE848 /* PlayTemplate.pdf in Resources */,
 				9F2D312315B8233800FAE848 /* EjectTemplate.pdf in Resources */,
@@ -3497,7 +3515,6 @@
 				9F2D318815B826F300FAE848 /* About.xib in Resources */,
 				9F2D318915B826F600FAE848 /* DOSWindow.xib in Resources */,
 				9F2D318B15B826FE00FAE848 /* MainMenu.xib in Resources */,
-				9FCB7B2615B877A100CC7CC7 /* ProgramPanel.xib in Resources */,
 				9FCB7B2715B877E500CC7CC7 /* DOS Toolkit in Resources */,
 				9FCB7B2815B8782800CC7CC7 /* Bezel.xib in Resources */,
 				9F1E959A15BD88D700C3C6A0 /* UserDefaults.plist in Resources */,
@@ -3505,7 +3522,10 @@
 				9FB60E9415C573C100CD0D63 /* package.icns in Resources */,
 				9FAEBE5315D678C800C9AC5F /* DOSWindowBackground.png in Resources */,
 				9FAEBE5615D67C3A00C9AC5F /* DOSWindowGrille.png in Resources */,
-				9F458D9A15D83A1600DF9102 /* DOSImportWindow.xib in Resources */,
+				9F57684E15DA3DA600B50500 /* DOSWindowBackground@2x.png in Resources */,
+				9F57685115DA3DAF00B50500 /* DOSWindowGrille@2x.png in Resources */,
+				9F57685B15DA3DFC00B50500 /* StandaloneLogo.png in Resources */,
+				9F57685C15DA3DFC00B50500 /* StandaloneLogo@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4400,7 +4420,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
-				COMBINE_HIDPI_IMAGES = YES;
+				COMBINE_HIDPI_IMAGES = NO;
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4431,7 +4451,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
-				COMBINE_HIDPI_IMAGES = YES;
+				COMBINE_HIDPI_IMAGES = NO;
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

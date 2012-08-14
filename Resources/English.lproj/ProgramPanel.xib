@@ -2,28 +2,28 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">11C74</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
-		<string key="IBDocument.AppKitVersion">1138.23</string>
-		<string key="IBDocument.HIToolboxVersion">567.00</string>
+		<string key="IBDocument.SystemVersion">12A269</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2549</string>
+		<string key="IBDocument.AppKitVersion">1187</string>
+		<string key="IBDocument.HIToolboxVersion">624.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1938</string>
+			<string key="NS.object.0">2549</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<string>NSScroller</string>
 			<string>NSArrayController</string>
 			<string>NSButton</string>
-			<string>NSScrollView</string>
 			<string>NSButtonCell</string>
-			<string>NSTextFieldCell</string>
-			<string>NSProgressIndicator</string>
-			<string>NSCollectionViewItem</string>
-			<string>NSCustomView</string>
 			<string>NSCollectionView</string>
+			<string>NSCollectionViewItem</string>
 			<string>NSCustomObject</string>
+			<string>NSCustomView</string>
+			<string>NSProgressIndicator</string>
+			<string>NSScrollView</string>
+			<string>NSScroller</string>
 			<string>NSTextField</string>
+			<string>NSTextFieldCell</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -75,7 +75,7 @@
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="711915858">
-							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">138413056</int>
 							<string key="NSContents">Click a program to launch:</string>
 							<object class="NSFont" key="NSSupport">
@@ -103,6 +103,7 @@
 								</object>
 							</object>
 						</object>
+						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
 					<object class="NSScrollView" id="427757765">
 						<reference key="NSNextResponder" ref="156718782"/>
@@ -120,7 +121,7 @@
 										<string key="NSFrameSize">{640, 40}</string>
 										<reference key="NSSuperview" ref="470278647"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView" ref="20793709"/>
+										<reference key="NSNextKeyView" ref="740269719"/>
 										<string key="NSMinGridSize">{0, 0}</string>
 										<string key="NSMaxGridSize">{0, 0}</string>
 										<int key="NSMaxNumberOfGridRows">1</int>
@@ -154,6 +155,7 @@
 								<reference key="NSSuperview" ref="427757765"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="470278647"/>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 								<reference key="NSTarget" ref="427757765"/>
 								<string key="NSAction">_doScroller:</string>
 								<double key="NSCurValue">1</double>
@@ -165,7 +167,7 @@
 								<string key="NSFrame">{{1, 144}, {233, 15}}</string>
 								<reference key="NSSuperview" ref="427757765"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 								<int key="NSsFlags">1</int>
 								<int key="NSArrowsLoc">2</int>
 								<reference key="NSTarget" ref="427757765"/>
@@ -176,12 +178,15 @@
 						<string key="NSFrameSize">{640, 40}</string>
 						<reference key="NSSuperview" ref="156718782"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="740269719"/>
+						<reference key="NSNextKeyView" ref="470278647"/>
 						<int key="NSsFlags">133664</int>
 						<reference key="NSVScroller" ref="740269719"/>
 						<reference key="NSHScroller" ref="20793709"/>
 						<reference key="NSContentView" ref="470278647"/>
 						<bytes key="NSScrollAmts">QSAAAAAAAABBIAAAAAAAAA</bytes>
+						<double key="NSMinMagnification">0.25</double>
+						<double key="NSMaxMagnification">4</double>
+						<double key="NSMagnification">1</double>
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
@@ -208,7 +213,7 @@
 								<reference key="NSNextKeyView" ref="22873074"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="199814762">
-									<int key="NSCellFlags">-2080244224</int>
+									<int key="NSCellFlags">-2080374784</int>
 									<int key="NSCellFlags2">0</int>
 									<string key="NSContents">Launch wwwwwww.exe every time I start this gamebox.</string>
 									<object class="NSFont" key="NSSupport" id="732647970">
@@ -217,7 +222,7 @@
 										<int key="NSfFlags">1044</int>
 									</object>
 									<reference key="NSControlView" ref="90678187"/>
-									<int key="NSButtonFlags">1211912703</int>
+									<int key="NSButtonFlags">1211912448</int>
 									<int key="NSButtonFlags2">2</int>
 									<object class="NSCustomResource" key="NSNormalImage">
 										<string key="NSClassName">NSImage</string>
@@ -231,6 +236,7 @@
 									<int key="NSPeriodicDelay">200</int>
 									<int key="NSPeriodicInterval">25</int>
 								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 							</object>
 							<object class="NSTextField" id="22873074">
 								<reference key="NSNextResponder" ref="199830071"/>
@@ -239,7 +245,7 @@
 								<reference key="NSSuperview" ref="199830071"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="568456724">
-									<int key="NSCellFlags">68288064</int>
+									<int key="NSCellFlags">68157504</int>
 									<int key="NSCellFlags2">272761856</int>
 									<string key="NSContents">Hold down Option during startup to get the DOS prompt instead.</string>
 									<object class="NSFont" key="NSSupport" id="26">
@@ -251,6 +257,7 @@
 									<reference key="NSBackgroundColor" ref="870526867"/>
 									<reference key="NSTextColor" ref="328216868"/>
 								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 							</object>
 						</object>
 						<string key="NSFrame">{{111, 0}, {439, 64}}</string>
@@ -281,7 +288,7 @@
 								<reference key="NSNextKeyView" ref="285486819"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="834639366">
-									<int key="NSCellFlags">68288064</int>
+									<int key="NSCellFlags">68157504</int>
 									<int key="NSCellFlags2">272761856</int>
 									<string key="NSContents">You can change your choice later from the Inspector Panel.</string>
 									<reference key="NSSupport" ref="26"/>
@@ -289,6 +296,7 @@
 									<reference key="NSBackgroundColor" ref="870526867"/>
 									<reference key="NSTextColor" ref="328216868"/>
 								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 							</object>
 							<object class="NSTextField" id="534632662">
 								<reference key="NSNextResponder" ref="555678485"/>
@@ -298,7 +306,7 @@
 								<reference key="NSNextKeyView" ref="310915110"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="238034547">
-									<int key="NSCellFlags">68288064</int>
+									<int key="NSCellFlags">68157504</int>
 									<int key="NSCellFlags2">272630784</int>
 									<string key="NSContents">Launch wwwwwwww.exe every time?</string>
 									<object class="NSFont" key="NSSupport" id="867845248">
@@ -310,6 +318,7 @@
 									<reference key="NSBackgroundColor" ref="870526867"/>
 									<reference key="NSTextColor" ref="328216868"/>
 								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 							</object>
 							<object class="NSButton" id="285486819">
 								<reference key="NSNextResponder" ref="555678485"/>
@@ -319,18 +328,19 @@
 								<reference key="NSNextKeyView" ref="799286223"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="794322956">
-									<int key="NSCellFlags">-2080244224</int>
+									<int key="NSCellFlags">-2080374784</int>
 									<int key="NSCellFlags2">134217728</int>
 									<string key="NSContents">Not now</string>
 									<reference key="NSSupport" ref="732647970"/>
 									<reference key="NSControlView" ref="285486819"/>
-									<int key="NSButtonFlags">-2038152961</int>
+									<int key="NSButtonFlags">-2038153216</int>
 									<int key="NSButtonFlags2">163</int>
 									<string key="NSAlternateContents"/>
 									<string key="NSKeyEquivalent"/>
 									<int key="NSPeriodicDelay">400</int>
 									<int key="NSPeriodicInterval">75</int>
 								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 							</object>
 							<object class="NSButton" id="799286223">
 								<reference key="NSNextResponder" ref="555678485"/>
@@ -339,18 +349,19 @@
 								<reference key="NSSuperview" ref="555678485"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="266085088">
-									<int key="NSCellFlags">-2080244224</int>
+									<int key="NSCellFlags">-2080374784</int>
 									<int key="NSCellFlags2">134217728</int>
 									<string key="NSContents">Launch every time</string>
 									<reference key="NSSupport" ref="732647970"/>
 									<reference key="NSControlView" ref="799286223"/>
-									<int key="NSButtonFlags">-2038152961</int>
+									<int key="NSButtonFlags">-2038153216</int>
 									<int key="NSButtonFlags2">163</int>
 									<string key="NSAlternateContents"/>
 									<string key="NSKeyEquivalent"/>
 									<int key="NSPeriodicDelay">400</int>
 									<int key="NSPeriodicInterval">75</int>
 								</object>
+								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 							</object>
 						</object>
 						<string key="NSFrameSize">{640, 64}</string>
@@ -371,7 +382,6 @@
 					<object class="NSProgressIndicator" id="399757585">
 						<reference key="NSNextResponder" ref="1029538789"/>
 						<int key="NSvFlags">1293</int>
-						<object class="NSPSMatrix" key="NSDrawMatrix"/>
 						<string key="NSFrame">{{304, 14}, {32, 32}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
 						<int key="NSpiFlags">28682</int>
@@ -394,7 +404,7 @@
 						<reference key="NSSuperview" ref="626641734"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="570511196">
-							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">138544128</int>
 							<string key="NSContents">Once you’ve installed some programs, they will be listed here.</string>
 							<reference key="NSSupport" ref="26"/>
@@ -402,6 +412,7 @@
 							<reference key="NSBackgroundColor" ref="870526867"/>
 							<reference key="NSTextColor" ref="328216868"/>
 						</object>
+						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
 					<object class="NSTextField" id="141805782">
 						<reference key="NSNextResponder" ref="626641734"/>
@@ -411,7 +422,7 @@
 						<reference key="NSNextKeyView" ref="611997035"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="839947696">
-							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags">68157504</int>
 							<int key="NSCellFlags2">138413056</int>
 							<string key="NSContents">There are no programs in this gamebox.</string>
 							<reference key="NSSupport" ref="867845248"/>
@@ -419,6 +430,7 @@
 							<reference key="NSBackgroundColor" ref="870526867"/>
 							<reference key="NSTextColor" ref="328216868"/>
 						</object>
+						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
@@ -426,7 +438,7 @@
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="80732392">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">266</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -435,13 +447,11 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{4, 2}, {112, 19}}</string>
 						<reference key="NSSuperview" ref="80732392"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:2419</string>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="261680593">
-							<int key="NSCellFlags">67239424</int>
+							<int key="NSCellFlags">67108864</int>
 							<int key="NSCellFlags2">134217728</int>
 							<string key="NSContents">[filename.exe]</string>
 							<object class="NSFont" key="NSSupport">
@@ -451,18 +461,17 @@
 							</object>
 							<string key="NSCellIdentifier">_NS:2419</string>
 							<reference key="NSControlView" ref="944698193"/>
-							<int key="NSButtonFlags">-2038152961</int>
+							<int key="NSButtonFlags">-2038153216</int>
 							<int key="NSButtonFlags2">173</int>
 							<string key="NSAlternateContents"/>
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">400</int>
 							<int key="NSPeriodicInterval">75</int>
 						</object>
+						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
 				</object>
 				<string key="NSFrameSize">{120, 24}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="944698193"/>
 				<string key="NSClassName">BXCollectionItemView</string>
 			</object>
@@ -1120,7 +1129,7 @@
 					<string>52.IBPluginDependency</string>
 					<string>66.IBPluginDependency</string>
 				</object>
-				<object class="NSMutableArray" key="dict.values">
+				<object class="NSArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1247,13 +1256,19 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>hideProgramPanel:</string>
+							<string>showDOSView:</string>
+							<string>showLaunchPanel:</string>
+							<string>showLoadingPanel:</string>
 							<string>showProgramPanel:</string>
-							<string>toggleFilterType:</string>
 							<string>toggleProgramPanelShown:</string>
+							<string>toggleRenderingStyle:</string>
 							<string>toggleStatusBarShown:</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -1266,15 +1281,30 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>hideProgramPanel:</string>
+							<string>showDOSView:</string>
+							<string>showLaunchPanel:</string>
+							<string>showLoadingPanel:</string>
 							<string>showProgramPanel:</string>
-							<string>toggleFilterType:</string>
 							<string>toggleProgramPanelShown:</string>
+							<string>toggleRenderingStyle:</string>
 							<string>toggleStatusBarShown:</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
 								<string key="name">hideProgramPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showDOSView:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showLaunchPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showLoadingPanel:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -1282,11 +1312,11 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">toggleFilterType:</string>
+								<string key="name">toggleProgramPanelShown:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">toggleProgramPanelShown:</string>
+								<string key="name">toggleRenderingStyle:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -1301,16 +1331,24 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>inputController</string>
 							<string>inputView</string>
+							<string>launchPanel</string>
+							<string>launchPanelController</string>
+							<string>loadingPanel</string>
+							<string>loadingSpinner</string>
 							<string>programPanel</string>
 							<string>programPanelController</string>
 							<string>renderingView</string>
 							<string>statusBar</string>
 							<string>statusBarController</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>BXInputController</string>
 							<string>BXInputView</string>
+							<string>NSView</string>
+							<string>BXLaunchPanelController</string>
+							<string>NSView</string>
+							<string>YRKSpinningProgressIndicator</string>
 							<string>NSView</string>
 							<string>BXProgramPanelController</string>
 							<string>NSView</string>
@@ -1324,13 +1362,17 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>inputController</string>
 							<string>inputView</string>
+							<string>launchPanel</string>
+							<string>launchPanelController</string>
+							<string>loadingPanel</string>
+							<string>loadingSpinner</string>
 							<string>programPanel</string>
 							<string>programPanelController</string>
 							<string>renderingView</string>
 							<string>statusBar</string>
 							<string>statusBarController</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBToOneOutletInfo">
 								<string key="name">inputController</string>
@@ -1339,6 +1381,22 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">inputView</string>
 								<string key="candidateClassName">BXInputView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">launchPanel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">launchPanelController</string>
+								<string key="candidateClassName">BXLaunchPanelController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">loadingPanel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">loadingSpinner</string>
+								<string key="candidateClassName">YRKSpinningProgressIndicator</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">programPanel</string>
@@ -1398,7 +1456,10 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>sendBreak:</string>
+							<string>sendBackslash:</string>
+							<string>sendColon:</string>
+							<string>sendCtrlBreak:</string>
+							<string>sendDash:</string>
 							<string>sendDelete:</string>
 							<string>sendEnd:</string>
 							<string>sendF10:</string>
@@ -1413,6 +1474,7 @@
 							<string>sendF7:</string>
 							<string>sendF8:</string>
 							<string>sendF9:</string>
+							<string>sendForwardSlash:</string>
 							<string>sendHome:</string>
 							<string>sendInsert:</string>
 							<string>sendNumLock:</string>
@@ -1422,10 +1484,16 @@
 							<string>sendPrintScreen:</string>
 							<string>sendScrollLock:</string>
 							<string>toggleMouseLocked:</string>
+							<string>toggleSimulatedNumpad:</string>
 							<string>toggleTrackMouseWhileUnlocked:</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -1457,7 +1525,10 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>sendBreak:</string>
+							<string>sendBackslash:</string>
+							<string>sendColon:</string>
+							<string>sendCtrlBreak:</string>
+							<string>sendDash:</string>
 							<string>sendDelete:</string>
 							<string>sendEnd:</string>
 							<string>sendF10:</string>
@@ -1472,6 +1543,7 @@
 							<string>sendF7:</string>
 							<string>sendF8:</string>
 							<string>sendF9:</string>
+							<string>sendForwardSlash:</string>
 							<string>sendHome:</string>
 							<string>sendInsert:</string>
 							<string>sendNumLock:</string>
@@ -1481,12 +1553,25 @@
 							<string>sendPrintScreen:</string>
 							<string>sendScrollLock:</string>
 							<string>toggleMouseLocked:</string>
+							<string>toggleSimulatedNumpad:</string>
 							<string>toggleTrackMouseWhileUnlocked:</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
-								<string key="name">sendBreak:</string>
+								<string key="name">sendBackslash:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">sendColon:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">sendCtrlBreak:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">sendDash:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -1546,6 +1631,10 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">sendForwardSlash:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">sendHome:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -1582,6 +1671,10 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">toggleSimulatedNumpad:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">toggleTrackMouseWhileUnlocked:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -1598,6 +1691,71 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXInputView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXLaunchPanelController</string>
+					<string key="superclassName">NSViewController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">launchFavoriteProgram:</string>
+						<string key="NS.object.0">NSButton</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">launchFavoriteProgram:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">launchFavoriteProgram:</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>allProgramsList</string>
+							<string>favoriteProgramsList</string>
+							<string>tabSelector</string>
+							<string>tabView</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSCollectionView</string>
+							<string>NSCollectionView</string>
+							<string>NSSegmentedControl</string>
+							<string>NSTabView</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>allProgramsList</string>
+							<string>favoriteProgramsList</string>
+							<string>tabSelector</string>
+							<string>tabView</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">allProgramsList</string>
+								<string key="candidateClassName">NSCollectionView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">favoriteProgramsList</string>
+								<string key="candidateClassName">NSCollectionView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tabSelector</string>
+								<string key="candidateClassName">NSSegmentedControl</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">tabView</string>
+								<string key="candidateClassName">NSTabView</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXLaunchPanelController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -1659,7 +1817,7 @@
 							<string>scanSpinner</string>
 							<string>scanningForProgramsPanel</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSView</string>
 							<string>NSView</string>
@@ -1684,7 +1842,7 @@
 							<string>scanSpinner</string>
 							<string>scanningForProgramsPanel</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBToOneOutletInfo">
 								<string key="name">defaultProgramPanel</string>
@@ -1742,22 +1900,30 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>decrementFrameSkip:</string>
 							<string>decrementSpeed:</string>
+							<string>fastForward:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
+							<string>mergeShadowedChanges:</string>
 							<string>mountNextDrivesInQueues:</string>
 							<string>mountPreviousDrivesInQueues:</string>
 							<string>openInDOS:</string>
 							<string>paste:</string>
-							<string>relaunch:</string>
-							<string>showCPUPanel:</string>
-							<string>showDrivesPanel:</string>
-							<string>showGamePanel:</string>
-							<string>showMountPanel:</string>
-							<string>showMousePanel:</string>
+							<string>pause:</string>
+							<string>performRestart:</string>
+							<string>relaunchTargetProgram:</string>
+							<string>releaseFastForward:</string>
+							<string>resume:</string>
+							<string>revertShadowedChanges:</string>
+							<string>saveScreenshot:</string>
+							<string>toggleFastForward:</string>
 							<string>togglePaused:</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -1781,21 +1947,25 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>decrementFrameSkip:</string>
 							<string>decrementSpeed:</string>
+							<string>fastForward:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
+							<string>mergeShadowedChanges:</string>
 							<string>mountNextDrivesInQueues:</string>
 							<string>mountPreviousDrivesInQueues:</string>
 							<string>openInDOS:</string>
 							<string>paste:</string>
-							<string>relaunch:</string>
-							<string>showCPUPanel:</string>
-							<string>showDrivesPanel:</string>
-							<string>showGamePanel:</string>
-							<string>showMountPanel:</string>
-							<string>showMousePanel:</string>
+							<string>pause:</string>
+							<string>performRestart:</string>
+							<string>relaunchTargetProgram:</string>
+							<string>releaseFastForward:</string>
+							<string>resume:</string>
+							<string>revertShadowedChanges:</string>
+							<string>saveScreenshot:</string>
+							<string>toggleFastForward:</string>
 							<string>togglePaused:</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
 								<string key="name">decrementFrameSkip:</string>
@@ -1806,11 +1976,19 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">fastForward:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">incrementFrameSkip:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">incrementSpeed:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">mergeShadowedChanges:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -1830,27 +2008,35 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">relaunch:</string>
+								<string key="name">pause:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">showCPUPanel:</string>
+								<string key="name">performRestart:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">showDrivesPanel:</string>
+								<string key="name">relaunchTargetProgram:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">showGamePanel:</string>
+								<string key="name">releaseFastForward:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">showMountPanel:</string>
+								<string key="name">resume:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">showMousePanel:</string>
+								<string key="name">revertShadowedChanges:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">saveScreenshot:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">toggleFastForward:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -1884,11 +2070,13 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>notificationMessage</string>
 							<string>statusBarControls</string>
+							<string>volumeControls</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSTextField</string>
 							<string>NSSegmentedControl</string>
+							<string>NSView</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -1897,8 +2085,9 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>notificationMessage</string>
 							<string>statusBarControls</string>
+							<string>volumeControls</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBToOneOutletInfo">
 								<string key="name">notificationMessage</string>
@@ -1907,6 +2096,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">statusBarControls</string>
 								<string key="candidateClassName">NSSegmentedControl</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">volumeControls</string>
+								<string key="candidateClassName">NSView</string>
 							</object>
 						</object>
 					</object>
@@ -1948,7 +2141,7 @@
 							<string>openInDOS:</string>
 							<string>relaunch:</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>id</string>
 							<string>id</string>
@@ -1961,7 +2154,7 @@
 							<string>openInDOS:</string>
 							<string>relaunch:</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
 								<string key="name">openInDOS:</string>
@@ -1979,70 +2172,11 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">NSDocument</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>printDocument:</string>
-							<string>revertDocumentToSaved:</string>
-							<string>runPageLayout:</string>
-							<string>saveDocument:</string>
-							<string>saveDocumentAs:</string>
-							<string>saveDocumentTo:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>printDocument:</string>
-							<string>revertDocumentToSaved:</string>
-							<string>runPageLayout:</string>
-							<string>saveDocument:</string>
-							<string>saveDocumentAs:</string>
-							<string>saveDocumentTo:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">printDocument:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">revertDocumentToSaved:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">runPageLayout:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">saveDocument:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">saveDocumentAs:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">saveDocumentTo:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-						</object>
-					</object>
+					<string key="className">YRKSpinningProgressIndicator</string>
+					<string key="superclassName">NSView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/NSDocument.h</string>
+						<string key="minorKey">./Classes/YRKSpinningProgressIndicator.h</string>
 					</object>
 				</object>
 			</object>
@@ -2052,10 +2186,6 @@
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
 			<integer value="1050" key="NS.object.0"/>
-		</object>
-		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
-			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
-			<integer value="1060" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDevelopmentDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3</string>

@@ -503,6 +503,28 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[super removeWindowController: windowController];
 }
 
+- (void) setDOSWindowController: (BXDOSWindowController *)controller
+{
+    if (controller != self.DOSWindowController)
+    {
+        if (self.DOSWindowController)
+        {
+            [self.DOSWindowController removeObserver: self forKeyPath: @"currentPanel"];
+        }
+        
+        [_DOSWindowController release];
+        _DOSWindowController = [controller retain];
+        
+        if (self.DOSWindowController)
+        {
+            [self.DOSWindowController addObserver: self
+                                       forKeyPath: @"currentPanel"
+                                          options: 0
+                                          context: NULL];
+        }
+    }
+}
+
 - (void) userDidToggleProgramPanel
 {
     //If the user toggled the program panel while at the DOS prompt, record its state
@@ -1058,11 +1080,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             arguments = nil;
 		}
         
-        //Switch into fullscreen now, if the user had previously quit while in fullscreen
+        //Display the DOS view and switch into fullscreen now, if the user had previously quit while in fullscreen
         //and if they haven't skipped the startup program.
         BOOL startInFullScreen = [[self.gameSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey] boolValue];
         if (startInFullScreen && !_userSkippedDefaultProgram)
         {
+            [self.DOSWindowController switchToPanel: BXDOSWindowDOSView animate: YES];
             [self.DOSWindowController enterFullScreen];
         }
         
@@ -1756,6 +1779,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         //was to appear.
         if (self.DOSWindowController.window.isMiniaturized)
             return YES;
+        
+        //Autopause if the DOS window is showing the launcher panel.
+        if (self.DOSWindowController.currentPanel == BXDOSWindowLaunchPanel)
+        {
+            return YES;
+        }
     }
 	
     return NO;
@@ -1796,7 +1825,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 				   name: NSApplicationDidBecomeActiveNotification
 				 object: NSApp];
 	
-	
 	[center addObserver: self
 			   selector: @selector(_interruptionWillBegin:)
 				   name: NSMenuDidBeginTrackingNotification
@@ -1816,6 +1844,17 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 			   selector: @selector(_interruptionDidFinish:)
 				   name: BXDidFinishInterruptionNotification
 				 object: nil];
+}
+
+- (void) observeValueForKeyPath: (NSString *)keyPath
+                       ofObject: (id)object
+                         change: (NSDictionary *)change
+                        context: (void *)context
+{
+    if (object == self.DOSWindowController && [keyPath isEqualToString: @"currentPanel"])
+    {
+        [self _syncAutoPausedState];
+    }
 }
 	 
 - (void) _deregisterForPauseNotifications

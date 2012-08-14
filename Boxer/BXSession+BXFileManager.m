@@ -193,7 +193,7 @@
 
 - (IBAction) relaunchTargetProgram: (id)sender
 {
-	if ([self targetPath]) [self openFileAtPath: [self targetPath]];
+	if ([self targetPath]) [self openFileAtPath: self.targetPath];
 }
 
 - (IBAction) openInDOS: (id)sender
@@ -709,7 +709,10 @@
 	NSString *dosPath = [self.emulator DOSPathForPath: path];
 	if (!dosPath || ![self.emulator DOSPathExists: dosPath]) return NO;
 	
-	//Unpause the emulation if it's paused
+	//Unpause the emulation if it's paused, and ensure we don't remain auto-paused.
+    //TODO: we shouldn't force autopause to be off here, we should trigger a re-evaluation
+    //of the autopause criteria and handle this in _shouldAutoPause.
+    self.autoPaused = NO;
 	[self resume: self];
 	
 	if ([self.class isExecutable: path])

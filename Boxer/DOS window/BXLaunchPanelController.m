@@ -30,8 +30,6 @@
 {
     self.allProgramRows = [NSMutableArray array];
     self.favoriteProgramRows = [NSMutableArray array];
-    
-    self.representedObject = [self.view.window.windowController document];
 }
 
 - (void) setRepresentedObject: (id)representedObject

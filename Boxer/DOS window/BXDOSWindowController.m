@@ -11,6 +11,7 @@
 #import "BXBaseAppController.h"
 #import "BXProgramPanelController.h"
 #import "BXInputController.h"
+#import "BXLaunchPanelController.h"
 #import "BXGamebox.h"
 
 #import "BXFrameRenderingView.h"
@@ -66,6 +67,7 @@
 	{
 		self.programPanelController.representedObject = nil;
     	self.inputController.representedObject = nil;
+        self.launchPanelController.representedObject = nil;
     }
 
 	[super setDocument: document];
@@ -74,6 +76,7 @@
 	{
 		self.programPanelController.representedObject = document;
     	self.inputController.representedObject = document;
+        self.launchPanelController.representedObject = document;
     }
 }
 

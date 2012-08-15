@@ -795,6 +795,7 @@
 		9FDFB47215DBA3BE004EA615 /* StandaloneAbout.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDFB47015DBA3BE004EA615 /* StandaloneAbout.xib */; };
 		9FDFB47B15DBB530004EA615 /* StandaloneAbout.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDFB47015DBA3BE004EA615 /* StandaloneAbout.xib */; };
 		9FDFB47F15DBBABC004EA615 /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 9FDFB47C15DBBABC004EA615 /* Credits.html */; };
+		9FDFB48015DBC32D004EA615 /* BXGLHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C458615DB7E77009F4477 /* BXGLHelpers.m */; };
 		9FE1B61313FFBE430001640C /* NSImage+BXImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE1B61213FFBE430001640C /* NSImage+BXImageEffects.m */; };
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9FE2172E121EED1E001452E3 /* ImportCoverArtTip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */; };
@@ -4207,6 +4208,7 @@
 				9F458D9E15D83B9000DF9102 /* BXDOSWindowBackgroundView.m in Sources */,
 				9F57684A15DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */,
 				9FDFB46E15DBA38F004EA615 /* BXStandaloneAboutController.m in Sources */,
+				9FDFB48015DBC32D004EA615 /* BXGLHelpers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1063,6 +1063,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     
 	if (target)
 	{
+        BOOL targetIsExecutable = [self.class isExecutable: target];
+        
         //If the Option key is held down during the startup process, skip the default program.
         //(Repeated from runPreflightCommandsForEmulator: above, in case the user started
         //holding the key down in between.)
@@ -1074,19 +1076,21 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         
 		//If the Option key was held down, don't launch the gamebox's target;
 		//Instead, just switch to its parent folder.
-		if (_userSkippedDefaultProgram && [self.class isExecutable: target])
+		if (_userSkippedDefaultProgram && targetIsExecutable)
 		{
 			target = target.stringByDeletingLastPathComponent;
+            targetIsExecutable = NO;
             arguments = nil;
 		}
         
         //Display the DOS view and switch into fullscreen now, if the user had previously quit while in fullscreen
         //and if they haven't skipped the startup program.
         BOOL startInFullScreen = [[self.gameSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey] boolValue];
-        if (startInFullScreen && !_userSkippedDefaultProgram)
+        if (startInFullScreen)
         {
-            [self.DOSWindowController switchToPanel: BXDOSWindowDOSView animate: YES];
+            BXDOSWindowPanel initialPanel = (targetIsExecutable) ? BXDOSWindowDOSView : BXDOSWindowLaunchPanel;
             [self.DOSWindowController enterFullScreen];
+            [self.DOSWindowController switchToPanel: initialPanel animate: NO];
         }
         
 		[self openFileAtPath: target withArguments: arguments];
@@ -1095,6 +1099,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //Clear the program-skipping flag for next launch.
     _userSkippedDefaultProgram = NO;
 }
+
 
 - (void) emulator: (BXEmulator *)theEmulator didFinishFrame: (BXVideoFrame *)frame
 {

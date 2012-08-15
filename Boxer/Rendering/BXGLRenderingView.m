@@ -15,6 +15,7 @@
 #import "BXDOSWindowController.h" //For notifications
 #import "BXBSNESShader.h"
 #import "BXPostLeopardAPIs.h"
+#import "NSView+BXDrawing.h"
 
 #import <OpenGL/CGLMacro.h>
 
@@ -24,10 +25,6 @@
 @interface BXGLRenderingView ()
 
 @property (retain) BXVideoFrame *currentFrame;
-
-//Whether to render black using Quartz instead of rendering the current video frame using OpenGL.
-//This toggle allows calling contexts to fade in the view.
-@property (assign) BOOL fillWithBlackForFade;
 
 //Whether we should redraw in the next display-link cycle.
 //Set to YES upon receiving a new frame, then back to NO after rendering it.
@@ -64,7 +61,6 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @synthesize viewportRect = _viewportRect;
 @synthesize maxViewportSize = _maxViewportSize;
 @synthesize renderingStyle = _renderingStyle;
-@synthesize fillWithBlackForFade = _fillWithBlackForFade;
 
 - (void) dealloc
 {
@@ -289,7 +285,12 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
                 [self.renderer updateWithFrame: self.currentFrame];
             
             //Sync up the new renderer with our current state
+            if (NSIsEmptyRect(self.viewportRect))
+            {
+                self.viewportRect = (self.currentFrame) ? [self viewportForFrame: self.currentFrame] : self.bounds;
+            }
             [self _applyViewportToRenderer: self.renderer];
+        
         CGLUnlockContext(self.openGLContext.CGLContextObj);
     }
 }
@@ -365,19 +366,29 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     [self _applyViewportToRenderer: self.renderer];
 }
 
-- (void) fadeWillStart
+- (void) viewAnimationWillStart: (NSViewAnimation *)animation
 {
-    self.fillWithBlackForFade = YES;
+    self.needsCVLinkDisplay = NO;
+    _snapshot = [[self imageWithContentsOfRect: self.bounds] retain];
 }
 
-- (void) fadeDidEnd
+- (void) viewAnimationDidEnd: (NSViewAnimation *)animation
 {
-    self.fillWithBlackForFade = NO;
+    [_snapshot release], _snapshot = nil;
 }
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-    if (self.fillWithBlackForFade || ![self.renderer canRender])
+    if (_snapshot)
+    {
+        [_snapshot drawInRect: self.bounds
+                     fromRect: NSZeroRect
+                    operation: NSCompositeSourceOver
+                     fraction: 1.0
+               respectFlipped: YES
+                        hints: nil];
+    }
+    else if (![self.renderer canRender])
     {
         [[NSColor blackColor] set];
         NSRectFill(dirtyRect);
@@ -415,7 +426,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	
 	BXGLRenderingView *view = (BXGLRenderingView *)displayLinkContext;
     
-    if (view.needsCVLinkDisplay && !view.fillWithBlackForFade)
+    if (view.needsCVLinkDisplay)
         [view display];
     
 	[pool drain];
@@ -472,13 +483,15 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	//Ensure the rectangle isn't fractional
 	theRect = NSIntegralRect(theRect);
     
-    
 	//Now, do the OpenGL calls to rip off the image data
     CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
     
     CGLLockContext(cgl_ctx);
         //Grab what's in the front buffer
+        //TODO: if the view is hidden/hasn't been rendered yet then this could be empty.
+        //We should catch this case and render to an offscreen context instead.
         glReadBuffer(GL_FRONT);
+    
         //Back up current settings
         glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
         

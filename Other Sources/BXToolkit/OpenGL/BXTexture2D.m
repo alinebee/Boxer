@@ -8,11 +8,10 @@
 
 #import "BXTexture2D.h"
 #import "BXGeometry.h"
+#import "BXGLHelpers.h"
 #import <OpenGL/gl.h>
+#import <OpenGL/glu.h>
 #import <OpenGL/CGLMacro.h>
-
-NSString * const BXGLErrorDomain = @"BXGLErrorDomain";
-NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensionErrorDomain";
 
 
 @implementation BXTexture2D
@@ -44,25 +43,11 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
     }
 }
 
-- (NSError *) latestGLError
-{
-    CGLContextObj cgl_ctx = _context;
-    GLenum status = glGetError();
-    if (status)
-    {
-        return [NSError errorWithDomain: BXGLErrorDomain code: status userInfo: nil];
-    }
-    else
-    {
-        return nil;
-    }
-}
-
 - (BOOL) _checkForGLError: (NSError **)outError
 {
     if (outError)
     {
-        *outError = self.latestGLError;
+        *outError = latestErrorInCGLContext(_context);
         return (*outError == nil);
     }
     return YES;
@@ -374,9 +359,7 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
         GLint status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
         if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
         {
-            *outError = [NSError errorWithDomain: BXGLFramebufferExtensionErrorDomain
-                                            code: status
-                                        userInfo: nil];
+            *outError = errorForGLFramebufferExtensionStatus(status);
             succeeded = NO;
         }
     }

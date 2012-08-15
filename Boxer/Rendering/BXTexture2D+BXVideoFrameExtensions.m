@@ -85,14 +85,7 @@
                         regionBytes);                   //Texture data
     }
 	
-    //Check for errors only if an error object was provided.
-    //Otherwise, we assume everything worked OK.
-    BOOL succeeded = YES;
-    if (outError)
-    {
-        *outError = self.latestGLError;
-        succeeded = (*outError == nil);
-    }
+    BOOL succeeded = [self _checkForGLError: outError];
         
     return succeeded;
 }

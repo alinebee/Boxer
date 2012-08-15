@@ -66,6 +66,7 @@
 		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9F2C28A2129D906600B172C8 /* BXFirstRunWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */; };
 		9F2C28B8129D924E00B172C8 /* FirstRunWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */; };
+		9F2C458715DB7E77009F4477 /* BXGLHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C458615DB7E77009F4477 /* BXGLHelpers.m */; };
 		9F2D2F9915B8233800FAE848 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		9F2D2F9A15B8233800FAE848 /* BXAboutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC351D0F56C7B7001811F2 /* BXAboutController.m */; };
 		9F2D2F9C15B8233800FAE848 /* BXSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35210F56C7B7001811F2 /* BXSession.m */; };
@@ -970,6 +971,8 @@
 		9F2C28A0129D906600B172C8 /* BXFirstRunWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFirstRunWindowController.h; sourceTree = "<group>"; };
 		9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFirstRunWindowController.m; sourceTree = "<group>"; };
 		9F2C28B7129D924E00B172C8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/FirstRunWindow.xib; sourceTree = "<group>"; };
+		9F2C458515DB7E77009F4477 /* BXGLHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGLHelpers.h; sourceTree = "<group>"; };
+		9F2C458615DB7E77009F4477 /* BXGLHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGLHelpers.m; sourceTree = "<group>"; };
 		9F2D317215B8233800FAE848 /* Boxer Standalone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Boxer Standalone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F2D317415B8233900FAE848 /* Boxer Standalone-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Boxer Standalone-Info.plist"; sourceTree = "<group>"; };
 		9F2D317D15B826EF00FAE848 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/About.xib; sourceTree = "<group>"; };
@@ -2057,12 +2060,6 @@
 				9F4175AA119DBFDD00646B15 /* BXRenderingLayer.m */,
 				9FB4F9E211957B55006C8AC9 /* BXVideoFrame.h */,
 				9FB4F9E311957B55006C8AC9 /* BXVideoFrame.m */,
-				9FE3237C157A42B3004492E8 /* BXShader.h */,
-				9FE3237D157A42B3004492E8 /* BXShader.m */,
-				9FE32380157A7498004492E8 /* BXBSNESShader.h */,
-				9FE32381157A7498004492E8 /* BXBSNESShader.m */,
-				9FF68FF6157B9C6600F8B5BC /* BXTexture2D.h */,
-				9FF68FF7157B9C6600F8B5BC /* BXTexture2D.m */,
 				9FF68FFE157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.h */,
 				9FF68FFF157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m */,
 				9FECE18E11A31B8B00E0EBB6 /* BXBasicRenderer.h */,
@@ -2161,6 +2158,21 @@
 				9F2120F713015653002AB1B7 /* BXShelfArt.m */,
 			);
 			name = Artwork;
+			sourceTree = "<group>";
+		};
+		9F2C458315DB7DC3009F4477 /* OpenGL */ = {
+			isa = PBXGroup;
+			children = (
+				9F2C458515DB7E77009F4477 /* BXGLHelpers.h */,
+				9F2C458615DB7E77009F4477 /* BXGLHelpers.m */,
+				9FE3237C157A42B3004492E8 /* BXShader.h */,
+				9FE3237D157A42B3004492E8 /* BXShader.m */,
+				9FE32380157A7498004492E8 /* BXBSNESShader.h */,
+				9FE32381157A7498004492E8 /* BXBSNESShader.m */,
+				9FF68FF6157B9C6600F8B5BC /* BXTexture2D.h */,
+				9FF68FF7157B9C6600F8B5BC /* BXTexture2D.m */,
+			);
+			path = OpenGL;
 			sourceTree = "<group>";
 		};
 		9F2D317915B823D300FAE848 /* Standalone */ = {
@@ -2726,6 +2738,7 @@
 		9F7A8F230F8E705100D1AAD5 /* BXToolkit */ = {
 			isa = PBXGroup;
 			children = (
+				9F2C458315DB7DC3009F4477 /* OpenGL */,
 				9F9840FE15BEE5F700B50CDA /* Filesystem */,
 				9F81CFB613EEA3D7008F0265 /* Disk Images */,
 				9FD1D622136428F800792011 /* HID */,
@@ -3888,6 +3901,7 @@
 				9FCA6D9615C85D8500E1650C /* BXLaunchPanelController.m in Sources */,
 				9FAEBE4F15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m in Sources */,
 				9F57684915DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */,
+				9F2C458715DB7E77009F4477 /* BXGLHelpers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

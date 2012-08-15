@@ -1089,8 +1089,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         if (startInFullScreen)
         {
             BXDOSWindowPanel initialPanel = (targetIsExecutable) ? BXDOSWindowDOSView : BXDOSWindowLaunchPanel;
-            [self.DOSWindowController enterFullScreen];
             [self.DOSWindowController switchToPanel: initialPanel animate: NO];
+            [self.DOSWindowController enterFullScreen];
         }
         
 		[self openFileAtPath: target withArguments: arguments];

@@ -27,7 +27,7 @@
     
     BOOL _needsRendererUpdate;
     
-    BOOL _suppressRendering;
+    BOOL _usesTransparentSurface;
 }
 @property (retain, nonatomic) BXBasicRenderer *renderer;
 @property (assign, nonatomic) BOOL managesAspectRatio;

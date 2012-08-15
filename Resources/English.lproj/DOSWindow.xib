@@ -252,7 +252,7 @@
 											<array class="NSMutableArray" key="NSSubviews">
 												<object class="NSScrollView" id="485892903">
 													<reference key="NSNextResponder" ref="223608717"/>
-													<int key="NSvFlags">319</int>
+													<int key="NSvFlags">301</int>
 													<array class="NSMutableArray" key="NSSubviews">
 														<object class="NSClipView" id="299863135">
 															<reference key="NSNextResponder" ref="485892903"/>
@@ -298,7 +298,7 @@
 															<string key="NSFrame">{{234, 1}, {15, 143}}</string>
 															<reference key="NSSuperview" ref="485892903"/>
 															<reference key="NSWindow"/>
-															<reference key="NSNextKeyView"/>
+															<reference key="NSNextKeyView" ref="773857734"/>
 															<string key="NSReuseIdentifierKey">_NS:82</string>
 															<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 															<reference key="NSTarget" ref="485892903"/>

@@ -392,18 +392,25 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     
     if (involvesFade)
     {
-        _suppressRendering = YES;
+        _usesTransparentSurface = YES;
+        GLint opacity = 0;
+        [self.openGLContext setValues: &opacity forParameter: NSOpenGLCPSurfaceOpacity];
     }
 }
 
 - (void) viewAnimationDidEnd: (NSViewAnimation *)animation
 {
-    _suppressRendering = NO;
+    if (_usesTransparentSurface)
+    {
+        _usesTransparentSurface = NO;
+        GLint opacity = 1;
+        [self.openGLContext setValues: &opacity forParameter: NSOpenGLCPSurfaceOpacity];
+    }
 }
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-    if (_suppressRendering || ![self.renderer canRender])
+    if (![self.renderer canRender])
     {
         [[NSColor blackColor] set];
         NSRectFill(dirtyRect);

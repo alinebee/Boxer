@@ -113,6 +113,7 @@
     [self addObserver: self forKeyPath: @"document.autoPaused" options: 0 context: nil];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
     [self bind: @"aspectCorrected"
       toObject: defaults
    withKeyPath: @"aspectCorrected"

@@ -78,10 +78,16 @@ enum {
 - (void) awakeFromNib
 {
     //Make our represented object be the drive array for the current session.
-    [self bind: @"representedObject" toObject: [NSApp delegate] withKeyPath: @"currentSession.allDrives" options: nil];
+    [self bind: @"representedObject"
+      toObject: [NSApp delegate]
+   withKeyPath: @"currentSession.allDrives"
+       options: nil];
     
     //Listen for changes to the current session's mounted drives, so we can enable/disable our action buttons
-    [[NSApp delegate] addObserver: self forKeyPath: @"currentSession.mountedDrives" options: 0 context: NULL];
+    [[NSApp delegate] addObserver: self
+                       forKeyPath: @"currentSession.mountedDrives"
+                          options: 0
+                          context: NULL];
     
     
 	//Register the entire drive panel as a drag-drop target.

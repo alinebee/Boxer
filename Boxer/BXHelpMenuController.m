@@ -42,6 +42,18 @@
     _needsSessionDocsRefresh = YES;
 }
 
+- (void) dealloc
+{
+    [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.documentation"];
+    
+    self.mobygamesItem = nil;
+    self.replacementDocsItem = nil;
+    self.documentationDivider = nil;
+    self.helpLinksDivider = nil;
+    
+    [super dealloc];
+}
+
 - (void) observeValueForKeyPath: (NSString *)keyPath
                        ofObject: (id)object
                          change: (NSDictionary *)change
@@ -288,16 +300,6 @@
 	NSArray *sortDescriptors = [NSArray arrayWithObjects: sortByType, sortByName, nil];
 	[sortByType release], [sortByName release];
 	return sortDescriptors;
-}
-
-- (void) dealloc
-{
-    self.mobygamesItem = nil;
-    self.replacementDocsItem = nil;
-    self.documentationDivider = nil;
-    self.helpLinksDivider = nil;
-    
-	[super dealloc];
 }
 
 @end

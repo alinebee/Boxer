@@ -1868,6 +1868,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	
 	[center removeObserver: self name: NSWindowWillMiniaturizeNotification object: nil];
 	[center removeObserver: self name: NSWindowDidDeminiaturizeNotification object: nil];
+    
+	[center removeObserver: self name: NSMenuDidEndTrackingNotification object: nil];
+	[center removeObserver: self name: NSMenuDidBeginTrackingNotification object: nil];
 	
 	[center removeObserver: self name: NSApplicationWillResignActiveNotification object: nil];
 	[center removeObserver: self name: NSApplicationDidBecomeActiveNotification object: nil];

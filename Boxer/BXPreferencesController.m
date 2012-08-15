@@ -106,6 +106,9 @@
 
 - (void) dealloc
 {
+	[[NSUserDefaults standardUserDefaults] removeObserver: self
+                                               forKeyPath: @"renderingStyle"];
+    
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     [[NSApp delegate] removeObserver: self forKeyPath: @"MIDIDeviceMonitor.discoveredMT32s"];
     [[NSApp delegate] removeObserver: self forKeyPath: @"pathToMT32ControlROM"];

@@ -10,7 +10,7 @@
 
 
 @implementation BXAboutController
-@synthesize version;
+@synthesize version = _version;
 
 + (id) controller
 {
@@ -22,21 +22,23 @@
 
 //Set up all the appearance properties we couldn't in Interface Builder
 - (void) awakeFromNib
-{
-	NSWindow *theWindow	= [self window];
-	
+{	
 	//Let the window be moved by clicking anywhere inside it
-	[theWindow setMovableByWindowBackground: YES];
+    self.window.movableByWindowBackground = YES;
 	
 	//Set the version's number and appearance
 	NSString *versionFormat	= NSLocalizedString(@"Version %1$@ | build %2$@", @"Version string for display in About panel. %1$@ is human-readable version (e.g. 1.0beta), %2$@ is build number (e.g. 20090323-1.)");
 	NSString *versionName	= [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
 	NSString *buildNumber	= [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
 	NSString *versionString	= [NSString stringWithFormat: versionFormat, versionName, buildNumber];
-	[version setStringValue: versionString];
-    
-    //Add a bottom border to the window
-    [theWindow setContentBorderThickness: 41.0f forEdge: NSMinYEdge];
+	
+    self.version.stringValue = versionString;
+}
+
+- (void) dealloc
+{
+    self.version = nil;
+    [super dealloc];
 }
 
 - (IBAction) showAcknowledgements: (id)sender
@@ -53,7 +55,7 @@
 {
     NSImage *background = [NSImage imageNamed: @"AboutBackground"];
     
-    [background drawInRect: [self bounds]
+    [background drawInRect: self.bounds
                   fromRect: NSZeroRect
                  operation: NSCompositeSourceOver
                   fraction: 1.0f];
@@ -64,7 +66,8 @@
                             [NSColor colorWithCalibratedWhite: 0 alpha: 0.4f],  1.0f,
                             nil];
     
-    [lighting drawInRect: [self bounds] relativeCenterPosition: NSMakePoint(0.25f, 0.5f)];
+    [lighting drawInRect: self.bounds
+  relativeCenterPosition: NSMakePoint(0.25f, 0.5f)];
     
     [lighting release];
 }

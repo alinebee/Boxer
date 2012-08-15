@@ -393,7 +393,6 @@
 		9F2D316B15B8233800FAE848 /* SDL.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; };
 		9F2D316C15B8233800FAE848 /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
 		9F2D316D15B8233800FAE848 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; };
-		9F2D318815B826F300FAE848 /* About.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2D317C15B826EF00FAE848 /* About.xib */; };
 		9F2D318915B826F600FAE848 /* DOSWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2D317E15B826EF00FAE848 /* DOSWindow.xib */; };
 		9F2D318B15B826FE00FAE848 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2D318215B826EF00FAE848 /* MainMenu.xib */; };
 		9F3034B914E2C3F600BC572E /* NumlockActiveTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F3034B714E2C3F600BC572E /* NumlockActiveTemplate.pdf */; };
@@ -792,6 +791,10 @@
 		9FDE34341351DFD4000DCE44 /* BXImportTipsPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDE34331351DFD4000DCE44 /* BXImportTipsPanelController.m */; };
 		9FDE34371351E0F5000DCE44 /* Welcome.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34361351E0F5000DCE44 /* Welcome.xib */; };
 		9FDE343A1351E127000DCE44 /* ImportTipsPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34381351E127000DCE44 /* ImportTipsPanel.xib */; };
+		9FDFB46E15DBA38F004EA615 /* BXStandaloneAboutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDFB46D15DBA38E004EA615 /* BXStandaloneAboutController.m */; };
+		9FDFB47215DBA3BE004EA615 /* StandaloneAbout.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDFB47015DBA3BE004EA615 /* StandaloneAbout.xib */; };
+		9FDFB47B15DBB530004EA615 /* StandaloneAbout.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDFB47015DBA3BE004EA615 /* StandaloneAbout.xib */; };
+		9FDFB47F15DBBABC004EA615 /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 9FDFB47C15DBBABC004EA615 /* Credits.html */; };
 		9FE1B61313FFBE430001640C /* NSImage+BXImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE1B61213FFBE430001640C /* NSImage+BXImageEffects.m */; };
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9FE2172E121EED1E001452E3 /* ImportCoverArtTip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */; };
@@ -975,7 +978,6 @@
 		9F2C458615DB7E77009F4477 /* BXGLHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGLHelpers.m; sourceTree = "<group>"; };
 		9F2D317215B8233800FAE848 /* Boxer Standalone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Boxer Standalone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F2D317415B8233900FAE848 /* Boxer Standalone-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Boxer Standalone-Info.plist"; sourceTree = "<group>"; };
-		9F2D317D15B826EF00FAE848 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/About.xib; sourceTree = "<group>"; };
 		9F2D317F15B826EF00FAE848 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DOSWindow.xib; sourceTree = "<group>"; };
 		9F2D318315B826EF00FAE848 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		9F3034B714E2C3F600BC572E /* NumlockActiveTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = NumlockActiveTemplate.pdf; sourceTree = "<group>"; };
@@ -1649,6 +1651,10 @@
 		9FDE34321351DFD4000DCE44 /* BXImportTipsPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportTipsPanelController.h; sourceTree = "<group>"; };
 		9FDE34331351DFD4000DCE44 /* BXImportTipsPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportTipsPanelController.m; sourceTree = "<group>"; };
 		9FDE34391351E127000DCE44 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/ImportTipsPanel.xib; sourceTree = "<group>"; };
+		9FDFB46C15DBA38E004EA615 /* BXStandaloneAboutController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXStandaloneAboutController.h; sourceTree = "<group>"; };
+		9FDFB46D15DBA38E004EA615 /* BXStandaloneAboutController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXStandaloneAboutController.m; sourceTree = "<group>"; };
+		9FDFB47115DBA3BE004EA615 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Standalone/Resources/English.lproj/StandaloneAbout.xib; sourceTree = SOURCE_ROOT; };
+		9FDFB47D15DBBABC004EA615 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = English; path = English.lproj/Credits.html; sourceTree = "<group>"; };
 		9FE1B61113FFBE430001640C /* NSImage+BXImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+BXImageEffects.h"; sourceTree = "<group>"; };
 		9FE1B61213FFBE430001640C /* NSImage+BXImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSImage+BXImageEffects.m"; sourceTree = "<group>"; };
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
@@ -2182,6 +2188,8 @@
 				9F2D317415B8233900FAE848 /* Boxer Standalone-Info.plist */,
 				9FCB7B0B15B842E000CC7CC7 /* BXStandaloneAppController.h */,
 				9FCB7B0C15B842E000CC7CC7 /* BXStandaloneAppController.m */,
+				9FDFB46C15DBA38E004EA615 /* BXStandaloneAboutController.h */,
+				9FDFB46D15DBA38E004EA615 /* BXStandaloneAboutController.m */,
 			);
 			path = Standalone;
 			sourceTree = "<group>";
@@ -2189,6 +2197,7 @@
 		9F2D317A15B8240400FAE848 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9FDFB47C15DBBABC004EA615 /* Credits.html */,
 				9F57685815DA3DDE00B50500 /* Images */,
 				9F1E959B15BD899500C3C6A0 /* GameDefaults.plist */,
 				9F1E959915BD88D700C3C6A0 /* UserDefaults.plist */,
@@ -3137,7 +3146,7 @@
 		9FCB7ACC15B8420800CC7CC7 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
-				9F2D317C15B826EF00FAE848 /* About.xib */,
+				9FDFB47015DBA3BE004EA615 /* StandaloneAbout.xib */,
 				9F2D317E15B826EF00FAE848 /* DOSWindow.xib */,
 				9F2D318215B826EF00FAE848 /* MainMenu.xib */,
 			);
@@ -3488,6 +3497,7 @@
 				9FAEBE5515D67C3A00C9AC5F /* DOSWindowGrille.png in Resources */,
 				9F57684D15DA3DA600B50500 /* DOSWindowBackground@2x.png in Resources */,
 				9F57685015DA3DAF00B50500 /* DOSWindowGrille@2x.png in Resources */,
+				9FDFB47B15DBB530004EA615 /* StandaloneAbout.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3525,7 +3535,6 @@
 				9F2D313E15B8233800FAE848 /* ScreenshotTemplate.pdf in Resources */,
 				9F2D313F15B8233800FAE848 /* Shaders in Resources */,
 				9F2D314515B8233800FAE848 /* AboutBackground@2x.png in Resources */,
-				9F2D318815B826F300FAE848 /* About.xib in Resources */,
 				9F2D318915B826F600FAE848 /* DOSWindow.xib in Resources */,
 				9F2D318B15B826FE00FAE848 /* MainMenu.xib in Resources */,
 				9FCB7B2715B877E500CC7CC7 /* DOS Toolkit in Resources */,
@@ -3539,6 +3548,8 @@
 				9F57685115DA3DAF00B50500 /* DOSWindowGrille@2x.png in Resources */,
 				9F57685B15DA3DFC00B50500 /* StandaloneLogo.png in Resources */,
 				9F57685C15DA3DFC00B50500 /* StandaloneLogo@2x.png in Resources */,
+				9FDFB47215DBA3BE004EA615 /* StandaloneAbout.xib in Resources */,
+				9FDFB47F15DBBABC004EA615 /* Credits.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4195,6 +4206,7 @@
 				9F458D9D15D83B8C00DF9102 /* BXLaunchPanelController.m in Sources */,
 				9F458D9E15D83B9000DF9102 /* BXDOSWindowBackgroundView.m in Sources */,
 				9F57684A15DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */,
+				9FDFB46E15DBA38F004EA615 /* BXStandaloneAboutController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4234,14 +4246,6 @@
 			);
 			name = FirstRunWindow.xib;
 			path = ..;
-			sourceTree = "<group>";
-		};
-		9F2D317C15B826EF00FAE848 /* About.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9F2D317D15B826EF00FAE848 /* English */,
-			);
-			name = About.xib;
 			sourceTree = "<group>";
 		};
 		9F2D317E15B826EF00FAE848 /* DOSWindow.xib */ = {
@@ -4408,6 +4412,23 @@
 				9FDE34391351E127000DCE44 /* English */,
 			);
 			name = ImportTipsPanel.xib;
+			sourceTree = "<group>";
+		};
+		9FDFB47015DBA3BE004EA615 /* StandaloneAbout.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FDFB47115DBA3BE004EA615 /* English */,
+			);
+			name = StandaloneAbout.xib;
+			path = ../../Resources;
+			sourceTree = "<group>";
+		};
+		9FDFB47C15DBBABC004EA615 /* Credits.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FDFB47D15DBBABC004EA615 /* English */,
+			);
+			name = Credits.html;
 			sourceTree = "<group>";
 		};
 		9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */ = {

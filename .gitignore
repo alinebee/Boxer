@@ -15,5 +15,6 @@ xcuserdata
 project.xcworkspace
 
 #Ignore standalone assets that are meant to be provided downstream
-Standalone/Resources/StandaloneLogo.*
-Standalone/Resources/StandaloneLogo@2x.*
+Standalone/Resources/StandaloneLogo.png
+Standalone/Resources/StandaloneLogo@2x.png
+Standalone/Resources/English.lproj/Credits.html

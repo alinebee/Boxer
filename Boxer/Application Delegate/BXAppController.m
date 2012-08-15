@@ -530,6 +530,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	[[BXAboutController controller] showWindow: sender];
 }
+
 - (IBAction) orderFrontPreferencesPanel: (id)sender
 {
 	[[BXPreferencesController controller] showWindow: sender];

@@ -9,6 +9,7 @@
 #import "BXStandaloneAppController.h"
 #import "BXSession.h"
 #import "BXEmulator.h"
+#import "BXStandaloneAboutController.h"
 
 #pragma mark -
 #pragma mark App-menu replacement constants
@@ -209,6 +210,11 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
 
 #pragma mark -
 #pragma mark UI actions
+
+- (IBAction) orderFrontAboutPanel: (id)sender
+{
+	[[BXStandaloneAboutController controller] showWindow: sender];
+}
 
 - (IBAction) visitOrganizationWebsite: (id)sender
 {

@@ -11,3 +11,15 @@
 @interface BXDOSWindowBackgroundView : NSView
 
 @end
+
+
+@interface BXDOSWindowBackgroundView (PrivateMethods)
+
+//Separate functions for drawing each component of the view, called during drawRect:.
+//These should not be called directly: they are intended for overriding by subclasses.
+- (void) _drawBackgroundInRect: (NSRect)dirtyRect;
+- (void) _drawGrillesInRect: (NSRect)dirtyRect;
+- (void) _drawLightingInRect: (NSRect)dirtyRect;
+- (void) _drawBrandInRect: (NSRect)dirtyRect;
+
+@end

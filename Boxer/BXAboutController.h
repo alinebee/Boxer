@@ -12,9 +12,9 @@
 
 @interface BXAboutController : NSWindowController
 {
-	IBOutlet NSTextField *version;
+	NSTextField *_version;
 }
-@property (retain, nonatomic) NSTextField *version;
+@property (retain, nonatomic) IBOutlet NSTextField *version;
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. BXAboutController should always be accessed from this singleton.
@@ -22,6 +22,7 @@
 
 //Display the credits and acknowledgements help page
 - (IBAction) showAcknowledgements: (id)sender;
+
 @end
 
 

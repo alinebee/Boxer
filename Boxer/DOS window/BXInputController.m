@@ -388,7 +388,7 @@
 
 - (void) didResignKey
 {
-    self.mouseLocked = NO;
+    [self setMouseLocked: NO force: YES];
     
     [self.emulatedKeyboard clearInput];
 	[self.emulatedMouse clearInput];

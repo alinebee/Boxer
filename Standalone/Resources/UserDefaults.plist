@@ -6,26 +6,18 @@
 	<true/>
 	<key>aspectCorrected</key>
 	<true/>
-	<key>showFirstRunPanel</key>
-	<false/>
 	<key>useVSync</key>
 	<true/>
 	<key>useCVDisplayLink</key>
 	<true/>
 	<key>renderingStyle</key>
 	<integer>0</integer>
-	<key>initialInspectorPanelIndex</key>
-	<integer>1</integer>
-	<key>startupAction</key>
-	<integer>1</integer>
 	<key>statusBarShown</key>
 	<true/>
 	<key>temporaryDriveLetter</key>
 	<string>X</string>
 	<key>toolkitDriveLetter</key>
 	<string>Y</string>
-	<key>useBinCueErrorCorrection</key>
-	<false/>
 	<key>showMT32LCDMessages</key>
 	<true/>
 	<key>showFullscreenToggleMessage</key>

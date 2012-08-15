@@ -110,6 +110,7 @@
     //not safe to attach observations to it directly.
     [self addObserver: self forKeyPath: @"document.currentPath" options: 0 context: nil];
     [self addObserver: self forKeyPath: @"document.paused" options: 0 context: nil];
+    [self addObserver: self forKeyPath: @"document.autoPaused" options: 0 context: nil];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [self bind: @"aspectCorrected"
@@ -127,6 +128,7 @@
 {
     [self removeObserver: self forKeyPath: @"document.currentPath"];
     [self removeObserver: self forKeyPath: @"document.paused"];
+    [self removeObserver: self forKeyPath: @"document.autoPaused"];
     
     [self unbind: @"aspectCorrected"];
     [self.renderingView unbind: @"renderingStyle"];
@@ -194,7 +196,8 @@
                         context: (void *)context
 {
     if ([keyPath isEqualToString: @"document.currentPath"] || 
-        [keyPath isEqualToString: @"document.paused"])
+        [keyPath isEqualToString: @"document.paused"] ||
+        [keyPath isEqualToString: @"document.autoPaused"])
     {
         [self synchronizeWindowTitleWithDocumentName];
     }
@@ -253,7 +256,7 @@
 	}
 	
 	//If emulation is paused (but not simply interrupted by UI events) then indicate this in the title
-	if (self.document.isPaused)
+	if (self.currentPanel == BXDOSWindowDOSView && (self.document.isPaused || self.document.isAutoPaused))
 	{
 		NSString *pausedFormat = NSLocalizedString(@"%@ (Paused)",
 												   @"Window title format when session is paused. %@ is the regular title of the window.");

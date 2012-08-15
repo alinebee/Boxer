@@ -131,9 +131,6 @@
 #pragma mark -
 #pragma mark Misc UI actions
 
-//Display Boxer's About panel.
-- (IBAction) orderFrontAboutPanel: (id)sender;
-
 //Reveal the sender's represented object in a new Finder window.
 - (IBAction) revealInFinder: (id)sender;
 

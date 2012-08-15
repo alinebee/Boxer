@@ -43,6 +43,9 @@ enum {
 #pragma mark -
 #pragma mark UI actions
 
+//Display Boxer's About panel.
+- (IBAction) orderFrontAboutPanel: (id)sender;
+
 - (IBAction) orderFrontWelcomePanel: (id)sender;		//Display the welcome panel.
 - (IBAction) orderFrontWelcomePanelWithTransition: (id)sender;
 - (IBAction) orderFrontFirstRunPanel: (id)sender;		//Display the first-run panel.

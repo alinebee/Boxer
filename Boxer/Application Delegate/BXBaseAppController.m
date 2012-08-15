@@ -14,7 +14,6 @@
 
 #import "BXMIDIDeviceMonitor.h"
 #import "BXKeyboardEventTap.h"
-#import "BXAboutController.h"
 #import "BXBezelController.h"
 
 #import "BXDOSWindowController.h"
@@ -242,7 +241,7 @@
     //On SL, we need to manage the fullscreen application state ourselves.
     if (isRunningOnSnowLeopard())
     {
-        if (currentController.window.isFullScreen)
+        if ([NSApp isActive] && currentController.window.isFullScreen)
         {
             if (currentController.inputController.mouseLocked)
             {
@@ -266,7 +265,7 @@
     }
     
     //Disable process-switching while the mouse is locked, and enable it again when unlocked.
-    if (suppressProcessSwitching && currentController.inputController.mouseLocked)
+    if (suppressProcessSwitching && [NSApp isActive] && currentController.inputController.mouseLocked)
     {
         newOptions |= NSApplicationPresentationDisableProcessSwitching;
         
@@ -278,7 +277,7 @@
     {
         newOptions &= ~NSApplicationPresentationDisableProcessSwitching;
         
-        //We want to unset any auto-hiding we did upstream, but only if we're not in fullscreen and don't have the menu-bar hidden (as these options insist on the dock remaining auto-hidden.
+        //We want to unset any auto-hiding we did upstream, but only if we're not in fullscreen and don't have the menu-bar hidden (as these options insist on the dock remaining auto-hidden.)
         if (!(currentOptions & NSApplicationPresentationAutoHideMenuBar) && !(currentOptions & NSApplicationPresentationFullScreen))
             newOptions &= NSApplicationPresentationAutoHideDock;
     }
@@ -336,6 +335,16 @@
 	[self syncApplicationPresentationMode];
 }
 
+- (void) applicationDidResignActive: (NSNotification *)notification
+{
+    [self syncApplicationPresentationMode];
+}
+
+- (void) applicationDidBecomeActive: (NSNotification *)notification
+{
+    [self syncApplicationPresentationMode];
+}
+
 
 #pragma mark -
 #pragma mark Document management
@@ -373,11 +382,6 @@
 
 #pragma mark -
 #pragma mark Misc UI actions
-
-- (IBAction) orderFrontAboutPanel: (id)sender
-{
-	[[BXAboutController controller] showWindow: sender];
-}
 
 - (void) showHelpAnchor: (NSString *)anchor
 {

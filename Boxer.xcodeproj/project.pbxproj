@@ -68,7 +68,6 @@
 		9F2C28B8129D924E00B172C8 /* FirstRunWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */; };
 		9F2C458715DB7E77009F4477 /* BXGLHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C458615DB7E77009F4477 /* BXGLHelpers.m */; };
 		9F2D2F9915B8233800FAE848 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
-		9F2D2F9A15B8233800FAE848 /* BXAboutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC351D0F56C7B7001811F2 /* BXAboutController.m */; };
 		9F2D2F9C15B8233800FAE848 /* BXSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35210F56C7B7001811F2 /* BXSession.m */; };
 		9F2D2F9D15B8233800FAE848 /* BXEmulator+BXShell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */; };
 		9F2D2F9E15B8233800FAE848 /* BXDOSWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35240F56C7B7001811F2 /* BXDOSWindow.m */; };
@@ -337,7 +336,6 @@
 		9F2D30D115B8233800FAE848 /* BXSupersamplingRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4FC1141592508100319428 /* BXSupersamplingRenderer.m */; };
 		9F2D30D215B8233800FAE848 /* BXShaderRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4FC117159253DA00319428 /* BXShaderRenderer.m */; };
 		9F2D30D315B8233800FAE848 /* NSKeyedArchiver+BXArchivingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5F12C515ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.m */; };
-		9F2D30D515B8233800FAE848 /* AboutBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D10F56C370001811F2 /* AboutBackground.png */; };
 		9F2D30D615B8233800FAE848 /* LockClosing.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DD0F56C383001811F2 /* LockClosing.aiff */; };
 		9F2D30D715B8233800FAE848 /* LockOpening.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DE0F56C383001811F2 /* LockOpening.aiff */; };
 		9F2D30D815B8233800FAE848 /* DOSBox.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC34480F56C5D1001811F2 /* DOSBox.strings */; };
@@ -366,7 +364,6 @@
 		9F2D313D15B8233800FAE848 /* Volume0PercentTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F27BD1714FAA4F5008EB0A1 /* Volume0PercentTemplate.pdf */; };
 		9F2D313E15B8233800FAE848 /* ScreenshotTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F839FB4150B81EF00337DD6 /* ScreenshotTemplate.pdf */; };
 		9F2D313F15B8233800FAE848 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = 9F84C86D157800DD00CCBCA7 /* Shaders */; };
-		9F2D314515B8233800FAE848 /* AboutBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FCA157A159721A300C42D10 /* AboutBackground@2x.png */; };
 		9F2D314F15B8233800FAE848 /* libJoypadCocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC6380913C09C5B004478A3 /* libJoypadCocoa.a */; };
 		9F2D315015B8233800FAE848 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC637FC13C09B10004478A3 /* CoreServices.framework */; };
 		9F2D315115B8233800FAE848 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -3509,7 +3506,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F2D30D515B8233800FAE848 /* AboutBackground.png in Resources */,
 				9F2D30D615B8233800FAE848 /* LockClosing.aiff in Resources */,
 				9F2D30D715B8233800FAE848 /* LockOpening.aiff in Resources */,
 				9F2D30D815B8233800FAE848 /* DOSBox.strings in Resources */,
@@ -3538,7 +3534,6 @@
 				9F2D313D15B8233800FAE848 /* Volume0PercentTemplate.pdf in Resources */,
 				9F2D313E15B8233800FAE848 /* ScreenshotTemplate.pdf in Resources */,
 				9F2D313F15B8233800FAE848 /* Shaders in Resources */,
-				9F2D314515B8233800FAE848 /* AboutBackground@2x.png in Resources */,
 				9F2D318915B826F600FAE848 /* DOSWindow.xib in Resources */,
 				9F2D318B15B826FE00FAE848 /* MainMenu.xib in Resources */,
 				9FCB7B2715B877E500CC7CC7 /* DOS Toolkit in Resources */,
@@ -3926,7 +3921,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F2D2F9915B8233800FAE848 /* main.m in Sources */,
-				9F2D2F9A15B8233800FAE848 /* BXAboutController.m in Sources */,
 				9F2D2F9C15B8233800FAE848 /* BXSession.m in Sources */,
 				9F2D2F9D15B8233800FAE848 /* BXEmulator+BXShell.mm in Sources */,
 				9F2D2F9E15B8233800FAE848 /* BXDOSWindow.m in Sources */,

@@ -543,9 +543,23 @@
             //Disable autoresizing so we don't screw up the subviews while we're arranging things.
             wrapperView.autoresizesSubviews = NO;
             
-            wrapperView.frame = NSMakeRect(originalFrame.origin.x, originalFrame.origin.y,
-                                           originalFrame.size.width * 2, originalFrame.size.height);
+            //Work out the initial and destination frames for an expanded wrapper view.
+            NSPoint launcherShown = originalFrame.origin;
+            NSPoint DOSViewShown = NSMakePoint(originalFrame.origin.x - originalFrame.size.width,
+                                               originalFrame.origin.y);
             
+            NSPoint startingPoint   = (newPanel == BXDOSWindowLaunchPanel) ? DOSViewShown : launcherShown;
+            NSPoint destination     = (newPanel == BXDOSWindowLaunchPanel) ? launcherShown : DOSViewShown;
+            
+            NSRect startingFrame = NSMakeRect(startingPoint.x, startingPoint.y,
+                                              originalFrame.size.width * 2, originalFrame.size.height);
+            
+            NSRect endingFrame = NSMakeRect(destination.x, destination.y,
+                                            originalFrame.size.width * 2, originalFrame.size.height);
+            
+            wrapperView.frame = startingFrame;
+            
+            //Position the panels within the expanded wrapper view ready for animation.
             self.launchPanel.frame = originalBounds;
             self.inputView.frame = NSMakeRect(originalBounds.origin.x + originalBounds.size.width,
                                               originalBounds.origin.y,
@@ -555,18 +569,11 @@
             self.launchPanel.hidden = NO;
             self.inputView.hidden = NO;
             
-            //Now, decide where we'll start and where we'll end up.
-            NSPoint launcherShown = originalFrame.origin;
-            NSPoint DOSViewShown = NSMakePoint(originalFrame.origin.x - originalFrame.size.width,
-                                               originalFrame.origin.y);
+            [self.window enableFlushWindow];
+            [wrapperView display];
             
-            NSPoint startingPoint   = (newPanel == BXDOSWindowLaunchPanel) ? DOSViewShown : launcherShown;
-            NSPoint destination     = (newPanel == BXDOSWindowLaunchPanel) ? launcherShown : DOSViewShown;
-            
-            NSRect startingFrame = wrapperView.frame, endingFrame = wrapperView.frame;
-            startingFrame.origin = startingPoint;
-            endingFrame.origin = destination;
-            
+    
+            //Finally, perform the slide animation itself
             NSDictionary *slide = [NSDictionary dictionaryWithObjectsAndKeys:
                                    wrapperView, NSViewAnimationTargetKey,
                                    [NSValue valueWithRect: startingFrame], NSViewAnimationStartFrameKey,
@@ -579,21 +586,21 @@
             animation.animationBlockingMode = NSAnimationBlocking;
             animation.animationCurve = NSAnimationEaseInOut;
             
-            [self.window enableFlushWindow];
-            
-            [wrapperView display];
-            
             [animation startAnimation];
             
             [animation release];
             
-            //Once we're done, restore the views to what they were.
+            
+            //Once we're done sliding, restore the frames to what they were.
+            [self.window disableFlushWindow];
+            
             self.launchPanel.frame = originalBounds;
             self.inputView.frame = originalBounds;
             
             wrapperView.frame = originalFrame;
-                
             wrapperView.autoresizesSubviews = YES;
+            
+            [self.window enableFlushWindow];
         }
         //For all other transitions, crossfade the current panel and the new panel.
         else

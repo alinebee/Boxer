@@ -29,7 +29,7 @@
 {
     [super windowDidLoad];
     
-    NSURL *creditsResourceURL = [[NSBundle mainBundle] URLForResource: @"AboutCredits" withExtension: @"html"];
+    NSURL *creditsResourceURL = [[NSBundle mainBundle] URLForResource: @"Credits" withExtension: @"html"];
     self.creditsView.mainFrameURL = creditsResourceURL.absoluteString;
     self.creditsView.drawsBackground = NO;
     self.creditsView.shouldUpdateWhileOffscreen = NO;

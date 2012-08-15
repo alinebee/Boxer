@@ -7,9 +7,9 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleHelpBookFolder</key>
-	<string>Help</string>
+	<string>Help.help</string>
 	<key>CFBundleHelpBookName</key>
-	<string>${PRODUCT_NAME} Help</string>
+	<string>net.washboardabs.boxer-standalone.help</string>
 	<key>CFBundleIconFile</key>
 	<string>app.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -31,7 +31,7 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>© 2011 Alun Bestor. Released under the GNU Public License 2.0.</string>
+	<string>© 2012 ${COMPANY_NAME}, all rights reserved.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -39,21 +39,21 @@
 	<key>BXBundledGameboxName</key>
 	<string>Game</string>
 	<key>BXOrganizationName</key>
-	<string>Your Name Here</string>
+	<string>${COMPANY_NAME}</string>
 	<key>BXOrganizationWebsiteURL</key>
 	<string>http://your.website.here.com/</string>
-    <key>BXHelpLinks</key>
-    <array>
-        <dict>
-            <key>BXHelpLinkTitle</key>
-            <string>Boxer Website</string>
-            <key>BXHelpLinkURL</key>
-            <string>http://boxerapp.com/</string>
-        </dict>
-    </array>
-    <key>CFBundleDocumentTypes</key>
+	<key>BXHelpLinks</key>
 	<array>
-        <dict>
+		<dict>
+			<key>BXHelpLinkTitle</key>
+			<string>Boxer Website</string>
+			<key>BXHelpLinkURL</key>
+			<string>http://boxerapp.com/</string>
+		</dict>
+	</array>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
 			<key>CFBundleTypeIconFile</key>
 			<string>package.icns</string>
 			<key>CFBundleTypeName</key>
@@ -83,7 +83,7 @@
 			<key>LSTypeIsPackage</key>
 			<true/>
 		</dict>
-    </array>
+	</array>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>

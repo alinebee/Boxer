@@ -796,6 +796,7 @@
 		9FDFB47B15DBB530004EA615 /* StandaloneAbout.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDFB47015DBA3BE004EA615 /* StandaloneAbout.xib */; };
 		9FDFB47F15DBBABC004EA615 /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 9FDFB47C15DBBABC004EA615 /* Credits.html */; };
 		9FDFB48015DBC32D004EA615 /* BXGLHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C458615DB7E77009F4477 /* BXGLHelpers.m */; };
+		9FDFB48215DBC73D004EA615 /* Help.help in Resources */ = {isa = PBXBuildFile; fileRef = 9FDFB48115DBC73D004EA615 /* Help.help */; };
 		9FE1B61313FFBE430001640C /* NSImage+BXImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE1B61213FFBE430001640C /* NSImage+BXImageEffects.m */; };
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9FE2172E121EED1E001452E3 /* ImportCoverArtTip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */; };
@@ -1656,6 +1657,7 @@
 		9FDFB46D15DBA38E004EA615 /* BXStandaloneAboutController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXStandaloneAboutController.m; sourceTree = "<group>"; };
 		9FDFB47115DBA3BE004EA615 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Standalone/Resources/English.lproj/StandaloneAbout.xib; sourceTree = SOURCE_ROOT; };
 		9FDFB47D15DBBABC004EA615 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = English; path = English.lproj/Credits.html; sourceTree = "<group>"; };
+		9FDFB48115DBC73D004EA615 /* Help.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Help.help; sourceTree = "<group>"; };
 		9FE1B61113FFBE430001640C /* NSImage+BXImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+BXImageEffects.h"; sourceTree = "<group>"; };
 		9FE1B61213FFBE430001640C /* NSImage+BXImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSImage+BXImageEffects.m"; sourceTree = "<group>"; };
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
@@ -2198,6 +2200,7 @@
 		9F2D317A15B8240400FAE848 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9FDFB48115DBC73D004EA615 /* Help.help */,
 				9FDFB47C15DBBABC004EA615 /* Credits.html */,
 				9F57685815DA3DDE00B50500 /* Images */,
 				9F1E959B15BD899500C3C6A0 /* GameDefaults.plist */,
@@ -3551,6 +3554,7 @@
 				9F57685C15DA3DFC00B50500 /* StandaloneLogo@2x.png in Resources */,
 				9FDFB47215DBA3BE004EA615 /* StandaloneAbout.xib in Resources */,
 				9FDFB47F15DBBABC004EA615 /* Credits.html in Resources */,
+				9FDFB48215DBC73D004EA615 /* Help.help in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

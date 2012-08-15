@@ -251,7 +251,7 @@ GLfloat viewportVerticesFlipped[8] = {
                                              inGLContext: _context
                                                    error: &textureError];
         
-        NSAssert1(self.frameTexture != nil, @"Fuck, texture creation failed: %@", textureError);
+        NSAssert1(self.frameTexture != nil, @"Texture creation failed: %@", textureError);
         
         [self.frameTexture setMinFilter: GL_LINEAR
                               magFilter: GL_NEAREST

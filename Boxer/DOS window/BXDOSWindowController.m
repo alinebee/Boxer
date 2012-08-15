@@ -524,6 +524,8 @@
     
     if (animate)
     {
+        BOOL involvesRenderingView = ([self.renderingView isDescendantOf: viewForNewPanel] || [self.renderingView isDescendantOf: viewForOldPanel]);
+        
         [[NSNotificationCenter defaultCenter] postNotificationName: BXWillBeginInterruptionNotification object: self];
         
         //Slide horizontally between the launcher panel and the DOS view.
@@ -582,11 +584,18 @@
             
             NSViewAnimation *animation = [[NSViewAnimation alloc] init];
             animation.viewAnimations = [NSArray arrayWithObject: slide];
-            animation.duration = 0.75f;
+            animation.duration = 0.5f;
             animation.animationBlockingMode = NSAnimationBlocking;
             animation.animationCurve = NSAnimationEaseInOut;
             
+            //For the sake of speed, force our rendering view to render a snapshot of itself instead of the actual GL view.
+            if (involvesRenderingView)
+                [self.renderingView viewAnimationWillStart: animation];
+            
             [animation startAnimation];
+            
+            if (involvesRenderingView)
+                [self.renderingView viewAnimationDidEnd: animation];
             
             [animation release];
             
@@ -634,13 +643,13 @@
             animation.animationBlockingMode = NSAnimationBlocking;
             animation.animationCurve = NSAnimationEaseIn;
             
-            if (newPanel == BXDOSWindowDOSView || self.currentPanel == BXDOSWindowDOSView)
-                [self.renderingView fadeWillStart];
+            if (involvesRenderingView)
+                [self.renderingView viewAnimationWillStart: animation];
             
             [animation startAnimation];
             
-            if (newPanel == BXDOSWindowDOSView || self.currentPanel == BXDOSWindowDOSView)
-                [self.renderingView fadeDidEnd];
+            if (involvesRenderingView)
+                [self.renderingView viewAnimationDidEnd: animation];
             
             [animation release];
         }

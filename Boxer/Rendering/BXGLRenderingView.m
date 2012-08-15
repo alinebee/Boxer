@@ -16,6 +16,7 @@
 #import "BXBSNESShader.h"
 #import "BXPostLeopardAPIs.h"
 #import "NSView+BXDrawing.h"
+#import "BXGLHelpers.h"
 
 #import <OpenGL/CGLMacro.h>
 
@@ -368,27 +369,41 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (void) viewAnimationWillStart: (NSViewAnimation *)animation
 {
+    //Disable CV link display while the animation is going on
     self.needsCVLinkDisplay = NO;
-    _snapshot = [[self imageWithContentsOfRect: self.bounds] retain];
+    
+    //If the animation involves fading the opacity of one of our parent views,
+    //we'll need to change our rendering method to compensate.
+    BOOL involvesFade = NO;
+    for (NSDictionary *animDefinition in animation.viewAnimations)
+    {
+        NSView *targetView = [animDefinition objectForKey: NSViewAnimationTargetKey];
+        if ([self isDescendantOf: targetView])
+        {
+            NSString *animType = [animDefinition objectForKey: NSViewAnimationEffectKey];
+            if ([animType isEqualToString: NSViewAnimationFadeInEffect] ||
+                [animType isEqualToString: NSViewAnimationFadeOutEffect])
+            {
+                involvesFade = YES;
+                break;
+            }
+        }
+    }
+    
+    if (involvesFade)
+    {
+        _suppressRendering = YES;
+    }
 }
 
 - (void) viewAnimationDidEnd: (NSViewAnimation *)animation
 {
-    [_snapshot release], _snapshot = nil;
+    _suppressRendering = NO;
 }
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-    if (_snapshot)
-    {
-        [_snapshot drawInRect: self.bounds
-                     fromRect: NSZeroRect
-                    operation: NSCompositeSourceOver
-                     fraction: 1.0
-               respectFlipped: YES
-                        hints: nil];
-    }
-    else if (![self.renderer canRender])
+    if (_suppressRendering || ![self.renderer canRender])
     {
         [[NSColor blackColor] set];
         NSRectFill(dirtyRect);
@@ -474,8 +489,6 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 - (void) cacheDisplayInRect: (NSRect)theRect 
            toBitmapImageRep: (NSBitmapImageRep *)rep
 {
-	GLenum channelOrder, byteType;
-    
     //Account for high-resolution displays when filling the bitmap context.
     if ([self respondsToSelector: @selector(convertRectToBacking:)])
         theRect = [self convertRectToBacking: theRect];
@@ -483,14 +496,52 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	//Ensure the rectangle isn't fractional
 	theRect = NSIntegralRect(theRect);
     
-	//Now, do the OpenGL calls to rip off the image data
+    //If we don't have a renderer yet, we won't be able to provide any image data.
+    //This will be the case if the view has never been rendered (e.g. it's offscreen.)
+    //In this case, just fill the rep with black.
+    if (!self.renderer)
+    {
+        NSUInteger numBytes = rep.bytesPerPlane * rep.numberOfPlanes;
+        bzero(rep.bitmapData, numBytes);
+        return;
+    }
+    
+	//Now, do the OpenGL calls to rip out the image data
     CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
     
     CGLLockContext(cgl_ctx);
-        //Grab what's in the front buffer
-        //TODO: if the view is hidden/hasn't been rendered yet then this could be empty.
-        //We should catch this case and render to an offscreen context instead.
-        glReadBuffer(GL_FRONT);
+        GLenum channelOrder, byteType;
+        GLuint framebuffer, renderbuffer;
+        
+        glGenFramebuffersEXT(1, &framebuffer);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebuffer);
+    
+        glGenRenderbuffersEXT(1, &renderbuffer);
+        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, renderbuffer);
+    
+        glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8, theRect.size.width, theRect.size.height);
+        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
+                                     GL_COLOR_ATTACHMENT0_EXT,
+                                     GL_RENDERBUFFER_EXT,
+                                     renderbuffer);
+    
+        GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+        if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
+        {
+            NSAssert1(status == GL_FRAMEBUFFER_COMPLETE_EXT,
+                      @"Framebuffer creation failed: %@",
+                      errorForGLFramebufferExtensionStatus(status));
+        }
+    
+        glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR);
+        [self.renderer render];
+        
+        //Restore previous framebuffer
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+     
+        //Read the pixels out of the renderbuffer
+        glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
     
         //Back up current settings
         glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
@@ -501,7 +552,11 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         glPixelStorei(GL_PACK_SKIP_PIXELS,	0);
         
         //Reverse the retrieved byte order depending on the endianness of the processor.
-        byteType		= (NSHostByteOrder() == NS_LittleEndian) ? GL_UNSIGNED_INT_8_8_8_8_REV : GL_UNSIGNED_INT_8_8_8_8;
+#ifdef BIG_ENDIAN
+        byteType = GL_UNSIGNED_INT_8_8_8_8_REV;
+#else
+        byteType = GL_UNSIGNED_INT_8_8_8_8;
+#endif
         channelOrder	= GL_RGBA;
         
         //Pour the data into the NSBitmapImageRep
@@ -518,6 +573,10 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         
         //Restore the old settings
         glPopClientAttrib();
+    
+        //Delete the renderbuffer and framebuffer
+        glDeleteRenderbuffersEXT(1, &renderbuffer);
+        glDeleteFramebuffersEXT(1, &framebuffer);
     CGLUnlockContext(cgl_ctx);
     
 	//Finally, flip the captured image since GL reads it in the reverse order from what we need

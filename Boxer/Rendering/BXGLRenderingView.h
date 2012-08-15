@@ -27,7 +27,7 @@
     
     BOOL _needsRendererUpdate;
     
-    NSImage *_snapshot;
+    BOOL _suppressRendering;
 }
 @property (retain, nonatomic) BXBasicRenderer *renderer;
 @property (assign, nonatomic) BOOL managesAspectRatio;

@@ -98,7 +98,6 @@
 											<string key="NSFrame">{{95, 4}, {27, 17}}</string>
 											<reference key="NSSuperview" ref="208389043"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView"/>
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<bool key="NSEnabled">YES</bool>
 											<object class="NSButtonCell" key="NSCell" id="214898833">
@@ -232,7 +231,7 @@
 													<bool key="NSEnabled">YES</bool>
 													<object class="NSButtonCell" key="NSCell" id="106427879">
 														<int key="NSCellFlags">67108864</int>
-														<int key="NSCellFlags2">134217728</int>
+														<int key="NSCellFlags2">167804928</int>
 														<string key="NSContents"/>
 														<object class="NSFont" key="NSSupport" id="697431282">
 															<string key="NSName">LucidaGrande</string>
@@ -268,7 +267,7 @@
 																	<string key="NSFrameSize">{480, 296}</string>
 																	<reference key="NSSuperview" ref="299863135"/>
 																	<reference key="NSWindow"/>
-																	<reference key="NSNextKeyView" ref="71412926"/>
+																	<reference key="NSNextKeyView" ref="707454198"/>
 																	<string key="NSReuseIdentifierKey">_NS:80</string>
 																	<string key="NSMinGridSize">{0, 0}</string>
 																	<string key="NSMaxGridSize">{0, 0}</string>
@@ -328,7 +327,7 @@
 													<string key="NSFrame">{{80, 52}, {480, 296}}</string>
 													<reference key="NSSuperview" ref="223608717"/>
 													<reference key="NSWindow"/>
-													<reference key="NSNextKeyView" ref="707454198"/>
+													<reference key="NSNextKeyView" ref="299863135"/>
 													<string key="NSReuseIdentifierKey">_NS:76</string>
 													<int key="NSsFlags">133648</int>
 													<reference key="NSVScroller" ref="71412926"/>
@@ -361,7 +360,7 @@
 													<bool key="NSEnabled">YES</bool>
 													<object class="NSButtonCell" key="NSCell" id="597566440">
 														<int key="NSCellFlags">67108864</int>
-														<int key="NSCellFlags2">134217728</int>
+														<int key="NSCellFlags2">167804928</int>
 														<string key="NSContents"/>
 														<reference key="NSSupport" ref="697431282"/>
 														<string key="NSCellIdentifier">_NS:9</string>
@@ -1148,7 +1147,6 @@
 						<string key="maximizeVolume:">id</string>
 						<string key="minimizeVolume:">id</string>
 						<string key="openInDefaultApplication:">id</string>
-						<string key="orderFrontAboutPanel:">id</string>
 						<string key="revealInFinder:">id</string>
 						<string key="toggleMuted:">id</string>
 					</dictionary>
@@ -1171,10 +1169,6 @@
 						</object>
 						<object class="IBActionInfo" key="openInDefaultApplication:">
 							<string key="name">openInDefaultApplication:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontAboutPanel:">
-							<string key="name">orderFrontAboutPanel:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="revealInFinder:">

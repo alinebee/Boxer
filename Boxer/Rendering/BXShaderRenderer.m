@@ -325,8 +325,6 @@
             //We'll be using the output texture from this texture as the input texture
             //for the next shader in the list.
             inputSize = outputSize;
-            
-            NSLog(@"Size needed for shader %i: %@", i, NSStringFromCGSize(outputSize));
         }
         
         //At this stage, we now know:
@@ -343,49 +341,64 @@
         //fits within our maximum texture size.
         //TODO: finesse this so that it will try to choose a suitable size based on the
         //shader context.
+        /*
         largestOutputSize.width     = MIN(largestOutputSize.width, _maxBufferTextureSize.width);
         largestOutputSize.height    = MIN(largestOutputSize.height, _maxBufferTextureSize.height);
+        */
         
-        //Recreate the main buffer texture, if we don't have one yet or if our old one
-        //cannot accomodate the output size.
-        if (_shouldUseSupersampling || numShadersNeedingBuffers > 0)
+        //TEMPORARY FIX: if the required size is beyond our maximum texture dimensions,
+        //disable the shaders altogether.
+        if (largestOutputSize.width > _maxBufferTextureSize.width ||
+            largestOutputSize.height > _maxBufferTextureSize.height)
         {
-            if (![self.supersamplingBufferTexture canAccomodateContentSize: largestOutputSize])
+            _shouldUseShaders = NO;
+            _shouldUseSupersampling = NO;
+        }
+        else
+        {
+            _shouldUseShaders = YES;
+        
+            //Recreate the main buffer texture, if we don't have one yet or if our old one
+            //cannot accomodate the output size.
+            if (_shouldUseSupersampling || numShadersNeedingBuffers > 0)
             {
-                if (_currentBufferTexture == self.supersamplingBufferTexture.texture)
+                if (![self.supersamplingBufferTexture canAccomodateContentSize: largestOutputSize])
+                {
+                    if (_currentBufferTexture == self.supersamplingBufferTexture.texture)
+                        _currentBufferTexture = 0;
+                    
+                    //Clear our old buffer texture straight away when replacing it
+                    [self.supersamplingBufferTexture deleteTexture];
+                    
+                    //(Re)create the buffer texture in the new dimensions
+                    self.supersamplingBufferTexture = [BXTexture2D textureWithType: self.bufferTextureType
+                                                                       contentSize: largestOutputSize
+                                                                             bytes: NULL
+                                                                       inGLContext: _context
+                                                                             error: NULL];
+                }
+            }
+            
+            //(Re)create a second auxiliary buffer if we'll need to swap back and forth
+            //to handle multiple shaders.
+            if (numShadersNeedingBuffers > 1)
+            {
+                if (![self.auxiliaryBufferTexture canAccomodateContentSize: largestOutputSize])
+                {   
+                    if (_currentBufferTexture == self.auxiliaryBufferTexture.texture)
                     _currentBufferTexture = 0;
-                
-                //Clear our old buffer texture straight away when replacing it
-                [self.supersamplingBufferTexture deleteTexture];
-                
-                //(Re)create the buffer texture in the new dimensions
-                self.supersamplingBufferTexture = [BXTexture2D textureWithType: self.bufferTextureType
+                    
+                    
+                    //Clear our old buffer texture straight away when replacing it
+                    [self.auxiliaryBufferTexture deleteTexture];
+                    
+                    //(Re)create the buffer texture in the new dimensions
+                    self.auxiliaryBufferTexture = [BXTexture2D textureWithType: self.bufferTextureType
                                                                    contentSize: largestOutputSize
                                                                          bytes: NULL
                                                                    inGLContext: _context
                                                                          error: NULL];
-            }
-        }
-        
-        //(Re)create a second auxiliary buffer if we'll need to swap back and forth
-        //to handle multiple shaders.
-        if (numShadersNeedingBuffers > 1)
-        {
-            if (![self.auxiliaryBufferTexture canAccomodateContentSize: largestOutputSize])
-            {   
-                if (_currentBufferTexture == self.auxiliaryBufferTexture.texture)
-                _currentBufferTexture = 0;
-                
-                
-                //Clear our old buffer texture straight away when replacing it
-                [self.auxiliaryBufferTexture deleteTexture];
-                
-                //(Re)create the buffer texture in the new dimensions
-                self.auxiliaryBufferTexture = [BXTexture2D textureWithType: self.bufferTextureType
-                                                               contentSize: largestOutputSize
-                                                                     bytes: NULL
-                                                               inGLContext: _context
-                                                                     error: NULL];
+                }
             }
         }
         

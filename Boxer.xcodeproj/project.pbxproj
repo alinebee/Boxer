@@ -600,6 +600,8 @@
 		9F7721E912B38C4400072AE8 /* shell_batch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217312B38C4400072AE8 /* shell_batch.cpp */; };
 		9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217412B38C4400072AE8 /* shell_cmds.cpp */; };
 		9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217512B38C4400072AE8 /* shell_misc.cpp */; };
+		9F77EE0115DCC9BF00B75835 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F77EE0015DCC9BF00B75835 /* WebKit.framework */; };
+		9F77EE0215DCC9DC00B75835 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F77EE0015DCC9BF00B75835 /* WebKit.framework */; };
 		9F7D9EFF1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */; };
 		9F7FC94C139EB38300D60320 /* RacingWheel.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7FC94B139EB38300D60320 /* RacingWheel.png */; };
 		9F839FB5150B81EF00337DD6 /* ScreenshotTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F839FB4150B81EF00337DD6 /* ScreenshotTemplate.pdf */; };
@@ -1367,6 +1369,7 @@
 		9F77217312B38C4400072AE8 /* shell_batch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell_batch.cpp; sourceTree = "<group>"; };
 		9F77217412B38C4400072AE8 /* shell_cmds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell_cmds.cpp; sourceTree = "<group>"; };
 		9F77217512B38C4400072AE8 /* shell_misc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell_misc.cpp; sourceTree = "<group>"; };
+		9F77EE0015DCC9BF00B75835 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		9F7D9EFD1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXExternalMT32+BXMT32Sysexes.h"; sourceTree = "<group>"; };
 		9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXExternalMT32+BXMT32Sysexes.m"; sourceTree = "<group>"; };
 		9F7FC94B139EB38300D60320 /* RacingWheel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RacingWheel.png; sourceTree = "<group>"; };
@@ -1741,6 +1744,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F77EE0215DCC9DC00B75835 /* WebKit.framework in Frameworks */,
 				9FC6380A13C09C5B004478A3 /* libJoypadCocoa.a in Frameworks */,
 				9FC637FD13C09B11004478A3 /* CoreServices.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
@@ -1769,6 +1773,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F77EE0115DCC9BF00B75835 /* WebKit.framework in Frameworks */,
 				9F2D314F15B8233800FAE848 /* libJoypadCocoa.a in Frameworks */,
 				9F2D315015B8233800FAE848 /* CoreServices.framework in Frameworks */,
 				9F2D315115B8233800FAE848 /* Cocoa.framework in Frameworks */,
@@ -1835,6 +1840,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9F77EE0015DCC9BF00B75835 /* WebKit.framework */,
 				9FC637FC13C09B10004478A3 /* CoreServices.framework */,
 				9F20C28D11E5D8B4005AF541 /* QTKit.framework */,
 				9F4E042B0F67E72300427D50 /* AudioToolbox.framework */,
@@ -4516,7 +4522,7 @@
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.4pre;
-				CURRENT_PROJECT_VERSION = 20120729.1;
+				CURRENT_PROJECT_VERSION = 20120816.1;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -4600,7 +4606,7 @@
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.4pre;
-				CURRENT_PROJECT_VERSION = 20120729.1;
+				CURRENT_PROJECT_VERSION = 20120816.1;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;

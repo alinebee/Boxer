@@ -1160,7 +1160,12 @@
                                                                    error: nil];
                 
                 if (createdLauncher)
-                    self.gamebox.targetPath = launchPath;
+                {
+                    //self.gamebox.targetPath = launchPath;
+                    [self.gamebox addLauncherWithTitle: self.gameboxName
+                                                  path: launchPath
+                                             arguments: nil];
+                }
             }
         }
         

@@ -157,4 +157,9 @@
 	//[self _drawBrandInRect: dirtyRect];
 }
 
+- (BOOL) isOpaque
+{
+    return YES;
+}
+
 @end

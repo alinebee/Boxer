@@ -27,6 +27,7 @@
     
     BOOL _needsRendererUpdate;
     
+    BOOL _inViewAnimation;
     BOOL _usesTransparentSurface;
 }
 @property (retain, nonatomic) BXBasicRenderer *renderer;

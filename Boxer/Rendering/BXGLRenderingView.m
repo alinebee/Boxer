@@ -30,6 +30,11 @@
 //Whether we should redraw in the next display-link cycle.
 //Set to YES upon receiving a new frame, then back to NO after rendering it.
 @property (assign) BOOL needsCVLinkDisplay;
+//Whether we're currently involved in a view animation.
+
+//This will avoid drawing with the CV link for the duration of the animation.
+@property (assign, getter=isInViewAnimation) BOOL inViewAnimation;
+
 
 //The display link callback that renders the next frame in sync with the screen refresh.
 CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
@@ -62,6 +67,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @synthesize viewportRect = _viewportRect;
 @synthesize maxViewportSize = _maxViewportSize;
 @synthesize renderingStyle = _renderingStyle;
+@synthesize inViewAnimation = _inViewAnimation;
 
 - (void) dealloc
 {
@@ -369,8 +375,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (void) viewAnimationWillStart: (NSViewAnimation *)animation
 {
-    //Disable CV link display while the animation is going on
-    self.needsCVLinkDisplay = NO;
+    self.inViewAnimation = YES;
     
     //If the animation involves fading the opacity of one of our parent views,
     //we'll need to change our rendering method to compensate.
@@ -406,6 +411,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         GLint opacity = 1;
         [self.openGLContext setValues: &opacity forParameter: NSOpenGLCPSurfaceOpacity];
     }
+    self.inViewAnimation = NO;
 }
 
 - (void) drawRect: (NSRect)dirtyRect
@@ -448,7 +454,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	
 	BXGLRenderingView *view = (BXGLRenderingView *)displayLinkContext;
     
-    if (view.needsCVLinkDisplay)
+    if (view.needsCVLinkDisplay && !view.inViewAnimation)
         [view display];
     
 	[pool drain];

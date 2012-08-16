@@ -270,7 +270,7 @@
         newOptions |= NSApplicationPresentationDisableProcessSwitching;
         
         //The disable process-switching flag requires that the dock be hidden also For Some Reason.
-        if (!(currentOptions & NSApplicationPresentationAutoHideDock) && !(currentOptions & NSApplicationPresentationHideDock))
+        if (!(newOptions & NSApplicationPresentationAutoHideDock) && !(newOptions & NSApplicationPresentationHideDock))
             newOptions |= NSApplicationPresentationAutoHideDock;
     }
     else
@@ -278,7 +278,7 @@
         newOptions &= ~NSApplicationPresentationDisableProcessSwitching;
         
         //We want to unset any auto-hiding we did upstream, but only if we're not in fullscreen and don't have the menu-bar hidden (as these options insist on the dock remaining auto-hidden.)
-        if (!(currentOptions & NSApplicationPresentationAutoHideMenuBar) && !(currentOptions & NSApplicationPresentationFullScreen))
+        if (!(newOptions & NSApplicationPresentationAutoHideMenuBar) && !(newOptions & NSApplicationPresentationFullScreen))
             newOptions &= ~NSApplicationPresentationAutoHideDock;
     }
     

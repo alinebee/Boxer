@@ -1545,9 +1545,9 @@
         if (drive.shadowPath)
             [self _startTrackingChangesAtPath: drive.shadowPath];
 		
-		//If this drive is part of the gamebox, scan it for executables
-        //to display in the program panel
-        if ([self driveIsBundled: drive])
+		//If this drive is part of the gamebox, and we're not a standalone app,
+        //scan it for executables to display in the program panel
+        if ([self driveIsBundled: drive] && ![[NSApp delegate] isStandaloneGameBundle])
 		{
 			[self executableScanForDrive: drive startImmediately: YES];
 		}

@@ -293,11 +293,17 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                     NSString *basePath = self.gamebox.resourcePath;
                     previousProgramPath = [basePath stringByAppendingPathComponent: previousProgramPath];
                 }
+            }
+            
+            //TWEAK: make sure that the previous target path is still reachable.
+            BOOL previousPathAvailable = previousProgramPath && [[NSFileManager defaultManager] fileExistsAtPath: previousProgramPath];
+            if (previousPathAvailable)
+            {
                 self.targetPath = previousProgramPath;
                 self.targetArguments = [self.gameSettings objectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
             }
-            //If the user hasn't launched any program yet, then launch the gamebox's
-            //default program (if it has one.)
+            //If the user hasn't launched any program yet, or the previous program could not be reached,
+            //then launch the gamebox's default launcher if it has one.
             else
             {
                 NSDictionary *defaultLauncher = self.gamebox.defaultLauncher;

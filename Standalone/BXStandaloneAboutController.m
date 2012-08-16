@@ -36,9 +36,9 @@
     self.creditsView.shouldCloseWithWindow = YES;
 }
 
-- (void)webView: (WebView *)webView decidePolicyForNavigationAction: (NSDictionary *)actionInformation
-        request: (NSURLRequest *)request
-          frame: (WebFrame *)frame
+- (void) webView: (WebView *)webView decidePolicyForNavigationAction: (NSDictionary *)actionInformation
+         request: (NSURLRequest *)request
+           frame: (WebFrame *)frame
 decisionListener: (id < WebPolicyDecisionListener >)listener
 {
     //Open remote URLs in the standard browser.

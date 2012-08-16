@@ -6,9 +6,7 @@
  */
 
 #import "BXPostLeopardAPIs.h"
-
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1070 //OS X 10.7
+#import <objc/runtime.h>
 
 NSString * const NSWindowDidChangeBackingPropertiesNotification = @"NSWindowDidChangeBackingPropertiesNotification";
 NSString * const NSWindowWillEnterFullScreenNotification = @"NSWindowWillEnterFullScreenNotification";
@@ -17,19 +15,43 @@ NSString * const NSWindowWillExitFullScreenNotification = @"NSWindowWillExitFull
 NSString * const NSWindowDidExitFullScreenNotification = @"NSWindowDidExitFullScreenNotification";
 
 
-@implementation NSFileManager (BXPostLeopardFileManagerAPIs)
+@implementation BXFallbackProxyCategory
+
++ (void) addInstanceMethod: (SEL)selector toClass: (Class)targetClass
+{
+    //Don't bother if the class already implements this selector.
+    if ([targetClass instancesRespondToSelector: selector])
+        return;
+    
+    NSAssert2([self instancesRespondToSelector: selector], @"Selector not implemented on %@: %@", self, NSStringFromSelector(selector));
+    
+    Method method = class_getInstanceMethod(self, selector);
+    IMP implementation = method_getImplementation(method);
+    const char *types = method_getTypeEncoding(method);
+    
+    class_addMethod(targetClass, selector, implementation, types);
+}
+
+@end
+
+@implementation NSFileManagerProxyCategory
+
++ (void) load
+{
+    //Implementation for createDirectoryAtURL:withIntermediateDirectories:attributes:error:
+    SEL selector = @selector(createDirectoryAtURL:withIntermediateDirectories:attributes:error:);
+    [self addInstanceMethod: selector toClass: [NSFileManager class]];
+}
 
 - (BOOL) createDirectoryAtURL: (NSURL *)URL
   withIntermediateDirectories: (BOOL)createIntermediates
                    attributes: (NSDictionary *)attributes
                         error: (NSError **)error
 {
-    return [self createDirectoryAtPath: URL.path
-           withIntermediateDirectories: createIntermediates
-                            attributes: attributes
-                                 error: error];
+    return [(NSFileManager *)self createDirectoryAtPath: URL.path
+                            withIntermediateDirectories: createIntermediates
+                                             attributes: attributes
+                                                  error: error];
 }
 
 @end
-
-#endif

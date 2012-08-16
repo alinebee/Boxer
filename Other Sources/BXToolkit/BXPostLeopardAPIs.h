@@ -160,6 +160,7 @@ extern NSString * const NSWindowDidChangeBackingPropertiesNotification;
 #pragma mark -
 #pragma mark 10.7-only NSFileManager APIs
 
+
 @interface NSFileManager (BXPostLeopardFileManagerAPIs)
 
 - (BOOL) createDirectoryAtURL: (NSURL *)URL
@@ -169,3 +170,19 @@ extern NSString * const NSWindowDidChangeBackingPropertiesNotification;
 @end
 
 #endif
+
+
+
+#pragma mark -
+#pragma mark Runtime voodoo for applying fallback methods to other classes in a category-like manner.
+@interface BXFallbackProxyCategory: NSObject
+
+//Copies the specified instance method from the proxy class onto the target class,
+//if the target class does not already respond to that selector.
++ (void) addInstanceMethod: (SEL)selector toClass: (Class)targetClass;
+
+@end
+
+
+@interface NSFileManagerProxyCategory: BXFallbackProxyCategory
+@end

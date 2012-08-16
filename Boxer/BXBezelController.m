@@ -363,6 +363,11 @@
 
 - (void) showMT32MissingBezel
 {
+    //Don't show the missing MT-32 bezel if we're a standalone game app,
+    //as there's nothing the user can do about it.
+    if ([[NSApp delegate] isStandaloneGameBundle])
+        return;
+    
     [self showBezel: self.MT32MissingBezel
         forDuration: BXMT32MissingBezelDuration
            priority: BXBezelPriorityLow];

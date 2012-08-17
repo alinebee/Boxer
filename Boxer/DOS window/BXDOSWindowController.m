@@ -595,7 +595,6 @@
             animation.animationBlockingMode = NSAnimationBlocking;
             animation.animationCurve = NSAnimationEaseInOut;
             
-            //For the sake of speed, force our rendering view to render a snapshot of itself instead of the actual GL view.
             if (involvesRenderingView)
                 [self.renderingView viewAnimationWillStart: animation];
             
@@ -605,7 +604,6 @@
                 [self.renderingView viewAnimationDidEnd: animation];
             
             [animation release];
-            
             
             //Once we're done sliding, restore the frames to what they were.
             [self.window disableFlushWindow];
@@ -671,6 +669,8 @@
     //Sync the mouse-locked state when switching to/away from the DOS view.
     if (newPanel == BXDOSWindowDOSView)
     {
+        [self.window makeFirstResponder: self.inputView];
+        
         //Re-lock the mouse when switching to the DOS view, if we're in fullscreen.
         if (self.window.isFullScreen)
         {
@@ -678,7 +678,6 @@
             //TODO: let the app controller handle this, the way it handles the standard fullscreen notifications.
             [[BXBezelController controller] showFullscreenBezel];
         }
-        [self.window makeFirstResponder: self.inputView];
     }
     else
     {

@@ -264,11 +264,9 @@
 	SEL itemAction	= @selector(openDocumentFromMenuItem:);	//implemented by BXAppController
 	NSSize iconSize	= NSMakeSize(16, 16);
 
-	NSFileManager *manager	= [NSFileManager defaultManager];
-	
 	NSImage *itemIcon	= [documentInfo objectForKey: @"icon"];
 	NSString *itemPath	= [documentInfo objectForKey: @"path"];
-	NSString *itemTitle	= [manager displayNameAtPath: itemPath];
+	NSString *itemTitle	= [itemPath.lastPathComponent stringByDeletingPathExtension];
 	
 	NSMenuItem *newItem = [menu	insertItemWithTitle: itemTitle
                                              action: itemAction

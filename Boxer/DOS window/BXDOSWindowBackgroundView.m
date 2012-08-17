@@ -11,6 +11,7 @@
 #import "NSView+BXDrawing.h"
 
 @implementation BXDOSWindowBackgroundView
+@synthesize snapshot = _snapshot;
 
 - (void) _drawBackgroundInRect: (NSRect)dirtyRect
 {
@@ -49,7 +50,7 @@
 	if (topGrilleDirty || bottomGrilleDirty)
 	{
         NSColor *grillePattern  = [NSColor colorWithPatternImage: grille];
-		NSPoint patternOffset	= self.offsetFromWindowOrigin;
+		NSPoint patternOffset	= [NSView focusView].offsetFromWindowOrigin;
         
         CGFloat horizontalPhase = patternOffset.x + ((backgroundRect.size.width - patternSize.width) * 0.5f);
         
@@ -147,19 +148,59 @@
 	}
 }
 
+- (void) _reallyDrawRect: (NSRect)dirtyRect
+{
+    [self _drawBackgroundInRect: self.bounds];
+    [self _drawLightingInRect: self.bounds];
+    [self _drawGrillesInRect: self.bounds];
+}
+
 - (void) drawRect: (NSRect)dirtyRect
 {
-	[NSBezierPath clipRect: dirtyRect];
-	
-	[self _drawBackgroundInRect: dirtyRect];
-	[self _drawLightingInRect: dirtyRect];
-	[self _drawGrillesInRect: dirtyRect];
-	//[self _drawBrandInRect: dirtyRect];
+    //IMPLEMENTATION NOTE: drawing this view is quite expensive because of all the effects,
+    //especially in fullscreen. Because this view has a bunch of transparent views on top of it,
+    //it gets dirty all the time: so we optimize for overdraw by rendering the background to an
+    //image and then rendering that image in future.
+    //(If the user is resizing the window, we say to hell with it and draw ourselves anew each time
+    //as the alternative would be too look blurry and gross.)
+    
+    if (self.inLiveResize)
+    {
+        [self _reallyDrawRect: dirtyRect];
+    }
+    else
+    {
+        if (!NSEqualSizes(self.bounds.size, self.snapshot.size))
+        {
+            self.snapshot = nil;
+            NSImage *canvas = [[NSImage alloc] initWithSize: self.bounds.size];
+            
+            [canvas lockFocus];
+                [self _reallyDrawRect: self.bounds];
+            [canvas unlockFocus];
+            
+            self.snapshot = canvas;
+            [canvas release];
+        }
+        
+        [self.snapshot drawInRect: dirtyRect
+                         fromRect: dirtyRect
+                        operation: NSCompositeSourceOver
+                         fraction: 1.0
+                   respectFlipped: YES
+                            hints: nil];
+    }
 }
 
 - (BOOL) isOpaque
 {
     return YES;
+}
+
+- (void) dealloc
+{
+    self.snapshot = nil;
+    [super dealloc];
 }
 
 @end

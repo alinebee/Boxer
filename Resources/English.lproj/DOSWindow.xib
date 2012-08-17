@@ -422,7 +422,7 @@
 			<object class="NSViewController" id="175536825"/>
 			<object class="NSCollectionViewItem" id="223798695"/>
 			<object class="NSView" id="1058351658">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">298</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="NSButton" id="391807345">
@@ -431,8 +431,6 @@
 						<array class="NSMutableArray" key="NSSubviews"/>
 						<string key="NSFrame">{{14, 4}, {452, 48}}</string>
 						<reference key="NSSuperview" ref="1058351658"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="735816580">
@@ -461,8 +459,6 @@
 					</object>
 				</array>
 				<string key="NSFrameSize">{480, 56}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="391807345"/>
 			</object>
 		</array>
@@ -921,6 +917,7 @@
 							<reference ref="391807345"/>
 						</array>
 						<reference key="parent" ref="0"/>
+						<string key="objectName">Launch Button Container</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1187</int>
@@ -944,6 +941,7 @@
 							<reference ref="653019913"/>
 						</array>
 						<reference key="parent" ref="89453087"/>
+						<string key="objectName">Panel Transition Wrapper</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">978</int>
@@ -1092,6 +1090,7 @@
 					<string key="superclassName">BXBaseAppController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
 						<string key="hideWelcomePanel:">id</string>
+						<string key="orderFrontAboutPanel:">id</string>
 						<string key="orderFrontFirstRunPanel:">id</string>
 						<string key="orderFrontFirstRunPanelWithTransition:">id</string>
 						<string key="orderFrontImportGamePanel:">id</string>
@@ -1118,6 +1117,10 @@
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
 						<object class="IBActionInfo" key="hideWelcomePanel:">
 							<string key="name">hideWelcomePanel:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="orderFrontAboutPanel:">
+							<string key="name">orderFrontAboutPanel:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="orderFrontFirstRunPanel:">
@@ -1223,7 +1226,6 @@
 						<string key="maximizeVolume:">id</string>
 						<string key="minimizeVolume:">id</string>
 						<string key="openInDefaultApplication:">id</string>
-						<string key="orderFrontAboutPanel:">id</string>
 						<string key="revealInFinder:">id</string>
 						<string key="toggleMuted:">id</string>
 					</dictionary>
@@ -1246,10 +1248,6 @@
 						</object>
 						<object class="IBActionInfo" key="openInDefaultApplication:">
 							<string key="name">openInDefaultApplication:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontAboutPanel:">
-							<string key="name">orderFrontAboutPanel:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="revealInFinder:">

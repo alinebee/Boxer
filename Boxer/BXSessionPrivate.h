@@ -79,6 +79,9 @@
 //Whether the session should relaunch the previous program next time it starts up.
 - (BOOL) _shouldPersistPreviousProgram;
 
+//Whether the user can hold down Option to bypass the regular startup program.
+- (BOOL) _shouldAllowSkippingStartupProgram;
+
 
 //Create our BXEmulator instance and starts its main loop.
 //Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent

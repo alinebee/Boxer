@@ -1034,9 +1034,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 {
 	if (!_hasConfigured)
 	{
-        //If the Option key is held down during the startup process, skip the default program.
-		CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
-		_userSkippedDefaultProgram = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
+        if ([self _shouldAllowSkippingStartupProgram])
+        {
+            //If the Option key is held down during the startup process, skip the default program.
+            CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
+            _userSkippedDefaultProgram = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
+        }
         
         //If we'll be starting up with a target program, clear the screen
         //at the start of the autoexec sequence.
@@ -1074,7 +1077,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         //If the Option key is held down during the startup process, skip the default program.
         //(Repeated from runPreflightCommandsForEmulator: above, in case the user started
         //holding the key down in between.)
-        if (!_userSkippedDefaultProgram)
+        if ([self _shouldAllowSkippingStartupProgram] && !_userSkippedDefaultProgram)
         {
             CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
             _userSkippedDefaultProgram = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
@@ -1361,6 +1364,18 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 #pragma mark -
 #pragma mark Behavioural modifiers
 
+- (BOOL) _shouldAllowSkippingStartupProgram
+{
+    //For standalone game apps, only allow the user to skip the startup program
+    //if there is more than one launch option to display on the launch panel.
+    if ([[NSApp delegate] isStandaloneGameBundle])
+    {
+        BOOL hasMultipleLaunchers = (self.gamebox.launchers.count > 1);
+        return hasMultipleLaunchers;
+    }
+    else return YES;
+}
+
 - (BOOL) _shouldAutoMountExternalVolumes
 {
     //If this is a standalone game app, assume it has everything it needs
@@ -1370,6 +1385,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     else
         return YES;
 }
+
 - (BOOL) _shouldPersistGameProfile: (BXGameProfile *)profile
 {
     return YES;
@@ -1377,12 +1393,24 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (BOOL) _shouldPersistQueuedDrives
 {
-    return YES;
+    //Don't bother persisting drives for standalone game apps:
+    //they should already include everything they need.
+    if ([[NSApp delegate] isStandaloneGameBundle])
+        return NO;
+    else
+        return YES;
 }
 
 - (BOOL) _shouldPersistPreviousProgram
 {
-    return YES;
+    //For standalone game apps, only bother recording the previous program
+    //if the gamebox has more than one launch option to choose from.
+    if ([[NSApp delegate] isStandaloneGameBundle])
+    {
+        BOOL hasMultipleLaunchers = (self.gamebox.launchers.count > 1);
+        return hasMultipleLaunchers;
+    }
+    else return YES;
 }
 
 - (BOOL) _shouldCloseOnEmulatorExit { return YES; }
@@ -1390,10 +1418,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (BOOL) _shouldCloseOnProgramExit
 {
-    //If we're in standalone mode and there is more than one game launcher, don't close on exit
-    //(we'll return to the launcher panel instead.)
-    if ([[NSApp delegate] isStandaloneGameBundle] && self.gamebox.launchers.count > 1)
-        return NO;
+    //If we're a standalone game app and there is only one launch option,
+    //then exit; otherwise, return to the launcher panel.
+    if ([[NSApp delegate] isStandaloneGameBundle])
+    {
+        BOOL hasMultipleLaunchers = (self.gamebox.launchers.count == 1);
+        return !hasMultipleLaunchers;
+    }
     
 	//Don't close if the auto-close preference is disabled for this gamebox
 	if (!self.gamebox.closeOnExit) return NO;

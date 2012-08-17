@@ -6,15 +6,16 @@
  */
 
 
-//BXDelegatedView is a base class for views that have a delegate. Drag-drop and resize events
-//are passed on to the delegate, if it implements the appropriate methods.
+//BXDelegatedView is a base class for views that have a delegate.
+//Currently drag-drop are passed on to the delegate, if it implements
+//the appropriate methods.
 
 #import <Cocoa/Cocoa.h>
 
 @interface BXDelegatedView : NSView
 {
-	IBOutlet id delegate;
-	NSDragOperation draggingEnteredResponse;
+	IBOutlet id _delegate;
+	NSDragOperation _draggingEnteredResponse;
 }
 @property (assign) id delegate;
 

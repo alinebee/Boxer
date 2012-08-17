@@ -10,65 +10,66 @@
 
 
 @implementation BXDelegatedView
-@synthesize delegate;
+@synthesize delegate = _delegate;
 
 #pragma mark -
-#pragma mark Supporting drag-drop
+#pragma mark Delegating drag-drop
 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
 {
-	draggingEnteredResponse = NSDragOperationNone;
-	if ([[self delegate] respondsToSelector: @selector(draggingEntered:)])
-		draggingEnteredResponse = [[self delegate] draggingEntered: sender];
+	_draggingEnteredResponse = NSDragOperationNone;
+	if ([self.delegate respondsToSelector: _cmd])
+		_draggingEnteredResponse = [self.delegate draggingEntered: sender];
 	
-	return draggingEnteredResponse;
+	return _draggingEnteredResponse;
 }
 
 - (BOOL) wantsPeriodicDraggingUpdates
 {
-	if ([[self delegate] respondsToSelector: @selector(wantsPeriodicDraggingUpdates)])
-		return [[self delegate] wantsPeriodicDraggingUpdates];
+	if ([self.delegate respondsToSelector: _cmd])
+		return [self.delegate wantsPeriodicDraggingUpdates];
 	else return YES;
 }
 
 - (NSDragOperation) draggingUpdated: (id <NSDraggingInfo>)sender
 {
-	if ([[self delegate] respondsToSelector: @selector(draggingUpdated:)])
-		return [[self delegate] draggingUpdated: sender];
-	else return draggingEnteredResponse;
+	if ([self.delegate respondsToSelector: _cmd])
+		return [self.delegate draggingUpdated: sender];
+	else return _draggingEnteredResponse;
 }
 
 - (void) draggingExited: (id <NSDraggingInfo>)sender
 {
-	if ([[self delegate] respondsToSelector: @selector(draggingExited:)])
-		[[self delegate] draggingExited: sender];
+	if ([self.delegate respondsToSelector: _cmd])
+		[self.delegate draggingExited: sender];
 }
 
 - (void) draggingEnded: (id <NSDraggingInfo>)sender
 {
-	if ([[self delegate] respondsToSelector: @selector(draggingEnded:)])
-		[[self delegate] draggingEnded: sender];	
+	if ([self.delegate respondsToSelector: _cmd])
+		[self.delegate draggingEnded: sender];
 }
 
 
 
 - (BOOL) prepareForDragOperation: (id <NSDraggingInfo>)sender
 {
-	if ([[self delegate] respondsToSelector: @selector(prepareForDragOperation:)])
-		return [[self delegate] prepareForDragOperation: sender];
+	if ([self.delegate respondsToSelector: _cmd])
+		return [self.delegate prepareForDragOperation: sender];
 	else return YES;	
 }
 
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
 {
-	if ([[self delegate] respondsToSelector: @selector(performDragOperation:)])
-		return [[self delegate] performDragOperation: sender];
+	if ([self.delegate respondsToSelector: _cmd])
+		return [self.delegate performDragOperation: sender];
 	else return NO;
 }
 
 - (void) concludeDragOperation: (id <NSDraggingInfo>)sender
 {
-	if ([[self delegate] respondsToSelector: @selector(concludeDragOperation:)])
-		[[self delegate] concludeDragOperation: sender];	
+	if ([self.delegate respondsToSelector: _cmd])
+		[self.delegate concludeDragOperation: sender];
 }
+
 @end

@@ -2754,6 +2754,7 @@
 		9F7A8F230F8E705100D1AAD5 /* BXToolkit */ = {
 			isa = PBXGroup;
 			children = (
+				9FAB449615DEADE000900A4C /* Drawing */,
 				9F2C458315DB7DC3009F4477 /* OpenGL */,
 				9F9840FE15BEE5F700B50CDA /* Filesystem */,
 				9F81CFB613EEA3D7008F0265 /* Disk Images */,
@@ -2763,15 +2764,9 @@
 				9F0497BF1334C5970001FEE4 /* BXPostLeopardAPIs.m */,
 				9FADFE9511EC932800990E91 /* NSData+HexStrings.h */,
 				9FADFE9611EC932800990E91 /* NSData+HexStrings.m */,
-				9F2120FC1301597E002AB1B7 /* NSImage+BXSaveImages.h */,
-				9F2120FD1301597E002AB1B7 /* NSImage+BXSaveImages.m */,
-				9FE1B61113FFBE430001640C /* NSImage+BXImageEffects.h */,
-				9FE1B61213FFBE430001640C /* NSImage+BXImageEffects.m */,
 				9FFF97931232B718009B5EE5 /* BXMultiPanelWindowController.h */,
 				9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */,
 				9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */,
-				9FBC351B0F56C7B7001811F2 /* BXGeometry.h */,
-				9FBC35280F56C7B7001811F2 /* BXGeometry.m */,
 				9FA5D68111EB6CCC0012DFA5 /* BXLineEnumerator.h */,
 				9FA5D68211EB6CCC0012DFA5 /* BXLineEnumerator.m */,
 				9FADFE5311EC7E1700990E91 /* BXDigest.h */,
@@ -2782,8 +2777,6 @@
 				9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */,
 				9FC7481F122A7C8B00E86E6A /* BXPathEnumerator.h */,
 				9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */,
-				9FC8B071121807AD004F6DA2 /* NSView+BXDrawing.h */,
-				9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */,
 				9FC8F50A10934F3400AD6307 /* NSString+BXPaths.h */,
 				9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */,
 				9FB60E8C15C5552F00CD0D63 /* NSURL+BXFilePaths.h */,
@@ -2800,16 +2793,8 @@
 				9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */,
 				9F6193191233D8F000F35AB4 /* BXTabbedWindowController.h */,
 				9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */,
-				9FBC35190F56C7B7001811F2 /* NSWindow+BXWindowDimensions.h */,
-				9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowDimensions.m */,
-				9FD23D53129AE3B600B2100B /* NSWindow+BXWindowEffects.h */,
-				9FD23D54129AE3B600B2100B /* NSWindow+BXWindowEffects.m */,
-				9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */,
-				9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */,
 				9FD95D6813E2A45C005EF2C0 /* BXFullScreenCapableWindow.h */,
 				9FD95D6913E2A45C005EF2C0 /* BXFullScreenCapableWindow.m */,
-				9F586CEC143E4A0100E840C8 /* CALayer+BXLayerAdditions.h */,
-				9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */,
 				9F9AEE8714CB4AEA00728641 /* BXAppKitVersionHelpers.h */,
 				9F9AEE8814CB4AEA00728641 /* BXAppKitVersionHelpers.m */,
 				9F1DE9B014FB7F3800F9C91E /* NSObject+BXPerformExtensions.h */,
@@ -3011,6 +2996,29 @@
 				9F586CEA143E41C200E840C8 /* BXMT32ROMDropzone.m */,
 			);
 			name = "Preferences panel";
+			sourceTree = "<group>";
+		};
+		9FAB449615DEADE000900A4C /* Drawing */ = {
+			isa = PBXGroup;
+			children = (
+				9FBC351B0F56C7B7001811F2 /* BXGeometry.h */,
+				9FBC35280F56C7B7001811F2 /* BXGeometry.m */,
+				9FC8B071121807AD004F6DA2 /* NSView+BXDrawing.h */,
+				9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */,
+				9F586CEC143E4A0100E840C8 /* CALayer+BXLayerAdditions.h */,
+				9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */,
+				9FBC35190F56C7B7001811F2 /* NSWindow+BXWindowDimensions.h */,
+				9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowDimensions.m */,
+				9FD23D53129AE3B600B2100B /* NSWindow+BXWindowEffects.h */,
+				9FD23D54129AE3B600B2100B /* NSWindow+BXWindowEffects.m */,
+				9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */,
+				9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */,
+				9F2120FC1301597E002AB1B7 /* NSImage+BXSaveImages.h */,
+				9F2120FD1301597E002AB1B7 /* NSImage+BXSaveImages.m */,
+				9FE1B61113FFBE430001640C /* NSImage+BXImageEffects.h */,
+				9FE1B61213FFBE430001640C /* NSImage+BXImageEffects.m */,
+			);
+			name = Drawing;
 			sourceTree = "<group>";
 		};
 		9FAD43B610A341F6007E8C0D /* UKKQueue */ = {

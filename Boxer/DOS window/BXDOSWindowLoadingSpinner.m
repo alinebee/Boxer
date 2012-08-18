@@ -9,28 +9,36 @@
 #import "BXDOSWindowLoadingSpinner.h"
 #import "NSShadow+BXShadowExtensions.h"
 
+@interface BXDOSWindowLoadingSpinner ()
+@property (retain, nonatomic) NSShadow *dropShadow;
+
+@end
+
 @implementation BXDOSWindowLoadingSpinner
+@synthesize dropShadow = _dropShadow;
 
 - (void) awakeFromNib
 {
     self.color = [NSColor whiteColor];
     self.drawsBackground = NO;
     self.lineWidth = 2.0f;
-    _dropShadow = [NSShadow shadowWithBlurRadius: 4.0f
-                                          offset: NSMakeSize(0, -1.0f)
-                                           color: [NSColor blackColor]];
-    [_dropShadow retain];
+    self.dropShadow = [NSShadow shadowWithBlurRadius: 4.0f
+                                              offset: NSMakeSize(0, -1.0f)
+                                               color: [NSColor blackColor]];
 }
 
 - (void) dealloc
 {
-    [_dropShadow release], _dropShadow = nil;
+    self.dropShadow = nil;
     [super dealloc];
 }
 
 - (void) drawRect: (NSRect)dirtyRect
-{	
-    [_dropShadow set];
-    [super drawRect: dirtyRect];
+{
+    [NSGraphicsContext saveGraphicsState];
+        [self.dropShadow set];
+        [super drawRect: dirtyRect];
+    [NSGraphicsContext restoreGraphicsState];
 }
+
 @end

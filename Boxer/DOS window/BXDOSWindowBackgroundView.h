@@ -10,14 +10,14 @@
 //BXDOSWindowBackgroundView simply renders the badged grey gradient background of the DOS window.
 @interface BXDOSWindowBackgroundView : NSView
 {
-    NSImage *_snapshot;
+    NSBitmapImageRep *_snapshot;
 }
 @end
 
 
 @interface BXDOSWindowBackgroundView ()
 
-@property (retain, nonatomic) NSImage *snapshot;
+@property (retain, nonatomic) NSBitmapImageRep *snapshot;
 
 //Separate functions for drawing each component of the view, called during drawRect:.
 //These should not be called directly: they are intended for overriding by subclasses.

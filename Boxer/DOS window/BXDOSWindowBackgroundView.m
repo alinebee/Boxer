@@ -9,29 +9,31 @@
 #import "BXGeometry.h"
 #import "NSShadow+BXShadowExtensions.h"
 #import "NSView+BXDrawing.h"
+#import "NSImage+BXSaveImages.h"
 
 @implementation BXDOSWindowBackgroundView
 @synthesize snapshot = _snapshot;
 
 - (void) _drawBackgroundInRect: (NSRect)dirtyRect
 {
-	NSColor *blueprintColor = [NSColor colorWithPatternImage: [NSImage imageNamed: @"DOSWindowBackground.png"]];
-	NSSize patternSize		= blueprintColor.patternImage.size;
+    NSImage *background = [NSImage imageNamed: @"DOSWindowBackground"];
+	NSColor *backgroundPattern = [NSColor colorWithPatternImage: background];
+	NSSize patternSize		= background.size;
 	NSSize viewSize			= self.bounds.size;
 	NSPoint patternOffset	= [NSView focusView].offsetFromWindowOrigin;
 	NSPoint patternPhase	= NSMakePoint(patternOffset.x + ((viewSize.width - patternSize.width) * 0.5f),
 										  patternOffset.y + (viewSize.height - patternSize.height));
 	
 	[NSGraphicsContext saveGraphicsState];
-        [[NSGraphicsContext currentContext] setPatternPhase: patternPhase];
-        [blueprintColor set];
-        [NSBezierPath fillRect: self.bounds];
+        [NSGraphicsContext currentContext].patternPhase = patternPhase;
+        [backgroundPattern set];
+        [NSBezierPath fillRect: dirtyRect];
 	[NSGraphicsContext restoreGraphicsState];
 }
 
 - (void) _drawGrillesInRect: (NSRect)dirtyRect
 {
-	NSImage *grille		= [NSImage imageNamed: @"DOSWindowGrille.png"];
+	NSImage *grille = [NSImage imageNamed: @"DOSWindowGrille"];
 	NSSize patternSize      = grille.size;
 	NSRect backgroundRect   = self.bounds;
 	
@@ -43,8 +45,9 @@
     NSRect bottomGrilleStrip        = backgroundRect;
 	bottomGrilleStrip.size.height	= patternSize.height * 0.83f;
 	
-    BOOL topGrilleDirty = [self needsToDrawRect: topGrilleStrip];
-    BOOL bottomGrilleDirty = [self needsToDrawRect: bottomGrilleStrip];
+    BOOL renderingToSnapshot = ([NSView focusView] == nil);
+    BOOL topGrilleDirty     = renderingToSnapshot || [self needsToDrawRect: topGrilleStrip];
+    BOOL bottomGrilleDirty  = renderingToSnapshot || [self needsToDrawRect: bottomGrilleStrip];
     
 	//Only bother drawing the grilles if they intersect with the region being drawn
 	if (topGrilleDirty || bottomGrilleDirty)
@@ -107,8 +110,9 @@
     bottomShadowRect.size.height = 20;
     topShadowRect.origin.y = backgroundRect.size.height - topShadowRect.size.height;
     
-    BOOL topShadowDirty = [self needsToDrawRect: topShadowRect];
-    BOOL bottomShadowDirty = [self needsToDrawRect: bottomShadowRect];
+    BOOL renderingToSnapshot = ([NSView focusView] == nil);
+    BOOL topShadowDirty     = renderingToSnapshot || [self needsToDrawRect: topShadowRect];
+    BOOL bottomShadowDirty  = renderingToSnapshot || [self needsToDrawRect: bottomShadowRect];
     if (topShadowDirty || bottomShadowDirty)
     {
         NSGradient *edgeShadows = [[NSGradient alloc] initWithColorsAndLocations:
@@ -135,24 +139,28 @@
     
 	brandRegion = NSIntegralRect(centerInRect(brandRegion, self.bounds));
 	
-	if ([self needsToDrawRect: brandRegion])
+    BOOL renderingToSnapshot = ([NSView focusView] == nil);
+	if (renderingToSnapshot || [self needsToDrawRect: brandRegion])
 	{
         NSShadow *brandShadow = [NSShadow shadowWithBlurRadius: 5.0f
                                                         offset: NSZeroSize
                                                          color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.25f]];
-        [brandShadow set];
-		[brand drawInRect: brandRegion
-				 fromRect: NSZeroRect
-				operation: NSCompositeSourceOver
-				 fraction: 0.5f];
+        
+        [NSGraphicsContext saveGraphicsState];
+            [brandShadow set];
+            [brand drawInRect: brandRegion
+                     fromRect: NSZeroRect
+                    operation: NSCompositeSourceOver
+                     fraction: 0.5f];
+        [NSGraphicsContext restoreGraphicsState];
 	}
 }
 
 - (void) _reallyDrawRect: (NSRect)dirtyRect
 {
-    [self _drawBackgroundInRect: self.bounds];
-    [self _drawLightingInRect: self.bounds];
-    [self _drawGrillesInRect: self.bounds];
+    [self _drawBackgroundInRect: dirtyRect];
+    [self _drawLightingInRect: dirtyRect];
+    [self _drawGrillesInRect: dirtyRect];
 }
 
 - (void) drawRect: (NSRect)dirtyRect
@@ -160,7 +168,7 @@
     //IMPLEMENTATION NOTE: drawing this view is quite expensive because of all the effects,
     //especially in fullscreen. Because this view has a bunch of transparent views on top of it,
     //it gets dirty all the time: so we optimize for overdraw by rendering the background to an
-    //image and then rendering that image in future.
+    //bitmap and then rendering that bitmap in future.
     //(If the user is resizing the window, we say to hell with it and draw ourselves anew each time
     //as the alternative would be too look blurry and gross.)
     
@@ -170,23 +178,31 @@
     }
     else
     {
-        if (!NSEqualSizes(self.bounds.size, self.snapshot.size))
+        NSSize backingSize = self.bounds.size;
+        if ([self respondsToSelector: @selector(convertSizeToBacking:)])
+            backingSize = [self convertSizeToBacking: backingSize];
+        
+        if (!NSEqualSizes(backingSize, self.snapshot.size))
         {
-            self.snapshot = nil;
-            NSImage *canvas = [[NSImage alloc] initWithSize: self.bounds.size];
+            //CHECKME: this would be less code if we used NSBitmapImageRep -initWithFocusedViewRect:.
+            //Check if that's faster or slower.
+            self.snapshot = [self bitmapImageRepForCachingDisplayInRect: self.bounds];
             
-            [canvas lockFocus];
+            NSDictionary *contextAttribs = [NSDictionary dictionaryWithObject: self.snapshot
+                                                                       forKey: NSGraphicsContextDestinationAttributeName];
+            
+            NSGraphicsContext *context = [NSGraphicsContext graphicsContextWithAttributes: contextAttribs];
+            
+            [NSGraphicsContext saveGraphicsState];
+                [NSGraphicsContext setCurrentContext: context];
                 [self _reallyDrawRect: self.bounds];
-            [canvas unlockFocus];
-            
-            self.snapshot = canvas;
-            [canvas release];
+            [NSGraphicsContext restoreGraphicsState];
         }
         
         [self.snapshot drawInRect: dirtyRect
                          fromRect: dirtyRect
-                        operation: NSCompositeSourceOver
-                         fraction: 1.0
+                        operation: NSCompositeCopy
+                         fraction: 1.0f
                    respectFlipped: YES
                             hints: nil];
     }

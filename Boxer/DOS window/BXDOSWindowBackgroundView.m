@@ -18,7 +18,7 @@
 	NSColor *blueprintColor = [NSColor colorWithPatternImage: [NSImage imageNamed: @"DOSWindowBackground.png"]];
 	NSSize patternSize		= blueprintColor.patternImage.size;
 	NSSize viewSize			= self.bounds.size;
-	NSPoint patternOffset	= self.offsetFromWindowOrigin;
+	NSPoint patternOffset	= [NSView focusView].offsetFromWindowOrigin;
 	NSPoint patternPhase	= NSMakePoint(patternOffset.x + ((viewSize.width - patternSize.width) * 0.5f),
 										  patternOffset.y + (viewSize.height - patternSize.height));
 	

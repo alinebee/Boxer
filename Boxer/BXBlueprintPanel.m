@@ -10,26 +10,25 @@
 #import "NSView+BXDrawing.h"
 #import "NSBezierPath+MCAdditions.h"
 #import "BXGeometry.h"
+#import "NSShadow+BXShadowExtensions.h"
 
 @implementation BXBlueprintPanel
 
-- (NSPoint) _phaseForPattern: (NSImage *)pattern
-{
-	NSPoint offset = [self offsetFromWindowOrigin];
-	NSRect panelFrame = [self frame];
-	return NSMakePoint(offset.x + ((panelFrame.size.width - [pattern size].width) / 2),
-					   offset.y);
-}
 
 - (void) _drawBlueprintInRect: (NSRect)dirtyRect
 {
-	NSColor *blueprintColor = [NSColor colorWithPatternImage: [NSImage imageNamed: @"Blueprint.jpg"]];
-	NSPoint patternPhase	= [self _phaseForPattern: [blueprintColor patternImage]];
+    NSImage *pattern = [NSImage imageNamed: @"Blueprint.jpg"];
+	NSColor *blueprintColor = [NSColor colorWithPatternImage: pattern];
+    
+	NSPoint offset = [NSView focusView].offsetFromWindowOrigin;
+	NSRect panelFrame = self.bounds;
+	NSPoint patternPhase = NSMakePoint(offset.x + ((panelFrame.size.width - pattern.size.width) / 2),
+                                       offset.y);
 	
 	[NSGraphicsContext saveGraphicsState];
-		[[NSGraphicsContext currentContext] setPatternPhase: patternPhase];
+		[NSGraphicsContext currentContext].patternPhase = patternPhase;
 		[blueprintColor set];
-		[NSBezierPath fillRect: [self bounds]];
+		[NSBezierPath fillRect: dirtyRect];
 	[NSGraphicsContext restoreGraphicsState];
 }
 
@@ -38,7 +37,7 @@
 	NSGradient *lighting = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f]
 														 endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.4f]];
 
-	NSRect backgroundRect = [self bounds];
+	NSRect backgroundRect = self.bounds;
 	NSPoint startPoint	= NSMakePoint(NSMidX(backgroundRect), NSMaxY(backgroundRect));
 	NSPoint endPoint	= NSMakePoint(NSMidX(backgroundRect), NSMidY(backgroundRect));
 	CGFloat startRadius = NSWidth(backgroundRect) * 0.1f;
@@ -54,12 +53,12 @@
 - (void) _drawShadowInRect: (NSRect)dirtyRect
 {
 	//Draw a soft shadow beneath the titlebar
-	NSRect shadowRect = [self bounds];
+	NSRect shadowRect = self.bounds;
 	shadowRect.origin.y += shadowRect.size.height - 6.0f;
 	shadowRect.size.height = 6.0f;
 	
 	//Draw a 1-pixel groove at the bottom of the view
-	NSRect grooveRect = [self bounds];
+	NSRect grooveRect = self.bounds;
 	grooveRect.size.height = 1.0f;
 	
 	if (NSIntersectsRect(dirtyRect, shadowRect))
@@ -112,7 +111,7 @@
 
 - (void) drawWithFrame: (NSRect)frame inView: (NSView *)controlView
 {
-	BOOL isFocused = [self showsFirstResponder] && [[controlView window] isKeyWindow];
+	BOOL isFocused = self.showsFirstResponder && controlView.window.isKeyWindow;
 	CGFloat backgroundOpacity = (isFocused) ? 0.4f : 0.2f;
 	
 	NSColor *textColor = [NSColor whiteColor];
@@ -129,27 +128,25 @@
 															   yRadius: cornerRadius];
 	
 	
-	NSShadow *innerShadow = [[NSShadow alloc] init];
-	[innerShadow setShadowColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.66f]];
-	[innerShadow setShadowBlurRadius: 2.0f];
-	[innerShadow setShadowOffset: NSMakeSize(0.0f, -1.0f)];
-	
+	NSShadow *innerShadow = [NSShadow shadowWithBlurRadius: 2.0f
+                                                    offset: NSMakeSize(0.0f, -1.0f)
+                                                     color: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.66f]];
+    
 	[NSGraphicsContext saveGraphicsState];
 		[backgroundColor set];
-		if (isFocused) NSSetFocusRingStyle(NSFocusRingBelow);
+		if (isFocused)
+            NSSetFocusRingStyle(NSFocusRingBelow);
 		[background fill];
 		[background fillWithInnerShadow: innerShadow];
 	[NSGraphicsContext restoreGraphicsState];
 	
 	
-	NSTextView* textView = (NSTextView *)[[controlView window] fieldEditor: NO forObject: controlView];
+	NSTextView* textView = (NSTextView *)[controlView.window fieldEditor: NO forObject: controlView];
 	
-	[self setTextColor: textColor];
-	[textView setInsertionPointColor: textColor];
-	
+    self.textColor = textColor;
+    textView.insertionPointColor = textColor;
+    
 	[self drawInteriorWithFrame: frame inView: controlView];
-	
-	[innerShadow release];
 }
 
 @end
@@ -159,16 +156,15 @@
 
 - (void) awakeFromNib
 {
-	[self setColor: [NSColor whiteColor]];
-	[self setDrawsBackground: NO];
+    self.color = [NSColor whiteColor];
+    self.drawsBackground = NO;
 }
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-	NSShadow *dropShadow = [[NSShadow alloc] init];
-	[dropShadow setShadowOffset: NSMakeSize(0.0f, 0.0f)];
-	[dropShadow setShadowBlurRadius: 3.0f];
-	[dropShadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.5f]];
+	NSShadow *dropShadow = [NSShadow shadowWithBlurRadius: 3.0f
+                                                   offset: NSMakeSize(0.0f, 0.0f)
+                                                    color: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f]];
 	
 	[NSGraphicsContext saveGraphicsState];
 		[dropShadow set];

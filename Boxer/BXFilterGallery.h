@@ -17,7 +17,7 @@
 
 @interface BXFilterPortrait : NSButton
 {
-	CGFloat illumination;
+	CGFloat _illumination;
 }
 //The current illumination, which controls the brightness of the portrait and the opacity of the
 //spotlight. This is animatable via -animator and will change automatically when the button's state

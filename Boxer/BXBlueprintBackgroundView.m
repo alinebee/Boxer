@@ -17,7 +17,7 @@
 	NSColor *blueprintColor = [NSColor colorWithPatternImage: [NSImage imageNamed: @"Blueprint.jpg"]];
 	NSSize patternSize		= blueprintColor.patternImage.size;
 	NSSize viewSize			= self.bounds.size;
-	NSPoint patternOffset	= self.offsetFromWindowOrigin;
+	NSPoint patternOffset	= [NSView focusView].offsetFromWindowOrigin;
 	NSPoint patternPhase	= NSMakePoint(patternOffset.x + ((viewSize.width - patternSize.width) / 2),
 										  patternOffset.y + ((viewSize.height - patternSize.height) / 2));
 	

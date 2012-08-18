@@ -8,17 +8,19 @@
 
 #import "BXFilterGallery.h"
 #import "NSView+BXDrawing.h"
+#import "NSShadow+BXShadowExtensions.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation BXFilterGallery
+
 - (void) drawRect: (NSRect)dirtyRect
 {
 	NSImage *wallpaper	= [NSImage imageNamed: @"GalleryBkg.jpg"];
 	NSColor *pattern	= [NSColor colorWithPatternImage: wallpaper];
 	
-	NSSize patternSize	= [wallpaper size];
-	NSSize viewSize		= [self bounds].size;
-	NSPoint patternOffset	= [self offsetFromWindowOrigin];
+	NSSize patternSize	= wallpaper.size;
+	NSSize viewSize		= self.bounds.size;
+	NSPoint patternOffset	= [NSView focusView].offsetFromWindowOrigin;
 	
 	NSPoint patternPhase = NSMakePoint(
 		//Center the pattern horizontally
@@ -29,13 +31,13 @@
 
 	//Also add a bevel line at the bottom of the view
 	NSColor *bevelColor = [NSColor whiteColor];
-	NSRect bevelRect = [self bounds];
+	NSRect bevelRect = self.bounds;
 	bevelRect.size.height = 1.0f;
 	
 	//Fill the view with the background pattern and draw the bevel
 	[NSGraphicsContext saveGraphicsState];
 		[pattern set];
-		[[NSGraphicsContext currentContext] setPatternPhase: patternPhase];
+		[NSGraphicsContext currentContext].patternPhase = patternPhase;
 		[NSBezierPath fillRect: dirtyRect];
 	
 		//Don't bother drawing the bevel if it's not dirty
@@ -49,7 +51,7 @@
 @end
 
 @implementation BXFilterPortrait
-@synthesize illumination;
+@synthesize illumination = _illumination;
 
 + (id)defaultAnimationForKey: (NSString *)key
 {
@@ -62,14 +64,14 @@
 - (void) setState: (NSInteger)value
 {
 	[super setState: value];
-	if (value)	[[self animator] setIllumination: 1.0f];
-	else		[[self animator] setIllumination: 0.0f];
+	if (value)	[self.animator setIllumination: 1.0f];
+	else		[self.animator setIllumination: 0.0f];
 }
 
 - (void) setIllumination: (CGFloat)newValue
 {
-	illumination = newValue;
-	[self setNeedsDisplay: YES];
+	_illumination = newValue;
+    self.needsDisplay = YES;
 }
 @end
 
@@ -82,7 +84,7 @@
 - (void) awakeFromNib
 {
 	//Prevent the portrait from darkening when pressed in.
-	[self setHighlightsBy: NSNoCellMask];
+    self.highlightsBy = NSNoCellMask;
 }
 
 
@@ -102,7 +104,7 @@
 - (NSFont *) titleFont
 {
 	//Render the text in bold if this button is selected or the user is pressing the button
-	if ([self state] || [self isHighlighted])
+	if (self.state || self.isHighlighted)
 		return [NSFont boldSystemFontOfSize: 0];
 	else
 		return [NSFont systemFontOfSize: 0];
@@ -111,34 +113,32 @@
 - (NSColor *) titleColor
 {
 	//Render the text in white if this button is selected
-	return ([self state]) ? [NSColor whiteColor] : [NSColor lightGrayColor];
+	return (self.state) ? [NSColor whiteColor] : [NSColor lightGrayColor];
 }
 
 - (NSShadow *) titleShadow
 {
-	NSShadow *textShadow = [[NSShadow alloc] init];	
-	[textShadow setShadowOffset: NSMakeSize(0.0f, -1.0f)];
-	[textShadow setShadowBlurRadius: 2.0f];
-	[textShadow setShadowColor: [NSColor blackColor]];	
-	return [textShadow autorelease];
+    return [NSShadow shadowWithBlurRadius: 2.0f
+                                   offset: NSMakeSize(0.0f, -1.0f)
+                                    color: [NSColor blackColor]];
 }
 
 - (NSDictionary *) titleAttributes
 {	
 	return [NSDictionary dictionaryWithObjectsAndKeys:
-			[self titleFont], NSFontAttributeName,
-			[self titleColor], NSForegroundColorAttributeName,
-			[self titleShadow], NSShadowAttributeName,
+			self.titleFont, NSFontAttributeName,
+			self.titleColor, NSForegroundColorAttributeName,
+			self.titleShadow, NSShadowAttributeName,
 			nil];
 }
 
 //Style the button title with our text shadow, colour and font
 - (NSAttributedString *) attributedTitle
 {
-	NSMutableAttributedString *title = [[super attributedTitle] mutableCopy];
-	NSRange textRange = NSMakeRange(0, [title length]);
+	NSMutableAttributedString *title = [super.attributedTitle mutableCopy];
+	NSRange textRange = NSMakeRange(0, title.length);
 	
-	[title addAttributes: [self titleAttributes] range: textRange];
+	[title addAttributes: self.titleAttributes range: textRange];
 	
 	return [title autorelease];
 }
@@ -163,23 +163,26 @@
 - (void) drawWithFrame: (NSRect)frame inView: (BXFilterPortrait *)controlView
 {
 	//Render our spotlight behind the rest of the button content
-	if ([controlView illumination] > 0.0f)
+	if (controlView.illumination > 0.0f)
 	{
-		[self drawSpotlightWithFrame: frame inView: controlView withAlpha: [controlView illumination]];
+		[self drawSpotlightWithFrame: frame
+                              inView: controlView
+                           withAlpha: controlView.illumination];
 	}
-	[super drawWithFrame: frame inView: controlView];
+	[super drawWithFrame: frame
+                  inView: controlView];
 }
 
 - (void) drawSpotlightWithFrame: (NSRect)frame inView: (NSView *)controlView withAlpha: (CGFloat)alpha
 {
 	NSImage *spotlight = [NSImage imageNamed: @"GallerySpotlight"];
 	
-	[spotlight setFlipped: [controlView isFlipped]];
-	
 	[spotlight drawInRect: frame
 				 fromRect: NSZeroRect
 				operation: NSCompositePlusLighter
-				 fraction: alpha];
+				 fraction: alpha
+           respectFlipped: YES
+                    hints: nil];
 }
 
 - (void) drawImage: (NSImage *)image	
@@ -189,16 +192,16 @@
 	NSColor *shade = nil;
 	
 	//If the button is being pressed, brighten the image
-	if ([self isHighlighted] && [self imageHighlightLevel])
+	if (self.isHighlighted && self.imageHighlightLevel)
 	{
-		CGFloat shadeLevel = [self imageHighlightLevel];
+		CGFloat shadeLevel = self.imageHighlightLevel;
 		shade = [NSColor colorWithCalibratedWhite: 1.0f alpha: shadeLevel];		
 	}
 	
 	//Otherwise, darken the image according to the current illumination level
-	else if ([controlView illumination] < 0.9)
+	else if (controlView.illumination < 0.9)
 	{
-		CGFloat shadeLevel = [self imageShadeLevelForIllumination: [controlView illumination]];
+		CGFloat shadeLevel = [self imageShadeLevelForIllumination: controlView.illumination];
 		shade = [NSColor colorWithCalibratedWhite: 0.0f alpha: shadeLevel];
 	}
 	
@@ -208,7 +211,7 @@
 		NSImage *shadedImage = [image copy];
 		NSRect bounds;
 		bounds.origin = NSZeroPoint;
-		bounds.size = [shadedImage size];
+		bounds.size = shadedImage.size;
 		
 		[shadedImage lockFocus];
 			[shade set];
@@ -219,7 +222,7 @@
 	}
 	
 	//While we're here, let's override the image positioning with our own
-	NSRect imageRect = [self imageRectForBounds: [controlView bounds]];
+	NSRect imageRect = [self imageRectForBounds: controlView.bounds];
 	[super drawImage: image withFrame: imageRect inView: controlView];
 }
 

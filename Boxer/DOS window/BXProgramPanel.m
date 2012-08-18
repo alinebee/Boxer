@@ -48,7 +48,7 @@
 	//Only bother drawing the grille if it intersects with the region being drawn
 	if ([self needsToDrawRect: grilleStrip])
 	{
-		NSPoint patternOffset	= self.offsetFromWindowOrigin;
+		NSPoint patternOffset	= [NSView focusView].offsetFromWindowOrigin;
         
         NSPoint grillePhase		= NSMakePoint(patternOffset.x + ((panelRegion.size.width - patternSize.width) / 2),																patternOffset.y + grilleStrip.origin.y);
 		

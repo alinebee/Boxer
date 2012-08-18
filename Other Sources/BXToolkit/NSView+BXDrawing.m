@@ -17,9 +17,9 @@
 	NSView *offsetParent = self;
 	do
 	{
-		offset = pointWithDelta(offset, [offsetParent frame].origin);
+		offset = pointWithDelta(offset, offsetParent.frame.origin);
 	}
-	while ((offsetParent = [offsetParent superview]));
+	while ((offsetParent = offsetParent.superview));
 	
 	return offset;
 }

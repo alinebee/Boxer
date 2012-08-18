@@ -524,6 +524,11 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     
     CGLLockContext(cgl_ctx);
         GLenum channelOrder, byteType;
+    
+    //Alternate implementation that renders to a renderbuffer instead of grabbing pixel
+    //data straight from the front buffer. This is currently disabled as it offered no
+    //benefits and would frequently result in screenshots of incomplete frames.
+    /*
         GLuint framebuffer, renderbuffer;
         
         glGenFramebuffersEXT(1, &framebuffer);
@@ -555,6 +560,10 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
      
         //Read the pixels out of the renderbuffer
         glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
+    */
+    
+        //Read out the contents of the front buffer 
+        glReadBuffer(GL_FRONT);
     
         //Back up current settings
         glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
@@ -587,9 +596,11 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         //Restore the old settings
         glPopClientAttrib();
     
+    /*
         //Delete the renderbuffer and framebuffer
         glDeleteRenderbuffersEXT(1, &renderbuffer);
         glDeleteFramebuffersEXT(1, &framebuffer);
+     */
     CGLUnlockContext(cgl_ctx);
     
 	//Finally, flip the captured image since GL reads it in the reverse order from what we need

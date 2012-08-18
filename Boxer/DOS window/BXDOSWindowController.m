@@ -141,11 +141,10 @@
 
 - (void) windowDidLoad
 {
-	//While we're here, register for drag-drop file operations (used for mounting folders and such)
+	//Register for drag-drop file operations (used for mounting folders and such)
     NSArray *dragTypes = [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil];
 	[self.window registerForDraggedTypes: dragTypes];
 	
-	//Listen for UI events that will interrupt emulation
 	[self _addObservers];
 	
 	//Set up the window UI components appropriately
@@ -165,6 +164,13 @@
 	self.window.preservesContentDuringLiveResize = NO;
 	self.window.acceptsMouseMovedEvents = YES;
 	
+    //Adjust the window's initial dimensions to suit the current aspect-ratio correction settings.
+    BOOL aspectCorrectText = [[NSUserDefaults standardUserDefaults] boolForKey: @"aspectCorrectedText"];
+    if (self.isAspectCorrected && aspectCorrectText)
+    {
+        [self resizeWindowToRenderingViewSize: NSMakeSize(640, 480) animate: NO];
+    }
+    
 	//Now that we can retrieve the game's identifier from the session,
 	//use the autosaved window size for that game
 	if (self.document.hasGamebox)
@@ -698,7 +704,7 @@
 - (void) updateWithFrame: (BXVideoFrame *)frame
 {
     //Apply aspect-ratio correction if appropriate
-    if (self.isAspectCorrected && [self _shouldCorrectAspectRatioOfFrame: frame])
+    if ([self _shouldCorrectAspectRatioOfFrame: frame])
         [frame useAspectRatio: BX4by3AspectRatio];
     else
         [frame useSquarePixels];
@@ -725,7 +731,20 @@
 
 - (BOOL) _shouldCorrectAspectRatioOfFrame: (BXVideoFrame *)frame
 {
-    return (frame != nil) && !frame.containsText;
+    if (frame == nil || !self.isAspectCorrected)
+    {
+        return NO;
+    }
+    //Only correct text-mode frames if we're forcing the issue;
+    //aspect-correction on text usually looks pretty crappy.
+    else if (frame.containsText)
+    {
+        return [[NSUserDefaults standardUserDefaults] boolForKey: @"aspectCorrectedText"];
+    }
+    else
+    {
+        return NO;
+    }
 }
 
 - (void) setAspectCorrected: (BOOL)aspectCorrected

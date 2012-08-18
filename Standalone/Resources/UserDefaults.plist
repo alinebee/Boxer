@@ -6,6 +6,8 @@
 	<true/>
 	<key>aspectCorrected</key>
 	<true/>
+	<key>aspectCorrectedText</key>
+	<false/>
 	<key>useVSync</key>
 	<true/>
 	<key>useCVDisplayLink</key>

@@ -168,7 +168,8 @@
     BOOL aspectCorrectText = [[NSUserDefaults standardUserDefaults] boolForKey: @"aspectCorrectedText"];
     if (self.isAspectCorrected && aspectCorrectText)
     {
-        [self resizeWindowToRenderingViewSize: NSMakeSize(640, 480) animate: NO];
+        [self resizeWindowToRenderingViewSize: NSMakeSize(640, 480)
+                                      animate: NO];
     }
     
 	//Now that we can retrieve the game's identifier from the session,
@@ -743,7 +744,7 @@
     }
     else
     {
-        return NO;
+        return YES;
     }
 }
 

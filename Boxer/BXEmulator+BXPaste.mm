@@ -60,11 +60,12 @@
 			if (cleanedString.length)
 			{
                 BOOL isLastLine = (i == numLines - 1);
-				//Execute each line immediately, except for the last one, which we leave in case the user wants to modify it
+                //Execute each line immediately, except for the last one,
+                //which we leave in case the user wants to modify it
 				if (!isLastLine)
                     cleanedString = [cleanedString stringByAppendingString: @"\n"];
                 
-				[self.commandQueue addObject: cleanedString];
+                [self.commandQueue addObject: cleanedString];
 			}
 		}
 	}
@@ -75,6 +76,7 @@
     {
         [self.keyBuffer addKeysForCharacters: pastedString];
     }
+    
     //Otherwise, fall back on typing the string into the emulated keyboard.
     else
     {

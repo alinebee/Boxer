@@ -11,6 +11,7 @@
 #import "setup.h"
 #import "mapper.h"
 #import "cross.h"
+#import "shell.h"
 #import "BXFilesystem.h"
 
 #pragma mark -
@@ -138,21 +139,50 @@ const char * boxer_localizedStringForKey(char const *keyStr)
 bool boxer_handleCommandInput(char *cmd, Bitu *cursorPosition, bool *executeImmediately)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	NSString *oldCommandLine = [NSString stringWithCString: cmd encoding: BXDirectStringEncoding];
-	NSString *newCommandLine = [emulator _handleCommandInput: oldCommandLine
-											atCursorPosition: (NSUInteger *)cursorPosition
-										  executeImmediately: (BOOL *)executeImmediately];
-	if (newCommandLine)
+    NSString *inOutCommand = [NSString stringWithCString: cmd encoding: BXDirectStringEncoding];
+	
+    if ([emulator _handleCommandInput: &inOutCommand
+                       cursorPosition: (NSUInteger *)cursorPosition
+                       executeCommand: (BOOL *)executeImmediately])
 	{
-		const char *newcmd = [newCommandLine cStringUsingEncoding: BXDirectStringEncoding];
+		const char *newcmd = [inOutCommand cStringUsingEncoding: BXDirectStringEncoding];
 		if (newcmd)
 		{
-			strcpy(cmd, newcmd);
-			return YES;
+            strlcpy(cmd, newcmd, CMD_MAXLINE);
+            return YES;
 		}
 		else return NO;
 	}
-	else return NO;
+	return false;
+}
+
+bool boxer_executeNextPendingCommand()
+{
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+	return [emulator _executeNextPendingCommand];
+}
+
+bool boxer_hasPendingCommands()
+{
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+	return emulator.commandQueue.count > 0;
+}
+
+void boxer_willReadCommandInputFromHandle(Bit16u handle)
+{
+    if (handle == STDIN)
+    {
+        BXEmulator *emulator = [BXEmulator currentEmulator];
+        emulator.waitingForCommandInput = YES;
+    }
+}
+void boxer_didReadCommandInputFromHandle(Bit16u handle)
+{
+    if (handle == STDIN)
+    {
+        BXEmulator *emulator = [BXEmulator currentEmulator];
+        emulator.waitingForCommandInput = NO;
+    }
 }
 
 void boxer_didReturnToShell()
@@ -183,6 +213,12 @@ void boxer_didExecuteFileAtDOSPath(const char *path, const char *arguments, DOS_
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
     [emulator _didExecuteFileAtDOSPath: path onDOSBoxDrive: dosboxDrive withArguments: arguments];
+}
+
+bool boxer_shouldDisplayStartupMessages()
+{
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    return [emulator _shouldDisplayStartupMessagesForShell: emulator._currentShell];
 }
 
 
@@ -397,6 +433,16 @@ Bitu boxer_numKeyCodesInPasteBuffer()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
     return emulator.keyBuffer.count;
+}
+
+bool boxer_continueListeningForKeyEvents()
+{
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    if (emulator.isWaitingForCommandInput && emulator.commandQueue.count)
+    {
+        return false;
+    }
+    return true;
 }
 
 bool boxer_getNextKeyCodeInPasteBuffer(Bit16u *outKeyCode, bool consumeKey)

@@ -1041,13 +1041,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             _userSkippedDefaultProgram = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
         }
         
-        //If we'll be starting up with a target program, clear the screen
-        //at the start of the autoexec sequence.
-        if (!_userSkippedDefaultProgram && self.targetPath && [self.class isExecutable: self.targetPath])
-        {
-            [theEmulator clearScreen];
-        }
-        
 		[self _mountDrivesForSession];
 		
 		//Flag that we have completed our initial game configuration.
@@ -1102,7 +1095,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             [self.DOSWindowController enterFullScreen];
         }
         
-		[self openFileAtPath: target withArguments: arguments];
+		[self openFileAtPath: target
+               withArguments: arguments
+              clearingScreen: YES];
 	}
     
     //Clear the program-skipping flag for next launch.

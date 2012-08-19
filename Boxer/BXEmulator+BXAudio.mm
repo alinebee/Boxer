@@ -58,8 +58,8 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 {
     if (device != [self activeMIDIDevice])
     {
-        [activeMIDIDevice release];
-        activeMIDIDevice = [device retain];
+        [_activeMIDIDevice release];
+        _activeMIDIDevice = [device retain];
         
         //If the device supports mixing, create a DOSBox mixer channel for it.
         if ([device conformsToProtocol: @protocol(BXAudioSource)])
@@ -71,7 +71,8 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
         
 #ifdef BOXER_DEBUG
         //When debugging, display an LCD message so that we know MT-32 mode has kicked in
-        if ([device supportsMT32Music]) [self sendMT32LCDMessage: @"BOXER:::MT-32 Active"];
+        if (device.supportsMT32Music)
+            [self sendMT32LCDMessage: @"BOXER:::MT-32 Active"];
 #endif
     }
 }
@@ -94,11 +95,11 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
     //Connect to our requested MIDI device the first time we need one.
     [self _attachRequestedMIDIDeviceIfNeeded];
     
-    if ([self activeMIDIDevice])
+    if (self.activeMIDIDevice)
     {
         //If we're not ready to send yet, wait until we are.
         [self _waitUntilActiveMIDIDeviceIsReady];
-        [[self activeMIDIDevice] handleMessage: message];
+        [self.activeMIDIDevice handleMessage: message];
     }
 }
 
@@ -109,7 +110,7 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
     
     //Autodetect if the music we're receiving would be suitable for an MT-32:
     //If so, and our current device can't play MT-32 music, try switching to one that can.
-    if (self._shouldAutodetectMT32)
+    if ([self _shouldAutodetectMT32])
     {
         //Check if the message we've received was intended for an MT-32,
         //and if so, how 'conclusive' it is that the game is playing MT-32 music.
@@ -179,8 +180,8 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 {
     SDL_PauseAudio(YES);
     
-    cdromWasPlaying = (SDL_CDStatus(NULL) == CD_PLAYING);
-    if (cdromWasPlaying)
+    _cdromWasPlaying = (SDL_CDStatus(NULL) == CD_PLAYING);
+    if (_cdromWasPlaying)
         SDL_CDPause(NULL);
     
     [self.activeMIDIDevice pause];
@@ -190,7 +191,7 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 {
     SDL_PauseAudio(NO);
     
-    if (cdromWasPlaying)
+    if (_cdromWasPlaying)
         SDL_CDResume(NULL);
     
     [self.activeMIDIDevice resume];
@@ -318,14 +319,14 @@ void _renderMIDIOutput(Bitu numFrames)
 
 - (void) setRequestedMIDIDeviceDescription: (NSDictionary *)newDescription
 {
-    if (![requestedMIDIDeviceDescription isEqual: newDescription])
+    if (![_requestedMIDIDeviceDescription isEqual: newDescription])
     {
-        [requestedMIDIDeviceDescription release];
-        requestedMIDIDeviceDescription = [newDescription retain];
+        [_requestedMIDIDeviceDescription release];
+        _requestedMIDIDeviceDescription = [newDescription retain];
         
         //Enable MT-32 autodetection if the description doesn't have a specific music type in mind.
         BXMIDIMusicType musicType = [[newDescription objectForKey: BXMIDIMusicTypeKey] integerValue];
-        [self setAutodetectsMT32: (musicType == BXMIDIMusicAutodetect)];
+        self.autodetectsMT32 = (musicType == BXMIDIMusicAutodetect);
     }
 }
 
@@ -333,7 +334,7 @@ void _renderMIDIOutput(Bitu numFrames)
 {
     //Try to autodetect the MT-32 only if autodetection was enabled,
     //and if we don't already have a MIDI device that supports MT-32 music.
-    return ([self autodetectsMT32] && ![[self activeMIDIDevice] supportsMT32Music]);
+    return (self.autodetectsMT32 && !self.activeMIDIDevice.supportsMT32Music);
 }
 
 - (void) _resetMIDIDevice
@@ -341,27 +342,27 @@ void _renderMIDIOutput(Bitu numFrames)
     [self _clearPendingSysexMessages];
     
     //Clear the active MIDI device so that we can redetect it next time
-    if ([self autodetectsMT32])
+    if (self.autodetectsMT32)
     {
-        [self setActiveMIDIDevice: nil];
+        self.activeMIDIDevice = nil;
     }
 }
 
 - (void) _queueSysexMessage: (NSData *)message
 {
     //Copy the message before queuing, as it may be backed by a buffer we don't own.
-    [pendingSysexMessages addObject: [NSData dataWithData: message]];
+    [_pendingSysexMessages addObject: [NSData dataWithData: message]];
 }
 
 - (void) _flushPendingSysexMessages
 {
-    if ([self activeMIDIDevice])
+    if (self.activeMIDIDevice)
     {
-        for (NSData *message in pendingSysexMessages)
+        for (NSData *message in _pendingSysexMessages)
         {
             //If we're not ready to send yet, wait until we are.
             [self _waitUntilActiveMIDIDeviceIsReady];
-            [[self activeMIDIDevice] handleSysex: message];
+            [self.activeMIDIDevice handleSysex: message];
         }
     }
     [self _clearPendingSysexMessages];
@@ -369,13 +370,13 @@ void _renderMIDIOutput(Bitu numFrames)
 
 - (void) _clearPendingSysexMessages
 {
-    [pendingSysexMessages removeAllObjects];
+    [_pendingSysexMessages removeAllObjects];
 }
 
 - (void) _waitUntilActiveMIDIDeviceIsReady
 {
-    id <BXMIDIDevice> device = [self activeMIDIDevice];
-    BOOL askDelegate = [[self delegate] respondsToSelector: @selector(emulator:shouldWaitForMIDIDevice:untilDate:)];
+    id <BXMIDIDevice> device = self.activeMIDIDevice;
+    BOOL askDelegate = [self.delegate respondsToSelector: @selector(emulator:shouldWaitForMIDIDevice:untilDate:)];
     
     while (device.isProcessing)
     {
@@ -398,9 +399,9 @@ void _renderMIDIOutput(Bitu numFrames)
 
 - (void) _attachRequestedMIDIDeviceIfNeeded
 {
-    if (![self activeMIDIDevice])
+    if (!self.activeMIDIDevice)
     {
-        [self attachMIDIDeviceForDescription: [self requestedMIDIDeviceDescription]];
+        [self attachMIDIDeviceForDescription: self.requestedMIDIDeviceDescription];
     }
 }
 
@@ -415,7 +416,7 @@ void _renderMIDIOutput(Bitu numFrames)
     
     if (self.masterVolume != volume)
     {
-        masterVolume = volume;
+        _masterVolume = volume;
         [self _syncVolume];
     }
 }

@@ -209,7 +209,9 @@
 	if (programPath)
     {
         BXSession *session = (BXSession *)self.representedObject;
-        [session openFileAtPath: programPath withArguments: arguments];
+        [session openFileAtPath: programPath
+                  withArguments: arguments
+                 clearingScreen: YES];
     }
 }
 

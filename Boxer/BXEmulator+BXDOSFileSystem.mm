@@ -414,7 +414,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (NSString *) preferredLetterForDrive: (BXDrive *)drive
 {
-	NSArray *usedLetters = [driveCache allKeys];
+	NSArray *usedLetters = [_driveCache allKeys];
 	
 	//TODO: try to ensure CD-ROM mounts are contiguous
 	NSArray *letters;
@@ -435,7 +435,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (NSArray *) mountedDrives
 {
-	return [driveCache allValues];
+	return [_driveCache allValues];
 }
 
 - (BOOL) driveIsMounted: (BXDrive *)drive
@@ -453,7 +453,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (BXDrive *) driveAtLetter: (NSString *)driveLetter
 {
-	return [driveCache objectForKey: driveLetter];
+	return [_driveCache objectForKey: driveLetter];
 }
 
 - (BOOL) driveInUseAtLetter: (NSString *)driveLetter
@@ -468,7 +468,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (BOOL) pathIsMountedAsDrive: (NSString *)path
 {
-	for (BXDrive *drive in [driveCache objectEnumerator])
+	for (BXDrive *drive in [_driveCache objectEnumerator])
 	{
 		if ([drive representsPath: path]) return YES;
 	}
@@ -477,7 +477,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (BOOL) pathIsDOSAccessible: (NSString *)path
 {
-	for (BXDrive *drive in [driveCache objectEnumerator])
+	for (BXDrive *drive in [_driveCache objectEnumerator])
 	{
 		if ([drive exposesPath: path]) return YES;
 	}
@@ -526,9 +526,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	//Sort the drives by path depth, so that deeper mounts are picked over 'shallower' ones.
 	//e.g. when MyGame.boxer and MyGame.boxer/MyCD.cdrom are both mounted, it should pick the latter.
 	//Todo: filter this down to matching drives first, then do the sort, which would be quicker.
-	NSArray *sortedDrives = [[driveCache allValues] sortedArrayUsingSelector: @selector(pathDepthCompare:)];
+	NSArray *sortedDrives = [_driveCache.allValues sortedArrayUsingSelector: @selector(pathDepthCompare:)];
 	
-	for (BXDrive *drive in [sortedDrives reverseObjectEnumerator]) 
+	for (BXDrive *drive in sortedDrives.reverseObjectEnumerator)
 	{
 		if ([drive exposesPath: path]) return drive;
 	}
@@ -607,43 +607,50 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	return [dosDrive stringByAppendingString: dosPath];
 }
 
-- (BXDrive *) currentDrive { return [driveCache objectForKey: [self currentDriveLetter]]; }
+- (BXDrive *) currentDrive { return [_driveCache objectForKey: self.currentDriveLetter]; }
 - (NSString *) currentDriveLetter
 {
-	if ([self isExecuting])
+	if (self.isExecuting)
 	{
-		return [[[self class] driveLetters] objectAtIndex: DOS_GetDefaultDrive()];
+		return [[self.class driveLetters] objectAtIndex: DOS_GetDefaultDrive()];
 	}
 	else return nil;
 }
 
 - (NSString *) currentDirectory
 {
-	if ([self isExecuting])
+	if (self.isExecuting)
 	{
-		return [NSString stringWithCString: Drives[DOS_GetDefaultDrive()]->curdir encoding: BXDirectStringEncoding];
+        DOS_Drive *currentDOSBoxDrive = Drives[DOS_GetDefaultDrive()];
+        const char *currentDir = currentDOSBoxDrive->curdir;
+		return [NSString stringWithCString: currentDir
+                                  encoding: BXDirectStringEncoding];
 	}
 	else return nil;
 }
 
 - (NSString *) pathOfCurrentDirectory
 {
-	if ([self isExecuting])
+	if (self.isExecuting)
 	{
 		DOS_Drive *currentDOSBoxDrive = Drives[DOS_GetDefaultDrive()];
+		const char *currentDir = currentDOSBoxDrive->curdir;
 		
-		NSString *localPath	= [self _filesystemPathForDOSPath: currentDOSBoxDrive->curdir onDOSBoxDrive: currentDOSBoxDrive];
-		if (localPath) return localPath;
+		NSString *localPath	= [self _filesystemPathForDOSPath: currentDir
+                                                onDOSBoxDrive: currentDOSBoxDrive];
+		
+        if (localPath)
+            return localPath;
 		
 		//If no accurate local path could be determined, then return the source path of the current drive instead 
-		else return [[self currentDrive] path];		
+		else return self.currentDrive.path;
 	}
 	else return nil;
 }
 
 - (NSString *) pathForDOSPath: (NSString *)path
 {
-	if ([self isExecuting])
+	if (self.isExecuting)
 	{
 		const char *dosPath = [path cStringUsingEncoding: BXDirectStringEncoding];
 		//If the path couldn't be encoded successfully, don't do further lookups
@@ -662,7 +669,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 			else
 			{
 				BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-				return [drive path];
+				return drive.path;
 			}			
 		}
 		else return nil;
@@ -751,7 +758,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	{
 		if (Drives[i] == dosDrive)
 		{
-			return [driveCache objectForKey: [self _driveLetterForIndex: i]];
+			return [_driveCache objectForKey: [self _driveLetterForIndex: i]];
 		}
 	}
     
@@ -1100,7 +1107,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	for (i=0; i < DOS_DRIVES; i++)
 	{
 		NSString *letter	= [self _driveLetterForIndex: i];
-		BXDrive *drive		= [driveCache objectForKey: letter];
+		BXDrive *drive		= [_driveCache objectForKey: letter];
 		
 		//A drive exists in DOSBox that we don't have a record of yet, add it to our cache
 		if (Drives[i] && !drive)
@@ -1131,14 +1138,14 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 - (void) _addDriveToCache: (BXDrive *)drive
 {
 	[self willChangeValueForKey: @"mountedDrives"];
-	[driveCache setObject: drive forKey: [drive letter]];
+	[_driveCache setObject: drive forKey: drive.letter];
 	[self didChangeValueForKey: @"mountedDrives"];
 }
 
 - (void) _removeDriveFromCache: (BXDrive *)drive
 {
 	[self willChangeValueForKey: @"mountedDrives"];
-	[driveCache removeObjectForKey: [drive letter]];
+	[_driveCache removeObjectForKey: drive.letter];
 	[self didChangeValueForKey: @"mountedDrives"];
 }
 

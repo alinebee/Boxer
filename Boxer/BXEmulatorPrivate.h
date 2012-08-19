@@ -104,6 +104,7 @@ enum {
 @property (readwrite, copy) NSString *processLocalPath;
 
 @property (readwrite) BOOL joystickActive;
+@property (readwrite, getter=isWaitingForCommandInput) BOOL waitingForCommandInput;
 
 
 @property (readwrite, retain) BXVideoHandler *videoHandler;
@@ -303,6 +304,14 @@ enum {
 
 @interface BXEmulator (BXShellInternals)
 
+//Returns YES if we can execute new commands directly, or NO if we must wait for the current
+//process to finish before doing so (in which case commands will be queued up instead.)
+- (BOOL) _canExecuteCommandsDirectly;
+
+//Used internally by command execution functions. Should not be called directly.
+- (void) _parseCommand: (NSString *)command
+              encoding: (NSStringEncoding)encoding;
+
 //Routes DOS commands to the appropriate selector according to commandList.
 - (BOOL) _handleCommand: (NSString *)command withArgumentString: (NSString *)arguments;
 
@@ -310,12 +319,20 @@ enum {
 //Used internally for rewriting and chaining commands.
 - (void) _substituteCommand: (NSString *)theString encoding: (NSStringEncoding)encoding;
 
-//Called by DOSBox when processing input at the commandline. Returns a modified command string,
-//along with a flag to execute the command or leave it on the commandline for further modification.
-//Returns nil if Boxer does not wish to meddle with the command string.
-- (NSString *)_handleCommandInput: (NSString *)commandLine
-				 atCursorPosition: (NSUInteger *)cursorPosition
-			   executeImmediately: (BOOL *)execute;
+//Called by DOSBox when processing input at the commandline to allow it to rewrite
+//or interrupt the specified command input. Returns YES if Boxer has modified any
+//of the parameters provided by reference, or NO otherwise.
+- (BOOL) _handleCommandInput: (inout NSString **)inOutCommand
+              cursorPosition: (NSUInteger *)cursorPosition
+              executeCommand: (BOOL *)execute;
+
+//Called by DOSBox at opportune moments in the shell command process to give Boxer
+//an opportunity to run its own commands.
+- (BOOL) _executeNextPendingCommand;
+
+
+//Whether to display the startup preamble for the specified shell.
+- (BOOL) _shouldDisplayStartupMessagesForShell: (DOS_Shell *)shell;
 
 //Called by DOSBox whenever control returns to the DOS prompt. Sends a delegate notification.
 - (void) _didReturnToShell;

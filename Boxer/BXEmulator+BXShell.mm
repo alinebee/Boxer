@@ -18,7 +18,7 @@
 
 
 //Lookup table of BXEmulator+BXShell selectors and the shell commands that call them
-NSDictionary *commandList = [[NSDictionary alloc] initWithObjectsAndKeys:
+NSDictionary *_commandList = [[NSDictionary alloc] initWithObjectsAndKeys:
 	//Commands prefixed by boxer_ are intended for Boxer's own use in batchfiles and our own personal command chains
 	@"runPreflightCommands:",	@"boxer_preflight",
 	@"runLaunchCommands:",		@"boxer_launch",
@@ -36,7 +36,7 @@ nil];
 //Lookup table of shell commands and the aliases that run them
 //These have been replaced with actual batch files located in
 //Boxer's toolkit drive: this allows them to appear in autocomplete.
-NSDictionary *commandAliases = [[NSDictionary alloc] initWithObjectsAndKeys:
+NSDictionary *_commandAliases = [[NSDictionary alloc] initWithObjectsAndKeys:
 								//@"help",          @"commands",
 								//Disabled temporarily to avoid interfering with XCOM: TFTD
 								//@"help",          @"intro",
@@ -60,36 +60,19 @@ nil];
 - (void) executeCommand: (NSString *)command
 			   encoding: (NSStringEncoding)encoding
 {
-	if ([self isExecuting])
-	{
-        NSAssert2([command lengthOfBytesUsingEncoding: encoding] < CMD_MAXLINE,
-                  @"Command exceeded maximum commandline length of %u: %@", CMD_MAXLINE, command);
-        
-        //If we're inside a batchfile, we can go ahead and run the command directly.
-		if ([self isInBatchScript])
-		{   
-            char encodedCommand[CMD_MAXLINE];
-            
-			BOOL encoded = [command getCString: encodedCommand
-                                     maxLength: CMD_MAXLINE
-                                      encoding: encoding];
-			if (encoded)
-            {
-                DOS_Shell *shell = [self _currentShell];
-                shell->ParseLine(encodedCommand);
-            }
-            else
-            {
-                NSAssert1(NO, @"Could not encode command: %@", command);
-            }
+    if (self.isExecuting)
+    {
+		if (self._canExecuteCommandsDirectly)
+		{
+            [self _parseCommand: command encoding: encoding];
 		}
         //Otherwise, add the line to the end of the queue and we'll process it 
         //when we're next at the commandline.
 		else
 		{
-			[[self commandQueue] addObject: [command stringByAppendingString: @"\n"]];
+			[self.commandQueue addObject: [command stringByAppendingString: @"\n"]];
 		}
-	}
+    }
 }
 
 - (void) executeCommand: (NSString *)command
@@ -111,7 +94,9 @@ nil];
 
 - (void) executeProgramAtDOSPath: (NSString *)dosPath changingDirectory: (BOOL)changeDir
 {
-    [self executeProgramAtDOSPath: dosPath withArguments: nil changingDirectory: changeDir];
+    [self executeProgramAtDOSPath: dosPath
+                    withArguments: nil
+                changingDirectory: changeDir];
 }
 
 - (void) executeProgramAtDOSPath: (NSString *)dosPath
@@ -123,8 +108,8 @@ nil];
         //Normalise the path to Unix format so that we can perform standard Cocoa path operations upon it.
         //TODO: write an NSString category with DOS path-handling routines for this kind of thing.
         NSString *cocoafiedDOSPath = [dosPath stringByReplacingOccurrencesOfString: @"\\" withString: @"/"];
-		NSString *parentFolder	= [[cocoafiedDOSPath stringByDeletingLastPathComponent] stringByAppendingString: @"/"];
-		NSString *programName	= [cocoafiedDOSPath lastPathComponent];
+		NSString *parentFolder	= [cocoafiedDOSPath.stringByDeletingLastPathComponent stringByAppendingString: @"/"];
+		NSString *programName	= cocoafiedDOSPath.lastPathComponent;
 		
 		[self changeWorkingDirectoryToDOSPath: parentFolder];
 		[self executeCommand: programName
@@ -143,15 +128,15 @@ nil];
 
 - (void) displayString: (NSString *)theString
 {
-	if ([self isExecuting] && ![self isRunningProcess])
+	if (self.isExecuting && !self.isRunningProcess)
 	{
 		//Will be NULL if the string is not encodable
 		const char *encodedString = [theString cStringUsingEncoding: BXDisplayStringEncoding];
 		
 		if (encodedString != NULL)
 		{
-			DOS_Shell *shell = [self _currentShell];
-			shell->WriteOut(encodedString);
+			DOS_Shell *shell = self._currentShell;
+			shell->WriteOut_NoParsing(encodedString);
 		}
 	}
 }
@@ -173,7 +158,7 @@ nil];
 	dosPath = [dosPath stringByReplacingOccurrencesOfString: @"/" withString: @"\\"];
 	
 	//If the path starts with a drive letter, switch to that first
-	if ([dosPath length] >= 2 && [dosPath characterAtIndex: 1] == (unichar)':')
+	if (dosPath.length >= 2 && [dosPath characterAtIndex: 1] == (unichar)':')
 	{
 		NSString *driveLetter = [dosPath substringToIndex: 1];
 		//Snip off the drive letter from the front of the path
@@ -185,7 +170,7 @@ nil];
 		if (!changedPath) return NO;
 	}
 	
-	if ([dosPath length])
+	if (dosPath.length)
 	{
         [self willChangeValueForKey: @"pathOfCurrentDirectory"];
         
@@ -196,8 +181,11 @@ nil];
 	}
 	
     //DOCUMENT ME: why were we discarding any commands that were already typed?
-	if (changedPath) [self discardShellInput];
-	
+	if (changedPath)
+    {
+        [self discardShellInput];
+	}
+    
 	return changedPath;
 }
 
@@ -238,11 +226,11 @@ nil];
 
 - (void) discardShellInput
 {
-	if ([self isAtPrompt])
+	if (self.isWaitingForCommandInput)
 	{
 		NSString *emptyInput = @"\n";
-		if (![[[self commandQueue] lastObject] isEqualToString: emptyInput])
-            [[self commandQueue] addObject: emptyInput];
+		if (![self.commandQueue.lastObject isEqualToString: emptyInput])
+            [self.commandQueue addObject: emptyInput];
 	}
 }
 
@@ -271,12 +259,12 @@ nil];
 
 - (void) runPreflightCommands: (NSString *)argumentString
 {
-	[[self delegate] runPreflightCommandsForEmulator: self];
+	[self.delegate runPreflightCommandsForEmulator: self];
 }
 
 - (void) runLaunchCommands: (NSString *)argumentString
 {
-	[[self delegate] runLaunchCommandsForEmulator: self];
+	[self.delegate runLaunchCommandsForEmulator: self];
 }
 
 - (void) listDrives: (NSString *)argumentString
@@ -291,8 +279,6 @@ nil];
 	NSArray *sortedDrives = [self.mountedDrives sortedArrayUsingSelector: @selector(letterCompare:)];
 	for (BXDrive *drive in sortedDrives)
 	{
-		//if ([drive isHidden]) continue;
-		
 		NSString *localizedFormat;
 		
 		if (drive.isInternal)
@@ -353,7 +339,7 @@ nil];
         BXDrive *drive = [self driveForDOSPath: cleanedPath];
         
         NSString *errorFormat;
-        if ([drive isInternal])
+        if (drive.isInternal)
         {
             errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" is a virtual drive used by Boxer and does not exist in OS X.",
                                                                @"Shell",
@@ -389,9 +375,12 @@ nil];
 
 - (void) clearScreen
 {
-    //Copypasta from CMD_CLS.
-	reg_ax=0x0003;
-	CALLBACK_RunRealInt(0x10);
+    if (!self.isRunningProcess)
+    {
+        //Copypasta from CMD_CLS.
+        reg_ax=0x0003;
+        CALLBACK_RunRealInt(0x10);
+    }
 }
 @end
 
@@ -401,18 +390,90 @@ nil];
 
 @implementation BXEmulator (BXShellInternals)
 
+- (BOOL) _canExecuteCommandsDirectly
+{
+    return self.isExecuting && !self.isRunningProcess && !self.isWaitingForCommandInput;
+}
+
+- (BOOL) _executeNextPendingCommand
+{
+    NSMutableArray *queue = self.commandQueue;
+    if (queue.count)
+    {
+		NSString *command = [[[queue objectAtIndex: 0] copy] autorelease];
+		[queue removeObjectAtIndex: 0];
+        
+        command = [command stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        
+        if (command.length)
+        {
+            DOS_Shell *shell = [self _currentShell];
+            
+            BOOL printCommand = shell->echo;
+            
+            //The printing behaviour below matches DOSBox's handling of batch file lines:
+            //q.v. shell.cpp.
+            if (printCommand && (!self.isInBatchScript || [command characterAtIndex: 0] != '@'))
+            {
+                shell->ShowPrompt();
+                
+                [self displayString: command];
+                [self displayString: @"\n"];
+            }
+            
+            //This could block and execute nested commands,
+            //which is why we remove the command from the queue beforehand.
+            [self _parseCommand: command encoding: BXDirectStringEncoding];
+            
+            if (printCommand)
+                [self displayString: @"\n"];
+        }
+        
+        return YES;
+    }
+    return NO;
+}
+
+- (void) _parseCommand: (NSString *)command
+              encoding: (NSStringEncoding)encoding
+{
+    NSAssert2([command lengthOfBytesUsingEncoding: encoding] < CMD_MAXLINE,
+              @"Command exceeded maximum commandline length of %u: %@", CMD_MAXLINE, command);
+    
+    char encodedCommand[CMD_MAXLINE];
+    
+    BOOL encoded = [command getCString: encodedCommand
+                             maxLength: CMD_MAXLINE
+                              encoding: encoding];
+    if (encoded)
+    {
+        if (self.clearsScreenBeforeCommandExecution)
+            [self clearScreen];
+        
+        DOS_Shell *shell = [self _currentShell];
+        shell->ParseLine(encodedCommand);
+    }
+    else
+    {
+        NSAssert1(NO, @"Could not encode command: %@", command);
+    }
+}
+
 - (BOOL) _handleCommand: (NSString *)originalCommand
 	 withArgumentString: (NSString *)originalArgumentString
 {	
 	//Normalise the command to lowercase
-	NSString *command = [originalCommand lowercaseString];
+	NSString *command = originalCommand.lowercaseString;
 	
 	//Check if the command matched one of our aliases
-	NSString *aliasedCommand = [commandAliases objectForKey: command];
+	NSString *aliasedCommand = [_commandAliases objectForKey: command];
 	if (aliasedCommand)
 	{
 		//If it was an alias to one of our built-in commands, switch to that command and keep going
-		if ([commandList objectForKey: aliasedCommand]) command = aliasedCommand;
+		if ([_commandList objectForKey: aliasedCommand])
+        {
+            command = aliasedCommand;
+        }
 		//Otherwise, execute the new command in the shell and return
 		else
 		{
@@ -423,14 +484,14 @@ nil];
 	}
 	
 	//Check for a selector corresponding to the command, and call it if one is found
-	NSString *selectorName = [commandList objectForKey: command];
+	NSString *selectorName = [_commandList objectForKey: command];
 	if (selectorName)
 	{
 		SEL selector = NSSelectorFromString(selectorName);
 		if (selector)
 		{
 			//Eat the first character of the arguments, which is just the separator between command and arguments
-			NSString *argumentString = ([originalArgumentString length]) ? [originalArgumentString substringFromIndex: 1] : @"";
+			NSString *argumentString = (originalArgumentString.length) ? [originalArgumentString substringFromIndex: 1] : @"";
 			
 			BOOL returnValue;
 			
@@ -440,11 +501,13 @@ nil];
 				[self performSelector: selector withObject: argumentString];
                 returnValue = YES;
 			}
-			//Otherwise, pass the selector up to the application as an action call, using the argument string as the action parameter
-			//This allows other parts of Boxer to hook into the shell, without BXShell explicitly handling the method responsible
+			//Otherwise, pass the selector up to the application as an action call,
+            //using the argument string as the action parameter
+			//This allows other parts of Boxer to hook into the shell, without
+            //BXShell explicitly handling the method responsible
 			else
 			{
-				NSString *sender = [argumentString length] ? argumentString : nil;
+				NSString *sender = argumentString.length ? argumentString : nil;
 				returnValue = [NSApp sendAction: selector to: nil from: sender];
 			}
 			return returnValue;
@@ -456,7 +519,7 @@ nil];
 
 - (void) _substituteCommand: (NSString *)command encoding: (NSStringEncoding)encoding
 {
-	if ([self isExecuting])
+	if (self.isExecuting)
 	{
         NSAssert2([command lengthOfBytesUsingEncoding: encoding] < CMD_MAXLINE,
                   @"Command exceeded maximum commandline length of %u: %@", CMD_MAXLINE, command);
@@ -466,20 +529,29 @@ nil];
         
 		if (encoded)
 		{
-			DOS_Shell *shell = [self _currentShell];
+			DOS_Shell *shell = self._currentShell;
 			shell->DoCommand(cmd);
 		}
 	}
 }
 
-- (NSString *)_handleCommandInput: (NSString *)commandLine
-				 atCursorPosition: (NSUInteger *)cursorPosition
-			   executeImmediately: (BOOL *)execute
+- (BOOL) _handleCommandInput: (inout NSString **)inOutCommand
+              cursorPosition: (NSUInteger *)cursorPosition
+              executeCommand: (BOOL *)execute
 {
-	NSMutableArray *queue = [self commandQueue];
-	if ([queue count])
+    NSAssert(execute, @"_handleCommandInput:cursorPosition:executeCommand: must be given a pointer to fill with the execute flag.");
+    
+    NSMutableArray *queue = self.commandQueue;
+	if (queue.count)
 	{
-		NSString *finalCommand = nil;
+        //If we have any pending commands, ignore the user's command input and break
+        //out of command processing immediately.
+        *execute = YES;
+        [self displayString: @"\n"];
+        return YES;
+        
+        /*
+        
 		NSString *nextCommand = [[queue objectAtIndex: 0] copy];
 		[queue removeObjectAtIndex: 0];
 		
@@ -488,7 +560,7 @@ nil];
 		//If the command is terminated by a newline, treat it as an entire command and execute it immediately
 		if (completeCommand)
 		{
-			finalCommand = [nextCommand substringToIndex: [nextCommand length] - 1];
+			*inOutCommand = [nextCommand substringToIndex: nextCommand.length - 1];
 			*execute = YES;
 			
 			[self displayString: nextCommand];
@@ -496,21 +568,56 @@ nil];
 		//Otherwise, treat it as a command snippet and insert it into to the current commandline at the cursor position
 		else
 		{
-			NSString *prefix = [commandLine substringToIndex: *cursorPosition];
-			NSString *suffix = [commandLine substringFromIndex: *cursorPosition];
-			*cursorPosition += [nextCommand length];
-			*execute = NO;
+            NSString *originalCommand = *inOutCommand;
+			NSString *prefix = [originalCommand substringToIndex: *cursorPosition];
+			NSString *suffix = [originalCommand substringFromIndex: *cursorPosition];
 			
-			finalCommand = [NSString stringWithFormat: @"%@%@%@", prefix, nextCommand, suffix];
+            *cursorPosition += nextCommand.length;
+			*execute = NO;
+			*inOutCommand = [NSString stringWithFormat: @"%@%@%@", prefix, nextCommand, suffix];
 
 			[self displayString: nextCommand];
 			[self displayString: suffix];
 		}
 		
 		[nextCommand release];
-		return finalCommand;
+		return YES;
+         */
 	}
-	else return nil;
+	else return NO;
+}
+
+/*
+- (BOOL) _executePendingCommandWithCommandInput: (inout NSString **)inOutCommand
+{
+    NSAssert(inOutCommand != NULL, @"_launchPendingCommandWithCommandInput: must be passed a valid pointer to an NSString object.");
+    NSMutableArray *queue = self.commandQueue;
+	
+    if (queue.count)
+    {
+		NSString *nextCommand = [[[queue objectAtIndex: 0] copy] autorelease];
+		[queue removeObjectAtIndex: 0];
+        
+        if (nextCommand.length)
+        {
+            if (self.clearsScreenBeforeCommandExecution)
+                [self clearScreen];
+            
+            *inOutCommand = nextCommand;
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+ */
+
+- (BOOL) _shouldDisplayStartupMessagesForShell: (DOS_Shell *)shell
+{
+    if ([self.delegate respondsToSelector: @selector(emulatorShouldDisplayStartupMessages:)])
+        return [self.delegate emulatorShouldDisplayStartupMessages: self];
+    else
+        return YES;
 }
 
 - (void) _willRunStartupCommands

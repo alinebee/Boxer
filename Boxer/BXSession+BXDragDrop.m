@@ -54,8 +54,13 @@
 //Called by BXDOSWindowController draggingEntered: to figure out what we'd do with a dropped string.
 - (NSDragOperation) responseToDroppedString: (NSString *)droppedString
 {
-	if ([self.emulator canAcceptPastedString: droppedString]) return NSDragOperationCopy;
-	else return NSDragOperationNone;
+    //Only permit string drops if we're displaying the DOS view currently.
+    BOOL isShowingDOSView = (self.DOSWindowController.currentPanel == BXDOSWindowDOSView);
+    
+	if (isShowingDOSView && [self.emulator canAcceptPastedString: droppedString])
+        return NSDragOperationCopy;
+	else
+        return NSDragOperationNone;
 }
 
 

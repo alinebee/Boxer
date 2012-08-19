@@ -552,24 +552,29 @@
 
 - (IBAction) paste: (id)sender
 {
-	NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+    //If we're not currently displaying the DOS prompt, disallow pasting.
+    BOOL isShowingDOSView = (self.DOSWindowController.currentPanel == BXDOSWindowDOSView);
+    if (isShowingDOSView)
+    {
+        NSPasteboard *pboard = [NSPasteboard generalPasteboard];
 
-	NSArray *acceptedPasteTypes = [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil];
-	NSString *bestType = [pboard availableTypeFromArray: acceptedPasteTypes];
-	NSString *pastedString;
-	
-	if (!bestType) return;
-	if ([bestType isEqualToString: NSFilenamesPboardType])
-	{
-		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		pastedString = filePaths.lastObject;
-	}
-	else pastedString = [pboard stringForType: NSStringPboardType];
-    
-    //Unpause when pasting strings
-    [self resume: self];
-    
-	[self.emulator handlePastedString: pastedString];
+        NSArray *acceptedPasteTypes = [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil];
+        NSString *bestType = [pboard availableTypeFromArray: acceptedPasteTypes];
+        NSString *pastedString;
+        
+        if (!bestType) return;
+        if ([bestType isEqualToString: NSFilenamesPboardType])
+        {
+            NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
+            pastedString = filePaths.lastObject;
+        }
+        else pastedString = [pboard stringForType: NSStringPboardType];
+        
+        //Unpause when pasting strings
+        [self resume: self];
+        
+        [self.emulator handlePastedString: pastedString];
+    }
 }
 
 - (BOOL) canPasteFromPasteboard: (NSPasteboard *)pboard 

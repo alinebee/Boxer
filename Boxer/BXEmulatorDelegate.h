@@ -89,11 +89,17 @@ extern NSString * const BXEmulatorLaunchArgumentsKey;
 //Called whenever the emulator starts/finishes one iteration of its run loop.
 - (void) emulatorWillStartRunLoop: (BXEmulator *)emulator;
 - (void) emulatorDidFinishRunLoop: (BXEmulator *)emulator;
-                        
-                        
+
+
+@optional
+
+//Called at shell startup to decide whether to display the standard DOSBox startup preamble.
+//Defaults to YES if not implemented.
+- (BOOL) emulatorShouldDisplayStartupMessages: (BXEmulator *)emulator;
+
+
 #pragma mark -
 #pragma mark Lifecycle notifications
-
 
 //These are sent to the emulator delegate if defined, and posted on the default notification center.
 @optional
@@ -177,7 +183,8 @@ extern NSString * const BXEmulatorLaunchArgumentsKey;
 //the specified date, or NO to let the emulator send its message anyway.
 //If the delegate does not respond to this signal, the emulator will
 //assume the answer is YES.
-- (BOOL) emulator: (BXEmulator *)emulator shouldWaitForMIDIDevice: (id <BXMIDIDevice>)device untilDate: (NSDate *)date;
+- (BOOL) emulator: (BXEmulator *)emulator shouldWaitForMIDIDevice: (id <BXMIDIDevice>)device
+        untilDate: (NSDate *)date;
 
 //Posted whenever a game tells the MT-32 to display an LCD message.
 - (void) emulatorDidDisplayMT32Message: (NSNotification *)notification;

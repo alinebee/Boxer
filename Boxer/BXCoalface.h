@@ -64,9 +64,21 @@ extern "C" {
 	//Called from shell_cmds.cpp: hooks into shell command processing.
 	bool boxer_shouldRunShellCommand(char* cmd, char* args);
 	
-	//Called from shell_misc.cpp to allow Boxer to inject its own commands at the DOS command line.
+    //Called from shell_misc.cpp to let Boxer know the shell is waiting for command input.
+    void boxer_willReadCommandInputFromHandle(Bit16u handle);
+    void boxer_didReadCommandInputFromHandle(Bit16u handle);
+    
+	//Called from shell_misc.cpp to let Boxer rewrite or interrupt the shell's input processing.
+    //Returns true if Boxer has modified any of the parameters passed by reference.
 	bool boxer_handleCommandInput(char *cmd, Bitu *cursorPosition, bool *executeImmediately);
-	
+    
+    //Called from shell.cpp to give Boxer a chance to launch any commands of its own.
+    bool boxer_hasPendingCommands();
+    bool boxer_executeNextPendingCommand();
+    
+    //Called from shell.cpp to let Boxer override the display of the standard startup messages.
+	bool boxer_shouldDisplayStartupMessages();
+    
 	//Called from drive_cache.cpp: allows Boxer to hide OS X files that DOSBox shouldn't touch.
 	bool boxer_shouldShowFileWithName(const char *name);
 	
@@ -126,6 +138,10 @@ extern "C" {
     
 	//Called from dos_keyboard_layout.cpp: provides the current OS X keyboard layout as a DOSBox layout code.
 	const char * boxer_preferredKeyboardLayout();
+    
+    //Called in bios_keyboard.cpp to allow Boxer to interrupt the INT16 keyboard handling loop.
+    //(Used by the DOS prompt, among others.)
+    bool boxer_continueListeningForKeyEvents();
     
     //Returns how many BIOS keycodes Boxer has stored in its internal key buffer.
     Bitu boxer_numKeyCodesInPasteBuffer();

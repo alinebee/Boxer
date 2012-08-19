@@ -298,14 +298,19 @@ void DOS_Shell::Run(void) {
 		return;
 	}
 	/* Start a normal shell and check for a first command init */
-	WriteOut(MSG_Get("SHELL_STARTUP_BEGIN"),VERSION);
-#if C_DEBUG
-	WriteOut(MSG_Get("SHELL_STARTUP_DEBUG"));
-#endif
-	if (machine == MCH_CGA) WriteOut(MSG_Get("SHELL_STARTUP_CGA"));
-	if (machine == MCH_HERC) WriteOut(MSG_Get("SHELL_STARTUP_HERC"));
-	WriteOut(MSG_Get("SHELL_STARTUP_END"));
-
+    //--Modified 2012-08-19 by Alun Bestor to allow selective overriding of the startup messages.
+    if (boxer_shouldDisplayStartupMessages())
+    {
+        WriteOut(MSG_Get("SHELL_STARTUP_BEGIN"),VERSION);
+    #if C_DEBUG
+        WriteOut(MSG_Get("SHELL_STARTUP_DEBUG"));
+    #endif
+        if (machine == MCH_CGA) WriteOut(MSG_Get("SHELL_STARTUP_CGA"));
+        if (machine == MCH_HERC) WriteOut(MSG_Get("SHELL_STARTUP_HERC"));
+        WriteOut(MSG_Get("SHELL_STARTUP_END"));
+    }
+    //--End of modifications
+    
 	if (cmd->FindString("/INIT",line,true)) {
 		//--Added 2009-12-13 by Alun Bestor to let Boxer monitor the autoexec process
 		boxer_autoexecDidStart();
@@ -318,8 +323,14 @@ void DOS_Shell::Run(void) {
 		//--End of modifications
 	}
 	do {
-		if (bf){
-			if(bf->ReadLine(input_line)) {
+        //--Added 2012-08-19 by Alun Bestor to let Boxer insert its own commands into batch processing.
+        if (boxer_hasPendingCommands())
+        {
+            boxer_executeNextPendingCommand();
+        }
+		else if (bf){
+        //--End of modifications
+            if(bf->ReadLine(input_line)) {
 				if (echo) {
 					if (input_line[0]!='@') {
 						ShowPrompt();
@@ -337,8 +348,14 @@ void DOS_Shell::Run(void) {
             
 			if (echo) ShowPrompt();
 			InputCommand(input_line);
-			ParseLine(input_line);
-			if (echo && !bf) WriteOut_NoParsing("\n");
+            
+            //--Added 2012-08-19 by Alun Bestor to let Boxer interrupt the command input with its own commands.
+            if (!boxer_hasPendingCommands())
+            {
+                //--End of modifications
+                ParseLine(input_line);
+                if (echo && !bf) WriteOut_NoParsing("\n");
+            }
 		}
 	} while (!exit);
 }

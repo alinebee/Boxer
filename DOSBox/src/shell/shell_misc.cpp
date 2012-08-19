@@ -59,14 +59,17 @@ void DOS_Shell::InputCommand(char * line) {
 	while (size) {
 		dos.echo=false;		
 		
-		while(!DOS_ReadFile(input_handle,&c,&n)) {
+		//--Modified 2012-08-19 by Alun Bestor to let Boxer inject its own input
+        //and cancel keyboard input listening.
+        boxer_willReadCommandInputFromHandle(input_handle);
+		while(boxer_continueListeningForKeyEvents() && !DOS_ReadFile(input_handle,&c,&n)) {
 			Bit16u dummy;
 			DOS_CloseFile(input_handle);
 			DOS_OpenFile("con",2,&dummy);
 			LOG(LOG_MISC,LOG_ERROR)("Reopening the input handle.This is a bug!");
 		}
+        boxer_didReadCommandInputFromHandle(input_handle);
 		
-		//--Added 2010-01-22 by Alun Bestor to let Boxer inject its own input
 		bool executeImmediately = false;
 		if (boxer_handleCommandInput(line, &str_index, &executeImmediately))
 		{
@@ -343,16 +346,6 @@ void DOS_Shell::InputCommand(char * line) {
 			size = 0;       // stop the next loop
 			str_len = 0;    // prevent multiple adds of the same line
 			break;
-                
-//--Added 2010-12-29 by Alun Bestor to suppress bogus control char
-//that gets printed for some reason when Boxer injects its own commands
-//after a program has been run.
-//FIXME: this indicates a deeper bug (possibly in DOS_ReadFile())
-//that I haven't tracked down yet.
-        case 0x10:
-            break;
-//--End of modifications
-
 		
 		default:
 			if (l_completion.size()) l_completion.clear();

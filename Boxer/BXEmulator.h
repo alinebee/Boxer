@@ -75,46 +75,49 @@ extern NSString * const shellProcessPath;
 
 @interface BXEmulator : NSObject
 {
-	id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate> delegate;
-	BXVideoHandler *videoHandler;
-	BXEmulatedKeyboard *keyboard;
-	BXEmulatedMouse *mouse;
-	id <BXEmulatedJoystick> joystick;
+	id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate> _delegate;
+	BXVideoHandler *_videoHandler;
+	BXEmulatedKeyboard *_keyboard;
+	BXEmulatedMouse *_mouse;
+	id <BXEmulatedJoystick> _joystick;
     
-    BOOL joystickActive;
+    BOOL _joystickActive;
     
-    float masterVolume;
+    float _masterVolume;
 	
-	NSString *processName;
-	NSString *processPath;
-	NSString *processLocalPath;
+	NSString *_processName;
+	NSString *_processPath;
+	NSString *_processLocalPath;
 	
-	NSMutableDictionary *driveCache;
+	NSMutableDictionary *_driveCache;
 	
-	BOOL cancelled;
-	BOOL executing;
-	BOOL initialized;
-	BOOL paused;
-    BOOL wasAutoSpeed;
+	BOOL _cancelled;
+	BOOL _executing;
+	BOOL _initialized;
+	BOOL _paused;
+    BOOL _wasAutoSpeed;
+    
+    BOOL _waitingForCommandInput;
+    BOOL _clearsScreenBeforeCommandExecution;
     
     //Whether an SDL CD-ROM was playing when we paused the emulator.
     //Used to selectively resume CD-ROM playback after unpausing.
-    BOOL cdromWasPlaying;
+    BOOL _cdromWasPlaying;
     
     //The thread on which start was called.
-    NSThread *emulationThread;
+    NSThread *_emulationThread;
 	
 	//The queue of commands we are waiting to execute at the DOS prompt.
     //Managed by BXShell.
-	NSMutableArray *commandQueue;
+	NSMutableArray *_commandQueue;
     BXKeyBuffer *_keyBuffer;
     NSTimeInterval _keyBufferLastCheckTime;
     
     //Managed by BXAudio.
-    id <BXMIDIDevice> activeMIDIDevice;
-    NSDictionary *requestedMIDIDeviceDescription;
-    NSMutableArray *pendingSysexMessages;
-    BOOL autodetectsMT32;
+    id <BXMIDIDevice> _activeMIDIDevice;
+    NSDictionary *_requestedMIDIDeviceDescription;
+    NSMutableArray *_pendingSysexMessages;
+    BOOL _autodetectsMT32;
     
     //Used by BXDOSFilesystem to track drives while they're being mounted.
     BXDrive *_driveBeingMounted;
@@ -174,6 +177,9 @@ extern NSString * const shellProcessPath;
 //Returns whether DOSBox is waiting patiently at the DOS prompt doing nothing.
 @property (readonly) BOOL isAtPrompt;
 
+//Returns whether DOSBox is actively waiting for command input at the DOS prompt.
+@property (readonly, getter=isWaitingForCommandInput) BOOL waitingForCommandInput;
+
 //The name of the currently-executing DOSBox process. Will be nil if no process is running.
 @property (readonly, copy) NSString *processName;
 
@@ -216,6 +222,10 @@ extern NSString * const shellProcessPath;
 
 //An array of queued command strings to execute on the DOS command line.
 @property (readonly) NSMutableArray *commandQueue;
+
+//Whether the emulator will clear the screen before executing a command
+//with the executeCommand: and executeProgram: methods.
+@property (assign) BOOL clearsScreenBeforeCommandExecution;
 
 
 //The properties requested by the game for what kind of MIDI playback

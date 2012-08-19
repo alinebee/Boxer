@@ -701,7 +701,9 @@
     }
 }
 
-- (BOOL) openFileAtPath: (NSString *)path withArguments: (NSString *)arguments
+- (BOOL) openFileAtPath: (NSString *)path
+          withArguments: (NSString *)arguments
+         clearingScreen: (BOOL)clearScreen
 {
 	if (!self.emulator.isInitialized || self.emulator.isRunningProcess) return NO;
     
@@ -717,6 +719,8 @@
 	
 	if ([self.class isExecutable: path])
 	{
+        self.emulator.clearsScreenBeforeCommandExecution = clearScreen;
+        
 		//If an executable was specified, execute it
         self.lastLaunchedProgramPath = path;
         self.lastLaunchedProgramArguments = arguments;
@@ -734,7 +738,9 @@
 
 - (BOOL) openFileAtPath: (NSString *)path
 {
-    return [self openFileAtPath: path withArguments: nil];
+    return [self openFileAtPath: path
+                  withArguments: nil
+                 clearingScreen: NO];
 }
 
 

@@ -20,8 +20,8 @@
 #pragma mark Global tracking variables
 
 //The singleton emulator instance. Returned by [BXEmulator currentEmulator].
-static BXEmulator *currentEmulator = nil;
-static BOOL hasStartedEmulator = NO;
+static BXEmulator *_currentEmulator = nil;
+static BOOL _hasStartedEmulator = NO;
 
 
 #pragma mark -
@@ -91,18 +91,28 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 #pragma mark Implementation
 
 @implementation BXEmulator
-@synthesize processName, processPath, processLocalPath;
-@synthesize delegate;
-@synthesize videoHandler;
-@synthesize mouse, keyboard;
-@synthesize cancelled, executing, initialized, paused;
+@synthesize processName = _processName;
+@synthesize processPath = _processPath;
+@synthesize processLocalPath = _processLocalPath;
+@synthesize delegate = _delegate;
+@synthesize videoHandler = _videoHandler;
+@synthesize mouse = _mouse;
+@synthesize keyboard = _keyboard;
+@synthesize cancelled = _cancelled;
+@synthesize executing = _executing;
+@synthesize initialized = _initialized;
+@synthesize paused = _paused;
 
-@synthesize commandQueue;
-@synthesize emulationThread;
+@synthesize commandQueue = _commandQueue;
+@synthesize emulationThread = _emulationThread;
+@synthesize clearsScreenBeforeCommandExecution = _clearsScreenBeforeCommandExecution;
 
-@synthesize activeMIDIDevice, requestedMIDIDeviceDescription, autodetectsMT32;
-@synthesize masterVolume;
+@synthesize activeMIDIDevice = _activeMIDIDevice;
+@synthesize requestedMIDIDeviceDescription = _requestedMIDIDeviceDescription;
+@synthesize autodetectsMT32 = _autodetectsMT32;
+@synthesize masterVolume = _masterVolume;
 @synthesize keyBuffer = _keyBuffer;
+@synthesize waitingForCommandInput = _waitingForCommandInput;
 
 
 #pragma mark -
@@ -111,13 +121,13 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 //Returns the currently executing emulator instance, for DOSBox coalface functions to talk to.
 + (BXEmulator *) currentEmulator
 {
-	return [[currentEmulator retain] autorelease];
+	return [[_currentEmulator retain] autorelease];
 }
 
 //Whether it is safe to launch a new emulator instance.
 + (BOOL) canLaunchEmulator;
 {
-	return !hasStartedEmulator;
+	return !_hasStartedEmulator;
 }
 
 + (NSString *) configStringForFixedSpeed: (NSInteger)speed
@@ -177,9 +187,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 {
 	if ((self = [super init]))
 	{
-		commandQueue            = [[NSMutableArray alloc] initWithCapacity: 4];
-		driveCache              = [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
-		pendingSysexMessages    = [[NSMutableArray alloc] initWithCapacity: 4];
+		_commandQueue            = [[NSMutableArray alloc] initWithCapacity: 4];
+		_driveCache              = [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
+		_pendingSysexMessages    = [[NSMutableArray alloc] initWithCapacity: 4];
         
         self.masterVolume = 1.0f;
 		
@@ -206,9 +216,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     self.videoHandler = nil;
     self.keyBuffer = nil;
     
-	[driveCache release], driveCache = nil;
-	[commandQueue release], commandQueue = nil;
-    [pendingSysexMessages release], pendingSysexMessages = nil;
+	[_driveCache release], _driveCache = nil;
+	[_commandQueue release], _commandQueue = nil;
+    [_pendingSysexMessages release], _pendingSysexMessages = nil;
 	
 	[super dealloc];
 }
@@ -219,18 +229,18 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (void) start
 {
-    NSAssert(!hasStartedEmulator, @"Emulation session started after one has already been started.");
+    NSAssert(!_hasStartedEmulator, @"Emulation session started after one has already been started.");
     
 	if (self.isCancelled) return;
     
     self.emulationThread = [NSThread currentThread];
 	
 	//Record ourselves as the current emulator instance for DOSBox to talk to
-    if (!currentEmulator)
+    if (!_currentEmulator)
     {
-        currentEmulator = [self retain];
+        _currentEmulator = [self retain];
     }
-	hasStartedEmulator = YES;
+	_hasStartedEmulator = YES;
 	
 	[self _willStart];
 	
@@ -241,10 +251,10 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	
 	self.executing = NO;
 	
-	if (currentEmulator == self)
+	if (_currentEmulator == self)
     {
-        [currentEmulator autorelease];
-        currentEmulator = nil;
+        [_currentEmulator autorelease];
+        _currentEmulator = nil;
 	}
     
 	[self _didFinish];
@@ -385,7 +395,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	if ([self isExecuting])
 	{
         //While in turbo mode, report the value we had before we entered turbo.
-        if (self.isTurboSpeed) autoSpeed = wasAutoSpeed;
+        if (self.isTurboSpeed) autoSpeed = _wasAutoSpeed;
         else autoSpeed = (CPU_CycleAutoAdjust == BXSpeedAuto);
 	}
 	return autoSpeed;
@@ -399,7 +409,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
         //instead, set the value we'll return to when we come out of turbo.
         if (self.isTurboSpeed)
         {
-            wasAutoSpeed = autoSpeed;
+            _wasAutoSpeed = autoSpeed;
         }
         else
         {
@@ -428,9 +438,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
         {
             ticksLocked = YES;
             
-            wasAutoSpeed = (CPU_CycleAutoAdjust == BXSpeedAuto);
+            _wasAutoSpeed = (CPU_CycleAutoAdjust == BXSpeedAuto);
             //Suppress auto-speed temporarily
-            if (wasAutoSpeed)
+            if (_wasAutoSpeed)
             {
                 CPU_CycleAutoAdjust = NO;
                 //Hurray, magic numbers!
@@ -443,9 +453,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
             ticksLocked = NO;
             
             //Restore the previous auto-speed value.
-            if (wasAutoSpeed)
+            if (_wasAutoSpeed)
             {
-                wasAutoSpeed = NO;
+                _wasAutoSpeed = NO;
                 CPU_CycleAutoAdjust = BXSpeedAuto;
                 //TODO: should we set this using setAutoSpeed:?
             }
@@ -582,7 +592,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (BOOL) joystickActive
 {
-    return joystickActive;
+    return _joystickActive;
 }
 
 - (void) setJoystickActive: (BOOL)flag
@@ -595,7 +605,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
         //and then gave up.
         if (self.joystick || !flag)
         {
-            joystickActive = flag;
+            _joystickActive = flag;
         }
     }
 }
@@ -619,9 +629,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 {
     @synchronized(self)
     {
-        [joystick retain];
+        [_joystick retain];
     }
-    return [joystick autorelease];
+    return [_joystick autorelease];
 }
 
 - (void) setJoystick: (id <BXEmulatedJoystick>)newJoystick
@@ -631,18 +641,18 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
         if (self.joystick != newJoystick)
         {
             //Detach the existing joystick...
-            if (joystick)
+            if (_joystick)
             {
-                [joystick willDisconnect];
-                [joystick release];
+                [_joystick willDisconnect];
+                [_joystick release];
             }
             
-            joystick = [newJoystick retain];
+            _joystick = [newJoystick retain];
             
             //...and prepare the new one
-            if (joystick)
+            if (_joystick)
             {
-                [joystick didConnect];
+                [_joystick didConnect];
             }
         }
     }
@@ -862,11 +872,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	//TWEAK: it's only safe to break out once initialization is done, since some
 	//of DOSBox's initialization routines rely on running tasks on the run loop
 	//and may crash if they fail to complete.
-	if (self.isCancelled && self.isInitialized) return NO;
-
-	//If we have a command of our own waiting at the command prompt,
-    //then break out of DOSBox's stdin input loop
-	if (self.commandQueue.count > 0 && self.isAtPrompt) return NO;
+	if (self.isCancelled && self.isInitialized)
+        return NO;
 	
 	return YES;
 }

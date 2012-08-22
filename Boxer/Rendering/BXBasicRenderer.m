@@ -35,6 +35,7 @@ GLfloat viewportVerticesFlipped[8] = {
 @synthesize frameRate = _frameRate;
 @synthesize renderingTime = _renderingTime;
 @synthesize viewport = _viewport;
+@synthesize delegate = _delegate;
 
 #pragma mark -
 #pragma mark Helper methods
@@ -205,8 +206,14 @@ GLfloat viewportVerticesFlipped[8] = {
 
 - (void) _renderFrame: (BXVideoFrame *)frame
 {
+    if (self.delegate)
+        [self.delegate renderer: self willRenderTextureToDestinationContext: self.frameTexture];
+    
     [self _setViewportToRegion: self.viewport];
     [self.frameTexture drawOntoVertices: viewportVertices error: NULL];
+    
+    if (self.delegate)
+        [self.delegate renderer: self didRenderTextureToDestinationContext: self.frameTexture];
 }
 
 - (void) _clearViewport

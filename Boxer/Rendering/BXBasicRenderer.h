@@ -31,10 +31,11 @@ extern NSString * const BXRendererErrorDomain;
 
 @class BXVideoFrame;
 @class BXTexture2D;
-
+@protocol BXRendererDelegate;
 @interface BXBasicRenderer : NSObject
 {
     CGLContextObj _context;
+    id <BXRendererDelegate> _delegate;
     
 	BXVideoFrame *_currentFrame;
 	CGRect _viewport;
@@ -55,6 +56,9 @@ extern NSString * const BXRendererErrorDomain;
 
 #pragma mark -
 #pragma mark Properties
+
+//The delegate to which we will send BXRendererDelegate messages.
+@property (assign) id <BXRendererDelegate> delegate;
 
 //The context in which this renderer is running, set when the renderer is created.
 //Renderers cannot be moved between contexts.
@@ -119,5 +123,17 @@ extern NSString * const BXRendererErrorDomain;
 
 //Renders the frame into its GL context.
 - (void) render;
+
+@end
+
+
+@protocol BXRendererDelegate <NSObject>
+
+//Called when the renderer has completed all intermediate rendering steps
+//and is ready to render to the final output surface (usually the screen.)
+//The delegate can use this step to activate additional shaders or render
+//to a framebuffer.
+- (void) renderer: (BXBasicRenderer *)renderer willRenderTextureToDestinationContext: (BXTexture2D *)texture;
+- (void) renderer: (BXBasicRenderer *)renderer didRenderTextureToDestinationContext: (BXTexture2D *)texture;
 
 @end

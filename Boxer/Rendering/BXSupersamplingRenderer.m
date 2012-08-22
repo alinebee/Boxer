@@ -133,6 +133,8 @@
 {
     if ([self _shouldRenderWithSupersampling])
     {
+        BXTexture2D *destinationTexture = self.supersamplingBufferTexture;
+        
         CGLContextObj cgl_ctx = _context;
         
         //Retrieve the current framebuffer so we can revert to it afterwards.
@@ -141,14 +143,14 @@
         
         //Bind our own framebuffer and texture.
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _supersamplingBuffer);
-        [self _bindTextureToSupersamplingBuffer: self.supersamplingBufferTexture];
+        [self _bindTextureToSupersamplingBuffer: destinationTexture];
         
         //Set the GL viewport to match the content region of the buffer texture.
-        CGRect bufferViewport = self.supersamplingBufferTexture.contentRegion;
+        CGRect bufferViewport = destinationTexture.contentRegion;
         [self _setViewportToRegion: bufferViewport];
         
         //Draw the frame into the buffer texture.
-        [self.frameTexture drawOntoVertices: viewportVertices error: NULL];
+        [self.frameTexture drawOntoVertices: viewportVerticesFlipped error: NULL];
         
         //Revert the framebuffer to the context's original target,
         //so that future drawing goes to the screen (or a parent framebuffer.)
@@ -157,9 +159,16 @@
         //Finally, draw the scaling buffer texture into the final viewport
         //Note that this is flipped vertically from the coordinates we use
         //for rendering the frame texture - DOCUMENT WHY THIS IS SO!
+        
+        if (self.delegate)
+            [self.delegate renderer: self willRenderTextureToDestinationContext: destinationTexture];
+        
         [self _setViewportToRegion: self.viewport];
-        [self.supersamplingBufferTexture drawOntoVertices: viewportVerticesFlipped
-                                                    error: NULL];
+        [destinationTexture drawOntoVertices: viewportVertices
+                                       error: NULL];
+        
+        if (self.delegate)
+            [self.delegate renderer: self didRenderTextureToDestinationContext: destinationTexture];
     }
     //Fall back on the standard rendering path if we don't need supersampling
     else

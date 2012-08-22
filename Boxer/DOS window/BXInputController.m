@@ -14,6 +14,7 @@
 #import "BXGeometry.h"
 #import "BXCursorFadeAnimation.h"
 #import "BXDOSWindowController.h"
+#import "BXGLRenderingView.h"
 #import "BXDOSWindow.h"
 #import "BXPostLeopardAPIs.h"
 #import "NSWindow+BXWindowDimensions.h"
@@ -518,6 +519,8 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	if ([sender respondsToSelector: @selector(boolValue)]) lock = [sender boolValue];
 	else lock = !wasLocked;
 	
+    BOOL mouseWasInside = self.mouseInView;
+    
     self.mouseLocked = lock;
     
 	//If the mouse state was actually toggled, play a sound to commemorate the occasion
@@ -525,6 +528,15 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	{
 		NSString *lockSoundName	= (wasLocked) ? @"LockOpening" : @"LockClosing";
 		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: BXMouseLockSoundVolume];
+        
+        //Also do a little ripple animation where the mouse cursor was.
+        if (mouseWasInside)
+        {
+            NSPoint previousMouseLocation = self.view.window.mouseLocationOutsideOfEventStream;
+            BXGLRenderingView *renderView = (BXGLRenderingView *)self.windowController.renderingView;
+            NSPoint rippleLocation = [renderView convertPoint: previousMouseLocation fromView: nil];
+            [renderView showRippleAtPoint: rippleLocation reverse: wasLocked];
+        }
 	}
 }
 

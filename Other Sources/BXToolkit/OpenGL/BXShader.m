@@ -407,9 +407,7 @@ NSString * const BXShaderUniformSizeKey = @"Size";
         if (_shaderProgram && _freeProgramWhenDone)
         {
             CGLContextObj cgl_ctx = _context;
-            
             glDeleteObjectARB(_shaderProgram);
-            _shaderProgram = NULL;
         }
         
         _shaderProgram = shaderProgram;

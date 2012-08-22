@@ -145,7 +145,7 @@
                 outputRect = outTexture.contentRegion;
                 quadCoords = viewportVerticesFlipped;
             }
-            //Otherwise we'll render the shader straight to the screen.
+            //Otherwise we'll render this shader straight to the screen.
             else
             {
                 glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, originalBuffer);
@@ -184,9 +184,15 @@
             shader.frameCount++;
             
             //Resize the viewport and draw!
+            if (!shaderNeedsBuffer && self.delegate)
+                [self.delegate renderer: self willRenderTextureToDestinationContext: inTexture];
+                
             [self _setViewportToRegion: outputRect];
             [inTexture drawOntoVertices: quadCoords error: nil];
             
+            if (!shaderNeedsBuffer && self.delegate)
+                [self.delegate renderer: self didRenderTextureToDestinationContext: inTexture];
+                
             //Use the output from this shader as the input for the next shader (if any.)
             inTexture = outTexture;
         }
@@ -198,8 +204,14 @@
         //draw this to the screen now.
         if (outTexture)
         {
+            if (self.delegate)
+                [self.delegate renderer: self willRenderTextureToDestinationContext: outTexture];
+            
             [self _setViewportToRegion: self.viewport];
             [outTexture drawOntoVertices: viewportVertices error: nil];
+            
+            if (self.delegate)
+                [self.delegate renderer: self didRenderTextureToDestinationContext: outTexture];
         }
     }
     //Fall back on the parent rendering path if shaders should not be used.

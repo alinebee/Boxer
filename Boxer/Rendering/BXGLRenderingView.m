@@ -10,6 +10,8 @@
 #import "BXBasicRenderer.h"
 #import "BXSupersamplingRenderer.h"
 #import "BXShaderRenderer.h"
+#import "BXRippleShader.h"
+#import "BXTexture2D.h"
 #import "BXVideoFrame.h"
 #import "BXGeometry.h"
 #import "BXDOSWindowController.h" //For notifications
@@ -21,11 +23,18 @@
 #import <OpenGL/CGLMacro.h>
 
 #pragma mark -
-#pragma mark Private interface declaration
+#pragma mark Private interface declarations
 
 @interface BXGLRenderingView ()
 
 @property (retain) BXVideoFrame *currentFrame;
+
+@property (retain) BXRippleShader *rippleEffect2D;
+@property (retain) BXRippleShader *rippleEffectRectangle;
+
+@property (assign, nonatomic) CGPoint rippleOrigin;
+@property (assign, nonatomic) CGFloat rippleProgress;
+@property (assign, nonatomic) BOOL rippleReversed;
 
 //Whether we should redraw in the next display-link cycle.
 //Set to YES upon receiving a new frame, then back to NO after rendering it.
@@ -69,10 +78,19 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @synthesize renderingStyle = _renderingStyle;
 @synthesize inViewAnimation = _inViewAnimation;
 
+@synthesize rippleEffect2D = _rippleEffect2D;
+@synthesize rippleEffectRectangle = _rippleEffectRectangle;
+
+@synthesize rippleProgress = _rippleProgress;
+@synthesize rippleOrigin = _rippleOrigin;
+@synthesize rippleReversed = _rippleReversed;
+
 - (void) dealloc
 {
     self.currentFrame = nil;
     self.renderer = nil;
+    self.rippleEffect2D = nil;
+    self.rippleEffectRectangle = nil;
 	[super dealloc];
 }
 
@@ -164,6 +182,12 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         animation.duration = 0.1;
         return animation;
     }
+    else if ([key isEqualToString: @"rippleProgress"])
+    {
+        CABasicAnimation *animation = [CABasicAnimation animation];
+        animation.duration = 0.5;
+        return animation;
+    }
     else
     {
         return [super defaultAnimationForKey: key];
@@ -221,28 +245,6 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     }
 }
 
-- (void) setRenderingStyle: (BXRenderingStyle)renderingStyle
-{
-    NSAssert1(renderingStyle >= 0 && renderingStyle < BXNumRenderingStyles,
-              @"Unrecognised rendering style: %i", renderingStyle);
-    
-    if (self.renderingStyle != renderingStyle)
-    {
-        _renderingStyle = renderingStyle;
-        
-        //Switch renderers to one that suits the new rendering style
-        if (self.openGLContext)
-        {
-            _needsRendererUpdate = YES;
-            
-            if (_displayLink)
-                self.needsCVLinkDisplay = YES;
-            else
-                self.needsDisplay = YES;
-        }
-    }
-}
-
 - (void) _applyViewportToRenderer: (BXBasicRenderer *)renderer
 {
     NSRect backingRect = self.viewportRect;
@@ -274,6 +276,28 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	return NSSizeFromCGSize(self.renderer.maxFrameSize);
 }
 
+- (void) setRenderingStyle: (BXRenderingStyle)renderingStyle
+{
+    NSAssert1(renderingStyle >= 0 && renderingStyle < BXNumRenderingStyles,
+              @"Unrecognised rendering style: %i", renderingStyle);
+    
+    if (self.renderingStyle != renderingStyle)
+    {
+        _renderingStyle = renderingStyle;
+        
+        //Switch renderers to one that suits the new rendering style
+        if (self.openGLContext)
+        {
+            _needsRendererUpdate = YES;
+            
+            if (_displayLink)
+                self.needsCVLinkDisplay = YES;
+            else
+                self.needsDisplay = YES;
+        }
+    }
+}
+
 - (void) setRenderer: (BXBasicRenderer *)renderer
 {
     if (_renderer != renderer)
@@ -284,7 +308,9 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
             
             [_renderer release];
             _renderer = [renderer retain];
-            
+        
+            self.renderer.delegate = self;
+        
             //Tell the new renderer to configure its context.
             [self.renderer prepareContext];
             
@@ -321,6 +347,23 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     self.renderer = [self rendererForStyle: self.renderingStyle
                                  inContext: cgl_ctx];
     
+    //Load in our ripple effects
+    NSError *rippleLoadingError = nil;
+    self.rippleEffect2D = [BXRippleShader shaderNamed: @"ripple2D"
+                                       inSubdirectory: @"Shaders"
+                                            inContext: cgl_ctx
+                                                error: &rippleLoadingError];
+    
+    if (rippleLoadingError)
+        NSLog(@"%@", rippleLoadingError);
+    
+    self.rippleEffectRectangle = [BXRippleShader shaderNamed: @"rippleRect"
+                                              inSubdirectory: @"Shaders"
+                                                   inContext: cgl_ctx
+                                                       error: &rippleLoadingError];
+    
+    if (rippleLoadingError)
+        NSLog(@"%@", rippleLoadingError);
     
     //Set up the CV display link if desired
     BOOL useCVDisplayLink = [[NSUserDefaults standardUserDefaults] boolForKey: @"useCVDisplayLink"];
@@ -350,6 +393,12 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 {
     //Get rid of our entire renderer when the context changes.
     self.renderer = nil;
+    
+    [self.rippleEffect2D deleteShaderProgram];
+    self.rippleEffect2D = nil;
+    
+    [self.rippleEffectRectangle deleteShaderProgram];
+    self.rippleEffectRectangle = nil;
     
 	if (_displayLink)
 	{
@@ -440,6 +489,62 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         
         CGLUnlockContext(cgl_ctx);
     }
+}
+
+- (void) showRippleAtPoint: (NSPoint)point reverse: (BOOL)reverse
+{
+    NSPoint relativeOrigin = pointRelativeToRect(point, self.viewportRect);
+    self.rippleOrigin = CGPointMake(relativeOrigin.x, 1.0f - relativeOrigin.y);
+    self.rippleReversed = reverse;
+    self.rippleProgress = 0.0f;
+    [self.animator setRippleProgress: 1.0f];
+}
+
+- (void) setRippleProgress: (CGFloat)progress
+{
+    _rippleProgress = progress;
+    
+    if (_displayLink)
+        self.needsCVLinkDisplay = YES;
+    else
+        self.needsDisplay = YES;
+}
+
+- (void) renderer: (BXBasicRenderer *)renderer willRenderTextureToDestinationContext: (BXTexture2D *)texture
+{
+    if (_rippleProgress > 0.0f && _rippleProgress < 1.0f)
+    {
+        //We need to switch which shader we use based on texture type: one shader version is written
+        //for 2D textures, the other for rectangle textures.
+        BXRippleShader *effect = (texture.type == GL_TEXTURE_RECTANGLE_ARB) ? self.rippleEffectRectangle : self.rippleEffect2D;
+        
+        if (effect)
+        {
+            CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
+            if (self.rippleReversed) currentTime = -currentTime;
+            
+            //Translate our 0->1 progress to 0->1->0, where the ripples are strongest midway through the animation.
+            CGFloat baseHeight = 0.5f;
+            CGFloat mirroredProgress = ABS(_rippleProgress - 0.5f) * 2.0f;
+            GLfloat height = baseHeight - (mirroredProgress * baseHeight);
+            
+            CGLContextObj cgl_ctx = effect.context;
+            glUseProgramObjectARB(effect.shaderProgram);
+            
+            effect.textureIndex = 0;
+            effect.textureSize = texture.textureSize;
+            effect.frameTime = currentTime;
+            effect.rippleHeight = height;
+            effect.rippleOrigin = self.rippleOrigin;
+        }
+    }
+}
+
+- (void) renderer: (BXBasicRenderer *)renderer didRenderTextureToDestinationContext: (BXTexture2D *)texture
+{
+    CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
+    
+    glUseProgramObjectARB(0);
 }
 
 CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,

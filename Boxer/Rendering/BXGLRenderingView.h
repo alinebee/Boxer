@@ -12,9 +12,12 @@
 
 #import "BXFrameRenderingView.h"
 #import <QuartzCore/QuartzCore.h>
+#import "BXBasicRenderer.h"
 
 @class BXBasicRenderer;
-@interface BXGLRenderingView : NSOpenGLView <BXFrameRenderingView>
+@class BXRippleShader;
+@class BXTexture2D;
+@interface BXGLRenderingView : NSOpenGLView <BXFrameRenderingView, BXRendererDelegate, NSAnimationDelegate>
 {
 	BXBasicRenderer *_renderer;
     BXVideoFrame *_currentFrame;
@@ -29,7 +32,15 @@
     
     BOOL _inViewAnimation;
     BOOL _usesTransparentSurface;
+    
+    BXRippleShader *_rippleEffect2D;
+    BXRippleShader *_rippleEffectRectangle;
+    
+    CGPoint _rippleOrigin;
+    CGFloat _rippleProgress;
+    BOOL _rippleReversed;
 }
+
 @property (retain, nonatomic) BXBasicRenderer *renderer;
 @property (assign, nonatomic) BOOL managesAspectRatio;
 @property (assign, nonatomic) NSSize maxViewportSize;
@@ -47,4 +58,7 @@
 //Returns a fully-configured renderer set up for the specified context.
 - (BXBasicRenderer *) rendererForStyle: (BXRenderingStyle)style
                              inContext: (CGLContextObj)context;
+
+- (void) showRippleAtPoint: (NSPoint)point
+                   reverse: (BOOL)reverse;
 @end

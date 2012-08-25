@@ -86,8 +86,7 @@ extern NSString * const shellProcessPath;
     float _masterVolume;
 	
 	NSString *_processName;
-	NSString *_processPath;
-	NSString *_processLocalPath;
+    NSMutableArray *_runningProcesses;
 	
 	NSMutableDictionary *_driveCache;
 	
@@ -185,11 +184,15 @@ extern NSString * const shellProcessPath;
 
 //The DOS filesystem path of the currently-executing DOSBox process.
 //Will be nil if no process is running.
-@property (readonly, copy) NSString *processPath;
+@property (readonly) NSString *processPath;
 
 //The local filesystem path of the currently-executing DOSBox process.
-//Will be nil if no process is running or if the process is on an image or DOSBox-internal drive.
-@property (readonly, copy) NSString *processLocalPath;
+//Will be nil if no process is running, or if the process is on an image or DOSBox-internal drive.
+@property (readonly) NSString *processLocalPath;
+
+//An array of dictionaries of [processPath, processLocalPath] pairs representing
+//the stack of running processes.
+@property (readonly) NSArray *runningProcesses;
 
 
 #pragma mark -

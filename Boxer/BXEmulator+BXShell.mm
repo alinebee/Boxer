@@ -651,31 +651,31 @@ nil];
     
     NSString *argumentString = [[NSString stringWithCString: arguments encoding: BXDirectStringEncoding] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 	
-    //TWEAK: if this is another instance of the DOS session, do not change our state.
-    if ([fullDOSPath isEqualToString: shellProcessPath]) return;
+    BOOL isShell = [fullDOSPath isEqualToString: shellProcessPath];
     
-	//IMPLEMENTATION NOTE: we activate the mouse as soon as any program starts,
-	//regardless of whether the program claims to support the mouse or not.
-    self.mouse.active = YES;
+    NSMutableDictionary *processInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                        fullDOSPath, BXEmulatorDOSPathKey,
+                                        drive,       BXEmulatorDriveKey,
+                                        nil];
     
-	self.processPath = fullDOSPath;
-	self.processLocalPath = localPath;
-	
-	NSMutableDictionary *userInfo	= [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                       fullDOSPath, BXEmulatorDOSPathKey,
-                                       drive,       BXEmulatorDriveKey,
-                                       nil];
-    
-    if (localPath)
-        [userInfo setObject: localPath forKey: BXEmulatorLocalPathKey];
+	if (localPath)
+        [processInfo setObject: localPath forKey: BXEmulatorLocalPathKey];
     
     if (argumentString.length)
-        [userInfo setObject: argumentString forKey: BXEmulatorLaunchArgumentsKey];
-	
+        [processInfo setObject: argumentString forKey: BXEmulatorLaunchArgumentsKey];
+    
+    [self willChangeValueForKey: @"runningProcesses"];
+    [_runningProcesses addObject: processInfo];
+    [self didChangeValueForKey: @"runningProcesses"];
+    
 	[self _postNotificationName: BXEmulatorWillStartProgramNotification
 			   delegateSelector: @selector(emulatorWillStartProgram:)
-					   userInfo: userInfo];
-	
+					   userInfo: processInfo];
+    
+    //IMPLEMENTATION NOTE: we activate the mouse as soon as any program starts,
+	//regardless of whether the program claims to support the mouse or not.
+    if (!isShell)
+        self.mouse.active = YES;
 }
 
 - (void) _didExecuteFileAtDOSPath: (const char *)dosPath
@@ -692,23 +692,25 @@ nil];
     
     NSString *argumentString = [[NSString stringWithCString: arguments encoding: BXDirectStringEncoding] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 	
-	NSMutableDictionary *userInfo	= [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                       fullDOSPath, BXEmulatorDOSPathKey,
-                                       drive,       BXEmulatorDriveKey,
-                                       nil];
+	NSMutableDictionary *processInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                        fullDOSPath, BXEmulatorDOSPathKey,
+                                        drive,       BXEmulatorDriveKey,
+                                        nil];
     
     if (localPath)
-        [userInfo setObject: localPath forKey: BXEmulatorLocalPathKey];
+        [processInfo setObject: localPath forKey: BXEmulatorLocalPathKey];
     
     if (argumentString.length)
-        [userInfo setObject: argumentString forKey: BXEmulatorLaunchArgumentsKey];
+        [processInfo setObject: argumentString forKey: BXEmulatorLaunchArgumentsKey];
 	
-    self.processPath = nil;
-    self.processLocalPath = nil;
+    //Pop the last process off the stack
+    [self willChangeValueForKey: @"runningProcesses"];
+    [_runningProcesses removeLastObject];
+    [self didChangeValueForKey: @"runningProcesses"];
     
 	[self _postNotificationName: BXEmulatorDidFinishProgramNotification
 			   delegateSelector: @selector(emulatorDidFinishProgram:)
-					   userInfo: userInfo];
+					   userInfo: processInfo];
 }
 
 - (void) _didReturnToShell

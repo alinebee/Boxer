@@ -144,8 +144,12 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
     if ([BXEmulator canLaunchEmulator])
     {
         NSString *bundledGameboxName = [[NSBundle mainBundle] objectForInfoDictionaryKey: BXBundledGameboxNameInfoPlistKey];
+        
+        if (![bundledGameboxName.pathExtension isEqualToString: @"boxer"])
+            bundledGameboxName = [bundledGameboxName stringByAppendingPathExtension: @"boxer"];
+        
         NSURL *bundledGameboxURL = [[NSBundle mainBundle] URLForResource: bundledGameboxName
-                                                           withExtension: @"boxer"];
+                                                           withExtension: nil];
         
         if (bundledGameboxURL)
         {

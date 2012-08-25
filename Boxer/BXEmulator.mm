@@ -92,8 +92,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 @implementation BXEmulator
 @synthesize processName = _processName;
-@synthesize processPath = _processPath;
-@synthesize processLocalPath = _processLocalPath;
+@synthesize runningProcesses = _runningProcesses;
 @synthesize delegate = _delegate;
 @synthesize videoHandler = _videoHandler;
 @synthesize mouse = _mouse;
@@ -187,9 +186,10 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 {
 	if ((self = [super init]))
 	{
-		_commandQueue            = [[NSMutableArray alloc] initWithCapacity: 4];
-		_driveCache              = [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
-		_pendingSysexMessages    = [[NSMutableArray alloc] initWithCapacity: 4];
+        _runningProcesses       = [[NSMutableArray alloc] initWithCapacity: 1];
+		_commandQueue           = [[NSMutableArray alloc] initWithCapacity: 4];
+		_driveCache             = [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
+		_pendingSysexMessages   = [[NSMutableArray alloc] initWithCapacity: 4];
         
         self.masterVolume = 1.0f;
 		
@@ -200,6 +200,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		self.videoHandler.emulator = self;
         
         self.keyBuffer = [[[BXKeyBuffer alloc] init] autorelease];
+        
     }
 	return self;
 }
@@ -216,6 +217,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     self.videoHandler = nil;
     self.keyBuffer = nil;
     
+    [_runningProcesses release], _runningProcesses = nil;
 	[_driveCache release], _driveCache = nil;
 	[_commandQueue release], _commandQueue = nil;
     [_pendingSysexMessages release], _pendingSysexMessages = nil;
@@ -270,11 +272,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     {
         if (self.isExecuting && !self.isCancelled)
         {
-            //Pause ourselves so that we immediately kill audio output
+            //Immediately kill audio output to avoid hanging notes
             [self pause];
-            
-            //Break out of DOSBox's commandline input loop
-            [self discardShellInput];
         
             //Tells DOSBox to close the current shell at the end of the commandline input loop
             DOS_Shell *shell = self._currentShell;
@@ -326,6 +325,28 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 - (BOOL) isRunningProcess
 {
     return self.processPath && ![self.processPath isEqualToString: shellProcessPath];
+}
+
++ (NSSet *) keyPathsForValuesAffectingProcessPath
+{
+    return [NSSet setWithObject: @"runningProcesses"];
+}
+
+- (NSString *) processPath
+{
+    NSDictionary *currentProcess = [_runningProcesses lastObject];
+    return [currentProcess objectForKey: BXEmulatorDOSPathKey];
+}
+
++ (NSSet *) keyPathsForValuesAffectingProcessLocalPath
+{
+    return [NSSet setWithObject: @"runningProcesses"];
+}
+
+- (NSString *) processLocalPath
+{
+    NSDictionary *currentProcess = [_runningProcesses lastObject];
+    return [currentProcess objectForKey: BXEmulatorLocalPathKey];
 }
 
 - (BOOL) processIsInternal
@@ -873,8 +894,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	//of DOSBox's initialization routines rely on running tasks on the run loop
 	//and may crash if they fail to complete.
 	if (self.isCancelled && self.isInitialized)
+    {
         return NO;
-	
+	}
 	return YES;
 }
 

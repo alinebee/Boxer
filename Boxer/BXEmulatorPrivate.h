@@ -100,8 +100,6 @@ enum {
 @property (readwrite, getter=isInitialized) BOOL initialized;
 @property (readwrite, getter=isPaused) BOOL paused;
 @property (readwrite, copy) NSString *processName;
-@property (readwrite, copy) NSString *processPath;
-@property (readwrite, copy) NSString *processLocalPath;
 
 @property (readwrite) BOOL joystickActive;
 @property (readwrite, getter=isWaitingForCommandInput) BOOL waitingForCommandInput;

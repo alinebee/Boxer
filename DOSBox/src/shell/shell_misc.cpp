@@ -70,6 +70,11 @@ void DOS_Shell::InputCommand(char * line) {
 		}
         boxer_didReadCommandInputFromHandle(input_handle);
 		
+        if (!boxer_shellShouldContinue())
+        {
+            return;
+        }
+        
 		bool executeImmediately = false;
 		if (boxer_handleCommandInput(line, &str_index, &executeImmediately))
 		{

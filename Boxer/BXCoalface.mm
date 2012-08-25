@@ -42,6 +42,11 @@ bool boxer_runLoopShouldContinue()
 	return [[BXEmulator currentEmulator] _runLoopShouldContinue];
 }
 
+bool boxer_shellShouldContinue()
+{
+	return ![BXEmulator currentEmulator].isCancelled;
+}
+
 //Notifies Boxer of changes to title and speed settings
 void boxer_handleDOSBoxTitleChange(Bit32s newCycles, Bits newFrameskip, bool newPaused)
 {
@@ -438,7 +443,7 @@ Bitu boxer_numKeyCodesInPasteBuffer()
 bool boxer_continueListeningForKeyEvents()
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
-    if (emulator.isWaitingForCommandInput && emulator.commandQueue.count)
+    if (emulator.isCancelled || (emulator.isWaitingForCommandInput && emulator.commandQueue.count))
     {
         return false;
     }

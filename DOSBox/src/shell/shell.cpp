@@ -350,14 +350,14 @@ void DOS_Shell::Run(void) {
 			InputCommand(input_line);
             
             //--Added 2012-08-19 by Alun Bestor to let Boxer interrupt the command input with its own commands.
-            if (!boxer_hasPendingCommands())
+            if (boxer_shellShouldContinue() && !boxer_hasPendingCommands())
             {
                 //--End of modifications
                 ParseLine(input_line);
                 if (echo && !bf) WriteOut_NoParsing("\n");
             }
 		}
-	} while (!exit);
+	} while (boxer_shellShouldContinue() && !exit);
 }
 
 void DOS_Shell::SyntaxError(void) {

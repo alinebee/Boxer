@@ -117,6 +117,7 @@ extern "C" {
 	void boxer_runLoopWillStartWithContextInfo(void **contextInfo);
 	void boxer_runLoopDidFinishWithContextInfo(void *contextInfo);
 	bool boxer_runLoopShouldContinue();
+	bool boxer_shellShouldContinue();
 	void boxer_processEvents();
 	
     void boxer_setJoystickActive(bool joystickActive);

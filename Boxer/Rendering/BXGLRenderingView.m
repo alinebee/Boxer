@@ -309,7 +309,8 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
             [_renderer release];
             _renderer = [renderer retain];
         
-            self.renderer.delegate = self;
+            //Disabled until we get the ripple effects sorted out
+            //self.renderer.delegate = self;
         
             //Tell the new renderer to configure its context.
             [self.renderer prepareContext];
@@ -348,6 +349,8 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
                                  inContext: cgl_ctx];
     
     //Load in our ripple effects
+    //Disabled for now because they suck
+    /*
     NSError *rippleLoadingError = nil;
     self.rippleEffect2D = [BXRippleShader shaderNamed: @"ripple2D"
                                        inSubdirectory: @"Shaders"
@@ -364,6 +367,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     
     if (rippleLoadingError)
         NSLog(@"%@", rippleLoadingError);
+     */
     
     //Set up the CV display link if desired
     BOOL useCVDisplayLink = [[NSUserDefaults standardUserDefaults] boolForKey: @"useCVDisplayLink"];

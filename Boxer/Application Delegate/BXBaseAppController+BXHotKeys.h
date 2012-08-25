@@ -16,4 +16,6 @@
 
 - (void) mediaKeyPressed: (NSEvent *)theEvent;
 
+- (void) showHotkeyWarningIfUnavailable;
+
 @end

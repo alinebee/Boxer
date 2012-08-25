@@ -170,6 +170,5 @@
 		[dropShadow set];
 		[super drawRect: dirtyRect];
 	[NSGraphicsContext restoreGraphicsState];
-	[dropShadow release];
 }
 @end

@@ -1417,7 +1417,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //then exit; otherwise, return to the launcher panel.
     if ([[NSApp delegate] isStandaloneGameBundle])
     {
-        BOOL hasMultipleLaunchers = (self.gamebox.launchers.count == 1);
+        BOOL hasMultipleLaunchers = (self.gamebox.launchers.count > 1);
         return !hasMultipleLaunchers;
     }
     
@@ -1550,10 +1550,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             
             packageDrive.title = titleForDriveC;
             
-            packageDrive = [self mountDrive: packageDrive
-                                   ifExists: BXDriveReplace
-                                    options: BXBundledDriveMountOptions
-                                      error: nil];
+            [self mountDrive: packageDrive
+                    ifExists: BXDriveReplace
+                     options: BXBundledDriveMountOptions
+                       error: nil];
         }
 	}
 	

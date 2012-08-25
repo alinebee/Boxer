@@ -167,7 +167,6 @@
                         withKeyPath: @"suppressSystemHotkeys"
                             options: nil];
 
-
     //Start scanning for MIDI devices now
     self.MIDIDeviceMonitor = [[[BXMIDIDeviceMonitor alloc] init] autorelease];
     [self.MIDIDeviceMonitor start];

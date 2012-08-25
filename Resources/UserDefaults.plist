@@ -34,6 +34,8 @@
 	<true/>
 	<key>showFullscreenToggleMessage</key>
 	<true/>
+	<key>showHotkeyWarning</key>
+	<true/>
 	<key>suppressSystemHotkeys</key>
 	<true/>
 	<key>suppressProcessSwitching</key>

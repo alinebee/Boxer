@@ -133,4 +133,76 @@
     }
 }
 
+- (NSURL *) _accessibilityPreferencesURL
+{
+    NSURL *libraryURL = [[[NSFileManager defaultManager] URLsForDirectory: NSLibraryDirectory inDomains:NSSystemDomainMask] objectAtIndex: 0];
+    NSURL *prefsURL = [libraryURL URLByAppendingPathComponent: @"PreferencePanes/UniversalAccessPref.prefPane"];
+    
+    return prefsURL;
+}
+
+- (void) showHotkeyWarningIfUnavailable
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL showHotkeyWarning = [defaults boolForKey: @"showHotkeyWarning"];
+    BOOL hasSeenHotkeyWarning = [defaults boolForKey: @"hasDismissedHotkeyWarning"];
+    
+    if (showHotkeyWarning && !hasSeenHotkeyWarning && !self.hotkeySuppressionTap.canTapEvents)
+    {
+        NSBundle *accessibilityPrefs = [NSBundle bundleWithURL: self._accessibilityPreferencesURL];
+        NSString *accessibilityPrefsName = [accessibilityPrefs objectForInfoDictionaryKey: @"CFBundleName"];
+        
+        NSAlert *hotkeyWarning = [[NSAlert alloc] init];
+        NSString *messageFormat = NSLocalizedString(@"For the best experience, turn on “Enable access for assistive devices” in OS X’s %1$@ preferences.",
+                                                    @"Bold text of alert shown if the user does not have 'Allow access for assistive devices' enabled. %1$@ is the localized name of the Accessibility preferences pane.");
+        
+        NSString *informativeTextFormat = NSLocalizedString(@"This will ensure that OS X hotkeys do not interfere with %@’s controls.",
+                                                      @"Informative text of alert shown if the user does not have 'Allow access for assistive devices' enabled. %1$@ is the name of the application.");
+        
+        hotkeyWarning.messageText = [NSString stringWithFormat: messageFormat, accessibilityPrefsName];
+        hotkeyWarning.informativeText = [NSString stringWithFormat: informativeTextFormat, [self.class appName]];
+        
+        NSString *defaultButtonFormat = NSLocalizedString(@"Show %@ Preferences", @"Label of default button in alert shown if the user does not have 'Allow access for assistive devices' enabled. %@ is the localized name of the Accessibility preferences pane.");
+        NSString *defaultButtonLabel = [NSString stringWithFormat: defaultButtonFormat, accessibilityPrefsName];
+        
+		NSString *cancelLabel = NSLocalizedString(@"Cancel",
+                                                  @"Cancel the current action and return to what the user was doing");
+ 
+        [hotkeyWarning addButtonWithTitle: defaultButtonLabel];
+        
+        [hotkeyWarning addButtonWithTitle: cancelLabel].keyEquivalent = @"\e";
+        
+        if (self.currentSession)
+        {
+            [hotkeyWarning beginSheetModalForWindow: self.currentSession.windowForSheet
+                                      modalDelegate: self
+                                     didEndSelector: @selector(_hotkeyAlertDidEnd:returnCode:contextInfo:)
+                                        contextInfo: NULL];
+        }
+        else
+        {
+            NSInteger returnCode = [hotkeyWarning runModal];
+            [self _hotkeyAlertDidEnd: hotkeyWarning returnCode: returnCode contextInfo: NULL];
+        }
+        
+        [hotkeyWarning release];
+    }
+}
+
+- (void) _hotkeyAlertDidEnd: (NSAlert *)alert
+                 returnCode: (NSInteger)returnCode
+                contextInfo: (void *)contextInfo
+{
+    if (returnCode == NSAlertFirstButtonReturn)
+    {
+        [[NSWorkspace sharedWorkspace] openURL: self._accessibilityPreferencesURL];
+    }
+    else
+    {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setBool: YES forKey: @"hasDismissedHotkeyWarning"];
+    }
+}
+
+
 @end

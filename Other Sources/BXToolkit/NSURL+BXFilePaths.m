@@ -70,7 +70,6 @@
     NSString *path = [manager stringWithFileSystemRepresentation: representation
                                                           length: strlen(representation)];
     
-    [manager release];
     
     return [NSURL fileURLWithPath: path];
 }
@@ -108,7 +107,7 @@
             break;
 	}
 	
-    return [components autorelease];
+    return components;
 }
 
 @end

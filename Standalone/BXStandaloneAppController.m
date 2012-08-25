@@ -10,6 +10,7 @@
 #import "BXSession.h"
 #import "BXEmulator.h"
 #import "BXStandaloneAboutController.h"
+#import "BXBaseAppController+BXHotKeys.h"
 
 #pragma mark -
 #pragma mark App-menu replacement constants
@@ -126,6 +127,10 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
         }
         
         [NSApp terminate: self];
+    }
+    else
+    {
+        [self showHotkeyWarningIfUnavailable];
     }
 }
 

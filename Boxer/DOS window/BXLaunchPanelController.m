@@ -160,19 +160,23 @@
     {
         NSString *path      = [launcher objectForKey: BXLauncherPathKey];
         NSString *title     = [launcher objectForKey: BXLauncherTitleKey];
-        NSString *arguments = [launcher objectForKey: BXLauncherArgsKey];
-        NSString *dosPath   = [session.emulator DOSPathForPath: path];
+        NSString *arguments = [launcher objectForKey: BXLauncherArgsKey]; //May be nil
+        NSString *dosPath   = [session.emulator DOSPathForPath: path]; //May be nil
         
         //If no title was provided, use the program's filename.
         if (!title.length)
             title = [programNameFormatter transformedValue: path];
         
-        NSDictionary *launcherRow = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    title, @"title",
-                                    path, @"path",
-                                    dosPath, @"dosPath",
-                                    arguments, @"arguments",
-                                    nil];
+        NSMutableDictionary *launcherRow = [NSMutableDictionary dictionary];
+        
+        [launcherRow setObject: path forKey: @"path"];
+        [launcherRow setObject: title forKey: @"title"];
+        
+        if (dosPath)
+            [launcherRow setObject: dosPath forKey: @"dosPath"];
+        
+        if (arguments)
+            [launcherRow setObject: arguments forKey: @"arguments"];
         
         [mutableRows addObject: launcherRow];
     }

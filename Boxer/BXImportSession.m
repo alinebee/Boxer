@@ -813,24 +813,55 @@
             {
                 BXDrive *driveToImport = [BXEmulator driveFromMountCommand: mountCommand
                                                                   basePath: configurationBasePath
-                                                                     error: nil];
+                                                                     error: NULL];
                 
                 BXOperation <BXDriveImport> *driveImport = [self importOperationForDrive: driveToImport
                                                                         startImmediately: NO];
                 
-                driveImport.delegate = nil;
-                
-                [driveImportSet.operations addObject: driveImport];
-                
-                //If a drive C was defined, then remove our gamebox's own drive C.
-                //FIXME: work out how to make this non-destructive if didInstallFiles is YES,
-                //i.e. if we ran an installer first that put its own files on drive C.
-                //(Currently this will never be the case, because the presence of a
-                //configuration file will stop the importer from offering to run an installer.
-                if ([driveToImport.letter isEqualToString: @"C"])
+                if (driveImport)
                 {
-                    [manager removeItemAtPath: self.rootDrivePath error: nil];
-                    self.rootDrivePath = [driveImport importedDrivePath];
+                    driveImport.delegate = nil;
+                    
+                    [driveImportSet.operations addObject: driveImport];
+                    
+                    //If a drive C was defined, then remove our gamebox's own drive C.
+                    //FIXME: work out how to make this non-destructive if didInstallFiles is YES,
+                    //i.e. if we ran an installer first that put its own files on drive C.
+                    //(Currently this will never be the case, because the presence of a
+                    //configuration file will stop the importer from offering to run an installer.)
+                    if ([driveToImport.letter isEqualToString: @"C"])
+                    {
+                        [manager removeItemAtPath: self.rootDrivePath error: nil];
+                        self.rootDrivePath = [driveImport importedDrivePath];
+                    }
+                }
+                //If we couldn't determine how to import this drive, flag it up as a failure.
+                else
+                {
+                    BOOL driveExists = [manager fileExistsAtPath: driveToImport.path];
+                    if (!driveExists)
+                    {
+                        NSError *driveError = [BXImportDriveUnavailableError errorWithSourcePath: self.sourcePath
+                                                                                           drive: driveToImport
+                                                                                        userInfo: nil];
+                        
+                        [self presentError: driveError
+                            modalForWindow: self.windowForSheet
+                                  delegate: nil
+                        didPresentSelector: NULL
+                               contextInfo: NULL];
+                        
+                        //Bail out altogether.
+                        //TODO: throw this up to an upstream context.
+                        
+                        [manager removeItemAtPath: self.gamebox.bundlePath error: NULL];
+                        self.sourcePath = nil;
+                        self.installerPaths = nil;
+                        self.fileURL = nil;
+                        self.gamebox = nil;
+                        self.importStage = BXImportSessionWaitingForSourcePath;
+                        return;
+                    }
                 }
             }
             

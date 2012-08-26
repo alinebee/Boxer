@@ -21,6 +21,7 @@ enum
 	BXImportSourcePathIsWindowsOnly,    //Returned when the import scanner can only find Windows executables in the source folder.
 	BXImportSourcePathIsMacOSApp,       //Returned when the import scanner can only find Mac applications in the source folder.
 	BXImportSourcePathIsHybridCD,       //Returned when the import scanner detects a hybrid Mac+PC CD.
+    BXImportDriveUnavailable,           //Returned when a DOSBox configuration file was provided that defines drives with paths that cannot be found.
 };
 
 //General base class for all session errors
@@ -50,4 +51,9 @@ enum
 
 @interface BXImportMacAppError : BXImportError
 + (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo;
+@end
+
+@class BXDrive;
+@interface BXImportDriveUnavailableError : BXImportError
++ (id) errorWithSourcePath: (NSString *)sourcePath drive: (BXDrive *)drive userInfo: (NSDictionary *)userInfo;
 @end

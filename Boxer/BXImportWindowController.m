@@ -26,11 +26,16 @@
 
 - (void) windowDidLoad
 {
-	[[self window] setContentBorderThickness: BXImportWindowBorderThickness + 1 forEdge: NSMinYEdge];
-	
-	//Default to the dropzone panel when we initially load (this will be overridden later anyway)
-	[self setCurrentPanel: [self dropzonePanel]];
+		//Default to the dropzone panel when we initially load (this will be overridden later anyway)
+	self.currentPanel = self.dropzonePanel;
     
+    //Disable window restoration.
+    if ([self.window respondsToSelector: @selector(setRestorable:)])
+        self.window.restorable = NO;
+
+    [self.window setContentBorderThickness: BXImportWindowBorderThickness + 1
+                                   forEdge: NSMinYEdge];
+
     //Observe ourselves for changes to the document or its import stage,
     //so we can sync the active panel.
     [self addObserver: self

@@ -164,6 +164,10 @@
 	self.window.preservesContentDuringLiveResize = NO;
 	self.window.acceptsMouseMovedEvents = YES;
 	
+    //Disable window restoration.
+    if ([self.window respondsToSelector: @selector(setRestorable:)])
+        self.window.restorable = NO;
+    
     //Adjust the window's initial dimensions to suit the current aspect-ratio correction settings.
     BOOL aspectCorrectText = [[NSUserDefaults standardUserDefaults] boolForKey: @"aspectCorrectedText"];
     if (self.isAspectCorrected && aspectCorrectText)

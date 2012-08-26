@@ -104,6 +104,11 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
     return YES;
 }
 
+- (NSUInteger) maximumRecentDocumentCount
+{
+    return 0;
+}
+
 - (void) applicationWillFinishLaunching: (NSNotification *)notification
 {
     [super applicationWillFinishLaunching: notification];

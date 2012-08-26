@@ -263,7 +263,7 @@
         //are just buried away on a disc image inside the source folder.
         //(e.g. GOG releases of Wing Commander 3 and Ultima Underworld 1 & 2.)
         
-        else if (!(self.isAlreadyInstalled && self.detectedProfile))
+        else if (!self.DOSBoxConfigurations.count && !(self.isAlreadyInstalled && self.detectedProfile))
         {   
             //If there were windows executables present, this is probably a Windows-only game.
             if (self.windowsExecutables.count > 0)

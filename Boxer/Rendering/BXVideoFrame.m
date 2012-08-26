@@ -92,8 +92,8 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 
 - (NSSize) scaledSize
 {
-	return NSMakeSize(ceilf(self.size.width	* self.intendedScale.width),
-					  ceilf(self.size.height * self.intendedScale.height));
+	return NSMakeSize(roundf(self.size.width    * self.intendedScale.width),
+					  roundf(self.size.height   * self.intendedScale.height));
 }
 
 //IMPLEMENTATION NOTE: sometimes the buffer size that DOSBox is using

@@ -10,7 +10,7 @@
 
 #import "BXHIDControllerProfilePrivate.h"
 
-b
+
 #pragma mark -
 #pragma mark Private constants
 

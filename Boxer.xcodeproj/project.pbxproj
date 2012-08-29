@@ -400,6 +400,7 @@
 		9F34BE5F142B851800A69FAF /* BXEmulator+BXAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */; };
 		9F34BE62142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */; };
 		9F39A43B1452CE9100942D0F /* BXBezelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F39A43A1452CE9100942D0F /* BXBezelView.m */; };
+		9F3DD6CC15EE8047003C9A25 /* BXCHFlightstickProUSB.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3DD6CB15EE8047003C9A25 /* BXCHFlightstickProUSB.m */; };
 		9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */; };
 		9F3EDA171434A6E4009BFBA2 /* BXSession+BXAudioControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA161434A6E4009BFBA2 /* BXSession+BXAudioControls.m */; };
 		9F3EDA1B1434B48D009BFBA2 /* BXExternalMT32.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA1A1434B48D009BFBA2 /* BXExternalMT32.m */; };
@@ -996,6 +997,7 @@
 		9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXBaseAppController+BXSupportFiles.m"; sourceTree = "<group>"; };
 		9F39A4391452CE9100942D0F /* BXBezelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBezelView.h; sourceTree = "<group>"; };
 		9F39A43A1452CE9100942D0F /* BXBezelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBezelView.m; sourceTree = "<group>"; };
+		9F3DD6CB15EE8047003C9A25 /* BXCHFlightstickProUSB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCHFlightstickProUSB.m; sourceTree = "<group>"; };
 		9F3E57A313F694B40070A14D /* BXEmulatorErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorErrors.h; sourceTree = "<group>"; };
 		9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorErrors.m; sourceTree = "<group>"; };
 		9F3EDA151434A6E4009BFBA2 /* BXSession+BXAudioControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXAudioControls.h"; sourceTree = "<group>"; };
@@ -3151,6 +3153,7 @@
 		9FC6382613C0DA0B004478A3 /* Controller profiles */ = {
 			isa = PBXGroup;
 			children = (
+				9F3DD6CB15EE8047003C9A25 /* BXCHFlightstickProUSB.m */,
 				9F06C6D113992E1F00B19DF1 /* BXHIDControllerProfile.h */,
 				9FD3A1ED139A37AF00D0918E /* BXHIDControllerProfilePrivate.h */,
 				9F06C6D213992E1F00B19DF1 /* BXHIDControllerProfile.m */,
@@ -3936,6 +3939,7 @@
 				9F57684915DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */,
 				9F2C458715DB7E77009F4477 /* BXGLHelpers.m in Sources */,
 				9F5DD13715E544710096D0E8 /* BXRippleShader.m in Sources */,
+				9F3DD6CC15EE8047003C9A25 /* BXCHFlightstickProUSB.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

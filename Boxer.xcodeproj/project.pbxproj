@@ -604,6 +604,7 @@
 		9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217512B38C4400072AE8 /* shell_misc.cpp */; };
 		9F77EE0115DCC9BF00B75835 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F77EE0015DCC9BF00B75835 /* WebKit.framework */; };
 		9F77EE0215DCC9DC00B75835 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F77EE0015DCC9BF00B75835 /* WebKit.framework */; };
+		9F794DAF15EA966E00A4CB05 /* DummyCD.iso in Resources */ = {isa = PBXBuildFile; fileRef = 9F12F97B144875F400FC9645 /* DummyCD.iso */; };
 		9F7D9EFF1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */; };
 		9F7FC94C139EB38300D60320 /* RacingWheel.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7FC94B139EB38300D60320 /* RacingWheel.png */; };
 		9F839FB5150B81EF00337DD6 /* ScreenshotTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F839FB4150B81EF00337DD6 /* ScreenshotTemplate.pdf */; };
@@ -3570,6 +3571,7 @@
 				9FDFB47215DBA3BE004EA615 /* StandaloneAbout.xib in Resources */,
 				9FDFB47F15DBBABC004EA615 /* Credits.html in Resources */,
 				9FDFB48215DBC73D004EA615 /* Help.help in Resources */,
+				9F794DAF15EA966E00A4CB05 /* DummyCD.iso in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

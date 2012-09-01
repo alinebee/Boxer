@@ -1,10 +1,10 @@
 :network-menu "Network game setup"
 
-[ Host a network game ]
+[  Host a network game  ]
 
-[ Join a network game ]
+[  Join a network game  ]
 
-[?        Quit        ]
+[?         Quit          ]
 :
 
 :ip-prompt

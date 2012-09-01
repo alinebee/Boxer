@@ -4,10 +4,12 @@ ipx true
 
 rem If no port was specified in the Boxer configuration file, use default
 IF "%IPXPORT%"=="" SET IPXPORT=2130
+IF "%SERIALPORT%"=="" SET SERIALPORT=2131
 
 rem Use any user-specified IP address and port
 IF NOT "%1"=="" SET IPXIP=%1
 IF NOT "%2"=="" SET IPXPORT=%2
+IF NOT "%3"=="" SET SERIALPORT=%3
 
 rem Skip IP confirmation if user gave an IP address on the commandline
 IF NOT "%1"=="" goto connect
@@ -24,6 +26,7 @@ IF "%IPXIP%"=="" goto exit
 :connect
 
 ipxnet connect %IPXIP% %IPXPORT%
+serial1 nullmodem server:%IPXIP% port:%SERIALPORT%
 
 :exit
 del %TEMP%\WBATVARS.BAT > nul

@@ -1,8 +1,8 @@
-:network-menu "IPX networking"
+:network-menu "Network game setup"
 
-[ Host a new network ]
+[ Host a network game ]
 
-[   Join a network   ]
+[ Join a network game ]
 
 [?        Quit        ]
 :

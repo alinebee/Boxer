@@ -32,6 +32,12 @@
 //This will differ from the actual render view size if in fullscreen mode.
 @property (readonly, nonatomic) NSSize windowedRenderingViewSize;
 
+//A property specifically for UI bindings to use. Toggling this will change the panel if allowed,
+//and flag that the change was made at the user's own request.
+@property (assign, nonatomic) BXDOSWindowPanel currentPanelUIBinding;
+
+//Whether the launch panel can be toggled. Used internally and by UI bindings.
+@property (readonly, nonatomic) BOOL canToggleLaunchPanel;
 
 #pragma mark -
 #pragma mark Housekeeping

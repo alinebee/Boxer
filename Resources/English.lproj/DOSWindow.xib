@@ -20,6 +20,8 @@
 			<string>NSOpenGLView</string>
 			<string>NSScrollView</string>
 			<string>NSScroller</string>
+			<string>NSSegmentedCell</string>
+			<string>NSSegmentedControl</string>
 			<string>NSSlider</string>
 			<string>NSSliderCell</string>
 			<string>NSTextField</string>
@@ -62,24 +64,63 @@
 							<reference key="NSNextResponder" ref="1006"/>
 							<int key="NSvFlags">290</int>
 							<array class="NSMutableArray" key="NSSubviews">
+								<object class="NSSegmentedControl" id="142680116">
+									<reference key="NSNextResponder" ref="773857734"/>
+									<int key="NSvFlags">268</int>
+									<string key="NSFrame">{{60, 3}, {64, 19}}</string>
+									<reference key="NSSuperview" ref="773857734"/>
+									<reference key="NSWindow"/>
+									<reference key="NSNextKeyView" ref="912332772"/>
+									<string key="NSReuseIdentifierKey">_NS:9</string>
+									<bool key="NSEnabled">YES</bool>
+									<object class="NSSegmentedCell" key="NSCell" id="1055327412">
+										<int key="NSCellFlags">67108864</int>
+										<int key="NSCellFlags2">131072</int>
+										<object class="NSFont" key="NSSupport" id="26">
+											<string key="NSName">LucidaGrande</string>
+											<double key="NSSize">11</double>
+											<int key="NSfFlags">3100</int>
+										</object>
+										<string key="NSCellIdentifier">_NS:9</string>
+										<reference key="NSControlView" ref="142680116"/>
+										<array class="NSMutableArray" key="NSSegmentImages">
+											<object class="NSSegmentItem">
+												<double key="NSSegmentItemWidth">29</double>
+												<object class="NSCustomResource" key="NSSegmentItemImage">
+													<string key="NSClassName">NSImage</string>
+													<string key="NSResourceName">NSListViewTemplate</string>
+												</object>
+												<int key="NSSegmentItemTag">2</int>
+												<int key="NSSegmentItemImageScaling">0</int>
+											</object>
+											<object class="NSSegmentItem">
+												<double key="NSSegmentItemWidth">32</double>
+												<object class="NSCustomResource" key="NSSegmentItemImage">
+													<string key="NSClassName">NSImage</string>
+													<string key="NSResourceName">PromptFreestandingTemplate</string>
+												</object>
+												<int key="NSSegmentItemTag">3</int>
+												<int key="NSSegmentItemImageScaling">0</int>
+											</object>
+										</array>
+										<int key="NSSegmentStyle">2</int>
+									</object>
+									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+								</object>
 								<object class="NSButton" id="38096588">
 									<reference key="NSNextResponder" ref="773857734"/>
 									<int key="NSvFlags">268</int>
 									<string key="NSFrame">{{20, 4}, {32, 18}}</string>
 									<reference key="NSSuperview" ref="773857734"/>
 									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView" ref="912332772"/>
+									<reference key="NSNextKeyView" ref="142680116"/>
 									<string key="NSReuseIdentifierKey">_NS:22</string>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSButtonCell" key="NSCell" id="1055856749">
 										<int key="NSCellFlags">-2080374784</int>
 										<int key="NSCellFlags2">134348800</int>
 										<string key="NSContents"/>
-										<object class="NSFont" key="NSSupport" id="26">
-											<string key="NSName">LucidaGrande</string>
-											<double key="NSSize">11</double>
-											<int key="NSfFlags">3100</int>
-										</object>
+										<reference key="NSSupport" ref="26"/>
 										<string key="NSCellIdentifier">_NS:22</string>
 										<reference key="NSControlView" ref="38096588"/>
 										<int key="NSButtonFlags">-2033958912</int>
@@ -748,6 +789,38 @@
 					</object>
 					<int key="connectionID">1204</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">selectedTag: currentPanelUIBinding</string>
+						<reference key="source" ref="142680116"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="142680116"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">selectedTag: currentPanelUIBinding</string>
+							<string key="NSBinding">selectedTag</string>
+							<string key="NSKeyPath">currentPanelUIBinding</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1265</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: canToggleLaunchPanel</string>
+						<reference key="source" ref="142680116"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="142680116"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">enabled: canToggleLaunchPanel</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">canToggleLaunchPanel</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1267</int>
+				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<array key="orderedObjects">
@@ -799,6 +872,7 @@
 							<reference ref="912332772"/>
 							<reference ref="208389043"/>
 							<reference ref="38096588"/>
+							<reference ref="142680116"/>
 						</array>
 						<reference key="parent" ref="1006"/>
 						<string key="objectName">Status bar</string>
@@ -1005,6 +1079,19 @@
 						<reference key="object" ref="750629320"/>
 						<reference key="parent" ref="653019913"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1258</int>
+						<reference key="object" ref="142680116"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="1055327412"/>
+						</array>
+						<reference key="parent" ref="773857734"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1259</int>
+						<reference key="object" ref="1055327412"/>
+						<reference key="parent" ref="142680116"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -1041,6 +1128,9 @@
 				<string key="1244.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="1251.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="1253.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="1258.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<integer value="1" key="1259.IBNSSegmentedControlInspectorSelectedSegmentMetadataKey"/>
+				<string key="1259.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="2.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="3.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="909.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1065,7 +1155,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1257</int>
+			<int key="maxID">1267</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1345,10 +1435,10 @@
 					<string key="superclassName">NSWindowController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
 						<string key="hideProgramPanel:">id</string>
-						<string key="showDOSView:">id</string>
-						<string key="showLaunchPanel:">id</string>
-						<string key="showLoadingPanel:">id</string>
+						<string key="performShowDOSView:">id</string>
+						<string key="performShowLaunchPanel:">id</string>
 						<string key="showProgramPanel:">id</string>
+						<string key="toggleLaunchPanel:">id</string>
 						<string key="toggleProgramPanelShown:">id</string>
 						<string key="toggleRenderingStyle:">id</string>
 						<string key="toggleStatusBarShown:">id</string>
@@ -1358,20 +1448,20 @@
 							<string key="name">hideProgramPanel:</string>
 							<string key="candidateClassName">id</string>
 						</object>
-						<object class="IBActionInfo" key="showDOSView:">
-							<string key="name">showDOSView:</string>
+						<object class="IBActionInfo" key="performShowDOSView:">
+							<string key="name">performShowDOSView:</string>
 							<string key="candidateClassName">id</string>
 						</object>
-						<object class="IBActionInfo" key="showLaunchPanel:">
-							<string key="name">showLaunchPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showLoadingPanel:">
-							<string key="name">showLoadingPanel:</string>
+						<object class="IBActionInfo" key="performShowLaunchPanel:">
+							<string key="name">performShowLaunchPanel:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="showProgramPanel:">
 							<string key="name">showProgramPanel:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="toggleLaunchPanel:">
+							<string key="name">toggleLaunchPanel:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="toggleProgramPanelShown:">
@@ -1913,7 +2003,9 @@
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
 			<string key="NSFollowLinkFreestandingTemplate">{10, 10}</string>
+			<string key="NSListViewTemplate">{11, 10}</string>
 			<string key="NSRevealFreestandingTemplate">{14, 14}</string>
+			<string key="PromptFreestandingTemplate">{128, 128}</string>
 			<string key="Volume0PercentCroppedTemplate">{128, 128}</string>
 			<string key="Volume100PercentTemplate">{128, 128}</string>
 		</dictionary>

@@ -414,6 +414,7 @@
 		9F444FCC12AEA28700A2D405 /* BXOperationSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F444FCB12AEA28700A2D405 /* BXOperationSet.m */; };
 		9F444FFF12AEBE5200A2D405 /* BXDriveBundleImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F444FFE12AEBE5200A2D405 /* BXDriveBundleImport.m */; };
 		9F44500212AEC0FC00A2D405 /* BXSimpleDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F44500112AEC0FC00A2D405 /* BXSimpleDriveImport.m */; };
+		9F44C5C515F274BE00FE0A88 /* PromptFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F44C5C415F274BE00FE0A88 /* PromptFreestandingTemplate.pdf */; };
 		9F44C75315A0A38800F6A9ED /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; };
 		9F44C75415A0A3AA00F6A9ED /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; };
 		9F44E5E410D17A4C0081B8D2 /* BXEmulator+BXPaste.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */; };
@@ -1030,6 +1031,7 @@
 		9F44500112AEC0FC00A2D405 /* BXSimpleDriveImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSimpleDriveImport.m; sourceTree = "<group>"; };
 		9F44501012AEC71100A2D405 /* BXFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFileTransfer.h; sourceTree = "<group>"; };
 		9F44509F12AECC4700A2D405 /* BXDriveImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveImport.h; sourceTree = "<group>"; };
+		9F44C5C415F274BE00FE0A88 /* PromptFreestandingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PromptFreestandingTemplate.pdf; sourceTree = "<group>"; };
 		9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = BGHUDAppKit.framework; sourceTree = "<group>"; };
 		9F44E5E210D17A4C0081B8D2 /* BXEmulator+BXPaste.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXPaste.h"; sourceTree = "<group>"; };
 		9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXPaste.mm"; sourceTree = "<group>"; };
@@ -3058,6 +3060,7 @@
 				9F9606ED14F65B1A0072E90C /* Cover art */,
 				9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */,
 				9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */,
+				9F44C5C415F274BE00FE0A88 /* PromptFreestandingTemplate.pdf */,
 				9FCA157C1597222D00C42D10 /* WelcomeSpotlight@2x.png */,
 				9FA9E27F121FD874006E20C4 /* PanelExpandTemplate.pdf */,
 				9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */,
@@ -3523,6 +3526,7 @@
 				9F57684D15DA3DA600B50500 /* DOSWindowBackground@2x.png in Resources */,
 				9F57685015DA3DAF00B50500 /* DOSWindowGrille@2x.png in Resources */,
 				9FDFB47B15DBB530004EA615 /* StandaloneAbout.xib in Resources */,
+				9F44C5C515F274BE00FE0A88 /* PromptFreestandingTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

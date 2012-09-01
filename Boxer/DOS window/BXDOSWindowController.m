@@ -393,6 +393,13 @@
 #pragma mark -
 #pragma mark UI actions
 
+- (IBAction) toggleRenderingStyle: (id <NSValidatedUserInterfaceItem>)sender
+{
+	BXRenderingStyle style = sender.tag;
+	[[NSUserDefaults standardUserDefaults] setInteger: style
+                                               forKey: @"renderingStyle"];
+}
+
 - (IBAction) toggleStatusBarShown: (id)sender
 {
     BOOL show = !self.statusBarShown;
@@ -408,8 +415,90 @@
     [self.document userDidToggleProgramPanel];
 }
 
+- (IBAction) performShowLaunchPanel: (id)sender
+{
+    [self showLaunchPanel];
+    [self.document userDidToggleLaunchPanel];
+}
+
+- (IBAction) performShowDOSView: (id)sender
+{
+    [self showDOSView];
+    [self.document userDidToggleLaunchPanel];
+}
+
+- (IBAction) toggleLaunchPanel: (id)sender
+{
+    if (self.currentPanel == BXDOSWindowLaunchPanel)
+    {
+        [self performShowDOSView: sender];
+    }
+    else if (self.currentPanel == BXDOSWindowDOSView)
+    {
+        [self performShowLaunchPanel: sender];
+    }
+}
+
+//The "currentPanelUIBinding" property is specifically for UI bindings to toggle the current panel,
+//and so it has more validation and flags any change as being user-driven. 
++ (NSSet *) keyPathsForValuesAffectingCurrentPanelUIBinding
+{
+    return [NSSet setWithObject: @"currentPanel"];
+}
+
+- (BXDOSWindowPanel) currentPanelUIBinding
+{
+    return self.currentPanel;
+}
+
+- (void) setCurrentPanelUIBinding: (BXDOSWindowPanel)currentPanelUIBinding
+{
+    if (self.document.emulator.isAtPrompt && self.currentPanel != BXDOSWindowLoadingPanel)
+    {
+        [self switchToPanel: currentPanelUIBinding animate: self.window.isVisible];
+        [self.document userDidToggleLaunchPanel];
+    }
+}
+
++ (NSSet *) keyPathsForValuesAffectingCanToggleLaunchPanel
+{
+    return [NSSet setWithObjects: @"document.hasGamebox", @"currentPanel", @"document.emulator.isAtPrompt", nil];
+}
+
+- (BOOL) canToggleLaunchPanel
+{
+    if (!self.document.hasGamebox)
+        return NO;
+    
+    if (self.currentPanel == BXDOSWindowLoadingPanel)
+        return NO;
+    
+    if (!self.document.emulator.isAtPrompt)
+        return NO;
+    
+    return YES;
+}
+
 #pragma mark -
-#pragma mark UI actions
+#pragma mark Programmatic UI actions
+
+- (void) showLaunchPanel
+{
+    [self switchToPanel: BXDOSWindowLaunchPanel
+                animate: self.window.isVisible];
+}
+
+- (void) showDOSView
+{
+    [self switchToPanel: BXDOSWindowDOSView
+                animate: self.window.isVisible];
+}
+
+- (void) showLoadingPanel
+{
+    [self switchToPanel: BXDOSWindowLoadingPanel
+                animate: self.window.isVisible];
+}
 
 - (void) enterFullScreen
 {
@@ -426,39 +515,14 @@
     [self.document userDidToggleFullScreen];
 }
 
-- (void) showProgramPanel: (id)sender
+- (IBAction) showProgramPanel: (id)sender
 {
 	[self setProgramPanelShown: YES animate: YES];
 }
 
-- (void) hideProgramPanel: (id)sender
+- (IBAction) hideProgramPanel: (id)sender
 {
 	[self setProgramPanelShown: NO animate: YES];
-}
-
-- (void) showLaunchPanel: (id)sender
-{
-    [self switchToPanel: BXDOSWindowLaunchPanel
-                animate: self.window.isVisible];
-}
-
-- (void) showDOSView: (id)sender
-{
-    [self switchToPanel: BXDOSWindowDOSView
-                animate: self.window.isVisible];
-}
-
-- (void) showLoadingPanel: (id)sender
-{
-    [self switchToPanel: BXDOSWindowLoadingPanel
-                animate: self.window.isVisible];
-}
-
-- (IBAction) toggleRenderingStyle: (id <NSValidatedUserInterfaceItem>)sender
-{
-	BXRenderingStyle style = sender.tag;
-	[[NSUserDefaults standardUserDefaults] setInteger: style
-                                               forKey: @"renderingStyle"];
 }
 
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem
@@ -479,6 +543,16 @@
 		return YES;
 	}
 	
+    else if (theAction == @selector(toggleLaunchPanel:))
+	{
+		if (self.currentPanel == BXDOSWindowDOSView)
+			theItem.title = NSLocalizedString(@"Show Launch Panel", @"View menu option for showing the launch panel.");
+		else
+			theItem.title = NSLocalizedString(@"Hide Launch Panel", @"View menu option for hiding the launch panel.");
+        
+		return (self.canToggleLaunchPanel);
+	}
+    
 	else if (theAction == @selector(toggleProgramPanelShown:))
 	{
 		if (!self.programPanelShown)

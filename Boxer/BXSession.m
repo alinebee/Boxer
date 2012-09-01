@@ -552,6 +552,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                           forKey: BXGameboxSettingsStartUpInFullScreenKey];
 }
 
+- (void) userDidToggleLaunchPanel
+{
+    _userSwitchedToDOSPrompt = (self.DOSWindowController.currentPanel == BXDOSWindowDOSView);
+}
+
 
 #pragma mark -
 #pragma mark Flow control
@@ -1142,10 +1147,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     if (_hasLaunched)
     {
         [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
-                                                 selector: @selector(showLaunchPanel:)
+                                                 selector: @selector(showLaunchPanel)
                                                    object: self];
         
-        [self.DOSWindowController performSelector: @selector(showDOSView:)
+        [self.DOSWindowController performSelector: @selector(showDOSView)
                                        withObject: self
                                        afterDelay: BXSwitchToDOSViewDelay];
     }
@@ -1265,18 +1270,18 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if ([self _shouldShowLaunchPanelAtPrompt])
 	{
 		[NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
-												 selector: @selector(showDOSView:)
+												 selector: @selector(showDOSView)
 												   object: self];
 		
 		//Switch to the launch panel only after a delay.
-		[self.DOSWindowController performSelector: @selector(showLaunchPanel:)
+		[self.DOSWindowController performSelector: @selector(showLaunchPanel)
                                        withObject: self
                                        afterDelay: BXSwitchToLaunchPanelDelay];
 	}
     //Otherwise, ensure we're displaying the DOS view.
     else
     {
-        [self.DOSWindowController showDOSView: self];
+        [self.DOSWindowController showDOSView];
     }
 
     //Enable/disable display-sleep suppression
@@ -1468,6 +1473,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     }
     else
     {
+        /*
         NSNumber *showProgramPanel = [self.gameSettings objectForKey: BXGameboxSettingsShowProgramPanelKey];
         if (showProgramPanel != nil)
         {
@@ -1477,6 +1483,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         {
             return YES;
         }
+        */
+        
+        //Don't show the launch panel if the user had manually switched to the DOS prompt
+        //from the launch panel.
+        if (_userSwitchedToDOSPrompt)
+            return NO;
+        
+        //Otherwise, show the damn launch panel.
+        return YES;
     }
 }
 

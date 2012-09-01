@@ -100,6 +100,8 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 	
 	BOOL _userSkippedDefaultProgram;
     BOOL _waitingForFastForwardRelease;
+    
+    BOOL _userSwitchedToDOSPrompt;
 	
 	NSOperationQueue *_importQueue;
     NSOperationQueue *_scanQueue;
@@ -244,4 +246,7 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 //Called when the user has manually toggled full screen mode.
 //This records the fullscreen/windowed to use next time the user starts up this gamebox.
 - (void) userDidToggleFullScreen;
+
+//Called when the user manually switches from/to the launch panel to/from the DOS prompt.
+- (void) userDidToggleLaunchPanel;
 @end

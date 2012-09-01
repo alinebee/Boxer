@@ -52,6 +52,7 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	NSView *_programPanel;
     NSView *_launchPanel;
     NSView *_loadingPanel;
+    NSSegmentedControl *_panelToggle;
     YRKSpinningProgressIndicator *_loadingSpinner;
 
 	BXProgramPanelController *_programPanelController;
@@ -146,9 +147,19 @@ extern NSString * const BXViewDidLiveResizeNotification;
 - (IBAction) showProgramPanel: (id)sender;
 - (IBAction) hideProgramPanel: (id)sender;
 
-- (IBAction) showLaunchPanel: (id)sender;
-- (IBAction) showDOSView: (id)sender;
-- (IBAction) showLoadingPanel: (id)sender;
+//Display the specified panel if allowed, and record it as the user's own action.
+- (IBAction) performShowLaunchPanel: (id)sender;
+- (IBAction) performShowDOSView: (id)sender;
+
+//Show/hide the launch panel.
+- (IBAction) toggleLaunchPanel: (id)sender;
+
+//Display the specified panel unconditionally, without validating it or
+//recording it as the user's own action.
+- (void) showLaunchPanel;
+- (void) showDOSView;
+- (void) showLoadingPanel;
+
 
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleRenderingStyle: (id)sender;

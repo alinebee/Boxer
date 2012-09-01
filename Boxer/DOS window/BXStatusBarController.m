@@ -224,7 +224,6 @@
 			   selector: @selector(_windowWillClose)
 				   name: @"NSWindowWillCloseNotification"
 				 object: self.view.window];
-	
 }
 
 - (void) _removeBindings

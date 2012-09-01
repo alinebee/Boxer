@@ -28,6 +28,7 @@ extern NSString * const BXControllerProfileDPadDown;
 #define BXHIDVendorIDSony 0x054c
 #define BXHIDVendorIDLogitech 0x046d
 #define BXHIDVendorIDThrustmaster 0x044f
+#define BXHIDVendorIDCH 0x068e
 
 #define BXHIDVendorIDMadCatz 0x0738
 #define BXHIDVendorIDHori 0x0f0d

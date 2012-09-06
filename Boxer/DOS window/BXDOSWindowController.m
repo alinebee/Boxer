@@ -195,10 +195,12 @@
     //Ensure our loading spinner runs on a separate thread.
     self.loadingSpinner.usesThreadedAnimation = YES;
     
+    
 	//Reassign the document to ensure we've set up our view controllers with references the document/emulator
 	//This is necessary because the order of windowDidLoad/setDocument: differs between OS X releases, and some
 	//of our members may have been nil when setDocument: was first called
 	self.document = self.document;
+    
 }
 
 

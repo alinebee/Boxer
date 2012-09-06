@@ -82,7 +82,7 @@
 	[NSBezierPath clipRect: dirtyRect];
 	
 	[self _drawBlueprintInRect: dirtyRect];
-	[self _drawBlueprintBrandInRect: dirtyRect];
+	//[self _drawBlueprintBrandInRect: dirtyRect];
 	[self _drawLightingInRect: dirtyRect];
 	[self _drawShadowInRect: dirtyRect];
 }

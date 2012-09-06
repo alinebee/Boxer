@@ -48,6 +48,7 @@ extern NSString * const BXGameboxSettingsProfileKey;
 extern NSString * const BXGameboxSettingsProfileVersionKey;
 extern NSString * const BXGameboxSettingsLastLocationKey;
 extern NSString * const BXGameboxSettingsShowProgramPanelKey;
+extern NSString * const BXGameboxSettingsStartUpInFullScreenKey;
 
 extern NSString * const BXGameboxSettingsLastProgramPathKey;
 extern NSString * const BXGameboxSettingsLastProgramLaunchArgumentsKey;

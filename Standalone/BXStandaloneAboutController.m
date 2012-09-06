@@ -12,8 +12,12 @@
 #import "BXBaseAppController.h"
 
 
+#define kAppNameDefaultFontSize 24
+#define kAppNameFallbackFontSize 18
+
 @implementation BXStandaloneAboutController
 @synthesize creditsView = _creditsView;
+@synthesize appNameField = _appNameField;
 
 + (id) controller
 {
@@ -56,6 +60,7 @@ decisionListener: (id < WebPolicyDecisionListener >)listener
 - (void) dealloc
 {
     self.creditsView = nil;
+    self.appNameField = nil;
     [super dealloc];
 }
 
@@ -77,6 +82,28 @@ decisionListener: (id < WebPolicyDecisionListener >)listener
 - (NSString *) appName
 {
     return [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleName"];
+}
+
++ (NSSet *) keyPathsForValuesAffectingAppNameFontSize
+{
+    return [NSSet setWithObject: @"appName"];
+}
+
+- (CGFloat) appNameFontSize
+{
+    NSDictionary *defaultAttributes = [NSDictionary dictionaryWithObject: [NSFont systemFontOfSize: kAppNameDefaultFontSize]
+                                                                  forKey: NSFontAttributeName];
+    
+    NSSize defaultSize = [self.appName sizeWithAttributes: defaultAttributes];
+    
+    if (defaultSize.width > self.appNameField.bounds.size.width)
+    {
+        return kAppNameFallbackFontSize;
+    }
+    else
+    {
+        return kAppNameDefaultFontSize;
+    }
 }
 
 - (IBAction) showAcknowledgements: (id)sender

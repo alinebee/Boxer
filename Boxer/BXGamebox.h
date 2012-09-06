@@ -181,6 +181,10 @@ typedef NSUInteger BXGameIdentifierType;
 //Clear resource caches for documentation, gameInfo and executables.
 - (void) refresh;
 
+
+- (void) addLauncher: (NSDictionary *)launcher;
+- (void) insertLauncher: (NSDictionary *)launcher atIndex: (NSUInteger)index;
+
 //Insert new launchers into the launcher array.
 - (void) insertLauncherWithTitle: (NSString *)title
                             path: (NSString *)path
@@ -191,5 +195,10 @@ typedef NSUInteger BXGameIdentifierType;
 - (void) addLauncherWithTitle: (NSString *)title
                          path: (NSString *)path
                     arguments: (NSString *)launchArguments;
+
+//Remove the specified launcher data from the launchers array.
+- (void) removeLauncher: (NSDictionary *)launcher;
+
+- (void) removeLauncherAtIndex: (NSUInteger)index;
 
 @end

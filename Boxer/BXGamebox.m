@@ -59,8 +59,12 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 //On return, type will be the type of identifier generated.
 - (NSString *) _generatedIdentifierOfType: (BXGameIdentifierType *)type;
 
+//Rewrite the launchers array in the game info.
+- (void) _persistLaunchers;
+
 //Save the game info back to the gamebox.
 - (void) _persistGameInfo;
+
 @end
 
 
@@ -294,26 +298,66 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     return _launchers;
 }
 
+- (void) _persistLaunchers
+{
+    NSMutableArray *relativeLaunchers = [NSMutableArray arrayWithCapacity: self.launchers.count];
+    for (NSDictionary *launcher in self.launchers)
+    {
+        NSMutableDictionary *relativeLauncher = [launcher mutableCopy];
+        
+        NSString *path = [relativeLauncher objectForKey: BXLauncherPathKey];
+        NSString *relativePath = [path pathRelativeToPath: self.resourcePath];
+        [relativeLauncher setObject: relativePath forKey: BXLauncherPathKey];
+        [relativeLaunchers addObject: relativeLauncher];
+    }
+    
+    [self setGameInfo: relativeLaunchers forKey: BXLaunchersGameInfoKey];
+}
+
+- (void) insertObject: (NSDictionary *)object inLaunchersAtIndex: (NSUInteger)index
+{
+    //Ensure the launchers array has been lazily populated from the game info.
+    self.launchers;
+    [_launchers insertObject: object atIndex: index];
+    
+    //Sync the revised launcher data back into the game info.
+    [self _persistLaunchers];
+}
+
+- (void) removeObjectFromLaunchersAtIndex: (NSUInteger)index
+{
+    //Ensure the launchers array has been lazily populated from the game info.
+    self.launchers;
+    [_launchers removeObjectAtIndex: index];
+    
+    //Sync the revised launcher data back into the game info.
+    [self _persistLaunchers];
+}
+
+- (void) insertLauncher: (NSDictionary *)launcher atIndex: (NSUInteger)index
+{
+    [[self mutableArrayValueForKey: @"launchers"] insertObject: launcher atIndex: index];
+}
+
+- (void) addLauncher: (NSDictionary *)launcher
+{
+    [[self mutableArrayValueForKey: @"launchers"] addObject: launcher];
+}
+
 - (void) insertLauncherWithTitle: (NSString *)title
                             path: (NSString *)path
                        arguments: (NSString *)launchArguments
                          atIndex: (NSUInteger)index
 {
-    NSString *relativePath = [path pathRelativeToPath: self.resourcePath];
     NSMutableDictionary *launcher = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                      [[title copy] autorelease], BXLauncherTitleKey,
-                                     relativePath, BXLauncherPathKey,
+                                     path, BXLauncherPathKey,
                                      nil];
     
     if (launchArguments)
         [launcher setObject: [[launchArguments copy] autorelease] forKey: BXLauncherArgsKey];
     
-    //Autopopulate the launchers array when we first need it
-    self.launchers;
-    [_launchers insertObject: launcher atIndex: index];
-    
-    //Persist the new launcher back into the game info
-    [self setGameInfo: _launchers forKey: BXLaunchersGameInfoKey];
+    [self insertLauncher: launcher atIndex: index];
 }
 
 - (void) addLauncherWithTitle: (NSString *)title
@@ -324,6 +368,26 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
                              path: path
                         arguments: launchArguments
                           atIndex: self.launchers.count];
+}
+
+- (void) removeLauncherAtIndex: (NSUInteger)index
+{
+    [[self mutableArrayValueForKey: @"launchers"] removeObjectAtIndex: index];
+}
+
+- (void) removeLauncher: (NSDictionary *)launcher
+{
+    //Ensure we fire off KVO notifications for removing the entry.
+    NSMutableArray *launchers = [self mutableArrayValueForKey: @"launchers"];
+    [launchers removeObject: launcher];
+    
+    //Persist the revised launcher array back into the game info
+    [self _persistLaunchers];
+}
+
++ (NSSet *) keyPathsForValuesAffectingDefaultLauncher
+{
+    return [NSSet setWithObject: @"launchers"];
 }
 
 - (NSDictionary *) defaultLauncher

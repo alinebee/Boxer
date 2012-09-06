@@ -16,6 +16,7 @@
 @interface BXStandaloneAboutController : NSWindowController
 {
     WebView *_creditsView;
+    NSTextField *_appNameField;
 }
 
 @property (readonly, nonatomic) NSString *appName;
@@ -24,7 +25,9 @@
 @property (readonly, nonatomic) NSString *buildNumber;
 
 @property (retain, nonatomic) IBOutlet WebView *creditsView;
+@property (retain, nonatomic) IBOutlet NSTextField *appNameField;
 
+@property (readonly, nonatomic) CGFloat appNameFontSize;
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. BXStandaloneAboutController should always be accessed from this singleton.

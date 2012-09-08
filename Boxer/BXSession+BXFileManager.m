@@ -218,7 +218,7 @@
 #pragma mark -
 #pragma mark Drive shadowing
 
-- (BOOL) shouldShadowDrive: (BXDrive *)drive
+- (BOOL) _shouldShadowDrive: (BXDrive *)drive
 {
     //Don't shadow if we're not running a gamebox.
     if (!self.hasGamebox)
@@ -246,7 +246,7 @@
 
 - (NSURL *) shadowURLForDrive: (BXDrive *)drive
 {
-    if ([self shouldShadowDrive: drive])
+    if ([self _shouldShadowDrive: drive])
     {
         NSURL *stateURL = self.currentStateURL;
         if (stateURL)

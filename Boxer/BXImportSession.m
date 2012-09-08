@@ -1402,6 +1402,11 @@
 //And we DEFINITELY don't want to close when returning to the DOS prompt in any case.
 - (BOOL) _shouldCloseOnProgramExit	{ return NO; }
 
+//Don't shadow any drives during importing, otherwise we'll never actually install stuff into the gamebox.
+- (BOOL) _shouldShadowDrive: (BXDrive *)drive
+{
+    return NO;
+}
 
 //This uses a different (and simpler) mount behaviour than BXSession to prioritise
 //the source path ahead of other drives.

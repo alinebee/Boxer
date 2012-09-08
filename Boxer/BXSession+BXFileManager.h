@@ -207,10 +207,6 @@ typedef NSUInteger BXDriveMountOptions;
 //Returns the path to the bundle where we will store state data for the current gamebox.
 - (NSURL *) currentStateURL;
 
-//Whether we should map writes from the specified drive to an external state bundle.
-//Will return NO if the drive is read-only or not part of the gamebox.
-- (BOOL) shouldShadowDrive: (BXDrive *)drive;
-
 //Returns an appropriate location to which we can shadow write operations for the specified drive.
 //This location may not exist yet, but will be created once it is needed.
 - (NSURL *) shadowURLForDrive: (BXDrive *)drive;

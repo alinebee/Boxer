@@ -159,4 +159,8 @@
 //to centralise mounting logic.
 - (void) _mountQueuedSiblingsAtOffset: (NSInteger)offset;
 
+//Whether we should map writes from the specified drive to an external state bundle.
+//Will return NO if the drive is read-only or not part of the gamebox.
+- (BOOL) _shouldShadowDrive: (BXDrive *)drive;
+
 @end

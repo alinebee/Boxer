@@ -627,7 +627,7 @@
             (self.currentPanel == BXDOSWindowLaunchPanel && newPanel == BXDOSWindowDOSView))
         {
             //Disable window flushes to prevent partial redraws while we're setting up the views.
-            [self.window disableFlushWindow];
+            //[self.window disableFlushWindow];
             
             //We reveal the launcher by sliding the parent view along horizontally:
             //So we resize the parent view to accommodate both views side-by-side.
@@ -665,7 +665,7 @@
             self.launchPanel.hidden = NO;
             self.inputView.hidden = NO;
             
-            [self.window enableFlushWindow];
+            //[self.window enableFlushWindow];
             [wrapperView display];
             
     
@@ -693,7 +693,7 @@
             [animation release];
             
             //Once we're done sliding, restore the frames to what they were.
-            [self.window disableFlushWindow];
+            //[self.window disableFlushWindow];
             
             self.launchPanel.frame = originalBounds;
             self.inputView.frame = originalBounds;
@@ -701,7 +701,7 @@
             wrapperView.frame = originalFrame;
             wrapperView.autoresizesSubviews = YES;
             
-            [self.window enableFlushWindow];
+            //[self.window enableFlushWindow];
         }
         //For all other transitions, crossfade the current panel and the new panel.
         else

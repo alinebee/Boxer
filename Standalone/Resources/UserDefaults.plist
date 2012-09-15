@@ -8,6 +8,8 @@
 	<true/>
 	<key>aspectCorrectedText</key>
 	<true/>
+	<key>showLaunchPanelOnFirstLaunch</key>
+	<true/>
 	<key>useVSync</key>
 	<true/>
 	<key>useCVDisplayLink</key>

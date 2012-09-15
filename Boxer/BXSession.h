@@ -55,6 +55,18 @@ extern NSString * const BXGameboxSettingsLastProgramLaunchArgumentsKey;
 
 extern NSString * const BXGameboxSettingsDrivesKey;
 
+//Whether to skip the default/previous program when next launching this gamebox.
+//This flag will be cleared on the next startup.
+extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
+
+#pragma mark User defaults keys
+
+//Whether to show the launcher panel when a launching a gamebox for the first time,
+//instead of running the gamebox's designated default launcher (if it has one).
+//Ignored for gameboxes that only have one launch option, in which case the launch
+//panel is redundant and the sole launcher will always be launched.
+extern NSString * const BXShowLaunchPanelOnFirstLaunchKey;
+
 
 #pragma mark -
 #pragma mark Interface
@@ -231,7 +243,9 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 
 //Restart the DOS emulator. Currently this involves closing and reopening the document,
 //which will usually trigger an application restart.
-- (void) restart;
+//If showLaunchPanel is YES, the launch panel will be displayed upon restarting; otherwise
+//the session will resume with the previously-running program (if any).
+- (void) restartShowingLaunchPanel: (BOOL)showLaunchPanel;
 
 //Shut down the DOS emulator.
 - (void) cancel;

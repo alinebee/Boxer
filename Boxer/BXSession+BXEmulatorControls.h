@@ -158,5 +158,6 @@ enum
 //Restart the emulation by closing and reopening the document.
 //This will show a confirmation first if there are programs running or drives being imported.
 - (IBAction) performRestart: (id)sender;
+- (IBAction) performRestartAtLaunchPanel: (id)sender;
 
 @end

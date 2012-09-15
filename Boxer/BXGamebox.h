@@ -86,6 +86,7 @@ enum {
 	BXGameIdentifierUserSpecified	= 0,	//Manually specified type.
 	BXGameIdentifierUUID			= 1,	//Standard UUID. Generated for empty gameboxes.
 	BXGameIdentifierEXEDigest		= 2,	//SHA1 digest of each EXE file in the gamebox.
+	BXGameIdentifierReverseDNS		= 3,	//Reverse-DNS (net.washboardabs.boxer)-style identifer.
 };
 typedef NSUInteger BXGameIdentifierType;
 

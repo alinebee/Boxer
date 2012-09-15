@@ -10,6 +10,8 @@
 	<false/>
 	<key>showFirstRunPanel</key>
 	<false/>
+	<key>showLaunchPanelOnFirstLaunch</key>
+	<true/>
 	<key>useVSync</key>
 	<true/>
 	<key>useCVDisplayLink</key>

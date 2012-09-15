@@ -71,6 +71,7 @@ NSString * const BXGameboxSettingsLastLocationKey = @"BXGameLastLocation";
 
 NSString * const BXGameboxSettingsShowProgramPanelKey = @"showProgramPanel";
 NSString * const BXGameboxSettingsStartUpInFullScreenKey = @"startUpInFullScreen";
+NSString * const BXGameboxSettingsShowLaunchPanelKey = @"showLaunchPanel";
 
 NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
 
@@ -91,6 +92,12 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 
 NSString * const BXWillBeginInterruptionNotification = @"BXWillBeginInterruptionNotification";
 NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruptionNotification";
+
+
+#pragma mark -
+#pragma mark User defaults keys
+
+NSString * const BXShowLaunchPanelOnFirstLaunchKey = @"showLaunchPanelOnFirstLaunch";
 
 
 #pragma mark -
@@ -265,11 +272,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	NSString *filePath		= absoluteURL.path;
 	
-	//Set our target launch path to point to this file, if we don't have a target already
+	//Set our target launch path to point to this file, if we don't have a target already.
 	if (!self.targetPath)
         self.targetPath = filePath;
     
-	//Check if the chosen file is located inside a gamebox
+	//Check if the chosen file is located inside a gamebox.
 	NSString *gameboxPath = [workspace parentOfFile: filePath
                                       matchingTypes: [NSSet setWithObject: BXGameboxType]];
 	
@@ -280,41 +287,60 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	{
 		self.gamebox = [[[BXGamebox alloc] initWithPath: gameboxPath] autorelease];
 		
-		//If we opened the gamebox directly, try to find a program to launch for it.
-        if ([self.targetPath isEqualToString: gameboxPath])
+        //Check if the user opened the gamebox itself or a specific file/folder inside the gamebox.
+        BOOL hasCustomTarget = ![self.targetPath isEqualToString: gameboxPath];
+        
+        //Check if we are flagged to show the launch panel for this game (instead of looking for a target program.)
+        BOOL startWithLaunchPanel = [[self.gameSettings objectForKey: BXGameboxSettingsShowLaunchPanelKey] boolValue];
+        
+		//If the user opened the gamebox itself instead of a specific file inside it,
+        //and we're not flagged to show the launch panel in this situation, then try
+        //to locate a program to launch at startup.
+        if (!hasCustomTarget && !startWithLaunchPanel)
 		{
-            //By default, launch the previous program that the user was running when they quit last time.
+            //Check if the user was running a program last time, and restore that if available.
 		    NSString *previousProgramPath = [self.gameSettings objectForKey: BXGameboxSettingsLastProgramPathKey];
-            if (previousProgramPath)
+            
+            //If the program path is relative, resolve it relative to the gamebox.
+            if (previousProgramPath && !previousProgramPath.isAbsolutePath)
             {
-                //If the program path is relative, resolve it relative to the gamebox.
-                if (!previousProgramPath.isAbsolutePath)
-                {
-                    NSString *basePath = self.gamebox.resourcePath;
-                    previousProgramPath = [basePath stringByAppendingPathComponent: previousProgramPath];
-                }
+                NSString *basePath = self.gamebox.gamePath;
+                previousProgramPath = [basePath stringByAppendingPathComponent: previousProgramPath];
             }
             
-            //TWEAK: make sure that the previous target path is still reachable.
+            //Check that the previous target path is still reachable.
             BOOL previousPathAvailable = previousProgramPath && [[NSFileManager defaultManager] fileExistsAtPath: previousProgramPath];
+            
+            //If a previous program is available, launch that.
             if (previousPathAvailable)
             {
                 self.targetPath = previousProgramPath;
                 self.targetArguments = [self.gameSettings objectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
             }
-            //If the user hasn't launched any program yet, or the previous program could not be reached,
-            //then launch the gamebox's default launcher if it has one.
+            //Otherwise, either launch the gamebox's default launcher or show the launch panel,
+            //depending on what the app has been configured to do.
             else
             {
                 NSDictionary *defaultLauncher = self.gamebox.defaultLauncher;
                 
-                if (defaultLauncher)
+                //Check if we should show the launch panel in this situation, or if we should launch the gamebox's default launcher.
+                BOOL ignoreDefaultLauncher = [[NSUserDefaults standardUserDefaults] boolForKey: BXShowLaunchPanelOnFirstLaunchKey];
+                
+                //If the game only has one launcher, there's no point showing the launch panel:
+                //in this situation, go ahead and launch that one launcher anyway.
+                if (self.gamebox.launchers.count == 1)
+                    ignoreDefaultLauncher = NO;
+                
+                if (defaultLauncher && !ignoreDefaultLauncher)
                 {
                     self.targetPath = [defaultLauncher objectForKey: BXLauncherPathKey];
                     self.targetArguments = [defaultLauncher objectForKey: BXLauncherArgsKey];
                 }
             }
         }
+        
+        //Once we've finished, clear any flags that override the startup program for this game.
+        [self.gameSettings removeObjectForKey: BXGameboxSettingsShowLaunchPanelKey];
 		
 		//FIXME: move the fileURL reset out of here and into a later step: we can't rely on the order
 		//in which NSDocument's setFileURL/readFromURL methods are called.
@@ -606,9 +632,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	}
 }
 
-- (void) restart
+- (void) restartShowingLaunchPanel: (BOOL)showLaunchPanel
 {
     NSURL *reopenURL = self.fileURL;
+    
+    [self.gameSettings setObject: [NSNumber numberWithBool: showLaunchPanel] forKey: BXGameboxSettingsShowLaunchPanelKey];
     
     [self close];
     [[NSApp delegate] openDocumentWithContentsOfURL: reopenURL display: YES error: NULL];
@@ -767,6 +795,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             
             [self.gameSettings setObject: queuedDrives forKey: BXGameboxSettingsDrivesKey];
         }
+        //Clear any previous data if we're not overwriting it
+        else
+        {
+            [self.gameSettings removeObjectForKey: BXGameboxSettingsDrivesKey];
+        }
         
         //Record the last-launched program for next time we launch this gamebox.
         if ([self _shouldPersistPreviousProgram])
@@ -819,7 +852,14 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                 [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
             }
         }
+        //Clear any previous data if we're not overwriting it
+        else
+        {
+            [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramPathKey];
+            [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
+        }
 
+        //Store the game settings back into the main user defaults
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, self.gamebox.gameIdentifier];
         [defaults setObject: self.gameSettings forKey: defaultsKey];
@@ -1403,6 +1443,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (BOOL) _shouldPersistPreviousProgram
 {
+    //If our relaunch-with-option was 
+    
     //For standalone game apps, only bother recording the previous program
     //if the gamebox has more than one launch option to choose from.
     if ([[NSApp delegate] isStandaloneGameBundle])

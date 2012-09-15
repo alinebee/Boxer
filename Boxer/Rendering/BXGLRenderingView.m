@@ -309,8 +309,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
             [_renderer release];
             _renderer = [renderer retain];
         
-            //Disabled until we get the ripple effects sorted out
-            //self.renderer.delegate = self;
+            self.renderer.delegate = self;
         
             //Tell the new renderer to configure its context.
             [self.renderer prepareContext];
@@ -367,7 +366,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     
     if (rippleLoadingError)
         NSLog(@"%@", rippleLoadingError);
-     */
+    */
     
     //Set up the CV display link if desired
     BOOL useCVDisplayLink = [[NSUserDefaults standardUserDefaults] boolForKey: @"useCVDisplayLink"];

@@ -14,6 +14,7 @@
 #import "BXVideoHandler.h"
 #import "BXDOSWindow.h"
 #import "BXCloseAlert.h"
+#import "BXGamebox.h"
 #import "NSAlert+BXAlert.h"
 
 #import "BXDOSWindowController.h"
@@ -535,6 +536,25 @@
         //That will break out of the menu's own key-event loop, which would otherwise block.
 		return self.isEmulating && isShowingDOSView && !_waitingForFastForwardRelease;
     }
+    else if (theAction == @selector(performRestartAtLaunchPanel:))
+    {
+        BOOL showOption = YES;
+        //Don't show this option if we're already at the launch panel
+        if (self.DOSWindowController.currentPanel == BXDOSWindowLaunchPanel)
+        {
+            showOption = NO;
+        }
+        //Don't show this option if we're a standalone app and only have one launch option
+        //(in which case the launch panel is never available.)
+        else if ([[NSApp delegate] isStandaloneGameBundle] && self.gamebox.launchers.count == 1)
+        {
+            showOption = NO;
+        }
+        theItem.hidden = !showOption;
+        return self.isEmulating;
+    }
+    
+    
     return [super validateMenuItem: theItem];
 }
 
@@ -670,6 +690,16 @@
 
 - (IBAction) performRestart: (id)sender
 {
+    [self _performRestartShowingLaunchPanel: NO];
+}
+
+- (IBAction) performRestartAtLaunchPanel: (id)sender
+{
+    [self _performRestartShowingLaunchPanel: YES];
+}
+
+- (void) _performRestartShowingLaunchPanel: (BOOL)showLaunchPanel
+{
     BOOL hasActiveImports = self.isImportingDrives;
     
 	//We confirm the close if a process is running and if we're not already shutting down
@@ -689,13 +719,13 @@
         [confirmation beginSheetModalForWindow: self.windowForSheet
                                  modalDelegate: self
                                 didEndSelector: @selector(_restartConfirmationDidEnd:returnCode:contextInfo:)
-                                   contextInfo: nil];
+                                   contextInfo: (void *)showLaunchPanel];
     }
     //If we're already at the DOS prompt then go ahead and restart already.
     else
     {
-        [self restart];
-    }
+        [self restartShowingLaunchPanel: showLaunchPanel];
+    }    
 }
 
 - (void) _restartConfirmationDidEnd: (NSAlert *)alert
@@ -704,7 +734,8 @@
 {
     if (returnCode == NSAlertFirstButtonReturn)
     {
-        [self restart];
+        BOOL showLaunchPanel = (BOOL)contextInfo;
+        [self restartShowingLaunchPanel: showLaunchPanel];
     }
 }
 
@@ -811,7 +842,7 @@
         //Once reversion is completed, restart the session to complete the operation.
         if (reverted)
         {
-            [self restart];
+            [self restartShowingLaunchPanel: NO];
         }
         
         //If reversion failed, tell the user the reason and restart the app afterward.
@@ -846,7 +877,7 @@
         //Once merging is completed, restart the app to complete the operation.
         if (merged)
         {
-            [self restart];
+            [self restartShowingLaunchPanel: NO];
         }
         
         //If the merge failed, tell the user the reason and restart the app afterward.
@@ -871,7 +902,7 @@
 - (void) _didPresentShadowOperationErrorWithRecovery: (BOOL)didRecover
                                          contextInfo: (void *)contextInfo
 {
-    [self restart];
+    [self restartShowingLaunchPanel: NO];
 }
 
 

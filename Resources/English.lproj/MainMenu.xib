@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">12A269</string>
+		<string key="IBDocument.SystemVersion">12B19</string>
 		<string key="IBDocument.InterfaceBuilderVersion">2549</string>
 		<string key="IBDocument.AppKitVersion">1187</string>
 		<string key="IBDocument.HIToolboxVersion">624.00</string>
@@ -951,6 +951,14 @@
 								<object class="NSMenuItem" id="382250108">
 									<reference key="NSMenu" ref="67815420"/>
 									<string key="NSTitle">Restart</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+								<object class="NSMenuItem" id="473199727">
+									<reference key="NSMenu" ref="67815420"/>
+									<string key="NSTitle">Restart at Launch Panel</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
@@ -2501,6 +2509,14 @@
 					<int key="connectionID">2272</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">performRestartAtLaunchPanel:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="473199727"/>
+					</object>
+					<int key="connectionID">2275</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
 						<reference key="source" ref="34920399"/>
@@ -3498,6 +3514,7 @@
 							<reference ref="633388051"/>
 							<reference ref="382250108"/>
 							<reference ref="883609823"/>
+							<reference ref="473199727"/>
 						</object>
 						<reference key="parent" ref="466028025"/>
 					</object>
@@ -3965,6 +3982,11 @@
 						<reference key="object" ref="171632512"/>
 						<reference key="parent" ref="632409172"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2273</int>
+						<reference key="object" ref="473199727"/>
+						<reference key="parent" ref="67815420"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -4152,6 +4174,7 @@
 					<string>2261.IBPluginDependency</string>
 					<string>2263.IBPluginDependency</string>
 					<string>2270.IBPluginDependency</string>
+					<string>2273.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>284.IBPluginDependency</string>
 					<string>285.IBPluginDependency</string>
@@ -4402,6 +4425,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -4416,7 +4440,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2272</int>
+			<int key="maxID">2275</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -5766,6 +5790,7 @@
 							<string>paste:</string>
 							<string>pause:</string>
 							<string>performRestart:</string>
+							<string>performRestartAtLaunchPanel:</string>
 							<string>relaunchTargetProgram:</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
@@ -5776,6 +5801,7 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -5813,6 +5839,7 @@
 							<string>paste:</string>
 							<string>pause:</string>
 							<string>performRestart:</string>
+							<string>performRestartAtLaunchPanel:</string>
 							<string>relaunchTargetProgram:</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
@@ -5869,6 +5896,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">performRestart:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">performRestartAtLaunchPanel:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

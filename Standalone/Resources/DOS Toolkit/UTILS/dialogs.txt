@@ -4,7 +4,7 @@
 
 [  Join a network game  ]
 
-[?         Quit          ]
+[?        Cancel         ]
 :
 
 :ip-prompt

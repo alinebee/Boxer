@@ -85,7 +85,7 @@
 //Called by BXDOSWindowController performDragOperation: when a string has been drag-dropped onto Boxer.
 - (BOOL) handleDroppedString: (NSString *)droppedString
 {
-	BOOL returnValue = [self.emulator handlePastedString: droppedString];
+	BOOL returnValue = [self.emulator handlePastedString: droppedString asCommand: YES];
     
 	//If the dragged string was successfully handled, reactivate Boxer and return focus to the DOS window.
     if (returnValue)

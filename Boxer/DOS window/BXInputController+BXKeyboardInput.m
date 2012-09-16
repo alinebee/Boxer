@@ -222,15 +222,15 @@
 - (IBAction) sendScrollLock:	(id)sender { [self.emulatedKeyboard keyPressed: KBD_scrolllock]; }
 - (IBAction) sendPrintScreen:	(id)sender { [self.emulatedKeyboard keyPressed: KBD_printscreen]; }
 
-- (IBAction) sendBackslash:     (id)sender { [self.representedObject.emulator handlePastedString: @"\\"]; }
-- (IBAction) sendForwardSlash:  (id)sender { [self.representedObject.emulator handlePastedString: @"/"]; }
-- (IBAction) sendColon:         (id)sender { [self.representedObject.emulator handlePastedString: @":"]; }
-- (IBAction) sendDash:          (id)sender { [self.representedObject.emulator handlePastedString: @"-"]; }
+- (IBAction) sendBackslash:     (id)sender { [self.representedObject.emulator handlePastedString: @"\\" asCommand: NO]; }
+- (IBAction) sendForwardSlash:  (id)sender { [self.representedObject.emulator handlePastedString: @"/" asCommand: NO]; }
+- (IBAction) sendColon:         (id)sender { [self.representedObject.emulator handlePastedString: @":" asCommand: NO]; }
+- (IBAction) sendDash:          (id)sender { [self.representedObject.emulator handlePastedString: @"-" asCommand: NO]; }
 
 
 - (void) type: (NSString *)message
 {
-    [self.representedObject.emulator handlePastedString: message];
+    [self.representedObject.emulator handlePastedString: message asCommand: NO];
 }
 
 #pragma mark -

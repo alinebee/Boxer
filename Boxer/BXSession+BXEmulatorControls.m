@@ -582,7 +582,7 @@
         //Unpause when pasting strings
         [self resume: self];
         
-        [self.emulator handlePastedString: pastedString];
+        [self.emulator handlePastedString: pastedString asCommand: YES];
     }
 }
 

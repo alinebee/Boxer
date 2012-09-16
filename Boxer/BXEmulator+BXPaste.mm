@@ -39,11 +39,11 @@
     return self.isAtPrompt;
 }
 
-- (BOOL) handlePastedString: (NSString *)pastedString
+- (BOOL) handlePastedString: (NSString *)pastedString asCommand: (BOOL)treatAsCommand
 {   
     //While we're at the DOS prompt, we can paste text directly as commands
     //and be more intelligent about formatting.
-	if (self._canPasteToShell)
+	if (treatAsCommand && self._canPasteToShell)
 	{
         NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
         NSCharacterSet *newLines = [NSCharacterSet newlineCharacterSet];

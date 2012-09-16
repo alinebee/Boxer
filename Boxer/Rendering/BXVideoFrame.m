@@ -111,8 +111,8 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 - (NSSize) scaledResolution
 {
 	NSSize effectiveResolution = self.effectiveResolution;
-	return NSMakeSize(ceilf(effectiveResolution.width	* self.intendedScale.width),
-					  ceilf(effectiveResolution.height	* self.intendedScale.height));
+	return NSMakeSize(roundf(effectiveResolution.width	* self.intendedScale.width),
+					  roundf(effectiveResolution.height	* self.intendedScale.height));
 }
 
 - (const void *) bytes

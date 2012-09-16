@@ -975,6 +975,9 @@
     //Override the window name while in fullscreen,
     //so that AppKit does not save the fullscreen frame in preferences
     self.autosaveNameBeforeFullScreen = self.window.frameAutosaveName;
+    if (!self.autosaveNameBeforeFullScreen)
+        self.autosaveNameBeforeFullScreen = @"";
+    
     [self.window setFrameAutosaveName: @""];
     
     self.renderingView.managesAspectRatio = YES;
@@ -1189,19 +1192,17 @@
     }
     else
     {
-        NSWindow *theWindow	= self.window;
-        
         //Calculate how big the window should be to accommodate the new size
-        NSRect newFrame	= [theWindow frameRectForContentSize: newSize
-                                             relativeToFrame: theWindow.frame
-                                                  anchoredAt: NSMakePoint(0.5f, 1.0f)];
+        NSRect newFrame	= [self.window frameRectForContentSize: newSize
+                                               relativeToFrame: self.window.frame
+                                                    anchoredAt: NSMakePoint(0.5f, 1.0f)];
 
         //Constrain the result to fit tidily on screen
-        newFrame = [theWindow fullyConstrainFrameRect: newFrame toScreen: theWindow.screen];
+        newFrame = [self.window fullyConstrainFrameRect: newFrame toScreen: self.window.screen];
         newFrame = NSIntegralRect(newFrame);
-        
+
         _resizingProgrammatically = YES;
-        [theWindow setFrame: newFrame display: YES animate: performAnimation];
+        [self.window setFrame: newFrame display: YES animate: performAnimation];
         _resizingProgrammatically = NO;
     }
 }

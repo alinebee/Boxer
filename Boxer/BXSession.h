@@ -190,6 +190,10 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 //Whether this session represents a gamebox.
 @property (readonly, nonatomic) BOOL hasGamebox;
 
+//Returns NO if this is a standalone game bundle with only a single launcher
+//(in which case the launcher panel is redundant.)
+@property (readonly, nonatomic) BOOL allowsLauncherPanel;
+
 //Whether this session is a game import. Returns NO by default.
 @property (readonly, nonatomic) BOOL isGameImport;
 

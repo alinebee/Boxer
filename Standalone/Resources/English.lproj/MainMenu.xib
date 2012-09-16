@@ -2087,6 +2087,26 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: values.showAspectCorrectionToggle</string>
+						<reference key="source" ref="803089018"/>
+						<reference key="destination" ref="852755903"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="803089018"/>
+							<reference key="NSDestination" ref="852755903"/>
+							<string key="NSLabel">hidden: values.showAspectCorrectionToggle</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">values.showAspectCorrectionToggle</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2526</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: values.pauseWhileInactive</string>
 						<reference key="source" ref="173528469"/>
 						<reference key="destination" ref="852755903"/>
@@ -2140,6 +2160,46 @@
 						</object>
 					</object>
 					<int key="connectionID">2209</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: selection.allowsLauncherPanel</string>
+						<reference key="source" ref="643680314"/>
+						<reference key="destination" ref="402931782"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="643680314"/>
+							<reference key="NSDestination" ref="402931782"/>
+							<string key="NSLabel">hidden: selection.allowsLauncherPanel</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">selection.allowsLauncherPanel</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2529</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: selection.allowsLauncherPanel</string>
+						<reference key="source" ref="310826317"/>
+						<reference key="destination" ref="402931782"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="310826317"/>
+							<reference key="NSDestination" ref="402931782"/>
+							<string key="NSLabel">hidden: selection.allowsLauncherPanel</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">selection.allowsLauncherPanel</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2532</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3539,7 +3599,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2523</int>
+			<int key="maxID">2532</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

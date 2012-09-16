@@ -544,6 +544,7 @@
         {
             theItem.state = NSOffState;
         }
+        //TODO: disable items that are unavailable at the current resolution.
 		return YES;
 	}
 	

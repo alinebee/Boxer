@@ -539,18 +539,9 @@
     //Restart menu item
     else if (theAction == @selector(performRestartAtLaunchPanel:))
     {
-        BOOL showOption = YES;
-        
-        //Don't show this option if we're a standalone app and only have one launch option
-        //(in which case the launch panel is never available.)
-        if ([[NSApp delegate] isStandaloneGameBundle] && self.gamebox.launchers.count == 1)
-        {
-            showOption = NO;
-        }
-        theItem.hidden = !showOption;
-        
-        //Disable the option while the app is already at the launch panel.
-        return self.isEmulating && (self.DOSWindowController.currentPanel != BXDOSWindowLaunchPanel);
+        //Disable the option if the current session does not support the launch panel
+        //or if we're already at the launch panel.
+        return self.isEmulating && self.allowsLauncherPanel && (self.DOSWindowController.currentPanel != BXDOSWindowLaunchPanel);
     }
     
     return [super validateMenuItem: theItem];
@@ -709,7 +700,10 @@
     if (shouldConfirm)
     {
         BXCloseAlert *confirmation;
-        if (hasActiveImports)
+        
+        if (showLaunchPanel)
+            confirmation = [BXCloseAlert restartAlertWhenReturningToLaunchPanel: self];
+        else if (hasActiveImports)
             confirmation = [BXCloseAlert restartAlertWhileImportingDrives: self];
         else
             confirmation = [BXCloseAlert restartAlertWhileSessionIsEmulating: self];

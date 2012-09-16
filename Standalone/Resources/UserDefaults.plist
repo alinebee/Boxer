@@ -16,6 +16,8 @@
 	<integer>0</integer>
 	<key>statusBarShown</key>
 	<true/>
+	<key>startUpInFullScreen</key>
+	<true/>
 	<key>temporaryDriveLetter</key>
 	<string>X</string>
 	<key>toolkitDriveLetter</key>
@@ -25,6 +27,8 @@
 	<key>showFullscreenToggleMessage</key>
 	<true/>
 	<key>showHotkeyWarning</key>
+	<true/>
+	<key>showAspectCorrectionToggle</key>
 	<true/>
 	<key>suppressSystemHotkeys</key>
 	<true/>

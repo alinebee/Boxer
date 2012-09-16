@@ -678,6 +678,7 @@
 			<key>BXProfileConfigurations</key>
 			<array>
 				<string>Timed joystick</string>
+				<string>Large mixer buffer</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -696,6 +697,7 @@
 			<key>BXProfileConfigurations</key>
 			<array>
 				<string>Timed joystick</string>
+				<string>Large mixer buffer</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>

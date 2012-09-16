@@ -152,6 +152,25 @@
 #pragma mark -
 #pragma mark Restart alerts
 
++ (BXCloseAlert *) restartAlertWhenReturningToLaunchPanel: (BXSession *)theSession
+{
+	BXCloseAlert *alert = [self alert];
+    
+    NSString *sessionName	= theSession.displayName;
+    NSString *messageFormat	= NSLocalizedString(@"Returning to the launch options will end your current game.",
+                                                @"Title of confirmation sheet when restarting a standalone game app to return to the launch panel. %@ is the display name of the app.");
+    
+    alert.messageText = [NSString stringWithFormat: messageFormat, sessionName];
+    alert.informativeText = NSLocalizedString(@"Any unsaved progress will be lost.",
+                                              @"Informative text of confirmation sheet when restarting a standalone game app to return to the launch panel.");
+    
+    NSButton *closeButton = [alert.buttons objectAtIndex: 0];
+	closeButton.title = NSLocalizedString(@"Return to Launch Options",
+                                          @"Close button for confirmation sheet when restarting a game session.");
+    
+	return alert;
+}
+
 + (BXCloseAlert *) restartAlertWhileSessionIsEmulating: (BXSession *)theSession
 {	
 	BXCloseAlert *alert = [self alert];

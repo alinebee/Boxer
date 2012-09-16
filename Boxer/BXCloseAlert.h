@@ -31,6 +31,10 @@
 //Shown after a windows-only program has failed to run and exited.
 + (BXCloseAlert *) closeAlertAfterWindowsOnlyProgramExited: (NSString *)programPath;
 
+//Shown when returning to the launch panel while a DOSBox process is running.
+//Warns the user that any unsaved data will be lost if they continue.
++ (BXCloseAlert *) restartAlertWhenReturningToLaunchPanel: (BXSession *)theSession;
+
 //Shown when restarting the session while a DOSBox process is running.
 //Warns the user that any unsaved data will be lost if they continue.
 + (BXCloseAlert *) restartAlertWhileSessionIsEmulating: (BXSession *)theSession;

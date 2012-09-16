@@ -892,6 +892,24 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     return (self.gamebox != nil);
 }
 
++ (NSSet *) keyPathsForValuesAffectingAllowsLauncherPanel
+{
+    return [NSSet setWithObject: @"gamebox.launchers"];
+}
+
+- (BOOL) allowsLauncherPanel
+{
+    if (!self.hasGamebox)
+        return NO;
+    
+    //Prevent access to the launcher panel if this is a standalone game bundle with only one launch option.
+    //In such cases the launcher panel is unnecessary.
+    if ([[NSApp delegate] isStandaloneGameBundle] && self.gamebox.launchers.count == 1)
+        return NO;
+    
+    return YES;
+}
+
 - (BOOL) isGameImport
 {
     return NO;
@@ -983,12 +1001,14 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 + (NSSet *) keyPathsForValuesAffectingCurrentPath       { return [NSSet setWithObjects: @"activeProgramPath", @"emulator.pathOfCurrentDirectory", nil]; }
 + (NSSet *) keyPathsForValuesAffectingActiveProgramPath { return [NSSet setWithObjects: @"lastExecutedProgramPath", @"lastLaunchedProgramPath", nil]; }
 
+
+
 #pragma mark -
 #pragma mark Emulator delegate methods and notifications
 
 - (BOOL) emulatorShouldDisplayStartupMessages: (BXEmulator *)emulator
 {
-    if ([NSApp isStandaloneGameBundle])
+    if ([[NSApp delegate] isStandaloneGameBundle])
         return NO;
     
     return YES;
@@ -1408,8 +1428,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //if there is more than one launch option to display on the launch panel.
     if ([[NSApp delegate] isStandaloneGameBundle])
     {
-        BOOL hasMultipleLaunchers = (self.gamebox.launchers.count > 1);
-        return hasMultipleLaunchers;
+        return self.allowsLauncherPanel;
     }
     else return YES;
 }
@@ -1441,8 +1460,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (BOOL) _shouldPersistPreviousProgram
 {
-    //If our relaunch-with-option was 
-    
     //For standalone game apps, only bother recording the previous program
     //if the gamebox has more than one launch option to choose from.
     if ([[NSApp delegate] isStandaloneGameBundle])
@@ -1458,12 +1475,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (BOOL) _shouldCloseOnProgramExit
 {
-    //If we're a standalone game app and there is only one launch option,
-    //then exit; otherwise, return to the launcher panel.
+    //If we're a standalone game app and the launcher panel is disabled,
+    //then close down after exiting to DOS; otherwise, return to the launcher panel.
     if ([[NSApp delegate] isStandaloneGameBundle])
     {
-        BOOL hasMultipleLaunchers = (self.gamebox.launchers.count > 1);
-        return !hasMultipleLaunchers;
+        return !self.allowsLauncherPanel;
     }
     
 	//Don't close if the auto-close preference is disabled for this gamebox

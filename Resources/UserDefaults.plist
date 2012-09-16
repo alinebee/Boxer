@@ -7,7 +7,7 @@
 	<key>aspectCorrected</key>
 	<true/>
 	<key>aspectCorrectedText</key>
-	<false/>
+	<true/>
 	<key>showFirstRunPanel</key>
 	<false/>
 	<key>useVSync</key>

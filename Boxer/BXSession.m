@@ -95,12 +95,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 
 #pragma mark -
-#pragma mark User defaults keys
-
-NSString * const BXShowLaunchPanelOnFirstLaunchKey = @"showLaunchPanelOnFirstLaunch";
-
-
-#pragma mark -
 #pragma mark Implementation
 
 @implementation BXSession
@@ -311,27 +305,23 @@ NSString * const BXShowLaunchPanelOnFirstLaunchKey = @"showLaunchPanelOnFirstLau
             //Check that the previous target path is still reachable.
             BOOL previousPathAvailable = previousProgramPath && [[NSFileManager defaultManager] fileExistsAtPath: previousProgramPath];
             
-            //If a previous program is available, launch that.
+            //If the previously-running program is available, launch that.
             if (previousPathAvailable)
             {
                 self.targetPath = previousProgramPath;
                 self.targetArguments = [self.gameSettings objectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
             }
-            //Otherwise, either launch the gamebox's default launcher or show the launch panel,
-            //depending on what the app has been configured to do.
+            //Otherwise, launch the gamebox's default launcher if it has one.
             else
             {
                 NSDictionary *defaultLauncher = self.gamebox.defaultLauncher;
                 
-                //Check if we should show the launch panel in this situation, or if we should launch the gamebox's default launcher.
-                BOOL ignoreDefaultLauncher = [[NSUserDefaults standardUserDefaults] boolForKey: BXShowLaunchPanelOnFirstLaunchKey];
+                //If there's no nominated default launcher, but the gamebox only *has* one launcher,
+                //then launch that by default instead.
+                if (!defaultLauncher && self.gamebox.launchers.count == 1)
+                    defaultLauncher = [self.gamebox.launchers objectAtIndex: 0];
                 
-                //If the game only has one launcher, there's no point showing the launch panel:
-                //in this situation, go ahead and launch that one launcher anyway.
-                if (self.gamebox.launchers.count == 1)
-                    ignoreDefaultLauncher = NO;
-                
-                if (defaultLauncher && !ignoreDefaultLauncher)
+                if (defaultLauncher)
                 {
                     self.targetPath = [defaultLauncher objectForKey: BXLauncherPathKey];
                     self.targetArguments = [defaultLauncher objectForKey: BXLauncherArgsKey];

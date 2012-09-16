@@ -61,6 +61,10 @@ extern NSString * const BXLauncherPathKey;
 //Launch-time parameters to pass to the launched program at startup.
 extern NSString * const BXLauncherArgsKey;
 
+//Whether this is the default launcher for this gamebox
+//(i.e. the launcher that will be executed when the gamebox is first launched.)
+extern NSString * const BXLauncherIsDefaultKey;
+
 
 #pragma mark -
 #pragma mark Filename constants
@@ -152,6 +156,9 @@ typedef NSUInteger BXGameIdentifierType;
 //The default launcher for this gamebox, which should be launched the first time the gamebox is run.
 //This will be nil if the gamebox has no default launcher.
 @property (readonly, nonatomic) NSDictionary *defaultLauncher;
+
+//The index in the launchers array of the default launcher.
+@property (assign, nonatomic) NSInteger defaultLauncherIndex;
 
 
 #pragma mark -

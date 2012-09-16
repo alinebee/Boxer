@@ -539,21 +539,18 @@
     else if (theAction == @selector(performRestartAtLaunchPanel:))
     {
         BOOL showOption = YES;
-        //Don't show this option if we're already at the launch panel
-        if (self.DOSWindowController.currentPanel == BXDOSWindowLaunchPanel)
-        {
-            showOption = NO;
-        }
+        
         //Don't show this option if we're a standalone app and only have one launch option
         //(in which case the launch panel is never available.)
-        else if ([[NSApp delegate] isStandaloneGameBundle] && self.gamebox.launchers.count == 1)
+        if ([[NSApp delegate] isStandaloneGameBundle] && self.gamebox.launchers.count == 1)
         {
             showOption = NO;
         }
         theItem.hidden = !showOption;
-        return self.isEmulating;
+        
+        //Disable the option while the app is already at the launch panel.
+        return self.isEmulating && (self.DOSWindowController.currentPanel != BXDOSWindowLaunchPanel);
     }
-    
     
     return [super validateMenuItem: theItem];
 }

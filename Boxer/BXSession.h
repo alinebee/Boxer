@@ -59,14 +59,6 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 //This flag will be cleared on the next startup.
 extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 
-#pragma mark User defaults keys
-
-//Whether to show the launcher panel when a launching a gamebox for the first time,
-//instead of running the gamebox's designated default launcher (if it has one).
-//Ignored for gameboxes that only have one launch option, in which case the launch
-//panel is redundant and the sole launcher will always be launched.
-extern NSString * const BXShowLaunchPanelOnFirstLaunchKey;
-
 
 #pragma mark -
 #pragma mark Interface

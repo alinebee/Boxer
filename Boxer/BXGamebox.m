@@ -32,9 +32,10 @@ NSString * const BXGameInfoFileExtension		= @"plist";
 NSString * const BXDocumentationFolderName		= @"Documentation";
 
 
-NSString * const BXLauncherTitleKey  = @"BXLauncherTitle";
-NSString * const BXLauncherPathKey   = @"BXLauncherPath";
-NSString * const BXLauncherArgsKey   = @"BXLauncherArguments";
+NSString * const BXLauncherTitleKey     = @"BXLauncherTitle";
+NSString * const BXLauncherPathKey      = @"BXLauncherPath";
+NSString * const BXLauncherArgsKey      = @"BXLauncherArguments";
+NSString * const BXLauncherDefaultKey   = @"BXLauncherIsDefault";
 
 
 NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
@@ -387,16 +388,62 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 + (NSSet *) keyPathsForValuesAffectingDefaultLauncher
 {
-    return [NSSet setWithObject: @"launchers"];
+    return [NSSet setWithObjects: @"launchers", @"defaultLauncherIndex", nil];
 }
 
 - (NSDictionary *) defaultLauncher
 {
-    if (self.launchers.count)
-        return [self.launchers objectAtIndex: 0];
+    NSUInteger index = self.defaultLauncherIndex;
+    if (index != NSNotFound)
+        return [self.launchers objectAtIndex: index];
     else
         return nil;
 }
+
++ (NSSet *) keyPathsForValuesAffectingDefaultLauncherIndex
+{
+    return [NSSet setWithObject: @"launchers"];
+}
+
+- (NSInteger) defaultLauncherIndex
+{
+    NSUInteger i, numLaunchers = self.launchers.count;
+    for (i=0; i<numLaunchers; i++)
+    {
+        NSDictionary *launcher = [self.launchers objectAtIndex: i];
+        NSNumber *defaultFlag = [launcher objectForKey: BXLauncherDefaultKey];
+        if (defaultFlag.boolValue)
+            return i;
+    }
+    return NSNotFound;
+}
+
+- (void) setDefaultLauncherIndex: (NSInteger)newIndex
+{
+    NSInteger oldIndex = self.defaultLauncherIndex;
+    if (oldIndex != newIndex)
+    {
+        [self willChangeValueForKey: @"launchers"];
+        if (oldIndex != NSNotFound)
+        {
+            NSMutableDictionary *oldDefaultLauncher = [self.launchers objectAtIndex: oldIndex];
+            [oldDefaultLauncher removeObjectForKey: BXLauncherDefaultKey];
+        }
+        
+        if (newIndex != NSNotFound)
+        {
+            NSMutableDictionary *newDefaultLauncher = [self.launchers objectAtIndex: newIndex];
+            [newDefaultLauncher setObject: [NSNumber numberWithBool: YES]
+                                   forKey: BXLauncherDefaultKey];
+        }
+        
+        [self _persistLaunchers];
+        
+        [self didChangeValueForKey: @"launchers"];
+    }
+}
+
+
 
 - (BOOL) closeOnExit
 {

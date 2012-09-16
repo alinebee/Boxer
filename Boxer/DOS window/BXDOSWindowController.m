@@ -297,7 +297,9 @@
 		CGFloat loadedAspectRatio = aspectRatioOfSize(loadedSize);
 		
 		//If the loaded size had a different aspect ratio to the size we had before,
-		//adjust the loaded size accordingly
+		//adjust the loaded size to match the original aspect ratio.
+        //This will be the case if the user has toggled aspect-ratio correction since
+        //they last ran the game, or if the game starts up in a different aspect ratio.
 		if (ABS(loadedAspectRatio - initialAspectRatio) > BXIdenticalAspectRatioDelta)
 		{
 			NSSize adjustedSize = loadedSize;

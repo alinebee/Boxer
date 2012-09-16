@@ -536,6 +536,7 @@
         //That will break out of the menu's own key-event loop, which would otherwise block.
 		return self.isEmulating && isShowingDOSView && !_waitingForFastForwardRelease;
     }
+    //Restart menu item
     else if (theAction == @selector(performRestartAtLaunchPanel:))
     {
         BOOL showOption = YES;

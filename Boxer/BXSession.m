@@ -986,6 +986,14 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 #pragma mark -
 #pragma mark Emulator delegate methods and notifications
 
+- (BOOL) emulatorShouldDisplayStartupMessages: (BXEmulator *)emulator
+{
+    if ([NSApp isStandaloneGameBundle])
+        return NO;
+    
+    return YES;
+}
+
 - (void) emulatorDidInitialize: (NSNotification *)notification
 {
 	//Flag that we are now officially emulating.

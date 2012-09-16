@@ -12,10 +12,6 @@
 #import "NSWindow+BXWindowDimensions.h"
 #import "BXAppKitVersionHelpers.h"
 
-//The height of the bottom window border.
-//TODO: determine this from NIB content.
-#define BXImportWindowBorderThickness 40.0f
-
 @implementation BXImportWindowController
 @synthesize dropzonePanel, loadingPanel, installerPanel, finalizingPanel, finishedPanel;
 
@@ -32,9 +28,6 @@
     //Disable window restoration.
     if ([self.window respondsToSelector: @selector(setRestorable:)])
         self.window.restorable = NO;
-
-    [self.window setContentBorderThickness: BXImportWindowBorderThickness + 1
-                                   forEdge: NSMinYEdge];
 
     //Observe ourselves for changes to the document or its import stage,
     //so we can sync the active panel.

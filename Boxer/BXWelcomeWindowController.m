@@ -14,10 +14,6 @@
 #import "NSWindow+BXWindowEffects.h"
 
 
-//The height of the bottom window border.
-//TODO: determine this from NIB content.
-#define BXWelcomeWindowBorderThickness 40.0f
-
 #define BXDocumentStartTag 1
 #define BXDocumentEndTag 2
 
@@ -71,9 +67,7 @@
 }
 
 - (void) windowDidLoad
-{
-	[[self window] setContentBorderThickness: BXWelcomeWindowBorderThickness + 1 forEdge: NSMinYEdge];
-	
+{	
 	//Set up drag-drop events for the buttons
 	NSArray *types = [NSArray arrayWithObject: NSFilenamesPboardType];
 	[[self importGameButton] registerForDraggedTypes: types];

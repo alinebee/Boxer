@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">12A269</string>
+		<string key="IBDocument.SystemVersion">12B19</string>
 		<string key="IBDocument.InterfaceBuilderVersion">2549</string>
 		<string key="IBDocument.AppKitVersion">1187</string>
 		<string key="IBDocument.HIToolboxVersion">624.00</string>
@@ -46,7 +46,7 @@
 			<object class="NSWindowTemplate" id="1005">
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{400, 200}, {640, 490}}</string>
+				<string key="NSWindowRect">{{400, 200}, {640, 570}}</string>
 				<int key="NSWTFlags">1618477056</int>
 				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">BXDOSWindow</string>
@@ -284,7 +284,7 @@
 												<object class="NSCustomView" id="671600945">
 													<reference key="NSNextResponder" ref="777416397"/>
 													<int key="NSvFlags">301</int>
-													<string key="NSFrame">{{242, 120}, {156, 160}}</string>
+													<string key="NSFrame">{{242, 160}, {156, 160}}</string>
 													<reference key="NSSuperview" ref="777416397"/>
 													<reference key="NSWindow"/>
 													<reference key="NSNextKeyView" ref="910670518"/>
@@ -292,7 +292,7 @@
 													<string key="NSClassName">BXBlueprintProgressIndicator</string>
 												</object>
 											</array>
-											<string key="NSFrameSize">{640, 400}</string>
+											<string key="NSFrameSize">{640, 480}</string>
 											<reference key="NSSuperview" ref="307206382"/>
 											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="671600945"/>
@@ -306,7 +306,7 @@
 												<object class="NSOpenGLView" id="201958132">
 													<reference key="NSNextResponder" ref="764581856"/>
 													<int key="NSvFlags">5394</int>
-													<string key="NSFrameSize">{640, 400}</string>
+													<string key="NSFrameSize">{640, 480}</string>
 													<reference key="NSSuperview" ref="764581856"/>
 													<reference key="NSWindow"/>
 													<reference key="NSNextKeyView" ref="777416397"/>
@@ -318,14 +318,14 @@
 													</object>
 												</object>
 											</array>
-											<string key="NSFrameSize">{640, 400}</string>
+											<string key="NSFrameSize">{640, 480}</string>
 											<reference key="NSSuperview" ref="307206382"/>
 											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="201958132"/>
 											<string key="NSClassName">BXInputView</string>
 										</object>
 									</array>
-									<string key="NSFrameSize">{640, 400}</string>
+									<string key="NSFrameSize">{640, 480}</string>
 									<reference key="NSSuperview" ref="89453087"/>
 									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="764581856"/>
@@ -333,14 +333,14 @@
 									<string key="NSClassName">NSView</string>
 								</object>
 							</array>
-							<string key="NSFrame">{{0, 90}, {640, 400}}</string>
+							<string key="NSFrame">{{0, 90}, {640, 480}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="307206382"/>
 							<string key="NSClassName">BXBlueprintBackgroundView</string>
 						</object>
 					</array>
-					<string key="NSFrameSize">{640, 490}</string>
+					<string key="NSFrameSize">{640, 570}</string>
 					<reference key="NSSuperview"/>
 					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="89453087"/>
@@ -770,8 +770,8 @@
 				<string key="-1.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="-2.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="-3.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<boolean value="NO" key="1.IBNSWindowAutoPositionCentersHorizontal"/>
-				<boolean value="NO" key="1.IBNSWindowAutoPositionCentersVertical"/>
+				<boolean value="YES" key="1.IBNSWindowAutoPositionCentersHorizontal"/>
+				<boolean value="YES" key="1.IBNSWindowAutoPositionCentersVertical"/>
 				<string key="1.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="1.IBWindowTemplateEditedContentRect">{{329, 197}, {640, 490}}</string>
 				<integer value="0" key="1.NSWindowTemplate.visibleAtLaunch"/>

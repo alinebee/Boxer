@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">12A269</string>
+		<string key="IBDocument.SystemVersion">12B19</string>
 		<string key="IBDocument.InterfaceBuilderVersion">2549</string>
 		<string key="IBDocument.AppKitVersion">1187</string>
 		<string key="IBDocument.HIToolboxVersion">624.00</string>
@@ -40,7 +40,7 @@
 			<object class="NSWindowTemplate" id="1032262345">
 				<int key="NSWindowStyleMask">3</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{960, 320}, {340, 384}}</string>
+				<string key="NSWindowRect">{{1030, 229}, {340, 384}}</string>
 				<int key="NSWTFlags">1685585920</int>
 				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">NSPanel</string>
@@ -60,6 +60,7 @@
 									<string key="NSFrame">{{193, 7}, {127, 25}}</string>
 									<reference key="NSSuperview" ref="245758057"/>
 									<reference key="NSWindow"/>
+									<reference key="NSNextKeyView"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSButtonCell" key="NSCell" id="296060041">
 										<int key="NSCellFlags">-2080374784</int>
@@ -408,6 +409,8 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 				<string key="-1.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="-2.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="-3.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<boolean value="NO" key="24.IBNSWindowAutoPositionCentersHorizontal"/>
+				<boolean value="YES" key="24.IBNSWindowAutoPositionCentersVertical"/>
 				<string key="24.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="24.IBWindowTemplateEditedContentRect">{{331, 201}, {340, 384}}</string>
 				<boolean value="NO" key="24.NSWindowTemplate.visibleAtLaunch"/>
@@ -535,6 +538,7 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 					<string key="superclassName">BXBaseAppController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
 						<string key="hideWelcomePanel:">id</string>
+						<string key="orderFrontAboutPanel:">id</string>
 						<string key="orderFrontFirstRunPanel:">id</string>
 						<string key="orderFrontFirstRunPanelWithTransition:">id</string>
 						<string key="orderFrontImportGamePanel:">id</string>
@@ -561,6 +565,10 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
 						<object class="IBActionInfo" key="hideWelcomePanel:">
 							<string key="name">hideWelcomePanel:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="orderFrontAboutPanel:">
+							<string key="name">orderFrontAboutPanel:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="orderFrontFirstRunPanel:">
@@ -666,7 +674,6 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 						<string key="maximizeVolume:">id</string>
 						<string key="minimizeVolume:">id</string>
 						<string key="openInDefaultApplication:">id</string>
-						<string key="orderFrontAboutPanel:">id</string>
 						<string key="revealInFinder:">id</string>
 						<string key="toggleMuted:">id</string>
 					</dictionary>
@@ -689,10 +696,6 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 						</object>
 						<object class="IBActionInfo" key="openInDefaultApplication:">
 							<string key="name">openInDefaultApplication:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontAboutPanel:">
-							<string key="name">orderFrontAboutPanel:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="revealInFinder:">

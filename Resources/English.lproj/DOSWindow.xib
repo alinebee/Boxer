@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">12A269</string>
+		<string key="IBDocument.SystemVersion">12B19</string>
 		<string key="IBDocument.InterfaceBuilderVersion">2549</string>
 		<string key="IBDocument.AppKitVersion">1187</string>
 		<string key="IBDocument.HIToolboxVersion">624.00</string>
@@ -50,7 +50,7 @@
 			<object class="NSWindowTemplate" id="1005">
 				<int key="NSWindowStyleMask">4111</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{400, 240}, {640, 426}}</string>
+				<string key="NSWindowRect">{{400, 240}, {640, 516}}</string>
 				<int key="NSWTFlags">1618477056</int>
 				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">BXDOSWindow</string>
@@ -362,7 +362,7 @@
 															<double key="NSPercent">0.63157892227172852</double>
 														</object>
 													</array>
-													<string key="NSFrame">{{80, 52}, {480, 296}}</string>
+													<string key="NSFrame">{{80, 97}, {480, 296}}</string>
 													<reference key="NSSuperview" ref="223608717"/>
 													<reference key="NSWindow"/>
 													<reference key="NSNextKeyView" ref="707454198"/>
@@ -376,7 +376,7 @@
 													<double key="NSMagnification">1</double>
 												</object>
 											</array>
-											<string key="NSFrameSize">{640, 400}</string>
+											<string key="NSFrameSize">{640, 490}</string>
 											<reference key="NSSuperview" ref="601818829"/>
 											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="485892903"/>
@@ -390,7 +390,7 @@
 												<object class="NSCustomView" id="750629320">
 													<reference key="NSNextResponder" ref="653019913"/>
 													<int key="NSvFlags">301</int>
-													<string key="NSFrame">{{242, 120}, {156, 160}}</string>
+													<string key="NSFrame">{{242, 165}, {156, 160}}</string>
 													<reference key="NSSuperview" ref="653019913"/>
 													<reference key="NSWindow"/>
 													<reference key="NSNextKeyView" ref="223608717"/>
@@ -398,7 +398,7 @@
 													<string key="NSClassName">BXDOSWindowLoadingSpinner</string>
 												</object>
 											</array>
-											<string key="NSFrameSize">{640, 400}</string>
+											<string key="NSFrameSize">{640, 490}</string>
 											<reference key="NSSuperview" ref="601818829"/>
 											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="750629320"/>
@@ -412,7 +412,7 @@
 												<object class="NSOpenGLView" id="511833091">
 													<reference key="NSNextResponder" ref="450603396"/>
 													<int key="NSvFlags">5394</int>
-													<string key="NSFrameSize">{640, 400}</string>
+													<string key="NSFrameSize">{640, 490}</string>
 													<reference key="NSSuperview" ref="450603396"/>
 													<reference key="NSWindow"/>
 													<reference key="NSNextKeyView" ref="653019913"/>
@@ -424,14 +424,14 @@
 													</object>
 												</object>
 											</array>
-											<string key="NSFrameSize">{640, 400}</string>
+											<string key="NSFrameSize">{640, 490}</string>
 											<reference key="NSSuperview" ref="601818829"/>
 											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="511833091"/>
 											<string key="NSClassName">BXInputView</string>
 										</object>
 									</array>
-									<string key="NSFrameSize">{640, 400}</string>
+									<string key="NSFrameSize">{640, 490}</string>
 									<reference key="NSSuperview" ref="89453087"/>
 									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="450603396"/>
@@ -439,14 +439,14 @@
 									<string key="NSClassName">NSView</string>
 								</object>
 							</array>
-							<string key="NSFrame">{{0, 26}, {640, 400}}</string>
+							<string key="NSFrame">{{0, 26}, {640, 490}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="601818829"/>
 							<string key="NSClassName">BXDOSWindowBackgroundView</string>
 						</object>
 					</array>
-					<string key="NSFrameSize">{640, 426}</string>
+					<string key="NSFrameSize">{640, 516}</string>
 					<reference key="NSSuperview"/>
 					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="89453087"/>
@@ -1099,7 +1099,7 @@
 				<string key="-2.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="-3.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<boolean value="YES" key="1.IBNSWindowAutoPositionCentersHorizontal"/>
-				<boolean value="NO" key="1.IBNSWindowAutoPositionCentersVertical"/>
+				<boolean value="YES" key="1.IBNSWindowAutoPositionCentersVertical"/>
 				<string key="1.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="1.IBWindowTemplateEditedContentRect">{{366, 355}, {640, 490}}</string>
 				<integer value="0" key="1.NSWindowTemplate.visibleAtLaunch"/>

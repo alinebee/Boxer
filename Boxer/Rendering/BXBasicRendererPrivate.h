@@ -55,6 +55,10 @@ extern GLfloat viewportVerticesFlipped[8];
 //multithreaded rendering.
 - (void) _prepareFrameTextureForFrame: (BXVideoFrame *)frame;
 
+//Returns the horizontal and vertical scaling factors we need to apply
+//to scale the specified frame to the specified viewport.
+- (CGPoint) _scalingFactorFromFrame: (BXVideoFrame *)frame
+                         toViewport: (CGRect)viewport;
 
 //Updates the GL viewport to the specified region in screen pixels.
 - (void) _setViewportToRegion: (CGRect)viewportRegion;
@@ -102,9 +106,12 @@ extern GLfloat viewportVerticesFlipped[8];
 
 @interface BXShaderRenderer ()
 
-//The shader programs we will render with, and the intermediate sampling
-//buffers associated with each.
+//The shader programs we are currently rendering with.
 @property (retain, nonatomic) NSArray *shaders;
+
+//The secondary buffer texture we shall use when rendering with shaders.
+//(When rendering with a series of shaders, we bounce back and forth between
+//our two buffer textures.)
 @property (retain, nonatomic) BXTexture2D *auxiliaryBufferTexture;
 
 //Called during _renderFrame: to check whether to render with shaders

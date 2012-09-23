@@ -13,13 +13,11 @@
 @synthesize auxiliaryBufferTexture = _auxiliaryBufferTexture;
 @synthesize shaders = _shaders;
 @synthesize shadersEnabled = _shadersEnabled;
-@synthesize minShaderScale = _minShaderScale;
-@synthesize maxShaderScale = _maxShaderScale;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
 
-- (id) initWithShaders: (NSArray *)shaders
+- (id) initWithShaderSet: (NSArray *)shaders
              inContext: (CGLContextObj)glContext
                  error: (NSError **)outError
 {
@@ -40,7 +38,7 @@
                                                          error: outError];
     if (shaders)
     {
-        self = [self initWithShaders: shaders inContext: glContext error: outError];
+        self = [self initWithShaderSet: shaders inContext: glContext error: outError];
     }
     else
     {
@@ -222,6 +220,8 @@
         //Because we're reusing frame and buffer textures between both rendering paths,
         //the texture filtering parameters and rendering sizes may have been modified
         //from what it expects by our shader rendering path.
+        //FIXME: do this cleanup once, whenever _shouldRenderWithShaders changes, instead
+        //of every damn frame.
         [self.frameTexture setMinFilter: GL_LINEAR
                               magFilter: GL_NEAREST
                                wrapping: GL_CLAMP_TO_EDGE];
@@ -267,19 +267,17 @@
         
         _shouldUseSupersampling = !CGSizeEqualToSize(_supersamplingSize, CGSizeZero);
         
-        //TODO: check here if the supersampling scale is too small for
-        //the shader program to produce good-quality results, and disable shaders if so.
-        
         CGSize inputSize = NSSizeToCGSize(frame.size);
         CGSize finalOutputSize = self.viewport.size;
         CGSize preferredOutputSize = [self _idealShaderRenderingSizeForFrame: frame
                                                                   toViewport: self.viewport];
         
+        CGSize largestOutputSize = preferredOutputSize;
+        NSUInteger numShadersNeedingBuffers = 0;
+        
         //Scan our shaders to figure out how big an output surface they will render
         //and whether they will need to draw into an intermediate sample buffer
         //rather than direct to the screen.
-        CGSize largestOutputSize = preferredOutputSize;
-        NSUInteger numShadersNeedingBuffers = 0;
         
         NSUInteger i, numShaders = self.shaders.count;
         for (i=0; i<numShaders; i++)
@@ -368,7 +366,7 @@
         }
         else
         {
-            _shouldUseShaders = YES;
+            _shouldUseShaders = self.shaders.count;
         
             //Recreate the main buffer texture, if we don't have one yet or if our old one
             //cannot accomodate the output size.

@@ -113,6 +113,17 @@ extern NSString * const BXRendererErrorDomain;
 #pragma mark -
 #pragma mark Frame updates and rendering
 
+//Sets the viewport to the specified rectangle in device pixels.
+//If recalculate is YES, the renderer may adjust its rendering to suit the new size.
+//If recalculate is NO, the renderer should not perform any expensive changes to the renderer setup.
+//(recalculate may be NO if e.g. the view is dynamically resizing.)
+- (void) setViewport: (CGRect)rect recalculate: (BOOL)recalculate;
+
+//Called to force the renderer to update to its current viewport size.
+//Intended to be used after a series of calls to setViewport:recalculate:
+//with recalculate as NO.
+- (void) recalculateViewport;
+
 //Replaces the current frame with a new/updated one for rendering.
 //Forces the texture contents to be reuploaded.
 - (void) updateWithFrame: (BXVideoFrame *)frame;

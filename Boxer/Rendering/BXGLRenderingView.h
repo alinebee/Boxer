@@ -12,7 +12,7 @@
 
 #import "BXFrameRenderingView.h"
 #import <QuartzCore/QuartzCore.h>
-#import "BXBasicRenderer.h"
+#import "BXSteppedShaderRenderer.h"
 
 @class BXBasicRenderer;
 @class BXRippleShader;
@@ -61,4 +61,24 @@
 
 - (void) showRippleAtPoint: (NSPoint)point
                    reverse: (BOOL)reverse;
+@end
+
+
+@interface BXBuiltinShaderRenderer : BXSteppedShaderRenderer
+
+- (id) initWithShaderNames: (NSArray *)shaderNames
+                  atScales: (CGFloat *)scales
+                 inContext: (CGLContextObj)glContext
+                     error: (NSError **)outError;
+
+@end
+
+//A preset renderer that applies the smoothed appearance.
+@interface BXSmoothedRenderer : BXBuiltinShaderRenderer
+
+@end
+
+//A preset renderer that applies the CRT scanlines appearance.
+@interface BXCRTRenderer : BXBuiltinShaderRenderer
+
 @end

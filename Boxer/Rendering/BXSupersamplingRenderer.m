@@ -96,18 +96,10 @@
     [super updateWithFrame: frame];
 }
 
-//Whenever the viewport changes, likewise recalculate how big
-//our supersampling buffer should be.
-- (void) setViewport: (CGRect)viewport
+- (void) recalculateViewport
 {
-    if (!CGRectEqualToRect(self.viewport, viewport))
-    {
-        [super setViewport: viewport];
-        
-        _shouldRecalculateBuffer = YES;
-    }
+    _shouldRecalculateBuffer = YES;
 }
-
 
 
 #pragma mark -
@@ -244,13 +236,13 @@
 {
     CGSize viewportSize     = viewport.size;
 	CGSize frameSize		= NSSizeToCGSize(frame.size);
-	CGSize scalingFactor	= CGSizeMake(viewportSize.width / frameSize.width,
-										 viewportSize.height / frameSize.height);
+    
+    CGPoint scalingFactor = [self _scalingFactorFromFrame: frame toViewport: viewport];
 	
 	//We disable the scaling buffer for scales over a certain limit,
 	//where (we assume) stretching artifacts won't be visible.
-	if (scalingFactor.height >= self.maxSupersamplingScale &&
-		scalingFactor.width >= self.maxSupersamplingScale) return CGSizeZero;
+	if (scalingFactor.y >= self.maxSupersamplingScale &&
+		scalingFactor.x >= self.maxSupersamplingScale) return CGSizeZero;
 	
 	//If no aspect ratio correction is needed, and the viewport is an even multiple
 	//of the initial resolution, then we don't need to scale either.
@@ -261,7 +253,7 @@
 	//Our ideal scaling buffer size is the closest integer multiple of the
 	//base resolution to the viewport size: rounding up, so that we're always
 	//scaling down to maintain sharpness.
-	NSInteger nearestScale = ceilf(scalingFactor.height);
+	NSInteger nearestScale = ceilf(scalingFactor.y);
 	
 	//Work our way down from that to find the largest scale that will still
     //fit into our maximum texture size.

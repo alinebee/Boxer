@@ -163,7 +163,27 @@ GLfloat viewportVerticesFlipped[8] = {
 	return _maxFrameTextureSize;
 }
 
+- (void) setViewport: (CGRect)viewport
+{
+    [self setViewport: viewport recalculate: YES];
+}
 
+- (void) setViewport: (CGRect)rect recalculate: (BOOL)recalculate
+{
+    if (!CGRectEqualToRect(rect, _viewport))
+    {
+        _viewport = rect;
+        
+        if (recalculate)
+            [self recalculateViewport];
+    }
+}
+
+- (void) recalculateViewport
+{
+    //A no-op, intended to be implemented by subclasses to perform any rendering changes
+    //needed to accomodate a new viewport size.
+}
 
 #pragma mark -
 #pragma mark Rendering
@@ -233,6 +253,17 @@ GLfloat viewportVerticesFlipped[8] = {
 			   (GLint)viewport.origin.y,
 			   (GLsizei)viewport.size.width,
 			   (GLsizei)viewport.size.height);
+}
+
+- (CGPoint) _scalingFactorFromFrame: (BXVideoFrame *)frame
+                         toViewport: (CGRect)viewport
+{
+    CGSize viewportSize     = viewport.size;
+	CGSize frameSize		= NSSizeToCGSize(frame.size);
+	CGPoint scalingFactor	= CGPointMake(viewportSize.width / frameSize.width,
+                                          viewportSize.height / frameSize.height);
+    
+    return scalingFactor;
 }
 
 

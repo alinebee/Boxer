@@ -612,6 +612,10 @@
 		9F839FB5150B81EF00337DD6 /* ScreenshotTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F839FB4150B81EF00337DD6 /* ScreenshotTemplate.pdf */; };
 		9F843FE11226EB1100FD37F1 /* import.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F843FE01226EB1100FD37F1 /* import.png */; };
 		9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */; };
+		9F872481160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F872480160F7DF200400D8C /* BXSteppedShaderRenderer.m */; };
+		9F872482160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F872480160F7DF200400D8C /* BXSteppedShaderRenderer.m */; };
+		9F872486160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F872485160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m */; };
+		9F872487160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F872485160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m */; };
 		9F87EF7A13C232B600326608 /* BXFlightstickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */; };
 		9F886FDB144CB6C30033CCD3 /* Bezel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F886FDD144CB6C30033CCD3 /* Bezel.xib */; };
 		9F887105156F85F9006CDB5F /* BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F887104156F85F8006CDB5F /* BXFileTypes.m */; };
@@ -1392,6 +1396,10 @@
 		9F84C86D157800DD00CCBCA7 /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
 		9F86DB3E1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMIDIDeviceMonitor.h; sourceTree = "<group>"; };
 		9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMIDIDeviceMonitor.m; sourceTree = "<group>"; };
+		9F87247F160F7DF200400D8C /* BXSteppedShaderRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSteppedShaderRenderer.h; sourceTree = "<group>"; };
+		9F872480160F7DF200400D8C /* BXSteppedShaderRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSteppedShaderRenderer.m; sourceTree = "<group>"; };
+		9F872484160F89C600400D8C /* BXGLRenderingView+BXImageCapture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXGLRenderingView+BXImageCapture.h"; sourceTree = "<group>"; };
+		9F872485160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXGLRenderingView+BXImageCapture.m"; sourceTree = "<group>"; };
 		9F87EF7113C1B18900326608 /* BXFlightstickAccelerometerLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFlightstickAccelerometerLayout.h; sourceTree = "<group>"; };
 		9F87EF7213C1B18900326608 /* BXFlightstickAccelerometerLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFlightstickAccelerometerLayout.m; sourceTree = "<group>"; };
 		9F886FDC144CB6C30033CCD3 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Bezel.xib; sourceTree = "<group>"; };
@@ -2092,6 +2100,10 @@
 				9F4FC117159253DA00319428 /* BXShaderRenderer.m */,
 				9F5DD13515E544710096D0E8 /* BXRippleShader.h */,
 				9F5DD13615E544710096D0E8 /* BXRippleShader.m */,
+				9F87247F160F7DF200400D8C /* BXSteppedShaderRenderer.h */,
+				9F872480160F7DF200400D8C /* BXSteppedShaderRenderer.m */,
+				9F872484160F89C600400D8C /* BXGLRenderingView+BXImageCapture.h */,
+				9F872485160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m */,
 			);
 			path = Rendering;
 			sourceTree = "<group>";
@@ -3944,6 +3956,8 @@
 				9F2C458715DB7E77009F4477 /* BXGLHelpers.m in Sources */,
 				9F5DD13715E544710096D0E8 /* BXRippleShader.m in Sources */,
 				9F3DD6CC15EE8047003C9A25 /* BXCHFlightstickProUSB.m in Sources */,
+				9F872481160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */,
+				9F872486160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4239,6 +4253,8 @@
 				9FDFB46E15DBA38F004EA615 /* BXStandaloneAboutController.m in Sources */,
 				9FDFB48015DBC32D004EA615 /* BXGLHelpers.m in Sources */,
 				9F5DD13815E544710096D0E8 /* BXRippleShader.m in Sources */,
+				9F872482160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */,
+				9F872487160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

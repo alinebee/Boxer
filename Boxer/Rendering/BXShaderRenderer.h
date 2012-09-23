@@ -14,8 +14,6 @@
     CGSize _shaderOutputSizes[10];
     BXTexture2D *_auxiliaryBufferTexture;
     
-    CGFloat _minShaderScale;
-    CGFloat _maxShaderScale;
     BOOL _shadersEnabled;
     BOOL _shouldUseShaders;
 }
@@ -28,19 +26,14 @@
 //(Note that even when this is YES, shaders may be disabled at certain scale factors.)
 @property (assign, nonatomic) BOOL shadersEnabled;
 
-//The minimum and maximum scale at which these shaders should be applied.
-//Outside of these the shaders will be disabled.
-@property (assign, nonatomic) CGFloat maxShaderScale;
-@property (assign, nonatomic) CGFloat minShaderScale;
-
 
 #pragma mark -
 #pragma mark Initialization and deallocation
 
-//Returns a new shader renderer using the specified array of shaders.
-- (id) initWithShaders: (NSArray *)shaders
-             inContext: (CGLContextObj)glContext
-                 error: (NSError **)outError;
+//Returns a new shader renderer using the specified set of shaders.
+- (id) initWithShaderSet: (NSArray *)shaderSet
+               inContext: (CGLContextObj)glContext
+                   error: (NSError **)outError;
 
 //Returns a new shader renderer using shaders loaded from the specified URL.
 - (id) initWithContentsOfURL: (NSURL *)shaderURL

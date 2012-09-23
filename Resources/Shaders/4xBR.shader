@@ -21,7 +21,7 @@
      )
 -->
 <shader language="GLSL">
-   <fragment scale="4.0" filter="nearest"><![CDATA[
+   <fragment><![CDATA[
 
       uniform sampler2D rubyTexture;
       uniform vec2 rubyInputSize;
@@ -176,9 +176,10 @@
          gl_FragColor = vec4(res, 1.0); 
       }
    ]]></fragment>
-    
+    <!--
    <fragment filter="linear" outscale="1.0"><![CDATA[
       uniform sampler2D rubyTexture;
       void main() { gl_FragColor = texture2D(rubyTexture, gl_TexCoord[0].xy); }
    ]]></fragment>
+     -->
 </shader>

@@ -607,8 +607,8 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (id) initWithContext: (CGLContextObj)glContext error: (NSError **)outError
 {
-    NSArray *shaderNames = [NSArray arrayWithObjects: @"5xBR Semi-Rounded", nil];
-    CGFloat scales[] = { 1.1 };
+    NSArray *shaderNames = [NSArray arrayWithObjects: @"5xBR Semi-Rounded-unclamped", @"5xBR Semi-Rounded-unclamped", nil];
+    CGFloat scales[] = { 1.5, 4.0 };
     
     return [self initWithShaderNames: shaderNames atScales: scales inContext: glContext error: outError];
 }
@@ -620,12 +620,8 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (id) initWithContext: (CGLContextObj)glContext error: (NSError **)outError
 {
-    //Disable curvature effect at low scales to avoid distracting moire patterns.
-    //Note that scale isn't an ideal heuristic for this renderer because the quality
-    //of the CRT rendering is partly dependent on pixel acreage as well as the scale
-    //from the base resolution.
-    NSArray *shaderNames = [NSArray arrayWithObjects: @"CRT-simple-uncurved", @"CRT-simple", nil];
-    CGFloat scales[] = { 1.5, 2.5 };
+    NSArray *shaderNames = [NSArray arrayWithObjects: @"crt-geom-interlaced-curved", nil];
+    CGFloat scales[] = { 1.5 };
     
     return [self initWithShaderNames: shaderNames atScales: scales inContext: glContext error: outError];
 }

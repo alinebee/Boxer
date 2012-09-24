@@ -12,7 +12,7 @@
 @implementation BXShaderRenderer
 @synthesize auxiliaryBufferTexture = _auxiliaryBufferTexture;
 @synthesize shaders = _shaders;
-@synthesize shadersEnabled = _shadersEnabled;
+@synthesize usesShaderUpsampling = _usesShaderUpsampling;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -53,8 +53,8 @@
     self = [super init];
     if (self)
     {
-        _shadersEnabled = YES;
         _shouldUseShaders = YES;
+        _usesShaderUpsampling = YES;
     }
     return self;
 }
@@ -87,7 +87,7 @@
 
 - (BOOL) _shouldRenderWithShaders
 {
-    return _shouldUseShaders && self.shadersEnabled;
+    return _shouldUseShaders;
 }
 
 - (void) _renderFrame: (BXVideoFrame *)frame
@@ -215,44 +215,26 @@
     //Fall back on the parent rendering path if shaders should not be used.
     else
     {
-        //Our parent implementation sets the filtering and content size of the buffer texture
-        //once in _prepareSupersamplingBufferForFrame:.
-        //Because we're reusing frame and buffer textures between both rendering paths,
-        //the texture filtering parameters and rendering sizes may have been modified
-        //from what it expects by our shader rendering path.
-        //FIXME: do this cleanup once, whenever _shouldRenderWithShaders changes, instead
-        //of every damn frame.
-        [self.frameTexture setMinFilter: GL_LINEAR
-                              magFilter: GL_NEAREST
-                               wrapping: GL_CLAMP_TO_EDGE];
-        
-        if (_shouldUseSupersampling)
-        {
-            [self.supersamplingBufferTexture setMinFilter: GL_LINEAR
-                                                magFilter: GL_LINEAR
-                                                 wrapping: GL_CLAMP_TO_EDGE];
-            
-            self.supersamplingBufferTexture.contentRegion = CGRectMake(0, 0,
-                                                                       _supersamplingSize.width,
-                                                                       _supersamplingSize.height);
-        }
-        
         [super _renderFrame: frame];
     }
 }
 
 - (CGSize) _idealShaderRenderingSizeForFrame: (BXVideoFrame *)frame toViewport: (CGRect)viewport
 {
-    return viewport.size;
-    /*
-    CGSize preferredSupersamplingSize = [self _idealSupersamplingBufferSizeForFrame: frame
-                                                                         toViewport: viewport];
-    
-    if (CGSizeEqualToSize(_supersamplingSize, CGSizeZero))
-        preferredSupersamplingSize = viewport.size;
-    
-    return preferredSupersamplingSize;
-     */
+    if (self.usesShaderUpsampling)
+    {
+        CGSize preferredSupersamplingSize = [self _idealSupersamplingBufferSizeForFrame: frame
+                                                                             toViewport: viewport];
+        
+        if (CGSizeEqualToSize(preferredSupersamplingSize, CGSizeZero))
+            preferredSupersamplingSize = viewport.size;
+        
+        return preferredSupersamplingSize;
+    }
+    else
+    {
+        return viewport.size;
+    }
 }
 
 - (void) _prepareSupersamplingBufferForFrame: (BXVideoFrame *)frame
@@ -261,16 +243,10 @@
     //we also precalculate details about the shader stack we're using
     //to save time when rendering.
     if (_shouldRecalculateBuffer)
-    {
-        _supersamplingSize = [self _idealSupersamplingBufferSizeForFrame: frame
-                                                              toViewport: self.viewport];
-        
-        _shouldUseSupersampling = !CGSizeEqualToSize(_supersamplingSize, CGSizeZero);
-        
+    {   
         CGSize inputSize = NSSizeToCGSize(frame.size);
         CGSize finalOutputSize = self.viewport.size;
-        CGSize preferredOutputSize = [self _idealShaderRenderingSizeForFrame: frame
-                                                                  toViewport: self.viewport];
+        CGSize preferredOutputSize = [self _idealShaderRenderingSizeForFrame: frame toViewport: self.viewport];
         
         CGSize largestOutputSize = preferredOutputSize;
         NSUInteger numShadersNeedingBuffers = 0;
@@ -367,6 +343,14 @@
         else
         {
             _shouldUseShaders = self.shaders.count;
+            
+            _supersamplingSize = [self _idealSupersamplingBufferSizeForFrame: frame
+                                                                  toViewport: self.viewport];
+            
+            _shouldUseSupersampling = !CGSizeEqualToSize(_supersamplingSize, CGSizeZero);
+            
+            if (!_shouldUseShaders)
+                largestOutputSize = _supersamplingSize;
         
             //Recreate the main buffer texture, if we don't have one yet or if our old one
             //cannot accomodate the output size.
@@ -408,6 +392,22 @@
                                                                          bytes: NULL
                                                                    inGLContext: _context
                                                                          error: NULL];
+                }
+            }
+            
+            //If we're not using shaders for the current viewport, then set the texture filtering parameters
+            //appropriately for the fallback supersampling rendering path.
+            if (!_shouldUseShaders)
+            {
+                [self.frameTexture setMinFilter: GL_LINEAR
+                                      magFilter: GL_NEAREST
+                                       wrapping: GL_CLAMP_TO_EDGE];
+                
+                if (_shouldUseSupersampling)
+                {
+                    [self.supersamplingBufferTexture setMinFilter: GL_LINEAR
+                                                        magFilter: GL_LINEAR
+                                                         wrapping: GL_CLAMP_TO_EDGE];
                 }
             }
         }

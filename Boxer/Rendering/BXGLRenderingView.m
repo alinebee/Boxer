@@ -607,10 +607,15 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (id) initWithContext: (CGLContextObj)glContext error: (NSError **)outError
 {
-    NSArray *shaderNames = [NSArray arrayWithObjects: @"5xBR Semi-Rounded-unclamped", @"5xBR Semi-Rounded-unclamped", nil];
-    CGFloat scales[] = { 1.5, 4.0 };
+    NSArray *shaderNames = [NSArray arrayWithObjects: @"5xBR Semi-Rounded-unclamped", nil];
+    CGFloat scales[] = { 1.25 };
     
     return [self initWithShaderNames: shaderNames atScales: scales inContext: glContext error: outError];
+}
+
+- (BOOL) usesShaderUpsampling
+{
+    return YES;
 }
 
 @end
@@ -621,9 +626,14 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 - (id) initWithContext: (CGLContextObj)glContext error: (NSError **)outError
 {
     NSArray *shaderNames = [NSArray arrayWithObjects: @"crt-geom-interlaced-curved", nil];
-    CGFloat scales[] = { 1.5 };
+    CGFloat scales[] = { 1.0 };
     
     return [self initWithShaderNames: shaderNames atScales: scales inContext: glContext error: outError];
+}
+
+- (BOOL) usesShaderUpsampling
+{
+    return NO;
 }
 
 @end

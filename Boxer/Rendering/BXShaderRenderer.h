@@ -14,17 +14,16 @@
     CGSize _shaderOutputSizes[10];
     BXTexture2D *_auxiliaryBufferTexture;
     
-    BOOL _shadersEnabled;
     BOOL _shouldUseShaders;
+    BOOL _usesShaderUpsampling;
 }
 
 #pragma mark -
 #pragma mark Properties
 
-//Whether to render frames using the shaders or using a fallback rendering approach.
-//For performance, you may wish to turn shaders off temporarily e.g. during window resizing.
-//(Note that even when this is YES, shaders may be disabled at certain scale factors.)
-@property (assign, nonatomic) BOOL shadersEnabled;
+//Whether to render the shader to the largest integer multiple of the base resolution
+//instead of to the destination size. Defaults to YES.
+@property (assign, nonatomic) BOOL usesShaderUpsampling;
 
 
 #pragma mark -

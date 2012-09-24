@@ -30,6 +30,7 @@
     
     BOOL _needsRendererUpdate;
     
+    BOOL _inViewportAnimation;
     BOOL _inViewAnimation;
     BOOL _usesTransparentSurface;
     

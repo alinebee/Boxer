@@ -57,6 +57,9 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 //whenever the renderer or the viewport changes.
 - (void) _applyViewportToRenderer: (BXBasicRenderer *)renderer;
 
+//Called when a live resize or other animation ends, to recaculate with the final state of the viewport. 
+- (void) _finalizeViewportChanges;
+
 @end
 
 
@@ -175,6 +178,8 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     {
 		CABasicAnimation *animation = [CABasicAnimation animation];
         animation.duration = 0.1;
+        animation.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionEaseIn];
+        animation.delegate = self;
         return animation;
     }
     else if ([key isEqualToString: @"rippleProgress"])
@@ -187,6 +192,19 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     {
         return [super defaultAnimationForKey: key];
     }
+}
+
+- (void) animationDidStart: (CAAnimation *)anim
+{
+    _inViewportAnimation = YES;
+}
+
+- (void) animationDidStop: (CAAnimation *)anim finished: (BOOL)flag
+{
+    _inViewportAnimation = NO;
+    anim.delegate = nil;
+    
+    [self _finalizeViewportChanges];
 }
 
 //Returns the rectangular region of the view into which the specified frame should be drawn.
@@ -251,8 +269,19 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
     
     CGLLockContext(cgl_ctx);
-        [renderer setViewport: NSRectToCGRect(backingRect) recalculate: !self.inLiveResize];
+        BOOL recalculate = !(_inViewportAnimation || self.inLiveResize);
+        [renderer setViewport: NSRectToCGRect(backingRect) recalculate: recalculate];
     CGLUnlockContext(cgl_ctx);
+}
+
+- (void) _finalizeViewportChanges
+{
+    [self.renderer recalculateViewport];
+    
+    if (_displayLink)
+        self.needsCVLinkDisplay = YES;
+    else
+        self.needsDisplay = YES;
 }
 
 - (void) setMaxViewportSize: (NSSize)maxViewportSize
@@ -417,12 +446,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (void) viewDidEndLiveResize
 {
-    [self.renderer recalculateViewport];
-    
-    if (_displayLink)
-        self.needsCVLinkDisplay = YES;
-    else
-        self.needsDisplay = YES;
+    [self _finalizeViewportChanges];
 }
 
 - (void) windowDidChangeBackingProperties: (NSNotification *)notification
@@ -469,6 +493,9 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         [self.openGLContext setValues: &opacity forParameter: NSOpenGLCPSurfaceOpacity];
     }
     self.inViewAnimation = NO;
+    
+    //Apply any viewport changes that may have occurred.
+    [self _finalizeViewportChanges];
 }
 
 - (void) drawRect: (NSRect)dirtyRect

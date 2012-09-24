@@ -75,7 +75,10 @@
         inGLContext: (CGLContextObj)context
               error: (NSError **)outError
 {
-    if ((self = [self init]))
+    NSAssert(contentSize.width > 0 && contentSize.height > 0, @"Invalid content size provided.");
+    
+    self = [self init];
+    if (self)
     {
         _context = context;
         CGLRetainContext(context);
@@ -91,6 +94,7 @@
         //of the texture itself; otherwise, we need a power of two texture
         //size large enough to accomodate the content size.)
         _textureSize = [self.class textureSizeNeededForContentSize: contentSize withType: type];
+        
         if (_type == GL_TEXTURE_RECTANGLE_ARB)
         {
             _usesNormalizedTextureCoordinates = NO;
@@ -157,19 +161,17 @@
             initialData = NULL;
         }
         
-        BOOL succeeded = YES;
+        BOOL succeeded = [self _checkForGLError: outError];
         
         //If we couldn't fill in any texture data in the initial call, do so now.
-        if (!canWriteTextureData && bytes)
-        {
-            succeeded = [self fillRegion: _contentRegion
-                               withBytes: bytes
-                                   error: outError];
-        }
-        
         if (succeeded)
         {
-            succeeded = [self _checkForGLError: outError];
+            if (!canWriteTextureData && bytes)
+            {
+                succeeded = [self fillRegion: _contentRegion
+                                   withBytes: bytes
+                                       error: outError];
+            }
         }
         
         //If texture creation failed, clean up after ourselves and return nil.

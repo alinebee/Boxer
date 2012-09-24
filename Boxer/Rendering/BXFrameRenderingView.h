@@ -35,6 +35,9 @@ typedef enum {
 - (void) setRenderingStyle: (BXRenderingStyle)style;
 - (BXRenderingStyle) renderingStyle;
 
+//Whether this rendering view can render in the specified style.
+- (BOOL) supportsRenderingStyle: (BXRenderingStyle)style;
+
 //Returns whether the view should adjust its viewport to suit the aspect ratio
 //of the current frame, or whether this will be done by adjusting the dimensions
 //of the view itself.

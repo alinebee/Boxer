@@ -40,6 +40,8 @@
     CGPoint _rippleOrigin;
     CGFloat _rippleProgress;
     BOOL _rippleReversed;
+    
+    BOOL _isLowSpecGPU;
 }
 
 @property (retain, nonatomic) BXBasicRenderer *renderer;

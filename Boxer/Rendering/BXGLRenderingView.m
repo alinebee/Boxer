@@ -123,11 +123,26 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     //Try to load a renderer for the specified rendering style.
     //If that fails, fall back on increasingly simple renderers until
     //we find one that works (or run out of options.)
-    NSArray *renderersToTry = [NSArray arrayWithObjects:
-                               [self rendererClassForStyle: style],
-                               [BXSupersamplingRenderer class],
-                               [BXBasicRenderer class],
-                               nil];
+    NSArray *renderersToTry;
+    
+    //On low-performance GPUs, don't even bother trying a fancy renderer:
+    //just stick with our standard renderers.
+    if (_isLowSpecGPU)
+    {
+        renderersToTry = [NSArray arrayWithObjects:
+                          [BXSupersamplingRenderer class],
+                          [BXBasicRenderer class],
+                          nil];
+    }
+    else
+    {
+        renderersToTry = [NSArray arrayWithObjects:
+                          [self rendererClassForStyle: style],
+                          [BXSupersamplingRenderer class],
+                          [BXBasicRenderer class],
+                          nil];
+    }
+    
     
     for (Class rendererClass in renderersToTry)
     {
@@ -322,6 +337,15 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     }
 }
 
+- (BOOL) supportsRenderingStyle: (BXRenderingStyle)style
+{
+    if (style == BXRenderingStyleNormal)
+        return YES;
+    else
+        return !_isLowSpecGPU;
+}
+
+
 - (void) setRenderer: (BXBasicRenderer *)renderer
 {
     if (_renderer != renderer)
@@ -366,6 +390,12 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     [self.openGLContext setValues: &useVSync
                      forParameter: NSOpenGLCPSwapInterval];
 	
+    //As a very simple test of the performance, check the GPU's maximum texture size.
+    //A low size such as 2048x2048 indicates a very low-performance GPU.
+    
+    GLint maxTextureDims = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureDims);
+    _isLowSpecGPU = (maxTextureDims < 4096);
     
     //Create a new renderer for this context, and set it up appropriately
     self.renderer = [self rendererForStyle: self.renderingStyle

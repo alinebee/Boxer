@@ -17,6 +17,7 @@
 #import "BXFrameRenderingView.h"
 #import "BXBezelController.h"
 #import "BXVideoFrame.h"
+#import "BXVideoHandler.h"
 #import "BXInputView.h"
 #import "BXGLRenderingView.h"
 #import "YRKSpinningProgressIndicator.h"
@@ -122,10 +123,10 @@
    withKeyPath: @"aspectCorrected"
        options: nil];
     
-    [self.renderingView bind: @"renderingStyle"
-                    toObject: defaults
-                 withKeyPath: @"renderingStyle"
-                     options: nil];
+    [self bind: @"renderingStyle"
+      toObject: defaults
+   withKeyPath: @"renderingStyle"
+       options: nil];
 }
 
 - (void) _removeObservers
@@ -402,6 +403,46 @@
 	BXRenderingStyle style = sender.tag;
 	[[NSUserDefaults standardUserDefaults] setInteger: style
                                                forKey: @"renderingStyle"];
+}
+
+- (void) setRenderingStyle: (BXRenderingStyle)style
+{
+    if (self.renderingStyle != style)
+    {
+        _renderingStyle = style;
+        BXVideoHandler *videoHandler = self.document.emulator.videoHandler;
+        
+        //Work out whether to have the GL view handle the style, or do it in software.
+        if ([self.renderingView supportsRenderingStyle: style])
+        {
+            videoHandler.filterType = BXFilterNormal;
+            self.renderingView.renderingStyle = style;
+        }
+        else
+        {
+            BXFilterType filterType;
+            switch (style)
+            {
+                case BXRenderingStyleSmoothed:
+                    filterType = BXFilterHQx;
+                    break;
+                case BXRenderingStyleCRT:
+                    filterType = BXFilterScanlines;
+                    break;
+                case BXRenderingStyleNormal:
+                default:
+                    filterType = BXFilterNormal;
+            }
+            
+            videoHandler.filterType = filterType;
+            self.renderingView.renderingStyle = BXRenderingStyleNormal;
+        }
+    }
+}
+
+- (BXRenderingStyle) renderingStyle
+{
+    return _renderingStyle;
 }
 
 - (IBAction) toggleStatusBarShown: (id)sender

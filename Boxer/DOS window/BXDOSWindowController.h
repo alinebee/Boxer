@@ -25,6 +25,7 @@ typedef enum {
 
 #import <Cocoa/Cocoa.h>
 #import "BXFullScreenCapableWindow.h"
+#import "BXFrameRenderingView.h"
 
 @class BXEmulator;
 @class BXSession;
@@ -70,6 +71,7 @@ extern NSString * const BXViewDidLiveResizeNotification;
     NSString *_autosaveNameBeforeFullScreen;
     
     BXDOSWindowPanel _currentPanel;
+    BXRenderingStyle _renderingStyle;
 }
 
 #pragma mark -
@@ -86,6 +88,9 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 //The view which displays the emulator's graphical output.
 @property (retain, nonatomic) IBOutlet NSView <BXFrameRenderingView> *renderingView;
+
+//The rendering style with which to render.
+@property (assign, nonatomic) BXRenderingStyle renderingStyle;
 
 //The view that tracks user input.
 @property (retain, nonatomic) IBOutlet BXInputView *inputView;

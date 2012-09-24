@@ -16,8 +16,20 @@
 #import "video.h"
 #endif
 
-
-typedef NSUInteger BXFilterType;
+//These constants are for reference and correspond directly to constants defined in DOSBox's render_scalers.h
+typedef enum {
+	BXFilterNormal		= 0,
+	BXFilterMAME		= 1,
+	BXFilterInterpolated= 2,
+	BXFilterHQx			= 3,
+	BXFilterSaI			= 4,
+	BXFilterSuperSaI	= 5,
+	BXFilterSuperEagle	= 6,
+	BXFilterTVScanlines	= 7,
+	BXFilterRGB			= 8,
+	BXFilterScanlines	= 9,
+    BXMaxFilters
+} BXFilterType;
 
 typedef struct {
 	//The type constant from BXEmulator+BXRendering.h to which this definition

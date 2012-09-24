@@ -11,21 +11,6 @@
 //Ugghhhhhhh.
 
 
-//These constants are for reference and correspond directly to constants defined in DOSBox's render_scalers.h
-enum {
-	BXFilterNormal		= 0,
-	BXFilterMAME		= 1,
-	BXFilterInterpolated= 2,
-	BXFilterHQx			= 3,
-	BXFilterSaI			= 4,
-	BXFilterSuperSaI	= 5,
-	BXFilterSuperEagle	= 6,
-	BXFilterTVScanlines	= 7,
-	BXFilterRGB			= 8,
-	BXFilterScanlines	= 9,
-    BXMaxFilters
-};
-
 // Accomodates 400x300 and 320x400 resolutions, which should still be small enough for reasonable filtering.
 const NSSize BXDefaultFilterResolutionCutoff = NSMakeSize(400, 400);
 

@@ -715,7 +715,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if (self.hasGamebox)
 	{
 		//Go through the settings working out which ones we should store in user defaults,
-		//and which ones we should store in the gamebox's configuration file.
+		//and which ones we should store in the gamebox's configuration file
+        //(and which we should not persist altogether).
 		BXEmulatorConfiguration *runtimeConf = [BXEmulatorConfiguration configuration];
 		
 		//These are the settings we want to keep in the configuration file
@@ -756,15 +757,29 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         //Now that we've saved those settings to the gamebox conf,
         //persist the rest of the game state to user defaults.
         
+        //Trim out any settings that are the same as the original defaults.
+        //This way, if a later version of Boxer changes the defaults, those
+        //will be propagated through to existing games.
+		NSString *defaultsPath = [[NSBundle mainBundle] pathForResource: @"GameDefaults" ofType: @"plist"];
+		NSMutableDictionary *defaultSettings = [NSMutableDictionary dictionaryWithContentsOfFile: defaultsPath];
         
+        NSMutableDictionary *settingsToPersist = [NSMutableDictionary dictionaryWithDictionary: self.gameSettings];
+        for (NSString *key in self.gameSettings)
+        {
+            id initialValue = [defaultSettings objectForKey: key];
+            id currentValue = [self.gameSettings objectForKey: key];
+            if ([initialValue isEqual: currentValue])
+                [settingsToPersist removeObjectForKey: key];
+        }
+
         //Add the gamebox name into the settings, to make it easier
         //to identify to which gamebox the record belongs.
-        [self.gameSettings setObject: self.gamebox.gameName forKey: BXGameboxSettingsNameKey];
+        [settingsToPersist setObject: self.gamebox.gameName forKey: BXGameboxSettingsNameKey];
         
         //While we're here, update the game settings to reflect the current location of the gamebox.
         NDAlias *packageLocation = [NDAlias aliasWithPath: self.gamebox.bundlePath];
         if (packageLocation)
-            [self.gameSettings setObject: packageLocation.data
+            [settingsToPersist setObject: packageLocation.data
                                   forKey: BXGameboxSettingsLastLocationKey];
         
         //Record the state of the drive queues for next time we launch this gamebox.
@@ -783,12 +798,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                 [queuedDrives addObject: driveInfo];
             }
             
-            [self.gameSettings setObject: queuedDrives forKey: BXGameboxSettingsDrivesKey];
+            [settingsToPersist setObject: queuedDrives forKey: BXGameboxSettingsDrivesKey];
         }
         //Clear any previous data if we're not overwriting it
         else
         {
-            [self.gameSettings removeObjectForKey: BXGameboxSettingsDrivesKey];
+            [settingsToPersist removeObjectForKey: BXGameboxSettingsDrivesKey];
         }
         
         //Record the last-launched program for next time we launch this gamebox.
@@ -816,14 +831,14 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                 //record it as an alias instead.
                 NSString *relativePath = [lastProgramPath pathRelativeToPath: basePath];
                 
-                [self.gameSettings setObject: relativePath
+                [settingsToPersist setObject: relativePath
                                       forKey: BXGameboxSettingsLastProgramPathKey];
                 
                 if (lastArguments)
-                    [self.gameSettings setObject: lastArguments
+                    [settingsToPersist setObject: lastArguments
                                           forKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
                 else
-                    [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
+                    [settingsToPersist removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
                     
             }
             else
@@ -832,27 +847,27 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                 if (currentDOSPath)
                 {
                     NSString *relativePath = [currentDOSPath pathRelativeToPath: basePath];
-                    [self.gameSettings setObject: relativePath
+                    [settingsToPersist setObject: relativePath
                                           forKey: BXGameboxSettingsLastProgramPathKey];
                 }
                 else
                 {
-                    [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramPathKey];
+                    [settingsToPersist removeObjectForKey: BXGameboxSettingsLastProgramPathKey];
                 }
-                [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
+                [settingsToPersist removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
             }
         }
         //Clear any previous data if we're not overwriting it
         else
         {
-            [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramPathKey];
-            [self.gameSettings removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
+            [settingsToPersist removeObjectForKey: BXGameboxSettingsLastProgramPathKey];
+            [settingsToPersist removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
         }
-
+        
         //Store the game settings back into the main user defaults
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, self.gamebox.gameIdentifier];
-        [defaults setObject: self.gameSettings forKey: defaultsKey];
+        [defaults setObject: settingsToPersist forKey: defaultsKey];
 	}
 }
 

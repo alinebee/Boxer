@@ -176,11 +176,6 @@
         [self resizeWindowToRenderingViewSize: NSMakeSize(640, 480)
                                       animate: NO];
     }
-    else
-    {
-        [self resizeWindowToRenderingViewSize: NSMakeSize(640, 400)
-                                      animate: NO];
-    }
     
 	//Now that we can retrieve the game's identifier from the session,
 	//use the autosaved window size for that game

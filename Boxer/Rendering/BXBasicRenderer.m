@@ -174,7 +174,7 @@ GLfloat viewportVerticesFlipped[8] = {
     {
         _viewport = rect;
         
-        if (recalculate)
+        if (YES || recalculate)
             [self recalculateViewport];
     }
 }

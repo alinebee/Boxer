@@ -226,7 +226,7 @@
         CGSize frameSize = NSSizeToCGSize(frame.size);
         CGPoint scalingFactor = [self _scalingFactorFromFrame: frame toViewport: viewport];
         
-        //Our ideal scaling buffer size is the closest integer multiple of the
+        //Our ideal shader target size is the closest integer multiple of the
         //base resolution to the viewport size: rounding up, so that we're always
         //scaling down to maintain sharpness.
         NSInteger nearestScale = ceilf(scalingFactor.y);
@@ -236,14 +236,11 @@
         CGSize preferredSupersamplingSize;
         do
         {
-            //If we're not scaling up at all in the end, then we don't need to supersample.
-            if (nearestScale <= 1) return CGSizeZero;
-            
             preferredSupersamplingSize = CGSizeMake(frameSize.width * nearestScale,
                                                     frameSize.height * nearestScale);
             nearestScale--;
         }
-        while (!BXCGSizeFitsWithinSize(preferredSupersamplingSize, _maxBufferTextureSize));
+        while (nearestScale > 0 && !BXCGSizeFitsWithinSize(preferredSupersamplingSize, _maxBufferTextureSize));
         
         return preferredSupersamplingSize;
     }
@@ -376,7 +373,7 @@
                 if (![self.auxiliaryBufferTexture canAccomodateContentSize: largestOutputSize])
                 {   
                     if (_currentBufferTexture == self.auxiliaryBufferTexture.texture)
-                    _currentBufferTexture = 0;
+                        _currentBufferTexture = 0;
                     
                     
                     //Clear our old buffer texture straight away when replacing it
@@ -394,6 +391,10 @@
         else
         {
             _shouldUseShaders = NO;
+            
+            if (_currentBufferTexture == self.supersamplingBufferTexture.texture)
+                _currentBufferTexture = 0;
+            
             [super _prepareSupersamplingBufferForFrame: frame];
             
             //If we're not using shaders this time around, then set the texture filtering parameters

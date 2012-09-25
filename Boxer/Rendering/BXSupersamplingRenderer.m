@@ -259,7 +259,7 @@
     //fit into our maximum texture size.
 	CGSize idealBufferSize;
 	do
-	{		
+	{
 		//If we're not scaling up at all in the end, then we don't need to supersample.
 		if (nearestScale <= 1) return CGSizeZero;
 		

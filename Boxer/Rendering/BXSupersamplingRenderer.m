@@ -189,21 +189,21 @@
 {
     if (_shouldRecalculateBuffer)
     {	
-        CGSize supersamplingSize = [self _idealSupersamplingBufferSizeForFrame: frame
-                                                                    toViewport: self.viewport];
+        _supersamplingSize = [self _idealSupersamplingBufferSizeForFrame: frame
+                                                              toViewport: self.viewport];
         
         //A zero ideal size means the supersampling buffer is not necessary.
-        _shouldUseSupersampling = !CGSizeEqualToSize(supersamplingSize, CGSizeZero);
+        _shouldUseSupersampling = !CGSizeEqualToSize(_supersamplingSize, CGSizeZero);
         
         if (_shouldUseSupersampling)
         {
             //Reuse the existing buffer if it's already large enough, simply ensuring
             //that it uses the new supersampling size.
-            if ([self.supersamplingBufferTexture canAccomodateContentSize: supersamplingSize])
+            if ([self.supersamplingBufferTexture canAccomodateContentSize: _supersamplingSize])
             {
                 self.supersamplingBufferTexture.contentRegion = CGRectMake(0, 0,
-                                                                           supersamplingSize.width,
-                                                                           supersamplingSize.height);
+                                                                           _supersamplingSize.width,
+                                                                           _supersamplingSize.height);
             }
             //Otherwise, recreate the buffer texture if it can't accomodate the new size.
             else
@@ -216,7 +216,7 @@
                 
                 //(Re)create the buffer texture in the new dimensions
                 self.supersamplingBufferTexture = [BXTexture2D textureWithType: self.bufferTextureType
-                                                                   contentSize: supersamplingSize
+                                                                   contentSize: _supersamplingSize
                                                                          bytes: NULL
                                                                    inGLContext: _context
                                                                          error: NULL];

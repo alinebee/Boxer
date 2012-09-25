@@ -24,6 +24,7 @@
     
 	BOOL _shouldUseSupersampling;
     CGFloat _maxSupersamplingScale;
+    CGSize _supersamplingSize;
     
 	BOOL _shouldRecalculateBuffer;
 }

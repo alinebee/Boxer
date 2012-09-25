@@ -223,27 +223,11 @@
 {
     if (self.usesShaderUpsampling)
     {
-        CGSize frameSize = NSSizeToCGSize(frame.size);
-        CGPoint scalingFactor = [self _scalingFactorFromFrame: frame toViewport: viewport];
+        CGSize preferredSupersamplingSize = [self _idealSupersamplingBufferSizeForFrame: frame
+                                                                             toViewport: viewport];
         
-        //Our ideal scaling buffer size is the closest integer multiple of the
-        //base resolution to the viewport size: rounding up, so that we're always
-        //scaling down to maintain sharpness.
-        NSInteger nearestScale = ceilf(scalingFactor.y);
-        
-        //Work our way down from that to find the largest scale that will still
-        //fit into our maximum texture size.
-        CGSize preferredSupersamplingSize;
-        do
-        {
-            //If we're not scaling up at all in the end, then we don't need to supersample.
-            if (nearestScale <= 1) return CGSizeZero;
-            
-            preferredSupersamplingSize = CGSizeMake(frameSize.width * nearestScale,
-                                                    frameSize.height * nearestScale);
-            nearestScale--;
-        }
-        while (!BXCGSizeFitsWithinSize(preferredSupersamplingSize, _maxBufferTextureSize));
+        if (CGSizeEqualToSize(preferredSupersamplingSize, CGSizeZero))
+            preferredSupersamplingSize = viewport.size;
         
         return preferredSupersamplingSize;
     }
@@ -260,97 +244,117 @@
     //to save time when rendering.
     if (_shouldRecalculateBuffer)
     {   
+        CGSize inputSize = NSSizeToCGSize(frame.size);
+        CGSize finalOutputSize = self.viewport.size;
+        CGSize preferredOutputSize = [self _idealShaderRenderingSizeForFrame: frame toViewport: self.viewport];
+        
+        CGSize largestOutputSize = preferredOutputSize;
+        NSUInteger numShadersNeedingBuffers = 0;
+        
+        //Scan our shaders to figure out how big an output surface they will render
+        //and whether they will need to draw into an intermediate sample buffer
+        //rather than direct to the screen.
+        
         NSUInteger i, numShaders = self.shaders.count;
-        if (numShaders)
+        for (i=0; i<numShaders; i++)
         {
-            CGSize inputSize = NSSizeToCGSize(frame.size);
-            CGSize finalOutputSize = self.viewport.size;
-            CGSize preferredOutputSize = [self _idealShaderRenderingSizeForFrame: frame toViewport: self.viewport];
+            BXBSNESShader *shader = [self.shaders objectAtIndex: i];
             
-            CGSize largestOutputSize = preferredOutputSize;
-            NSUInteger numShadersNeedingBuffers = 0;
+            BOOL isFirstShader  = (i == 0);
+            BOOL isLastShader   = (i == numShaders - 1);
             
-            //Scan our shaders to figure out how big an output surface they will render
-            //and whether they will need to draw into an intermediate sample buffer
-            //rather than direct to the screen.
+            //All but the last shader are guaranteed to need to draw into a frame buffer.
+            BOOL shaderNeedsBuffer = !isLastShader;
             
-            _shouldUseShaders = YES;
-            for (i=0; i<numShaders; i++)
+            //Ask the shader how big a surface it wants to render into given the current input size.
+            CGSize outputSize = [shader outputSizeForInputSize: inputSize
+                                               finalOutputSize: finalOutputSize];
+            
+            //If no preferred size was given, and this is the first shader,
+            //then use our own preferred upscaling output size.
+            if (isFirstShader)
             {
-                BXBSNESShader *shader = [self.shaders objectAtIndex: i];
+                if (outputSize.width == 0)
+                    outputSize.width = preferredOutputSize.width;
                 
-                BOOL isFirstShader  = (i == 0);
-                BOOL isLastShader   = (i == numShaders - 1);
-                
-                //All but the last shader are guaranteed to need to draw into a frame buffer.
-                BOOL shaderNeedsBuffer = !isLastShader;
-                
-                //Ask the shader how big a surface it wants to render into given the current input size.
-                CGSize outputSize = [shader outputSizeForInputSize: inputSize
-                                                   finalOutputSize: finalOutputSize];
-                
-                //If no preferred size was given, and this is the first shader,
-                //then use our own preferred upscaling output size.
-                if (isFirstShader)
-                {
-                    if (outputSize.width == 0)
-                        outputSize.width = preferredOutputSize.width;
-                    
-                    if (outputSize.height == 0)
-                        outputSize.height = preferredOutputSize.height;
-                }
-                
-                //If this is the last shader and its output size differs from
-                //the viewport size, then we'll need to render to an intermediate
-                //framebuffer for that also.
-                if (isLastShader)
-                {
-                    if (outputSize.width == 0)
-                        outputSize.width = finalOutputSize.width;
-                    else if (outputSize.height != finalOutputSize.height)
-                        shaderNeedsBuffer = YES;
-                    
-                    if (outputSize.height == 0)
-                        outputSize.height = finalOutputSize.height;
-                    else if (outputSize.height != finalOutputSize.height)
-                        shaderNeedsBuffer = YES;
-                }
-                
-                //Track the largest overall output size across all shaders.
-                //This will indicate the size of buffer texture(s) we need.
-                largestOutputSize = CGSizeMake(MAX(largestOutputSize.width, outputSize.width),
-                                               MAX(largestOutputSize.height, outputSize.height));
-                
-                if (shaderNeedsBuffer)
-                    numShadersNeedingBuffers++;
-                
-                //Store the precalculated output size to use further on in our render path.
-                _shaderOutputSizes[i] = outputSize;
-                
-                //We'll be using the output texture from this texture as the input texture
-                //for the next shader in the list.
-                inputSize = outputSize;
+                if (outputSize.height == 0)
+                    outputSize.height = preferredOutputSize.height;
             }
             
-            //At this stage, we now know:
-            //1. Whether our fallback supersampling render path will need a buffer;
-            //2. How many of our shaders need to draw to an intermediate scaling buffer;
-            //3. The largest output size we will need to accomodate in our scaling buffer.
+            //If this is the last shader and its output size differs from
+            //the viewport size, then we'll need to render to an intermediate
+            //framebuffer for that also.
+            if (isLastShader)
+            {
+                if (outputSize.width == 0)
+                    outputSize.width = finalOutputSize.width;
+                else if (outputSize.height != finalOutputSize.height)
+                    shaderNeedsBuffer = YES;
+                
+                if (outputSize.height == 0)
+                    outputSize.height = finalOutputSize.height;
+                else if (outputSize.height != finalOutputSize.height)
+                    shaderNeedsBuffer = YES;
+            }
             
-            //From this we can decide how many buffer textures we'll need and what size
-            //to make them. We'll use up to two buffers of identical size and swap them
-            //back and forth as we render our shaders into them.
+            //Track the largest overall output size across all shaders.
+            //This will indicate the size of buffer texture(s) we need.
+            largestOutputSize = CGSizeMake(MAX(largestOutputSize.width, outputSize.width),
+                                           MAX(largestOutputSize.height, outputSize.height));
             
-            //Bounds-check the overall size we need for the buffer, to ensure that it still
-            //fits within our maximum texture size.
-            //TODO: finesse this so that it will try to choose a suitable size based on the
-            //shader context.
-            largestOutputSize.width     = MIN(largestOutputSize.width, _maxBufferTextureSize.width);
-            largestOutputSize.height    = MIN(largestOutputSize.height, _maxBufferTextureSize.height);
+            if (shaderNeedsBuffer)
+                numShadersNeedingBuffers++;
+            
+            //Store the precalculated output size to use further on in our render path.
+            _shaderOutputSizes[i] = outputSize;
+            
+            //We'll be using the output texture from this texture as the input texture
+            //for the next shader in the list.
+            inputSize = outputSize;
+        }
+        
+        //At this stage, we now know:
+        //1. Whether our fallback supersampling render path will need a buffer;
+        //2. How many of our shaders need to draw to an intermediate scaling buffer;
+        //3. The largest output size we will need to accomodate in our scaling buffer.
+        
+        //From this we can decide how many buffer textures we'll need and what size
+        //to make them. We'll use up to two buffers of identical size and swap them
+        //back and forth as we render our shaders into them.
+        
+        
+        //Bounds-check the overall size we need for the buffer, to ensure that it still
+        //fits within our maximum texture size.
+        //TODO: finesse this so that it will try to choose a suitable size based on the
+        //shader context.
+        /*
+        largestOutputSize.width     = MIN(largestOutputSize.width, _maxBufferTextureSize.width);
+        largestOutputSize.height    = MIN(largestOutputSize.height, _maxBufferTextureSize.height);
+        */
+        
+        //TEMPORARY FIX: if the required size is beyond our maximum texture dimensions,
+        //disable the shaders altogether.
+        if (largestOutputSize.width > _maxBufferTextureSize.width ||
+            largestOutputSize.height > _maxBufferTextureSize.height)
+        {
+            _shouldUseShaders = NO;
+            _shouldUseSupersampling = NO;
+        }
+        else
+        {
+            _shouldUseShaders = self.shaders.count;
+            
+            _supersamplingSize = [self _idealSupersamplingBufferSizeForFrame: frame
+                                                                  toViewport: self.viewport];
+            
+            _shouldUseSupersampling = !CGSizeEqualToSize(_supersamplingSize, CGSizeZero);
+            
+            if (!_shouldUseShaders)
+                largestOutputSize = _supersamplingSize;
         
             //Recreate the main buffer texture, if we don't have one yet or if our old one
             //cannot accomodate the output size.
-            if (numShadersNeedingBuffers > 0)
+            if (_shouldUseSupersampling || numShadersNeedingBuffers > 0)
             {
                 if (![self.supersamplingBufferTexture canAccomodateContentSize: largestOutputSize])
                 {
@@ -390,21 +394,22 @@
                                                                          error: NULL];
                 }
             }
-        }
-        else
-        {
-            _shouldUseShaders = NO;
-            [super _prepareSupersamplingBufferForFrame: frame];
             
-            //If we're not using shaders this time around, then set the texture filtering parameters
+            //If we're not using shaders for the current viewport, then set the texture filtering parameters
             //appropriately for the fallback supersampling rendering path.
-            [self.frameTexture setMinFilter: GL_LINEAR
-                                  magFilter: GL_NEAREST
-                                   wrapping: GL_CLAMP_TO_EDGE];
-            
-            [self.supersamplingBufferTexture setMinFilter: GL_LINEAR
-                                                magFilter: GL_LINEAR
-                                                 wrapping: GL_CLAMP_TO_EDGE];
+            if (!_shouldUseShaders)
+            {
+                [self.frameTexture setMinFilter: GL_LINEAR
+                                      magFilter: GL_NEAREST
+                                       wrapping: GL_CLAMP_TO_EDGE];
+                
+                if (_shouldUseSupersampling)
+                {
+                    [self.supersamplingBufferTexture setMinFilter: GL_LINEAR
+                                                        magFilter: GL_LINEAR
+                                                         wrapping: GL_CLAMP_TO_EDGE];
+                }
+            }
         }
         
         _shouldRecalculateBuffer = NO;

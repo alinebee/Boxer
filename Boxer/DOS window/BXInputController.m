@@ -17,6 +17,7 @@
 #import "BXGLRenderingView.h"
 #import "BXDOSWindow.h"
 #import "BXPostLeopardAPIs.h"
+#import "BXAppKitVersionHelpers.h"
 #import "NSWindow+BXWindowDimensions.h"
 
 #import "BXEventConstants.h"
@@ -902,9 +903,12 @@ void _inputSourceChanged(CFNotificationCenterRef center,
     [self cursorUpdate: theEvent];
     [self didChangeValueForKey: @"mouseInView"];
     
-    //If the mouse leaves the view while we're locked, unlock it immediately.
-    //This can happen if the user activates Exposé or the Cmd-Tab bar.
-    self.mouseLocked = NO;
+    //If the mouse leaves the view while we're locked, unlock it immediately:
+    //this will happen if the user activates Exposé or the Cmd-Tab bar.
+    //TWEAK: 10.6 seems to spuriously trigger this during fullscreen transitions.
+    //For now, we ignore it on 10.6, but we need to look into the root cause.
+    if (isRunningOnLionOrAbove())
+        self.mouseLocked = NO;
 }
 
 - (void) mouseEntered: (NSEvent *)theEvent

@@ -664,8 +664,8 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (id) initWithContext: (CGLContextObj)glContext error: (NSError **)outError
 {
-    NSArray *shaderNames = [NSArray arrayWithObjects: @"5xBR Semi-Rounded-unclamped", nil];
-    CGFloat scales[] = { 1.25 };
+    NSArray *shaderNames = [NSArray arrayWithObjects: @"5xBR Semi-Rounded-unclamped", @"5xBR Semi-Rounded-clamped", nil];
+    CGFloat scales[] = { 1.25, 5.0, };
     
     return [self initWithShaderNames: shaderNames atScales: scales inContext: glContext error: outError];
 }

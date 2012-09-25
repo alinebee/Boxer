@@ -40,6 +40,10 @@ extern GLfloat viewportVerticesFlipped[8];
 //The texture type we use for frame textures. Either GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE.
 @property (readonly, nonatomic) GLenum frameTextureType;
 
+//Whether to continuously recalculate when the viewport changes,
+//even if the calling context says we don't have to.
+@property (readonly, nonatomic) BOOL alwaysRecalculatesAfterViewportChange;
+
 //Called at the start of rendering to do any last-minute setup of the context and textures.
 //Should be extended by subclasses to do any additional preparations.
 - (void) _prepareForRenderingFrame: (BXVideoFrame *)frame;
@@ -61,7 +65,7 @@ extern GLfloat viewportVerticesFlipped[8];
                          toViewport: (CGRect)viewport;
 
 //Updates the GL viewport to the specified region in screen pixels.
-- (void) _setViewportToRegion: (CGRect)viewportRegion;
+- (void) _setGLViewportToRegion: (CGRect)viewportRegion;
 
 //Clears the GL viewport with black.
 - (void) _clearViewport;
@@ -85,17 +89,19 @@ extern GLfloat viewportVerticesFlipped[8];
 
 //Prepares a framebuffer and buffer texture for the specified frame if
 //a suitable one is not already available.
-//This also determines whether a supersampling buffer is even necessary
-//(for the specified frame, and flags shouldUseSupersampling accordingly.)
+//(This also determines whether a supersampling buffer is even necessary
+//for the specified frame, and flags shouldUseSupersampling accordingly.)
 - (void) _prepareSupersamplingBufferForFrame: (BXVideoFrame *)frame;
 
 //Returns the most appropriate supersampling buffer size for the specified frame
-//to the specified viewport.
-//Normally this returns the nearest even multiple of the frame's pixel size that
+//to the specified viewport. We first draw the frame into this supersampling buffer,
+//then draw the buffer back to the final viewport, which gives us crisp upscaling with
+//a touch of antialiasing on non-integer scales.
+//Normally this returns the nearest integer multiple of the frame's pixel size that
 //is larger than or equal to the viewport (except in cases where this would exceed
 //the supported texture size of the context).
 //This returns CGSizeZero if supersampling would be inappropriate, e.g. if the scaling
-//factor is too large to bother supersampling for.
+//factor is too large or too small to bother supersampling for.
 - (CGSize) _idealSupersamplingBufferSizeForFrame: (BXVideoFrame *)frame
                                       toViewport: (CGRect)viewportRegion;
 

@@ -670,7 +670,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     return [self initWithShaderNames: shaderNames atScales: scales inContext: glContext error: outError];
 }
 
-- (BOOL) usesShaderUpsampling
+- (BOOL) usesShaderSupersampling
 {
     return YES;
 }
@@ -688,7 +688,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     return [self initWithShaderNames: shaderNames atScales: scales inContext: glContext error: outError];
 }
 
-- (BOOL) usesShaderUpsampling
+- (BOOL) usesShaderSupersampling
 {
     return NO;
 }

@@ -383,7 +383,7 @@
     return CGRectContainsRect(textureRegion, region);
 }
 
-- (BOOL) canAccomodateContentSize: (CGSize)contentSize
+- (BOOL) canAccommodateContentSize: (CGSize)contentSize
 {
     return (contentSize.width <= self.textureSize.width) && (contentSize.height <= self.textureSize.height);
 }

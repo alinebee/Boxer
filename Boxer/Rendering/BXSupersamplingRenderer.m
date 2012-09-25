@@ -139,7 +139,7 @@
         
         //Set the GL viewport to match the content region of the buffer texture.
         CGRect bufferViewport = destinationTexture.contentRegion;
-        [self _setViewportToRegion: bufferViewport];
+        [self _setGLViewportToRegion: bufferViewport];
         
         //Draw the frame into the buffer texture.
         [self.frameTexture drawOntoVertices: viewportVerticesFlipped error: NULL];
@@ -155,7 +155,7 @@
         if (self.delegate)
             [self.delegate renderer: self willRenderTextureToDestinationContext: destinationTexture];
         
-        [self _setViewportToRegion: self.viewport];
+        [self _setGLViewportToRegion: self.viewport];
         [destinationTexture drawOntoVertices: viewportVertices
                                        error: NULL];
         
@@ -199,7 +199,7 @@
         {
             //Reuse the existing buffer if it's already large enough, simply ensuring
             //that it uses the new supersampling size.
-            if ([self.supersamplingBufferTexture canAccomodateContentSize: supersamplingSize])
+            if ([self.supersamplingBufferTexture canAccommodateContentSize: supersamplingSize])
             {
                 self.supersamplingBufferTexture.contentRegion = CGRectMake(0, 0,
                                                                            supersamplingSize.width,
@@ -215,11 +215,14 @@
                 [self.supersamplingBufferTexture deleteTexture];
                 
                 //(Re)create the buffer texture in the new dimensions
+                NSError *bufferError = nil;
                 self.supersamplingBufferTexture = [BXTexture2D textureWithType: self.bufferTextureType
                                                                    contentSize: supersamplingSize
                                                                          bytes: NULL
                                                                    inGLContext: _context
-                                                                         error: NULL];
+                                                                         error: &bufferError];
+                
+                NSAssert1(self.supersamplingBufferTexture != nil, @"Buffer texture creation failed: %@", bufferError);
                 
                 [self.supersamplingBufferTexture setMinFilter: GL_LINEAR
                                                     magFilter: GL_LINEAR

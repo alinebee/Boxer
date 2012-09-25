@@ -12,7 +12,7 @@
 @implementation BXShaderRenderer
 @synthesize auxiliaryBufferTexture = _auxiliaryBufferTexture;
 @synthesize shaders = _shaders;
-@synthesize usesShaderUpsampling = _usesShaderUpsampling;
+@synthesize usesShaderSupersampling = _usesShaderSupersampling;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -54,7 +54,7 @@
     if (self)
     {
         _shouldUseShaders = YES;
-        _usesShaderUpsampling = YES;
+        _usesShaderSupersampling = YES;
     }
     return self;
 }
@@ -85,6 +85,15 @@
     return GL_TEXTURE_2D;
 }
 
+//IMPLEMENTATION NOTE: our precalculations in _prepareSupersamplingBufferForFrame make it unsafe
+//to render to arbitrary viewports without recalculating, because _renderFrame: makes assumptions
+//about whether it needs to render into a buffer or not based on those precalculations.
+//If they're incorrect, we may try to render into a buffer that doesn't exist or is the wrong size.
+- (BOOL) alwaysRecalculatesAfterViewportChange
+{
+    return YES;
+}
+
 - (BOOL) _shouldRenderWithShaders
 {
     return _shouldUseShaders;
@@ -112,7 +121,6 @@
             
             //Retrieve the output size that we calculated earlier for this shader.
             CGSize outputSize = _shaderOutputSizes[i];
-            
             CGRect outputRect;
             GLfloat *quadCoords;
             
@@ -135,7 +143,7 @@
                 glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _supersamplingBuffer);
                 
                 //Resize the buffer's content region to match the intended output size.
-                [outTexture setContentRegion: CGRectMake(0, 0, outputSize.width, outputSize.height)];
+                outTexture.contentRegion = CGRectMake(0, 0, outputSize.width, outputSize.height);
                 
                 //Bind the texture to the framebuffer if it isn't already.
                 [self _bindTextureToSupersamplingBuffer: outTexture];
@@ -175,17 +183,18 @@
             //Activate the shader program and assign the uniform variables appropriately.
             glUseProgramObjectARB(shader.shaderProgram);
             
+            //TODO: all of these could be set once in advance when we're preparing the buffers.
             shader.textureIndex = 0;
             shader.textureSize = inTexture.textureSize;
             shader.inputSize = inTexture.contentRegion.size;
             shader.outputSize = outputRect.size;
             shader.frameCount++;
             
-            //Resize the viewport and draw!
             if (!shaderNeedsBuffer && self.delegate)
                 [self.delegate renderer: self willRenderTextureToDestinationContext: inTexture];
-                
-            [self _setViewportToRegion: outputRect];
+            
+            //Resize the viewport and draw!
+            [self _setGLViewportToRegion: outputRect];
             [inTexture drawOntoVertices: quadCoords error: nil];
             
             if (!shaderNeedsBuffer && self.delegate)
@@ -205,7 +214,7 @@
             if (self.delegate)
                 [self.delegate renderer: self willRenderTextureToDestinationContext: outTexture];
             
-            [self _setViewportToRegion: self.viewport];
+            [self _setGLViewportToRegion: self.viewport];
             [outTexture drawOntoVertices: viewportVertices error: nil];
             
             if (self.delegate)
@@ -221,7 +230,10 @@
 
 - (CGSize) _idealShaderRenderingSizeForFrame: (BXVideoFrame *)frame toViewport: (CGRect)viewport
 {
-    if (self.usesShaderUpsampling)
+    //If shader supersampling is enabled, then for non-integer sizes we try to render the shader
+    //to a larger size than the viewport and scale it back down. This works better for shaders
+    //that target specific output sizes, and gives us nice antialiasing on non-integer scales.
+    if (self.usesShaderSupersampling)
     {
         CGSize frameSize = NSSizeToCGSize(frame.size);
         CGPoint scalingFactor = [self _scalingFactorFromFrame: frame toViewport: viewport];
@@ -244,6 +256,8 @@
         
         return preferredSupersamplingSize;
     }
+    //If shader supersampling is disabled, then we can assume the shader should render
+    //directly to the viewport.
     else
     {
         return viewport.size;
@@ -252,16 +266,20 @@
 
 - (void) _prepareSupersamplingBufferForFrame: (BXVideoFrame *)frame
 {
-    //IMPLEMENTATION NOTE: when preparing the supersampling buffer(s)
-    //we also precalculate details about the shader stack we're using
-    //to save time when rendering.
+    //This is a reimplementation of BXSupersamplingBuffer's method which
+    //calculates the largest buffer size needed by our shader stack, and
+    //whether we will need multiple buffers.
+    
+    //This method also takes the opportunity to precalculate details about the
+    //shader stack to save time when rendering, even though the details may be
+    //nothing to do with the buffers themeselves.
+    
     if (_shouldRecalculateBuffer)
     {   
         NSUInteger i, numShaders = self.shaders.count;
         if (numShaders)
         {
             CGSize inputSize = NSSizeToCGSize(frame.size);
-            CGSize finalOutputSize = self.viewport.size;
             CGSize preferredOutputSize = [self _idealShaderRenderingSizeForFrame: frame toViewport: self.viewport];
             
             CGSize largestOutputSize = preferredOutputSize;
@@ -284,7 +302,7 @@
                 
                 //Ask the shader how big a surface it wants to render into given the current input size.
                 CGSize outputSize = [shader outputSizeForInputSize: inputSize
-                                                   finalOutputSize: finalOutputSize];
+                                                   finalOutputSize: self.viewport.size];
                 
                 //If no preferred size was given, and this is the first shader,
                 //then use our own preferred upscaling output size.
@@ -297,19 +315,21 @@
                         outputSize.height = preferredOutputSize.height;
                 }
                 
-                //If this is the last shader and its output size differs from
-                //the viewport size, then we'll need to render to an intermediate
-                //framebuffer for that also.
+                //If this is the last shader and no output size has been specified in the
+                //shader definition, then render it directly to the viewport.
+                //If this is the last shader and its output size is defined to be different
+                //from our viewport size, then we'll need to render it to an intermediate
+                //framebuffer instead (which then gets rendered to the final viewport.)
                 if (isLastShader)
                 {
                     if (outputSize.width == 0)
-                        outputSize.width = finalOutputSize.width;
-                    else if (outputSize.height != finalOutputSize.height)
+                        outputSize.width = self.viewport.size.width;
+                    else if (outputSize.width != self.viewport.size.width)
                         shaderNeedsBuffer = YES;
                     
                     if (outputSize.height == 0)
-                        outputSize.height = finalOutputSize.height;
-                    else if (outputSize.height != finalOutputSize.height)
+                        outputSize.height = self.viewport.size.height;
+                    else if (outputSize.height != self.viewport.size.height)
                         shaderNeedsBuffer = YES;
                 }
                 
@@ -329,15 +349,6 @@
                 inputSize = outputSize;
             }
             
-            //At this stage, we now know:
-            //1. Whether our fallback supersampling render path will need a buffer;
-            //2. How many of our shaders need to draw to an intermediate scaling buffer;
-            //3. The largest output size we will need to accomodate in our scaling buffer.
-            
-            //From this we can decide how many buffer textures we'll need and what size
-            //to make them. We'll use up to two buffers of identical size and swap them
-            //back and forth as we render our shaders into them.
-            
             //Bounds-check the overall size we need for the buffer, to ensure that it still
             //fits within our maximum texture size.
             //TODO: finesse this so that it will try to choose a suitable size based on the
@@ -345,11 +356,19 @@
             largestOutputSize.width     = MIN(largestOutputSize.width, _maxBufferTextureSize.width);
             largestOutputSize.height    = MIN(largestOutputSize.height, _maxBufferTextureSize.height);
         
+            //At this stage, we now know:
+            //1. How many of our shaders need to draw to an intermediate scaling buffer, and
+            //2. The largest output size we will need to accomodate in our scaling buffer.
+            
+            //From this we can decide how many buffer textures we'll need and what size
+            //to make them. We'll use up to two buffers of identical size and swap them
+            //back and forth as we render our shaders into them.
+            
             //Recreate the main buffer texture, if we don't have one yet or if our old one
             //cannot accomodate the output size.
             if (numShadersNeedingBuffers > 0)
             {
-                if (![self.supersamplingBufferTexture canAccomodateContentSize: largestOutputSize])
+                if (![self.supersamplingBufferTexture canAccommodateContentSize: largestOutputSize])
                 {
                     if (_currentBufferTexture == self.supersamplingBufferTexture.texture)
                         _currentBufferTexture = 0;
@@ -358,11 +377,14 @@
                     [self.supersamplingBufferTexture deleteTexture];
                     
                     //(Re)create the buffer texture in the new dimensions
+                    NSError *bufferError = nil;
                     self.supersamplingBufferTexture = [BXTexture2D textureWithType: self.bufferTextureType
                                                                        contentSize: largestOutputSize
                                                                              bytes: NULL
                                                                        inGLContext: _context
-                                                                             error: NULL];
+                                                                             error: &bufferError];
+                    
+                    NSAssert1(self.supersamplingBufferTexture != nil, @"Buffer texture creation failed: %@", bufferError);
                 }
             }
             
@@ -370,30 +392,29 @@
             //to handle multiple shaders.
             if (numShadersNeedingBuffers > 1)
             {
-                if (![self.auxiliaryBufferTexture canAccomodateContentSize: largestOutputSize])
+                if (![self.auxiliaryBufferTexture canAccommodateContentSize: largestOutputSize])
                 {   
                     if (_currentBufferTexture == self.auxiliaryBufferTexture.texture)
                         _currentBufferTexture = 0;
-                    
                     
                     //Clear our old buffer texture straight away when replacing it
                     [self.auxiliaryBufferTexture deleteTexture];
                     
                     //(Re)create the buffer texture in the new dimensions
+                    NSError *bufferError = nil;
                     self.auxiliaryBufferTexture = [BXTexture2D textureWithType: self.bufferTextureType
                                                                    contentSize: largestOutputSize
                                                                          bytes: NULL
                                                                    inGLContext: _context
-                                                                         error: NULL];
+                                                                         error: &bufferError];
+                    
+                    NSAssert1(self.auxiliaryBufferTexture != nil, @"Buffer texture creation failed: %@", bufferError);
                 }
             }
         }
         else
         {
             _shouldUseShaders = NO;
-            
-            if (_currentBufferTexture == self.supersamplingBufferTexture.texture)
-                _currentBufferTexture = 0;
             
             [super _prepareSupersamplingBufferForFrame: frame];
             

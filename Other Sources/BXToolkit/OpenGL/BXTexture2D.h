@@ -153,7 +153,7 @@
 - (BOOL) containsRegion: (CGRect)region;
 
 //Whether the texture can contain the specified content size.
-- (BOOL) canAccomodateContentSize: (CGSize)contentSize;
+- (BOOL) canAccommodateContentSize: (CGSize)contentSize;
 
 //Functions to convert to and from texels (coordinates expressed as pixel measurements)
 //and normalized texture coordinates (coordinates in which the texture size is {1, 1}).

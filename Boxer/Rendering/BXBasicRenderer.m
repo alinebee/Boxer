@@ -174,7 +174,7 @@ GLfloat viewportVerticesFlipped[8] = {
     {
         _viewport = rect;
         
-        if (YES || recalculate)
+        if (recalculate || self.alwaysRecalculatesAfterViewportChange)
             [self recalculateViewport];
     }
 }
@@ -183,6 +183,11 @@ GLfloat viewportVerticesFlipped[8] = {
 {
     //A no-op, intended to be implemented by subclasses to perform any rendering changes
     //needed to accomodate a new viewport size.
+}
+
+- (BOOL) alwaysRecalculatesAfterViewportChange
+{
+    return NO;
 }
 
 #pragma mark -
@@ -229,7 +234,7 @@ GLfloat viewportVerticesFlipped[8] = {
     if (self.delegate)
         [self.delegate renderer: self willRenderTextureToDestinationContext: self.frameTexture];
     
-    [self _setViewportToRegion: self.viewport];
+    [self _setGLViewportToRegion: self.viewport];
     [self.frameTexture drawOntoVertices: viewportVertices error: NULL];
     
     if (self.delegate)
@@ -244,7 +249,7 @@ GLfloat viewportVerticesFlipped[8] = {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-- (void) _setViewportToRegion: (CGRect)viewport 
+- (void) _setGLViewportToRegion: (CGRect)viewport 
 {
     CGLContextObj cgl_ctx = _context;
     

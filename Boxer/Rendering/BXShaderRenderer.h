@@ -15,7 +15,7 @@
     BXTexture2D *_auxiliaryBufferTexture;
     
     BOOL _shouldUseShaders;
-    BOOL _usesShaderUpsampling;
+    BOOL _usesShaderSupersampling;
 }
 
 #pragma mark -
@@ -23,7 +23,7 @@
 
 //Whether to render the shader to the largest integer multiple of the base resolution
 //instead of to the destination size. Defaults to YES.
-@property (assign, nonatomic) BOOL usesShaderUpsampling;
+@property (assign, nonatomic) BOOL usesShaderSupersampling;
 
 
 #pragma mark -

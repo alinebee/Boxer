@@ -92,6 +92,6 @@
 
 - (BOOL) canAccomodateVideoFrame: (BXVideoFrame *)frame
 {
-    return [self canAccomodateContentSize: NSSizeToCGSize(frame.size)];
+    return [self canAccommodateContentSize: NSSizeToCGSize(frame.size)];
 }
 @end

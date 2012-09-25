@@ -21,11 +21,11 @@
     GLuint _currentBufferTexture;
     
 	CGSize _maxBufferTextureSize;
-    
-	BOOL _shouldUseSupersampling;
     CGFloat _maxSupersamplingScale;
     
+	BOOL _shouldUseSupersampling;
 	BOOL _shouldRecalculateBuffer;
+    BOOL _shouldRecalculateBufferAfterViewportChange;
 }
 
 //The maximum frame->viewport scale, above which we will just render

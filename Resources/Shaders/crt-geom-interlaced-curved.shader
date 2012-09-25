@@ -91,7 +91,8 @@ void main()
   // gamma of display monitor (typically 2.2 is correct)
   monitorgamma = 2.2;
   // overscan (e.g. 1.02 for 2% overscan)
-  overscan = vec2(0.99,0.99);
+  //Modified 2012-09-25 by Alun Bestor: this was 0.99/0.99 but this was getting horizontally clipped on 2011 iMac.
+  overscan = vec2(0.92,0.92);
   // aspect ratio
   aspect = vec2(1.0, 0.75);
   // lengths are measured in units of (approximately) the width of the monitor
@@ -121,9 +122,10 @@ void main()
 
   // Texture coords.
   texCoord = gl_MultiTexCoord0.xy;
-  
+
+  //Disabled 2012-09-25 by Alun Bestor: this was causing severe degradation at higher scales.
   //ilfac = vec2(1.0,floor(rubyInputSize.y/200.0));
-ilfac = vec2(1.0,1.0);
+  ilfac = vec2(1.0,1.0);
   // The size of one texel, in texture-coordinates.
   one = ilfac / rubyTextureSize;
 

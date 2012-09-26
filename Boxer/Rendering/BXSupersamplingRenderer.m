@@ -101,9 +101,17 @@
     _shouldRecalculateBuffer = YES;
 }
 
+//TWEAK: always recalculate the supersampling buffer size whenever the viewport changes,
+//because it's cheap and ensures high-quality scaling.
+- (BOOL) alwaysRecalculatesAfterViewportChange
+{
+    return YES;
+}
+
 
 #pragma mark -
 #pragma mark Rendering
+
 
 - (GLenum) bufferTextureType
 {
@@ -237,40 +245,39 @@
 - (CGSize) _idealSupersamplingBufferSizeForFrame: (BXVideoFrame *)frame
                                       toViewport: (CGRect)viewport
 {
-    CGSize viewportSize     = viewport.size;
-	CGSize frameSize		= NSSizeToCGSize(frame.size);
-    
     CGPoint scalingFactor = [self _scalingFactorFromFrame: frame toViewport: viewport];
 	
-	//We disable the scaling buffer for scales over a certain limit,
-	//where (we assume) stretching artifacts won't be visible.
+	//Disable supersampling for scales over a certain limit,
+	//where we assume stretching artifacts won't be visible.
 	if (scalingFactor.y >= self.maxSupersamplingScale &&
 		scalingFactor.x >= self.maxSupersamplingScale) return CGSizeZero;
 	
-	//If no aspect ratio correction is needed, and the viewport is an even multiple
-	//of the initial resolution, then we don't need to scale either.
-	if (NSEqualSizes(frame.intendedScale, NSMakeSize(1, 1)) &&
-		!((NSInteger)viewportSize.width % (NSInteger)frameSize.width) && 
-		!((NSInteger)viewportSize.height % (NSInteger)frameSize.height)) return CGSizeZero;
+	//If no aspect ratio correction is being applied, and the viewport is an even multiple
+	//of the initial resolution, then we don't need to supersample either: the base pixels
+    //will scale cleanly up to the final viewport without stretching.
+    BOOL usesSquarePixels = (frame.intendedScale.width == 1 && frame.intendedScale.height == 1);
+    BOOL isEvenScaling = CGPointEqualToPoint(scalingFactor, CGPointIntegral(scalingFactor));
+	if (usesSquarePixels && isEvenScaling) return CGSizeZero;
 	
-	//Our ideal scaling buffer size is the closest integer multiple of the
-	//base resolution to the viewport size: rounding up, so that we're always
-	//scaling down to maintain sharpness.
+	//Our ideal supersampling buffer size is the smallest integer multiple
+    //of the base resolution that fully covers the viewport. This is then scaled
+    //down to the final viewport.
 	NSInteger nearestScale = ceilf(scalingFactor.y);
-	
-	//Work our way down from that to find the largest scale that will still
-    //fit into our maximum texture size.
-	CGSize idealBufferSize;
-	do
+	CGSize frameSize = NSSizeToCGSize(frame.size);
+	CGSize idealBufferSize = CGSizeMake(frameSize.width * nearestScale,
+                                        frameSize.height * nearestScale);
+    
+	//If the ideal buffer size is larger than our texture size, work our way down
+    //from that to find the largest even multiple that we can support.
+	while (!BXCGSizeFitsWithinSize(idealBufferSize, _maxBufferTextureSize))
 	{
-		//If we're not scaling up at all in the end, then we don't need to supersample.
-		if (nearestScale <= 1) return CGSizeZero;
-		
-		idealBufferSize = CGSizeMake(frameSize.width * nearestScale,
-									 frameSize.height * nearestScale);
-		nearestScale--;
+		idealBufferSize.width -= frameSize.width;
+        idealBufferSize.height -= frameSize.height;
 	}
-	while (!BXCGSizeFitsWithinSize(idealBufferSize, _maxBufferTextureSize));
+    
+    //If we're not scaling up at all in the end, then we don't need to supersample.
+    if (CGSizeEqualToSize(idealBufferSize, frameSize))
+        return CGSizeZero;
 	
 	return idealBufferSize;
 }

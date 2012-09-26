@@ -84,6 +84,12 @@ extern "C" {
 
 	CGSize BXCGLargerSize(CGSize size1, CGSize size2);
     
+    //Returns the specified point with x and y snapped to the nearest integral values.
+    CGPoint CGPointIntegral(CGPoint point);
+    
+	//Returns the specified size with width and height rounded up to the nearest integral values.
+	//Equivalent to CGRectIntegral. Will return CGSizeZero if width or height are 0 or negative.
+	CGSize CGSizeIntegral(CGSize size);
     
     #pragma mark -
     #pragma mark Debug logging

@@ -55,7 +55,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 //Updates the current renderer with the appropriate OpenGL viewport,
 //whenever the renderer or the viewport changes.
-- (void) _applyViewportToRenderer: (BXBasicRenderer *)renderer;
+- (void) _applyViewportToRenderer;
 
 //Called when a live resize or other animation ends, to recaculate with the final state of the viewport. 
 - (void) _finalizeViewportChanges;
@@ -173,8 +173,11 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     if (self.managesAspectRatio)
     {
         NSRect newViewport = [self viewportForFrame: frame];
-        if (!NSEqualRects(newViewport, self.viewportRect))
+        if (!NSEqualRects(newViewport, _targetViewportRect))
+        {
+            _targetViewportRect = newViewport;
             [self.animator setViewportRect: newViewport];
+        }
     }
     
     //If we're using a CV Link, don't tell Cocoa that we need redrawing:
@@ -254,7 +257,8 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         _managesAspectRatio = enabled;
         
         //Update our viewport immediately to compensate for the change
-        self.viewportRect = [self viewportForFrame: self.currentFrame];
+        _targetViewportRect = [self viewportForFrame: self.currentFrame];
+        self.viewportRect = _targetViewportRect;
     }
 }
 
@@ -264,7 +268,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     {
         _viewportRect = newRect;
         
-        [self _applyViewportToRenderer: self.renderer];
+        [self _applyViewportToRenderer];
         
         if (_displayLink)
             self.needsCVLinkDisplay = YES;
@@ -273,19 +277,18 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     }
 }
 
-- (void) _applyViewportToRenderer: (BXBasicRenderer *)renderer
+- (void) _applyViewportToRenderer
 {
-    NSRect backingRect = self.viewportRect;
-    
-    //Compensate for hi-res contexts
-    if ([self respondsToSelector: @selector(convertRectToBacking:)])
-        backingRect = [self convertRectToBacking: backingRect];
-    
     CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
-    
     CGLLockContext(cgl_ctx);
+        NSRect backingRect = self.viewportRect;
+        
+        //Compensate for hi-res contexts
+        if ([self respondsToSelector: @selector(convertRectToBacking:)])
+            backingRect = [self convertRectToBacking: backingRect];
+    
         BOOL recalculate = !(_inViewportAnimation || self.inLiveResize);
-        [renderer setViewport: NSRectToCGRect(backingRect) recalculate: recalculate];
+        [self.renderer setViewport: NSRectToCGRect(backingRect) recalculate: recalculate];
     CGLUnlockContext(cgl_ctx);
 }
 
@@ -305,8 +308,14 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     {
         _maxViewportSize = maxViewportSize;
         
-        //Update our viewport immediately to compensate for the change
-        self.viewportRect = [self viewportForFrame: self.currentFrame];
+        
+        //Animate our viewport to the new viewport size if it's not already there.
+        NSRect newViewport = [self viewportForFrame: self.currentFrame];
+        if (!NSEqualRects(newViewport, _targetViewportRect))
+        {
+            _targetViewportRect = newViewport;
+            [self.animator setViewportRect: newViewport];
+        }
     }
 }
 
@@ -368,9 +377,11 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
             //Sync up the new renderer with our current state
             if (NSIsEmptyRect(self.viewportRect))
             {
-                self.viewportRect = (self.currentFrame) ? [self viewportForFrame: self.currentFrame] : self.bounds;
+                _targetViewportRect = (self.currentFrame) ? [self viewportForFrame: self.currentFrame] : self.bounds;
+                //TODO: should we animate this change?
+                self.viewportRect = _targetViewportRect;
             }
-            [self _applyViewportToRenderer: self.renderer];
+            [self _applyViewportToRenderer];
         
         CGLUnlockContext(self.openGLContext.CGLContextObj);
     }
@@ -471,7 +482,8 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     [super reshape];
     
     //Instantly recalculate our viewport rect whenever the view changes shape.
-    self.viewportRect = [self viewportForFrame: self.currentFrame];
+    _targetViewportRect = [self viewportForFrame: self.currentFrame];
+    self.viewportRect = _targetViewportRect;
 }
 
 - (void) viewDidEndLiveResize
@@ -481,7 +493,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (void) windowDidChangeBackingProperties: (NSNotification *)notification
 {
-    [self _applyViewportToRenderer: self.renderer];
+    [self _applyViewportToRenderer];
 }
 
 - (void) viewAnimationWillStart: (NSViewAnimation *)animation

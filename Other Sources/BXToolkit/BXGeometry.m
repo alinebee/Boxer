@@ -171,3 +171,14 @@ CGSize BXCGLargerSize(CGSize size1, CGSize size2)
 	return BXCGSizeFitsWithinSize(size1, size2) ? size2 : size1;
 }
 
+CGPoint CGPointIntegral(CGPoint point)
+{
+    return CGPointMake(round(point.x), round(point.y));
+}
+
+CGSize CGSizeIntegral(CGSize size)
+{
+	//To match behaviour of CGRectIntegral
+	if (size.width <= 0 || size.height <= 0) return CGSizeZero;
+	return CGSizeMake(ceil(size.width), ceil(size.height));
+}

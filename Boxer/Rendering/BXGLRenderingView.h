@@ -25,6 +25,7 @@
     BOOL _needsCVLinkDisplay;
     BOOL _managesAspectRatio;
     NSRect _viewportRect;
+    NSRect _targetViewportRect;
     NSSize _maxViewportSize;
     BXRenderingStyle _renderingStyle;
     

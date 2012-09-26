@@ -91,8 +91,7 @@ void main()
   // gamma of display monitor (typically 2.2 is correct)
   monitorgamma = 2.2;
   // overscan (e.g. 1.02 for 2% overscan)
-  //Modified 2012-09-25 by Alun Bestor: this was 1.0/1.0 but this was getting clipped on 2011 iMac.
-  overscan = vec2(0.92,0.92);
+  overscan = vec2(0.99,0.99);
   // aspect ratio
   aspect = vec2(1.0, 0.75);
   // lengths are measured in units of (approximately) the width of the monitor
@@ -102,7 +101,8 @@ void main()
   R = 2.0;
   // tilt angle in radians
   // (behavior might be a bit wrong if both components are nonzero)
-  const vec2 angle = vec2(0.0,-0.0);
+  //Tweaked 2012-09-27 by Alun Bestor: this was vec2(0.0, -0.0), but this was causing the view to get scaled up weirdly on Radeon HD 6770M.
+  const vec2 angle = vec2(0.0,0.001);
   // size of curved corners
   cornersize = 0.03;
   // border smoothness parameter
@@ -133,7 +133,7 @@ void main()
   mod_factor = texCoord.x * rubyTextureSize.x * rubyOutputSize.x / rubyInputSize.x;			
 }
     ]]></vertex>
-    <fragment><![CDATA[
+    <fragment filter="nearest"><![CDATA[
 // Comment the next line to disable interpolation in linear gamma (and gain speed).
 //#define LINEAR_PROCESSING
 

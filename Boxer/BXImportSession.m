@@ -1191,6 +1191,13 @@
             
             if (launchCommands.count)
             {
+                //Add an echo-off to the top of the launch commands if there isn't one already there.
+                if (![[launchCommands objectAtIndex: 0] hasPrefix: @"@echo off"])
+                {
+                    launchCommands = [[launchCommands mutableCopy] autorelease];
+                    [(NSMutableArray *)launchCommands insertObject: @"@echo off" atIndex: 0];
+                }
+                
                 NSString *launchPath = [self.rootDrivePath stringByAppendingPathComponent: @"bxlaunch.bat"];
                 NSString *startupCommandString = [launchCommands componentsJoinedByString: @"\r\n"];
                 

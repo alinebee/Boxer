@@ -189,7 +189,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     if ([key isEqualToString: @"viewportRect"])
     {
 		CABasicAnimation *animation = [CABasicAnimation animation];
-        animation.duration = 0.1;
+        animation.duration = 0.25;
         animation.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionEaseIn];
         animation.delegate = self;
         return animation;

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		501F283B161303DA00B1ED53 /* BXBuiltinShaderRenderers.m in Sources */ = {isa = PBXBuildFile; fileRef = 501F283A161303DA00B1ED53 /* BXBuiltinShaderRenderers.m */; };
+		501F283C161303DA00B1ED53 /* BXBuiltinShaderRenderers.m in Sources */ = {isa = PBXBuildFile; fileRef = 501F283A161303DA00B1ED53 /* BXBuiltinShaderRenderers.m */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9F0102E01440543500942713 /* MT32ShelfHighlight.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0102DF1440543500942713 /* MT32ShelfHighlight.png */; };
@@ -895,6 +897,8 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		501F2839161303DA00B1ED53 /* BXBuiltinShaderRenderers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBuiltinShaderRenderers.h; sourceTree = "<group>"; };
+		501F283A161303DA00B1ED53 /* BXBuiltinShaderRenderers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBuiltinShaderRenderers.m; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F0102DF1440543500942713 /* MT32ShelfHighlight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MT32ShelfHighlight.png; sourceTree = "<group>"; };
 		9F0102E11440561E00942713 /* MT32Shelf.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = MT32Shelf.jpg; sourceTree = "<group>"; };
@@ -2104,6 +2108,8 @@
 				9F872480160F7DF200400D8C /* BXSteppedShaderRenderer.m */,
 				9F872484160F89C600400D8C /* BXGLRenderingView+BXImageCapture.h */,
 				9F872485160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m */,
+				501F2839161303DA00B1ED53 /* BXBuiltinShaderRenderers.h */,
+				501F283A161303DA00B1ED53 /* BXBuiltinShaderRenderers.m */,
 			);
 			path = Rendering;
 			sourceTree = "<group>";
@@ -3958,6 +3964,7 @@
 				9F3DD6CC15EE8047003C9A25 /* BXCHFlightstickProUSB.m in Sources */,
 				9F872481160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */,
 				9F872486160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */,
+				501F283B161303DA00B1ED53 /* BXBuiltinShaderRenderers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4255,6 +4262,7 @@
 				9F5DD13815E544710096D0E8 /* BXRippleShader.m in Sources */,
 				9F872482160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */,
 				9F872487160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */,
+				501F283C161303DA00B1ED53 /* BXBuiltinShaderRenderers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

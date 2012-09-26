@@ -1,13 +1,30 @@
-//
-//  BXBuiltinShaderRenderers.h
-//  Boxer
-//
-//  Created by Alun Bestor on 9/26/12.
-//  Copyright (c) 2012 Alun Bestor and contributors. All rights reserved.
-//
+/*
+ Boxer is copyright 2011 Alun Bestor and contributors.
+ Boxer is released under the GNU General Public License 2.0. A full copy of this license can be
+ found in this XCode project at Resources/English.lproj/BoxerHelp/pages/legalese.html, or read
+ online at [http://www.gnu.org/licenses/gpl-2.0.txt].
+ */
+
+//Convenience classes for Boxer's builtin shader-based renderers.
 
 #import "BXSteppedShaderRenderer.h"
 
-@interface BXBuiltinShaderRenderers : BXSteppedShaderRenderer
+
+@interface BXBuiltinShaderRenderer : BXSteppedShaderRenderer
+
+- (id) initWithShaderNames: (NSArray *)shaderNames
+                  atScales: (CGFloat *)scales
+                 inContext: (CGLContextObj)glContext
+                     error: (NSError **)outError;
+
+@end
+
+//A preset renderer that applies the smoothed appearance.
+@interface BXSmoothedRenderer : BXBuiltinShaderRenderer
+
+@end
+
+//A preset renderer that applies the CRT scanlines appearance.
+@interface BXCRTRenderer : BXBuiltinShaderRenderer
 
 @end

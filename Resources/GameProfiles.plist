@@ -3,9 +3,24 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20120704.1</string>
+	<string>20120927.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.bullfrog.magic-carpet</string>
+			<key>BXProfileGameName</key>
+			<string>Magic Carpet</string>
+			<key>BXProfileConfigurations</key>
+			<array>
+				<string>Magic Carpet</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>carpet.exe</string>
+				<string>carpet.cd</string>
+			</array>
+		</dict>
 		<dict>
 			<key>BXProfileIdentifier</key>
 			<string>com.microprose.dragonsphere</string>

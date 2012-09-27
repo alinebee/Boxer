@@ -453,8 +453,9 @@ const char* DOS_GetLoadedLayout(void);
         case 'm': return KBD_m;
             
         case '\e': return KBD_esc;
-            //KBD_capslock unavailable
-        case NSBackspaceCharacter: return KBD_tab;
+        //KBD_capslock has no equivalent unicode character
+        case '\t': return KBD_tab;
+        case NSBackspaceCharacter: return KBD_backspace;
             
         case NSDeleteCharacter: return KBD_delete;
         case NSDeleteFunctionKey: return KBD_delete;

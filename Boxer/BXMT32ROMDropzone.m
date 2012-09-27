@@ -98,6 +98,25 @@
     self.wantsLayer = YES;
 }
 
+//Required for OSX 10.8, which appears to have removed the default
+//transition for the CALayer hidden property.
+- (id <CAAction>) actionForLayer: (CALayer *)layer forKey: (NSString *)event
+{
+    if ([event isEqualToString: @"hidden"])
+    {
+        CATransition *fade = [CATransition animation];
+        fade.type = kCATransitionFade;
+        fade.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionEaseIn];
+        fade.duration = 0.5;
+        
+        return fade;
+    }
+    else
+    {
+        return nil;
+    }
+}
+
 - (BOOL) layer: (CALayer *)layer shouldInheritContentsScale: (CGFloat)newScale fromWindow: (NSWindow *)window
 {
     return YES;
@@ -115,10 +134,6 @@
 - (void) _syncDisplayedDevice
 {
     [CATransaction begin];
-        //10.5 FIX: was setAnimationDuration, but that's 10.6-and-up.
-        [CATransaction setValue: [NSNumber numberWithDouble: 0.75]
-                         forKey: kCATransactionAnimationDuration];
-        
         self.CM32LLayer.hidden      = !(self.ROMType == BXMT32ROMTypeCM32L);
         self.MT32Layer.hidden       = !(self.ROMType == BXMT32ROMTypeMT32);
         self.highlightLayer.hidden  = !(self.ROMType == BXMT32ROMTypeUnknown && self.isHighlighted);

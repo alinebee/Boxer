@@ -65,7 +65,11 @@
 				if (!isLastLine)
                     cleanedString = [cleanedString stringByAppendingString: @"\n"];
                 
-                [self.commandQueue addObject: cleanedString];
+                //TWEAK: no longer paste these into the command queue, because the architecture
+                //for that has changed significantly. Instead, paste the sanitised strings into
+                //the keybuffer.
+                //[self.commandQueue addObject: cleanedString];
+                [self.keyBuffer addKeysForCharacters: cleanedString];
 			}
 		}
 	}

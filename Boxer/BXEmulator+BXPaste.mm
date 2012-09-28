@@ -30,8 +30,7 @@
 
 - (BOOL) _canPasteToBIOS
 {
-    NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
-    return (now - _keyBufferLastCheckTime) < BXBIOSKeyBufferPollIntervalCutoff;
+    return (_lastRunLoopTime - _keyBufferLastCheckTime) < BXBIOSKeyBufferPollIntervalCutoff;
 }
 
 - (BOOL) _canPasteToShell

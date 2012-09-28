@@ -915,6 +915,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 {
 	[self.delegate emulatorDidFinishRunLoop: self];
     
+    _lastRunLoopTime = [NSDate timeIntervalSinceReferenceDate];
+    
     if (contextInfo)
     {
         [(NSAutoreleasePool *)contextInfo drain];

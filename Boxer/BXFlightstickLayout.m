@@ -27,15 +27,8 @@
         [layout setName: NSLocalizedString(@"Boxer: 4-button flightstick with POV switch", @"Label for flightstick Joypad layout.")];
         
         [layout addAnalogStickWithFrame: CGRectMake(0, 70, 240, 240)
-                             identifier: kJoyInputAnalogStick1];
-        
-        /*
-        //Hat-switch: top center of screen
-        [layout addDpadWithFrame: CGRectMake(280, 0, 200, 200)
-                      dpadOrigin: CGPointMake(380, 100)
-                      identifier: kJoyInputDpad1];
-        */
-        
+                             identifier: kJoyInputAnalogStick1 recentering: YES];
+                
         [layout addButtonWithFrame: CGRectMake(350,10,60,60) 
                              label: @"⇡"
                           fontSize: 36
@@ -65,15 +58,15 @@
                         identifier: BXJoyInputFakeDPadButtonRight];
         
          
-        //Primary buttons: blue, square, located at bottom left of screen
-        [layout addButtonWithFrame: CGRectMake(380,240,100,80) 
+        //Primary buttons: blue, square, located at middle left of screen
+        [layout addButtonWithFrame: CGRectMake(380,160,100,100)
                              label: @"1" 
                           fontSize: 36
                              shape: kJoyButtonShapeSquare
                              color: kJoyButtonColorBlue
                         identifier: kJoyInputAButton];
         
-        [layout addButtonWithFrame: CGRectMake(280,240,100,80) 
+        [layout addButtonWithFrame: CGRectMake(280,160,100,100)
                              label: @"2" 
                           fontSize: 36
                              shape: kJoyButtonShapeSquare
@@ -81,15 +74,15 @@
                         identifier: kJoyInputBButton];
         
         
-        //Secondary buttons: black and rectangular, located at middle left of screen
-        [layout addButtonWithFrame: CGRectMake(380,160,100,80) 
+        //Secondary buttons: black and rectangular, located at bottom left of screen
+        [layout addButtonWithFrame: CGRectMake(380,260,100,60)
                              label: @"3" 
                           fontSize: 28
                              shape: kJoyButtonShapeSquare
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputXButton];
         
-        [layout addButtonWithFrame: CGRectMake(280,160,100,80) 
+        [layout addButtonWithFrame: CGRectMake(280,260,100,60)
                              label: @"4" 
                           fontSize: 28
                              shape: kJoyButtonShapeSquare

@@ -27,10 +27,6 @@
 //How much of the analog stick's travel to treat as deadzone.
 #define BXJoypadAnalogStickDeadzone 0.25f
 
-//How much travel the analog stick has. 1.0 is full travel;
-//lower values make the thumbstick more precise at the cost of full movement range.
-#define BXJoypadAnalogStickSensitivity 0.8f
-
 //What fraction of the accelerometer input to mix with the previous input,
 //to derive a smoothed value. Used by joypadDevice:didAccelerate:.
 #define BXJoypadAccelerationFilter 0.2f
@@ -411,10 +407,6 @@
         
         if (ABS(y) < BXJoypadAnalogStickDeadzone)
             y = 0;
-        
-        //Finally, scale the joystick movement.
-        x *= BXJoypadAnalogStickSensitivity;
-        y *= BXJoypadAnalogStickSensitivity;
         
         [joystick setXAxis: x];
         [joystick setYAxis: y];

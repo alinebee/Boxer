@@ -24,6 +24,13 @@
 //(used to be 55.0 in previous versions of the Joypad SDK, now normalised to 1.0.)
 #define BXJoypadAnalogStickMaxDistance 1.0f
 
+//How much of the analog stick's travel to treat as deadzone.
+#define BXJoypadAnalogStickDeadzone 0.25f
+
+//How much travel the analog stick has. 1.0 is full travel;
+//lower values make the thumbstick more precise at the cost of full movement range.
+#define BXJoypadAnalogStickSensitivity 0.8f
+
 //What fraction of the accelerometer input to mix with the previous input,
 //to derive a smoothed value. Used by joypadDevice:didAccelerate:.
 #define BXJoypadAccelerationFilter 0.2f
@@ -385,10 +392,29 @@
     {
         //Joypad SDK provides stick position as polar coordinates
         //(angle and distance); we need to convert this to cartesian
-        //(x, y) coordinates for emulated joystick.
-        float scale = newPosition.distance / BXJoypadAnalogStickMaxDistance;
-        float x = cosf(newPosition.angle) * scale;
-        float y = -sinf(newPosition.angle) * scale;
+        //(x, y) coordinates for the emulated joystick.
+        float ratio = newPosition.distance / BXJoypadAnalogStickMaxDistance;
+        float x = cosf(newPosition.angle) * ratio;
+        float y = -sinf(newPosition.angle) * ratio;
+        
+        //Stretch the circular travel out to a square one.
+        float maxDim = fmax(ABS(x), ABS(y));
+        if (maxDim > 0)
+        {
+            x *= ratio / maxDim;
+            y *= ratio / maxDim;
+        }
+        
+        //Apply a deadzone to the stick to reduce small unintentional movements.
+        if (ABS(x) < BXJoypadAnalogStickDeadzone)
+            x = 0;
+        
+        if (ABS(y) < BXJoypadAnalogStickDeadzone)
+            y = 0;
+        
+        //Finally, scale the joystick movement.
+        x *= BXJoypadAnalogStickSensitivity;
+        y *= BXJoypadAnalogStickSensitivity;
         
         [joystick setXAxis: x];
         [joystick setYAxis: y];

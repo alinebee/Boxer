@@ -1478,7 +1478,7 @@
 
 	NSFileManager *manager = [NSFileManager defaultManager];
 
-	NSString *gameName		= self.gameProfile.gameName;
+	NSString *gameName		= [self.class validGameboxNameFromName: self.gameProfile.gameName];
 	if (!gameName) gameName	= [self.class nameForGameAtPath: self.sourcePath];
 	
 	NSString *gamesFolder	= [[NSApp delegate] gamesFolderPath];

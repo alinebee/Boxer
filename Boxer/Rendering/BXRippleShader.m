@@ -38,6 +38,18 @@
         glUniform2fARB(_textureSizeLocation, textureSize.width, textureSize.height);
 }
 
+- (void) setInputSize: (CGSize)inputSize
+{
+    CGLContextObj cgl_ctx = _context;
+    if (!_inputSizeLocation)
+    {
+        _inputSizeLocation = glGetUniformLocationARB(_shaderProgram, "rubyInputSize");
+    }
+    
+    if (_inputSizeLocation != BXShaderUnsupportedUniformLocation)
+        glUniform2fARB(_inputSizeLocation, inputSize.width, inputSize.height);
+}
+
 - (void) setRippleOrigin: (CGPoint)origin
 {
     CGLContextObj cgl_ctx = _context;

@@ -1,6 +1,7 @@
 uniform float time;
 uniform vec2 rippleOrigin;
 uniform vec2 rubyTextureSize;
+uniform vec2 rubyInputSize;
 uniform sampler2DRect rubyTexture;
 uniform float rippleHeight;
 
@@ -11,7 +12,7 @@ const float rippleQuantity = 200.0;
 void main(void) {
 	vec2 normalizedCoords = gl_TexCoord[0].xy / rubyTextureSize;
     
-    float distanceFromOrigin = distance(normalizedCoords, rippleOrigin);
+    float distanceFromOrigin = distance(normalizedCoords, rippleOrigin * (rubyInputSize / rubyTextureSize));
 
     float distanceCoefficient = min(1.0, max(0.0, maxDistance - distanceFromOrigin));
     //Make the strength of the ripples taper off as they reach the edge

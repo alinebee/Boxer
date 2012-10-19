@@ -12,6 +12,7 @@
 {
     GLint _textureLocation;
     GLint _textureSizeLocation;
+    GLint _inputSizeLocation;
     GLint _frameTimeLocation;
     GLint _rippleOriginLocation;
     GLint _rippleHeightLocation;
@@ -21,6 +22,7 @@
 #pragma mark Shader setters
 - (void) setTextureIndex: (GLint)texture;
 - (void) setTextureSize: (CGSize)textureSize;
+- (void) setInputSize: (CGSize)inputSize;
 - (void) setFrameTime: (CFAbsoluteTime)frameTime;
 
 //Specified as a range from 0.0 to 1.0.

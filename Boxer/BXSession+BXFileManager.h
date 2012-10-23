@@ -214,14 +214,33 @@ typedef NSUInteger BXDriveMountOptions;
 //Revert the contents of the specified drive/all drives to their original values by deleting
 //the shadowed data. Reverting will fail if one or more of the drives are currently in use by DOS.
 //Returns YES on success, or NO and populates outError on failure.
+//After successfully reverting, the emulation should be restarted.
 - (BOOL) revertChangesForDrive: (BXDrive *)drive error: (NSError **)outError;
 - (BOOL) revertChangesForAllDrivesAndReturnError: (NSError **)outError;
 
 //Merges any shadowed data for the specified drive/all drives back into the original location.
 //Merging will fail if one or more of the drives are currently in use by DOS.
 //Returns YES on success, or NO and populates outError on failure.
+//After successfully merging, the emulation should be restarted.
 - (BOOL) mergeChangesForDrive: (BXDrive *)drive error: (NSError **)outError;
 - (BOOL) mergeChangesForAllDrivesAndReturnError: (NSError **)outError;
+
+//Returns YES if this is a valid state that can be imported for the current gamebox,
+//or NO and populates outError with a reason why the state was invalid.
+- (BOOL) isValidGameStateAtURL: (NSURL *)URL error: (NSError **)outError;
+
+
+//Saves a copy of the current game state as a boxerstate bundle at the specified location,
+//which must be a full path including filename.
+//Returns YES on success, or NO and populates outError on failure.
+- (BOOL) exportGameStateToURL: (NSURL *)destinationURL error: (NSError **)outError;
+
+//Replace the current game state with the state from the specified resource,
+//which must be a valid boxerstate bundle (as created by exportStateFromURL:error:,
+//which can be verified by isValidStateAtURL:.)
+//Returns YES on success, or NO and populates outError on failure.
+//After successfully importing a new state, the emulation should be restarted.
+- (BOOL) importGameStateFromURL: (NSURL *)sourceURL error: (NSError **)outError;
 
 //Whether the session has shadowed data for any of its drives.
 //This is used to toggle the availability of the merge/revert options. 

@@ -22,6 +22,7 @@
 #import "BXBezelController.h"
 
 #import "NSImage+BXSaveImages.h"
+#import "BXFileTypes.h"
 
 
 @implementation BXSession (BXEmulatorControls)
@@ -36,7 +37,6 @@
     {   
         NSDateFormatter *screenshotDateFormatter = [[NSDateFormatter alloc] init];
         screenshotDateFormatter.dateFormat = NSLocalizedString(@"yyyy-MM-dd 'at' h.mm.ss a", @"The date and time format to use for screenshot filenames. Literal strings (such as the 'at') should be enclosed in single quotes. The date order should not be changed when localizing unless really necessary, as this is important to maintain chronological ordering in alphabetical file listings. Note that some characters such as / and : are not permissible in filenames and will be stripped out or replaced.");
-        
         
         double bands[6] = {
             BXMinSpeedThreshold,
@@ -405,10 +405,13 @@
     
 	if (theAction == @selector(saveScreenshot:))		return isShowingDOSView;
     
-	//Defined in BXFileManager
 	if (theAction == @selector(openInDOS:))				return self.emulator.isAtPrompt;
 	if (theAction == @selector(revertShadowedChanges:)) return self.hasShadowedChanges;
 	if (theAction == @selector(mergeShadowedChanges:))  return self.hasShadowedChanges;
+    
+    if (theAction == @selector(exportGameState:)) return self.hasShadowedChanges;
+	if (theAction == @selector(importGameState:))  return self.hasGamebox;
+    
     
 	if (theAction == @selector(paste:))
 		return isShowingDOSView && [self canPasteFromPasteboard: [NSPasteboard generalPasteboard]];
@@ -846,10 +849,12 @@
                 //we need to get the confirmation sheet out of the way.
                 [self.windowForSheet.attachedSheet orderOut: self];
                 
+                //Note that unlike with, we don't call our _shadow. We assume that the import operation
+                //did not affect the existing files.
                 [self presentError: revertError
                     modalForWindow: self.windowForSheet
                           delegate: self
-                didPresentSelector: @selector(_didPresentShadowOperationErrorWithRecovery:contextInfo:)
+                didPresentSelector: NULL
                        contextInfo: NULL];
             }
         }
@@ -889,6 +894,103 @@
             }
         }
     }
+}
+
+- (IBAction) importGameState: (id)sender
+{
+    //Don't continue if this session doesn't support importing
+    if (!self.hasGamebox)
+        return;
+    
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    panel.title = NSLocalizedString(@"Import game data",
+                                    @"Title for open panel when importing a game state");
+    panel.prompt = NSLocalizedString(@"Import and Relaunch",
+                                     @"Label for confirmation button on open panel when importing a game state.");
+    panel.message = NSLocalizedString(@"Your savegames and player data will be replaced with the imported versions.\nThe game will relaunch after importing.",
+                                      @"Explanatory text on open panel when importing a game state.");
+    panel.allowedFileTypes = @[BXGameStateType];
+    panel.canChooseDirectories = NO;
+    panel.allowsMultipleSelection = NO;
+    
+    [panel beginSheetModalForWindow: self.windowForSheet completionHandler: ^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton)
+        {
+            NSURL *sourceURL = panel.URL;
+            NSError *importError = nil;
+            BOOL imported = [self importGameStateFromURL: sourceURL error: &importError];
+            
+            //Once importing is complete, restart the app to complete the operation.
+            if (imported)
+            {
+                [self restartShowingLaunchPanel: NO];
+            }
+            //Otherwise, tell the user what went wrong.
+            else
+            {
+                //In order to display the error to the user,
+                //we need to get the open panel out of the way.
+                [self.windowForSheet.attachedSheet orderOut: self];
+                
+                [self presentError: importError
+                    modalForWindow: self.windowForSheet
+                          delegate: self
+                didPresentSelector: NULL
+                       contextInfo: NULL];
+            }
+        }
+    }];
+}
+
+- (IBAction) exportGameState: (id)sender
+{
+    //Don't continue if we have nothing to export
+    if (!self.hasShadowedChanges)
+        return;
+
+    //Work out a suitable filename, based on the game name and the current date.
+    NSString *nameFormat = NSLocalizedString(@"%1$@ (%2$@)", @"The ");
+    
+    NSValueTransformer *transformer = [NSValueTransformer valueTransformerForName: @"BXScreenshotDateTransformer"];
+    NSString *formattedDate = [transformer transformedValue: [NSDate date]];
+    
+    NSString *baseName  = [NSString stringWithFormat: nameFormat, self.displayName, formattedDate];
+    //NSString *extension = [[NSWorkspace sharedWorkspace] preferredFilenameExtensionForType: BXGameStateType];
+    
+    NSSavePanel *panel = [NSSavePanel savePanel];
+    panel.title = NSLocalizedString(@"Export game data",
+                                    @"Title for save panel when exporting the current game state");
+    panel.prompt = NSLocalizedString(@"Export",
+                                     @"Label for confirmation button on save panel when exporting the current game state.");
+    panel.nameFieldLabel = NSLocalizedString(@"Export as:",
+                                             @"Label for filename field on save panel when exporting the current game state.");
+    
+    panel.allowedFileTypes = @[BXGameStateType];
+    panel.nameFieldStringValue = baseName;
+    panel.canSelectHiddenExtension = NO;
+    
+    [panel beginSheetModalForWindow: self.windowForSheet completionHandler: ^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton)
+        {
+            NSError *exportError = nil;
+            NSURL *destinationURL = panel.URL;
+            BOOL exported = [self exportGameStateToURL: destinationURL error: &exportError];
+            if (exported)
+            {
+                [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: @[destinationURL]];
+            }
+            else if (exportError)
+            {
+                [self.windowForSheet.attachedSheet orderOut: self];
+                
+                [self presentError: exportError
+                    modalForWindow: self.windowForSheet
+                          delegate: nil
+                didPresentSelector: NULL
+                       contextInfo: NULL];
+            }
+        }
+    }];
 }
 
 - (void) _didPresentShadowOperationErrorWithRecovery: (BOOL)didRecover

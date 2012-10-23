@@ -8,7 +8,8 @@
 #import "BXFileTypes.h"
 #import "BXDrive.h"
 
-NSString * const BXGameboxType = @"net.washboardabs.boxer-game-package";
+NSString * const BXGameboxType      = @"net.washboardabs.boxer-game-package";
+NSString * const BXGameStateType    = @"net.washboardabs.boxer-game-state";
 
 NSString * const BXMountableFolderType  = @"net.washboardabs.boxer-mountable-folder";
 NSString * const BXFloppyFolderType     = @"net.washboardabs.boxer-floppy-folder";

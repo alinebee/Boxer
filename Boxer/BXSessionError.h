@@ -22,6 +22,9 @@ enum
 	BXImportSourcePathIsMacOSApp,       //Returned when the import scanner can only find Mac applications in the source folder.
 	BXImportSourcePathIsHybridCD,       //Returned when the import scanner detects a hybrid Mac+PC CD.
     BXImportDriveUnavailable,           //Returned when a DOSBox configuration file was provided that defines drives with paths that cannot be found.
+    
+    BXGameStateUnsupported,     //Returned when the current session does not support game states. (e.g. no gamebox is present.)
+    BXGameStateGameboxMismatch, //Returned when validating a boxerstate file, if it is for a different game than the current game.
 };
 
 //General base class for all session errors
@@ -56,4 +59,9 @@ enum
 @class BXDrive;
 @interface BXImportDriveUnavailableError : BXImportError
 + (id) errorWithSourcePath: (NSString *)sourcePath drive: (BXDrive *)drive userInfo: (NSDictionary *)userInfo;
+@end
+
+@class BXGamebox;
+@interface BXGameStateGameboxMismatchError : BXSessionError
++ (id) errorWithStateURL: (NSURL *)stateURL gamebox: (BXGamebox *)gamebox userInfo: (NSDictionary *)userInfo;
 @end

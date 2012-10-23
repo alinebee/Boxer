@@ -339,6 +339,88 @@
     return YES;
 }
 
+- (BOOL) isValidGameStateAtURL: (NSURL *)stateURL error: (NSError **)outError
+{
+    if (![stateURL checkResourceIsReachableAndReturnError: outError])
+    {
+        return NO;
+    }
+    
+    if (!self.hasGamebox)
+    {
+        if (outError)
+        {
+            *outError = [BXSessionError errorWithDomain: BXSessionErrorDomain
+                                                   code: BXGameStateUnsupported
+                                               userInfo: @{ NSURLErrorKey: stateURL }];
+        }
+        return NO;
+    }
+    else
+    {
+        //TODO: check the contents of the bundle to ensure that it's actually for the current gamebox.
+        BOOL matchesGamebox = YES;
+        
+        if (!matchesGamebox)
+        {
+            if (outError)
+            {
+                *outError = [BXGameStateGameboxMismatchError errorWithStateURL: stateURL
+                                                                       gamebox: self.gamebox
+                                                                      userInfo: nil];
+            }
+            return NO;
+        }
+    }
+    
+    return YES;
+}
+
+- (BOOL) importGameStateFromURL: (NSURL *)sourceURL error: (NSError **)outError
+{
+    NSAssert(self.hasGamebox, @"No state URL was available - we may have been unable to create it.");
+    
+    NSURL *destinationURL = self.currentStateURL;
+    NSURL *destinationBaseURL = destinationURL.URLByDeletingLastPathComponent;
+    
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
+    //Ensure the containing folder for state bundles exists before we start.
+    BOOL destinationExists = [manager createDirectoryAtURL: destinationBaseURL
+                               withIntermediateDirectories: YES
+                                                attributes: nil
+                                                     error: outError];
+    if (!destinationExists) return NO;
+    
+    //Make a temporary directory into which we can copy the new state before replacing the old one.
+    NSURL *tempBaseURL = [manager URLForDirectory: NSItemReplacementDirectory
+                                         inDomain: NSUserDomainMask
+                                appropriateForURL: destinationBaseURL
+                                           create: YES
+                                            error: outError];
+    if (!tempBaseURL) return NO;
+    
+    //Copy the state file to the temporary location.
+    NSURL *tempURL = [tempBaseURL URLByAppendingPathComponent: destinationURL.lastPathComponent];
+    BOOL copied = [manager copyItemAtURL: sourceURL toURL: tempURL error: outError];
+    if (!copied) return NO;
+    
+    //Finally, replace the original state with the new state.
+    return [manager replaceItemAtURL: destinationURL
+                       withItemAtURL: tempURL
+                      backupItemName: nil
+                             options: 0
+                    resultingItemURL: NULL
+                               error: outError];
+}
+
+- (BOOL) exportGameStateToURL: (NSURL *)destinationURL error: (NSError **)outError
+{
+    NSURL *sourceURL = self.currentStateURL;
+    
+    return [[NSFileManager defaultManager] copyItemAtURL: sourceURL toURL: destinationURL error: outError];
+}
+
 
 #pragma mark -
 #pragma mark Drive status

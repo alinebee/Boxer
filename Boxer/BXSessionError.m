@@ -8,6 +8,7 @@
 
 #import "BXSessionError.h"
 #import "BXDrive.h"
+#import "BXGamebox.h"
 #import "BXValueTransformers.h"
 
 NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
@@ -214,3 +215,38 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 }
 @end
 
+
+
+@implementation BXGameStateGameboxMismatchError
+
++ (id) errorWithStateURL: (NSURL *)stateURL gamebox: (BXGamebox *)gamebox userInfo: (NSDictionary *)userInfo
+{
+    NSString *displayName = stateURL.lastPathComponent;
+    [stateURL getResourceValue: &displayName forKey: NSURLLocalizedNameKey error: NULL];
+    
+	NSString *descriptionFormat = NSLocalizedString(@"“%1$@” contains game data for a different game.",
+                                                    @"Error message shown when importing a folder that has missing drives. %1$@ is the display filename of the imported path.");
+	
+	NSString *suggestionFormat = NSLocalizedString(@"Please provide a game data file that was exported from %1$@.",
+                                                   @"Informative text of warning shown when importing a folder that has missing drives. %1$@ is the missing drive path.");
+	
+    //NSValueTransformer *drivePathFormatter = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];
+    
+	NSString *description = [NSString stringWithFormat: descriptionFormat, displayName];
+    NSString *suggestion = [NSString stringWithFormat: suggestionFormat, gamebox.gameName];
+	
+    //[drivePathFormatter release];
+    
+	NSMutableDictionary *defaultInfo = [NSMutableDictionary dictionaryWithDictionary: @{
+        NSLocalizedDescriptionKey: description,
+        NSLocalizedRecoverySuggestionErrorKey: suggestion,
+        NSURLErrorKey: stateURL
+    }];
+	
+	if (userInfo) [defaultInfo addEntriesFromDictionary: userInfo];
+	
+	return [self errorWithDomain: BXSessionErrorDomain
+							code: BXGameStateGameboxMismatch
+						userInfo: defaultInfo];
+}
+@end

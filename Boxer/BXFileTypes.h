@@ -10,6 +10,7 @@
 //Constants and class methods for file type UTIs that Boxer manages.
 
 extern NSString * const BXGameboxType;          //.boxer
+extern NSString * const BXGameStateType;        //.boxerstate
 
 extern NSString * const BXMountableFolderType;  //Base UTI for .cdrom, .floppy, .harddisk
 extern NSString * const BXFloppyFolderType;     //.floppy

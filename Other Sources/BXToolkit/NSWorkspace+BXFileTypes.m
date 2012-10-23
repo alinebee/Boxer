@@ -10,6 +10,11 @@
 
 @implementation NSWorkspace (BXFileTypes)
 
+- (BOOL) fileAtURL: (NSURL *)URL matchesTypes: (NSSet *)acceptedTypes
+{
+    return [self file: URL.path matchesTypes: acceptedTypes];
+}
+
 - (BOOL) file: (NSString *)filePath matchesTypes: (NSSet *)acceptedTypes
 {
 	NSString *fileType = [self typeOfFile: filePath error: nil];
@@ -39,14 +44,22 @@
 	return NO;
 }
 
+- (NSURL *) nearestAncestorOfURL: (NSURL *)URL matchingTypes: (NSSet *)acceptedTypes
+{
+    NSString *path = [self parentOfFile: URL.path matchingTypes: acceptedTypes];
+    return [NSURL fileURLWithPath: path];
+}
+
 - (NSString *) parentOfFile: (NSString *)filePath matchingTypes: (NSSet *)acceptedTypes
 {
 	do
 	{
-		if ([self file: filePath matchesTypes: acceptedTypes]) return filePath;
-		filePath = [filePath stringByDeletingLastPathComponent];
+		if ([self file: filePath matchesTypes: acceptedTypes])
+            return filePath;
+        
+		filePath = filePath.stringByDeletingLastPathComponent;
 	}
-	while ([filePath length] && ![filePath isEqualToString: @"/"]);
+	while (filePath.length && ![filePath isEqualToString: @"/"]);
 	return nil;
 }
 

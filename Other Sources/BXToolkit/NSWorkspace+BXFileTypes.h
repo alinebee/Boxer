@@ -12,12 +12,14 @@
 
 @interface NSWorkspace (BXFileTypes)
 
-//Returns whether the file at the specified path matches any of the specified UTI filetypes:
+//Returns whether the file at the specified path/URL matches any of the specified UTI filetypes:
 //i.e. whether the file's UTI is equal to *or inherits from* any of those types.
+- (BOOL) fileAtURL: (NSURL *)URL matchesTypes: (NSSet *)acceptedTypes;
 - (BOOL) file: (NSString *)filePath matchesTypes: (NSSet *)acceptedTypes;
 
-//Returns the nearest parent folder of the specified path which matches any of the specified UTIs,
-//or nil if no folder matched. This may return filePath, if the file itself matches the specified types.
-- (NSString *)parentOfFile: (NSString *)filePath matchingTypes: (NSSet *)acceptedTypes;
+//Returns the nearest ancestor of the specified path/URL that matches any of the specified UTIs,
+//or nil if no ancestor matched. This may return filePath, if the file itself matches the specified types.
+- (NSURL *) nearestAncestorOfURL: (NSURL *)URL matchingTypes: (NSSet *)acceptedTypes;
+- (NSString *) parentOfFile: (NSString *)filePath matchingTypes: (NSSet *)acceptedTypes;
 
 @end

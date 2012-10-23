@@ -150,10 +150,15 @@ enum
 - (IBAction) mountNextDrivesInQueues: (id)sender;
 - (IBAction) mountPreviousDrivesInQueues: (id)sender;
 
-//Overridden to discard shadowed files for each drive.
-//If a program is running, it will be shut down before continuing.
+//Discard/merge the current game data.
+//The game be relaunched after the operation is complete.
 - (IBAction) revertShadowedChanges: (id)sender;
 - (IBAction) mergeShadowedChanges: (id)sender;
+
+//Import/export the current game data.
+//The game will be relaunched after importing is complete.
+- (IBAction) importGameState: (id)sender;
+- (IBAction) exportGameState: (id)sender;
 
 //Restart the emulation by closing and reopening the document.
 //This will show a confirmation first if there are programs running or drives being imported.

@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">12C54</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2840</string>
+		<string key="IBDocument.SystemVersion">12C60</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2843</string>
 		<string key="IBDocument.AppKitVersion">1187.34</string>
 		<string key="IBDocument.HIToolboxVersion">625.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2840</string>
+			<string key="NS.object.0">2843</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -153,9 +153,9 @@
 							<string key="NSTitle">File</string>
 							<object class="NSMutableArray" key="NSMenuItems">
 								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="NSMenuItem" id="734016876">
+								<object class="NSMenuItem" id="643680314">
 									<reference key="NSMenu" ref="176076355"/>
-									<string key="NSTitle">Reset Game Data…</string>
+									<string key="NSTitle">Return to Launch Options</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
@@ -171,9 +171,25 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
-								<object class="NSMenuItem" id="643680314">
+								<object class="NSMenuItem" id="195128102">
 									<reference key="NSMenu" ref="176076355"/>
-									<string key="NSTitle">Return to Launch Options</string>
+									<string key="NSTitle">Import Game Data…</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+								<object class="NSMenuItem" id="854800758">
+									<reference key="NSMenu" ref="176076355"/>
+									<string key="NSTitle">Export Game Data…</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+								<object class="NSMenuItem" id="734016876">
+									<reference key="NSMenu" ref="176076355"/>
+									<string key="NSTitle">Reset Game Data</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
@@ -2006,6 +2022,22 @@
 					<int key="connectionID">2523</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">importGameState:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="195128102"/>
+					</object>
+					<int key="connectionID">2537</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">exportGameState:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="854800758"/>
+					</object>
+					<int key="connectionID">2538</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
 						<reference key="source" ref="34920399"/>
@@ -2372,9 +2404,11 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="254874267"/>
 							<reference ref="696314613"/>
-							<reference ref="734016876"/>
+							<reference ref="854800758"/>
 							<reference ref="643680314"/>
 							<reference ref="310826317"/>
+							<reference ref="734016876"/>
+							<reference ref="195128102"/>
 						</object>
 						<reference key="parent" ref="848222553"/>
 					</object>
@@ -3226,6 +3260,16 @@
 						<reference key="object" ref="310826317"/>
 						<reference key="parent" ref="176076355"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2535</int>
+						<reference key="object" ref="195128102"/>
+						<reference key="parent" ref="176076355"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2536</int>
+						<reference key="object" ref="854800758"/>
+						<reference key="parent" ref="176076355"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3377,6 +3421,8 @@
 					<string>2516.IBPluginDependency</string>
 					<string>2517.IBPluginDependency</string>
 					<string>2521.IBPluginDependency</string>
+					<string>2535.IBPluginDependency</string>
+					<string>2536.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>284.IBPluginDependency</string>
 					<string>285.IBPluginDependency</string>
@@ -3585,6 +3631,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -3599,7 +3647,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2532</int>
+			<int key="maxID">2538</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -4656,7 +4704,9 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>decrementFrameSkip:</string>
 							<string>decrementSpeed:</string>
+							<string>exportGameState:</string>
 							<string>fastForward:</string>
+							<string>importGameState:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
 							<string>mergeShadowedChanges:</string>
@@ -4697,6 +4747,8 @@
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
@@ -4705,7 +4757,9 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>decrementFrameSkip:</string>
 							<string>decrementSpeed:</string>
+							<string>exportGameState:</string>
 							<string>fastForward:</string>
+							<string>importGameState:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
 							<string>mergeShadowedChanges:</string>
@@ -4735,7 +4789,15 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">exportGameState:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">fastForward:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">importGameState:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

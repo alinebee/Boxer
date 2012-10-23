@@ -163,4 +163,12 @@
 //Will return NO if the drive is read-only or not part of the gamebox.
 - (BOOL) _shouldShadowDrive: (BXDrive *)drive;
 
+//Used for importing and exporting game states while safely overwriting existing ones.
+- (BOOL) _copyGameStateFromURL: (NSURL *)sourceURL toURL: (NSURL *)destinationURL outError: (NSError **)outError;
+
+//Synchronises the specified game state's name, game identifier and version
+//to match those for the current gamebox and Boxer.
+//Called when closing the session and when exporting game state.
+- (void) _updateInfoForGameStateAtURL: (NSURL *)stateURL;
+
 @end

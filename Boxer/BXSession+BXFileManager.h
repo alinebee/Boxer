@@ -205,7 +205,12 @@ typedef NSUInteger BXDriveMountOptions;
 #pragma mark Managing drive shadowing
 
 //Returns the path to the bundle where we will store state data for the current gamebox.
-- (NSURL *) currentStateURL;
+- (NSURL *) currentGameStateURL;
+
+//Sets/retrieves the Info.plist metadata for the game state at the specified URL. 
+- (NSDictionary *) infoForGameStateAtURL: (NSURL *)stateURL;
+- (BOOL) setInfo: (NSDictionary *)info forGameStateAtURL: (NSURL *)stateURL;
+
 
 //Returns an appropriate location to which we can shadow write operations for the specified drive.
 //This location may not exist yet, but will be created once it is needed.

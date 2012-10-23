@@ -40,6 +40,11 @@
 #define BXVolumeMountDelay 1.0
 
 
+NSString * const BXGameStateGameNameKey = @"BXGameName";
+NSString * const BXGameStateGameIdentifierKey = @"BXGameIdentifier";
+NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
+
+
 //The methods in this category are not intended to be called outside BXSession.
 @interface BXSession (BXFileManagerPrivate)
 
@@ -231,13 +236,16 @@
     return YES;
 }
 
-- (NSURL *) currentStateURL
+- (NSURL *) currentGameStateURL
 {
     if (!self.hasGamebox)
         return nil;
     
     NSString *statePath = [[NSApp delegate] statesPathForGamebox: self.gamebox
                                                creatingIfMissing: NO];
+    
+    if (!statePath)
+        return nil;
     
     NSURL *stateURL = [NSURL fileURLWithPath: statePath isDirectory: YES];
     
@@ -248,7 +256,7 @@
 {
     if ([self _shouldShadowDrive: drive])
     {
-        NSURL *stateURL = self.currentStateURL;
+        NSURL *stateURL = self.currentGameStateURL;
         if (stateURL)
         {
             NSString *driveName;
@@ -356,43 +364,39 @@
         }
         return NO;
     }
-    else
+    
+    //Check the metadata of the bundle to ensure that it is actually a match for the current gamebox.
+    NSDictionary *stateInfo = [self infoForGameStateAtURL: stateURL];
+    NSString *gameIdentifier = [stateInfo objectForKey: BXGameStateGameIdentifierKey];
+    
+    if (![gameIdentifier isEqualToString: self.gamebox.gameIdentifier])
     {
-        //TODO: check the contents of the bundle to ensure that it's actually for the current gamebox.
-        BOOL matchesGamebox = YES;
-        
-        if (!matchesGamebox)
+        if (outError)
         {
-            if (outError)
-            {
-                *outError = [BXGameStateGameboxMismatchError errorWithStateURL: stateURL
-                                                                       gamebox: self.gamebox
-                                                                      userInfo: nil];
-            }
-            return NO;
+            *outError = [BXGameStateGameboxMismatchError errorWithStateURL: stateURL
+                                                                   gamebox: self.gamebox
+                                                                  userInfo: nil];
         }
+        return NO;
     }
     
     return YES;
 }
 
-- (BOOL) importGameStateFromURL: (NSURL *)sourceURL error: (NSError **)outError
+- (BOOL) _copyGameStateFromURL: (NSURL *)sourceURL toURL: (NSURL *)destinationURL outError: (NSError **)outError
 {
-    NSAssert(self.hasGamebox, @"No state URL was available - we may have been unable to create it.");
-    
-    NSURL *destinationURL = self.currentStateURL;
     NSURL *destinationBaseURL = destinationURL.URLByDeletingLastPathComponent;
     
     NSFileManager *manager = [NSFileManager defaultManager];
     
-    //Ensure the containing folder for state bundles exists before we start.
+    //Ensure the destination folder exists before we start.
     BOOL destinationExists = [manager createDirectoryAtURL: destinationBaseURL
                                withIntermediateDirectories: YES
                                                 attributes: nil
                                                      error: outError];
     if (!destinationExists) return NO;
     
-    //Make a temporary directory into which we can copy the new state before replacing the old one.
+    //Make a temporary directory into which we can copy the new state before replacing any original.
     NSURL *tempBaseURL = [manager URLForDirectory: NSItemReplacementDirectory
                                          inDomain: NSUserDomainMask
                                 appropriateForURL: destinationBaseURL
@@ -405,7 +409,7 @@
     BOOL copied = [manager copyItemAtURL: sourceURL toURL: tempURL error: outError];
     if (!copied) return NO;
     
-    //Finally, replace the original state with the new state.
+    //Finally, replace any original state with the new state.
     return [manager replaceItemAtURL: destinationURL
                        withItemAtURL: tempURL
                       backupItemName: nil
@@ -414,11 +418,59 @@
                                error: outError];
 }
 
+- (BOOL) importGameStateFromURL: (NSURL *)sourceURL error: (NSError **)outError
+{
+    if (![self isValidGameStateAtURL: sourceURL error: outError])
+        return NO;
+    
+    NSURL *destinationURL = self.currentGameStateURL;
+    
+    return [self _copyGameStateFromURL: sourceURL toURL: destinationURL outError: outError];
+}
+
 - (BOOL) exportGameStateToURL: (NSURL *)destinationURL error: (NSError **)outError
 {
-    NSURL *sourceURL = self.currentStateURL;
+    NSURL *sourceURL = self.currentGameStateURL;
     
-    return [[NSFileManager defaultManager] copyItemAtURL: sourceURL toURL: destinationURL error: outError];
+    //Ensure our game state has the latest metadata before copying
+    //(this is otherwise written on session exit.)
+    [self _updateInfoForGameStateAtURL: sourceURL];
+    
+    return [self _copyGameStateFromURL: sourceURL toURL: destinationURL outError: outError];
+}
+
+- (NSDictionary *) infoForGameStateAtURL: (NSURL *)stateURL
+{
+    NSURL *plistURL = [stateURL URLByAppendingPathComponent: @"Info.plist"];
+    return [NSDictionary dictionaryWithContentsOfURL: plistURL];
+}
+
+- (BOOL) setInfo: (NSDictionary *)info forGameStateAtURL: (NSURL *)stateURL
+{
+    NSURL *plistURL = [stateURL URLByAppendingPathComponent: @"Info.plist"];
+    BOOL stateExists = [[NSFileManager defaultManager] createDirectoryAtURL: stateURL
+                                                withIntermediateDirectories: YES
+                                                                 attributes: NULL
+                                                                      error: NULL];
+    if (stateExists)
+    {
+        return [info writeToURL: plistURL atomically: YES];
+    }
+    return stateExists;
+}
+
+- (void) _updateInfoForGameStateAtURL: (NSURL *)stateURL
+{
+    NSAssert(stateURL != nil, @"No game state specified.");
+    NSAssert(self.hasGamebox, @"_updateInfoForGameStateAtURL called on a session that has no gamebox.");
+    
+    NSDictionary *originalData = [self infoForGameStateAtURL: stateURL];
+    NSMutableDictionary *newData = [NSMutableDictionary dictionaryWithDictionary: originalData];
+    [newData setObject: self.gamebox.gameName forKey: BXGameStateGameNameKey];
+    [newData setObject: self.gamebox.gameIdentifier forKey: BXGameStateGameIdentifierKey];
+    [newData setObject: [BXBaseAppController buildNumber] forKey: BXGameStateEmulatorVersionKey];
+    
+    [self setInfo: newData forGameStateAtURL: stateURL];
 }
 
 

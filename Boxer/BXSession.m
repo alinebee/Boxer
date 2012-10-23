@@ -868,6 +868,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, self.gamebox.gameIdentifier];
         [defaults setObject: settingsToPersist forKey: defaultsKey];
+        
+        //Finally, also ensure our shadow volume matches the current game metadata.
+        NSURL *stateURL = self.currentGameStateURL;
+        if ([stateURL checkResourceIsReachableAndReturnError: NULL])
+            [self _updateInfoForGameStateAtURL: stateURL];
 	}
 }
 

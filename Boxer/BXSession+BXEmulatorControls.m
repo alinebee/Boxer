@@ -907,7 +907,7 @@
                                     @"Title for open panel when importing a game state");
     panel.prompt = NSLocalizedString(@"Import and Relaunch",
                                      @"Label for confirmation button on open panel when importing a game state.");
-    panel.message = NSLocalizedString(@"Your savegames and player data will be replaced with the imported versions.\nThe game will relaunch after importing.",
+    panel.message = NSLocalizedString(@"Importing will replace your current savegames and player data. The game will relaunch to complete the import.",
                                       @"Explanatory text on open panel when importing a game state.");
     panel.allowedFileTypes = @[BXGameStateType];
     panel.canChooseDirectories = NO;
@@ -949,7 +949,7 @@
         return;
 
     //Work out a suitable filename, based on the game name and the current date.
-    NSString *nameFormat = NSLocalizedString(@"%1$@ (%2$@)", @"The ");
+    NSString *nameFormat = NSLocalizedString(@"%1$@ %2$@", @"The filename format under which to save exported game states. %1$@ is the name of the current game. %2$@ is the current date and time.");
     
     NSValueTransformer *transformer = [NSValueTransformer valueTransformerForName: @"BXScreenshotDateTransformer"];
     NSString *formattedDate = [transformer transformedValue: [NSDate date]];

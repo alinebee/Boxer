@@ -1122,18 +1122,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //TWEAK: Sanitise the configurations folder of a standalone game app the first time the app is launched,
     //by deleting all unused conf files.
     if ([[NSApp delegate] isStandaloneGameBundle])
-    {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        BOOL hasSanitisedConfigurations = [defaults boolForKey: @"hasSanitisedConfigurations"];
-        if (!hasSanitisedConfigurations)
+    {   
+        NSFileManager *manager = [[NSFileManager alloc] init];
+        NSURL *confBaseURL = [appBundle.resourceURL URLByAppendingPathComponent: @"Configurations"];
+        NSArray *allConfigs = [manager contentsOfDirectoryAtURL: confBaseURL
+                                     includingPropertiesForKeys: nil
+                                                        options: 0
+                                                          error: NULL];
+        
+        if (allConfigs.count > configURLs.count)
         {
-            NSFileManager *manager = [[NSFileManager alloc] init];
-            NSURL *confBaseURL = [appBundle.resourceURL URLByAppendingPathComponent: @"Configurations"];
-            NSArray *allConfigs = [manager contentsOfDirectoryAtURL: confBaseURL
-                                         includingPropertiesForKeys: nil
-                                                            options: 0
-                                                              error: NULL];
-            
             for (NSURL *confURL in allConfigs)
             {
                 //If this configuration is unused by this game, expunge it.
@@ -1142,11 +1140,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                     [manager removeItemAtURL: confURL error: NULL];
                 }
             }
-            
-            [manager release];
-            
-            [defaults setBool: YES forKey: @"hasSanitisedConfigurations"];
         }
+        [manager release];
     }
     
     return [configURLs autorelease];

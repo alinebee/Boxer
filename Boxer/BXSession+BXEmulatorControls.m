@@ -652,8 +652,8 @@
         
         //Sanitise the filename in case it contains characters that are disallowed for file paths.
         //TODO: move this off to an NSFileManager/NSString category.
-        fileName = [fileName stringByReplacingOccurrencesOfString: @":" withString: @"."];
-        fileName = [fileName stringByReplacingOccurrencesOfString: @"/" withString: @"-"]; 
+        fileName = [fileName stringByReplacingOccurrencesOfString: @":" withString: @"-"];
+        fileName = [fileName stringByReplacingOccurrencesOfString: @"/" withString: @"-"];
         
         NSString *basePath = [[NSApp delegate] recordingsPathCreatingIfMissing: YES];
         NSString *destination = [basePath stringByAppendingPathComponent: fileName];
@@ -955,7 +955,10 @@
     NSString *formattedDate = [transformer transformedValue: [NSDate date]];
     
     NSString *baseName  = [NSString stringWithFormat: nameFormat, self.displayName, formattedDate];
-    //NSString *extension = [[NSWorkspace sharedWorkspace] preferredFilenameExtensionForType: BXGameStateType];
+    //Sanitise the filename in case it contains characters that are disallowed for file paths.
+    //TODO: move this off to an NSFileManager/NSString category.
+    baseName = [baseName stringByReplacingOccurrencesOfString: @":" withString: @"-"];
+    baseName = [baseName stringByReplacingOccurrencesOfString: @"/" withString: @"-"];
     
     NSSavePanel *panel = [NSSavePanel savePanel];
     panel.title = NSLocalizedString(@"Export game data",

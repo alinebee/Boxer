@@ -72,6 +72,10 @@
     return NO;
 }
 
+- (BOOL) isUnbrandedGameBundle
+{
+    return NO;
+}
 
 #pragma mark -
 #pragma mark Initialization and teardown

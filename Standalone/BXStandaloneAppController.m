@@ -104,6 +104,12 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
     return YES;
 }
 
+- (BOOL) isUnbrandedGameBundle
+{
+    //If no organization name was provided, hide all branding.
+    return [BXStandaloneAboutController organizationName].length = 0;
+}
+
 - (NSUInteger) maximumRecentDocumentCount
 {
     return 0;
@@ -227,7 +233,15 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
 
 - (IBAction) orderFrontAboutPanel: (id)sender
 {
-	[[BXStandaloneAboutController controller] showWindow: sender];
+    //Show the default OS X app about panel if this is an unbranded game app.
+    if (self.isUnbrandedGameBundle)
+    {
+        [NSApp orderFrontStandardAboutPanel: self];
+    }
+    else
+    {
+        [[BXStandaloneAboutController controller] showWindow: sender];
+    }
 }
 
 - (IBAction) visitOrganizationWebsite: (id)sender

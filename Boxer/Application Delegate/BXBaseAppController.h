@@ -74,6 +74,9 @@
 //Returns NO by default; overridden by BXStandaloneAppController.
 - (BOOL) isStandaloneGameBundle;
 
+//Whether the app should hide all potential branding.
+//Returns NO by default; overridden by BXStandaloneAppController.
+- (BOOL) isUnbrandedGameBundle;
 
 #pragma mark -
 #pragma mark Initialization

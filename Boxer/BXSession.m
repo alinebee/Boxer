@@ -72,6 +72,7 @@ NSString * const BXGameboxSettingsLastLocationKey = @"BXGameLastLocation";
 NSString * const BXGameboxSettingsShowProgramPanelKey = @"showProgramPanel";
 NSString * const BXGameboxSettingsStartUpInFullScreenKey = @"startUpInFullScreen";
 NSString * const BXGameboxSettingsShowLaunchPanelKey = @"showLaunchPanel";
+NSString * const BXGameboxSettingsAlwaysShowLaunchPanelKey = @"alwaysShowLaunchPanel";
 
 NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
 
@@ -284,8 +285,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         //Check if the user opened the gamebox itself or a specific file/folder inside the gamebox.
         BOOL hasCustomTarget = ![self.targetPath isEqualToString: gameboxPath];
         
-        //Check if we are flagged to show the launch panel for this game (instead of looking for a target program.)
+        //Check if we are flagged to show the launch panel at startup for this game (instead of looking for a target program.)
         BOOL startWithLaunchPanel = [[self.gameSettings objectForKey: BXGameboxSettingsShowLaunchPanelKey] boolValue];
+        BOOL alwaysStartWithLaunchPanel = [[self.gameSettings objectForKey: BXGameboxSettingsAlwaysShowLaunchPanelKey] boolValue];
+        if (alwaysStartWithLaunchPanel) startWithLaunchPanel = YES;
         
 		//If the user opened the gamebox itself instead of a specific file inside it,
         //and we're not flagged to show the launch panel in this situation, then try

@@ -107,7 +107,7 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
 - (BOOL) isUnbrandedGameBundle
 {
     //If no organization name was provided, hide all branding.
-    return [BXStandaloneAboutController organizationName].length = 0;
+    return ([self.class organizationName].length == 0);
 }
 
 - (NSUInteger) maximumRecentDocumentCount

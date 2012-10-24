@@ -925,10 +925,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     if (!self.hasGamebox)
         return NO;
     
-    //Prevent access to the launcher panel if this is a standalone game bundle with only one launch option.
+    //Prevent access to the launcher panel if this is a standalone game bundle with only one launch option,
+    //and it hasn't been overridden to always show the launch panel.
     //In such cases the launcher panel is unnecessary.
-    if ([[NSApp delegate] isStandaloneGameBundle] && self.gamebox.launchers.count == 1)
-        return NO;
+    if ([[NSApp delegate] isStandaloneGameBundle])
+    {
+        BOOL alwaysStartWithLaunchPanel = [[self.gameSettings objectForKey: BXGameboxSettingsAlwaysShowLaunchPanelKey] boolValue];
+        if (!alwaysStartWithLaunchPanel && self.gamebox.launchers.count == 1)
+            return NO;
+    }
     
     return YES;
 }

@@ -115,14 +115,14 @@
 	{
 		if (viewController.mouseLocked)
 		{
-			return NSLocalizedString(@"Cmd-click to release the mouse.",
+			return NSLocalizedString(@"Cmd+click to release the mouse.",
 									 @"Statusbar message when mouse is locked.");
 		}
 		else if (viewController.mouseInView)
 		{	
 			if (viewController.trackMouseWhileUnlocked)
 			{
-				return NSLocalizedString(@"Cmd-click inside the window to lock the mouse.",
+				return NSLocalizedString(@"Cmd+click inside the window to lock the mouse.",
 										 @"Statusbar message when mouse is unlocked and over DOS viewport.");
 			}
 			else

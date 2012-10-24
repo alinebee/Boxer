@@ -171,17 +171,17 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
-								<object class="NSMenuItem" id="195128102">
+								<object class="NSMenuItem" id="854800758">
 									<reference key="NSMenu" ref="176076355"/>
-									<string key="NSTitle">Import Game Data…</string>
+									<string key="NSTitle">Export Game Data…</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
-								<object class="NSMenuItem" id="854800758">
+								<object class="NSMenuItem" id="195128102">
 									<reference key="NSMenu" ref="176076355"/>
-									<string key="NSTitle">Export Game Data…</string>
+									<string key="NSTitle">Import Game Data…</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
@@ -1255,7 +1255,6 @@
 						<string key="NSFrame">{{174, 0}, {27, 17}}</string>
 						<reference key="NSSuperview" ref="178359719"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="946362292">
@@ -2404,10 +2403,10 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="254874267"/>
 							<reference ref="696314613"/>
-							<reference ref="854800758"/>
 							<reference ref="643680314"/>
 							<reference ref="310826317"/>
 							<reference ref="734016876"/>
+							<reference ref="854800758"/>
 							<reference ref="195128102"/>
 						</object>
 						<reference key="parent" ref="848222553"/>

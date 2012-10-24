@@ -1824,7 +1824,6 @@
 		080E96DDFE201D6D7F000001 /* Boxer */ = {
 			isa = PBXGroup;
 			children = (
-				9FBC3CB10F56E32C001811F2 /* Info.plist */,
 				9F5114FF129055DE00BEC0B9 /* Scripting */,
 				9F160E6E1236B28900F8768E /* Application Delegate */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
@@ -1915,18 +1914,19 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				9F84C86D157800DD00CCBCA7 /* Shaders */,
-				9F0102E3144078E300942713 /* BoxerHelp */,
-				9FF86676134DCA16001CE857 /* cdrdao */,
-				9FF86677134DCA16001CE857 /* toc2cue */,
-				9F12F97B144875F400FC9645 /* DummyCD.iso */,
-				9F70C19B129036C900A3627F /* Boxer.sdef */,
-				9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */,
+				9FBC3CB10F56E32C001811F2 /* Info.plist */,
 				9F466AFB11A92C4B00C50965 /* UserDefaults.plist */,
 				9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */,
 				9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */,
 				9FCC303B13670F680013F083 /* KeyboardLayouts.plist */,
 				9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */,
+				9FF86676134DCA16001CE857 /* cdrdao */,
+				9FF86677134DCA16001CE857 /* toc2cue */,
+				9F12F97B144875F400FC9645 /* DummyCD.iso */,
+				9F70C19B129036C900A3627F /* Boxer.sdef */,
+				9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */,
+				9F84C86D157800DD00CCBCA7 /* Shaders */,
+				9F0102E3144078E300942713 /* BoxerHelp */,
 				9F160BD91236952400F8768E /* Sample Games */,
 				9FFAFE2E10DE343F00728BAC /* Configurations */,
 				9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */,

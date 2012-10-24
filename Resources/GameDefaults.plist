@@ -16,5 +16,7 @@
 	<true/>
 	<key>startUpInFullScreen</key>
 	<false/>
+	<key>alwaysShowLaunchPanel</key>
+	<false/>
 </dict>
 </plist>

@@ -69,7 +69,7 @@ extern NSString * const BXEmulatorLaunchArgumentsKey;
 //the emulator session should load, in the order in which they should be loaded
 //(settings in later configurations will override earlier ones.)
 //May return nil or an empty array, to load no configuration files.
-- (NSArray *) configurationPathsForEmulator: (BXEmulator *)emulator;
+- (NSArray *) configurationURLsForEmulator: (BXEmulator *)emulator;
 
 //Tells the delegate that the specified frame has finished rendering.
 - (void) emulator: (BXEmulator *)emulator didFinishFrame: (BXVideoFrame *)frame;

@@ -1066,15 +1066,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         [self close];
 }
 
-- (NSArray *) configurationPathsForEmulator: (BXEmulator *)emulator
+- (NSArray *) configurationURLsForEmulator: (BXEmulator *)emulator
 {
-    NSMutableArray *configPaths = [[NSMutableArray alloc] initWithCapacity: 4];
+    NSMutableArray *configURLs = [[NSMutableArray alloc] initWithCapacity: 4];
     
     //Load Boxer's baseline configuration first.
     NSBundle *appBundle = [NSBundle mainBundle];
-    [configPaths addObject: [appBundle pathForResource: @"Preflight"
-                                                ofType: @"conf"
-                                           inDirectory: @"Configurations"]];
+    [configURLs addObject: [appBundle URLForResource: @"Preflight"
+                                       withExtension: @"conf"
+                                        subdirectory: @"Configurations"]];
 
 	//If we don't have a previously-determined game profile already,
     //detect the game profile from our target path and set it now.
@@ -1091,26 +1091,57 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//Load the appropriate configuration files from our game profile.
     for (NSString *confName in self.gameProfile.configurations)
     {
-        NSString *profileConf = [appBundle pathForResource: confName
-                                                    ofType: @"conf"
-                                               inDirectory: @"Configurations"];
+        NSURL *profileConf = [appBundle URLForResource: confName
+                                         withExtension: @"conf"
+                                          subdirectory: @"Configurations"];
         
-        if (profileConf) [configPaths addObject: profileConf];
+        if (profileConf) [configURLs addObject: profileConf];
         else NSLog(@"Missing configuration profile: %@", confName);
     }
 	
 	//Next, load the gamebox's own configuration file if it has one.
-    NSString *packageConf = self.gamebox.configurationFile;
-    if (packageConf)
-        [configPaths addObject: packageConf];
+    NSString *packageConfPath = self.gamebox.configurationFile;
+    if (packageConfPath)
+        [configURLs addObject: [NSURL fileURLWithPath: packageConfPath isDirectory: NO]];
     
 	
     //Last but not least, load Boxer's launch configuration.
-    [configPaths addObject: [appBundle pathForResource: @"Launch"
-                                                ofType: @"conf"
-                                           inDirectory: @"Configurations"]];
+    [configURLs addObject: [appBundle URLForResource: @"Launch"
+                                       withExtension: @"conf"
+                                        subdirectory: @"Configurations"]];
     
-    return [configPaths autorelease];
+    
+    //TWEAK: Sanitise the configurations folder of a standalone game app the first time the app is launched,
+    //by deleting all unused conf files.
+    if ([[NSApp delegate] isStandaloneGameBundle])
+    {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        BOOL hasSanitisedConfigurations = [defaults boolForKey: @"hasSanitisedConfigurations"];
+        if (!hasSanitisedConfigurations)
+        {
+            NSFileManager *manager = [[NSFileManager alloc] init];
+            NSURL *confBaseURL = [appBundle.resourceURL URLByAppendingPathComponent: @"Configurations"];
+            NSArray *allConfigs = [manager contentsOfDirectoryAtURL: confBaseURL
+                                         includingPropertiesForKeys: nil
+                                                            options: 0
+                                                              error: NULL];
+            
+            for (NSURL *confURL in allConfigs)
+            {
+                //If this configuration is unused by this game, expunge it.
+                if (![configURLs containsObject: confURL])
+                {
+                    [manager removeItemAtURL: confURL error: NULL];
+                }
+            }
+            
+            [manager release];
+            
+            [defaults setBool: YES forKey: @"hasSanitisedConfigurations"];
+        }
+    }
+    
+    return [configURLs autorelease];
 }
 
 - (void) runPreflightCommandsForEmulator: (BXEmulator *)theEmulator

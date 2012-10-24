@@ -945,11 +945,10 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		DOSBOX_Init();
 
 		//Ask our delegate for the configuration files we should be loading today.
-        NSArray *configPaths = [self.delegate configurationPathsForEmulator: self];
-		for (NSString *configPath in configPaths)
+        NSArray *configURLs = [self.delegate configurationURLsForEmulator: self];
+		for (NSURL *configURL in configURLs)
 		{
-			configPath = configPath.stringByStandardizingPath;
-			const char *encodedConfigPath = configPath.fileSystemRepresentation;
+			const char *encodedConfigPath = configURL.path.fileSystemRepresentation;
 			control->ParseConfigFile(encodedConfigPath);
 		}
 

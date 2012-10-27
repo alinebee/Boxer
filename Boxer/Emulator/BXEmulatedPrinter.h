@@ -183,6 +183,7 @@ typedef enum {
     NSImage *_currentPage;
     NSMutableArray *_completedPages;
     NSMutableDictionary *_textAttributes;
+    BOOL _textAttributesNeedUpdate;
 }
 
 @property (readonly, nonatomic, getter=isBusy) BOOL busy;

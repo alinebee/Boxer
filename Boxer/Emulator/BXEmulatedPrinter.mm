@@ -104,6 +104,9 @@ enum {
 @property (retain, nonatomic) NSMutableArray *completedPages;
 @property (retain, nonatomic) NSMutableDictionary *textAttributes;
 
+@property (assign, nonatomic) NSPoint headPosition;
+@property (readonly, nonatomic) NSPoint headPositionInPoints;
+
 #pragma mark -
 #pragma mark Helper class methods
 
@@ -210,6 +213,8 @@ enum {
 @synthesize completedPages = _completedPages;
 @synthesize textAttributes = _textAttributes;
 
+@synthesize headPosition = _headPosition;
+
 
 - (id) init
 {
@@ -289,7 +294,7 @@ enum {
     if (self.bold != flag)
     {
         _bold = flag;
-        [self _updateTextAttributes];
+        _textAttributesNeedUpdate = YES;
     }
 }
 
@@ -298,7 +303,7 @@ enum {
     if (self.italic != flag)
     {
         _italic = flag;
-        [self _updateTextAttributes];
+        _textAttributesNeedUpdate = YES;
     }
 }
 
@@ -308,7 +313,7 @@ enum {
     {
         _condensed = flag;
         _horizontalMotionIndex = HMI_UNDEFINED;
-        [self _updateTextAttributes];
+        _textAttributesNeedUpdate = YES;
     }
 }
 
@@ -317,7 +322,7 @@ enum {
     if (self.subscript != flag)
     {
         _subscript = flag;
-        [self _updateTextAttributes];
+        _textAttributesNeedUpdate = YES;
     }
 }
 
@@ -326,7 +331,7 @@ enum {
     if (self.superscript != flag)
     {
         _superscript = flag;
-        [self _updateTextAttributes];
+        _textAttributesNeedUpdate = YES;
     }
 }
 
@@ -342,7 +347,7 @@ enum {
     {
         _doubleWidth = flag;
         _horizontalMotionIndex = HMI_UNDEFINED;
-        [self _updateTextAttributes];
+        _textAttributesNeedUpdate = YES;
     }
 }
 
@@ -351,7 +356,7 @@ enum {
     if (self.doubleHeight != flag)
     {
         _doubleHeight = flag;
-        [self _updateTextAttributes];
+        _textAttributesNeedUpdate = YES;
     }
 }
 
@@ -361,7 +366,7 @@ enum {
     {
         _doubleWidthForLine = flag;
         _horizontalMotionIndex = HMI_UNDEFINED;
-        [self _updateTextAttributes];
+        _textAttributesNeedUpdate = YES;
     }
 }
 
@@ -378,7 +383,7 @@ enum {
     if (self.underlined != flag)
     {
         _underlined = flag;
-        [self _updateTextAttributes];
+        _textAttributesNeedUpdate = YES;
     }
 }
 
@@ -387,7 +392,7 @@ enum {
     if (self.overscored != flag)
     {
         _overscored = flag;
-        [self _updateTextAttributes];
+        _textAttributesNeedUpdate = YES;
     }
 }
 
@@ -396,7 +401,7 @@ enum {
     if (self.linethroughed != flag)
     {
         _linethroughed = flag;
-        [self _updateTextAttributes];
+        _textAttributesNeedUpdate = YES;
     }
 }
 
@@ -419,7 +424,7 @@ enum {
         case BXEmulatedPrinterTypefaceSVBusaba:
         case BXEmulatedPrinterTypefaceSVJittra:
             _typeFace = (BXEmulatedPrinterTypeface)typeFace;
-            [self _updateTextAttributes];
+            _textAttributesNeedUpdate = YES;
             break;
         default:
             break;
@@ -500,6 +505,7 @@ enum {
         fontDescriptor = [fontDescriptor fontDescriptorWithMatrix: transform];
     }
     
+    //Apply the basic text attributes
     NSFont *font = [NSFont fontWithDescriptor: fontDescriptor size: fontSize.height];
     NSColor *color = [self.class _colorForColorCode: self.color];
     
@@ -507,6 +513,56 @@ enum {
                            font, NSFontAttributeName,
                            color, NSForegroundColorAttributeName,
                            nil];
+    
+    //Apply underlining and strikethroughing
+    NSUInteger strikeStyle = NSUnderlineStyleNone;
+    switch (self.lineStyle)
+    {
+        case BXEmulatedPrinterLineStyleSingle:
+            strikeStyle |= NSUnderlineStyleSingle;
+            break;
+        case BXEmulatedPrinterLineStyleDouble:
+            strikeStyle |= NSUnderlineStyleDouble;
+            break;
+        case BXEmulatedPrinterLineStyleBroken:
+            strikeStyle |= NSUnderlineStyleSingle | NSUnderlinePatternDash;
+            break;
+        case BXEmulatedPrinterLineStyleDoubleBroken:
+            strikeStyle |= NSUnderlineStyleDouble | NSUnderlinePatternDash;
+            break;
+    }
+    
+    if (self.underlined)
+    {
+        [self.textAttributes setObject: [NSNumber numberWithUnsignedInteger: strikeStyle]
+                                forKey: NSUnderlineStyleAttributeName];
+    }
+    
+    if (self.linethroughed)
+    {
+        [self.textAttributes setObject: [NSNumber numberWithUnsignedInteger: strikeStyle]
+                                forKey: NSStrikethroughStyleAttributeName];
+    }
+    
+    if (self.overscored)
+    {
+        //UNIMPLEMENTED: Cocoa's text attributes don't support overlining
+    }
+    
+    //Apply super/subscripting
+    if (self.superscript || self.subscript)
+    {
+        //Move the baseline up 40% for superscripting, or down 30% for subscripting.
+        CGFloat heightRatio = (self.superscript) ? 0.4 : -0.3;
+        
+        //TODO: We could also base this on the font's ascender and descender, which might
+        //be more pleasing to the eye.
+        CGFloat baselineOffset = fontSize.height * heightRatio;
+        [self.textAttributes setObject: [NSNumber numberWithFloat: baselineOffset]
+                                forKey: NSBaselineOffsetAttributeName];
+    }
+    
+    _textAttributesNeedUpdate = NO;
 }
 
 + (NSFontDescriptor *) _fontDescriptorForEmulatedTypeface: (BXEmulatedPrinterTypeface)typeface
@@ -517,6 +573,8 @@ enum {
     if (bold) traits |= NSFontBoldTrait;
     if (italic) traits |= NSFontItalicTrait;
     
+    //Use an actual font family name (e.g. "Courier") where there's a direct equivalent for the emulated face;
+    //Otherwise, use a font family class (e.g. NSFontSansSerifClass) to ask for a suitable font for that style.
     NSString *fontName = nil;
     switch (typeface)
     {
@@ -831,23 +889,35 @@ enum {
     //IMPLEMENT ME
 }
 
+- (NSPoint) headPositionInPoints
+{
+    return  NSMakePoint(_headPosition.x * _dpi.width,
+                        _headPosition.y * _dpi.height);
+}
+
 - (void) _printCharacter: (uint8_t)character
 {
+    //FIXME: this routine naively prints each glyph one by one, which prevents OSX from doing kerning or ligatures.
+    //Instead we should batch up characters into strings and print them once we hit the end of the line
+    //(or are interrupted by other commands.)
+    
     //I have no idea, this was just in the original implementation with no explanation given.
     if (character == 0x01)
         character = 0x20;
     
+    //If our text attributes are dirty, rebuild them now
+    if (_textAttributesNeedUpdate)
+        [self _updateTextAttributes];
+    
     //Locate the unicode character to print
     unichar codepoint = _charMap[character];
     
+    //Construct a string for drawing the glyph
     NSString *stringToPrint = [NSString stringWithCharacters: &codepoint length: 1];
-    NSSize stringSize = [stringToPrint sizeWithAttributes: self.textAttributes];
     
-    NSPoint headPosInPoints = NSMakePoint(_headPosition.x * _dpi.width,
-                                          _headPosition.y * _dpi.height);
-    
+    //Draw the glyph at the current position of the printing head
     [self.currentPage lockFocus];
-        [stringToPrint drawAtPoint: headPosInPoints
+        [stringToPrint drawAtPoint: self.headPositionInPoints
                     withAttributes: self.textAttributes];
     [self.currentPage unlockFocus];
     
@@ -855,6 +925,7 @@ enum {
     CGFloat advance = 0;
     if (self.proportional)
     {
+        NSSize stringSize = [stringToPrint sizeWithAttributes: self.textAttributes];
         advance = stringSize.width;
     }
     else if (_horizontalMotionIndex == HMI_UNDEFINED)
@@ -870,90 +941,11 @@ enum {
     _headPosition.x += advance;
     
     //Wrap the line if the next character would go over the right margin.
-    //This may also trigger a new page.
+    //(This may also trigger a new page.)
 	if((_headPosition.x + advance) > _rightMargin)
     {
         [self _startNewLine];
 	}
-    
-    /*
-    // Find the glyph for the char to render
-	FT_UInt index = FT_Get_Char_Index(curFont, curMap[ch]);
-	
-	// Load the glyph
-	FT_Load_Glyph(curFont, index, FT_LOAD_DEFAULT);
-    
-	// Render a high-quality bitmap
-	FT_Render_Glyph(curFont->glyph, FT_RENDER_MODE_NORMAL);
-    
-	Bit16u penX = PIXX + curFont->glyph->bitmap_left;
-	Bit16u penY = PIXY - curFont->glyph->bitmap_top + curFont->size->metrics.ascender/64;
-    
-	if (style & STYLE_SUBSCRIPT) penY += curFont->glyph->bitmap.rows / 2;
-    
-	// Copy bitmap into page
-	SDL_LockSurface(page);
-    
-	blitGlyph(curFont->glyph->bitmap, penX, penY, false);
-	blitGlyph(curFont->glyph->bitmap, penX+1, penY, true);
-    
-	// Doublestrike => Print the glyph a second time one pixel below
-	if (style & STYLE_DOUBLESTRIKE) {
-		blitGlyph(curFont->glyph->bitmap, penX, penY+1, true);
-		blitGlyph(curFont->glyph->bitmap, penX+1, penY+1, true);
-	}
-    
-	// Bold => Print the glyph a second time one pixel to the right
-	// or be a bit more bold...
-	if (style & STYLE_BOLD) {
-		blitGlyph(curFont->glyph->bitmap, penX+1, penY, true);
-		blitGlyph(curFont->glyph->bitmap, penX+2, penY, true);
-		blitGlyph(curFont->glyph->bitmap, penX+3, penY, true);
-	}
-	SDL_UnlockSurface(page);
-    
-	// For line printing
-	Bit16u lineStart = PIXX;
-    
-	// advance the cursor to the right
-	Real64 x_advance;
-	if (style &	STYLE_PROP)
-		x_advance = (Real64)((Real64)(curFont->glyph->advance.x)/(Real64)(dpi*64));
-	else {
-		if (hmi < 0) x_advance = 1/(Real64)actcpi;
-		else x_advance = hmi;
-	}
-	x_advance += extraIntraSpace;
-     curX += x_advance;
-     */
-    
-	// Draw lines if desired
-    /*
-	if ((score != SCORE_NONE) && (style &
-                                  (STYLE_UNDERLINE|STYLE_STRIKETHROUGH|STYLE_OVERSCORE)))
-	{
-		// Find out where to put the line
-		Bit16u lineY = PIXY;
-		double height = (curFont->size->metrics.height>>6); // TODO height is fixed point madness...
-        
-		if (style & STYLE_UNDERLINE) lineY = PIXY + (Bit16u)(height*0.9);
-		else if (style & STYLE_STRIKETHROUGH) lineY = PIXY + (Bit16u)(height*0.45);
-		else if (style & STYLE_OVERSCORE)
-			lineY = PIXY - (((score == SCORE_DOUBLE)||(score == SCORE_DOUBLEBROKEN))?5:0);
-        
-		drawLine(lineStart, PIXX, lineY, score==SCORE_SINGLEBROKEN || score==SCORE_DOUBLEBROKEN);
-        
-		// draw second line if needed
-		if ((score == SCORE_DOUBLE)||(score == SCORE_DOUBLEBROKEN))
-			drawLine(lineStart, PIXX, lineY + 5, score==SCORE_SINGLEBROKEN || score==SCORE_DOUBLEBROKEN);
-	}
-	// If the next character would go beyond the right margin, line-wrap.
-	if((curX + x_advance) > rightMargin) {
-		curX = leftMargin;
-		curY += lineSpacing;
-		if (curY > bottomMargin) newPage(true,false);
-	}
-     */
 }
 
 - (BOOL) _handleControlCharacter: (uint8_t)byte
@@ -1293,7 +1285,7 @@ enum {
             
             _horizontalMotionIndex = HMI_UNDEFINED;
             _multipointEnabled = NO;
-            [self _updateTextAttributes];
+            _textAttributesNeedUpdate = YES;
         }
             break;
             
@@ -1484,7 +1476,7 @@ enum {
             _charactersPerInch = 12;
             _horizontalMotionIndex = HMI_UNDEFINED;
             _multipointEnabled = NO;
-            [self _updateTextAttributes];
+            _textAttributesNeedUpdate = YES;
             break;
             
         case 'N': // Set bottom margin (ESC N)
@@ -1501,7 +1493,7 @@ enum {
             _charactersPerInch = 10;
             _horizontalMotionIndex = HMI_UNDEFINED;
             _multipointEnabled = NO;
-            [self _updateTextAttributes];
+            _textAttributesNeedUpdate = YES;
             break;
             
         case 'Q': // Set right margin
@@ -1568,7 +1560,7 @@ enum {
             else if (_multipointFontSize == 0)
                 _multipointFontSize = 10.5;
             
-            [self _updateTextAttributes];
+            _textAttributesNeedUpdate = YES;
         }
             break;
             
@@ -1613,7 +1605,7 @@ enum {
             _charactersPerInch = 15;
             _horizontalMotionIndex = HMI_UNDEFINED;
             _multipointEnabled = NO;
-            [self _updateTextAttributes];
+            _textAttributesNeedUpdate = YES;
             break;
             
         case IBM_FLAG+'F': // Select forward feed mode (FS F) - set reverse not implemented yet
@@ -1685,7 +1677,7 @@ enum {
                     break;
             }
             //CHECKME: is this necessary?
-            [self _updateTextAttributes];
+            _textAttributesNeedUpdate = YES;
             break;
             
         case 'w': // Turn double-height printing on/off (ESC w)

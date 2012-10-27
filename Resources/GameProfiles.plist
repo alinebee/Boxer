@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20120927.1</string>
+	<string>20121026.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
 		<dict>
@@ -1260,6 +1260,22 @@
 			</array>
 			<key>BXSourceDriveType</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.cdrom-installer-games</string>
+			<key>BXProfileDescription</key>
+			<string>Games that rely on being installed from CD-ROM.</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>Space Hulk: Vengeance of the Blood Angels</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>hulkname.dat</string>
+			</array>
+			<key>BXSourceDriveType</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>BXProfileIdentifier</key>

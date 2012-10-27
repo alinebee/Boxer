@@ -55,6 +55,10 @@ enum {
 //Used to flag ESC2 commands that we don't support but whose parameters we still need to eat from the bytestream
 #define UNSUPPORTED_ESC2_COMMAND 0x101
 
+#define VERTICAL_TABS_UNDEFINED 255
+#define UNIT_SIZE_UNDEFINED -1
+#define HMI_UNDEFINED -1
+
 
 #pragma mark -
 #pragma mark Private interface declaration
@@ -96,6 +100,26 @@ enum {
 @property (assign, nonatomic) BXEmulatedPrinterCharTable activeCharTable;
 @property (readonly, nonatomic) NSUInteger activeCodepage;
 
+@property (retain, nonatomic) NSImage *currentPage;
+@property (retain, nonatomic) NSMutableArray *completedPages;
+@property (retain, nonatomic) NSMutableDictionary *textAttributes;
+
+#pragma mark -
+#pragma mark Helper class methods
+
+//Returns the ASCII->Unicode character mapping to use for the specified codepage.
++ (const uint16_t * const) _charmapForCodepage: (NSUInteger)codepage;
+
+//Returns a CMYK-gamut NSColor suitable for the specified color code.
++ (NSColor *) _colorForColorCode: (BXEmulatedPrinterColor)colorCode;
+
+//Returns a font descriptor object that can be used to identify a suitable font for the specified typeface.
++ (NSFontDescriptor *) _fontDescriptorForEmulatedTypeface: (BXEmulatedPrinterTypeface)typeface
+                                                     bold: (BOOL)bold
+                                                   italic: (BOOL)italic;
+
+#pragma mark -
+#pragma mark Initialization
 
 //Called when the DOS session first communicates the intent to print.
 - (void) _prepareForPrinting;
@@ -113,9 +137,6 @@ enum {
 #pragma mark -
 #pragma mark Character mapping functions
 
-//Returns the ASCII->Unicode character mapping to use for the specified codepage.
-+ (const uint16_t * const) _charmapForCodepage: (NSUInteger)codepage;
-
 //Switch to the specified codepage for ASCII->Unicode mappings.
 - (void) _selectCodepage: (NSUInteger)codepage;
 
@@ -132,12 +153,12 @@ enum {
 #pragma mark Command handling
 
 //Open a context for parsing an ESC/P (or FS) command code.
-- (void) _beginESCPCommandWithCode: (uint8_t)ESCCode isFSCommand: (BOOL)isFS;
+- (void) _beginESCPCommandWithCode: (uint8_t)commandCode isFSCommand: (BOOL)isFS;
 
-//Accumulate the specified byte as a parameter to the current ESC/P command.
+//Add the specified byte as a parameter to the current ESC/P command.
 - (void) _parseESCPCommandParameter: (uint8_t)parameter;
 
-//Called at the end of command processing to close up command parsing.
+//Called after command processing is complete, to close up the command context.
 - (void) _endESCPCommand;
 
 @end
@@ -181,9 +202,14 @@ enum {
 @synthesize multipointFontSize = _multipointFontSize;
 @synthesize CPI = _charactersPerInch;
 @synthesize multipointCPI = _multipointCharactersPerInch;
-@synthesize effectiveCPI = _actualCharactersPerInch;
+@synthesize effectiveCPI = _effectiveCharactersPerInch;
 
 @synthesize activeCharTable = _activeCharTable;
+
+@synthesize currentPage = _currentPage;
+@synthesize completedPages = _completedPages;
+@synthesize textAttributes = _textAttributes;
+
 
 - (id) init
 {
@@ -191,9 +217,67 @@ enum {
     if (self)
     {
         _controlRegister = BXEmulatedPrinterControlReset;
-        _msbMode = BXEmulatedPrinterMSBStandard;
+        _initialized = NO;
+        self.completedPages = [NSMutableArray arrayWithCapacity: 1];
     }
     return self;
+}
+
+- (void) dealloc
+{
+    self.currentPage = nil;
+    self.completedPages = nil;
+    self.textAttributes = nil;
+    
+    [super dealloc];
+}
+
+
+#pragma mark -
+#pragma mark Helper class methods
+
++ (const uint16_t *) _charmapForCodepage: (NSUInteger)codepage
+{
+	NSUInteger i=0;
+    while(charmap[i].codepage != 0)
+    {
+		if (charmap[i].codepage == codepage)
+			return charmap[i].map;
+		i++;
+	}
+    
+    //If we get this far, no matching codepage could be found.
+    return NULL;
+}
+
++ (NSColor *) _colorForColorCode: (BXEmulatedPrinterColor)colorCode
+{
+    CGFloat c, y, m, k;
+    switch (colorCode)
+    {
+        case BXEmulatedPrinterColorCyan:
+            c=1; y=0; m=0; k=0; break;
+            
+        case BXEmulatedPrinterColorMagenta:
+            c=0; y=0; m=1; k=0; break;
+            
+        case BXEmulatedPrinterColorYellow:
+            c=0; y=1; m=0; k=0; break;
+            
+        case BXEmulatedPrinterColorRed:
+            c=0; y=1; m=1; k=0; break;
+            
+        case BXEmulatedPrinterColorGreen:
+            c=1; y=1; m=0; k=0; break;
+            
+        case BXEmulatedPrinterColorViolet:
+            c=1; y=0; m=1; k=0; break;
+        
+        case BXEmulatedPrinterColorBlack:
+        default:
+            c=0; y=0; m=0; k=1; break;
+    }
+    return [NSColor colorWithDeviceCyan: c magenta: m yellow: y black: k alpha: 1];
 }
 
 
@@ -223,7 +307,7 @@ enum {
     if (self.condensed != flag)
     {
         _condensed = flag;
-        _horizontalMotionIndex = -1;
+        _horizontalMotionIndex = HMI_UNDEFINED;
         [self _updateTextAttributes];
     }
 }
@@ -249,7 +333,7 @@ enum {
 - (void) setLetterSpacing: (double)spacing
 {
     _letterSpacing = spacing;
-    _horizontalMotionIndex = -1;
+    _horizontalMotionIndex = HMI_UNDEFINED;
 }
 
 - (void) setDoubleWidth: (BOOL)flag
@@ -257,7 +341,7 @@ enum {
     if (self.doubleWidth != flag)
     {
         _doubleWidth = flag;
-        _horizontalMotionIndex = -1;
+        _horizontalMotionIndex = HMI_UNDEFINED;
         [self _updateTextAttributes];
     }
 }
@@ -276,7 +360,7 @@ enum {
     if (self.doubleWidthForLine != flag)
     {
         _doubleWidthForLine = flag;
-        _horizontalMotionIndex = -1;
+        _horizontalMotionIndex = HMI_UNDEFINED;
         [self _updateTextAttributes];
     }
 }
@@ -344,26 +428,141 @@ enum {
 
 - (void) _updateTextAttributes
 {
-    //IMPLEMENT ME
+    NSFontDescriptor *fontDescriptor = [self.class _fontDescriptorForEmulatedTypeface: self.typeFace
+                                                                                 bold: self.bold
+                                                                               italic: self.italic];
+    
+    //Work out the effective horizontal and vertical scale we need for the text.
+    NSSize fontSize;
+	if (self.multipointEnabled)
+    {
+        _effectiveCharactersPerInch = _multipointCharactersPerInch;
+        fontSize = NSMakeSize(_multipointFontSize, _multipointFontSize);
+    }
+    else
+    {
+        //Use a base font size of 10.5 points
+        fontSize = NSMakeSize(10.5, 10.5);
+        _effectiveCharactersPerInch = _charactersPerInch;
+        
+        if (self.condensed)
+        {
+            if (self.proportional)
+            {
+                fontSize.width *= 0.5;
+            }
+            else if (_charactersPerInch == 10.0)
+            {
+                _effectiveCharactersPerInch = 17.14;
+                fontSize.width *= 10.0 / _effectiveCharactersPerInch;
+                fontSize.height *= 10.0 / _charactersPerInch;
+            }
+            else if (_charactersPerInch == 12.0)
+            {
+                _effectiveCharactersPerInch = 20.0;
+                fontSize.width *= 10.0 / _effectiveCharactersPerInch;
+                fontSize.height *= 10.0 / _charactersPerInch;
+            }
+        }
+        else
+        {
+            fontSize.width *= 10.0 / _effectiveCharactersPerInch;
+            fontSize.height *= 10.0 / _charactersPerInch;
+        }
+        
+        if (self.doubleWidth || self.doubleWidthForLine)
+        {
+            _effectiveCharactersPerInch *= 0.5;
+            fontSize.width *= 2.0;
+        }
+        
+        if (self.doubleHeight)
+        {
+            fontSize.height *= 2.0;
+        }
+	}
+    
+    if (self.superscript || self.subscript)
+    {
+        fontSize.width *= 2.0/3.0;
+        fontSize.height *= 2.0/3.0;
+        _effectiveCharactersPerInch *= 2.0/3.0;
+    }
+    
+    //If the text needs to be scaled in one direction or another,
+    //apply a transform to do this.
+    CGFloat aspectRatio = (fontSize.width / fontSize.height);
+    if (ABS(aspectRatio - 1) > 0.01)
+    {
+        NSAffineTransform *transform = [NSAffineTransform transform];
+        [transform scaleXBy: aspectRatio yBy: 1];
+        
+        fontDescriptor = [fontDescriptor fontDescriptorWithMatrix: transform];
+    }
+    
+    NSFont *font = [NSFont fontWithDescriptor: fontDescriptor size: fontSize.height];
+    NSColor *color = [self.class _colorForColorCode: self.color];
+    
+    self.textAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                           font, NSFontAttributeName,
+                           color, NSForegroundColorAttributeName,
+                           nil];
+}
+
++ (NSFontDescriptor *) _fontDescriptorForEmulatedTypeface: (BXEmulatedPrinterTypeface)typeface
+                                                     bold: (BOOL)bold
+                                                   italic: (BOOL)italic
+{
+    NSFontSymbolicTraits traits = 0;
+    if (bold) traits |= NSFontBoldTrait;
+    if (italic) traits |= NSFontItalicTrait;
+    
+    NSString *fontName = nil;
+    switch (typeface)
+    {
+        case BXEmulatedPrinterTypefaceOCRA:
+        case BXEmulatedPrinterTypefaceOCRB:
+            fontName = @"OCR A Std";
+            break;
+            
+        case BXEmulatedPrinterTypefaceCourier:
+            fontName = @"Courier";
+            break;
+            
+        case BXEmulatedPrinterTypefaceScript:
+        case BXEmulatedPrinterTypefaceScriptC:
+            traits |= NSFontScriptsClass;
+            break;
+            
+        case BXEmulatedPrinterTypefaceSansSerif:
+        case BXEmulatedPrinterTypefaceSansSerifH:
+            fontName = @"Helvetica";
+            traits |= NSFontSansSerifClass;
+            
+        case BXEmulatedPrinterTypefaceRoman:
+        case BXEmulatedPrinterTypefaceRomanT:
+        default:
+            traits |= NSFontModernSerifsClass;
+            fontName = @"Times";
+            break;
+    }
+    
+    NSDictionary *traitDict = [NSDictionary dictionaryWithObject: [NSNumber numberWithUnsignedInteger: traits]
+                                                          forKey: NSFontSymbolicTrait];
+    
+    NSMutableDictionary *attribs = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                    traitDict, NSFontTraitsAttribute,
+                                    nil];
+    
+    if (fontName)
+        [attribs setObject: fontName forKey: NSFontFamilyAttribute];
+    
+    return [NSFontDescriptor fontDescriptorWithFontAttributes: attribs];
 }
 
 
 #pragma mark -
 #pragma mark Character mapping
-
-+ (const uint16_t *) _charmapForCodepage: (NSUInteger)codepage
-{
-	NSUInteger i=0;
-    while(charmap[i].codepage != 0)
-    {
-		if (charmap[i].codepage == codepage)
-			return charmap[i].map;
-		i++;
-	}
-    
-    //If we get this far, no matching codepage could be found.
-    return NULL;
-}
 
 - (void) _selectCodepage: (NSUInteger)codepage
 {
@@ -445,6 +644,19 @@ enum {
     return NO;
 }
 
+- (void) _prepareForPrinting
+{
+    _initialized = YES;
+    
+    //TODO: derive the default page size from OSX's default printer settings instead.
+    _defaultPageSize = NSMakeSize(8.27, 11.69); //A4 in inches
+    
+    //Dots per inch
+    _dpi = NSMakeSize(600, 600);
+    
+    [self resetHard];
+}
+
 - (void) resetHard
 {
     _hasReadData = NO;
@@ -453,28 +665,119 @@ enum {
 
 - (void) reset
 {
-    //IMPLEMENT ME
+    _expectingESCCommand = NO;
+    _expectingFSCommand = NO;
+    [self _endESCPCommand];
+    
+    _typeFace = BXEmulatedPrinterTypefaceDefault;
+    _color = BXEmulatedPrinterColorBlack;
+    _headPosition = NSZeroPoint;
+    _horizontalMotionIndex = HMI_UNDEFINED;
+    
+    _pageSize = _defaultPageSize;
+    _topMargin = 0.0;
+    _leftMargin = 0.0;
+    _rightMargin = _defaultPageSize.width;
+    _bottomMargin = _defaultPageSize.height;
+    
+    _lineSpacing = BXEmulatedPrinterLineSpacingDefault;
+    _letterSpacing = 0.0;
+    _charactersPerInch = BXEmulatedPrinterCPIDefault;
+    
+    _activeCharTable = BXEmulatedPrinterCharTable1;
+    _charTables[BXEmulatedPrinterCharTable0] = 0;
+    _charTables[BXEmulatedPrinterCharTable1] = 437;
+    _charTables[BXEmulatedPrinterCharTable2] = 437;
+    _charTables[BXEmulatedPrinterCharTable3] = 437;
+    
+    _bold = NO;
+    _italic = NO;
+    _doubleStrike = NO;
+    
+    _superscript = NO;
+    _subscript = NO;
+    
+    _doubleWidth = NO;
+    _doubleWidthForLine = NO;
+    _doubleHeight = NO;
+    _proportional = NO;
+    _condensed = NO;
+    
+    _underlined = NO;
+    _linethroughed = NO;
+    _overscored = NO;
+    _lineStyle = BXEmulatedPrinterLineStyleNone;
+    
+    _densityK = 0;
+    _densityL = 1;
+    _densityY = 2;
+    _densityZ = 3;
+    
+    _printUpperControlCodes = NO;
+    _numDataBytesToIgnore = 0;
+    _numDataBytesToPrint = 0;
+    
+    _unitSize = UNIT_SIZE_UNDEFINED;
+    
+    _multipointEnabled = NO;
+    _multipointFontSize = 0.0;
+    _multipointCharactersPerInch = 0.0;
+    
+    _msbMode = BXEmulatedPrinterMSBDefault;
+
+    //Apply default tab layout: one every 8 characters
+    NSUInteger i;
+    for (i=0; i<32; i++)
+        _horizontalTabPositions[i] = i * 8 * (1 / _charactersPerInch);
+    _numHorizontalTabs = 32;
+    _numVerticalTabs = VERTICAL_TABS_UNDEFINED;
+    
+    [self _updateTextAttributes];
+    [self _startNewPageSavingPrevious: NO resetHead: NO];
 }
 
 - (void) formFeed
 {
-    //IMPLEMENT ME
+    //TODO: toggle saving of page based on whether anything has been drawn into the page yet
+    [self _startNewPageSavingPrevious: YES resetHead: YES];
+    [self finishPrintSession];
 }
 
-- (void) _prepareForPrinting
+- (void) _startNewLine
 {
-    _initialized = YES;
-    //IMPLEMENT ME
+    _headPosition.x = _leftMargin;
+    _headPosition.y += _lineSpacing;
+    
+    if (_headPosition.y > _bottomMargin)
+        [self _startNewPageSavingPrevious: YES resetHead: NO];
 }
 
 - (void) _startNewPageSavingPrevious: (BOOL)savePrevious resetHead: (BOOL)resetHead
 {
-    //IMPLEMENT ME
+    if (savePrevious)
+        [self.completedPages addObject: self.currentPage];
+    
+    _headPosition.y = _topMargin;
+    if (resetHead)
+        _headPosition.x = _leftMargin;
+    
+    NSSize canvasSize = NSMakeSize(_pageSize.width * _dpi.width,
+                                   _pageSize.height * _dpi.height);
+    self.currentPage = [[[NSImage alloc] initWithSize: canvasSize] autorelease];
+    [self.currentPage setFlipped: YES];
+    
+    //Fill the page with white to start with
+    [self.currentPage lockFocus];
+        [[NSColor whiteColor] set];
+        NSRectFill(NSMakeRect(0, 0, canvasSize.width, canvasSize.height));
+    [self.currentPage unlockFocus];
 }
 
-- (void) _prepareForBitmapWithDensity:(NSUInteger)density columns:(NSUInteger)numColumns
+- (void) finishPrintSession
 {
     //IMPLEMENT ME
+    //This is where we'd do the actual printing.
+    [self.completedPages removeAllObjects];
 }
 
 - (void) handleDataByte: (uint8_t)byte
@@ -501,7 +804,7 @@ enum {
         case BXEmulatedPrinterMSB1:
             byte |= 0x80;
             break;
-        case BXEmulatedPrinterMSBStandard:
+        case BXEmulatedPrinterMSBDefault:
             break;
     }
     
@@ -513,11 +816,144 @@ enum {
     }
     else
     {
-        //Try to handle the byte as a control character.
+        //Check if we should handle the byte as a control character.
         if ([self _handleControlCharacter: byte]) return;
     }
     
+    //If we get this far, we should treat the byte as a regular character
+    //and print it with the current text settings.
+    [self _printCharacter: byte];
+}
+
+- (void) _prepareForBitmapWithDensity: (NSUInteger)density
+                              columns: (NSUInteger)numColumns
+{
     //IMPLEMENT ME
+}
+
+- (void) _printCharacter: (uint8_t)character
+{
+    //I have no idea, this was just in the original implementation with no explanation given.
+    if (character == 0x01)
+        character = 0x20;
+    
+    //Locate the unicode character to print
+    unichar codepoint = _charMap[character];
+    
+    NSString *stringToPrint = [NSString stringWithCharacters: &codepoint length: 1];
+    NSSize stringSize = [stringToPrint sizeWithAttributes: self.textAttributes];
+    
+    NSPoint headPosInPoints = NSMakePoint(_headPosition.x * _dpi.width,
+                                          _headPosition.y * _dpi.height);
+    
+    [self.currentPage lockFocus];
+        [stringToPrint drawAtPoint: headPosInPoints
+                    withAttributes: self.textAttributes];
+    [self.currentPage unlockFocus];
+    
+    //Advance the head past the string
+    CGFloat advance = 0;
+    if (self.proportional)
+    {
+        advance = stringSize.width;
+    }
+    else if (_horizontalMotionIndex == HMI_UNDEFINED)
+    {
+        advance = 1 / _effectiveCharactersPerInch;
+    }
+    else
+    {
+        advance = _horizontalMotionIndex;
+    }
+    
+    advance += self.letterSpacing;
+    _headPosition.x += advance;
+    
+    //Wrap the line if the next character would go over the right margin.
+    //This may also trigger a new page.
+	if((_headPosition.x + advance) > _rightMargin)
+    {
+        [self _startNewLine];
+	}
+    
+    /*
+    // Find the glyph for the char to render
+	FT_UInt index = FT_Get_Char_Index(curFont, curMap[ch]);
+	
+	// Load the glyph
+	FT_Load_Glyph(curFont, index, FT_LOAD_DEFAULT);
+    
+	// Render a high-quality bitmap
+	FT_Render_Glyph(curFont->glyph, FT_RENDER_MODE_NORMAL);
+    
+	Bit16u penX = PIXX + curFont->glyph->bitmap_left;
+	Bit16u penY = PIXY - curFont->glyph->bitmap_top + curFont->size->metrics.ascender/64;
+    
+	if (style & STYLE_SUBSCRIPT) penY += curFont->glyph->bitmap.rows / 2;
+    
+	// Copy bitmap into page
+	SDL_LockSurface(page);
+    
+	blitGlyph(curFont->glyph->bitmap, penX, penY, false);
+	blitGlyph(curFont->glyph->bitmap, penX+1, penY, true);
+    
+	// Doublestrike => Print the glyph a second time one pixel below
+	if (style & STYLE_DOUBLESTRIKE) {
+		blitGlyph(curFont->glyph->bitmap, penX, penY+1, true);
+		blitGlyph(curFont->glyph->bitmap, penX+1, penY+1, true);
+	}
+    
+	// Bold => Print the glyph a second time one pixel to the right
+	// or be a bit more bold...
+	if (style & STYLE_BOLD) {
+		blitGlyph(curFont->glyph->bitmap, penX+1, penY, true);
+		blitGlyph(curFont->glyph->bitmap, penX+2, penY, true);
+		blitGlyph(curFont->glyph->bitmap, penX+3, penY, true);
+	}
+	SDL_UnlockSurface(page);
+    
+	// For line printing
+	Bit16u lineStart = PIXX;
+    
+	// advance the cursor to the right
+	Real64 x_advance;
+	if (style &	STYLE_PROP)
+		x_advance = (Real64)((Real64)(curFont->glyph->advance.x)/(Real64)(dpi*64));
+	else {
+		if (hmi < 0) x_advance = 1/(Real64)actcpi;
+		else x_advance = hmi;
+	}
+	x_advance += extraIntraSpace;
+     curX += x_advance;
+     */
+    
+	// Draw lines if desired
+    /*
+	if ((score != SCORE_NONE) && (style &
+                                  (STYLE_UNDERLINE|STYLE_STRIKETHROUGH|STYLE_OVERSCORE)))
+	{
+		// Find out where to put the line
+		Bit16u lineY = PIXY;
+		double height = (curFont->size->metrics.height>>6); // TODO height is fixed point madness...
+        
+		if (style & STYLE_UNDERLINE) lineY = PIXY + (Bit16u)(height*0.9);
+		else if (style & STYLE_STRIKETHROUGH) lineY = PIXY + (Bit16u)(height*0.45);
+		else if (style & STYLE_OVERSCORE)
+			lineY = PIXY - (((score == SCORE_DOUBLE)||(score == SCORE_DOUBLEBROKEN))?5:0);
+        
+		drawLine(lineStart, PIXX, lineY, score==SCORE_SINGLEBROKEN || score==SCORE_DOUBLEBROKEN);
+        
+		// draw second line if needed
+		if ((score == SCORE_DOUBLE)||(score == SCORE_DOUBLEBROKEN))
+			drawLine(lineStart, PIXX, lineY + 5, score==SCORE_SINGLEBROKEN || score==SCORE_DOUBLEBROKEN);
+	}
+	// If the next character would go beyond the right margin, line-wrap.
+	if((curX + x_advance) > rightMargin) {
+		curX = leftMargin;
+		curY += lineSpacing;
+		if (curY > bottomMargin) newPage(true,false);
+	}
+     */
 }
 
 - (BOOL) _handleControlCharacter: (uint8_t)byte
@@ -710,7 +1146,7 @@ enum {
         
 		switch (param)
 		{
-            case 'B': // Bar code setup and print (ESC (B)
+            //case 'B': // Bar code setup and print (ESC (B)
             case '^': // Print data as characters (ESC (^)
                 _numParamsExpected = 2;
                 break;
@@ -855,14 +1291,14 @@ enum {
                 self.underlined = NO;
             }
             
-            _horizontalMotionIndex = -1;
+            _horizontalMotionIndex = HMI_UNDEFINED;
             _multipointEnabled = NO;
             [self _updateTextAttributes];
         }
             break;
             
         case '#': // Cancel MSB control (ESC #)
-            _msbMode = BXEmulatedPrinterMSBStandard;
+            _msbMode = BXEmulatedPrinterMSBDefault;
             break;
             
         case '$': // Set absolute horizontal print position (ESC $)
@@ -871,7 +1307,7 @@ enum {
             uint16_t position = WIDEPARAM(params, 0);
             
             double effectiveUnitSize = _unitSize;
-            if (effectiveUnitSize < 0)
+            if (effectiveUnitSize == UNIT_SIZE_UNDEFINED)
                 effectiveUnitSize = 60.0;
             
             CGFloat newX = _leftMargin + (position / effectiveUnitSize);
@@ -961,16 +1397,16 @@ enum {
             
         case '?': // Reassign bit-image mode (ESC ?)
             switch(params[0])
-        {
-            case 'K':
-                _densityK = params[1]; break;
-            case 'L':
-                _densityL = params[1]; break;
-            case 'Y':
-                _densityY = params[1]; break;
-            case 'Z':
-                _densityZ = params[1]; break;
-        }
+            {
+                case 'K':
+                    _densityK = params[1]; break;
+                case 'L':
+                    _densityL = params[1]; break;
+                case 'Y':
+                    _densityY = params[1]; break;
+                case 'Z':
+                    _densityZ = params[1]; break;
+            }
             break;
             
         case '@': // Initialize printer (ESC @)
@@ -1046,7 +1482,7 @@ enum {
             
         case 'M': // Select 10.5-point, 12-cpi (ESC M)
             _charactersPerInch = 12;
-            _horizontalMotionIndex = -1;
+            _horizontalMotionIndex = HMI_UNDEFINED;
             _multipointEnabled = NO;
             [self _updateTextAttributes];
             break;
@@ -1063,7 +1499,7 @@ enum {
             
         case 'P': // Select 10.5-point, 10-cpi (ESC P)
             _charactersPerInch = 10;
-            _horizontalMotionIndex = -1;
+            _horizontalMotionIndex = HMI_UNDEFINED;
             _multipointEnabled = NO;
             [self _updateTextAttributes];
             break;
@@ -1102,6 +1538,7 @@ enum {
             if (!_multipointEnabled)
             {
                 self.doubleWidth = (params[0] == '1' || params[0] == 1);
+                self.doubleWidthForLine = NO;
             }
             break;
         case 'X': // Select font by pitch and point (ESC X)
@@ -1155,7 +1592,7 @@ enum {
             int16_t offset = WIDEPARAM(params, 0);
             
             double effectiveUnitSize = _unitSize;
-            if (effectiveUnitSize < 0)
+            if (effectiveUnitSize == UNIT_SIZE_UNDEFINED)
                 effectiveUnitSize = (self.quality == BXEmulatedPrinterQualityDraft) ? 120.0 : 180.0;
             
             _headPosition.x += offset / effectiveUnitSize;
@@ -1174,7 +1611,7 @@ enum {
             
         case 'g': // Select 10.5-point, 15-cpi (ESC g)
             _charactersPerInch = 15;
-            _horizontalMotionIndex = -1;
+            _horizontalMotionIndex = HMI_UNDEFINED;
             _multipointEnabled = NO;
             [self _updateTextAttributes];
             break;
@@ -1228,14 +1665,27 @@ enum {
             
         case 't': // Select character table (ESC t)
         case IBM_FLAG+'I': // Select character table (FS I)
-        {
-            if (params[0] < 4)
-                self.activeCharTable = (BXEmulatedPrinterCharTable)params[0];
-            else if (params[0] >= 48 && params[0] <= 51)
-                self.activeCharTable = (BXEmulatedPrinterCharTable)(params[0] - 48);
-            
+            switch (params[0])
+            {
+                case 0:
+                case '0':
+                    self.activeCharTable = BXEmulatedPrinterCharTable0;
+                    break;
+                case 1:
+                case '1':
+                    self.activeCharTable = BXEmulatedPrinterCharTable1;
+                    break;
+                case 2:
+                case '2':
+                    self.activeCharTable = BXEmulatedPrinterCharTable2;
+                    break;
+                case 3:
+                case '3':
+                    self.activeCharTable = BXEmulatedPrinterCharTable3;
+                    break;
+            }
+            //CHECKME: is this necessary?
             [self _updateTextAttributes];
-        }
             break;
             
         case 'w': // Turn double-height printing on/off (ESC w)
@@ -1247,32 +1697,28 @@ enum {
             
         case 'x': // Select LQ or draft (ESC x)
             switch (params[0])
-        {
-            case '0':
-            case 0:
-                self.quality = BXEmulatedPrinterQualityDraft;
-                self.condensed = YES;
-                break;
-            case '1':
-            case 1:
-                self.quality = BXEmulatedPrinterQualityLQ;
-                self.condensed = NO;
-                break;
-        }
-            break;
-            
-        case UNSUPPORTED_ESC2_COMMAND: // Skip unsupported ESC ( command but eat its parameters anyway
-            _numDataBytesToIgnore = WIDEPARAM(params, 0);
+            {
+                case 0:
+                case '0':
+                    self.quality = BXEmulatedPrinterQualityDraft;
+                    self.condensed = YES;
+                    break;
+                case 1:
+                case '1':
+                    self.quality = BXEmulatedPrinterQualityLQ;
+                    self.condensed = NO;
+                    break;
+            }
             break;
             
         case ESCP2_FLAG+'t': // Assign character table (ESC (t)
         {
-            uint8_t charTable = params[2];
+            BXEmulatedPrinterCharTable charTable = (BXEmulatedPrinterCharTable)params[2];
             uint8_t codepageIndex = params[3];
             if (charTable < 4 && codepageIndex < 16)
             {
                 [self _assignCodepage: codepages[codepageIndex]
-                          toCharTable: (BXEmulatedPrinterCharTable)charTable];
+                          toCharTable: charTable];
             }
         }
             break;
@@ -1295,14 +1741,7 @@ enum {
             }
             break;
             
-        case ESCP2_FLAG+'B': // Bar code setup and print (ESC (B)
-            NSLog(@"PRINTER: Bardcode printing not supported, skipping command.");
-            // Find out how many bytes to skip
-            _numParamsExpected = WIDEPARAM(params, 0);
-            _numParamsRead = 0;
-            break;
-            
-        case ESCP2_FLAG+'C': // Set page length in defined unit (ESC (C)
+        case ESCP2_FLAG+'C': // Set page height in defined unit (ESC (C)
             if (params[0] != 0 && _unitSize > 0)
             {
                 _pageSize.height = _bottomMargin = WIDEPARAM(params, 2) * _unitSize;
@@ -1317,10 +1756,11 @@ enum {
         case ESCP2_FLAG+'V': // Set absolute vertical print position (ESC (V)
         {
             double effectiveUnitSize = _unitSize;
-            if (effectiveUnitSize < 0)
+            if (effectiveUnitSize == UNIT_SIZE_UNDEFINED)
                 effectiveUnitSize = 360.0;
             
-            CGFloat newPos = _topMargin + WIDEPARAM(params, 2) * effectiveUnitSize;
+            int16_t offset = WIDEPARAM(params, 2);
+            CGFloat newPos = _topMargin + (offset * effectiveUnitSize);
             
             if (newPos > _bottomMargin)
                 [self _startNewPageSavingPrevious: YES resetHead: NO];
@@ -1338,33 +1778,39 @@ enum {
             {
                 double newTop = WIDEPARAM(params, 2) * _unitSize;
                 double newBottom = WIDEPARAM(params, 4) * _unitSize;
-                if (newTop >= newBottom) break;
-                
-                if (newTop < _pageSize.height) _topMargin = newTop;
-                if (newBottom < _pageSize.height) _bottomMargin = newBottom;
-                if (_headPosition.x < _topMargin) _headPosition.x = _topMargin;
-                //LOG_MSG("du %d, p1 %d, p2 %d, newtop %f, newbott %f, nt %f, nb %f, ph %f",
-                //	(Bitu)definedUnit,PARAM16(2),PARAM16(4),topMargin,bottomMargin,
-                //	newTop,newBottom,pageHeight);
+                if (newTop < newBottom)
+                {
+                    if (newTop < _pageSize.height)
+                        _topMargin = newTop;
+                    
+                    if (newBottom < _pageSize.height)
+                        _bottomMargin = newBottom;
+                        
+                    if (_headPosition.x < _topMargin)
+                        _headPosition.x = _topMargin;
+                }
             }
             break;
             
         case ESCP2_FLAG + 'v': // Set relative vertical print position (ESC (v)
         {
             Real64 effectiveUnitSize = _unitSize;
-            if (effectiveUnitSize < 0)
+            if (effectiveUnitSize == UNIT_SIZE_UNDEFINED)
                 effectiveUnitSize = 360.0;
             
             int16_t offset = WIDEPARAM(params, 2);
             Real64 newPos = _headPosition.y + (offset * effectiveUnitSize);
             if (newPos > _topMargin)
             {
-                if (newPos > _bottomMargin)
+                _headPosition.y = newPos;
+                if (_headPosition.y > _bottomMargin)
                     [self _startNewPageSavingPrevious: YES resetHead: NO];
-                else
-                    _headPosition.y = newPos;
             }
         }
+            break;
+
+        case UNSUPPORTED_ESC2_COMMAND: // Skip unsupported ESC ( command but eat its parameters anyway
+            _numDataBytesToIgnore = WIDEPARAM(params, 0);
             break;
             
         default:
@@ -1393,24 +1839,24 @@ enum {
         case 0x00:  // NUL is ignored by the printer
             return YES;
             
-        case 0x07:  // Beeper (BEL)
+        case '\a':  // Beeper (BEL)
             // BEEEP!
             return YES;
             
-        case 0x08:	// Backspace (BS)
+        case '\b':	// Backspace (BS)
 		{
 			double newX;
 			if (_horizontalMotionIndex > 0)
 				newX = _headPosition.x - _horizontalMotionIndex;
             else
-                newX = _headPosition.x - (1 / _actualCharactersPerInch);
+                newX = _headPosition.x - (1 / _effectiveCharactersPerInch);
             
 			if (newX >= _leftMargin)
 				_headPosition.x = newX;
 		}
             return YES;
             
-        case 0x09:	// Tab horizontally (HT)
+        case '\t':	// Tab horizontally (HT)
 		{
 			// Find tab right to current pos
 			double chosenTabPos = -1;
@@ -1427,23 +1873,19 @@ enum {
                 }
             }
             
-			if (chosenTabPos > 0 && chosenTabPos < _rightMargin)
+			if (chosenTabPos >= 0 && chosenTabPos < _rightMargin)
 				_headPosition.x = chosenTabPos;
 		}
             return YES;
             
-        case 0x0b:	// Tab vertically (VT)
+        case '\v':	// Tab vertically (VT)
             if (_numVerticalTabs == 0) // All tabs cancelled => Act like CR
             {
                 _headPosition.x = _leftMargin;
             }
-            else if (_numVerticalTabs == 255) // No tabs set since reset => Act like LF
+            else if (_numVerticalTabs == VERTICAL_TABS_UNDEFINED) // No tabs set since reset => Act like LF
             {
-                _headPosition.x = _leftMargin;
-                _headPosition.y += _lineSpacing;
-                
-                if (_headPosition.y > _bottomMargin)
-                    [self _startNewPageSavingPrevious: YES resetHead: NO];
+                [self _startNewLine];
             }
             else
             {
@@ -1463,7 +1905,7 @@ enum {
                 }
                 
                 // Nothing found => Act like FF
-                if (chosenTabPos > _bottomMargin || chosenTabPos < 0)
+                if (chosenTabPos > _bottomMargin || chosenTabPos == -1)
                     [self _startNewPageSavingPrevious: YES resetHead: NO];
                 else
                     _headPosition.y = chosenTabPos;
@@ -1473,24 +1915,21 @@ enum {
             self.doubleWidthForLine = NO;
             return YES;
             
-        case 0x0c:		// Form feed (FF)
+        case '\f':		// Form feed (FF)
             self.doubleWidthForLine = NO;
             [self _startNewPageSavingPrevious: YES resetHead: NO];
             return YES;
             
-        case 0x0d:		// Carriage Return (CR)
+        case '\r':		// Carriage Return (CR)
             _headPosition.x = _leftMargin;
             if (!self.autoFeed)
                 return YES;
             //If autoFeed is enabled, we drop down into the next case to automatically add a line feed
             
-        case 0x0a:		// Line feed
+        case '\n':		// Line feed
             self.doubleWidthForLine = NO;
             
-            _headPosition.x = _leftMargin;
-            _headPosition.y += _lineSpacing;
-            if (_headPosition.y > _bottomMargin)
-                [self _startNewPageSavingPrevious: YES resetHead: NO];
+            [self _startNewLine];
             return YES;
             
         case 0x0e:		//Select double-width printing (one line) (SO)

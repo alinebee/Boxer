@@ -31,9 +31,9 @@ typedef enum {
 } BXEmulatedPrinterQuality;
 
 typedef enum {
-    BXEmulatedPrinterMSBStandard,
-    BXEmulatedPrinterMSB0,
-    BXEmulatedPrinterMSB1,
+    BXEmulatedPrinterMSBDefault = -1,
+    BXEmulatedPrinterMSB0 = 0,
+    BXEmulatedPrinterMSB1 = 1,
 } BXEmulatedPrinterMSBMode;
 
 typedef enum {
@@ -51,6 +51,8 @@ typedef enum {
     BXEmulatedPrinterTypefaceSansSerifH,
     BXEmulatedPrinterTypefaceSVBusaba = 30,
     BXEmulatedPrinterTypefaceSVJittra = 31,
+    
+    BXEmulatedPrinterTypefaceDefault = BXEmulatedPrinterTypefaceRoman,
 } BXEmulatedPrinterTypeface;
 
 typedef enum {
@@ -94,6 +96,8 @@ typedef enum {
 #define BXEmulatedPrinterMaxHorizontalTabs 32
 
 #define BXEmulatedPrinterUnitSizeDefault 60
+#define BXEmulatedPrinterLineSpacingDefault 1 / 6.0
+#define BXEmulatedPrinterCPIDefault 10
 
 
 @protocol BXEmulatedPrinterDelegate;
@@ -158,7 +162,7 @@ typedef enum {
     
     double _topMargin, _bottomMargin, _rightMargin, _leftMargin;	// Margins of the page (in inch)
 	double _lineSpacing;											// Size of one line (in inch)
-    double _charactersPerInch, _actualCharactersPerInch;
+    double _charactersPerInch, _effectiveCharactersPerInch;
     double _letterSpacing;  //Extra space between each printed character
     
     BOOL _multipointEnabled;
@@ -173,8 +177,12 @@ typedef enum {
     uint16_t _charTables[4];
     BXEmulatedPrinterCharTable _activeCharTable;
     
-    
     NSUInteger _densityK, _densityL, _densityY, _densityZ;
+    
+    NSSize _dpi;
+    NSImage *_currentPage;
+    NSMutableArray *_completedPages;
+    NSMutableDictionary *_textAttributes;
 }
 
 @property (readonly, nonatomic, getter=isBusy) BOOL busy;
@@ -185,7 +193,10 @@ typedef enum {
 - (void) reset;
 - (void) resetHard;
 
+//Called to eject the current page from the printer.
 - (void) formFeed;
+//Called to mark the end of a multiple-page print session and actually print the damn thing.
+- (void) finishPrintSession;
 
 - (void) handleDataByte: (uint8_t)byte;
 

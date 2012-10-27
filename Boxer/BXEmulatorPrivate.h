@@ -20,6 +20,7 @@
 #import "BXVideoHandler.h"
 #import "BXEmulatedKeyboard.h"
 #import "BXEmulatedJoystick.h"
+#import "BXEmulatedPrinter.h"
 #import "BXEmulatedMouse.h"
 #import "BXKeyBuffer.h"
 #import "BXAudioSource.h"

@@ -209,6 +209,8 @@ This means that this file has had too many modifications to be safely replaceabl
 /* Compile with PhysicalFS support */
 #define C_HAVE_PHYSFS 0
 
+#define C_PRINTER 1
+
 //--Note 2009-02-26 by Alun Bestor: I'm assuming (hoping) these lines are unused by everything except make install
 
 /* Name of package */

@@ -786,6 +786,20 @@
 		9FD54A5B14DE96B800FE350F /* NumpadActiveTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD54A5914DE96B800FE350F /* NumpadActiveTemplate.pdf */; };
 		9FD54A5D14DE979B00FE350F /* NumpadInactiveTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD54A5C14DE979B00FE350F /* NumpadInactiveTemplate.pdf */; };
 		9FD668F11215CDD6009E0118 /* BXBottomBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD668F01215CDD6009E0118 /* BXBottomBar.m */; };
+		9FD6AA0E16314A5B002B774E /* directlpt_linux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA0016314A5B002B774E /* directlpt_linux.cpp */; };
+		9FD6AA0F16314A5B002B774E /* directlpt_linux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA0016314A5B002B774E /* directlpt_linux.cpp */; };
+		9FD6AA1016314A5B002B774E /* directlpt_win32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA0216314A5B002B774E /* directlpt_win32.cpp */; };
+		9FD6AA1116314A5B002B774E /* directlpt_win32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA0216314A5B002B774E /* directlpt_win32.cpp */; };
+		9FD6AA1216314A5B002B774E /* filelpt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA0416314A5B002B774E /* filelpt.cpp */; };
+		9FD6AA1316314A5B002B774E /* filelpt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA0416314A5B002B774E /* filelpt.cpp */; };
+		9FD6AA1416314A5B002B774E /* parport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA0616314A5B002B774E /* parport.cpp */; };
+		9FD6AA1516314A5B002B774E /* parport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA0616314A5B002B774E /* parport.cpp */; };
+		9FD6AA1816314A5B002B774E /* printer_charmaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA0916314A5B002B774E /* printer_charmaps.cpp */; };
+		9FD6AA1916314A5B002B774E /* printer_charmaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA0916314A5B002B774E /* printer_charmaps.cpp */; };
+		9FD6AA1A16314A5B002B774E /* printer_redir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA0C16314A5B002B774E /* printer_redir.cpp */; };
+		9FD6AA1B16314A5B002B774E /* printer_redir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA0C16314A5B002B774E /* printer_redir.cpp */; };
+		9FD6AA2016315278002B774E /* BXEmulatedPrinter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA1F16315278002B774E /* BXEmulatedPrinter.mm */; };
+		9FD6AA2116315278002B774E /* BXEmulatedPrinter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FD6AA1F16315278002B774E /* BXEmulatedPrinter.mm */; };
 		9FD7B6B0145745D800565CEB /* BXThemedPopUpButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD7B6AF145745D800565CEB /* BXThemedPopUpButtonCell.m */; };
 		9FD7B6B3145746CC00565CEB /* BXThemedButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD7B6B2145746CC00565CEB /* BXThemedButtonCell.m */; };
 		9FD8BEE414FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD8BEE314FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m */; };
@@ -1648,6 +1662,23 @@
 		9FD54A5C14DE979B00FE350F /* NumpadInactiveTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = NumpadInactiveTemplate.pdf; sourceTree = "<group>"; };
 		9FD668EF1215CDD6009E0118 /* BXBottomBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBottomBar.h; sourceTree = "<group>"; };
 		9FD668F01215CDD6009E0118 /* BXBottomBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBottomBar.m; sourceTree = "<group>"; };
+		9FD6AA0016314A5B002B774E /* directlpt_linux.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = directlpt_linux.cpp; sourceTree = "<group>"; };
+		9FD6AA0116314A5B002B774E /* directlpt_linux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = directlpt_linux.h; sourceTree = "<group>"; };
+		9FD6AA0216314A5B002B774E /* directlpt_win32.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = directlpt_win32.cpp; sourceTree = "<group>"; };
+		9FD6AA0316314A5B002B774E /* directlpt_win32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = directlpt_win32.h; sourceTree = "<group>"; };
+		9FD6AA0416314A5B002B774E /* filelpt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = filelpt.cpp; sourceTree = "<group>"; };
+		9FD6AA0516314A5B002B774E /* filelpt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filelpt.h; sourceTree = "<group>"; };
+		9FD6AA0616314A5B002B774E /* parport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parport.cpp; sourceTree = "<group>"; };
+		9FD6AA0716314A5B002B774E /* printer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = printer.cpp; sourceTree = "<group>"; };
+		9FD6AA0816314A5B002B774E /* printer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = printer.h; sourceTree = "<group>"; };
+		9FD6AA0916314A5B002B774E /* printer_charmaps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = printer_charmaps.cpp; sourceTree = "<group>"; };
+		9FD6AA0A16314A5B002B774E /* printer_charmaps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = printer_charmaps.h; sourceTree = "<group>"; };
+		9FD6AA0B16314A5B002B774E /* printer_if.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = printer_if.h; sourceTree = "<group>"; };
+		9FD6AA0C16314A5B002B774E /* printer_redir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = printer_redir.cpp; sourceTree = "<group>"; };
+		9FD6AA0D16314A5B002B774E /* printer_redir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = printer_redir.h; sourceTree = "<group>"; };
+		9FD6AA1D16314AC6002B774E /* parport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parport.h; sourceTree = "<group>"; };
+		9FD6AA1E16315278002B774E /* BXEmulatedPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXEmulatedPrinter.h; path = Emulator/BXEmulatedPrinter.h; sourceTree = "<group>"; };
+		9FD6AA1F16315278002B774E /* BXEmulatedPrinter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BXEmulatedPrinter.mm; path = Emulator/BXEmulatedPrinter.mm; sourceTree = "<group>"; };
 		9FD7B6AE145745D800565CEB /* BXThemedPopUpButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedPopUpButtonCell.h; sourceTree = "<group>"; };
 		9FD7B6AF145745D800565CEB /* BXThemedPopUpButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedPopUpButtonCell.m; sourceTree = "<group>"; };
 		9FD7B6B1145746CC00565CEB /* BXThemedButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedButtonCell.h; sourceTree = "<group>"; };
@@ -2076,6 +2107,8 @@
 				9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */,
 				9F9DF413153B058200233968 /* BXKeyBuffer.h */,
 				9F9DF414153B058200233968 /* BXKeyBuffer.mm */,
+				9FD6AA1E16315278002B774E /* BXEmulatedPrinter.h */,
+				9FD6AA1F16315278002B774E /* BXEmulatedPrinter.mm */,
 			);
 			comments = "The sourcefiles in this group interface directly with DOSBox's internals. For this reason, they need to be compiled as Objective C++ rather than Objective C.";
 			name = Emulator;
@@ -2392,6 +2425,7 @@
 		9F77207312B38C4400072AE8 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				9FD6AA1D16314AC6002B774E /* parport.h */,
 				9F77207412B38C4400072AE8 /* bios.h */,
 				9F77207512B38C4400072AE8 /* bios_disk.h */,
 				9F77207612B38C4400072AE8 /* callback.h */,
@@ -2640,6 +2674,7 @@
 		9F77211B12B38C4400072AE8 /* hardware */ = {
 			isa = PBXGroup;
 			children = (
+				9FD6A9FF16314A5B002B774E /* parport */,
 				9F77211C12B38C4400072AE8 /* adlib.cpp */,
 				9F77211D12B38C4400072AE8 /* adlib.h */,
 				9F77211E12B38C4400072AE8 /* cmos.cpp */,
@@ -3257,6 +3292,27 @@
 				9FA0C9E213D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m */,
 			);
 			name = HID;
+			sourceTree = "<group>";
+		};
+		9FD6A9FF16314A5B002B774E /* parport */ = {
+			isa = PBXGroup;
+			children = (
+				9FD6AA0016314A5B002B774E /* directlpt_linux.cpp */,
+				9FD6AA0116314A5B002B774E /* directlpt_linux.h */,
+				9FD6AA0216314A5B002B774E /* directlpt_win32.cpp */,
+				9FD6AA0316314A5B002B774E /* directlpt_win32.h */,
+				9FD6AA0416314A5B002B774E /* filelpt.cpp */,
+				9FD6AA0516314A5B002B774E /* filelpt.h */,
+				9FD6AA0616314A5B002B774E /* parport.cpp */,
+				9FD6AA0716314A5B002B774E /* printer.cpp */,
+				9FD6AA0816314A5B002B774E /* printer.h */,
+				9FD6AA0916314A5B002B774E /* printer_charmaps.cpp */,
+				9FD6AA0A16314A5B002B774E /* printer_charmaps.h */,
+				9FD6AA0B16314A5B002B774E /* printer_if.h */,
+				9FD6AA0C16314A5B002B774E /* printer_redir.cpp */,
+				9FD6AA0D16314A5B002B774E /* printer_redir.h */,
+			);
+			path = parport;
 			sourceTree = "<group>";
 		};
 		9FD7B6AC1457459D00565CEB /* Themes */ = {
@@ -3965,6 +4021,13 @@
 				9F872481160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */,
 				9F872486160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */,
 				501F283B161303DA00B1ED53 /* BXBuiltinShaderRenderers.m in Sources */,
+				9FD6AA0E16314A5B002B774E /* directlpt_linux.cpp in Sources */,
+				9FD6AA1016314A5B002B774E /* directlpt_win32.cpp in Sources */,
+				9FD6AA1216314A5B002B774E /* filelpt.cpp in Sources */,
+				9FD6AA1416314A5B002B774E /* parport.cpp in Sources */,
+				9FD6AA1816314A5B002B774E /* printer_charmaps.cpp in Sources */,
+				9FD6AA1A16314A5B002B774E /* printer_redir.cpp in Sources */,
+				9FD6AA2016315278002B774E /* BXEmulatedPrinter.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4263,6 +4326,13 @@
 				9F872482160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */,
 				9F872487160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */,
 				501F283C161303DA00B1ED53 /* BXBuiltinShaderRenderers.m in Sources */,
+				9FD6AA0F16314A5B002B774E /* directlpt_linux.cpp in Sources */,
+				9FD6AA1116314A5B002B774E /* directlpt_win32.cpp in Sources */,
+				9FD6AA1316314A5B002B774E /* filelpt.cpp in Sources */,
+				9FD6AA1516314A5B002B774E /* parport.cpp in Sources */,
+				9FD6AA1916314A5B002B774E /* printer_charmaps.cpp in Sources */,
+				9FD6AA1B16314A5B002B774E /* printer_redir.cpp in Sources */,
+				9FD6AA2116315278002B774E /* BXEmulatedPrinter.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

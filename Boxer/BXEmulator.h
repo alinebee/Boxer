@@ -63,6 +63,7 @@ extern NSString * const shellProcessPath;
 @class BXVideoHandler;
 @class BXEmulatedKeyboard;
 @class BXEmulatedMouse;
+@class BXEmulatedPrinter;
 @class BXKeyBuffer;
 @class BXDrive;
 
@@ -79,6 +80,7 @@ extern NSString * const shellProcessPath;
 	BXVideoHandler *_videoHandler;
 	BXEmulatedKeyboard *_keyboard;
 	BXEmulatedMouse *_mouse;
+    BXEmulatedPrinter *_printer;
 	id <BXEmulatedJoystick> _joystick;
     
     BOOL _joystickActive;
@@ -134,6 +136,7 @@ extern NSString * const shellProcessPath;
 @property (readonly, retain) BXEmulatedKeyboard *keyboard;       //Our emulated keyboard.
 @property (readonly, retain) BXEmulatedMouse *mouse;             //Our emulated mouse.
 @property (retain) id <BXEmulatedJoystick> joystick;             //Our emulated joystick. Initially empty.
+@property (retain) BXEmulatedPrinter *printer;                   //Our emulated printer.
 
 //The keybuffer we use for pasting text into DOS.
 @property (readonly, retain) BXKeyBuffer *keyBuffer;

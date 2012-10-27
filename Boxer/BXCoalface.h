@@ -152,6 +152,14 @@ extern "C" {
     //If consumeKey is true, the key will be removed from the buffer as it is read.
     bool boxer_getNextKeyCodeInPasteBuffer(Bit16u *outKeyCode, bool consumeKey);
     
+    //Called from printer_redir.cpp to pass printer instructions to Boxer's virtual printer.
+    Bitu boxer_PRINTER_readdata(Bitu port,Bitu iolen);
+    void boxer_PRINTER_writedata(Bitu port,Bitu val,Bitu iolen);
+    Bitu boxer_PRINTER_readstatus(Bitu port,Bitu iolen);
+    void boxer_PRINTER_writecontrol(Bitu port,Bitu val, Bitu iolen);
+    Bitu boxer_PRINTER_readcontrol(Bitu port,Bitu iolen);
+    
+    bool boxer_PRINTER_isInited();
     
     void boxer_log(char const* format,...);
     void boxer_die(char const *functionName, char const *fileName, int lineNumber, char const* format,...);

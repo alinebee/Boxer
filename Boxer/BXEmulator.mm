@@ -97,6 +97,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @synthesize videoHandler = _videoHandler;
 @synthesize mouse = _mouse;
 @synthesize keyboard = _keyboard;
+@synthesize printer = _printer;
 @synthesize cancelled = _cancelled;
 @synthesize executing = _executing;
 @synthesize initialized = _initialized;
@@ -214,6 +215,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     self.keyboard = nil;
     self.mouse = nil;
     self.joystick = nil;
+    self.printer = nil;
     self.videoHandler = nil;
     self.keyBuffer = nil;
     

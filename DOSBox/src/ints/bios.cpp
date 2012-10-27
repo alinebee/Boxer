@@ -31,6 +31,9 @@
 #include "mouse.h"
 #include "setup.h"
 #include "serialport.h"
+//--Added 2012-10-19 by Alun Bestor to activate parallel port emulation
+#include "parport.h"
+//--End of modifications
 
 
 /* if mem_systems 0 then size_extended is reported as the real size else 
@@ -1128,6 +1131,35 @@ void BIOS_SetComPorts(Bit16u baseaddr[]) {
 	CMOS_SetRegister(0x14,(Bit8u)(equipmentword&0xff)); //Should be updated on changes
 }
 
+//--Added 2012-10-19 by Alun Bestor as part of parallel port emulation
+void BIOS_SetLPTPort(Bitu port, Bit16u baseaddr) {
+	switch(port) {
+        case 0:
+            mem_writew(BIOS_ADDRESS_LPT1,baseaddr);
+            mem_writeb(BIOS_LPT1_TIMEOUT, 10);
+            break;
+        case 1:
+            mem_writew(BIOS_ADDRESS_LPT2,baseaddr);
+            mem_writeb(BIOS_LPT2_TIMEOUT, 10);
+            break;
+        case 2:
+            mem_writew(BIOS_ADDRESS_LPT3,baseaddr);
+            mem_writeb(BIOS_LPT3_TIMEOUT, 10);
+            break;
+	}
+    
+	// set equipment word: count ports
+	Bit16u portcount=0;
+	if(mem_readw(BIOS_ADDRESS_LPT1) != 0) portcount++;
+	if(mem_readw(BIOS_ADDRESS_LPT2) != 0) portcount++;
+	if(mem_readw(BIOS_ADDRESS_LPT3) != 0) portcount++;
+	
+	Bit16u equipmentword = mem_readw(BIOS_CONFIGURATION);
+	equipmentword &= (~0xC000);
+	equipmentword |= (portcount << 14);
+	mem_writew(BIOS_CONFIGURATION,equipmentword);
+}
+//--End of modifications
 
 static BIOS* test;
 

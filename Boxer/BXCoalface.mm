@@ -502,6 +502,46 @@ void boxer_setScrollLockActive(bool active)
     emulator.keyboard.scrollLockEnabled = active;
 }
 
+
+#pragma mark -
+#pragma mark Printer-related functions
+
+Bitu boxer_PRINTER_readdata(Bitu port,Bitu iolen)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+    return emulator.printer.dataRegister;
+}
+
+void boxer_PRINTER_writedata(Bitu port,Bitu val,Bitu iolen)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+    emulator.printer.dataRegister = val;
+}
+
+Bitu boxer_PRINTER_readstatus(Bitu port,Bitu iolen)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+    return emulator.printer.statusRegister;
+}
+
+void boxer_PRINTER_writecontrol(Bitu port,Bitu val, Bitu iolen)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+    emulator.printer.controlRegister = val;
+}
+
+Bitu boxer_PRINTER_readcontrol(Bitu port,Bitu iolen)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+    return emulator.printer.controlRegister;
+}
+
+bool boxer_PRINTER_isInited()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+    return emulator.printer != nil;
+}
+
 #pragma mark -
 #pragma mark Helper functions
 

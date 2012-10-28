@@ -520,6 +520,13 @@ enum {
         _effectiveCharactersPerInch *= 2.0/3.0;
     }
     
+    //Multiply out the font size to account for our current DPI settings,
+    //Since appkit's drawing points are predicated on a 72dpi display.
+    fontSize.width *= (_dpi.width / 72);
+    fontSize.height *= (_dpi.height / 72);
+    
+    fontDescriptor = [fontDescriptor fontDescriptorWithSize: fontSize.height];
+    
     //If the text needs to be scaled in one direction or another,
     //apply a transform to do this.
     CGFloat aspectRatio = (fontSize.width / fontSize.height);
@@ -601,33 +608,36 @@ enum {
     
     //Use an actual font family name (e.g. "Courier") where there's a direct equivalent for the emulated face;
     //Otherwise, use a font family class (e.g. NSFontSansSerifClass) to ask for a suitable font for that style.
-    NSString *fontName = nil;
+    NSString *familyName = nil;
     switch (typeface)
     {
         case BXESCPTypefaceOCRA:
         case BXESCPTypefaceOCRB:
-            fontName = @"OCR A Std";
+            familyName = @"OCR A Std";
+            traits |= NSFontMonoSpaceTrait;
             break;
             
         case BXESCPTypefaceCourier:
-            fontName = @"Courier";
+            familyName = @"Courier";
+            traits |= NSFontSlabSerifsClass | NSFontMonoSpaceTrait;
             break;
             
         case BXESCPTypefaceScript:
         case BXESCPTypefaceScriptC:
+            familyName = @"Brush Script MT";
             traits |= NSFontScriptsClass;
             break;
             
         case BXESCPTypefaceSansSerif:
         case BXESCPTypefaceSansSerifH:
-            fontName = @"Helvetica";
+            familyName = @"Helvetica";
             traits |= NSFontSansSerifClass;
             
         case BXESCPTypefaceRoman:
         case BXESCPTypefaceRomanT:
         default:
-            traits |= NSFontModernSerifsClass;
-            fontName = @"Times";
+            familyName = @"Times New Roman";
+            traits |= NSFontOldStyleSerifsClass;
             break;
     }
     
@@ -638,10 +648,34 @@ enum {
                                     traitDict, NSFontTraitsAttribute,
                                     nil];
     
-    if (fontName)
-        [attribs setObject: fontName forKey: NSFontFamilyAttribute];
+    if (familyName)
+        [attribs setObject: familyName forKey: NSFontFamilyAttribute];
     
-    return [NSFontDescriptor fontDescriptorWithFontAttributes: attribs];
+    NSFontDescriptor *partialDescriptor = [NSFontDescriptor fontDescriptorWithFontAttributes: attribs];
+    
+    //First try looking up by family name and traits
+    NSFontDescriptor *matchedDescriptor = [partialDescriptor matchingFontDescriptorWithMandatoryKeys: [NSSet setWithObjects: NSFontFamilyAttribute, NSFontTraitsAttribute, nil]];
+    
+    //If that fails, look up by family name alone
+    if (matchedDescriptor == nil)
+    {
+        NSLog(@"Family name %@ and traits %i not matched, falling back on family name alone", familyName, traits);
+        matchedDescriptor = [partialDescriptor matchingFontDescriptorWithMandatoryKeys: [NSSet setWithObjects: NSFontFamilyAttribute, nil]];
+    }
+    
+    //If that fails, look up by traits alone
+    if (matchedDescriptor == nil)
+    {
+        NSLog(@"Family name %@ alone not matched, falling back on traits %i", familyName, traits);
+        matchedDescriptor = [matchedDescriptor matchingFontDescriptorWithMandatoryKeys: [NSSet setWithObject: NSFontTraitsAttribute]];
+    }
+    
+    else
+    {
+        //TODO: fall back on some failsafe font descriptor here
+    }
+    
+    return matchedDescriptor;
 }
 
 
@@ -742,7 +776,7 @@ enum {
     
     //Actual dots per inch of the output. This will affect the size of canvas we use
     //for 'drawing' each page.
-    _dpi = NSMakeSize(300, 300);
+    _dpi = NSMakeSize(72, 72);
     
     [self resetHard];
     
@@ -814,7 +848,7 @@ enum {
     _multipointFontSize = 0.0;
     _multipointCharactersPerInch = 0.0;
     
-    _msbMode = BXESCPMSBModeDefault;
+    _msbMode = BXNoMSBControl;
 
     //Apply default tab layout: one every 8 characters
     NSUInteger i;
@@ -872,10 +906,12 @@ enum {
     
     //Fill the page with white to start with
     //TODO: should we bother? Could just leave it clear
+    /*
     [self.currentPage lockFocusFlipped: YES];
         [[NSColor whiteColor] set];
         NSRectFill(NSMakeRect(0, 0, canvasSize.width, canvasSize.height));
     [self.currentPage unlockFocus];
+     */
     
     _currentPageIsBlank = YES;
 }
@@ -902,9 +938,9 @@ enum {
     }
         
     //If an MSB control mode is active, rewrite the most significant bit (bit 7).
-    if (_msbMode == BXESCPMSBMode0)
+    if (_msbMode == BXMSB0)
         byte &= ~(1 << 7);
-    else if (_msbMode == BXESCPMSBMode1)
+    else if (_msbMode == BXMSB1)
         byte |= (1 << 7);
     
     //If we're in the middle of loading up bitmap data, handle this byte as part of the bitmap.
@@ -1081,14 +1117,10 @@ enum {
     
     //Construct a string for drawing the glyph
     NSString *stringToPrint = [NSString stringWithCharacters: &codepoint length: 1];
-    NSColor *textColor = [self.class _colorForColorCode: self.color];
-    
-    NSLog(@"Printing string: %c mapped to unicode %i", character, codepoint);
     
     //Draw the glyph at the current position of the print head
     [self.currentPage lockFocusFlipped: YES];
         //TODO: clip drawing to within the printable area of the page
-        [textColor set];
     
         //Use multiply blending so that overlapping colors will darken each other
         CGContextRef context = (CGContextRef)([NSGraphicsContext currentContext].graphicsPort);
@@ -1483,7 +1515,7 @@ enum {
             break;
             
         case '#': // Cancel MSB control (ESC #)
-            _msbMode = BXESCPMSBModeDefault;
+            _msbMode = BXNoMSBControl;
             break;
             
         case '$': // Set absolute horizontal print position (ESC $)
@@ -1573,11 +1605,11 @@ enum {
             break;
             
         case '=': // Set MSB to 0 (ESC =)
-            _msbMode = BXESCPMSBMode0;
+            _msbMode = BXMSB0;
             break;
             
         case '>': // Set MSB to 1 (ESC >)
-            _msbMode = BXESCPMSBMode1;
+            _msbMode = BXMSB1;
             break;
             
         case '?': // Reassign bit-image mode (ESC ?)

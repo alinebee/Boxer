@@ -31,10 +31,10 @@ typedef enum {
 } BXESCPQuality;
 
 typedef enum {
-    BXESCPMSBModeDefault = -1,
-    BXESCPMSBMode0 = 0,
-    BXESCPMSBMode1 = 1,
-} BXESCPMSBMode;
+    BXNoMSBControl = -1,
+    BXMSB0 = 0,
+    BXMSB1 = 1,
+} BXESCPMSBControl;
 
 typedef enum {
     BXESCPTypefaceRoman = 0,
@@ -118,7 +118,7 @@ typedef enum {
     NSUInteger _numDataBytesToPrint;
     NSUInteger _numDataBytesToIgnore;
     
-    BXESCPMSBMode _msbMode;
+    BXESCPMSBControl _msbMode;
     BXESCPQuality _quality;
     BXESCPTypeface _typeFace;
     BXESCPColor _color;

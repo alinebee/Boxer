@@ -863,16 +863,20 @@ enum {
 
 - (void) finishPrintSession
 {
-    //Commit the previous page as long as it's not entirely blank
+    //Commit the current page as long as it's not entirely blank
     [self _startNewPageSavingPrevious: !self.currentPageIsBlank
                        carriageReturn: YES];
     
-    if ([self.delegate respondsToSelector: @selector(printer:didFinishPrintSession:)])
+    if (self.completedPages.count)
     {
-        [self.delegate printer: self didFinishPrintSession: [[self.completedPages copy] autorelease]];
+        if ([self.delegate respondsToSelector: @selector(printer:didFinishPrintSession:)])
+        {
+            [self.delegate printer: self
+             didFinishPrintSession: [[self.completedPages copy] autorelease]];
+        }
+        
+        [self.completedPages removeAllObjects];
     }
-    
-    [self.completedPages removeAllObjects];
 }
 
 - (void) _startNewLine
@@ -1117,34 +1121,12 @@ enum {
     
     //Construct a string for drawing the glyph
     NSString *stringToPrint = [NSString stringWithCharacters: &codepoint length: 1];
+    NSSize stringSize = [stringToPrint sizeWithAttributes: self.textAttributes];
     
-    //Draw the glyph at the current position of the print head
-    [self.currentPage lockFocusFlipped: YES];
-        //TODO: clip drawing to within the printable area of the page
-    
-        //Use multiply blending so that overlapping colors will darken each other
-        CGContextRef context = (CGContextRef)([NSGraphicsContext currentContext].graphicsPort);
-        CGContextSetBlendMode(context, kCGBlendModeMultiply);
-    
-        [stringToPrint drawAtPoint: self.headPositionInDevicePoints
-                    withAttributes: self.textAttributes];
-    
-        //In doublestrike mode, reprint the same string shifted slightly down to 'thicken' it.
-        if (self.doubleStrike)
-        {
-            [stringToPrint drawAtPoint: NSMakePoint(self.headPositionInDevicePoints.x,
-                                                    self.headPositionInDevicePoints.y + 0.5)
-                        withAttributes: self.textAttributes];
-        }
-    
-        _currentPageIsBlank = NO;
-    [self.currentPage unlockFocus];
-    
-    //Advance the head past the string
+    //Work out how wide this character should be
     CGFloat advance = 0;
     if (self.proportional)
     {
-        NSSize stringSize = [stringToPrint sizeWithAttributes: self.textAttributes];
         advance = stringSize.width;
     }
     else if (_horizontalMotionIndex == HMI_UNDEFINED)
@@ -1156,8 +1138,33 @@ enum {
         advance = _horizontalMotionIndex;
     }
     
-    advance += self.letterSpacing;
-    _headPosition.x += advance;
+    NSPoint printPos = self.headPositionInDevicePoints;
+    printPos.x += (advance - stringSize.width) * 0.5;
+    
+    //Draw the glyph at the current position of the print head,
+    //centered within the space it is expected to occupy.
+    [self.currentPage lockFocusFlipped: YES];
+        //TODO: clip drawing to within the printable area of the page
+    
+        //Use multiply blending so that overlapping colors will darken each other
+        CGContextRef context = (CGContextRef)([NSGraphicsContext currentContext].graphicsPort);
+        CGContextSetBlendMode(context, kCGBlendModeMultiply);
+    
+        [stringToPrint drawAtPoint: printPos
+                    withAttributes: self.textAttributes];
+    
+        //In doublestrike mode, reprint the same string shifted slightly down to 'thicken' it.
+        if (self.doubleStrike)
+        {
+            [stringToPrint drawAtPoint: NSMakePoint(printPos.x, printPos.y + 0.5)
+                        withAttributes: self.textAttributes];
+        }
+    
+        _currentPageIsBlank = NO;
+    [self.currentPage unlockFocus];
+    
+    //Advance the head past the string
+    _headPosition.x += advance + self.letterSpacing;
     
     //Wrap the line if the character after this one would go over the right margin.
     //(This may also trigger a new page.)

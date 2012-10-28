@@ -111,7 +111,7 @@ enum {
 @property (retain, nonatomic) NSMutableDictionary *textAttributes;
 
 @property (assign, nonatomic) NSPoint headPosition;
-@property (readonly, nonatomic) NSPoint headPositionInPoints;
+@property (readonly, nonatomic) NSPoint headPositionInDevicePoints;
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -156,6 +156,21 @@ enum {
 //If this chartable is active, the current ASCII mapping will be updated accordingly.
 - (void) _assignCodepage: (NSUInteger)codepage
              toCharTable: (BXESCPCharTable)charTable;
+
+
+#pragma mark -
+#pragma mark Input handling
+
+//Returns YES if the specified byte was handled as part of a bitmap,
+//or NO otherwise.
+- (BOOL) _handleBitmapData: (uint8_t)byte;
+
+//Returns YES if the specified byte was handled as part of a control command,
+//or NO if it should be treated as character data to print.
+- (BOOL) _handleControlCharacter: (uint8_t)byte;
+
+//Prints the specified character to the page.
+- (void) _printCharacter: (uint8_t)byte;
 
 
 #pragma mark -
@@ -714,9 +729,11 @@ enum {
     _initialized = YES;
     
     //TODO: derive the default page size from OSX's default printer settings instead.
+    //We could even pop up the OSX page setup sheet to get them to confirm the values there.
     _defaultPageSize = NSMakeSize(8.27, 11.69); //A4 in inches
     
-    //Dots per inch
+    //Actual dots per inch of the output. This will affect the size of canvas we use
+    //for 'drawing' each page.
     _dpi = NSMakeSize(600, 600);
     
     [self resetHard];
@@ -730,8 +747,6 @@ enum {
 
 - (void) reset
 {
-    _expectingESCCommand = NO;
-    _expectingFSCommand = NO;
     [self _endESCPCommand];
     
     _typeFace = BXESCPTypefaceDefault;
@@ -831,6 +846,7 @@ enum {
     self.currentPage = [[[NSImage alloc] initWithSize: canvasSize] autorelease];
     
     //Fill the page with white to start with
+    //TODO: should we bother? Could just leave it clear
     [self.currentPage lockFocusFlipped: YES];
         [[NSColor whiteColor] set];
         NSRectFill(NSMakeRect(0, 0, canvasSize.width, canvasSize.height));
@@ -842,6 +858,12 @@ enum {
     //IMPLEMENT ME
     //This is where we'd do the actual printing.
     [self.completedPages removeAllObjects];
+}
+
+- (NSPoint) headPositionInDevicePoints
+{
+    return  NSMakePoint(_headPosition.x * _dpi.width,
+                        _headPosition.y * _dpi.height);
 }
 
 - (void) handleDataByte: (uint8_t)byte
@@ -865,33 +887,154 @@ enum {
     else if (_msbMode == BXESCPMSBMode1)
         byte |= (1 << 7);
     
-    //Certain control commands can force n subsequent bytes to be treated as characters to print,
-    //even when they would otherwise be interpreted as a new command.
-    if (_numDataBytesToPrint > 0)
-    {
-        _numDataBytesToPrint--;
-    }
-    else
-    {
-        //Check if we should handle the byte as a control character.
-        if ([self _handleControlCharacter: byte]) return;
-    }
+    //If we're in the middle of loading up bitmap data, handle this byte as part of the bitmap.
+    if ([self _handleBitmapData: byte]) return;
     
-    //If we get this far, we should treat the byte as a regular character
-    //and print it with the current text settings.
+    //Check if we should handle the byte as a control character.
+    if ([self _handleControlCharacter: byte]) return;
+    
+    //If we get this far, we should treat the byte as a regular character and print it to the page.
     [self _printCharacter: byte];
 }
 
 - (void) _prepareForBitmapWithDensity: (NSUInteger)density
                               columns: (NSUInteger)numColumns
 {
-    //IMPLEMENT ME
+	switch (density)
+	{
+        case 0:
+            _bitmapDPI = NSMakeSize(60, 60);
+            _bitmapPrintAdjacent = YES;
+            _bitmapBytesPerColumn = 1;
+            break;
+        case 1:
+            _bitmapDPI = NSMakeSize(120, 60);
+            _bitmapPrintAdjacent = YES;
+            _bitmapBytesPerColumn = 1;
+            break;
+        case 2:
+            _bitmapDPI = NSMakeSize(120, 60);
+            _bitmapPrintAdjacent = NO;
+            _bitmapBytesPerColumn = 1;
+            break;
+        case 3:
+            _bitmapDPI = NSMakeSize(240, 60);
+            _bitmapPrintAdjacent = NO;
+            _bitmapBytesPerColumn = 1;
+            break;
+        case 4:
+            _bitmapDPI = NSMakeSize(80, 60);
+            _bitmapPrintAdjacent = YES;
+            _bitmapBytesPerColumn = 1;
+            break;
+        case 6:
+            _bitmapDPI = NSMakeSize(90, 60);
+            _bitmapPrintAdjacent = YES;
+            _bitmapBytesPerColumn = 1;
+            break;
+        case 32:
+            _bitmapDPI = NSMakeSize(60, 180);
+            _bitmapPrintAdjacent = YES;
+            _bitmapBytesPerColumn = 3;
+            break;
+        case 33:
+            _bitmapDPI = NSMakeSize(120, 180);
+            _bitmapPrintAdjacent = YES;
+            _bitmapBytesPerColumn = 3;
+            break;
+        case 38:
+            _bitmapDPI = NSMakeSize(90, 180);
+            _bitmapPrintAdjacent = YES;
+            _bitmapBytesPerColumn = 3;
+            break;
+        case 39:
+            _bitmapDPI = NSMakeSize(180, 180);
+            _bitmapPrintAdjacent = YES;
+            _bitmapBytesPerColumn = 3;
+            break;
+        case 40:
+            _bitmapDPI = NSMakeSize(360, 180);
+            _bitmapPrintAdjacent = NO;
+            _bitmapBytesPerColumn = 3;
+            break;
+        case 71:
+            _bitmapDPI = NSMakeSize(180, 360);
+            _bitmapPrintAdjacent = YES;
+            _bitmapBytesPerColumn = 6;
+            break;
+        case 72:
+            _bitmapDPI = NSMakeSize(360, 360);
+            _bitmapPrintAdjacent = NO;
+            _bitmapBytesPerColumn = 6;
+            break;
+        case 73:
+            _bitmapDPI = NSMakeSize(360, 360);
+            _bitmapPrintAdjacent = YES;
+            _bitmapBytesPerColumn = 6;
+            break;
+        default:
+            NSLog(@"PRINTER: Unsupported bit image density %u", density);
+	}
+    
+    _bitmapBytesRemaining = numColumns * _bitmapBytesPerColumn;
+    _bitmapBytesReadInColumn = 0;
 }
 
-- (NSPoint) headPositionInPoints
+- (BOOL) _handleBitmapData: (uint8_t)byte
 {
-    return  NSMakePoint(_headPosition.x * _dpi.width,
-                        _headPosition.y * _dpi.height);
+    if (_bitmapBytesRemaining)
+    {
+        //Add the specified byte to the current column.
+        _bitmapColumnData[_bitmapBytesReadInColumn] = byte;
+        _bitmapBytesReadInColumn++;
+        _bitmapBytesRemaining--;
+        
+        //Once we have a full column of bitmap data, draw it to the page
+        if (_bitmapBytesReadInColumn == _bitmapBytesPerColumn)
+        {
+            NSColor *printColor = [self.class _colorForColorCode: self.color];
+            
+            //Where to start printing the column from and how big each dot should be in device coordinates.
+            NSRect dotRect;
+            dotRect.origin = self.headPositionInDevicePoints;
+            dotRect.size = NSMakeSize(_dpi.width / _bitmapDPI.width,
+                                      _dpi.height / _bitmapDPI.height);
+            
+            [self.currentPage lockFocusFlipped: YES];
+                //Use multiply blending so that overlapping colors will darken each other
+                CGContextRef context = (CGContextRef)([NSGraphicsContext currentContext].graphicsPort);
+                CGContextSetBlendMode(context, kCGBlendModeMultiply);
+                [printColor set];
+            
+                //Loop over each bit in each byte, printing a dot for each bit
+                //that's on and leaving a space for each bit that's off
+                NSUInteger byteIndex, bitIndex;
+                for (byteIndex=0; byteIndex < _bitmapBytesPerColumn; byteIndex++)
+                {
+                    //Bits go from highest to lowest => left to right
+                    for (bitIndex=128; bitIndex > 0; bitIndex >>= 1)
+                    {
+                        //If the bit is active, draw a dot here
+                        if (_bitmapColumnData[byteIndex] & bitIndex)
+                            NSRectFill(dotRect);
+                        
+                        dotRect.origin.y += dotRect.size.height;
+                    }
+                }
+            [self.currentPage unlockFocus];
+            
+            _bitmapBytesReadInColumn = 0;
+            
+            //Advance the print head past the current graphics column.
+            _headPosition.x +=  1 / _bitmapDPI.width;
+        }
+        
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
 }
 
 - (void) _printCharacter: (uint8_t)character
@@ -921,13 +1064,13 @@ enum {
         CGContextRef context = (CGContextRef)([NSGraphicsContext currentContext].graphicsPort);
         CGContextSetBlendMode(context, kCGBlendModeMultiply);
     
-        [stringToPrint drawAtPoint: self.headPositionInPoints
+        [stringToPrint drawAtPoint: self.headPositionInDevicePoints
                     withAttributes: self.textAttributes];
     
         //In doublestrike mode, reprint the same string shifted slightly down to 'thicken' it.
         if (self.doubleStrike)
         {
-            [stringToPrint drawAtPoint: NSMakePoint(self.headPositionInPoints.x, self.headPositionInPoints.y + 0.5)
+            [stringToPrint drawAtPoint: NSMakePoint(self.headPositionInDevicePoints.x, self.headPositionInDevicePoints.y + 0.5)
                         withAttributes: self.textAttributes];
         }
     [self.currentPage unlockFocus];
@@ -962,6 +1105,14 @@ enum {
 
 - (BOOL) _handleControlCharacter: (uint8_t)byte
 {
+    //If we're forcing the next n characters to be printed instead of interpreted,
+    //then don't treat this byte as a control character.
+    if (_numDataBytesToPrint > 0)
+    {
+        _numDataBytesToPrint--;
+        return NO;
+    }
+    
     //If we've been waiting for the control code for an ESC command, parse this as a control code
     if (_expectingESCCommand || _expectingFSCommand)
 	{
@@ -1309,7 +1460,7 @@ enum {
             
             double effectiveUnitSize = _unitSize;
             if (effectiveUnitSize == UNIT_SIZE_UNDEFINED)
-                effectiveUnitSize = 60.0;
+                effectiveUnitSize = BXESCPUnitSizeDefault;
             
             CGFloat newX = _leftMargin + (position / effectiveUnitSize);
             if (newX <= _rightMargin)
@@ -1829,6 +1980,8 @@ enum {
 
 - (void) _endESCPCommand
 {
+    _expectingESCCommand = NO;
+    _expectingFSCommand = NO;
     _currentESCPCommand = 0;
     _numParamsExpected = 0;
     _numParamsRead = 0;

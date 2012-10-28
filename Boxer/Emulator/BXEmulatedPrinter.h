@@ -172,6 +172,13 @@ typedef enum {
     uint16_t _charTables[4];
     BXESCPCharTable _activeCharTable;
     
+    NSSize _bitmapDPI;
+    uint8_t _bitmapColumnData[6];
+    BOOL _bitmapPrintAdjacent;
+    NSUInteger _bitmapBytesPerColumn;
+    NSUInteger _bitmapBytesReadInColumn;
+    NSUInteger _bitmapBytesRemaining;
+    
     NSUInteger _densityK, _densityL, _densityY, _densityZ;
     
     NSSize _dpi;

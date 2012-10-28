@@ -231,6 +231,7 @@ enum {
 @synthesize activeCharTable = _activeCharTable;
 
 @synthesize currentPage = _currentPage;
+@synthesize currentPageIsBlank = _currentPageIsBlank;
 @synthesize completedPages = _completedPages;
 @synthesize textAttributes = _textAttributes;
 
@@ -737,6 +738,9 @@ enum {
     _dpi = NSMakeSize(600, 600);
     
     [self resetHard];
+    
+    if ([self.delegate respondsToSelector: @selector(printerWillBeginPrinting:)])
+        [self.delegate printerWillBeginPrinting: self];
 }
 
 - (void) resetHard
@@ -816,11 +820,17 @@ enum {
     [self _startNewPageSavingPrevious: NO carriageReturn: NO];
 }
 
-- (void) formFeed
+- (void) finishPrintSession
 {
-    //TODO: toggle saving of page based on whether anything has been drawn into the page yet
-    [self _startNewPageSavingPrevious: YES carriageReturn: YES];
-    [self finishPrintSession];
+    [self _startNewPageSavingPrevious: !self.currentPageIsBlank
+                       carriageReturn: YES];
+    
+    if ([self.delegate respondsToSelector: @selector(printer:didFinishPrintSession:)])
+    {
+        [self.delegate printer: self didFinishPrintSession: [[self.completedPages copy] autorelease]];
+    }
+    
+    [self.completedPages removeAllObjects];
 }
 
 - (void) _startNewLine
@@ -834,13 +844,19 @@ enum {
 
 - (void) _startNewPageSavingPrevious: (BOOL)savePrevious carriageReturn: (BOOL)carriageReturn
 {
-    if (savePrevious)
+    if (savePrevious && self.currentPage != nil)
+    {
         [self.completedPages addObject: self.currentPage];
+        
+        if ([self.delegate respondsToSelector: @selector(printer:didFinishPage:)])
+            [self.delegate printer: self didFinishPage: self.currentPage];
+    }
     
     _headPosition.y = _topMargin;
     if (carriageReturn)
         _headPosition.x = _leftMargin;
     
+    //FIXME: this doesn't account for the DOS session changing the paper size while printing.
     NSSize canvasSize = NSMakeSize(_pageSize.width * _dpi.width,
                                    _pageSize.height * _dpi.height);
     self.currentPage = [[[NSImage alloc] initWithSize: canvasSize] autorelease];
@@ -851,13 +867,8 @@ enum {
         [[NSColor whiteColor] set];
         NSRectFill(NSMakeRect(0, 0, canvasSize.width, canvasSize.height));
     [self.currentPage unlockFocus];
-}
-
-- (void) finishPrintSession
-{
-    //IMPLEMENT ME
-    //This is where we'd do the actual printing.
-    [self.completedPages removeAllObjects];
+    
+    _currentPageIsBlank = YES;
 }
 
 - (NSPoint) headPositionInDevicePoints
@@ -1016,8 +1027,10 @@ enum {
                     {
                         //If the bit is active, draw a dot here
                         if (_bitmapColumnData[byteIndex] & bitIndex)
+                        {
                             NSRectFill(dotRect);
-                        
+                            _currentPageIsBlank = NO;
+                        }
                         dotRect.origin.y += dotRect.size.height;
                     }
                 }
@@ -1073,6 +1086,8 @@ enum {
             [stringToPrint drawAtPoint: NSMakePoint(self.headPositionInDevicePoints.x, self.headPositionInDevicePoints.y + 0.5)
                         withAttributes: self.textAttributes];
         }
+    
+        _currentPageIsBlank = NO;
     [self.currentPage unlockFocus];
     
     //Advance the head past the string

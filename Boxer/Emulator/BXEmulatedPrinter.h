@@ -186,19 +186,29 @@ typedef enum {
     NSMutableArray *_completedPages;
     NSMutableDictionary *_textAttributes;
     BOOL _textAttributesNeedUpdate;
+    BOOL _currentPageIsBlank;
 }
 
 @property (readonly, nonatomic, getter=isBusy) BOOL busy;
 @property (assign, nonatomic) id <BXEmulatedPrinterDelegate> delegate;
+@property (readonly, retain, nonatomic) NSMutableArray *completedPages;
+@property (readonly, retain, nonatomic) NSImage *currentPage;
+@property (readonly, nonatomic) BOOL currentPageIsBlank;
 
+//Pings the printer to acknowledge that the latest byte of data has been received.
+//Returns YES when called the first time after data has been received,
+//or NO subsequent times (or if no data has been sent since the printer was last reset.)
 - (BOOL) acknowledge;
 
+//Resets the printer, restoring all settings to their defaults.
 - (void) reset;
+
+//Resets the printer and also clears the acknowledge, so that any immediately subsequent
+//acknowledge request will return NO.
 - (void) resetHard;
 
-//Called to eject the current page from the printer.
-- (void) formFeed;
-//Called to mark the end of a multiple-page print session and actually print the damn thing.
+//Called to mark the end of a multiple-page print session and deliver
+//what the printer has produced so far.
 - (void) finishPrintSession;
 
 - (void) handleDataByte: (uint8_t)byte;
@@ -216,5 +226,10 @@ typedef enum {
 
 @protocol BXEmulatedPrinterDelegate <NSObject>
 
-                           
+@optional
+
+- (void) printerWillBeginPrinting: (BXEmulatedPrinter *)printer;
+- (void) printer: (BXEmulatedPrinter *)printer didFinishPage: (NSImage *)page;
+- (void) printer: (BXEmulatedPrinter *)printer didFinishPrintSession: (NSArray *)completedPages;
+
 @end

@@ -189,11 +189,34 @@ typedef enum {
     BOOL _currentPageIsBlank;
 }
 
+//Whether the printer is currently busy and cannot respond to more data.
 @property (readonly, nonatomic, getter=isBusy) BOOL busy;
+
+//The delegate to whom we will send BXEmulatedPrinterDelegate messages.
 @property (assign, nonatomic) id <BXEmulatedPrinterDelegate> delegate;
+
+//An array of NSImages for each previous page that has been created.
 @property (readonly, retain, nonatomic) NSMutableArray *completedPages;
+
+//An NSImage representing the current page being printed.
 @property (readonly, retain, nonatomic) NSImage *currentPage;
+
+//Whether the current page is entirely empty (i.e. nothing has been printed to it yet.)
 @property (readonly, nonatomic) BOOL currentPageIsBlank;
+
+//The standard page size in inches.
+@property (readonly, nonatomic) NSSize defaultPageSize;
+
+//The size of the current page in inches. This may differ from defaultPageSize
+//if the DOS session has configured a different size itself.
+@property (readonly, nonatomic) NSSize currentPageSize;
+
+//The position of the print head in inches.
+@property (readonly, nonatomic) NSPoint headPosition;
+
+//The position of the print head in device units (i.e., in the same units as currentPage's size.)
+@property (readonly, nonatomic) NSPoint headPositionInDevicePoints;
+
 
 //Pings the printer to acknowledge that the latest byte of data has been received.
 //Returns YES when called the first time after data has been received,
@@ -211,12 +234,14 @@ typedef enum {
 //what the printer has produced so far.
 - (void) finishPrintSession;
 
+//Called by the parallel port subsystem to feed each byte of data to the printer.
 - (void) handleDataByte: (uint8_t)byte;
 
 
 #pragma mark -
-#pragma mark DOS functions
+#pragma mark Parallel port functions
 
+//Called by the parallel port subsystem to set/retrieve the bits on the printer's parallel port.
 @property (readonly, nonatomic) uint8_t statusRegister;
 @property (assign, nonatomic) uint8_t controlRegister;
 @property (assign, nonatomic) uint8_t dataRegister;
@@ -228,8 +253,13 @@ typedef enum {
 
 @optional
 
+//Called when the printer first receives print data from the DOS session.
 - (void) printerWillBeginPrinting: (BXEmulatedPrinter *)printer;
+
+//Called when the printer finishes printing a single page.
 - (void) printer: (BXEmulatedPrinter *)printer didFinishPage: (NSImage *)page;
+
+//Called when the printer finishes printing a set of pages.
 - (void) printer: (BXEmulatedPrinter *)printer didFinishPrintSession: (NSArray *)completedPages;
 
 @end

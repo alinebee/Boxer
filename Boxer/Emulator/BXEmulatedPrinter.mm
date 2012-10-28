@@ -111,7 +111,6 @@ enum {
 @property (retain, nonatomic) NSMutableDictionary *textAttributes;
 
 @property (assign, nonatomic) NSPoint headPosition;
-@property (readonly, nonatomic) NSPoint headPositionInDevicePoints;
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -236,6 +235,8 @@ enum {
 @synthesize textAttributes = _textAttributes;
 
 @synthesize headPosition = _headPosition;
+@synthesize defaultPageSize = _defaultPageSize;
+@synthesize currentPageSize = _pageSize;
 
 
 - (id) init
@@ -245,7 +246,6 @@ enum {
     {
         _controlRegister = BXEmulatedPrinterControlReset;
         _initialized = NO;
-        self.completedPages = [NSMutableArray arrayWithCapacity: 1];
     }
     return self;
 }
@@ -274,6 +274,7 @@ enum {
 	}
     
     //If we get this far, no matching codepage could be found.
+    NSLog(@"No charmap found for codepage %u", codepage);
     return NULL;
 }
 
@@ -398,6 +399,8 @@ enum {
         color = BXESCPColorBlack;
     
     _color = color;
+    
+    _textAttributesNeedUpdate = YES;
 }
 
 - (void) setUnderlined: (BOOL)flag
@@ -657,6 +660,8 @@ enum {
         mapToUse = [self.class _charmapForCodepage: 437];
     }
     
+    //Copy the bytes from the charmap we're using, rather than just using a pointer
+    //to that charmap. This is because certain ESC/P commands will overwrite charmap data.
     NSUInteger i;
 	for (i=0; i<256; i++)
 		_charMap[i] = mapToUse[i];
@@ -729,13 +734,15 @@ enum {
 {
     _initialized = YES;
     
+    self.completedPages = [NSMutableArray arrayWithCapacity: 1];
+    
     //TODO: derive the default page size from OSX's default printer settings instead.
     //We could even pop up the OSX page setup sheet to get them to confirm the values there.
     _defaultPageSize = NSMakeSize(8.27, 11.69); //A4 in inches
     
     //Actual dots per inch of the output. This will affect the size of canvas we use
     //for 'drawing' each page.
-    _dpi = NSMakeSize(600, 600);
+    _dpi = NSMakeSize(300, 300);
     
     [self resetHard];
     
@@ -768,11 +775,11 @@ enum {
     _letterSpacing = 0.0;
     _charactersPerInch = BXESCPCPIDefault;
     
-    _activeCharTable = BXESCPCharTable1;
     _charTables[BXESCPCharTable0] = 0;
     _charTables[BXESCPCharTable1] = 437;
     _charTables[BXESCPCharTable2] = 437;
     _charTables[BXESCPCharTable3] = 437;
+    self.activeCharTable = BXESCPCharTable1;
     
     _bold = NO;
     _italic = NO;
@@ -822,6 +829,7 @@ enum {
 
 - (void) finishPrintSession
 {
+    //Commit the previous page as long as it's not entirely blank
     [self _startNewPageSavingPrevious: !self.currentPageIsBlank
                        carriageReturn: YES];
     
@@ -856,9 +864,10 @@ enum {
     if (carriageReturn)
         _headPosition.x = _leftMargin;
     
-    //FIXME: this doesn't account for the DOS session changing the paper size while printing.
+    //FIXME: this doesn't account for the DOS session changing the paper size while we're printing.
     NSSize canvasSize = NSMakeSize(_pageSize.width * _dpi.width,
                                    _pageSize.height * _dpi.height);
+    
     self.currentPage = [[[NSImage alloc] initWithSize: canvasSize] autorelease];
     
     //Fill the page with white to start with
@@ -1012,6 +1021,8 @@ enum {
                                       _dpi.height / _bitmapDPI.height);
             
             [self.currentPage lockFocusFlipped: YES];
+                //TODO: clip drawing to within the printable area of the page
+            
                 //Use multiply blending so that overlapping colors will darken each other
                 CGContextRef context = (CGContextRef)([NSGraphicsContext currentContext].graphicsPort);
                 CGContextSetBlendMode(context, kCGBlendModeMultiply);
@@ -1070,9 +1081,15 @@ enum {
     
     //Construct a string for drawing the glyph
     NSString *stringToPrint = [NSString stringWithCharacters: &codepoint length: 1];
+    NSColor *textColor = [self.class _colorForColorCode: self.color];
+    
+    NSLog(@"Printing string: %c mapped to unicode %i", character, codepoint);
     
     //Draw the glyph at the current position of the print head
     [self.currentPage lockFocusFlipped: YES];
+        //TODO: clip drawing to within the printable area of the page
+        [textColor set];
+    
         //Use multiply blending so that overlapping colors will darken each other
         CGContextRef context = (CGContextRef)([NSGraphicsContext currentContext].graphicsPort);
         CGContextSetBlendMode(context, kCGBlendModeMultiply);
@@ -1083,7 +1100,8 @@ enum {
         //In doublestrike mode, reprint the same string shifted slightly down to 'thicken' it.
         if (self.doubleStrike)
         {
-            [stringToPrint drawAtPoint: NSMakePoint(self.headPositionInDevicePoints.x, self.headPositionInDevicePoints.y + 0.5)
+            [stringToPrint drawAtPoint: NSMakePoint(self.headPositionInDevicePoints.x,
+                                                    self.headPositionInDevicePoints.y + 0.5)
                         withAttributes: self.textAttributes];
         }
     

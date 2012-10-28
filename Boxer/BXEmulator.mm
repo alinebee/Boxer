@@ -202,12 +202,17 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
         
         self.keyBuffer = [[[BXKeyBuffer alloc] init] autorelease];
         
+        self.printer = [[[BXEmulatedPrinter alloc] init] autorelease];
+        [self.printer bind: @"delegate" toObject: self withKeyPath: @"delegate" options: 0];
+        
     }
 	return self;
 }
 
 - (void) dealloc
-{	
+{
+    [self.printer unbind: @"delegate"];
+    
     self.processName = nil;
     self.activeMIDIDevice = nil;
     self.requestedMIDIDeviceDescription = nil;

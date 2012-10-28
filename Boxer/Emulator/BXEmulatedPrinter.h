@@ -256,7 +256,10 @@ typedef enum {
 //Called when the printer first receives print data from the DOS session.
 - (void) printerWillBeginPrinting: (BXEmulatedPrinter *)printer;
 
-//Called when the printer finishes printing a single page.
+//Called every time the printer prints characters or graphics to the current page.
+- (void) printerDidPrintToPage: (BXEmulatedPrinter *)printer;
+
+//Called when the printer finishes printing the current page.
 - (void) printer: (BXEmulatedPrinter *)printer didFinishPage: (NSImage *)page;
 
 //Called when the printer finishes printing a set of pages.

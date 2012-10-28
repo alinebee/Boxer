@@ -121,6 +121,9 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
     
     //Used by BXAudioControls
     NSMutableSet *_MT32MessagesReceived;
+    
+    //DEBUG: will be removed
+    NSView *_printPreview;
 }
 
 

@@ -1093,6 +1093,9 @@ enum {
             _headPosition.x +=  1 / _bitmapDPI.width;
         }
         
+        if ([self.delegate respondsToSelector: @selector(printerDidPrintToPage:)])
+            [self.delegate printerDidPrintToPage: self];
+        
         return YES;
     }
     else
@@ -1173,6 +1176,9 @@ enum {
     {
         [self _startNewLine];
 	}
+    
+    if ([self.delegate respondsToSelector: @selector(printerDidPrintToPage:)])
+        [self.delegate printerDidPrintToPage: self];
 }
 
 - (BOOL) _handleControlCharacter: (uint8_t)byte

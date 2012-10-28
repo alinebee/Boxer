@@ -15,89 +15,84 @@
 #pragma mark Constants
 
 enum {
-    BXEmulatedPrinterLineStyleNone = 0,
-    BXEmulatedPrinterLineStyleSingle = 1 << 0,
-    BXEmulatedPrinterLineStyleDouble = 1 << 1,
-    BXEmulatedPrinterLineStyleBroken = 1 << 2,
+    BXESCPLineStyleNone = 0,
+    BXESCPLineStyleSingle = 1 << 0,
+    BXESCPLineStyleDouble = 1 << 1,
+    BXESCPLineStyleBroken = 1 << 2,
     
-    BXEmulatedPrinterLineStyleSingleBroken = BXEmulatedPrinterLineStyleSingle | BXEmulatedPrinterLineStyleBroken,
-    BXEmulatedPrinterLineStyleDoubleBroken = BXEmulatedPrinterLineStyleDouble | BXEmulatedPrinterLineStyleBroken,
+    BXESCPLineStyleSingleBroken = BXESCPLineStyleSingle | BXESCPLineStyleBroken,
+    BXESCPLineStyleDoubleBroken = BXESCPLineStyleDouble | BXESCPLineStyleBroken,
 };
-typedef NSUInteger BXEmulatedPrinterLineStyle;
+typedef NSUInteger BXESCPLineStyle;
 
 typedef enum {
-    BXEmulatedPrinterQualityDraft = 1,
-    BXEmulatedPrinterQualityLQ = 2,
-} BXEmulatedPrinterQuality;
+    BXESCPQualityDraft = 1,
+    BXESCPQualityLQ = 2,
+} BXESCPQuality;
 
 typedef enum {
-    BXEmulatedPrinterMSBDefault = -1,
-    BXEmulatedPrinterMSB0 = 0,
-    BXEmulatedPrinterMSB1 = 1,
-} BXEmulatedPrinterMSBMode;
+    BXESCPMSBModeDefault = -1,
+    BXESCPMSBMode0 = 0,
+    BXESCPMSBMode1 = 1,
+} BXESCPMSBMode;
 
 typedef enum {
-    BXEmulatedPrinterTypefaceRoman = 0,
-    BXEmulatedPrinterTypefaceSansSerif,
-    BXEmulatedPrinterTypefaceCourier,
-    BXEmulatedPrinterTypefacePrestige,
-    BXEmulatedPrinterTypefaceScript,
-    BXEmulatedPrinterTypefaceOCRB,
-    BXEmulatedPrinterTypefaceOCRA,
-    BXEmulatedPrinterTypefaceOrator,
-    BXEmulatedPrinterTypefaceOratorS,
-    BXEmulatedPrinterTypefaceScriptC,
-    BXEmulatedPrinterTypefaceRomanT,
-    BXEmulatedPrinterTypefaceSansSerifH,
-    BXEmulatedPrinterTypefaceSVBusaba = 30,
-    BXEmulatedPrinterTypefaceSVJittra = 31,
+    BXESCPTypefaceRoman = 0,
+    BXESCPTypefaceSansSerif,
+    BXESCPTypefaceCourier,
+    BXESCPTypefacePrestige,
+    BXESCPTypefaceScript,
+    BXESCPTypefaceOCRB,
+    BXESCPTypefaceOCRA,
+    BXESCPTypefaceOrator,
+    BXESCPTypefaceOratorS,
+    BXESCPTypefaceScriptC,
+    BXESCPTypefaceRomanT,
+    BXESCPTypefaceSansSerifH,
+    BXESCPTypefaceSVBusaba = 30,
+    BXESCPTypefaceSVJittra = 31,
     
-    BXEmulatedPrinterTypefaceDefault = BXEmulatedPrinterTypefaceRoman,
-} BXEmulatedPrinterTypeface;
+    BXESCPTypefaceDefault = BXESCPTypefaceRoman,
+} BXESCPTypeface;
 
 typedef enum {
-    BXEmulatedPrinterColorBlack = 0,
-    BXEmulatedPrinterColorMagenta,
-    BXEmulatedPrinterColorCyan,
-    BXEmulatedPrinterColorViolet,
-    BXEmulatedPrinterColorYellow,
-    BXEmulatedPrinterColorRed,
-    BXEmulatedPrinterColorGreen,
-} BXEmulatedPrinterColor;
+    BXESCPColorBlack = 0,
+    BXESCPColorMagenta,
+    BXESCPColorCyan,
+    BXESCPColorViolet,
+    BXESCPColorYellow,
+    BXESCPColorRed,
+    BXESCPColorGreen,
+} BXESCPColor;
 
 typedef enum {
-    BXEmulatedPrinterCharTable0,
-    BXEmulatedPrinterCharTable1,
-    BXEmulatedPrinterCharTable2,
-    BXEmulatedPrinterCharTable3,
-} BXEmulatedPrinterCharTable;
+    BXESCPCharTable0,
+    BXESCPCharTable1,
+    BXESCPCharTable2,
+    BXESCPCharTable3,
+} BXESCPCharTable;
 
 typedef enum {
-    BXEmulatedPrinterCharsetUSA,
-    BXEmulatedPrinterCharsetFrance,
-    BXEmulatedPrinterCharsetGermany,
-    BXEmulatedPrinterCharsetUK,
-    BXEmulatedPrinterCharsetDenmark1,
-    BXEmulatedPrinterCharsetSweden,
-    BXEmulatedPrinterCharsetItaly,
-    BXEmulatedPrinterCharsetSpain1,
-    BXEmulatedPrinterCharsetJapan,
-    BXEmulatedPrinterCharsetNorway,
-    BXEmulatedPrinterCharsetDenmark2,
-    BXEmulatedPrinterCharsetSpain2,
-    BXEmulatedPrinterCharsetLatinAmerica,
-    BXEmulatedPrinterCharsetKorea,
+    BXESCPCharsetUSA,
+    BXESCPCharsetFrance,
+    BXESCPCharsetGermany,
+    BXESCPCharsetUK,
+    BXESCPCharsetDenmark1,
+    BXESCPCharsetSweden,
+    BXESCPCharsetItaly,
+    BXESCPCharsetSpain1,
+    BXESCPCharsetJapan,
+    BXESCPCharsetNorway,
+    BXESCPCharsetDenmark2,
+    BXESCPCharsetSpain2,
+    BXESCPCharsetLatinAmerica,
+    BXESCPCharsetKorea,
     
-    BXEmulatedPrinterCharsetLegal = 64
-} BXEmulatedPrinterCharset;
-
+    BXESCPCharsetLegal = 64
+} BXESCPCharset;
 
 #define BXEmulatedPrinterMaxVerticalTabs 16
 #define BXEmulatedPrinterMaxHorizontalTabs 32
-
-#define BXEmulatedPrinterUnitSizeDefault 60
-#define BXEmulatedPrinterLineSpacingDefault 1 / 6.0
-#define BXEmulatedPrinterCPIDefault 10
 
 
 @protocol BXEmulatedPrinterDelegate;
@@ -123,10 +118,10 @@ typedef enum {
     NSUInteger _numDataBytesToPrint;
     NSUInteger _numDataBytesToIgnore;
     
-    BXEmulatedPrinterMSBMode _msbMode;
-    BXEmulatedPrinterQuality _quality;
-    BXEmulatedPrinterTypeface _typeFace;
-    BXEmulatedPrinterColor _color;
+    BXESCPMSBMode _msbMode;
+    BXESCPQuality _quality;
+    BXESCPTypeface _typeFace;
+    BXESCPColor _color;
     
     //Style attributes
     BOOL _bold;
@@ -136,16 +131,16 @@ typedef enum {
     BOOL _superscript;
     BOOL _subscript;
     
-    BOOL _doubleWidth;
     BOOL _proportional;
     BOOL _condensed;
+    BOOL _doubleWidth;
     BOOL _doubleHeight;
     BOOL _doubleWidthForLine;
     
     BOOL _underlined;
     BOOL _linethroughed;
     BOOL _overscored;
-    BXEmulatedPrinterLineStyle _lineStyle;
+    BXESCPLineStyle _lineStyle;
     
     BOOL _printUpperControlCodes;
     double _horizontalMotionIndex;
@@ -175,7 +170,7 @@ typedef enum {
     uint16_t _charMap[256];
     
     uint16_t _charTables[4];
-    BXEmulatedPrinterCharTable _activeCharTable;
+    BXESCPCharTable _activeCharTable;
     
     NSUInteger _densityK, _densityL, _densityY, _densityZ;
     

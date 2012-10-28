@@ -60,6 +60,12 @@ enum {
 #define HMI_UNDEFINED -1
 
 
+#define BXESCPUnitSizeDefault 60.0
+#define BXESCPLineSpacingDefault 1 / 6.0
+#define BXESCPCPIDefault 10.0
+#define BXESCPFontSizeDefault 10.5
+
+
 #pragma mark -
 #pragma mark Private interface declaration
 
@@ -83,11 +89,11 @@ enum {
 @property (assign, nonatomic) BOOL underlined;
 @property (assign, nonatomic) BOOL linethroughed;
 @property (assign, nonatomic) BOOL overscored;
-@property (assign, nonatomic) BXEmulatedPrinterLineStyle lineStyle;
+@property (assign, nonatomic) BXESCPLineStyle lineStyle;
 
-@property (assign, nonatomic) BXEmulatedPrinterQuality quality;
-@property (assign, nonatomic) BXEmulatedPrinterColor color;
-@property (assign, nonatomic) BXEmulatedPrinterTypeface typeFace;
+@property (assign, nonatomic) BXESCPQuality quality;
+@property (assign, nonatomic) BXESCPColor color;
+@property (assign, nonatomic) BXESCPTypeface typeFace;
 
 @property (assign, nonatomic) BOOL autoFeed;
 @property (assign, nonatomic) double CPI;
@@ -97,7 +103,7 @@ enum {
 @property (assign, nonatomic) double multipointCPI;
 @property (assign, nonatomic) double multipointFontSize;
 
-@property (assign, nonatomic) BXEmulatedPrinterCharTable activeCharTable;
+@property (assign, nonatomic) BXESCPCharTable activeCharTable;
 @property (readonly, nonatomic) NSUInteger activeCodepage;
 
 @property (retain, nonatomic) NSImage *currentPage;
@@ -114,10 +120,10 @@ enum {
 + (const uint16_t * const) _charmapForCodepage: (NSUInteger)codepage;
 
 //Returns a CMYK-gamut NSColor suitable for the specified color code.
-+ (NSColor *) _colorForColorCode: (BXEmulatedPrinterColor)colorCode;
++ (NSColor *) _colorForColorCode: (BXESCPColor)colorCode;
 
 //Returns a font descriptor object that can be used to identify a suitable font for the specified typeface.
-+ (NSFontDescriptor *) _fontDescriptorForEmulatedTypeface: (BXEmulatedPrinterTypeface)typeface
++ (NSFontDescriptor *) _fontDescriptorForEmulatedTypeface: (BXESCPTypeface)typeface
                                                      bold: (BOOL)bold
                                                    italic: (BOOL)italic;
 
@@ -131,7 +137,7 @@ enum {
 - (void) _updateTextAttributes;
 
 //Called when the DOS session formfeeds or the print head goes off the extents of the current page.
-- (void) _startNewPageSavingPrevious: (BOOL)savePrevious resetHead: (BOOL)resetHead;
+- (void) _startNewPageSavingPrevious: (BOOL)savePrevious carriageReturn: (BOOL)carriageReturn;
 
 //Called when the DOS session prepares a bitmap drawing context.
 - (void) _prepareForBitmapWithDensity: (NSUInteger)density columns: (NSUInteger)numColumns;
@@ -144,12 +150,12 @@ enum {
 - (void) _selectCodepage: (NSUInteger)codepage;
 
 //Switch to the specified international character set using the current codepage.
-- (void) _selectInternationalCharset: (BXEmulatedPrinterCharset)charsetID;
+- (void) _selectInternationalCharset: (BXESCPCharset)charsetID;
 
 //Set the specified chartable entry to point to the specified codepage.
 //If this chartable is active, the current ASCII mapping will be updated accordingly.
 - (void) _assignCodepage: (NSUInteger)codepage
-             toCharTable: (BXEmulatedPrinterCharTable)charTable;
+             toCharTable: (BXESCPCharTable)charTable;
 
 
 #pragma mark -
@@ -255,30 +261,30 @@ enum {
     return NULL;
 }
 
-+ (NSColor *) _colorForColorCode: (BXEmulatedPrinterColor)colorCode
++ (NSColor *) _colorForColorCode: (BXESCPColor)colorCode
 {
     CGFloat c, y, m, k;
     switch (colorCode)
     {
-        case BXEmulatedPrinterColorCyan:
+        case BXESCPColorCyan:
             c=1; y=0; m=0; k=0; break;
             
-        case BXEmulatedPrinterColorMagenta:
+        case BXESCPColorMagenta:
             c=0; y=0; m=1; k=0; break;
             
-        case BXEmulatedPrinterColorYellow:
+        case BXESCPColorYellow:
             c=0; y=1; m=0; k=0; break;
             
-        case BXEmulatedPrinterColorRed:
+        case BXESCPColorRed:
             c=0; y=1; m=1; k=0; break;
             
-        case BXEmulatedPrinterColorGreen:
+        case BXESCPColorGreen:
             c=1; y=1; m=0; k=0; break;
             
-        case BXEmulatedPrinterColorViolet:
+        case BXESCPColorViolet:
             c=1; y=0; m=1; k=0; break;
         
-        case BXEmulatedPrinterColorBlack:
+        case BXESCPColorBlack:
         default:
             c=0; y=0; m=0; k=1; break;
     }
@@ -370,10 +376,10 @@ enum {
     }
 }
 
-- (void) setColor: (BXEmulatedPrinterColor)color
+- (void) setColor: (BXESCPColor)color
 {
-    if (BXEmulatedPrinterColorBlack < 0 || color > BXEmulatedPrinterColorGreen)
-        color = BXEmulatedPrinterColorBlack;
+    if (BXESCPColorBlack < 0 || color > BXESCPColorGreen)
+        color = BXESCPColorBlack;
     
     _color = color;
 }
@@ -405,25 +411,25 @@ enum {
     }
 }
 
-- (void) setTypeFace: (BXEmulatedPrinterTypeface)typeFace
+- (void) setTypeFace: (BXESCPTypeface)typeFace
 {
     switch (typeFace)
     {
-        case BXEmulatedPrinterTypefaceRoman:
-        case BXEmulatedPrinterTypefaceSansSerif:
-        case BXEmulatedPrinterTypefaceCourier:
-        case BXEmulatedPrinterTypefacePrestige:
-        case BXEmulatedPrinterTypefaceScript:
-        case BXEmulatedPrinterTypefaceOCRB:
-        case BXEmulatedPrinterTypefaceOCRA:
-        case BXEmulatedPrinterTypefaceOrator:
-        case BXEmulatedPrinterTypefaceOratorS:
-        case BXEmulatedPrinterTypefaceScriptC:
-        case BXEmulatedPrinterTypefaceRomanT:
-        case BXEmulatedPrinterTypefaceSansSerifH:
-        case BXEmulatedPrinterTypefaceSVBusaba:
-        case BXEmulatedPrinterTypefaceSVJittra:
-            _typeFace = (BXEmulatedPrinterTypeface)typeFace;
+        case BXESCPTypefaceRoman:
+        case BXESCPTypefaceSansSerif:
+        case BXESCPTypefaceCourier:
+        case BXESCPTypefacePrestige:
+        case BXESCPTypefaceScript:
+        case BXESCPTypefaceOCRB:
+        case BXESCPTypefaceOCRA:
+        case BXESCPTypefaceOrator:
+        case BXESCPTypefaceOratorS:
+        case BXESCPTypefaceScriptC:
+        case BXESCPTypefaceRomanT:
+        case BXESCPTypefaceSansSerifH:
+        case BXESCPTypefaceSVBusaba:
+        case BXESCPTypefaceSVJittra:
+            _typeFace = (BXESCPTypeface)typeFace;
             _textAttributesNeedUpdate = YES;
             break;
         default:
@@ -447,7 +453,7 @@ enum {
     else
     {
         //Use a base font size of 10.5 points
-        fontSize = NSMakeSize(10.5, 10.5);
+        fontSize = NSMakeSize(BXESCPFontSizeDefault, BXESCPFontSizeDefault);
         _effectiveCharactersPerInch = _charactersPerInch;
         
         if (self.condensed)
@@ -455,24 +461,25 @@ enum {
             if (self.proportional)
             {
                 fontSize.width *= 0.5;
+                //TODO: shouldn't the font size be applied here?
             }
             else if (_charactersPerInch == 10.0)
             {
                 _effectiveCharactersPerInch = 17.14;
-                fontSize.width *= 10.0 / _effectiveCharactersPerInch;
-                fontSize.height *= 10.0 / _charactersPerInch;
+                fontSize.width *= BXESCPCPIDefault / _effectiveCharactersPerInch;
+                fontSize.height *= BXESCPCPIDefault / _charactersPerInch;
             }
             else if (_charactersPerInch == 12.0)
             {
                 _effectiveCharactersPerInch = 20.0;
-                fontSize.width *= 10.0 / _effectiveCharactersPerInch;
-                fontSize.height *= 10.0 / _charactersPerInch;
+                fontSize.width *= BXESCPCPIDefault / _effectiveCharactersPerInch;
+                fontSize.height *= BXESCPCPIDefault / _charactersPerInch;
             }
         }
         else
         {
-            fontSize.width *= 10.0 / _effectiveCharactersPerInch;
-            fontSize.height *= 10.0 / _charactersPerInch;
+            fontSize.width *= BXESCPCPIDefault / _effectiveCharactersPerInch;
+            fontSize.height *= BXESCPCPIDefault / _charactersPerInch;
         }
         
         if (self.doubleWidth || self.doubleWidthForLine)
@@ -518,16 +525,16 @@ enum {
     NSUInteger strikeStyle = NSUnderlineStyleNone;
     switch (self.lineStyle)
     {
-        case BXEmulatedPrinterLineStyleSingle:
+        case BXESCPLineStyleSingle:
             strikeStyle |= NSUnderlineStyleSingle;
             break;
-        case BXEmulatedPrinterLineStyleDouble:
+        case BXESCPLineStyleDouble:
             strikeStyle |= NSUnderlineStyleDouble;
             break;
-        case BXEmulatedPrinterLineStyleBroken:
+        case BXESCPLineStyleBroken:
             strikeStyle |= NSUnderlineStyleSingle | NSUnderlinePatternDash;
             break;
-        case BXEmulatedPrinterLineStyleDoubleBroken:
+        case BXESCPLineStyleDoubleBroken:
             strikeStyle |= NSUnderlineStyleDouble | NSUnderlinePatternDash;
             break;
     }
@@ -565,7 +572,7 @@ enum {
     _textAttributesNeedUpdate = NO;
 }
 
-+ (NSFontDescriptor *) _fontDescriptorForEmulatedTypeface: (BXEmulatedPrinterTypeface)typeface
++ (NSFontDescriptor *) _fontDescriptorForEmulatedTypeface: (BXESCPTypeface)typeface
                                                      bold: (BOOL)bold
                                                    italic: (BOOL)italic
 {
@@ -578,27 +585,27 @@ enum {
     NSString *fontName = nil;
     switch (typeface)
     {
-        case BXEmulatedPrinterTypefaceOCRA:
-        case BXEmulatedPrinterTypefaceOCRB:
+        case BXESCPTypefaceOCRA:
+        case BXESCPTypefaceOCRB:
             fontName = @"OCR A Std";
             break;
             
-        case BXEmulatedPrinterTypefaceCourier:
+        case BXESCPTypefaceCourier:
             fontName = @"Courier";
             break;
             
-        case BXEmulatedPrinterTypefaceScript:
-        case BXEmulatedPrinterTypefaceScriptC:
+        case BXESCPTypefaceScript:
+        case BXESCPTypefaceScriptC:
             traits |= NSFontScriptsClass;
             break;
             
-        case BXEmulatedPrinterTypefaceSansSerif:
-        case BXEmulatedPrinterTypefaceSansSerifH:
+        case BXESCPTypefaceSansSerif:
+        case BXESCPTypefaceSansSerifH:
             fontName = @"Helvetica";
             traits |= NSFontSansSerifClass;
             
-        case BXEmulatedPrinterTypefaceRoman:
-        case BXEmulatedPrinterTypefaceRomanT:
+        case BXESCPTypefaceRoman:
+        case BXESCPTypefaceRomanT:
         default:
             traits |= NSFontModernSerifsClass;
             fontName = @"Times";
@@ -639,7 +646,7 @@ enum {
 		_charMap[i] = mapToUse[i];
 }
 
-- (void) setActiveCharTable: (BXEmulatedPrinterCharTable)charTable
+- (void) setActiveCharTable: (BXESCPCharTable)charTable
 {
     if (_activeCharTable != charTable)
     {
@@ -654,7 +661,7 @@ enum {
 }
 
 - (void) _assignCodepage: (NSUInteger)codepage
-             toCharTable: (BXEmulatedPrinterCharTable)charTable
+             toCharTable: (BXESCPCharTable)charTable
 {
     _charTables[charTable] = codepage;
     
@@ -662,10 +669,10 @@ enum {
         [self _selectCodepage: codepage];
 }
 
-- (void) _selectInternationalCharset: (BXEmulatedPrinterCharset)charsetID
+- (void) _selectInternationalCharset: (BXESCPCharset)charsetID
 {
     NSUInteger charsetIndex = charsetID;
-    if (charsetIndex == BXEmulatedPrinterCharsetLegal)
+    if (charsetIndex == BXESCPCharsetLegal)
         charsetIndex = 14;
     
     if (charsetIndex <= 14)
@@ -727,8 +734,8 @@ enum {
     _expectingFSCommand = NO;
     [self _endESCPCommand];
     
-    _typeFace = BXEmulatedPrinterTypefaceDefault;
-    _color = BXEmulatedPrinterColorBlack;
+    _typeFace = BXESCPTypefaceDefault;
+    _color = BXESCPColorBlack;
     _headPosition = NSZeroPoint;
     _horizontalMotionIndex = HMI_UNDEFINED;
     
@@ -738,15 +745,15 @@ enum {
     _rightMargin = _defaultPageSize.width;
     _bottomMargin = _defaultPageSize.height;
     
-    _lineSpacing = BXEmulatedPrinterLineSpacingDefault;
+    _lineSpacing = BXESCPLineSpacingDefault;
     _letterSpacing = 0.0;
-    _charactersPerInch = BXEmulatedPrinterCPIDefault;
+    _charactersPerInch = BXESCPCPIDefault;
     
-    _activeCharTable = BXEmulatedPrinterCharTable1;
-    _charTables[BXEmulatedPrinterCharTable0] = 0;
-    _charTables[BXEmulatedPrinterCharTable1] = 437;
-    _charTables[BXEmulatedPrinterCharTable2] = 437;
-    _charTables[BXEmulatedPrinterCharTable3] = 437;
+    _activeCharTable = BXESCPCharTable1;
+    _charTables[BXESCPCharTable0] = 0;
+    _charTables[BXESCPCharTable1] = 437;
+    _charTables[BXESCPCharTable2] = 437;
+    _charTables[BXESCPCharTable3] = 437;
     
     _bold = NO;
     _italic = NO;
@@ -764,7 +771,7 @@ enum {
     _underlined = NO;
     _linethroughed = NO;
     _overscored = NO;
-    _lineStyle = BXEmulatedPrinterLineStyleNone;
+    _lineStyle = BXESCPLineStyleNone;
     
     _densityK = 0;
     _densityL = 1;
@@ -781,7 +788,7 @@ enum {
     _multipointFontSize = 0.0;
     _multipointCharactersPerInch = 0.0;
     
-    _msbMode = BXEmulatedPrinterMSBDefault;
+    _msbMode = BXESCPMSBModeDefault;
 
     //Apply default tab layout: one every 8 characters
     NSUInteger i;
@@ -791,13 +798,13 @@ enum {
     _numVerticalTabs = VERTICAL_TABS_UNDEFINED;
     
     [self _updateTextAttributes];
-    [self _startNewPageSavingPrevious: NO resetHead: NO];
+    [self _startNewPageSavingPrevious: NO carriageReturn: NO];
 }
 
 - (void) formFeed
 {
     //TODO: toggle saving of page based on whether anything has been drawn into the page yet
-    [self _startNewPageSavingPrevious: YES resetHead: YES];
+    [self _startNewPageSavingPrevious: YES carriageReturn: YES];
     [self finishPrintSession];
 }
 
@@ -807,25 +814,24 @@ enum {
     _headPosition.y += _lineSpacing;
     
     if (_headPosition.y > _bottomMargin)
-        [self _startNewPageSavingPrevious: YES resetHead: NO];
+        [self _startNewPageSavingPrevious: YES carriageReturn: NO];
 }
 
-- (void) _startNewPageSavingPrevious: (BOOL)savePrevious resetHead: (BOOL)resetHead
+- (void) _startNewPageSavingPrevious: (BOOL)savePrevious carriageReturn: (BOOL)carriageReturn
 {
     if (savePrevious)
         [self.completedPages addObject: self.currentPage];
     
     _headPosition.y = _topMargin;
-    if (resetHead)
+    if (carriageReturn)
         _headPosition.x = _leftMargin;
     
     NSSize canvasSize = NSMakeSize(_pageSize.width * _dpi.width,
                                    _pageSize.height * _dpi.height);
     self.currentPage = [[[NSImage alloc] initWithSize: canvasSize] autorelease];
-    [self.currentPage setFlipped: YES];
     
     //Fill the page with white to start with
-    [self.currentPage lockFocus];
+    [self.currentPage lockFocusFlipped: YES];
         [[NSColor whiteColor] set];
         NSRectFill(NSMakeRect(0, 0, canvasSize.width, canvasSize.height));
     [self.currentPage unlockFocus];
@@ -853,18 +859,11 @@ enum {
         return;
     }
         
-    //Apply the current most-significant-bit mode to the byte
-    switch (_msbMode)
-    {
-        case BXEmulatedPrinterMSB0:
-            byte &= 0x7F;
-            break;
-        case BXEmulatedPrinterMSB1:
-            byte |= 0x80;
-            break;
-        case BXEmulatedPrinterMSBDefault:
-            break;
-    }
+    //If an MSB control mode is active, rewrite the most significant bit (bit 7).
+    if (_msbMode == BXESCPMSBMode0)
+        byte &= ~(1 << 7);
+    else if (_msbMode == BXESCPMSBMode1)
+        byte |= (1 << 7);
     
     //Certain control commands can force n subsequent bytes to be treated as characters to print,
     //even when they would otherwise be interpreted as a new command.
@@ -898,12 +897,13 @@ enum {
 - (void) _printCharacter: (uint8_t)character
 {
     //FIXME: this routine naively prints each glyph one by one, which prevents OSX from doing kerning or ligatures.
-    //Instead we should batch up characters into strings and print them once we hit the end of the line
-    //(or are interrupted by other commands.)
+    //Instead, when in proportional mode we could batch up characters into strings and print them once we hit the
+    //end of the line (or are interrupted by other commands.)
     
-    //I have no idea, this was just in the original implementation with no explanation given.
+    //I have no real idea why this is here, it was just in the original implementation with no explanation given.
+    //Perhaps there's some DOS programs that send 1s instead of spaces??
     if (character == 0x01)
-        character = 0x20;
+        character = ' ';
     
     //If our text attributes are dirty, rebuild them now
     if (_textAttributesNeedUpdate)
@@ -915,10 +915,21 @@ enum {
     //Construct a string for drawing the glyph
     NSString *stringToPrint = [NSString stringWithCharacters: &codepoint length: 1];
     
-    //Draw the glyph at the current position of the printing head
-    [self.currentPage lockFocus];
+    //Draw the glyph at the current position of the print head
+    [self.currentPage lockFocusFlipped: YES];
+        //Use multiply blending so that overlapping colors will darken each other
+        CGContextRef context = (CGContextRef)([NSGraphicsContext currentContext].graphicsPort);
+        CGContextSetBlendMode(context, kCGBlendModeMultiply);
+    
         [stringToPrint drawAtPoint: self.headPositionInPoints
                     withAttributes: self.textAttributes];
+    
+        //In doublestrike mode, reprint the same string shifted slightly down to 'thicken' it.
+        if (self.doubleStrike)
+        {
+            [stringToPrint drawAtPoint: NSMakePoint(self.headPositionInPoints.x, self.headPositionInPoints.y + 0.5)
+                        withAttributes: self.textAttributes];
+        }
     [self.currentPage unlockFocus];
     
     //Advance the head past the string
@@ -940,8 +951,9 @@ enum {
     advance += self.letterSpacing;
     _headPosition.x += advance;
     
-    //Wrap the line if the next character would go over the right margin.
+    //Wrap the line if the character after this one would go over the right margin.
     //(This may also trigger a new page.)
+    //CHECKME: is actually defined behaviour? It may be
 	if((_headPosition.x + advance) > _rightMargin)
     {
         [self _startNewLine];
@@ -988,7 +1000,6 @@ enum {
     //Work out how many extra bytes we should expect for this command
     switch (_currentESCPCommand)
     {
-        case 0x02: // Undocumented
         case 0x0a: // Reverse line feed											(ESC LF)
         case 0x0c: // Return to top of current page								(ESC FF)
         case 0x0e: // Select double-width printing (one line)					(ESC SO)
@@ -1106,6 +1117,9 @@ enum {
         case '&': // Define user-defined characters                             (ESC &)
         case ':': // Copy ROM to RAM											(ESC :)
             NSLog(@"PRINTER: User-defined characters not supported.");
+            //TODO: we should at least parse these commands so that
+            //we're not treating their parameters as garbage data
+            [self _endESCPCommand];
             break;
             
         case '(': // Extended ESCP/2 two-byte sequence
@@ -1113,16 +1127,15 @@ enum {
             break;
             
         default:
-            NSLog(@"PRINTER: Unknown command %@ (%02Xh) %c, unable to skip parameters.",
-                  (_currentESCPCommand & IBM_FLAG) ? @"FS" : @"ESC", _currentESCPCommand, _currentESCPCommand);
+            NSLog(@"PRINTER: Unknown command %@ %c, unable to skip parameters.",
+                  (_currentESCPCommand & IBM_FLAG) ? @"FS" : @"ESC", _currentESCPCommand);
             
-            _numParamsExpected = 0;
-            _currentESCPCommand = 0;
+            [self _endESCPCommand];
             break;
     }
     
     //If we don't need any parameters for this command, execute it straight away
-    if (_numParamsExpected == 0)
+    if (_currentESCPCommand && _numParamsExpected == 0)
         [self _executeESCCommand: _currentESCPCommand parameters: NULL];
 }
 
@@ -1229,10 +1242,6 @@ enum {
 {
     switch (command)
     {
-        case 0x02: // Undocumented
-            // Ignore
-            break;
-            
         case 0x0e: // Select double-width printing (one line) (ESC SO)
             if (!self.multipointEnabled)
             {
@@ -1250,14 +1259,14 @@ enum {
         case 0x19: // Control paper loading/ejecting (ESC EM)
             // We are not really loading paper, so most commands can be ignored
             if (params[0] == 'R')
-                [self _startNewPageSavingPrevious: YES resetHead: NO];
+                [self _startNewPageSavingPrevious: YES carriageReturn: NO];
             //newPage(true,false); // TODO resetx?
             break;
             
         case ' ': // Set intercharacter space (ESC SP)
             if (!self.multipointEnabled)
             {
-                double spacingFactor = (self.quality == BXEmulatedPrinterQualityDraft) ? 120 : 180;
+                double spacingFactor = (self.quality == BXESCPQualityDraft) ? 120 : 180;
                 self.letterSpacing = params[0] / spacingFactor;
             }
             break;
@@ -1276,7 +1285,7 @@ enum {
             if (params[0] & (1 << 7))
             {
                 self.underlined = YES;
-                self.lineStyle = BXEmulatedPrinterLineStyleSingle;
+                self.lineStyle = BXESCPLineStyleSingle;
             }
             else
             {
@@ -1290,7 +1299,7 @@ enum {
             break;
             
         case '#': // Cancel MSB control (ESC #)
-            _msbMode = BXEmulatedPrinterMSBDefault;
+            _msbMode = BXESCPMSBModeDefault;
             break;
             
         case '$': // Set absolute horizontal print position (ESC $)
@@ -1338,7 +1347,7 @@ enum {
             case '1':
             case 1:
                 self.underlined = YES;
-                self.lineStyle = BXEmulatedPrinterLineStyleSingle;
+                self.lineStyle = BXESCPLineStyleSingle;
                 break;
         }
             break;
@@ -1380,11 +1389,11 @@ enum {
             break;
             
         case '=': // Set MSB to 0 (ESC =)
-            _msbMode = BXEmulatedPrinterMSB0;
+            _msbMode = BXESCPMSBMode0;
             break;
             
         case '>': // Set MSB to 1 (ESC >)
-            _msbMode = BXEmulatedPrinterMSB1;
+            _msbMode = BXESCPMSBMode1;
             break;
             
         case '?': // Reassign bit-image mode (ESC ?)
@@ -1454,7 +1463,7 @@ enum {
             _headPosition.y += (params[0] / 180.0);
             
             if (_headPosition.y > _bottomMargin)
-                [self _startNewPageSavingPrevious: YES resetHead: NO];
+                [self _startNewPageSavingPrevious: YES carriageReturn: NO];
         }
             break;
             
@@ -1501,7 +1510,7 @@ enum {
             break;
             
         case 'R': // Select an international character set (ESC R)
-            [self _selectInternationalCharset: (BXEmulatedPrinterCharset)params[0]];
+            [self _selectInternationalCharset: (BXESCPCharset)params[0]];
             break;
             
         case 'S': // Select superscript/subscript printing (ESC S)
@@ -1585,7 +1594,7 @@ enum {
             
             double effectiveUnitSize = _unitSize;
             if (effectiveUnitSize == UNIT_SIZE_UNDEFINED)
-                effectiveUnitSize = (self.quality == BXEmulatedPrinterQualityDraft) ? 120.0 : 180.0;
+                effectiveUnitSize = (self.quality == BXESCPQualityDraft) ? 120.0 : 180.0;
             
             _headPosition.x += offset / effectiveUnitSize;
         }
@@ -1622,7 +1631,7 @@ enum {
         }
             
         case 'k': // Select typeface (ESC k)
-            self.typeFace = (BXEmulatedPrinterTypeface)params[0];
+            self.typeFace = (BXESCPTypeface)params[0];
             break;
             
         case 'l': // Set left margin (ESC l)
@@ -1633,22 +1642,22 @@ enum {
             
         case 'p': // Turn proportional mode on/off (ESC p)
             switch (params[0])
-        {
-            case '0':
-            case 0:
-                self.proportional = NO;
-                break;
-            case '1':
-            case 1:
-                self.proportional = YES;
-                self.quality = BXEmulatedPrinterQualityLQ;
-                break;
-        }
+            {
+                case '0':
+                case 0:
+                    self.proportional = NO;
+                    break;
+                case '1':
+                case 1:
+                    self.proportional = YES;
+                    self.quality = BXESCPQualityLQ;
+                    break;
+            }
             self.multipointEnabled = NO;
             break;
             
         case 'r': // Select printing color (ESC r)
-            self.color = (BXEmulatedPrinterColor)params[0];
+            self.color = (BXESCPColor)params[0];
             break;
             
         case 's': // Select low-speed mode (ESC s)
@@ -1661,19 +1670,19 @@ enum {
             {
                 case 0:
                 case '0':
-                    self.activeCharTable = BXEmulatedPrinterCharTable0;
+                    self.activeCharTable = BXESCPCharTable0;
                     break;
                 case 1:
                 case '1':
-                    self.activeCharTable = BXEmulatedPrinterCharTable1;
+                    self.activeCharTable = BXESCPCharTable1;
                     break;
                 case 2:
                 case '2':
-                    self.activeCharTable = BXEmulatedPrinterCharTable2;
+                    self.activeCharTable = BXESCPCharTable2;
                     break;
                 case 3:
                 case '3':
-                    self.activeCharTable = BXEmulatedPrinterCharTable3;
+                    self.activeCharTable = BXESCPCharTable3;
                     break;
             }
             //CHECKME: is this necessary?
@@ -1692,12 +1701,13 @@ enum {
             {
                 case 0:
                 case '0':
-                    self.quality = BXEmulatedPrinterQualityDraft;
+                    self.quality = BXESCPQualityDraft;
+                    //CHECKME: There's nothing in the ESC/P spec indicating that this mode should trigger condensed printing.
                     self.condensed = YES;
                     break;
                 case 1:
                 case '1':
-                    self.quality = BXEmulatedPrinterQualityLQ;
+                    self.quality = BXESCPQualityLQ;
                     self.condensed = NO;
                     break;
             }
@@ -1705,7 +1715,7 @@ enum {
             
         case ESCP2_FLAG+'t': // Assign character table (ESC (t)
         {
-            BXEmulatedPrinterCharTable charTable = (BXEmulatedPrinterCharTable)params[2];
+            BXESCPCharTable charTable = (BXESCPCharTable)params[2];
             uint8_t codepageIndex = params[3];
             if (charTable < 4 && codepageIndex < 16)
             {
@@ -1716,9 +1726,9 @@ enum {
             break;
             
         case ESCP2_FLAG+'-': // Select line/score (ESC (-)
-            self.lineStyle = (BXEmulatedPrinterLineStyle)params[4];
+            self.lineStyle = (BXESCPLineStyle)params[4];
             
-            if (self.lineStyle == BXEmulatedPrinterLineStyleNone)
+            if (self.lineStyle == BXESCPLineStyleNone)
             {
                 self.underlined = self.linethroughed = self.overscored = NO;
             }
@@ -1755,7 +1765,7 @@ enum {
             CGFloat newPos = _topMargin + (offset * effectiveUnitSize);
             
             if (newPos > _bottomMargin)
-                [self _startNewPageSavingPrevious: YES resetHead: NO];
+                [self _startNewPageSavingPrevious: YES carriageReturn: NO];
             else
                 _headPosition.y = newPos;
         }
@@ -1796,7 +1806,7 @@ enum {
             {
                 _headPosition.y = newPos;
                 if (_headPosition.y > _bottomMargin)
-                    [self _startNewPageSavingPrevious: YES resetHead: NO];
+                    [self _startNewPageSavingPrevious: YES carriageReturn: NO];
             }
         }
             break;
@@ -1898,7 +1908,7 @@ enum {
                 
                 // Nothing found => Act like FF
                 if (chosenTabPos > _bottomMargin || chosenTabPos == -1)
-                    [self _startNewPageSavingPrevious: YES resetHead: NO];
+                    [self _startNewPageSavingPrevious: YES carriageReturn: NO];
                 else
                     _headPosition.y = chosenTabPos;
             }
@@ -1909,7 +1919,7 @@ enum {
             
         case '\f':		// Form feed (FF)
             self.doubleWidthForLine = NO;
-            [self _startNewPageSavingPrevious: YES resetHead: NO];
+            [self _startNewPageSavingPrevious: YES carriageReturn: NO];
             return YES;
             
         case '\r':		// Carriage Return (CR)
@@ -1925,14 +1935,14 @@ enum {
             return YES;
             
         case 0x0e:		//Select double-width printing (one line) (SO)
-            if (!_multipointEnabled)
+            if (!self.multipointEnabled)
             {
                 self.doubleWidthForLine = YES;
             }
             return YES;
             
         case 0x0f:		// Select condensed printing (SI)
-            if (!_multipointEnabled && _charactersPerInch != 15.0)
+            if (!self.multipointEnabled && _charactersPerInch != 15.0)
             {
                 self.condensed = YES;
             }

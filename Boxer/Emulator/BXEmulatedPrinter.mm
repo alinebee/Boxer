@@ -107,6 +107,8 @@ enum {
 @property (readonly, nonatomic) NSUInteger activeCodepage;
 
 @property (retain, nonatomic) NSImage *currentPage;
+@property (retain, nonatomic) NSBitmapImageRep *previewCanvas;
+@property (retain, nonatomic) NSGraphicsContext *previewContext;
 @property (retain, nonatomic) NSMutableArray *completedPages;
 @property (retain, nonatomic) NSMutableDictionary *textAttributes;
 
@@ -137,6 +139,10 @@ enum {
 
 //Called when the DOS session formfeeds or the print head goes off the extents of the current page.
 - (void) _startNewPageSavingPrevious: (BOOL)savePrevious carriageReturn: (BOOL)carriageReturn;
+
+//Called when we first need to draw to the current page.
+//The page canvas is created at this time and the paper size is locked.
+- (void) _prepareCanvasForPrinting;
 
 //Called when the DOS session prepares a bitmap drawing context.
 - (void) _prepareForBitmapWithDensity: (NSUInteger)density columns: (NSUInteger)numColumns;
@@ -230,6 +236,8 @@ enum {
 @synthesize activeCharTable = _activeCharTable;
 
 @synthesize currentPage = _currentPage;
+@synthesize previewContext = _previewContext;
+@synthesize previewCanvas = _previewCanvas;
 @synthesize currentPageIsBlank = _currentPageIsBlank;
 @synthesize completedPages = _completedPages;
 @synthesize textAttributes = _textAttributes;
@@ -255,6 +263,8 @@ enum {
     self.currentPage = nil;
     self.completedPages = nil;
     self.textAttributes = nil;
+    self.previewContext = nil;
+    self.previewCanvas = nil;
     
     [super dealloc];
 }
@@ -521,7 +531,7 @@ enum {
     }
     
     //Multiply out the font size to account for our current DPI settings,
-    //Since appkit's drawing points are predicated on a 72dpi display.
+    //Since appkit's drawing points are predicated on a point being 1/72 of an inch.
     fontSize.width *= (_dpi.width / 72);
     fontSize.height *= (_dpi.height / 72);
     
@@ -606,38 +616,32 @@ enum {
     if (bold) traits |= NSFontBoldTrait;
     if (italic) traits |= NSFontItalicTrait;
     
-    //Use an actual font family name (e.g. "Courier") where there's a direct equivalent for the emulated face;
-    //Otherwise, use a font family class (e.g. NSFontSansSerifClass) to ask for a suitable font for that style.
     NSString *familyName = nil;
     switch (typeface)
     {
         case BXESCPTypefaceOCRA:
         case BXESCPTypefaceOCRB:
             familyName = @"OCR A Std";
-            traits |= NSFontMonoSpaceTrait;
             break;
             
         case BXESCPTypefaceCourier:
             familyName = @"Courier";
-            traits |= NSFontSlabSerifsClass | NSFontMonoSpaceTrait;
             break;
             
         case BXESCPTypefaceScript:
         case BXESCPTypefaceScriptC:
             familyName = @"Brush Script MT";
-            traits |= NSFontScriptsClass;
             break;
             
         case BXESCPTypefaceSansSerif:
         case BXESCPTypefaceSansSerifH:
-            familyName = @"Helvetica";
-            traits |= NSFontSansSerifClass;
+            familyName = @"Helvetica Neue";
+            break;
             
         case BXESCPTypefaceRoman:
         case BXESCPTypefaceRomanT:
         default:
             familyName = @"Times New Roman";
-            traits |= NSFontOldStyleSerifsClass;
             break;
     }
     
@@ -772,7 +776,7 @@ enum {
     
     //TODO: derive the default page size from OSX's default printer settings instead.
     //We could even pop up the OSX page setup sheet to get them to confirm the values there.
-    _defaultPageSize = NSMakeSize(8.27, 11.69); //A4 in inches
+    _defaultPageSize = NSMakeSize(8.5, 11); //US Letter paper in inches
     
     //Actual dots per inch of the output. This will affect the size of canvas we use
     //for 'drawing' each page.
@@ -841,6 +845,7 @@ enum {
     _printUpperControlCodes = NO;
     _numDataBytesToIgnore = 0;
     _numDataBytesToPrint = 0;
+    _bitmapBytesRemaining = 0;
     
     _unitSize = UNIT_SIZE_UNDEFINED;
     
@@ -852,9 +857,9 @@ enum {
 
     //Apply default tab layout: one every 8 characters
     NSUInteger i;
-    for (i=0; i<32; i++)
-        _horizontalTabPositions[i] = i * 8 * (1 / _charactersPerInch);
     _numHorizontalTabs = 32;
+    for (i=0; i<_numHorizontalTabs; i++)
+        _horizontalTabPositions[i] = i * 8 * (1 / _charactersPerInch);
     _numVerticalTabs = VERTICAL_TABS_UNDEFINED;
     
     [self _updateTextAttributes];
@@ -902,28 +907,58 @@ enum {
     if (carriageReturn)
         _headPosition.x = _leftMargin;
     
-    //FIXME: this doesn't account for the DOS session changing the paper size while we're printing.
-    NSSize canvasSize = NSMakeSize(_pageSize.width * _dpi.width,
-                                   _pageSize.height * _dpi.height);
-    
-    self.currentPage = [[[NSImage alloc] initWithSize: canvasSize] autorelease];
-    
-    //Fill the page with white to start with
-    //TODO: should we bother? Could just leave it clear
-    /*
-    [self.currentPage lockFocusFlipped: YES];
-        [[NSColor whiteColor] set];
-        NSRectFill(NSMakeRect(0, 0, canvasSize.width, canvasSize.height));
-    [self.currentPage unlockFocus];
-     */
-    
+    //Unset the current image. We'll create a new one as soon as anything is drawn onto the next page.
+    self.currentPage = nil;
+    self.previewContext = nil;
+    self.previewCanvas = nil;
+    _previewBacking = NULL;
     _currentPageIsBlank = YES;
+}
+
+- (void) _prepareCanvasForPrinting
+{
+    if (!self.currentPage)
+    {
+        //IMPLEMENTATION NOTE: this won't account for the DOS session increasing the paper size
+        //while we're printing. But this isn't recommended in any case, so DOS programs probably won't do it.
+        NSSize canvasSize = NSMakeSize(ceil(_pageSize.width * _dpi.width),
+                                       ceil(_pageSize.height * _dpi.height));
+        
+        self.currentPage = [[[NSImage alloc] initWithSize: canvasSize] autorelease];
+        
+        //Add a custom representation to this image into which we'll draw the page preview.
+        self.previewCanvas = [[[NSBitmapImageRep alloc] initWithBitmapDataPlanes: NULL
+                                                                      pixelsWide: canvasSize.width
+                                                                      pixelsHigh: canvasSize.height
+                                                                   bitsPerSample: 8
+                                                                 samplesPerPixel: 4
+                                                                        hasAlpha: YES
+                                                                        isPlanar: NO
+                                                                  colorSpaceName: NSDeviceRGBColorSpace
+                                                                     bytesPerRow: 0
+                                                                    bitsPerPixel: 0] autorelease];
+        [self.currentPage addRepresentation: self.previewCanvas];
+    }
+    
+    //Create a new graphics context with which we can draw into the canvas image.
+    //IMPLEMENTATION NOTE: in 10.8, NSBitmapImageRep may sometimes change its backing on the fly
+    //without telling the graphics context about it. So we also check if the backing appears to have
+    //changed since the last time and if it has, we recreate the context.
+    if (!self.previewContext || _previewBacking != self.previewCanvas.bitmapData)
+    {
+        self.previewContext = [NSGraphicsContext graphicsContextWithBitmapImageRep: self.previewCanvas];
+        _previewBacking = self.previewCanvas.bitmapData;
+        
+        //While we're here, set some properties of the context.
+        //Use multiply blending so that overlapping colors will darken each other
+        CGContextSetBlendMode((CGContextRef)(self.previewContext.graphicsPort), kCGBlendModeMultiply);
+    }
 }
 
 - (NSPoint) headPositionInDevicePoints
 {
-    return  NSMakePoint(_headPosition.x * _dpi.width,
-                        _headPosition.y * _dpi.height);
+    return NSMakePoint(_headPosition.x * _dpi.width,
+                       self.currentPage.size.height - (_headPosition.y * _dpi.height));
 }
 
 - (void) handleDataByte: (uint8_t)byte
@@ -1059,13 +1094,13 @@ enum {
             dotRect.origin = self.headPositionInDevicePoints;
             dotRect.size = NSMakeSize(_dpi.width / _bitmapDPI.width,
                                       _dpi.height / _bitmapDPI.height);
+            dotRect.origin.y -= dotRect.size.height;
             
-            [self.currentPage lockFocusFlipped: YES];
-                //TODO: clip drawing to within the printable area of the page
+            [self _prepareCanvasForPrinting];
             
-                //Use multiply blending so that overlapping colors will darken each other
-                CGContextRef context = (CGContextRef)([NSGraphicsContext currentContext].graphicsPort);
-                CGContextSetBlendMode(context, kCGBlendModeMultiply);
+            [NSGraphicsContext saveGraphicsState];
+                [NSGraphicsContext setCurrentContext: self.previewContext];
+            
                 [printColor set];
             
                 //Loop over each bit in each byte, printing a dot for each bit
@@ -1082,10 +1117,10 @@ enum {
                             NSRectFill(dotRect);
                             _currentPageIsBlank = NO;
                         }
-                        dotRect.origin.y += dotRect.size.height;
+                        dotRect.origin.y -= dotRect.size.height;
                     }
                 }
-            [self.currentPage unlockFocus];
+            [NSGraphicsContext restoreGraphicsState];
             
             _bitmapBytesReadInColumn = 0;
             
@@ -1118,7 +1153,6 @@ enum {
     //If our text attributes are dirty, rebuild them now
     if (_textAttributesNeedUpdate)
         [self _updateTextAttributes];
-    
     //Locate the unicode character to print
     unichar codepoint = _charMap[character];
     
@@ -1141,17 +1175,19 @@ enum {
         advance = _horizontalMotionIndex;
     }
     
+    //Note that this is in the flipped Quartz/PostScript coordinate system.
     NSPoint printPos = self.headPositionInDevicePoints;
     printPos.x += (advance - stringSize.width) * 0.5;
+    printPos.y -= stringSize.height;
     
     //Draw the glyph at the current position of the print head,
     //centered within the space it is expected to occupy.
-    [self.currentPage lockFocusFlipped: YES];
-        //TODO: clip drawing to within the printable area of the page
+    [self _prepareCanvasForPrinting];
+    [NSGraphicsContext saveGraphicsState];
+        [NSGraphicsContext setCurrentContext: self.previewContext];
     
         //Use multiply blending so that overlapping colors will darken each other
-        CGContextRef context = (CGContextRef)([NSGraphicsContext currentContext].graphicsPort);
-        CGContextSetBlendMode(context, kCGBlendModeMultiply);
+        CGContextSetBlendMode((CGContextRef)(self.previewContext.graphicsPort), kCGBlendModeMultiply);
     
         [stringToPrint drawAtPoint: printPos
                     withAttributes: self.textAttributes];
@@ -1164,14 +1200,13 @@ enum {
         }
     
         _currentPageIsBlank = NO;
-    [self.currentPage unlockFocus];
+    [NSGraphicsContext restoreGraphicsState];
     
     //Advance the head past the string
     _headPosition.x += advance + self.letterSpacing;
     
     //Wrap the line if the character after this one would go over the right margin.
     //(This may also trigger a new page.)
-    //CHECKME: is actually defined behaviour? It may be
 	if((_headPosition.x + advance) > _rightMargin)
     {
         [self _startNewLine];

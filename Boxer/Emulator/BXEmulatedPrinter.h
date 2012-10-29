@@ -187,6 +187,10 @@ typedef enum {
     NSMutableDictionary *_textAttributes;
     BOOL _textAttributesNeedUpdate;
     BOOL _currentPageIsBlank;
+    
+    NSBitmapImageRep *_previewCanvas;
+    NSGraphicsContext *_previewContext;
+    void *_previewBacking;
 }
 
 //Whether the printer is currently busy and cannot respond to more data.

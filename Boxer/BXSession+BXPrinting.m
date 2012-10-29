@@ -11,8 +11,6 @@
 
 - (void) printerWillBeginPrinting: (BXEmulatedPrinter *)printer
 {
-    NSLog(@"Print signals received!");
-    
     NSSize previewDPI = NSMakeSize(72.0, 72.0);
     
     NSRect contentRect = NSMakeRect(0, 0, printer.defaultPageSize.width * previewDPI.width,

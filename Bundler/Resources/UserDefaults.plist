@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>appVersion</key>
+	<string>1.0</string>
+	<key>ctrlClickEnabled</key>
+	<true/>
+	<key>seamlessMouseEnabled</key>
+	<false/>
+	<key>showsHotkeyWarning</key>
+	<true/>
+	<key>showsLaunchPanelOnFirstLaunch</key>
+	<true/>
+	<key>showsAspectCorrectionToggle</key>
+	<true/>
+	<key>helpLinks</key>
+	<array>
+		<dict>
+			<key>title</key>
+			<string>Game Forum</string>
+			<key>url</key>
+			<string>http://mygame.com/forum</string>
+		</dict>
+		<dict>
+			<key>title</key>
+			<string>Technical Support</string>
+			<key>url</key>
+			<string>http://mygame.com/support</string>
+		</dict>
+	</array>
+</dict>
+</plist>

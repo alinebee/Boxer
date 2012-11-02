@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'Boxer Bundler' target in the 'Boxer Bundler' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif

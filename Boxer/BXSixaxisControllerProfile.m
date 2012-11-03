@@ -70,12 +70,14 @@ enum {
             nil];
 }
 
+- (BXControllerStyle) controllerStyle { return BXControllerStyleGamepad; }
+
 - (NSDictionary *) DPadElementsFromButtons: (NSArray *)buttons
 {
-	NSMutableDictionary *padElements = [[NSMutableDictionary alloc] initWithCapacity: 4];
-	for (DDHidElement *element in [[self HIDController] buttonElements])
+	NSMutableDictionary *padElements = [NSMutableDictionary dictionaryWithCapacity: 4];
+	for (DDHidElement *element in self.device.buttonElements)
 	{
-		switch ([[element usage] usageId])
+		switch (element.usage.usageId)
 		{
 			case BXSixaxisControllerDPadUp:
 				[padElements setObject: element forKey: BXControllerProfileDPadUp];
@@ -94,20 +96,19 @@ enum {
 				break;
 		}
 		//Stop looking once we've found all the D-pad buttons
-		if ([padElements count] == 4) break;
+		if (padElements.count == 4) break;
 	}
-	return [padElements autorelease];
+	return padElements;
 }
 
 //Manual binding for Sixaxis buttons because they're numbered in a crazy-ass order.
 - (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element
 {
-	id binding;
-	id joystick = [self emulatedJoystick];
+	id <BXHIDInputBinding> binding;
 	
-	BOOL isWheel =	[joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
+	BOOL isWheel = [self.emulatedJoystick conformsToProtocol: @protocol(BXEmulatedWheel)];
 
-    switch ([[element usage] usageId])
+    switch (element.usage.usageId)
     {
         case BXSixaxisControllerXButton:
             binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton1];

@@ -24,33 +24,47 @@
 @protocol BXEmulatedJoystick;
 @protocol BXHIDInputBinding;
 
+//Constants used by BXHIDControllerProfile.controllerStyle.
+typedef enum {
+    BXControllerStyleUnknown,
+    BXControllerStyleJoystick,
+    BXControllerStyleFlightstick,
+    BXControllerStyleGamepad,
+    BXControllerStyleWheel,
+} BXControllerStyle;
+
 
 @interface BXHIDControllerProfile : NSObject
 {
-	DDHidJoystick *_HIDController;
+	DDHidJoystick *_device;
 	id <BXEmulatedJoystick> _emulatedJoystick;
 	NSMutableDictionary *_bindings;
+    BXControllerStyle _controllerStyle;
 }
 
 //The HID controller whose inputs we are converting from.
-@property (retain, nonatomic) DDHidJoystick *HIDController;
+@property (retain, nonatomic) DDHidJoystick *device;
 
 //The emulated joystick whose inputs we are converting to.
 @property (retain, nonatomic) id <BXEmulatedJoystick> emulatedJoystick;
 
 //A dictionary of DDHidUsage -> BXHIDInputBinding mappings.
-@property (readonly, nonatomic) NSMutableDictionary *bindings;
+@property (readonly, retain, nonatomic) NSMutableDictionary *bindings;
+
+//The style of this controller. Used for tweaking certain mapping behaviours.
+@property (readonly, nonatomic) BXControllerStyle controllerStyle;
 
 //Returns a BXControllerProfile that maps the specified HID controller
 //to the specified emulated joystick.
-+ (id) profileForHIDController: (DDHidJoystick *)HIDController
-			toEmulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick;
++ (id) profileForHIDDevice: (DDHidJoystick *)device
+          emulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick;
 
-- (id) initWithHIDController: (DDHidJoystick *)HIDController
-		  toEmulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick;
+- (id) initWithHIDDevice: (DDHidJoystick *)device
+        emulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick;
 
 //Set/get the specified input binding for the specified element usage
 - (id <BXHIDInputBinding>) bindingForElement: (DDHidElement *)element;
-- (void) setBinding: (id <BXHIDInputBinding>)binding forElement: (DDHidElement *)element;
+- (void) setBinding: (id <BXHIDInputBinding>)binding
+         forElement: (DDHidElement *)element;
 
 @end

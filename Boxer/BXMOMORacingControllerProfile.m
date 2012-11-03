@@ -90,14 +90,11 @@ enum {
             nil];
 }
 
+- (BXControllerStyle) controllerStyle { return BXControllerStyleWheel; }
+
 - (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element
-{
-	id binding = nil;
-	id joystick = [self emulatedJoystick];
-	
-	NSUInteger realButton = [[element usage] usageId];
-	NSUInteger emulatedButton = BXEmulatedJoystickUnknownButton;
-    NSUInteger numEmulatedButtons = [joystick numButtons];
+{	
+	NSUInteger emulatedButton, realButton = element.usage.usageId;
     
     switch (realButton)
     {
@@ -119,13 +116,18 @@ enum {
             emulatedButton = BXEmulatedJoystickButton4;
             break;
             
-            //Leave all other wheel buttons unbound for now
+        //Leave all other wheel buttons unbound for now
+        default:
+            emulatedButton = BXEmulatedJoystickUnknownButton;
+            break;
     }
     
+	BXButtonToButton *binding = nil;
+    NSUInteger numEmulatedButtons = self.emulatedJoystick.numButtons;
     if (emulatedButton != BXEmulatedJoystickUnknownButton && emulatedButton <= numEmulatedButtons)
     {
         binding = [BXButtonToButton binding];
-        [binding setButton: emulatedButton];
+        binding.button = emulatedButton;
     }
 	
 	return binding;
@@ -136,19 +138,19 @@ enum {
 {
     for (DDHidElement *element in elements)
     {
-        id binding;
-        switch([[element usage] usageId])
+        id <BXHIDInputBinding> binding;
+        switch(element.usage.usageId)
         {
             case BXMOMORacingWheelAxis:
                 binding = [BXAxisToAxis bindingWithAxis: BXAxisWheel];
-                [binding setDeadzone: BXMOMORacingWheelDeadzone];
+                ((BXAxisToAxis *)binding).deadzone = BXMOMORacingWheelDeadzone;
                 break;
                 
             case BXMOMORacingPedalAxis:
                 binding = [BXAxisToBindings bindingWithPositiveAxis: BXAxisBrake
                                                        negativeAxis: BXAxisAccelerator];
                 
-                [binding setDeadzone: BXMOMORacingPedalDeadzone];
+                ((BXAxisToBindings *)binding).deadzone = BXMOMORacingPedalDeadzone;
                 break;
                 
             default:

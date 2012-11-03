@@ -44,6 +44,10 @@ extern NSString * const BXControllerProfileDPadDown;
 
 @interface BXHIDControllerProfile () <BXPeriodicInputBindingDelegate>
 
+//Overridden to be settable in object constructor/destructor
+@property (retain, nonatomic) NSMutableDictionary *bindings;
+@property (assign, nonatomic) BXControllerStyle controllerStyle;
+
 //Generates the input bindings for the controller to the emulated joystick.
 //Called whenever the controller or emulated joystick are changed.
 - (void) generateBindings;
@@ -73,18 +77,18 @@ extern NSString * const BXControllerProfileDPadDown;
 + (void) registerProfile: (Class)profile;
 
 //Returns whether the implementing class is suitable for the specified controller.
-//Used by BXHIDControllerProfile profileClassForHIDController: to find custom
+//Used by BXHIDControllerProfile profileClassForrDevice: to find custom
 //profile classes for known devices.
 //Uses matchIDs by default, but can be overridden by subclasses to perform custom matching.
-+ (BOOL) matchesHIDController: (DDHidJoystick *)HIDController;
++ (BOOL) matchesDevice: (DDHidJoystick *)device;
 
-//Returns the BXHIDControllerProfile subclass most suited for the specified controller,
+//Returns the BXHIDControllerProfile subclass most suited for the specified device,
 //falling back on BXHIDControllerProfile itself if none more suitable is found.
 //Should not be overridden.
-+ (Class) profileClassForHIDController: (DDHidJoystick *)HIDController;
++ (Class) profileClassForDevice: (DDHidJoystick *)device;
 
 //Returns an array of NSDictionaries containing vendorID and usageID pairs,
-//which this profile should match. Used by matchesHIDController:.
+//which this profile should match. Used by matchesDevice:.
 //Returns an empty array by default, and is intended to be overridden by subclasses. 
 + (NSArray *) matchedIDs;
 

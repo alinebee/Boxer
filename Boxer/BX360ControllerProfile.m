@@ -112,13 +112,15 @@ enum {
     return matches;
 }
 
+- (BXControllerStyle) controllerStyle { return BXControllerStyleGamepad; }
+
 - (NSDictionary *) DPadElementsFromButtons: (NSArray *)buttons
 {
-	NSMutableDictionary *padElements = [[NSMutableDictionary alloc] initWithCapacity: 4];
+	NSMutableDictionary *padElements = [NSMutableDictionary dictionaryWithCapacity: 4];
 	
 	for (DDHidElement *element in buttons)
 	{
-		switch ([[element usage] usageId])
+		switch (element.usage.usageId)
 		{
 			case BX360ControllerDPadUp:
 				[padElements setObject: element forKey: BXControllerProfileDPadUp];
@@ -137,10 +139,10 @@ enum {
 				break;
 		}
 		//Stop looking once we've found all the D-pad buttons
-		if ([padElements count] == 4) break;
+		if (padElements.count == 4) break;
 	}
 	
-	return [padElements autorelease];
+	return padElements;
 }
 
 
@@ -149,12 +151,10 @@ enum {
 //triggers are the pedals).
 - (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element
 {
-	id binding = nil;
-	id joystick = [self emulatedJoystick];
-    
-	BOOL isWheel =	[joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
+	id <BXHIDInputBinding> binding = nil;
+	BOOL isWheel =	[self.emulatedJoystick conformsToProtocol: @protocol(BXEmulatedWheel)];
 					 
-	switch ([[element usage] usageId])
+	switch (element.usage.usageId)
 	{
 		case BX360ControllerLeftShoulder:
             binding = [BXButtonToButton bindingWithButton:
@@ -176,19 +176,18 @@ enum {
 //Bind triggers to buttons 1 & 2 for regular joystick emulation.
 - (id <BXHIDInputBinding>) generatedBindingForAxisElement: (DDHidElement *)element
 {
-	NSUInteger axis = [[element usage] usageId];
-	id binding = nil;
+	id <BXHIDInputBinding> binding = nil;
 	
-	switch (axis)
+	switch (element.usage.usageId)
 	{
 		case BX360ControllerLeftTrigger:
 			binding = [BXAxisToButton bindingWithButton: BXEmulatedJoystickButton2];
-			[binding setUnidirectional: YES];
+			((BXAxisToButton *)binding).unidirectional = YES;
 			break;
 		
 		case BX360ControllerRightTrigger:
 			binding = [BXAxisToButton bindingWithButton: BXEmulatedJoystickButton1];
-			[binding setUnidirectional: YES];
+			((BXAxisToButton *)binding).unidirectional = YES;
 			break;
 			
 		default:
@@ -202,8 +201,8 @@ enum {
 {
     for (DDHidElement *element in elements)
     {
-        id binding;
-        switch([[element usage] usageId])
+        id <BXHIDInputBinding> binding;
+        switch (element.usage.usageId)
         {
             case BX360ControllerLeftStickX:
                 binding = [BXAxisToAxis bindingWithAxis: BXAxisWheel];
@@ -216,17 +215,18 @@ enum {
                 
             case BX360ControllerLeftTrigger:
                 binding = [BXAxisToAxis bindingWithAxis: BXAxisBrake];
-                [binding setUnidirectional: YES];
+                ((BXAxisToAxis *)binding).unidirectional = YES;
                 break;
                 
             case BX360ControllerRightTrigger:
                 binding = [BXAxisToAxis bindingWithAxis: BXAxisAccelerator];
-                [binding setUnidirectional: YES];
+                ((BXAxisToAxis *)binding).unidirectional = YES;
                 break;
                 
             default:
                 binding = nil;
         }
+        
         if (binding)
             [self setBinding: binding forElement: element];
     }

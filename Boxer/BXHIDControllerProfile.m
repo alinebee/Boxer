@@ -12,10 +12,10 @@
 
 @implementation BXHIDControllerProfile
 
-@synthesize HIDController = _HIDController;
+@synthesize device = _device;
 @synthesize emulatedJoystick = _emulatedJoystick;
 @synthesize bindings = _bindings;
-
+@synthesize controllerStyle = _controllerStyle;
 
 #pragma mark -
 #pragma mark Constants
@@ -29,15 +29,15 @@ NSString * const BXControllerProfileDPadDown	= @"BXControllerProfileDPadDown";
 #pragma mark -
 #pragma mark Locating custom profiles
 
-static NSMutableArray *profileClasses = nil;
+static NSMutableArray *_profileClasses = nil;
 
 //Keep a record of every BXHIDControllerProfile subclass that comes along
 + (void) registerProfile: (Class)profile
 {
-	if (!profileClasses)
-		profileClasses = [[NSMutableArray alloc] initWithCapacity: 10];
+	if (!_profileClasses)
+		_profileClasses = [[NSMutableArray alloc] initWithCapacity: 10];
 	
-	[profileClasses addObject: profile];
+	[_profileClasses addObject: profile];
 }
 
 + (NSArray *)matchedIDs
@@ -54,26 +54,27 @@ static NSMutableArray *profileClasses = nil;
     nil];
 }
 
-+ (BOOL) matchesHIDController: (DDHidJoystick *)HIDController
++ (BOOL) matchesDevice: (DDHidJoystick *)device
 {
     for (NSDictionary *pairs in [self matchedIDs])
     {
         long vendorID = [(NSNumber *)[pairs objectForKey: @"vendorID"] longValue],
             productID = [(NSNumber *)[pairs objectForKey: @"productID"] longValue];
         
-        if ([HIDController vendorId] == vendorID &&
-            [HIDController productId] == productID) return YES;
+        if (device.vendorId == vendorID && device.productId == productID)
+            return YES;
     }
     return NO;
 }
 
-+ (Class) profileClassForHIDController: (DDHidJoystick *)HIDController
++ (Class) profileClassForDevice: (DDHidJoystick *)device
 {	
 	//Find a subclass that identifies with this device,
 	//falling back on a generic profile if none was found.
-	for (Class profileClass in profileClasses)
+	for (Class profileClass in _profileClasses)
 	{
-		if ([profileClass matchesHIDController: HIDController]) return profileClass;
+		if ([profileClass matchesDevice: device])
+            return profileClass;
 	}
 	
 	return self;
@@ -83,41 +84,45 @@ static NSMutableArray *profileClasses = nil;
 #pragma mark -
 #pragma mark Initialization and deallocation
 
-+ (id) profileForHIDController: (DDHidJoystick *)HIDController
-			toEmulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick
++ (id) profileForHIDDevice: (DDHidJoystick *)device
+          emulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick
 {
-	Class profileClass = [self profileClassForHIDController: HIDController];
+	Class profileClass = [self profileClassForDevice: device];
 	
-	return [[[profileClass alloc] initWithHIDController: HIDController
-									 toEmulatedJoystick: emulatedJoystick] autorelease];
+	return [[[profileClass alloc] initWithHIDDevice: device
+                                   emulatedJoystick: emulatedJoystick] autorelease];
 }
 
 
 - (id) init
 {
-	if ((self = [super init]))
-	{
-		_bindings = [[NSMutableDictionary alloc] initWithCapacity: 20];
+    self = [super init];
+	if (self)
+    {
+        self.controllerStyle = BXControllerStyleUnknown;
+		self.bindings = [NSMutableDictionary dictionaryWithCapacity: 20];
 	}
 	return self;
 }
 
-- (id) initWithHIDController: (DDHidJoystick *)HIDController
-		  toEmulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick 
+- (id) initWithHIDDevice: (DDHidJoystick *)device
+        emulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick 
 {
-	if ((self = [self init]))
+    self = [self init];
+	if (self)
 	{
-		[self setHIDController: HIDController];
-		[self setEmulatedJoystick: emulatedJoystick];
+        self.device = device;
+        self.emulatedJoystick = emulatedJoystick;
 	}
 	return self;
 }
 
 - (void) dealloc
 {
-	[_bindings release], _bindings = nil;
-	[self setHIDController: nil], [_HIDController release];
-	[self setEmulatedJoystick: nil], [_emulatedJoystick release];
+    self.bindings = nil;
+    self.device = nil;
+    self.emulatedJoystick = nil;
+    
 	[super dealloc];
 }
 
@@ -125,12 +130,12 @@ static NSMutableArray *profileClasses = nil;
 #pragma mark -
 #pragma mark Property accessors
 
-- (void) setHIDController: (DDHidJoystick *)controller
+- (void) setDevice: (DDHidJoystick *)device
 {
-	if (![controller isEqual: _HIDController])
+	if (![device isEqual: _device])
 	{
-		[_HIDController release];
-		_HIDController = [controller retain];
+		[_device release];
+		_device = [device retain];
 		
 		[self generateBindings];
 	}
@@ -150,15 +155,14 @@ static NSMutableArray *profileClasses = nil;
 - (void) setBinding: (id <BXHIDInputBinding>)binding
 		 forElement: (DDHidElement *)element
 {
-	DDHidUsage *key = [element usage];
-	if (!binding) [[self bindings] removeObjectForKey: key];
-	else [[self bindings] setObject: binding forKey: key];
+	DDHidUsage *key = element.usage;
+	if (binding == nil) [self.bindings removeObjectForKey: key];
+	else [self.bindings setObject: binding forKey: key];
 }
 
 - (id <BXHIDInputBinding>) bindingForElement: (DDHidElement *)element
 {
-	DDHidUsage *key = [element usage];
-	return [[self bindings] objectForKey: key];
+	return [self.bindings objectForKey: element.usage];
 }
 
 
@@ -168,34 +172,34 @@ static NSMutableArray *profileClasses = nil;
 - (void) generateBindings
 {
 	//Clear our existing bindings before we begin
-	[[self bindings] removeAllObjects];
+	[self.bindings removeAllObjects];
 	
 	//Don't continue if we don't yet know what we're mapping to or from
-	if (![self HIDController] || ![self emulatedJoystick]) return;
+	if (!self.device || !self.emulatedJoystick) return;
 	
-	NSArray *axes			= [[self HIDController] axisElements];
-	NSArray *buttons		= [[self HIDController] buttonElements];
-	NSArray *POVs			= [[self HIDController] povElements];
+	NSArray *axes			= self.device.axisElements;
+	NSArray *buttons		= self.device.buttonElements;
+	NSArray *POVs			= self.device.povElements;
 	
 	//If the controller has a D-pad, then bind it separately from the other buttons
-	NSDictionary *DPad = [self DPadElementsFromButtons: buttons];
-	if ([DPad count])
+	NSDictionary *dPad = [self DPadElementsFromButtons: buttons];
+	if (dPad.count)
 	{
 		NSMutableArray *filteredButtons = [NSMutableArray arrayWithArray: buttons];
-		[filteredButtons removeObjectsInArray: [DPad allValues]];
+		[filteredButtons removeObjectsInArray: dPad.allValues];
 		buttons = filteredButtons;
 	}
 	
-	if ([axes count])		[self bindAxisElements: axes];
-	if ([buttons count])	[self bindButtonElements: buttons];
-	if ([POVs count])		[self bindPOVElements: POVs];
-	if ([DPad count])		[self bindDPadElements: DPad];
+	if (axes.count)		[self bindAxisElements: axes];
+	if (buttons.count)	[self bindButtonElements: buttons];
+	if (POVs.count)		[self bindPOVElements: POVs];
+	if (dPad.count)		[self bindDPadElements: dPad];
 }
 
 - (void) bindAxisElements: (NSArray *)elements
 {
     //Custom binding logic for wheels, as each axis's role depends on what other axes are available
-    if ([[self emulatedJoystick] conformsToProtocol: @protocol(BXEmulatedWheel)])
+    if ([self.emulatedJoystick conformsToProtocol: @protocol(BXEmulatedWheel)])
     {
         [self bindAxisElementsForWheel: elements];
     }
@@ -212,67 +216,109 @@ static NSMutableArray *profileClasses = nil;
 
 - (void) bindAxisElementsForWheel: (NSArray *)elements
 {
+    //Unlike regular axis mapping, wheel axis mapping doesn't check the axis types of individual
+    //axis elements. Instead it sorts all the axes by usage ID and maps them to the wheel based
+    //on that enumeration order.
+    //DOCUMENT ME: why did we decide to go with this approach for wheels, instead of plucking out
+    //axes with certain usage IDs like we normally do?
+    
     DDHidElement *wheel, *accelerator, *brake;
     
-    //Sort the elements by usage, to compensate for devices that enumerate them in a funny order
+    //Sort the elements by usage, in case the device enumerates them in a funny order.
     NSArray *sortedElements = [elements sortedArrayUsingSelector: @selector(compareByUsage:)];
     
-    switch([elements count])
+    NSUInteger numAxes = sortedElements.count;
+    //There's nothing we can do with a single-axis controller.
+    if (numAxes < 2)
+        return;
+    
+    //Decide what to do with the axis elements based on what kind of controller we're dealing with.
+    BXControllerStyle style = self.controllerStyle;
+    
+    //If we don't know what kind of controller we are yet, then guess based on how many axes are available.
+    if (style == BXControllerStyleUnknown)
     {
-        case 1:
-            //There's nothing we can do with a single-axis controller.
-            return;
-        case 2:
-            //For 2-axis controllers, just bind the Y axis directly
-            //to accelerator and brake.
+        switch (numAxes)
+        {
+            case 2:
+                //Assume this is a 2-axis joystick.
+                style = BXControllerStyleJoystick;
+                break;
+            case 3:
+                //Assume this is a 3-axis wheel with pedals on individual axes.
+                //(There's a good chance it's actually a flightstick instead, in which case this
+                //will be completely wrong; but a flightstick would suck for wheel control anyway.)
+                style = BXControllerStyleWheel;
+                break;
+            case 4:
+            default:
+                //Assume this is a twin-stick gamepad. (It may also be an advanced flightstick, but see above.)
+                style = BXControllerStyleGamepad;
+                break;
+        }
+    }
+
+    switch (style)
+    {
+        case BXControllerStyleGamepad:
+            wheel = [sortedElements objectAtIndex: 0];
+            
+            //For twin-stick gamepads, map the steering to the left stick and the accelerator/brake
+            //to the right stick. This is because steering control sucks if they're all on one axis.
+            if (numAxes >= 4)
+            {
+                accelerator = brake = [sortedElements objectAtIndex: 3];
+            }
+            else
+            {
+                accelerator = brake = [sortedElements objectAtIndex: 1];
+            }
+            break;
+            
+        case BXControllerStyleWheel:
+            wheel = [sortedElements objectAtIndex: 0];
+            
+            //For wheels that have 3 or more axes, assume the accelerator and brake are on separate axes.
+            if (numAxes >= 3)
+            {
+                brake       = [sortedElements objectAtIndex: 1];
+                accelerator = [sortedElements objectAtIndex: 2];
+            }
+            else
+            {   
+                accelerator = brake = [sortedElements objectAtIndex: 1];
+            }
+            break;
+        
+        //For everything else, only use the first two axes.
+        case BXControllerStyleJoystick:
+        case BXControllerStyleFlightstick:
+        default:
             wheel = [sortedElements objectAtIndex: 0];
             accelerator = brake = [sortedElements objectAtIndex: 1];
             break;
-        case 3:
-            //A 3-axis controller may indicate a wheel with its pedals on individual axes.
-            //(Or, it may indicate a simple flightstick, in which case this will be completely
-            //wrong; but a flightstick would suck for wheel control anyway.)
-            wheel       = [sortedElements objectAtIndex: 0];
-            brake       = [sortedElements objectAtIndex: 1];
-            accelerator = [sortedElements objectAtIndex: 2];
-            break;
-        default:
-        {
-            //A controller with 4 or more axes usually means a gamepad
-            //(It may also mean an advanced flightstick, but see above.)
-            //In this case, we try to keep the accelerator/brake axis
-            //on a separate stick from the wheel, because having steering
-            //and pedals on the same stick is hell to control.
-            
-            //Prefer to explicitly use the X axis for the wheel;
-            //if there isn't one, use the first axis we can find.
-            wheel = [sortedElements objectAtIndex: 0];
-            
-            //Our preference for the pedals is the fourth axis in enumeration order,
-            //which for gamepads should correspond to the vertical axis of the right
-            //thumbstick.
-            accelerator = brake = [sortedElements objectAtIndex: 3];
-        }
     }
     
-    id wheelBinding = [BXAxisToAxis bindingWithAxis: BXAxisWheel];
+    
+    BXAxisToAxis *wheelBinding = [BXAxisToAxis bindingWithAxis: BXAxisWheel];
     [self setBinding: wheelBinding forElement: wheel];
     
     //If the same input is used for both brake and accelerator, map them as a split axis binding.
     if (brake == accelerator)
     {
-        id splitBinding = [BXAxisToBindings bindingWithPositiveAxis: BXAxisBrake
-                                                       negativeAxis: BXAxisAccelerator];
+        BXAxisToBindings *splitBinding = [BXAxisToBindings bindingWithPositiveAxis: BXAxisBrake
+                                                                      negativeAxis: BXAxisAccelerator];
         
         [self setBinding: splitBinding forElement: accelerator];
     }
     //Otherwise map them to the individual axis elements as unidirectional inputs.
     else
     {
-        id acceleratorBinding   = [BXAxisToAxis bindingWithAxis: BXAxisAccelerator];
-        id brakeBinding         = [BXAxisToAxis bindingWithAxis: BXAxisBrake];
-        [acceleratorBinding setUnidirectional: YES];
-        [brakeBinding setUnidirectional: YES];
+        BXAxisToAxis *acceleratorBinding   = [BXAxisToAxis bindingWithAxis: BXAxisAccelerator];
+        BXAxisToAxis *brakeBinding         = [BXAxisToAxis bindingWithAxis: BXAxisBrake];
+        acceleratorBinding.unidirectional = YES;
+        brakeBinding.unidirectional = YES;
+        
         [self setBinding: acceleratorBinding forElement: accelerator];
         [self setBinding: brakeBinding forElement: brake];
     }
@@ -305,8 +351,8 @@ static NSMutableArray *profileClasses = nil;
     //thumbstick-clicks, and we don't want to bind those automatically.
 	NSUInteger maxButtons = 8;
 	
-	NSUInteger numEmulatedButtons = [[self emulatedJoystick] numButtons];
-	NSUInteger realButton = [[element usage] usageId];
+	NSUInteger numEmulatedButtons = self.emulatedJoystick.numButtons;
+	NSUInteger realButton = element.usage.usageId;
     
 	//Wrap controller buttons so that they'll fit within the number of emulated buttons
 	if (realButton <= maxButtons)
@@ -319,9 +365,7 @@ static NSMutableArray *profileClasses = nil;
 
 - (id <BXHIDInputBinding>) generatedBindingForAxisElement: (DDHidElement *)element
 {
-	id <BXEmulatedJoystick> joystick = [self emulatedJoystick];
-	
-	NSUInteger axis = [[element usage] usageId], normalizedAxis;
+	NSUInteger axis = element.usage.usageId, normalizedAxis;
 	
 	//First, normalize the axes to known conventions
 	switch (axis)
@@ -334,7 +378,7 @@ static NSMutableArray *profileClasses = nil;
 			//Some joysticks pair Rz with Z, in which case it should be normalized to Ry (with Z as Rx);
 			//Others pair it with Slider, in which case it should be treated as Rx.
 			{
-				BOOL hasZAxis = [[self HIDController] axisElementWithUsageID: kHIDUsage_GD_Z] != nil;
+				BOOL hasZAxis = [self.device axisElementWithUsageID: kHIDUsage_GD_Z] != nil;
                 normalizedAxis = (hasZAxis) ? kHIDUsage_GD_Ry : kHIDUsage_GD_Rx;
 			}
 			break;
@@ -356,39 +400,49 @@ static NSMutableArray *profileClasses = nil;
 	switch (normalizedAxis)
 	{
 		case kHIDUsage_GD_X:
-			if ([joystick supportsAxis: BXAxisX])
+			if ([self.emulatedJoystick supportsAxis: BXAxisX])
                 return [BXAxisToAxis bindingWithAxis: BXAxisX];
             
 			break;
 			
 		case kHIDUsage_GD_Y:
-			if ([joystick supportsAxis: BXAxisY])
+			if ([self.emulatedJoystick supportsAxis: BXAxisY])
                 return [BXAxisToAxis bindingWithAxis: BXAxisY];
             
 			break;
 			
 		case kHIDUsage_GD_Rx:
-            if ([joystick supportsAxis: BXAxisRudder])
+            if ([self.emulatedJoystick supportsAxis: BXAxisRudder])
                 return [BXAxisToAxis bindingWithAxis: BXAxisRudder];
             
-            else if ([joystick supportsAxis: BXAxisX2])
+            else if ([self.emulatedJoystick supportsAxis: BXAxisX2])
                 return [BXAxisToAxis bindingWithAxis: BXAxisX2];
             
         	break;
 			
 		case kHIDUsage_GD_Ry:
-            if ([joystick supportsAxis: BXAxisThrottle])
+            if ([self.emulatedJoystick supportsAxis: BXAxisThrottle])
             {
-                //Special handling for flightstick throttle on axes that spring
-                //back to center: use an additive axis instead of an absolute one.
-                //TODO: heuristics to detect proper throttle wheels that *don't*
-                //spring back to center.
-                
-                id <BXPeriodicInputBinding> binding = [BXAxisToAxisAdditive bindingWithAxis: BXAxisThrottle];
-                [binding setDelegate: self];
-                return binding;
+                //If we know the HID device is a flightstick, assume that
+                //any throttle it has will not spring back to center and
+                //can be mapped directly to the emulated throttle.
+                if (self.controllerStyle == BXControllerStyleFlightstick)
+                {
+                    return [BXAxisToAxis bindingWithAxis: BXAxisThrottle];
+                }
+                //Otherwise, use an additive axis instead of an absolute one.
+                //This works best for axes that spring back to center:
+                //pushing the device axis up will gradually increase the emulated
+                //axis value and pushing it down will gradually decrease the value,
+                //while returning the device axis to center will stop the change.
+                else
+                {
+                    BXAxisToAxisAdditive *binding = [BXAxisToAxisAdditive bindingWithAxis: BXAxisThrottle];
+                    binding.delegate = self;
+                    return binding;
+                }
             }
-            else if ([joystick supportsAxis: BXAxisY2])
+            else if ([self.emulatedJoystick supportsAxis: BXAxisY2])
                 return [BXAxisToAxis bindingWithAxis: BXAxisY2];
             
 			break;
@@ -399,28 +453,29 @@ static NSMutableArray *profileClasses = nil;
 
 - (id <BXHIDInputBinding>) generatedBindingForPOVElement: (DDHidElement *)element
 {
-	id binding = nil;
-	id <BXEmulatedJoystick> joystick = [self emulatedJoystick];
+	id <BXHIDInputBinding> binding = nil;
 	
     //Map POV directly to POV on emulated joystick, if available
-	if ([joystick conformsToProtocol: @protocol(BXEmulatedFlightstick)])
+	if ([self.emulatedJoystick conformsToProtocol: @protocol(BXEmulatedFlightstick)])
 	{
 		binding = [BXPOVToPOV binding];
 	}
 	else
 	{
         //Otherwise, map the POV to the X and Y axes if available
-		if ([joystick respondsToSelector: @selector(xAxis)] && [joystick respondsToSelector: @selector(yAxis)])
+		if ([self.emulatedJoystick respondsToSelector: @selector(xAxis)] &&
+            [self.emulatedJoystick respondsToSelector: @selector(yAxis)])
 		{
 			binding = [BXPOVToAxes bindingWithXAxis: BXAxisX YAxis: BXAxisY];
 		}
         
         //Otherwise, map the POV's left and right directions to the wheel axis if available 
-		if ([joystick respondsToSelector: @selector(wheelAxis)])
+		if ([self.emulatedJoystick respondsToSelector: @selector(wheelAxis)])
 		{
 			binding = [BXPOVToAxes bindingWithXAxis: BXAxisWheel YAxis: nil];
 		}
 	}
+    
 	return binding;
 }
 
@@ -431,18 +486,19 @@ static NSMutableArray *profileClasses = nil;
 //Send the event on to the appropriate binding for that element
 - (void) dispatchHIDEvent: (BXHIDEvent *)event
 {
-	DDHidElement *element = [event element];
-	id binding = [self bindingForElement: element];
+	id <BXHIDInputBinding> binding = [self bindingForElement: event.element];
 	
-	[binding processEvent: event forTarget: [self emulatedJoystick]];
+	[binding processEvent: event
+                forTarget: self.emulatedJoystick];
 }
 
 - (void) binding: (id <BXPeriodicInputBinding>)binding didSendInputToTarget: (id <BXEmulatedJoystick>)target
 {
+    //Display a notification bezel showing the current state of any additive throttle axis.
     if ([binding isKindOfClass: [BXAxisToAxisAdditive class]]
         && [[(BXAxisToAxisAdditive *)binding axis] isEqualToString: BXAxisThrottle])
     {
-        float throttleValue = [(id)target throttleAxis];
+        float throttleValue = [(id <BXEmulatedFlightstick>)target throttleAxis];
         [[BXBezelController controller] showThrottleBezelForValue: throttleValue];
     }
 }
@@ -462,20 +518,19 @@ static NSMutableArray *profileClasses = nil;
 - (void) bindDPadElements: (NSDictionary *)padElements
 {
 	//Map the D-pad to a POV switch if the joystick has one
-	if ([[self emulatedJoystick] conformsToProtocol: @protocol(BXEmulatedFlightstick)])
+	if ([self.emulatedJoystick conformsToProtocol: @protocol(BXEmulatedFlightstick)])
 	{
 		[self bindDPadElements: padElements toPOV: 0];
 	}
 	//Otherwise, map it to the X and Y axes or wheel
 	else
 	{
-		id joystick = [self emulatedJoystick];
-		if ([joystick supportsAxis: BXAxisX] && [joystick supportsAxis: BXAxisY])
+		if ([self.emulatedJoystick supportsAxis: BXAxisX] && [self.emulatedJoystick supportsAxis: BXAxisY])
 		{
 			[self bindDPadElements: padElements toHorizontalAxis: BXAxisX verticalAxis: BXAxisY];
 		}
         
-        else if ([joystick supportsAxis: BXAxisWheel])
+        else if ([self.emulatedJoystick supportsAxis: BXAxisWheel])
         {
             [self bindDPadElements: padElements toHorizontalAxis: BXAxisWheel verticalAxis: nil];
         }
@@ -485,7 +540,7 @@ static NSMutableArray *profileClasses = nil;
 - (void) bindDPadElements: (NSDictionary *)padElements
 					toPOV: (NSUInteger)POVNumber
 {
-	for (NSString *key in [padElements keyEnumerator])
+	for (NSString *key in padElements.keyEnumerator)
 	{
 		DDHidElement *element = [padElements objectForKey: key];
         BXEmulatedPOVDirection direction = BXEmulatedPOVCentered;
@@ -510,7 +565,7 @@ static NSMutableArray *profileClasses = nil;
 		
 		if (direction != BXEmulatedPOVCentered)
 		{
-			id binding = [BXButtonToPOV bindingWithDirection: direction];
+			BXButtonToPOV *binding = [BXButtonToPOV bindingWithDirection: direction];
 			[self setBinding: binding forElement: element];
 		}
 	}
@@ -520,7 +575,7 @@ static NSMutableArray *profileClasses = nil;
 		 toHorizontalAxis: (NSString *)xAxis
 			 verticalAxis: (NSString *)yAxis
 {
-	for (NSString *key in [padElements keyEnumerator])
+	for (NSString *key in padElements.keyEnumerator)
 	{
 		DDHidElement *element = [padElements objectForKey: key];
 		
@@ -551,9 +606,10 @@ static NSMutableArray *profileClasses = nil;
 		
 		if (axis)
 		{
-			id binding = [BXButtonToAxis binding];
-			[binding setPressedValue: pressedValue];
-			[binding setAxis: axis];
+			BXButtonToAxis *binding = [BXButtonToAxis binding];
+            binding.pressedValue = pressedValue;
+            binding.axis = axis;
+            
 			[self setBinding: binding forElement: element];
 		}
 	}

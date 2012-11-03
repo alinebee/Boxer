@@ -7,6 +7,7 @@
 
 
 //Custom controller profile for the CH Flightstick Pro USB flightstick.
+//This corrects the mapping of the throttle axis.
 
 #import "BXHIDControllerProfilePrivate.h"
 
@@ -53,6 +54,8 @@ enum {
             [self matchForVendorID: BXCHFlightstickProUSBVendorID productID: BXCHF16CombatStickUSBProductID],
             nil];
 }
+
+- (BXControllerStyle) controllerStyle { return BXControllerStyleFlightstick; }
 
 //Make the throttle slider behave as an absolute axis when used for throttle,
 //rather than relative (the slider does not spring back to center, so relative

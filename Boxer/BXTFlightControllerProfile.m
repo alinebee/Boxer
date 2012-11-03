@@ -5,6 +5,10 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
+//Custom controller profile for the Thrustmaster T-Flight HOTAS stick.
+//This corrects the rudder and throttle mappings and makes the throttle absolute rather than additive.
+
+
 #import "BXHIDControllerProfilePrivate.h"
 
 enum {
@@ -37,17 +41,19 @@ enum {
             nil];
 }
 
+- (BXControllerStyle) controllerStyle { return BXControllerStyleFlightstick; }
+
 //Correct for flipped throttle and rudder axes, and make the throttle
 //act as an absolute axis rather than a relative accumulating one.
 - (id <BXHIDInputBinding>) generatedBindingForAxisElement: (DDHidElement *)element
 {
-    if ([[element usage] usageId] == BXTFlightThrottleAxis &&
-        [[self emulatedJoystick] supportsAxis: BXAxisThrottle])
+    if (element.usage.usageId == BXTFlightThrottleAxis &&
+        [self.emulatedJoystick supportsAxis: BXAxisThrottle])
     {
         return [BXAxisToAxis bindingWithAxis: BXAxisThrottle];
     }
-    else if ([[element usage] usageId] == BXTFlightRudderAxis &&
-             [[self emulatedJoystick] supportsAxis: BXAxisRudder])
+    else if (element.usage.usageId == BXTFlightRudderAxis &&
+             [self.emulatedJoystick supportsAxis: BXAxisRudder])
     {
         return [BXAxisToAxis bindingWithAxis: BXAxisRudder];
     }

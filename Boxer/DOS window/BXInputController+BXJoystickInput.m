@@ -243,8 +243,8 @@
         NSArray *controllers = [[[NSApp delegate] joystickController] joystickDevices];
         for (DDHidJoystick *controller in controllers)
         {
-            BXHIDControllerProfile *profile = [BXHIDControllerProfile profileForHIDController: controller
-                                                                           toEmulatedJoystick: joystick];
+            BXHIDControllerProfile *profile = [BXHIDControllerProfile profileForHIDDevice: controller
+                                                                           emulatedJoystick: joystick];
             
             NSNumber *locationID = [NSNumber numberWithLong: controller.locationId];
             [self.controllerProfiles setObject: profile forKey: locationID];

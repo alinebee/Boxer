@@ -79,15 +79,12 @@ enum {
             nil];
 }
 
+- (BXControllerStyle) controllerStyle { return BXControllerStyleWheel; }
+
 //Manual binding for G25/G27 buttons
 - (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element
-{
-	id binding = nil;
-	id joystick = [self emulatedJoystick];
-	
-	NSUInteger realButton = [[element usage] usageId];
-	NSUInteger emulatedButton = BXEmulatedJoystickUnknownButton;
-    NSUInteger numEmulatedButtons = [joystick numButtons];
+{	
+	NSUInteger emulatedButton, realButton = element.usage.usageId;
     
     switch (realButton)
     {
@@ -114,12 +111,17 @@ enum {
             break;
         
         //Leave all other buttons unbound
+        default:
+            emulatedButton = BXEmulatedJoystickUnknownButton;
+            break;
     }
     
+	BXButtonToButton *binding = nil;
+    NSUInteger numEmulatedButtons = self.emulatedJoystick.numButtons;
     if (emulatedButton != BXEmulatedJoystickUnknownButton && emulatedButton <= numEmulatedButtons)
     {
         binding = [BXButtonToButton binding];
-        [binding setButton: emulatedButton];
+        binding.button = emulatedButton;
     }
 	
 	return binding;
@@ -131,18 +133,18 @@ enum {
     for (DDHidElement *element in elements)
     {
         id binding;
-        switch([[element usage] usageId])
+        switch (element.usage.usageId)
         {
             case BXG25WheelAxis:
                 binding = [BXAxisToAxis bindingWithAxis: BXAxisWheel];
-                [binding setDeadzone: BXG25WheelDeadzone];
+                ((BXAxisToAxis *)binding).deadzone = BXG25WheelDeadzone;
                 break;
                 
             case BXG25PedalAxis:
                 binding = [BXAxisToBindings bindingWithPositiveAxis: BXAxisBrake
                                                        negativeAxis: BXAxisAccelerator];
                 
-                [binding setDeadzone: BXG25PedalDeadzone];
+                ((BXAxisToBindings *)binding).deadzone = BXG25PedalDeadzone;
                 break;
                 
             default:

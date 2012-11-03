@@ -30,7 +30,8 @@
 
 
 enum {
-    BXPrecisionProThrottleAxis = kHIDUsage_GD_Slider
+    BXPrecisionProRudderAxis = kHIDUsage_GD_Rz,
+    BXPrecisionProThrottleAxis = kHIDUsage_GD_Slider,
 };
 
 
@@ -55,12 +56,14 @@ enum {
             nil];
 }
 
+- (BXControllerStyle) controllerStyle { return BXControllerStyleFlightstick; }
+
 //Make the throttle slider behave as an absolute axis when used for throttle,
 //rather than relative (the slider does not spring back to center, so relative
 //throttle input is inappropriate for it.)
 - (id <BXHIDInputBinding>) generatedBindingForAxisElement: (DDHidElement *)element
 {
-    if ([[element usage] usageId] == BXPrecisionProThrottleAxis && [[self emulatedJoystick] supportsAxis: BXAxisThrottle])
+    if (element.usage.usageId == BXPrecisionProThrottleAxis && [self.emulatedJoystick supportsAxis: BXAxisThrottle])
     {
         return [BXAxisToAxis bindingWithAxis: BXAxisThrottle];
     }

@@ -72,17 +72,17 @@ enum {
             nil];
 }
 
+- (BXControllerStyle) controllerStyle { return BXControllerStyleGamepad; }
+
 //Custom binding for shoulder buttons: bind to buttons 3 & 4 for regular joysticks
 //(where the triggers are buttons 1 & 2), or to 1 & 2 for wheel emulation (where the
 //triggers are the pedals).
 - (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element
 {
-	id binding = nil;
-	
-	id joystick = [self emulatedJoystick];
-	BOOL isWheel =	[joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
+	id <BXHIDInputBinding> binding = nil;
+	BOOL isWheel = [self.emulatedJoystick conformsToProtocol: @protocol(BXEmulatedWheel)];
     
-	switch ([[element usage] usageId])
+	switch (element.usage.usageId)
 	{
         case BXDualActionControllerLeftTrigger:
             if (isWheel)

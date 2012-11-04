@@ -38,11 +38,19 @@
 - (id) initWithContext: (CGLContextObj)glContext error: (NSError **)outError
 {
     NSArray *shaderNames = [NSArray arrayWithObjects: @"5xBR Semi-Rounded-unclamped", @"5xBR Semi-Rounded-clamped", nil];
+    //The standard shader kicks in at 125% scales and higher: lower than this and the effects won't be noticeable.
+    //We switch to the clamped 5x shader once we go above 5x scaling: this caps the amount of work the shader
+    //will try to do on really large displays.
     CGFloat scales[] = { 1.25, 5.0, };
     
     return [self initWithShaderNames: shaderNames atScales: scales inContext: glContext error: outError];
 }
 
+//Let the smooth shader scale up to the largest even multiple of the base resolution,
+//then downscale from there. This smooths out jagged edges from the shader.
+//TODO: try to ensure we always supersample, because the jaggies are distracting
+//on those rare occasions when the target size turns out to be an even multiple
+//and so no supersampling is performed.
 - (BOOL) usesShaderSupersampling
 {
     return YES;
@@ -61,6 +69,7 @@
     return [self initWithShaderNames: shaderNames atScales: scales inContext: glContext error: outError];
 }
 
+//Let the CRT shader scale straight from the source size to the destination size.
 - (BOOL) usesShaderSupersampling
 {
     return NO;

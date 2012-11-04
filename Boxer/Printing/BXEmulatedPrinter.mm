@@ -9,6 +9,7 @@
 #import "BXEmulatedPrinter.h"
 #import "printer_charmaps.h"
 #import "BXCoalface.h"
+#import "BXPrintSession.h"
 
 
 #pragma mark -
@@ -106,13 +107,12 @@ enum {
 @property (assign, nonatomic) BXESCPCharTable activeCharTable;
 @property (readonly, nonatomic) NSUInteger activeCodepage;
 
-@property (retain, nonatomic) NSImage *currentPage;
-@property (retain, nonatomic) NSBitmapImageRep *previewCanvas;
-@property (retain, nonatomic) NSGraphicsContext *previewContext;
-@property (retain, nonatomic) NSMutableArray *completedPages;
 @property (retain, nonatomic) NSMutableDictionary *textAttributes;
 
 @property (assign, nonatomic) NSPoint headPosition;
+
+@property (retain, nonatomic) BXPrintSession *currentSession;
+
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -137,11 +137,18 @@ enum {
 //Called when the DOS session changes parameters for text printing.
 - (void) _updateTextAttributes;
 
+//Called when the printer first draws to the page, if no print session is currently active.
+- (void) _startNewPrintSession;
+
 //Called when the DOS session formfeeds or the print head goes off the extents of the current page.
-- (void) _startNewPageSavingPrevious: (BOOL)savePrevious carriageReturn: (BOOL)carriageReturn;
+//Finishes the current page in the session (if one was present) and advances printing to the next page.
+//If discardPreviousPageIfBlank is YES, and nothing was printed to the previous page, then the previous
+//page will be discarded unused. Otherwise a blank page will be inserted into the session before the new page.
+- (void) _startNewPageWithCarriageReturn: (BOOL)insertCarriageReturn
+                       discardBlankPages: (BOOL)discardPreviousPageIfBlank;
 
 //Called when we first need to draw to the current page.
-//The page canvas is created at this time and the paper size is locked.
+//The print session and page canvas are created at this time and the paper size is locked.
 - (void) _prepareCanvasForPrinting;
 
 //Called when the DOS session prepares a bitmap drawing context.
@@ -235,11 +242,7 @@ enum {
 
 @synthesize activeCharTable = _activeCharTable;
 
-@synthesize currentPage = _currentPage;
-@synthesize previewContext = _previewContext;
-@synthesize previewCanvas = _previewCanvas;
-@synthesize currentPageIsBlank = _currentPageIsBlank;
-@synthesize completedPages = _completedPages;
+@synthesize currentSession = _currentSession;
 @synthesize textAttributes = _textAttributes;
 
 @synthesize headPosition = _headPosition;
@@ -260,11 +263,8 @@ enum {
 
 - (void) dealloc
 {
-    self.currentPage = nil;
-    self.completedPages = nil;
+    self.currentSession = nil;
     self.textAttributes = nil;
-    self.previewContext = nil;
-    self.previewCanvas = nil;
     
     [super dealloc];
 }
@@ -530,11 +530,6 @@ enum {
         _effectiveCharactersPerInch *= 2.0/3.0;
     }
     
-    //Multiply out the font size to account for our current DPI settings,
-    //Since appkit's drawing points are predicated on a point being 1/72 of an inch.
-    fontSize.width *= (_dpi.width / 72);
-    fontSize.height *= (_dpi.height / 72);
-    
     fontDescriptor = [fontDescriptor fontDescriptorWithSize: fontSize.height];
     
     //If the text needs to be scaled in one direction or another,
@@ -772,18 +767,14 @@ enum {
 {
     _initialized = YES;
     
-    self.completedPages = [NSMutableArray arrayWithCapacity: 1];
-    
     //TODO: derive the default page size from OSX's default printer settings instead.
     //We could even pop up the OSX page setup sheet to get them to confirm the values there.
-    _defaultPageSize = NSMakeSize(8.5, 11); //US Letter paper in inches
+    self.defaultPageSize = NSMakeSize(8.5, 11); //US Letter paper in inches
     
-    //Actual dots per inch of the output. This will affect the size of canvas we use
-    //for 'drawing' each page.
-    _dpi = NSMakeSize(72, 72);
-    
+    //Initialise the emulated printer settings and data structures.
     [self resetHard];
     
+    //Let our delegate know that something in DOS has tried to print.
     if ([self.delegate respondsToSelector: @selector(printerWillBeginPrinting:)])
         [self.delegate printerWillBeginPrinting: self];
 }
@@ -863,25 +854,7 @@ enum {
     _numVerticalTabs = VERTICAL_TABS_UNDEFINED;
     
     [self _updateTextAttributes];
-    [self _startNewPageSavingPrevious: NO carriageReturn: NO];
-}
-
-- (void) finishPrintSession
-{
-    //Commit the current page as long as it's not entirely blank
-    [self _startNewPageSavingPrevious: !self.currentPageIsBlank
-                       carriageReturn: YES];
-    
-    if (self.completedPages.count)
-    {
-        if ([self.delegate respondsToSelector: @selector(printer:didFinishPrintSession:)])
-        {
-            [self.delegate printer: self
-             didFinishPrintSession: [[self.completedPages copy] autorelease]];
-        }
-        
-        [self.completedPages removeAllObjects];
-    }
+    [self _startNewPageWithCarriageReturn: NO discardBlankPages: YES];
 }
 
 - (void) _startNewLine
@@ -890,75 +863,85 @@ enum {
     _headPosition.y += _lineSpacing;
     
     if (_headPosition.y > _bottomMargin)
-        [self _startNewPageSavingPrevious: YES carriageReturn: NO];
+        [self _startNewPageWithCarriageReturn: NO discardBlankPages: NO];
 }
 
-- (void) _startNewPageSavingPrevious: (BOOL)savePrevious carriageReturn: (BOOL)carriageReturn
+- (void) _startNewPrintSession
 {
-    if (savePrevious && self.currentPage != nil)
+    self.currentSession = [[[BXPrintSession alloc] init] autorelease];
+    
+    if ([self.delegate respondsToSelector: @selector(printer:willBeginSession:)])
     {
-        [self.completedPages addObject: self.currentPage];
-        
-        if ([self.delegate respondsToSelector: @selector(printer:didFinishPage:)])
-            [self.delegate printer: self didFinishPage: self.currentPage];
+        [self.delegate printer: self willBeginSession: self.currentSession];
+    }
+}
+
+- (void) finishPrintSession
+{
+    //Commit the current page as long as it's not entirely blank
+    [self _startNewPageWithCarriageReturn: YES discardBlankPages: YES];
+    
+    [self.currentSession finishSession];
+    
+    if ([self.delegate respondsToSelector: @selector(printer:didFinishSession:)])
+    {
+        [self.delegate printer: self didFinishSession: self.currentSession];
     }
     
-    _headPosition.y = _topMargin;
-    if (carriageReturn)
-        _headPosition.x = _leftMargin;
+    self.currentSession = nil;
+}
+
+- (void) _startNewPageWithCarriageReturn: (BOOL)insertCarriageReturn
+                       discardBlankPages: (BOOL)discardPreviousPageIfBlank
+{
+    BOOL addedPage = NO;
     
-    //Unset the current image. We'll create a new one as soon as anything is drawn onto the next page.
-    self.currentPage = nil;
-    self.previewContext = nil;
-    self.previewCanvas = nil;
-    _previewBacking = NULL;
-    _currentPageIsBlank = YES;
+    //If a page is in progress, finish it up.
+    if (self.currentSession.pageInProgress)
+    {
+        [self.currentSession finishPage];
+        addedPage = YES;
+    }
+    //If a page isn't in progress, that means the current page is blank.
+    //In this case, insert a blank page only if the context demands it:
+    //which will be the case if we e.g. we are starting a new page because
+    //we linefed off the end of the previous page).
+    else if (!discardPreviousPageIfBlank)
+    {
+        [self.currentSession insertBlankPageWithSize: self.currentPageSize];
+        addedPage = YES;
+    }
+    
+    if (addedPage && [self.delegate respondsToSelector: @selector(printer:didFinishPageInSession:)])
+        [self.delegate printer: self didFinishPageInSession: self.currentSession];
+    
+    //Reset the head position to the top of the next page, and optionally reset to the left margin.
+    _headPosition.y = _topMargin;
+    if (insertCarriageReturn)
+        _headPosition.x = _leftMargin;
 }
 
 - (void) _prepareCanvasForPrinting
 {
-    if (!self.currentPage)
+    //Create a new print session, if none is currently in progress.
+    if (!self.currentSession)
     {
-        //IMPLEMENTATION NOTE: this won't account for the DOS session increasing the paper size
-        //while we're printing. But this isn't recommended in any case, so DOS programs probably won't do it.
-        NSSize canvasSize = NSMakeSize(ceil(_pageSize.width * _dpi.width),
-                                       ceil(_pageSize.height * _dpi.height));
-        
-        self.currentPage = [[[NSImage alloc] initWithSize: canvasSize] autorelease];
-        
-        //Add a custom representation to this image into which we'll draw the page preview.
-        self.previewCanvas = [[[NSBitmapImageRep alloc] initWithBitmapDataPlanes: NULL
-                                                                      pixelsWide: canvasSize.width
-                                                                      pixelsHigh: canvasSize.height
-                                                                   bitsPerSample: 8
-                                                                 samplesPerPixel: 4
-                                                                        hasAlpha: YES
-                                                                        isPlanar: NO
-                                                                  colorSpaceName: NSDeviceRGBColorSpace
-                                                                     bytesPerRow: 0
-                                                                    bitsPerPixel: 0] autorelease];
-        [self.currentPage addRepresentation: self.previewCanvas];
+        [self _startNewPrintSession];
     }
-    
-    //Create a new graphics context with which we can draw into the canvas image.
-    //IMPLEMENTATION NOTE: in 10.8, NSBitmapImageRep may sometimes change its backing on the fly
-    //without telling the graphics context about it. So we also check if the backing appears to have
-    //changed since the last time and if it has, we recreate the context.
-    if (!self.previewContext || _previewBacking != self.previewCanvas.bitmapData)
+
+    //Create a new page, if none is currently in progress.
+    if (!self.currentSession.pageInProgress)
     {
-        self.previewContext = [NSGraphicsContext graphicsContextWithBitmapImageRep: self.previewCanvas];
-        _previewBacking = self.previewCanvas.bitmapData;
+        [self.currentSession beginPageWithSize: self.currentPageSize];
         
-        //While we're here, set some properties of the context.
-        //Use multiply blending so that overlapping colors will darken each other
-        CGContextSetBlendMode((CGContextRef)(self.previewContext.graphicsPort), kCGBlendModeMultiply);
+        if ([self.delegate respondsToSelector: @selector(printer:willStartPageInSession:)])
+            [self.delegate printer: self willStartPageInSession: self.currentSession];
     }
 }
 
 - (NSPoint) headPositionInDevicePoints
 {
-    return NSMakePoint(_headPosition.x * _dpi.width,
-                       self.currentPage.size.height - (_headPosition.y * _dpi.height));
+    return NSMakePoint(_headPosition.x * 72, (self.currentPageSize.height - _headPosition.y) * 72);
 }
 
 - (void) handleDataByte: (uint8_t)byte
@@ -1089,38 +1072,46 @@ enum {
         {
             NSColor *printColor = [self.class _colorForColorCode: self.color];
             
-            //Where to start printing the column from and how big each dot should be in device coordinates.
+            //Where to start printing the column from and how big each dot should be in user space coordinates.
             NSRect dotRect;
             dotRect.origin = self.headPositionInDevicePoints;
-            dotRect.size = NSMakeSize(_dpi.width / _bitmapDPI.width,
-                                      _dpi.height / _bitmapDPI.height);
+            dotRect.size = NSMakeSize(72.0 / _bitmapDPI.width,
+                                      72.0 / _bitmapDPI.height);
             dotRect.origin.y -= dotRect.size.height;
             
             [self _prepareCanvasForPrinting];
             
-            [NSGraphicsContext saveGraphicsState];
-                [NSGraphicsContext setCurrentContext: self.previewContext];
+            //Draw into the preview and PDF context in turn.
+            NSArray *contexts = [NSArray arrayWithObjects:
+                                 self.currentSession.previewContext,
+                                 self.currentSession.PDFContext,
+                                 nil];
             
-                [printColor set];
-            
-                //Loop over each bit in each byte, printing a dot for each bit
-                //that's on and leaving a space for each bit that's off
-                NSUInteger byteIndex, bitIndex;
-                for (byteIndex=0; byteIndex < _bitmapBytesPerColumn; byteIndex++)
-                {
-                    //Bits go from highest to lowest => left to right
-                    for (bitIndex=128; bitIndex > 0; bitIndex >>= 1)
+            for (NSGraphicsContext *context in contexts)
+            {
+                [NSGraphicsContext saveGraphicsState];
+                    [NSGraphicsContext setCurrentContext: context];
+                
+                    [printColor set];
+                
+                    //Loop over each bit in each byte, printing a dot for each bit
+                    //that's on and leaving a space for each bit that's off
+                    NSUInteger byteIndex, bitIndex;
+                    for (byteIndex=0; byteIndex < _bitmapBytesPerColumn; byteIndex++)
                     {
-                        //If the bit is active, draw a dot here
-                        if (_bitmapColumnData[byteIndex] & bitIndex)
+                        //Bits go from highest to lowest => left to right
+                        for (bitIndex=128; bitIndex > 0; bitIndex >>= 1)
                         {
-                            NSRectFill(dotRect);
-                            _currentPageIsBlank = NO;
+                            //If the bit is active, draw a dot here
+                            if (_bitmapColumnData[byteIndex] & bitIndex)
+                            {
+                                NSRectFill(dotRect);
+                            }
+                            dotRect.origin.y -= dotRect.size.height;
                         }
-                        dotRect.origin.y -= dotRect.size.height;
                     }
-                }
-            [NSGraphicsContext restoreGraphicsState];
+                [NSGraphicsContext restoreGraphicsState];
+            }
             
             _bitmapBytesReadInColumn = 0;
             
@@ -1128,8 +1119,8 @@ enum {
             _headPosition.x +=  1 / _bitmapDPI.width;
         }
         
-        if ([self.delegate respondsToSelector: @selector(printerDidPrintToPage:)])
-            [self.delegate printerDidPrintToPage: self];
+        if ([self.delegate respondsToSelector: @selector(printer:didPrintToPageInSession:)])
+            [self.delegate printer: self didPrintToPageInSession: self.currentSession];
         
         return YES;
     }
@@ -1183,24 +1174,32 @@ enum {
     //Draw the glyph at the current position of the print head,
     //centered within the space it is expected to occupy.
     [self _prepareCanvasForPrinting];
-    [NSGraphicsContext saveGraphicsState];
-        [NSGraphicsContext setCurrentContext: self.previewContext];
     
-        //Use multiply blending so that overlapping colors will darken each other
-        CGContextSetBlendMode((CGContextRef)(self.previewContext.graphicsPort), kCGBlendModeMultiply);
+    //Draw into the preview and PDF context in turn.
+    NSArray *contexts = [NSArray arrayWithObjects:
+                         self.currentSession.previewContext,
+                         self.currentSession.PDFContext,
+                         nil];
     
-        [stringToPrint drawAtPoint: printPos
-                    withAttributes: self.textAttributes];
-    
-        //In doublestrike mode, reprint the same string shifted slightly down to 'thicken' it.
-        if (self.doubleStrike)
-        {
-            [stringToPrint drawAtPoint: NSMakePoint(printPos.x, printPos.y + 0.5)
+    for (NSGraphicsContext *context in contexts)
+    {
+        [NSGraphicsContext saveGraphicsState];
+            [NSGraphicsContext setCurrentContext: context];
+        
+            //Use multiply blending so that overlapping colors will darken each other
+            //CGContextSetBlendMode((CGContextRef)(context.graphicsPort), kCGBlendModeMultiply);
+        
+            [stringToPrint drawAtPoint: printPos
                         withAttributes: self.textAttributes];
-        }
-    
-        _currentPageIsBlank = NO;
-    [NSGraphicsContext restoreGraphicsState];
+        
+            //In doublestrike mode, reprint the same string shifted slightly down to 'thicken' it.
+            if (self.doubleStrike)
+            {
+                [stringToPrint drawAtPoint: NSMakePoint(printPos.x, printPos.y + 0.5)
+                            withAttributes: self.textAttributes];
+            }
+        [NSGraphicsContext restoreGraphicsState];
+    }
     
     //Advance the head past the string
     _headPosition.x += advance + self.letterSpacing;
@@ -1212,8 +1211,8 @@ enum {
         [self _startNewLine];
 	}
     
-    if ([self.delegate respondsToSelector: @selector(printerDidPrintToPage:)])
-        [self.delegate printerDidPrintToPage: self];
+    if ([self.delegate respondsToSelector: @selector(printer:didPrintToPageInSession:)])
+        [self.delegate printer: self didPrintToPageInSession: self.currentSession];
 }
 
 - (BOOL) _handleControlCharacter: (uint8_t)byte
@@ -1523,7 +1522,7 @@ enum {
         case 0x19: // Control paper loading/ejecting (ESC EM)
             // We are not really loading paper, so most commands can be ignored
             if (params[0] == 'R')
-                [self _startNewPageSavingPrevious: YES carriageReturn: NO];
+                [self _startNewPageWithCarriageReturn: NO discardBlankPages: NO];
             //newPage(true,false); // TODO resetx?
             break;
             
@@ -1727,7 +1726,7 @@ enum {
             _headPosition.y += (params[0] / 180.0);
             
             if (_headPosition.y > _bottomMargin)
-                [self _startNewPageSavingPrevious: YES carriageReturn: NO];
+                [self _startNewPageWithCarriageReturn: NO discardBlankPages: NO];
         }
             break;
             
@@ -2029,7 +2028,7 @@ enum {
             CGFloat newPos = _topMargin + (offset * effectiveUnitSize);
             
             if (newPos > _bottomMargin)
-                [self _startNewPageSavingPrevious: YES carriageReturn: NO];
+                [self _startNewPageWithCarriageReturn: NO discardBlankPages: NO];
             else
                 _headPosition.y = newPos;
         }
@@ -2070,7 +2069,7 @@ enum {
             {
                 _headPosition.y = newPos;
                 if (_headPosition.y > _bottomMargin)
-                    [self _startNewPageSavingPrevious: YES carriageReturn: NO];
+                    [self _startNewPageWithCarriageReturn: NO discardBlankPages: NO];
             }
         }
             break;
@@ -2174,7 +2173,7 @@ enum {
                 
                 // Nothing found => Act like FF
                 if (chosenTabPos > _bottomMargin || chosenTabPos == -1)
-                    [self _startNewPageSavingPrevious: YES carriageReturn: NO];
+                    [self _startNewPageWithCarriageReturn: NO discardBlankPages: NO];
                 else
                     _headPosition.y = chosenTabPos;
             }
@@ -2185,7 +2184,7 @@ enum {
             
         case '\f':		// Form feed (FF)
             self.doubleWidthForLine = NO;
-            [self _startNewPageSavingPrevious: YES carriageReturn: NO];
+            [self _startNewPageWithCarriageReturn: YES discardBlankPages: NO];
             return YES;
             
         case '\r':		// Carriage Return (CR)

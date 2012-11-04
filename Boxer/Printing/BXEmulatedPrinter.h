@@ -96,6 +96,7 @@ typedef enum {
 
 
 @protocol BXEmulatedPrinterDelegate;
+@class BXPrintSession;
 @interface BXEmulatedPrinter : NSObject
 {
     id <BXEmulatedPrinterDelegate> _delegate;
@@ -181,16 +182,10 @@ typedef enum {
     
     NSUInteger _densityK, _densityL, _densityY, _densityZ;
     
-    NSSize _dpi;
-    NSImage *_currentPage;
-    NSMutableArray *_completedPages;
     NSMutableDictionary *_textAttributes;
     BOOL _textAttributesNeedUpdate;
-    BOOL _currentPageIsBlank;
     
-    NSBitmapImageRep *_previewCanvas;
-    NSGraphicsContext *_previewContext;
-    void *_previewBacking;
+    BXPrintSession *_currentSession;
 }
 
 //Whether the printer is currently busy and cannot respond to more data.
@@ -199,17 +194,12 @@ typedef enum {
 //The delegate to whom we will send BXEmulatedPrinterDelegate messages.
 @property (assign, nonatomic) id <BXEmulatedPrinterDelegate> delegate;
 
-//An array of NSImages for each previous page that has been created.
-@property (readonly, retain, nonatomic) NSMutableArray *completedPages;
-
-//An NSImage representing the current page being printed.
-@property (readonly, retain, nonatomic) NSImage *currentPage;
-
-//Whether the current page is entirely empty (i.e. nothing has been printed to it yet.)
-@property (readonly, nonatomic) BOOL currentPageIsBlank;
+//The current print session that the printer is working on.
+//Will be nil before the printer has received anything to print.
+@property (readonly, retain, nonatomic) BXPrintSession *currentSession;
 
 //The standard page size in inches.
-@property (readonly, nonatomic) NSSize defaultPageSize;
+@property (assign, nonatomic) NSSize defaultPageSize;
 
 //The size of the current page in inches. This may differ from defaultPageSize
 //if the DOS session has configured a different size itself.
@@ -218,7 +208,7 @@ typedef enum {
 //The position of the print head in inches.
 @property (readonly, nonatomic) NSPoint headPosition;
 
-//The position of the print head in device units (i.e., in the same units as currentPage's size.)
+//The position of the print head in device units (i.e., in the same units as the page preview size.)
 @property (readonly, nonatomic) NSPoint headPositionInDevicePoints;
 
 
@@ -260,13 +250,19 @@ typedef enum {
 //Called when the printer first receives print data from the DOS session.
 - (void) printerWillBeginPrinting: (BXEmulatedPrinter *)printer;
 
-//Called every time the printer prints characters or graphics to the current page.
-- (void) printerDidPrintToPage: (BXEmulatedPrinter *)printer;
+//Called when the printer begins a new print session.
+- (void) printer: (BXEmulatedPrinter *)printer willBeginSession: (BXPrintSession *)session;
 
-//Called when the printer finishes printing the current page.
-- (void) printer: (BXEmulatedPrinter *)printer didFinishPage: (NSImage *)page;
+//Called when the printer finishes the specified session.
+- (void) printer: (BXEmulatedPrinter *)printer didFinishSession: (BXPrintSession *)session;
 
-//Called when the printer finishes printing a set of pages.
-- (void) printer: (BXEmulatedPrinter *)printer didFinishPrintSession: (NSArray *)completedPages;
+//Called when the printer begins a new page in the specified session.
+- (void) printer: (BXEmulatedPrinter *)printer willStartPageInSession: (BXPrintSession *)session;
+
+//Called every time the printer prints characters or graphics to the current page in the specified session.
+- (void) printer: (BXEmulatedPrinter *)printer didPrintToPageInSession: (BXPrintSession *)session;
+
+//Called when the printer finishes printing the current page in the specified session.
+- (void) printer: (BXEmulatedPrinter *)printer didFinishPageInSession: (BXPrintSession *)session;
 
 @end

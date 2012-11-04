@@ -859,6 +859,8 @@
 		9FF865CF134DAB5A001CE857 /* BXTaskOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF865CE134DAB5A001CE857 /* BXTaskOperation.m */; };
 		9FF86678134DCA16001CE857 /* cdrdao in Resources */ = {isa = PBXBuildFile; fileRef = 9FF86676134DCA16001CE857 /* cdrdao */; };
 		9FF86679134DCA16001CE857 /* toc2cue in Resources */ = {isa = PBXBuildFile; fileRef = 9FF86677134DCA16001CE857 /* toc2cue */; };
+		9FF982111646C7640080F763 /* BXPrintSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF982101646C7640080F763 /* BXPrintSession.m */; };
+		9FF982121646C7640080F763 /* BXPrintSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF982101646C7640080F763 /* BXPrintSession.m */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
 		9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */ = {isa = PBXBuildFile; fileRef = 9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */; };
@@ -1720,8 +1722,8 @@
 		9FD6AA0C16314A5B002B774E /* printer_redir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = printer_redir.cpp; sourceTree = "<group>"; };
 		9FD6AA0D16314A5B002B774E /* printer_redir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = printer_redir.h; sourceTree = "<group>"; };
 		9FD6AA1D16314AC6002B774E /* parport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parport.h; sourceTree = "<group>"; };
-		9FD6AA1E16315278002B774E /* BXEmulatedPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXEmulatedPrinter.h; path = Emulator/BXEmulatedPrinter.h; sourceTree = "<group>"; };
-		9FD6AA1F16315278002B774E /* BXEmulatedPrinter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BXEmulatedPrinter.mm; path = Emulator/BXEmulatedPrinter.mm; sourceTree = "<group>"; };
+		9FD6AA1E16315278002B774E /* BXEmulatedPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXEmulatedPrinter.h; path = Printing/BXEmulatedPrinter.h; sourceTree = "<group>"; };
+		9FD6AA1F16315278002B774E /* BXEmulatedPrinter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BXEmulatedPrinter.mm; path = Printing/BXEmulatedPrinter.mm; sourceTree = "<group>"; };
 		9FD7B6AE145745D800565CEB /* BXThemedPopUpButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedPopUpButtonCell.h; sourceTree = "<group>"; };
 		9FD7B6AF145745D800565CEB /* BXThemedPopUpButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedPopUpButtonCell.m; sourceTree = "<group>"; };
 		9FD7B6B1145746CC00565CEB /* BXThemedButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedButtonCell.h; sourceTree = "<group>"; };
@@ -1796,6 +1798,8 @@
 		9FF865CE134DAB5A001CE857 /* BXTaskOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTaskOperation.m; sourceTree = "<group>"; };
 		9FF86676134DCA16001CE857 /* cdrdao */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = cdrdao; sourceTree = "<group>"; };
 		9FF86677134DCA16001CE857 /* toc2cue */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = toc2cue; sourceTree = "<group>"; };
+		9FF9820F1646C7640080F763 /* BXPrintSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPrintSession.h; path = Printing/BXPrintSession.h; sourceTree = "<group>"; };
+		9FF982101646C7640080F763 /* BXPrintSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPrintSession.m; path = Printing/BXPrintSession.m; sourceTree = "<group>"; };
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
 		9FFBF67011A7F8F4000A1863 /* BXFrameRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameRenderingView.h; sourceTree = "<group>"; };
@@ -1920,6 +1924,7 @@
 				9F887103156F85F8006CDB5F /* BXFileTypes.h */,
 				9F887104156F85F8006CDB5F /* BXFileTypes.m */,
 				9F902C1D142E169800843B01 /* MIDI */,
+				9FF982141646C76C0080F763 /* Printing */,
 				9F1D50280F5C0ACD009F0AB9 /* Emulator */,
 				9F496E3D108EEB0700282261 /* DOS session */,
 				9F1CBA55120C783800C5E926 /* Game import session */,
@@ -2161,8 +2166,6 @@
 				9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */,
 				9F9DF413153B058200233968 /* BXKeyBuffer.h */,
 				9F9DF414153B058200233968 /* BXKeyBuffer.mm */,
-				9FD6AA1E16315278002B774E /* BXEmulatedPrinter.h */,
-				9FD6AA1F16315278002B774E /* BXEmulatedPrinter.mm */,
 			);
 			comments = "The sourcefiles in this group interface directly with DOSBox's internals. For this reason, they need to be compiled as Objective C++ rather than Objective C.";
 			name = Emulator;
@@ -3445,6 +3448,17 @@
 			name = "Drive importing";
 			sourceTree = "<group>";
 		};
+		9FF982141646C76C0080F763 /* Printing */ = {
+			isa = PBXGroup;
+			children = (
+				9FD6AA1E16315278002B774E /* BXEmulatedPrinter.h */,
+				9FD6AA1F16315278002B774E /* BXEmulatedPrinter.mm */,
+				9FF9820F1646C7640080F763 /* BXPrintSession.h */,
+				9FF982101646C7640080F763 /* BXPrintSession.m */,
+			);
+			name = Printing;
+			sourceTree = "<group>";
+		};
 		9FFF9714123269D1009B5EE5 /* NDAlias */ = {
 			isa = PBXGroup;
 			children = (
@@ -4154,6 +4168,7 @@
 				9FD6AA1A16314A5B002B774E /* printer_redir.cpp in Sources */,
 				9FD6AA2016315278002B774E /* BXEmulatedPrinter.mm in Sources */,
 				9F596502163D8D910094FD6B /* BXSession+BXPrinting.m in Sources */,
+				9FF982111646C7640080F763 /* BXPrintSession.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4460,6 +4475,7 @@
 				9FD6AA1B16314A5B002B774E /* printer_redir.cpp in Sources */,
 				9FD6AA2116315278002B774E /* BXEmulatedPrinter.mm in Sources */,
 				9F596503163D8D910094FD6B /* BXSession+BXPrinting.m in Sources */,
+				9FF982121646C7640080F763 /* BXPrintSession.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

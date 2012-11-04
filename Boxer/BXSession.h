@@ -123,7 +123,7 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
     NSMutableSet *_MT32MessagesReceived;
     
     //DEBUG: will be removed
-    NSView *_printPreview;
+    NSImageView *_printPreview;
 }
 
 

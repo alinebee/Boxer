@@ -6,6 +6,7 @@
  */
 
 #import "BXSession+BXPrinting.h"
+#import "BXPrintSession.h"
 
 @implementation BXSession (BXPrinting)
 
@@ -13,8 +14,8 @@
 {
     NSSize previewDPI = NSMakeSize(72.0, 72.0);
     
-    NSRect contentRect = NSMakeRect(0, 0, printer.defaultPageSize.width * previewDPI.width,
-                                    printer.defaultPageSize.height * previewDPI.height);
+    NSRect contentRect = NSMakeRect(0, 0,   printer.defaultPageSize.width * previewDPI.width,
+                                            printer.defaultPageSize.height * previewDPI.height);
     
     NSUInteger windowMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
     NSWindow *previewWindow = [[NSWindow alloc] initWithContentRect: contentRect
@@ -25,7 +26,7 @@
     NSImageView *preview = [[NSImageView alloc] initWithFrame: contentRect];
     preview.imageAlignment = NSImageAlignCenter;
     preview.imageScaling = NSImageScaleProportionallyUpOrDown;
-
+    
     previewWindow.title = @"Print Preview";
     [previewWindow.contentView addSubview: preview];
     
@@ -34,22 +35,41 @@
     [previewWindow setReleasedWhenClosed: YES];
     
     _printPreview = preview;
-    [_printPreview bind: @"image" toObject: printer withKeyPath: @"currentPage" options: nil];
 }
 
-- (void) printerDidPrintToPage: (BXEmulatedPrinter *)printer
+- (void) printer: (BXEmulatedPrinter *)printer willBeginSession: (BXPrintSession *)session
 {
+    NSLog(@"Print session begun.");
+}
+
+- (void) printer: (BXEmulatedPrinter *)printer willStartPageInSession: (BXPrintSession *)session
+{
+    NSLog(@"Page %i begun.", session.numPages);
+}
+
+- (void) printer: (BXEmulatedPrinter *)printer didFinishPageInSession: (BXPrintSession *)session
+{
+    NSLog(@"Page %i complete.", session.numPages);
+    
+    //Finish the session after each page
+    if (session.numPages >= 2)
+        [printer finishPrintSession];
+}
+
+- (void) printer: (BXEmulatedPrinter *)printer didFinishSession: (BXPrintSession *)session
+{
+    //Save the PDF to a file on the desktop
+    NSLog(@"Print session complete after %i pages.", session.numPages);
+    
+    NSURL *pageURL = [NSURL fileURLWithPath: @"~/Desktop/Printme.pdf".stringByExpandingTildeInPath];
+    
+    [session.PDFData writeToURL: pageURL atomically: YES];
+}
+
+- (void) printer: (BXEmulatedPrinter *)printer didPrintToPageInSession: (BXPrintSession *)session
+{
+    _printPreview.image = session.currentPagePreview;
     [_printPreview setNeedsDisplay: YES];
-}
-
-- (void) printer: (BXEmulatedPrinter *)printer didFinishPage: (NSImage *)page
-{
-    NSLog(@"Page complete: %@", page);
-}
-
-- (void) printer: (BXEmulatedPrinter *)printer didFinishPrintSession: (NSArray *)completedPages
-{
-    NSLog(@"Print session complete: %@", completedPages);
 }
 
 @end

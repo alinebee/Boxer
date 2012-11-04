@@ -523,6 +523,8 @@ bool CMscdex::GetAudioStatus(Bit8u subUnit, bool& playing, bool& pause, TMSF& st
 bool CMscdex::StopAudio(Bit8u subUnit)
 {
 	if (subUnit>=numDrives) return false;
+	// Update MSCDEX play/pause state from cdrom device state
+	cdrom[subUnit]->GetAudioStatus(dinfo[subUnit].audioPlay,dinfo[subUnit].audioPaused);
 	if (dinfo[subUnit].audioPlay)	dinfo[subUnit].lastResult = cdrom[subUnit]->PauseAudio(false);
 	else							dinfo[subUnit].lastResult = cdrom[subUnit]->StopAudio();
 	
@@ -792,6 +794,15 @@ Bit32u CMscdex::GetDeviceStatus(Bit8u subUnit)
 	bool media,changed,trayOpen;
 
 	dinfo[subUnit].lastResult = GetMediaStatus(subUnit,media,changed,trayOpen);
+    if (dinfo[subUnit].audioPlay) {
+        // Check if audio is still playing....
+        TMSF start,end;
+        bool playing,pause;
+        if (GetAudioStatus(subUnit,playing,pause,start,end)) {
+            dinfo[subUnit].audioPlay = playing;
+        } else
+            dinfo[subUnit].audioPlay = false;
+    }
 	Bit32u status = (trayOpen << 0)					|	// Drive is open ?
 					(dinfo[subUnit].locked	<< 1)	|	// Drive is locked ?
 					(1<<2)							|	// raw + cooked sectors
@@ -990,6 +1001,7 @@ static Bit16u MSCDEX_IOCTL_Optput(PhysPt buffer,Bit8u drive_unit) {
 					break;
 		case 0x05 :	// load media
 					if (!mscdex->LoadUnloadMedia(drive_unit,false)) return 0x02;
+					break;
 		default	:	LOG(LOG_MISC,LOG_ERROR)("MSCDEX: Unsupported IOCTL OUTPUT Subfunction %02X",ioctl_fct);
 					return 0x03;	// invalid function
 	}

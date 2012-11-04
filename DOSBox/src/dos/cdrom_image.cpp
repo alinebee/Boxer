@@ -237,7 +237,6 @@ bool CDROM_Interface_Image::PlayAudioSector(unsigned long start,unsigned long le
 
 bool CDROM_Interface_Image::PauseAudio(bool resume)
 {
-	if (!player.isPlaying) return false;
 	player.isPaused = !resume;
 	return true;
 }

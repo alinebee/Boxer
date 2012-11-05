@@ -58,60 +58,35 @@ enum {
 
 #define VERTICAL_TABS_UNDEFINED 255
 #define UNIT_SIZE_UNDEFINED -1
-#define HMI_UNDEFINED -1
 
-
+//By default, lengths parameters to ESC/P commands are specified in units of 1/60th of an inch
 #define BXESCPUnitSizeDefault 60.0
-#define BXESCPLineSpacingDefault 1 / 6.0
-#define BXESCPCPIDefault 10.0
-#define BXESCPFontSizeDefault 10.5
+#define BXESCPLineSpacingDefault 1 / 6.0 //1/6th of an inch, i.e. 12pt line height
+#define BXESCPCPIDefault 10.0 //Default character width of 10 characters per inch
 
+#define BXESCPBaselineOffset (20 / 180.0)    //The text baseline is positioned this many inches below the current vertical head position.
 
 #pragma mark -
 #pragma mark Private interface declaration
 
 @interface BXEmulatedPrinter ()
 
-@property (assign, nonatomic) BOOL bold;
-@property (assign, nonatomic) BOOL italic;
-@property (assign, nonatomic) BOOL doubleStrike;
+#pragma mark -
+#pragma mark Internal properties
 
-@property (assign, nonatomic) BOOL superscript;
-@property (assign, nonatomic) BOOL subscript;
-
-@property (assign, nonatomic) BOOL proportional;
-@property (assign, nonatomic) BOOL condensed;
-@property (assign, nonatomic) double letterSpacing;
-
-@property (assign, nonatomic) BOOL doubleWidth;
-@property (assign, nonatomic) BOOL doubleHeight;
-@property (assign, nonatomic) BOOL doubleWidthForLine;
-
-@property (assign, nonatomic) BOOL underlined;
-@property (assign, nonatomic) BOOL linethroughed;
-@property (assign, nonatomic) BOOL overscored;
-@property (assign, nonatomic) BXESCPLineStyle lineStyle;
-
-@property (assign, nonatomic) BXESCPQuality quality;
-@property (assign, nonatomic) BXESCPColor color;
-@property (assign, nonatomic) BXESCPTypeface typeFace;
-
-@property (assign, nonatomic) BOOL autoFeed;
-@property (assign, nonatomic) double CPI;
-@property (readonly, nonatomic) double effectiveCPI;
-
-@property (assign, nonatomic) BOOL multipointEnabled;
-@property (assign, nonatomic) double multipointCPI;
-@property (assign, nonatomic) double multipointFontSize;
-
-@property (assign, nonatomic) BXESCPCharTable activeCharTable;
-@property (readonly, nonatomic) NSUInteger activeCodepage;
-
+//Overridden to make them read-write internally.
 @property (retain, nonatomic) NSMutableDictionary *textAttributes;
-
 @property (assign, nonatomic) NSPoint headPosition;
-
 @property (retain, nonatomic) BXPrintSession *currentSession;
+
+//The effective pitch in characters-per-inch, counting the current font settings.
+@property (readonly, nonatomic) double effectivePitch;
+
+//The official width of one monospace character at the current pitch, in inches.
+@property (readonly, nonatomic) double characterWidth;
+
+//The actual width of one monospace character at the current pitch,  in inches.
+@property (readonly, nonatomic) double effectiveCharacterWidth;
 
 
 #pragma mark -
@@ -209,6 +184,7 @@ enum {
 
 @synthesize dataRegister = _dataRegister;
 
+@synthesize busy = _busy;
 @synthesize autoFeed = _autoFeed;
 
 @synthesize bold = _bold;
@@ -229,16 +205,17 @@ enum {
 @synthesize overscored = _overscored;
 @synthesize lineStyle = _lineStyle;
 
+@synthesize fontPitch = _fontPitch;
 @synthesize letterSpacing = _letterSpacing;
-@synthesize typeFace = _typeFace;
+@synthesize fontTypeface = _fontTypeface;
 @synthesize color = _color;
 @synthesize quality = _quality;
 
 @synthesize multipointEnabled = _multipointEnabled;
 @synthesize multipointFontSize = _multipointFontSize;
-@synthesize CPI = _charactersPerInch;
-@synthesize multipointCPI = _multipointCharactersPerInch;
-@synthesize effectiveCPI = _effectiveCharactersPerInch;
+@synthesize multipointFontPitch = _multipointFontPitch;
+@synthesize effectivePitch = _effectivePitch;
+@synthesize characterAdvance = _characterAdvance;
 
 @synthesize activeCharTable = _activeCharTable;
 
@@ -318,6 +295,25 @@ enum {
     return [NSColor colorWithDeviceCyan: c magenta: m yellow: y black: k alpha: 1];
 }
 
+#pragma mark -
+#pragma mark Geometry
+
+//Convert a coordinate in page inches into a coordinate in Quartz points.
+//This will flip the coordinate system to place the origin at the bottom left.
+- (NSPoint) convertPointFromPage: (NSPoint)pagePoint
+{
+    return NSMakePoint(pagePoint.x * 72.0,
+                       (self.currentPageSize.height - pagePoint.y) * 72.0);
+}
+
+//Convert a point in user space into a coordinate in page inches.
+//This will flip the coordinate system to place the origin at the top left.
+- (NSPoint) convertPointToPage: (NSPoint)userSpacePoint
+{
+    return NSMakePoint(userSpacePoint.x / 72.0,
+                       self.currentPageSize.height - (userSpacePoint.y / 72.0));
+}
+
 
 #pragma mark -
 #pragma mark Formatting
@@ -345,7 +341,17 @@ enum {
     if (self.condensed != flag)
     {
         _condensed = flag;
-        _horizontalMotionIndex = HMI_UNDEFINED;
+        self.characterAdvance = BXCharacterAdvanceAuto;
+        _textAttributesNeedUpdate = YES;
+    }
+}
+
+- (void) setFontPitch: (BXESCPFontPitch)pitch
+{
+    if (self.fontPitch != pitch)
+    {
+        _fontPitch = pitch;
+        self.characterAdvance = BXCharacterAdvanceAuto;
         _textAttributesNeedUpdate = YES;
     }
 }
@@ -371,7 +377,7 @@ enum {
 - (void) setLetterSpacing: (double)spacing
 {
     _letterSpacing = spacing;
-    _horizontalMotionIndex = HMI_UNDEFINED;
+    self.characterAdvance = BXCharacterAdvanceAuto;
 }
 
 - (void) setDoubleWidth: (BOOL)flag
@@ -379,7 +385,7 @@ enum {
     if (self.doubleWidth != flag)
     {
         _doubleWidth = flag;
-        _horizontalMotionIndex = HMI_UNDEFINED;
+        self.characterAdvance = BXCharacterAdvanceAuto;
         _textAttributesNeedUpdate = YES;
     }
 }
@@ -398,7 +404,7 @@ enum {
     if (self.doubleWidthForLine != flag)
     {
         _doubleWidthForLine = flag;
-        _horizontalMotionIndex = HMI_UNDEFINED;
+        self.characterAdvance = BXCharacterAdvanceAuto;
         _textAttributesNeedUpdate = YES;
     }
 }
@@ -440,9 +446,9 @@ enum {
     }
 }
 
-- (void) setTypeFace: (BXESCPTypeface)typeFace
+- (void) setFontTypeface: (BXESCPTypeface)typeface
 {
-    switch (typeFace)
+    switch (typeface)
     {
         case BXESCPTypefaceRoman:
         case BXESCPTypefaceSansSerif:
@@ -458,7 +464,7 @@ enum {
         case BXESCPTypefaceSansSerifH:
         case BXESCPTypefaceSVBusaba:
         case BXESCPTypefaceSVJittra:
-            _typeFace = (BXESCPTypeface)typeFace;
+            _fontTypeface = (BXESCPTypeface)typeface;
             _textAttributesNeedUpdate = YES;
             break;
         default:
@@ -468,7 +474,7 @@ enum {
 
 - (void) _updateTextAttributes
 {
-    NSFontDescriptor *fontDescriptor = [self.class _fontDescriptorForEmulatedTypeface: self.typeFace
+    NSFontDescriptor *fontDescriptor = [self.class _fontDescriptorForEmulatedTypeface: self.fontTypeface
                                                                                  bold: self.bold
                                                                                italic: self.italic];
     
@@ -476,75 +482,52 @@ enum {
     NSSize fontSize;
 	if (self.multipointEnabled)
     {
-        _effectiveCharactersPerInch = _multipointCharactersPerInch;
         fontSize = NSMakeSize(_multipointFontSize, _multipointFontSize);
+        _effectivePitch = _multipointFontPitch;
     }
     else
     {
-        //Use a base font size of 10.5 points
-        fontSize = NSMakeSize(BXESCPFontSizeDefault, BXESCPFontSizeDefault);
-        _effectiveCharactersPerInch = _charactersPerInch;
+        //Start with a base font size of 10.5pts for non-multipoint characters.
+        //This may then be scaled horizontally and/or vertically depending on the current font settings.
+        fontSize = NSMakeSize(10.5, 10.5);
+        _effectivePitch = (double)_fontPitch;
         
         if (self.condensed)
         {
             if (self.proportional)
             {
-                fontSize.width *= 0.5;
-                //TODO: shouldn't the font size be applied here?
+                //Proportional condensed fonts are 50% of the width of standard fonts.
+                _effectivePitch *= 2;
             }
-            else if (_charactersPerInch == 10.0)
+            else if (self.fontPitch == BXFontPitch10CPI)
             {
-                _effectiveCharactersPerInch = 17.14;
-                fontSize.width *= BXESCPCPIDefault / _effectiveCharactersPerInch;
-                fontSize.height *= BXESCPCPIDefault / _charactersPerInch;
+                _effectivePitch = 17.14;
             }
-            else if (_charactersPerInch == 12.0)
+            else if (self.fontPitch == BXFontPitch12CPI)
             {
-                _effectiveCharactersPerInch = 20.0;
-                fontSize.width *= BXESCPCPIDefault / _effectiveCharactersPerInch;
-                fontSize.height *= BXESCPCPIDefault / _charactersPerInch;
+                _effectivePitch = 20.0;
             }
-        }
-        else
-        {
-            fontSize.width *= BXESCPCPIDefault / _effectiveCharactersPerInch;
-            fontSize.height *= BXESCPCPIDefault / _charactersPerInch;
+            //15cpi pitch does not support condensed mode: evidently it's condensed enough already
         }
         
-        if (self.doubleWidth || self.doubleWidthForLine)
-        {
-            _effectiveCharactersPerInch *= 0.5;
-            fontSize.width *= 2.0;
-        }
-        
-        if (self.doubleHeight)
-        {
-            fontSize.height *= 2.0;
-        }
+        fontSize.width *= (BXFontPitch10CPI / _effectivePitch);
 	}
     
-    if (self.superscript || self.subscript)
+    //Shrink superscripted and subscripted characters to 2/3rds their normal size,
+    //unless we're at a particularly small font size.
+    if ((self.superscript || self.subscript) && fontSize.height > 8.0)
     {
-        fontSize.width *= 2.0/3.0;
-        fontSize.height *= 2.0/3.0;
-        _effectiveCharactersPerInch *= 2.0/3.0;
+        double subscriptScale = 2.0/3.0;
+        fontSize.width *= subscriptScale;
+        fontSize.height *= subscriptScale;
+        _effectivePitch *= subscriptScale;
     }
     
-    fontDescriptor = [fontDescriptor fontDescriptorWithSize: fontSize.height];
-    
-    //If the text needs to be scaled in one direction or another,
-    //apply a transform to do this.
-    CGFloat aspectRatio = (fontSize.width / fontSize.height);
-    if (ABS(aspectRatio - 1) > 0.01)
-    {
-        NSAffineTransform *transform = [NSAffineTransform transform];
-        [transform scaleXBy: aspectRatio yBy: 1];
-        
-        fontDescriptor = [fontDescriptor fontDescriptorWithMatrix: transform];
-    }
+    NSAffineTransform *transform = [NSAffineTransform transform];
+    [transform scaleXBy: fontSize.width yBy: fontSize.height];
     
     //Apply the basic text attributes
-    NSFont *font = [NSFont fontWithDescriptor: fontDescriptor size: fontSize.height];
+    NSFont *font = [NSFont fontWithDescriptor: fontDescriptor textTransform: transform];
     NSColor *color = [self.class _colorForColorCode: self.color];
     
     self.textAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -591,11 +574,11 @@ enum {
     if (self.superscript || self.subscript)
     {
         //Move the baseline up 40% for superscripting, or down 30% for subscripting.
-        CGFloat heightRatio = (self.superscript) ? 0.4 : -0.3;
+        double heightRatio = (self.superscript) ? 0.4 : -0.3;
         
         //TODO: We could also base this on the font's ascender and descender, which might
         //be more pleasing to the eye.
-        CGFloat baselineOffset = fontSize.height * heightRatio;
+        double baselineOffset = fontSize.height * heightRatio;
         [self.textAttributes setObject: [NSNumber numberWithFloat: baselineOffset]
                                 forKey: NSBaselineOffsetAttributeName];
     }
@@ -748,11 +731,6 @@ enum {
 #pragma mark -
 #pragma mark Print operations
 
-- (BOOL) isBusy
-{
-    return NO;
-}
-
 - (BOOL) acknowledge
 {
     if (_hasReadData)
@@ -773,10 +751,6 @@ enum {
     
     //Initialise the emulated printer settings and data structures.
     [self resetHard];
-    
-    //Let our delegate know that something in DOS has tried to print.
-    if ([self.delegate respondsToSelector: @selector(printerWillBeginPrinting:)])
-        [self.delegate printerWillBeginPrinting: self];
 }
 
 - (void) resetHard
@@ -789,10 +763,10 @@ enum {
 {
     [self _endESCPCommand];
     
-    _typeFace = BXESCPTypefaceDefault;
+    _fontTypeface = BXESCPTypefaceDefault;
     _color = BXESCPColorBlack;
     _headPosition = NSZeroPoint;
-    _horizontalMotionIndex = HMI_UNDEFINED;
+    _characterAdvance = BXCharacterAdvanceAuto;
     
     _pageSize = _defaultPageSize;
     _topMargin = 0.0;
@@ -800,9 +774,9 @@ enum {
     _rightMargin = _defaultPageSize.width;
     _bottomMargin = _defaultPageSize.height;
     
+    _fontPitch = BXFontPitchDefault;
     _lineSpacing = BXESCPLineSpacingDefault;
     _letterSpacing = 0.0;
-    _charactersPerInch = BXESCPCPIDefault;
     
     _charTables[BXESCPCharTable0] = 0;
     _charTables[BXESCPCharTable1] = 437;
@@ -842,7 +816,7 @@ enum {
     
     _multipointEnabled = NO;
     _multipointFontSize = 0.0;
-    _multipointCharactersPerInch = 0.0;
+    _multipointFontPitch = 0.0;
     
     _msbMode = BXNoMSBControl;
 
@@ -850,11 +824,36 @@ enum {
     NSUInteger i;
     _numHorizontalTabs = 32;
     for (i=0; i<_numHorizontalTabs; i++)
-        _horizontalTabPositions[i] = i * 8 * (1 / _charactersPerInch);
+        _horizontalTabPositions[i] = i * 8 * self.characterWidth;
     _numVerticalTabs = VERTICAL_TABS_UNDEFINED;
     
     [self _updateTextAttributes];
     [self _startNewPageWithCarriageReturn: NO discardBlankPages: YES];
+    
+    if ([self.delegate respondsToSelector: @selector(printerDidInitialize:)])
+        [self.delegate printerDidInitialize: self];
+}
+
+- (double) effectiveCharacterWidth
+{
+    //Recalculate the text attributes in case the effective pitch has changed
+    if (_textAttributesNeedUpdate)
+        [self _updateTextAttributes];
+    
+    return 1 / _effectivePitch;
+}
+
+- (double) characterAdvance
+{
+    if (_characterAdvance != BXCharacterAdvanceAuto)
+        return _characterAdvance;
+    else
+        return self.effectiveCharacterWidth;
+}
+
+- (double) characterWidth
+{
+    return 1 / (double)self.fontPitch;
 }
 
 - (void) _startNewLine
@@ -937,11 +936,6 @@ enum {
         if ([self.delegate respondsToSelector: @selector(printer:willStartPageInSession:)])
             [self.delegate printer: self willStartPageInSession: self.currentSession];
     }
-}
-
-- (NSPoint) headPositionInDevicePoints
-{
-    return NSMakePoint(_headPosition.x * 72, (self.currentPageSize.height - _headPosition.y) * 72);
 }
 
 - (void) handleDataByte: (uint8_t)byte
@@ -1074,7 +1068,7 @@ enum {
             
             //Where to start printing the column from and how big each dot should be in user space coordinates.
             NSRect dotRect;
-            dotRect.origin = self.headPositionInDevicePoints;
+            dotRect.origin = [self convertPointFromPage: self.headPosition];
             dotRect.size = NSMakeSize(72.0 / _bitmapDPI.width,
                                       72.0 / _bitmapDPI.height);
             dotRect.origin.y -= dotRect.size.height;
@@ -1147,35 +1141,42 @@ enum {
     //Locate the unicode character to print
     unichar codepoint = _charMap[character];
     
-    //Construct a string for drawing the glyph
+    //Construct a string for drawing the glyph and work out how big it will be rendered.
     NSString *stringToPrint = [NSString stringWithCharacters: &codepoint length: 1];
     NSSize stringSize = [stringToPrint sizeWithAttributes: self.textAttributes];
+    double stringWidth = (stringSize.width / 72.0);
     
-    //Work out how wide this character should be
-    CGFloat advance = 0;
+    //If we're printing in fixed-width, work out how big a space the string should fill
+    double advance = 0;
     if (self.proportional)
     {
-        advance = stringSize.width;
-    }
-    else if (_horizontalMotionIndex == HMI_UNDEFINED)
-    {
-        advance = 1 / _effectiveCharactersPerInch;
+        advance = stringWidth;
     }
     else
     {
-        advance = _horizontalMotionIndex;
+        advance = self.effectiveCharacterWidth;
     }
     
-    //Note that this is in the flipped Quartz/PostScript coordinate system.
-    NSPoint printPos = self.headPositionInDevicePoints;
-    printPos.x += (advance - stringSize.width) * 0.5;
-    printPos.y -= stringSize.height;
-    
-    //Draw the glyph at the current position of the print head,
+    //Draw the glyph at the current position ofƒ the print head,
     //centered within the space it is expected to occupy.
-    [self _prepareCanvasForPrinting];
+    
+    //Note that the head position is positioned at the visual top left of the line to print,
+    //but ESC/P printers print text 20/180 inch below this point, regardless of the current font size.
+    //This ensures that baselines always line up regardless of font size.
+    
+    NSPoint textOrigin = self.headPosition;
+    textOrigin.y += BXESCPBaselineOffset;
+    
+    //When in fixed-width mode, position the glyph smack in the middle of the expected advance.
+    if (!self.proportional)
+    {
+        textOrigin.x += (advance - stringWidth) * 0.5;
+    }
+    
+    NSPoint drawPos = [self convertPointFromPage: textOrigin];
     
     //Draw into the preview and PDF context in turn.
+    [self _prepareCanvasForPrinting];
     NSArray *contexts = [NSArray arrayWithObjects:
                          self.currentSession.previewContext,
                          self.currentSession.PDFContext,
@@ -1186,16 +1187,15 @@ enum {
         [NSGraphicsContext saveGraphicsState];
             [NSGraphicsContext setCurrentContext: context];
         
-            //Use multiply blending so that overlapping colors will darken each other
-            //CGContextSetBlendMode((CGContextRef)(context.graphicsPort), kCGBlendModeMultiply);
-        
-            [stringToPrint drawAtPoint: printPos
+            //Note that drawAtPoint:withAttributes will draw the string with the baseline
+            //positioned at the specified offset.
+            [stringToPrint drawAtPoint: drawPos
                         withAttributes: self.textAttributes];
         
             //In doublestrike mode, reprint the same string shifted slightly down to 'thicken' it.
             if (self.doubleStrike)
             {
-                [stringToPrint drawAtPoint: NSMakePoint(printPos.x, printPos.y + 0.5)
+                [stringToPrint drawAtPoint: NSMakePoint(drawPos.x, drawPos.y + 0.5)
                             withAttributes: self.textAttributes];
             }
         [NSGraphicsContext restoreGraphicsState];
@@ -1449,7 +1449,7 @@ enum {
 	else if (_currentESCPCommand == 'D')
 	{
         //Horizontal tab positions are specified as number of characters from left margin; convert this to a width in inches.
-        double tabPos = param * (1 / (double)_charactersPerInch);
+        double tabPos = param * self.characterWidth;
         
         //Once we get a null sentinel or a tab position that's lower than the previous position,
         //treat that as the end of the command.
@@ -1513,7 +1513,7 @@ enum {
             break;
             
         case 0x0f: // Select condensed printing (ESC SI)
-            if (!self.multipointEnabled && self.CPI != 15.0)
+            if (!self.multipointEnabled && self.fontPitch != BXFontPitch15CPI)
             {
                 self.condensed = YES;
             }
@@ -1536,14 +1536,13 @@ enum {
             
         case '!': // Master select (ESC !)
         {
-            _charactersPerInch = (params[0] & (1 << 0)) ? 12 : 10;
-            
-            self.proportional    = (params[0] & (1 << 1));
-            self.condensed       = (params[0] & (1 << 2));
-            self.bold            = (params[0] & (1 << 3));
-            self.doubleStrike    = (params[0] & (1 << 4));
-            self.doubleWidth     = (params[0] & (1 << 5));
-            self.italic          = (params[0] & (1 << 6));
+            self.fontPitch      = (params[0] & (1 << 0)) ? BXFontPitch12CPI : BXFontPitch10CPI;
+            self.proportional   = (params[0] & (1 << 1));
+            self.condensed      = (params[0] & (1 << 2));
+            self.bold           = (params[0] & (1 << 3));
+            self.doubleStrike   = (params[0] & (1 << 4));
+            self.doubleWidth    = (params[0] & (1 << 5));
+            self.italic         = (params[0] & (1 << 6));
             
             if (params[0] & (1 << 7))
             {
@@ -1555,9 +1554,8 @@ enum {
                 self.underlined = NO;
             }
             
-            _horizontalMotionIndex = HMI_UNDEFINED;
-            _multipointEnabled = NO;
-            _textAttributesNeedUpdate = YES;
+            self.multipointEnabled = NO;
+            self.characterAdvance = BXCharacterAdvanceAuto;
         }
             break;
             
@@ -1745,10 +1743,8 @@ enum {
             break;
             
         case 'M': // Select 10.5-point, 12-cpi (ESC M)
-            _charactersPerInch = 12;
-            _horizontalMotionIndex = HMI_UNDEFINED;
-            _multipointEnabled = NO;
-            _textAttributesNeedUpdate = YES;
+            self.fontPitch = BXFontPitch12CPI;
+            self.multipointEnabled = NO;
             break;
             
         case 'N': // Set bottom margin (ESC N)
@@ -1762,14 +1758,12 @@ enum {
             break;
             
         case 'P': // Select 10.5-point, 10-cpi (ESC P)
-            _charactersPerInch = 10;
-            _horizontalMotionIndex = HMI_UNDEFINED;
-            _multipointEnabled = NO;
-            _textAttributesNeedUpdate = YES;
+            self.fontPitch = BXFontPitch10CPI;
+            self.multipointEnabled = NO;
             break;
             
         case 'Q': // Set right margin
-            _rightMargin = (params[0] - 1) / _charactersPerInch;
+            _rightMargin = (params[0] - 1) * self.characterWidth;
             break;
             
         case 'R': // Select an international character set (ESC R)
@@ -1809,20 +1803,20 @@ enum {
         {
             _multipointEnabled = YES;
             
-            //Copy currently non-multipoint CPI if no value was set so far
-            if (_multipointCharactersPerInch == 0)
-                _multipointCharactersPerInch = _charactersPerInch;
+            //Copy current non-multipoint CPI if no value was set so far
+            if (_multipointFontPitch == 0)
+                _multipointFontPitch = (double)self.fontPitch;
             
-            double cpi = params[0];
+            double pitch = params[0];
             double fontSize = WIDEPARAM(params, 1);
             
-            if (cpi == 1) // Proportional spacing
+            if (pitch == 1) // Proportional spacing
             {
                 self.proportional = YES;
             }
-            else if (cpi >= 5)
+            else if (pitch >= 5)
             {
-                _multipointCharactersPerInch = 360.0 / cpi;
+                _multipointFontPitch = 360.0 / pitch;
             }
             
             //Font size is specified as a double-byte parameter
@@ -1830,7 +1824,7 @@ enum {
                 _multipointFontSize = fontSize / 2.0;
             //Fall back on a default point size of 10.5
             else if (_multipointFontSize == 0)
-                _multipointFontSize = 10.5;
+                _multipointFontSize = BXESCPBaseFontSize;
             
             _textAttributesNeedUpdate = YES;
         }
@@ -1869,15 +1863,13 @@ enum {
         case 'c': // Set horizontal motion index (HMI) (ESC c)
         {
             self.letterSpacing = 0;
-            _horizontalMotionIndex = WIDEPARAM(params, 0) / 360.0;
+            self.characterAdvance = WIDEPARAM(params, 0) / 360.0;
         }
             break;
             
         case 'g': // Select 10.5-point, 15-cpi (ESC g)
-            _charactersPerInch = 15;
-            _horizontalMotionIndex = HMI_UNDEFINED;
-            _multipointEnabled = NO;
-            _textAttributesNeedUpdate = YES;
+            self.fontPitch = BXFontPitch15CPI;
+            self.multipointEnabled = NO;
             break;
             
         case IBM_FLAG+'F': // Select forward feed mode (FS F) - set reverse not implemented yet
@@ -1894,11 +1886,11 @@ enum {
         }
             
         case 'k': // Select typeface (ESC k)
-            self.typeFace = (BXESCPTypeface)params[0];
+            self.fontTypeface = (BXESCPTypeface)params[0];
             break;
             
         case 'l': // Set left margin (ESC l)
-            _leftMargin = (params[0] - 1) / _charactersPerInch;
+            _leftMargin = (params[0] - 1) * self.characterWidth;
             if (_headPosition.x < _leftMargin)
                 _headPosition.x = _leftMargin;
             break;
@@ -1948,8 +1940,6 @@ enum {
                     self.activeCharTable = BXESCPCharTable3;
                     break;
             }
-            //CHECKME: is this necessary?
-            _textAttributesNeedUpdate = YES;
             break;
             
         case 'w': // Turn double-height printing on/off (ESC w)
@@ -1966,12 +1956,12 @@ enum {
                 case '0':
                     self.quality = BXESCPQualityDraft;
                     //CHECKME: There's nothing in the ESC/P spec indicating that this mode should trigger condensed printing.
-                    self.condensed = YES;
+                    //self.condensed = YES;
                     break;
                 case 1:
                 case '1':
                     self.quality = BXESCPQualityLQ;
-                    self.condensed = NO;
+                    //self.condensed = NO;
                     break;
             }
             break;
@@ -2112,12 +2102,7 @@ enum {
             
         case '\b':	// Backspace (BS)
 		{
-			double newX;
-			if (_horizontalMotionIndex > 0)
-				newX = _headPosition.x - _horizontalMotionIndex;
-            else
-                newX = _headPosition.x - (1 / _effectiveCharactersPerInch);
-            
+			double newX = _headPosition.x - self.characterAdvance;
 			if (newX >= _leftMargin)
 				_headPosition.x = newX;
 		}
@@ -2207,7 +2192,7 @@ enum {
             return YES;
             
         case 0x0f:		// Select condensed printing (SI)
-            if (!self.multipointEnabled && _charactersPerInch != 15.0)
+            if (!self.multipointEnabled && self.fontPitch != BXFontPitch15CPI)
             {
                 self.condensed = YES;
             }

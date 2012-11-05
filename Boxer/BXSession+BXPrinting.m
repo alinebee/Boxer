@@ -7,15 +7,23 @@
 
 #import "BXSession+BXPrinting.h"
 #import "BXPrintSession.h"
+#import <Quartz/Quartz.h>
+
+@interface PDFDocument (HiddenMethods)
+
+- (NSPrintOperation *) getPrintOperationForPrintInfo: (NSPrintInfo *)printInfo autoRotate: (BOOL)autoRotate;
+
+@end
+
 
 @implementation BXSession (BXPrinting)
 
-- (void) printerWillBeginPrinting: (BXEmulatedPrinter *)printer
+- (void) _createPreviewWindowForPrinter: (BXEmulatedPrinter *)printer
 {
     NSSize previewDPI = NSMakeSize(72.0, 72.0);
     
-    NSRect contentRect = NSMakeRect(0, 0,   printer.defaultPageSize.width * previewDPI.width,
-                                            printer.defaultPageSize.height * previewDPI.height);
+    NSRect contentRect = NSMakeRect(0, 0, printer.defaultPageSize.width * previewDPI.width,
+                                    printer.defaultPageSize.height * previewDPI.height);
     
     NSUInteger windowMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
     NSWindow *previewWindow = [[NSWindow alloc] initWithContentRect: contentRect
@@ -31,10 +39,16 @@
     [previewWindow.contentView addSubview: preview];
     
     [previewWindow center];
-    [previewWindow orderFront: self];
     [previewWindow setReleasedWhenClosed: YES];
+    [previewWindow makeKeyAndOrderFront: self];
     
     _printPreview = preview;
+}
+
+- (void) printerDidInitialize: (BXEmulatedPrinter *)printer
+{
+    if (NO && !_printPreview)
+        [self _createPreviewWindowForPrinter: printer];
 }
 
 - (void) printer: (BXEmulatedPrinter *)printer willBeginSession: (BXPrintSession *)session
@@ -58,12 +72,20 @@
 
 - (void) printer: (BXEmulatedPrinter *)printer didFinishSession: (BXPrintSession *)session
 {
-    //Save the PDF to a file on the desktop
-    NSLog(@"Print session complete after %i pages.", session.numPages);
-    
-    NSURL *pageURL = [NSURL fileURLWithPath: @"~/Desktop/Printme.pdf".stringByExpandingTildeInPath];
-    
-    [session.PDFData writeToURL: pageURL atomically: YES];
+    //Convert the data into a new PDFDocument instance and call Apple's sneaky hidden API to print it.
+    PDFDocument *PDF = [[PDFDocument alloc] initWithData: session.PDFData];
+    if (PDF)
+    {
+        NSPrintOperation *operation = [PDF getPrintOperationForPrintInfo: self.printInfo autoRotate: YES];
+        operation.canSpawnSeparateThread = YES;
+        
+        [operation runOperationModalForWindow: self.windowForSheet
+                                     delegate: nil
+                               didRunSelector: NULL
+                                  contextInfo: NULL];
+        
+        [PDF release];
+    }
 }
 
 - (void) printer: (BXEmulatedPrinter *)printer didPrintToPageInSession: (BXPrintSession *)session

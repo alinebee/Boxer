@@ -699,6 +699,8 @@
 		9FB60E9415C573C100CD0D63 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
 		9FB642A313FEB71D00385DD3 /* BXISOImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F81CFB813EEA3F4008F0265 /* BXISOImage.m */; };
 		9FB642A413FEB71D00385DD3 /* BXBinCueImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98589613EF71F600E66877 /* BXBinCueImage.m */; };
+		9FB769E3164861D8000644C2 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB769E2164861D8000644C2 /* Quartz.framework */; };
+		9FB769E5164861E1000644C2 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB769E2164861D8000644C2 /* Quartz.framework */; };
 		9FBA48C01450B73900F9BBDE /* Keyboard.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBA48BF1450B73900F9BBDE /* Keyboard.png */; };
 		9FBAA6BD134A1A430092BF95 /* BXCDImageImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA6BC134A1A430092BF95 /* BXCDImageImport.m */; };
 		9FBAA6E1134A21A50092BF95 /* BXDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA6E0134A21A50092BF95 /* BXDriveImport.m */; };
@@ -1561,6 +1563,7 @@
 		9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+BXFilePaths.m"; sourceTree = "<group>"; };
 		9FB60E9015C5643200CD0D63 /* NSError+BXErrorHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+BXErrorHelpers.h"; sourceTree = "<group>"; };
 		9FB60E9115C5643200CD0D63 /* NSError+BXErrorHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+BXErrorHelpers.m"; sourceTree = "<group>"; };
+		9FB769E2164861D8000644C2 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		9FBA48BF1450B73900F9BBDE /* Keyboard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Keyboard.png; sourceTree = "<group>"; };
 		9FBAA6BB134A1A430092BF95 /* BXCDImageImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCDImageImport.h; sourceTree = "<group>"; };
 		9FBAA6BC134A1A430092BF95 /* BXCDImageImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCDImageImport.m; sourceTree = "<group>"; };
@@ -1853,6 +1856,7 @@
 				9FBC3C720F56E0AE001811F2 /* OpenGL.framework in Frameworks */,
 				9FBC3C780F56E0D7001811F2 /* AudioUnit.framework in Frameworks */,
 				9FBC3C790F56E0D7001811F2 /* CoreMIDI.framework in Frameworks */,
+				9FB769E3164861D8000644C2 /* Quartz.framework in Frameworks */,
 				9F2140FF0F59F28000A5A183 /* QuartzCore.framework in Frameworks */,
 				9F4E042C0F67E72300427D50 /* AudioToolbox.framework in Frameworks */,
 				9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */,
@@ -1882,6 +1886,7 @@
 				9F2D315515B8233800FAE848 /* OpenGL.framework in Frameworks */,
 				9F2D315615B8233800FAE848 /* AudioUnit.framework in Frameworks */,
 				9F2D315715B8233800FAE848 /* CoreMIDI.framework in Frameworks */,
+				9FB769E5164861E1000644C2 /* Quartz.framework in Frameworks */,
 				9F2D315815B8233800FAE848 /* QuartzCore.framework in Frameworks */,
 				9F2D315915B8233800FAE848 /* AudioToolbox.framework in Frameworks */,
 				9F2D315A15B8233800FAE848 /* libicucore.dylib in Frameworks */,
@@ -1947,6 +1952,8 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9FB4538E16442CDD00BCF63B /* Cocoa.framework */,
+				9FB769E2164861D8000644C2 /* Quartz.framework */,
 				9F77EE0015DCC9BF00B75835 /* WebKit.framework */,
 				9FC637FC13C09B10004478A3 /* CoreServices.framework */,
 				9F20C28D11E5D8B4005AF541 /* QTKit.framework */,
@@ -2034,7 +2041,6 @@
 				9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */,
 				9FBC3C130F56D6E8001811F2 /* Bundled Frameworks */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
-				9FB4538E16442CDD00BCF63B /* Cocoa.framework */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;

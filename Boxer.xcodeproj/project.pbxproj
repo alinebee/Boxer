@@ -479,6 +479,10 @@
 		9F61FC8510DE3F7F00F3896C /* BXGameProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */; };
 		9F6311090F70F54300AB1155 /* BXHelpMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6311080F70F54300AB1155 /* BXHelpMenuController.m */; };
 		9F676BF01235451B00924B8C /* Display.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F676BEF1235451B00924B8C /* Display.png */; };
+		9F67855C1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F67855A1649A6BC007FE89A /* BXPrintStatusPanelController.m */; };
+		9F67855D1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F67855A1649A6BC007FE89A /* BXPrintStatusPanelController.m */; };
+		9F6785671649A791007FE89A /* PrintStatusPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F6785651649A791007FE89A /* PrintStatusPanel.xib */; };
+		9F6785681649A791007FE89A /* PrintStatusPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F6785651649A791007FE89A /* PrintStatusPanel.xib */; };
 		9F687004109F83ED003C26E4 /* BXDriveList.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F687003109F83ED003C26E4 /* BXDriveList.m */; };
 		9F6891A014B0F6D800641C62 /* BXTFlightControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F68919F14B0F6D800641C62 /* BXTFlightControllerProfile.m */; };
 		9F69128C10A2DF8D00EA78CD /* BXValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */; };
@@ -1166,6 +1170,9 @@
 		9F675DE30F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXDOSFileSystem.h"; sourceTree = "<group>"; };
 		9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXDOSFileSystem.mm"; sourceTree = "<group>"; };
 		9F676BEF1235451B00924B8C /* Display.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Display.png; sourceTree = "<group>"; };
+		9F6785591649A6BC007FE89A /* BXPrintStatusPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPrintStatusPanelController.h; path = Printing/BXPrintStatusPanelController.h; sourceTree = "<group>"; };
+		9F67855A1649A6BC007FE89A /* BXPrintStatusPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPrintStatusPanelController.m; path = Printing/BXPrintStatusPanelController.m; sourceTree = "<group>"; };
+		9F6785661649A791007FE89A /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/PrintStatusPanel.xib; sourceTree = "<group>"; };
 		9F687002109F83ED003C26E4 /* BXDriveList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveList.h; sourceTree = "<group>"; };
 		9F687003109F83ED003C26E4 /* BXDriveList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDriveList.m; sourceTree = "<group>"; };
 		9F68919F14B0F6D800641C62 /* BXTFlightControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTFlightControllerProfile.m; sourceTree = "<group>"; };
@@ -2424,6 +2431,7 @@
 		9F496E4C108EEDF700282261 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
+				9F6785651649A791007FE89A /* PrintStatusPanel.xib */,
 				9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */,
 				9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */,
 				9F45A1CB109C3D3400593456 /* MainMenu.xib */,
@@ -3461,6 +3469,8 @@
 				9FD6AA1F16315278002B774E /* BXEmulatedPrinter.mm */,
 				9FF9820F1646C7640080F763 /* BXPrintSession.h */,
 				9FF982101646C7640080F763 /* BXPrintSession.m */,
+				9F6785591649A6BC007FE89A /* BXPrintStatusPanelController.h */,
+				9F67855A1649A6BC007FE89A /* BXPrintStatusPanelController.m */,
 			);
 			name = Printing;
 			sourceTree = "<group>";
@@ -3734,6 +3744,7 @@
 				9F57685015DA3DAF00B50500 /* DOSWindowGrille@2x.png in Resources */,
 				9FDFB47B15DBB530004EA615 /* StandaloneAbout.xib in Resources */,
 				9F44C5C515F274BE00FE0A88 /* PromptFreestandingTemplate.pdf in Resources */,
+				9F6785671649A791007FE89A /* PrintStatusPanel.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3786,6 +3797,7 @@
 				9FDFB47F15DBBABC004EA615 /* Credits.html in Resources */,
 				9FDFB48215DBC73D004EA615 /* Help.help in Resources */,
 				9F794DAF15EA966E00A4CB05 /* DummyCD.iso in Resources */,
+				9F6785681649A791007FE89A /* PrintStatusPanel.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4175,6 +4187,7 @@
 				9FD6AA2016315278002B774E /* BXEmulatedPrinter.mm in Sources */,
 				9F596502163D8D910094FD6B /* BXSession+BXPrinting.m in Sources */,
 				9FF982111646C7640080F763 /* BXPrintSession.m in Sources */,
+				9F67855C1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4482,6 +4495,7 @@
 				9FD6AA2116315278002B774E /* BXEmulatedPrinter.mm in Sources */,
 				9F596503163D8D910094FD6B /* BXSession+BXPrinting.m in Sources */,
 				9FF982121646C7640080F763 /* BXPrintSession.m in Sources */,
+				9F67855D1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4611,6 +4625,14 @@
 			);
 			name = ProgramPanel.xib;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		9F6785651649A791007FE89A /* PrintStatusPanel.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F6785661649A791007FE89A /* English */,
+			);
+			name = PrintStatusPanel.xib;
 			sourceTree = "<group>";
 		};
 		9F886FDD144CB6C30033CCD3 /* Bezel.xib */ = {

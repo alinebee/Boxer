@@ -260,12 +260,19 @@ typedef enum {
 //Will be nil before the printer has received anything to print.
 @property (readonly, retain, nonatomic) BXPrintSession *currentSession;
 
-//The standard page size in inches.
+//The standard page size in inches. Defaults to US Letter (8.5 x 11").
 @property (assign, nonatomic) NSSize defaultPageSize;
 
 //The size of the current page in inches. This may differ from defaultPageSize
 //if the DOS session has configured a different size itself.
-@property (readonly, nonatomic) NSSize currentPageSize;
+@property (assign, nonatomic) NSSize currentPageSize;
+
+//Get/set the current page margins in inches. Note that the bottom and right margins
+//are measured as absolute distances from the top and left edges respectively.
+@property (assign, nonatomic) double leftMargin;
+@property (assign, nonatomic) double rightMargin;
+@property (assign, nonatomic) double topMargin;
+@property (assign, nonatomic) double bottomMargin;
 
 //The position of the print head in inches.
 @property (readonly, nonatomic) NSPoint headPosition;

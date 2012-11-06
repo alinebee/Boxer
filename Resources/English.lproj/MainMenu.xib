@@ -3,12 +3,12 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
 		<string key="IBDocument.SystemVersion">12C60</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2843</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
 		<string key="IBDocument.AppKitVersion">1187.34</string>
 		<string key="IBDocument.HIToolboxVersion">625.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2843</string>
+			<string key="NS.object.0">2844</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -308,6 +308,15 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
+								<object class="NSMenuItem" id="254874267">
+									<reference key="NSMenu" ref="176076355"/>
+									<string key="NSTitle">Close</string>
+									<string key="NSKeyEquiv">w</string>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
 								<object class="NSMenuItem" id="100815052">
 									<reference key="NSMenu" ref="176076355"/>
 									<string key="NSTitle">Revert</string>
@@ -350,11 +359,19 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
-								<object class="NSMenuItem" id="254874267">
+								<object class="NSMenuItem" id="667157495">
 									<reference key="NSMenu" ref="176076355"/>
-									<string key="NSTitle">Close</string>
-									<string key="NSKeyEquiv">w</string>
+									<string key="NSTitle">Page Setup…</string>
+									<string key="NSKeyEquiv">P</string>
 									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+								<object class="NSMenuItem" id="328811895">
+									<reference key="NSMenu" ref="176076355"/>
+									<string key="NSTitle">Print…</string>
+									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
@@ -2549,6 +2566,22 @@
 					<int key="connectionID">2281</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">runPageLayout:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="667157495"/>
+					</object>
+					<int key="connectionID">2333</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">printDocument:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="328811895"/>
+					</object>
+					<int key="connectionID">2335</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
 						<reference key="source" ref="34920399"/>
@@ -2964,7 +2997,6 @@
 							<reference ref="1013979946"/>
 							<reference ref="107284159"/>
 							<reference ref="388488174"/>
-							<reference ref="254874267"/>
 							<reference ref="934279086"/>
 							<reference ref="408921711"/>
 							<reference ref="980039867"/>
@@ -2976,6 +3008,9 @@
 							<reference ref="860203119"/>
 							<reference ref="276721447"/>
 							<reference ref="232102037"/>
+							<reference ref="254874267"/>
+							<reference ref="667157495"/>
+							<reference ref="328811895"/>
 						</object>
 						<reference key="parent" ref="848222553"/>
 					</object>
@@ -4031,6 +4066,16 @@
 						<reference key="object" ref="232102037"/>
 						<reference key="parent" ref="176076355"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2330</int>
+						<reference key="object" ref="667157495"/>
+						<reference key="parent" ref="176076355"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2331</int>
+						<reference key="object" ref="328811895"/>
+						<reference key="parent" ref="176076355"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -4221,6 +4266,8 @@
 					<string>2273.IBPluginDependency</string>
 					<string>2276.IBPluginDependency</string>
 					<string>2279.IBPluginDependency</string>
+					<string>2330.IBPluginDependency</string>
+					<string>2331.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>284.IBPluginDependency</string>
 					<string>285.IBPluginDependency</string>
@@ -4474,6 +4521,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -4488,7 +4537,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2281</int>
+			<int key="maxID">2335</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -5727,6 +5776,46 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">BXPrintStatusPanelController</string>
+					<string key="superclassName">NSWindowController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>hide:</string>
+							<string>print:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>hide:</string>
+							<string>print:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">hide:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">print:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXPrintStatusPanelController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">BXProgramPanelController</string>
 					<string key="superclassName">NSViewController</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -5837,10 +5926,12 @@
 							<string>mountNextDrivesInQueues:</string>
 							<string>mountPreviousDrivesInQueues:</string>
 							<string>openInDOS:</string>
+							<string>orderFrontPrintStatusPanel:</string>
 							<string>paste:</string>
 							<string>pause:</string>
 							<string>performRestart:</string>
 							<string>performRestartAtLaunchPanel:</string>
+							<string>printDocument:</string>
 							<string>relaunchTargetProgram:</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
@@ -5851,6 +5942,8 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -5890,10 +5983,12 @@
 							<string>mountNextDrivesInQueues:</string>
 							<string>mountPreviousDrivesInQueues:</string>
 							<string>openInDOS:</string>
+							<string>orderFrontPrintStatusPanel:</string>
 							<string>paste:</string>
 							<string>pause:</string>
 							<string>performRestart:</string>
 							<string>performRestartAtLaunchPanel:</string>
+							<string>printDocument:</string>
 							<string>relaunchTargetProgram:</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
@@ -5949,6 +6044,10 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">orderFrontPrintStatusPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">paste:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -5962,6 +6061,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">performRestartAtLaunchPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">printDocument:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

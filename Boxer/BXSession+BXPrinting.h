@@ -11,4 +11,8 @@
 #import "BXEmulatedPrinter.h"
 
 @interface BXSession (BXPrinting) <BXEmulatedPrinterDelegate>
+
+- (IBAction) printDocument: (id)sender;
+- (IBAction) orderFrontPrintStatusPanel: (id)sender;
+
 @end

@@ -230,6 +230,10 @@ enum {
 @synthesize headPosition = _headPosition;
 @synthesize defaultPageSize = _defaultPageSize;
 @synthesize currentPageSize = _pageSize;
+@synthesize leftMargin = _leftMargin;
+@synthesize rightMargin = _rightMargin;
+@synthesize topMargin = _topMargin;
+@synthesize bottomMargin = _bottomMargin;
 
 
 - (id) init
@@ -810,8 +814,8 @@ enum {
     _pageSize = _defaultPageSize;
     _topMargin = 0.0;
     _leftMargin = 0.0;
-    _rightMargin = _defaultPageSize.width;
-    _bottomMargin = _defaultPageSize.height;
+    _rightMargin = _pageSize.width;
+    _bottomMargin = _pageSize.height;
     
     _fontPitch = BXFontPitchDefault;
     _lineSpacing = BXESCPLineSpacingDefault;
@@ -925,15 +929,19 @@ enum {
 
 - (void) finishPrintSession
 {
+    //Finalize the session
+    [self.currentSession finishSession];
+    
     //Commit the current page as long as it's not entirely blank
     [self _startNewPageWithCarriageReturn: YES discardBlankPages: YES];
     
-    [self.currentSession finishSession];
     
     if ([self.delegate respondsToSelector: @selector(printer:didFinishSession:)])
     {
         [self.delegate printer: self didFinishSession: self.currentSession];
     }
+    
+    self.currentSession = nil;
 }
 
 - (void) _startNewPageWithCarriageReturn: (BOOL)insertCarriageReturn

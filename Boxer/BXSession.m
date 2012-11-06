@@ -101,6 +101,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 @implementation BXSession
 
 @synthesize DOSWindowController = _DOSWindowController;
+@synthesize printStatusController = _printStatusController;
 @synthesize gamebox = _gamebox;
 @synthesize emulator = _emulator;
 @synthesize targetPath = _targetPath;
@@ -232,6 +233,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     self.suppressesDisplaySleep = NO;
     
     self.DOSWindowController = nil;
+    self.printStatusController = nil;
     self.emulator = nil;
     self.gamebox = nil;
     self.gameProfile = nil;

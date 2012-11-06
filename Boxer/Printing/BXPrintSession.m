@@ -146,6 +146,7 @@
 - (void) beginPageWithSize: (NSSize)size
 {
     NSAssert(!self.pageInProgress, @"beginPageWithSize: called while a page was already in progress.");
+    NSAssert(!self.isFinished, @"beginPageWithSize: called on a session that's already finished.");
     
     if (NSEqualSizes(size, NSZeroSize))
         size = NSMakeSize(8.5, 11.0);

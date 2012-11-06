@@ -934,8 +934,6 @@ enum {
     {
         [self.delegate printer: self didFinishSession: self.currentSession];
     }
-    
-    self.currentSession = nil;
 }
 
 - (void) _startNewPageWithCarriageReturn: (BOOL)insertCarriageReturn
@@ -949,11 +947,15 @@ enum {
         [self.currentSession finishPage];
         addedPage = YES;
     }
+    
     //If a page isn't in progress, that means the current page is blank.
-    //In this case, insert a blank page only if the context demands it:
-    //which will be the case if we e.g. we are starting a new page because
-    //we linefed off the end of the previous page).
-    else if (!discardPreviousPageIfBlank)
+    //In this case, insert a blank page only if the context demands it.
+    //This will be the case if we e.g. we are starting a new page because
+    //we linefed off the end of the previous page; whereas if we're starting
+    //a new page because we reset the printer, then we don't want to save
+    //the blank page.
+    //TWEAK: never insert a blank page if it would be the first page in the session.
+    else if (!discardPreviousPageIfBlank && self.currentSession.numPages > 0)
     {
         [self.currentSession insertBlankPageWithSize: self.currentPageSize];
         addedPage = YES;
@@ -971,7 +973,7 @@ enum {
 - (void) _prepareCanvasForPrinting
 {
     //Create a new print session, if none is currently in progress.
-    if (!self.currentSession)
+    if (!self.currentSession || self.currentSession.isFinished)
     {
         [self _startNewPrintSession];
     }

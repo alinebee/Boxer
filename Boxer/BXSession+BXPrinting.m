@@ -9,9 +9,10 @@
 #import "BXPrintSession.h"
 #import <Quartz/Quartz.h>
 
-@interface PDFDocument (HiddenMethods)
+@interface PDFDocument (PDFDocumentPrivate)
 
-- (NSPrintOperation *) getPrintOperationForPrintInfo: (NSPrintInfo *)printInfo autoRotate: (BOOL)autoRotate;
+- (NSPrintOperation *) getPrintOperationForPrintInfo: (NSPrintInfo *)printInfo
+                                          autoRotate: (BOOL)autoRotate;
 
 @end
 
@@ -47,7 +48,7 @@
 
 - (void) printerDidInitialize: (BXEmulatedPrinter *)printer
 {
-    if (NO && !_printPreview)
+    if (!_printPreview)
         [self _createPreviewWindowForPrinter: printer];
 }
 

@@ -88,6 +88,11 @@ enum {
 //The actual width of one monospace character at the current pitch,  in inches.
 @property (readonly, nonatomic) double effectiveCharacterWidth;
 
+//The actual extra spacing to insert between characters.
+//This will be the same as letterSpacing unless one of the double-width modes
+//is active, in which case it will be doubled also.
+@property (readonly, nonatomic) double effectiveLetterSpacing;
+
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -374,6 +379,28 @@ enum {
     }
 }
 
+- (void) setMultipointEnabled: (BOOL)enable
+{
+    if (enable != self.multipointEnabled)
+    {
+        //If no multipoint pitch or size have been specified yet,
+        //inherit them now from the fixed-point pitch and font size.
+        if (enable)
+        {
+            if (_multipointFontPitch == 0)
+                _multipointFontPitch = (CGFloat)self.fontPitch;
+            
+            if (_multipointFontSize == 0)
+                self.multipointFontSize = BXESCPBaseFontSize;
+            
+            self.characterAdvance = BXCharacterAdvanceAuto;
+        }
+        
+        _multipointEnabled = enable;
+        _textAttributesNeedUpdate = YES;
+    }
+}
+
 - (void) setLetterSpacing: (double)spacing
 {
     _letterSpacing = spacing;
@@ -482,8 +509,9 @@ enum {
     NSSize fontSize;
 	if (self.multipointEnabled)
     {
-        fontSize = NSMakeSize(_multipointFontSize, _multipointFontSize);
-        _effectivePitch = _multipointFontPitch;
+        fontSize = NSMakeSize(self.multipointFontSize, self.multipointFontSize);
+        _effectivePitch = self.multipointFontPitch;
+        //TODO: apply width scaling to characters based on pitch?
     }
     else
     {
@@ -511,10 +539,21 @@ enum {
         }
         
         fontSize.width *= (BXFontPitch10CPI / _effectivePitch);
+        
+        //Apply double-width and double-height printing if desired
+        if (self.doubleWidth || self.doubleWidthForLine)
+        {
+            fontSize.width *= 2.0;
+            _effectivePitch *= 0.5;
+        }
+        if (self.doubleHeight)
+        {
+            fontSize.height *= 2.0;
+        }
 	}
     
     //Shrink superscripted and subscripted characters to 2/3rds their normal size,
-    //unless we're at a particularly small font size.
+    //unless we're below the 8pt font-size threshold.
     if ((self.superscript || self.subscript) && fontSize.height > 8.0)
     {
         double subscriptScale = 2.0/3.0;
@@ -834,6 +873,11 @@ enum {
         [self.delegate printerDidInitialize: self];
 }
 
+- (double) characterWidth
+{
+    return 1 / (double)self.fontPitch;
+}
+
 - (double) effectiveCharacterWidth
 {
     //Recalculate the text attributes in case the effective pitch has changed
@@ -851,10 +895,14 @@ enum {
         return self.effectiveCharacterWidth;
 }
 
-- (double) characterWidth
+- (double) effectiveLetterSpacing
 {
-    return 1 / (double)self.fontPitch;
+    if (self.doubleWidth || self.doubleWidthForLine)
+        return self.letterSpacing * 2;
+    else
+        return self.letterSpacing;
 }
+
 
 - (void) _startNewLine
 {
@@ -1144,7 +1192,9 @@ enum {
     //Construct a string for drawing the glyph and work out how big it will be rendered.
     NSString *stringToPrint = [NSString stringWithCharacters: &codepoint length: 1];
     NSSize stringSize = [stringToPrint sizeWithAttributes: self.textAttributes];
-    double stringWidth = (stringSize.width / 72.0);
+    
+    double stringWidth = stringSize.width / 72.0;
+    double descenderHeight = [[self.textAttributes objectForKey: NSFontAttributeName] descender] / 72.0;
     
     //If we're printing in fixed-width, work out how big a space the string should fill
     double advance = 0;
@@ -1157,21 +1207,22 @@ enum {
         advance = self.effectiveCharacterWidth;
     }
     
-    //Draw the glyph at the current position ofƒ the print head,
+    //Draw the glyph at the current position off the print head,
     //centered within the space it is expected to occupy.
-    
-    //Note that the head position is positioned at the visual top left of the line to print,
-    //but ESC/P printers print text 20/180 inch below this point, regardless of the current font size.
-    //This ensures that baselines always line up regardless of font size.
-    
     NSPoint textOrigin = self.headPosition;
-    textOrigin.y += BXESCPBaselineOffset;
     
-    //When in fixed-width mode, position the glyph smack in the middle of the expected advance.
-    if (!self.proportional)
-    {
-        textOrigin.x += (advance - stringWidth) * 0.5;
-    }
+    //The virtual head position is positioned at the top of the line to print,
+    //but ESC/P printers print text on a baseline that's 20/180 inch below this point
+    //(regardless of the current font size.) This ensures that baselines always line
+    //up regardless of font size.
+    //(Also note that we have to take the descender height into consideration because
+    //AppKit's drawAtPoint: function draws from the bottom of the descender, not the baseline.)
+    textOrigin.y += BXESCPBaselineOffset - descenderHeight;
+    
+    //Position the glyph in the middle of the expected character width.
+    //This prevents characters in proportional-but-monospaced fonts bunching up together.
+    textOrigin.x += (advance - stringWidth) * 0.5;
+    
     
     NSPoint drawPos = [self convertPointFromPage: textOrigin];
     
@@ -1187,8 +1238,6 @@ enum {
         [NSGraphicsContext saveGraphicsState];
             [NSGraphicsContext setCurrentContext: context];
         
-            //Note that drawAtPoint:withAttributes will draw the string with the baseline
-            //positioned at the specified offset.
             [stringToPrint drawAtPoint: drawPos
                         withAttributes: self.textAttributes];
         
@@ -1201,8 +1250,8 @@ enum {
         [NSGraphicsContext restoreGraphicsState];
     }
     
-    //Advance the head past the string
-    _headPosition.x += advance + self.letterSpacing;
+    //Advance the head past the string.
+    _headPosition.x += advance + self.effectiveLetterSpacing;
     
     //Wrap the line if the character after this one would go over the right margin.
     //(This may also trigger a new page.)
@@ -1448,7 +1497,8 @@ enum {
 	//Collect a stream of horizontal tab positions.
 	else if (_currentESCPCommand == 'D')
 	{
-        //Horizontal tab positions are specified as number of characters from left margin; convert this to a width in inches.
+        //Horizontal tab positions are specified as number of characters from left margin:
+        //convert this to a width in inches using the current character width as a guide.
         double tabPos = param * self.characterWidth;
         
         //Once we get a null sentinel or a tab position that's lower than the previous position,
@@ -1793,7 +1843,7 @@ enum {
             break;
             
         case 'W': // Turn double-width printing on/off (ESC W)
-            if (!_multipointEnabled)
+            if (!self.multipointEnabled)
             {
                 self.doubleWidth = (params[0] == '1' || params[0] == 1);
                 self.doubleWidthForLine = NO;
@@ -1801,32 +1851,25 @@ enum {
             break;
         case 'X': // Select font by pitch and point (ESC X)
         {
-            _multipointEnabled = YES;
-            
-            //Copy current non-multipoint CPI if no value was set so far
-            if (_multipointFontPitch == 0)
-                _multipointFontPitch = (double)self.fontPitch;
+            self.multipointEnabled = YES;
             
             double pitch = params[0];
+            //Font size is specified as a double-byte parameter
             double fontSize = WIDEPARAM(params, 1);
             
-            if (pitch == 1) // Proportional spacing
+            if (pitch == 1) //Activate proportional spacing
             {
                 self.proportional = YES;
             }
-            else if (pitch >= 5)
+            else if (pitch >= 5) //Set the font pitch in 360ths of an inch
             {
-                _multipointFontPitch = 360.0 / pitch;
+                self.multipointFontPitch = 360.0 / pitch;
             }
             
-            //Font size is specified as a double-byte parameter
-            if (fontSize > 0) // Set points
-                _multipointFontSize = fontSize / 2.0;
-            //Fall back on a default point size of 10.5
-            else if (_multipointFontSize == 0)
-                _multipointFontSize = BXESCPBaseFontSize;
-            
-            _textAttributesNeedUpdate = YES;
+            if (fontSize > 0) //Set point size
+            {
+                self.multipointFontSize = fontSize / 2.0;
+            }
         }
             break;
             
@@ -1943,7 +1986,7 @@ enum {
             break;
             
         case 'w': // Turn double-height printing on/off (ESC w)
-            if (!_multipointEnabled)
+            if (!self.multipointEnabled)
             {
                 self.doubleHeight = (params[0] == '1' || params[0] == 1);
             }
@@ -2102,7 +2145,8 @@ enum {
             
         case '\b':	// Backspace (BS)
 		{
-			double newX = _headPosition.x - self.characterAdvance;
+            double space = self.characterAdvance + self.effectiveLetterSpacing;
+			double newX = _headPosition.x - space;
 			if (newX >= _leftMargin)
 				_headPosition.x = newX;
 		}

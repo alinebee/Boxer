@@ -50,7 +50,9 @@
             NSLog(@"Panel completed with result: %i", result);
             if (result == BXPrintStatusPanelPrint)
             {
+                _finalizingPrintSession = YES;
                 [self.emulator.printer finishPrintSession];
+                _finalizingPrintSession = NO;
             }
         };
         
@@ -91,13 +93,17 @@
 - (void) printerDidInitialize: (BXEmulatedPrinter *)printer
 {
     NSSize sizeInPoints = self.printInfo.paperSize;
+    
     //Apply our own page setup to the print context
     printer.currentPageSize = NSMakeSize(sizeInPoints.width / 72.0, sizeInPoints.height / 72.0);
     
+    //Don't set the page margins - they may confuse the DOS session
+    /*
     printer.topMargin = self.printInfo.topMargin / 72.0;
     printer.bottomMargin = (sizeInPoints.height - self.printInfo.bottomMargin) / 72.0;
     printer.leftMargin = self.printInfo.leftMargin / 72.0;
     printer.rightMargin = (sizeInPoints.width - self.printInfo.rightMargin) / 72.0;
+     */
 }
 
 - (void) printer: (BXEmulatedPrinter *)printer willBeginSession: (BXPrintSession *)session
@@ -118,7 +124,10 @@
     NSLog(@"Page %i complete.", session.numPages);
     
     //Display the print status sheet if it is not already visible, so the user can decide whether to complete the print job
-    [self orderFrontPrintStatusPanel: self];
+    //TWEAK: only do this if we're not in the process of finishing up the session ourselves, in which case we'll want the
+    //status panel to stay hidden.
+    if (!_finalizingPrintSession)
+        [self orderFrontPrintStatusPanel: self];
 }
 
 - (void) printer: (BXEmulatedPrinter *)printer didFinishSession: (BXPrintSession *)session

@@ -929,18 +929,18 @@ enum {
 
 - (void) finishPrintSession
 {
-    //Finalize the session
-    [self.currentSession finishSession];
-    
     //Commit the current page as long as it's not entirely blank
     [self _startNewPageWithCarriageReturn: YES discardBlankPages: YES];
     
+    //Finalize the session
+    [self.currentSession finishSession];
     
     if ([self.delegate respondsToSelector: @selector(printer:didFinishSession:)])
     {
         [self.delegate printer: self didFinishSession: self.currentSession];
     }
     
+    //Clear the session altogether, so that subsequent attempts to print will create a new session.
     self.currentSession = nil;
 }
 
@@ -957,10 +957,10 @@ enum {
     }
     
     //If a page isn't in progress, that means the current page is blank.
-    //In this case, insert a blank page only if the context demands it.
-    //This will be the case if we e.g. we are starting a new page because
-    //we linefed off the end of the previous page; whereas if we're starting
-    //a new page because we reset the printer, then we don't want to save
+    //In this case, save it as a blank page in the session only if the context
+    //demands it. This will be the case if e.g. the DOS program threw in a formfeed
+    //or a string of linebreaks to insert a blank page of its own; whereas if we're
+    //starting a new page because we reset the printer, then we don't want to save
     //the blank page.
     //TWEAK: never insert a blank page if it would be the first page in the session.
     else if (!discardPreviousPageIfBlank && self.currentSession.numPages > 0)

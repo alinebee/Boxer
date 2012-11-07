@@ -125,6 +125,7 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
     
     //The window controller used for displaying the current status of the printer.
     BXPrintStatusPanelController *_printStatusController;
+    BOOL _finalizingPrintSession;
 }
 
 

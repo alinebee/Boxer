@@ -141,7 +141,7 @@
 										<string key="NSCellIdentifier">_NS:1535</string>
 										<reference key="NSControlView" ref="1028731206"/>
 										<reference key="NSBackgroundColor" ref="56387670"/>
-										<object class="NSColor" key="NSTextColor" id="798544492">
+										<object class="NSColor" key="NSTextColor">
 											<int key="NSColorSpace">6</int>
 											<string key="NSCatalogName">System</string>
 											<string key="NSColorName">textColor</string>
@@ -181,7 +181,7 @@
 										<int key="NSButtonFlags">-2038284288</int>
 										<int key="NSButtonFlags2">129</int>
 										<string key="NSAlternateContents"/>
-										<string type="base64-UTF8" key="NSKeyEquivalent">Gw</string>
+										<string type="base64-UTF8" key="NSKeyEquivalent">DQ</string>
 										<int key="NSPeriodicDelay">200</int>
 										<int key="NSPeriodicInterval">25</int>
 									</object>
@@ -215,10 +215,10 @@
 								<object class="NSTextField" id="896099742">
 									<reference key="NSNextResponder" ref="530486969"/>
 									<int key="NSvFlags">290</int>
-									<string key="NSFrame">{{17, 45}, {360, 17}}</string>
+									<string key="NSFrame">{{17, 22}, {349, 17}}</string>
 									<reference key="NSSuperview" ref="530486969"/>
 									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView" ref="981894"/>
+									<reference key="NSNextKeyView" ref="203065021"/>
 									<string key="NSReuseIdentifierKey">_NS:1535</string>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSTextFieldCell" key="NSCell" id="794116736">
@@ -230,27 +230,6 @@
 										<reference key="NSControlView" ref="896099742"/>
 										<reference key="NSBackgroundColor" ref="56387670"/>
 										<reference key="NSTextColor" ref="1016180277"/>
-									</object>
-									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-								</object>
-								<object class="NSTextField" id="981894">
-									<reference key="NSNextResponder" ref="530486969"/>
-									<int key="NSvFlags">290</int>
-									<string key="NSFrame">{{17, 22}, {349, 17}}</string>
-									<reference key="NSSuperview" ref="530486969"/>
-									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView" ref="203065021"/>
-									<string key="NSReuseIdentifierKey">_NS:1535</string>
-									<bool key="NSEnabled">YES</bool>
-									<object class="NSTextFieldCell" key="NSCell" id="943624443">
-										<int key="NSCellFlags">68157504</int>
-										<int key="NSCellFlags2">272630784</int>
-										<string key="NSContents">[Click “Print now” to print the completed pages.]</string>
-										<reference key="NSSupport" ref="941083501"/>
-										<string key="NSCellIdentifier">_NS:1535</string>
-										<reference key="NSControlView" ref="981894"/>
-										<reference key="NSBackgroundColor" ref="56387670"/>
-										<reference key="NSTextColor" ref="798544492"/>
 									</object>
 									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 								</object>
@@ -349,31 +328,31 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: canPrint</string>
+						<string key="label">hidden: numPages</string>
 						<reference key="source" ref="225546058"/>
 						<reference key="destination" ref="1001"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="225546058"/>
 							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">hidden: canPrint</string>
+							<string key="NSLabel">hidden: numPages</string>
 							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">canPrint</string>
+							<string key="NSKeyPath">numPages</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">17</int>
+					<int key="connectionID">44</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: canPrint</string>
+						<string key="label">hidden: numPages</string>
 						<reference key="source" ref="530486969"/>
 						<reference key="destination" ref="1001"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="530486969"/>
 							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">hidden: canPrint</string>
+							<string key="NSLabel">hidden: numPages</string>
 							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">canPrint</string>
+							<string key="NSKeyPath">numPages</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSValueTransformerName</string>
 								<string key="NS.object.0">NSNegateBoolean</string>
@@ -381,23 +360,7 @@
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">33</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: explanatoryText</string>
-						<reference key="source" ref="981894"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="981894"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">value: explanatoryText</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">explanatoryText</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">30</int>
+					<int key="connectionID">43</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -414,6 +377,26 @@
 						</object>
 					</object>
 					<int key="connectionID">29</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: inProgress</string>
+						<reference key="source" ref="204949428"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="204949428"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">enabled: inProgress</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">inProgress</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">40</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -515,19 +498,10 @@
 						<array class="NSMutableArray" key="children">
 							<reference ref="896099742"/>
 							<reference ref="204949428"/>
-							<reference ref="981894"/>
 							<reference ref="203065021"/>
 						</array>
 						<reference key="parent" ref="1006"/>
 						<string key="objectName">Printing display</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">23</int>
-						<reference key="object" ref="981894"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="943624443"/>
-						</array>
-						<reference key="parent" ref="530486969"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">24</int>
@@ -554,11 +528,6 @@
 						<int key="objectID">27</int>
 						<reference key="object" ref="794116736"/>
 						<reference key="parent" ref="896099742"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">28</int>
-						<reference key="object" ref="943624443"/>
-						<reference key="parent" ref="981894"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">34</int>
@@ -589,12 +558,10 @@
 				<string key="15.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="2.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="22.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="23.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="24.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="25.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="26.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="27.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="28.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="34.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="35.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -604,7 +571,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">37</int>
+			<int key="maxID">44</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">

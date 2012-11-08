@@ -29,10 +29,15 @@ typedef void(^BXPrintStatusCompletionHandler)(BXPrintStatusPanelResult result);
     BXPrintSession *_printSession;
     BXPrintStatusPort _activePrinterPort;
     NSString *_localizedPaperName;
+    BOOL _inProgress;
+    NSUInteger _numPages;
 }
 
-//The print session whose status we are displaying in the panel.
-@property (retain, nonatomic) BXPrintSession *printSession;
+//The number of pages printed so far, including the current page.
+@property (assign, nonatomic) NSUInteger numPages;
+
+//Whether the current page is still being printed.
+@property (assign, nonatomic, getter=isInProgress) BOOL inProgress;
 
 //The localized descriptive name of the paper type the user should select in DOS.
 @property (copy, nonatomic) NSString *localizedPaperName;

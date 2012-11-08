@@ -13,6 +13,10 @@
 
 #import <Quartz/Quartz.h> //For PDFDocument
 
+//After this many seconds of inactivity, Boxer will decide that the printer may have finished printing
+//and will enable printing.
+#define BXPrinterTimeout 1.0
+
 @interface PDFDocument (PDFDocumentPrivate)
 
 - (NSPrintOperation *) getPrintOperationForPrintInfo: (NSPrintInfo *)printInfo
@@ -47,12 +51,9 @@
     if (!self.printStatusController.window.isVisible)
     {
         BXPrintStatusCompletionHandler handler = ^(BXPrintStatusPanelResult result) {
-            NSLog(@"Panel completed with result: %i", result);
             if (result == BXPrintStatusPanelPrint)
             {
-                _finalizingPrintSession = YES;
                 [self.emulator.printer finishPrintSession];
-                _finalizingPrintSession = NO;
             }
         };
         
@@ -94,10 +95,10 @@
 {
     NSSize sizeInPoints = self.printInfo.paperSize;
     
-    //Apply our own page setup to the print context
+    //Apply our own page size as the default printer setup
     printer.currentPageSize = NSMakeSize(sizeInPoints.width / 72.0, sizeInPoints.height / 72.0);
     
-    //Don't set the page margins - they may confuse the DOS session
+    //Ignore the OSX printer margins: it seems most DOS programs will try to apply their own margins on top of this.
     /*
     printer.topMargin = self.printInfo.topMargin / 72.0;
     printer.bottomMargin = (sizeInPoints.height - self.printInfo.bottomMargin) / 72.0;
@@ -106,28 +107,39 @@
      */
 }
 
-- (void) printer: (BXEmulatedPrinter *)printer willBeginSession: (BXPrintSession *)session
+- (void) printer: (BXEmulatedPrinter *)printer didPrintToPageInSession: (BXPrintSession *)session
 {
-    NSLog(@"New print session begun.");
-    self.printStatusController.printSession = session;
+    //TODO: ping the print status controller to update with the new page preview
+    /*
+     _printPreview.image = session.currentPagePreview;
+     [_printPreview setNeedsDisplay: YES];
+     */
+    
+    BOOL wasInProgress = self.printStatusController.inProgress;
+    
+    self.printStatusController.inProgress = YES;
+    [NSObject cancelPreviousPerformRequestsWithTarget: self selector: @selector(_printerIdleTimeout) object: nil];
+    [self performSelector: @selector(_printerIdleTimeout) withObject: nil afterDelay: BXPrinterTimeout];
+    
+    //If this is the first thing we've printed since the printer was last idle, then show the print status again.
+    if (!wasInProgress)
+    {
+        [self orderFrontPrintStatusPanel: self];
+    }
 }
 
 - (void) printer: (BXEmulatedPrinter *)printer willStartPageInSession: (BXPrintSession *)session
 {
-    //Display the print status sheet if it is not already visible, so the user can see printing progress
-    [self orderFrontPrintStatusPanel: self];
-    NSLog(@"Page %i begun.", session.numPages);
+    self.printStatusController.numPages = session.numPages;
 }
 
-- (void) printer: (BXEmulatedPrinter *)printer didFinishPageInSession: (BXPrintSession *)session
+- (void) _printerIdleTimeout
 {
-    NSLog(@"Page %i complete.", session.numPages);
+    self.printStatusController.inProgress = NO;
     
-    //Display the print status sheet if it is not already visible, so the user can decide whether to complete the print job
-    //TWEAK: only do this if we're not in the process of finishing up the session ourselves, in which case we'll want the
-    //status panel to stay hidden.
-    if (!_finalizingPrintSession)
-        [self orderFrontPrintStatusPanel: self];
+    //Once the printer appears to have finished printing,
+    //redisplay the printer status panel if it's not already visible.
+    [self orderFrontPrintStatusPanel: self];
 }
 
 - (void) printer: (BXEmulatedPrinter *)printer didFinishSession: (BXPrintSession *)session
@@ -147,16 +159,8 @@
         [PDF release];
     }
 
-    self.printStatusController.printSession = nil;
-}
-
-- (void) printer: (BXEmulatedPrinter *)printer didPrintToPageInSession: (BXPrintSession *)session
-{
-    //TODO: ping the print status controller to update with the new page preview
-    /*
-    _printPreview.image = session.currentPagePreview;
-    [_printPreview setNeedsDisplay: YES];
-     */
+    self.printStatusController.numPages = 0;
+    self.printStatusController.inProgress = NO;
 }
 
 @end

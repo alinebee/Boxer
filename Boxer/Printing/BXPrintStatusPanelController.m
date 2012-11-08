@@ -20,9 +20,16 @@
 
 @implementation BXPrintStatusPanelController
 @synthesize completionHandler = _completionHandler;
-@synthesize printSession = _printSession;
+@synthesize numPages = _numPages;
+@synthesize inProgress = _inProgress;
 @synthesize activePrinterPort = _activePrinterPort;
 @synthesize localizedPaperName = _localizedPaperName;
+
+- (void) dealloc
+{
+    self.localizedPaperName = nil;
+    [super dealloc];
+}
 
 - (void) beginSheetModalWithWindow: (NSWindow *)parentWindow
                  completionHandler: (BXPrintStatusCompletionHandler)completionHandler
@@ -74,40 +81,6 @@
 #pragma mark -
 #pragma mark UI bindings
 
-+ (NSSet *) keyPathsForValuesAffectingStatusText
-{
-    return [NSSet setWithObjects: @"printSession.numPages", @"printSession.pageInProgress", nil];
-}
-
-- (NSString *) statusText
-{
-    //Print session has not been started
-    if (self.printSession.numPages == 0)
-    {
-        return NSLocalizedString(@"The emulated printer is currently idle.", @"Status text shown in print status panel when the emulated printer has not printed anything yet in the current print session.");
-    }
-    //In the middle of printing
-    else
-    {
-        NSString *format;
-        if (self.printSession.pageInProgress)
-        {
-            format = NSLocalizedString(@"Preparing page %u…", @"Status text shown in print status panel when the emulated printer is in the middle of printing a page. %u is the current page number being printed.");
-        }
-        else
-        {
-            format = NSLocalizedString(@"%u pages are ready to print.", @"Status text shown in print status panel when the emulated printer has finished printing for now. %u is the number of pages prepared so far.");
-        }
-        
-        return [NSString stringWithFormat: format, self.printSession.numPages];
-    }
-}
-
-+ (NSSet *) keyPathsForValuesAffectingExplanatoryText
-{
-    return [NSSet setWithObjects: @"printSession.numPages", @"localizedPaperName", @"activePrinterPort", nil];
-}
-
 + (NSString *) localizedNameForPort: (BXPrintStatusPort)port
 {
     switch (port)
@@ -124,6 +97,40 @@
             return NSLocalizedString(@"LPT3", @"Localized name for parallel port 3");
             break;
     }
+}
+
++ (NSSet *) keyPathsForValuesAffectingStatusText
+{
+    return [NSSet setWithObjects: @"numPages", @"inProgress", nil];
+}
+
+- (NSString *) statusText
+{
+    //Print session has not been started
+    if (self.numPages == 0)
+    {
+        return NSLocalizedString(@"The emulated printer is currently idle.", @"Status text shown in print status panel when the emulated printer has not printed anything yet in the current print session.");
+    }
+    //In the middle of printing
+    else
+    {
+        NSString *format;
+        if (self.inProgress)
+        {
+            format = NSLocalizedString(@"Preparing page %u for printing…", @"Status text shown in print status panel when the emulated printer is in the middle of printing a page. %u is the current page number being printed.");
+        }
+        else
+        {
+            format = NSLocalizedString(@"%u pages are ready to print.", @"Status text shown in print status panel when the emulated printer has finished printing for now. %u is the number of pages prepared so far.");
+        }
+        
+        return [NSString stringWithFormat: format, self.numPages];
+    }
+}
+
++ (NSSet *) keyPathsForValuesAffectingExplanatoryText
+{
+    return [NSSet setWithObjects: @"canPrint", @"localizedPaperName", @"activePrinterPort", nil];
 }
 
 - (NSString *) explanatoryText
@@ -144,12 +151,12 @@
 
 + (NSSet *) keyPathsForValuesAffectingCanPrint
 {
-    return [NSSet setWithObjects: @"printSession.numPages", nil];
+    return [NSSet setWithObjects: @"numPages", @"inProgress", nil];
 }
 
 - (BOOL) canPrint
 {
-    return self.printSession.numPages > 0;
+    return self.numPages > 0 && !self.inProgress;
 }
 
 @end

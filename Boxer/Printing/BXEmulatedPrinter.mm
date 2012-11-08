@@ -1169,10 +1169,10 @@ enum {
             
             //Advance the print head past the current graphics column.
             _headPosition.x +=  1 / _bitmapDPI.width;
+            
+            if ([self.delegate respondsToSelector: @selector(printer:didPrintToPageInSession:)])
+                [self.delegate printer: self didPrintToPageInSession: self.currentSession];
         }
-        
-        if ([self.delegate respondsToSelector: @selector(printer:didPrintToPageInSession:)])
-            [self.delegate printer: self didPrintToPageInSession: self.currentSession];
         
         return YES;
     }

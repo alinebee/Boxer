@@ -15,6 +15,7 @@
 			<string>NSButtonCell</string>
 			<string>NSCustomObject</string>
 			<string>NSCustomView</string>
+			<string>NSProgressIndicator</string>
 			<string>NSTextField</string>
 			<string>NSTextFieldCell</string>
 			<string>NSView</string>
@@ -162,6 +163,17 @@
 							<reference key="NSNextResponder" ref="1006"/>
 							<int key="NSvFlags">274</int>
 							<array class="NSMutableArray" key="NSSubviews">
+								<object class="NSProgressIndicator" id="404721806">
+									<reference key="NSNextResponder" ref="530486969"/>
+									<int key="NSvFlags">268</int>
+									<string key="NSFrame">{{20, 21}, {16, 16}}</string>
+									<reference key="NSSuperview" ref="530486969"/>
+									<reference key="NSWindow"/>
+									<reference key="NSNextKeyView" ref="896099742"/>
+									<string key="NSReuseIdentifierKey">_NS:945</string>
+									<int key="NSpiFlags">28938</int>
+									<double key="NSMaxValue">100</double>
+								</object>
 								<object class="NSButton" id="204949428">
 									<reference key="NSNextResponder" ref="530486969"/>
 									<int key="NSvFlags">289</int>
@@ -215,7 +227,7 @@
 								<object class="NSTextField" id="896099742">
 									<reference key="NSNextResponder" ref="530486969"/>
 									<int key="NSvFlags">290</int>
-									<string key="NSFrame">{{17, 22}, {349, 17}}</string>
+									<string key="NSFrame">{{41, 22}, {325, 17}}</string>
 									<reference key="NSSuperview" ref="530486969"/>
 									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="203065021"/>
@@ -237,7 +249,7 @@
 							<string key="NSFrameSize">{568, 82}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="896099742"/>
+							<reference key="NSNextKeyView" ref="404721806"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<string key="NSClassName">NSView</string>
 						</object>
@@ -398,6 +410,22 @@
 					</object>
 					<int key="connectionID">40</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">animate: inProgress</string>
+						<reference key="source" ref="404721806"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="404721806"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">animate: inProgress</string>
+							<string key="NSBinding">animate</string>
+							<string key="NSKeyPath">inProgress</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">49</int>
+				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<array key="orderedObjects">
@@ -499,6 +527,7 @@
 							<reference ref="896099742"/>
 							<reference ref="204949428"/>
 							<reference ref="203065021"/>
+							<reference ref="404721806"/>
 						</array>
 						<reference key="parent" ref="1006"/>
 						<string key="objectName">Printing display</string>
@@ -542,6 +571,11 @@
 						<reference key="object" ref="816835121"/>
 						<reference key="parent" ref="204949428"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">45</int>
+						<reference key="object" ref="404721806"/>
+						<reference key="parent" ref="530486969"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -564,6 +598,7 @@
 				<string key="27.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="34.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="35.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="45.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			</dictionary>
@@ -571,7 +606,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">44</int>
+			<int key="maxID">49</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">

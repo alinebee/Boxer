@@ -117,6 +117,7 @@
     
     BOOL wasInProgress = self.printStatusController.inProgress;
     
+    self.printStatusController.numPages = session.numPages;
     self.printStatusController.inProgress = YES;
     [NSObject cancelPreviousPerformRequestsWithTarget: self selector: @selector(_printerIdleTimeout) object: nil];
     [self performSelector: @selector(_printerIdleTimeout) withObject: nil afterDelay: BXPrinterTimeout];
@@ -126,11 +127,6 @@
     {
         [self orderFrontPrintStatusPanel: self];
     }
-}
-
-- (void) printer: (BXEmulatedPrinter *)printer willStartPageInSession: (BXPrintSession *)session
-{
-    self.printStatusController.numPages = session.numPages;
 }
 
 - (void) _printerIdleTimeout

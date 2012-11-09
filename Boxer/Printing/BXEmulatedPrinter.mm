@@ -243,6 +243,9 @@ enum {
     {
         _controlRegister = BXEmulatedPrinterControlReset;
         _initialized = NO;
+        
+        //IMPLEMENTATION NOTE: we do most of our real initialization in _prepareForPrinting,
+        //which is only called once printing support has actually been requested.
     }
     return self;
 }

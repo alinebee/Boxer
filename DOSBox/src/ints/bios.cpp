@@ -418,24 +418,38 @@ static Bitu INT12_Handler(void) {
 	return CBRET_NONE;
 }
 
+//Replaced 2012-11-09 by Alun Bestor with implementation from printer patch
 static Bitu INT17_Handler(void) {
-	LOG(LOG_BIOS,LOG_NORMAL)("INT17:Function %X",reg_ah);
+	if (reg_ah > 0x2 || reg_dx > 0x2) {	// 0-2 printer port functions
+        // and no more than 3 parallel ports
+		LOG_MSG("BIOS INT17: Unhandled call AH=%2X DX=%4x",reg_ah,reg_dx);
+		return CBRET_NONE;
+	}
+    
 	switch(reg_ah) {
-	case 0x00:		/* PRINTER: Write Character */
-		reg_ah=1;	/* Report a timeout */
-		break;
-	case 0x01:		/* PRINTER: Initialize port */
-		break;
-	case 0x02:		/* PRINTER: Get Status */
-		reg_ah=0;	
-		break;
-	case 0x20:		/* Some sort of printerdriver install check*/
-		break;
-	default:
-		E_Exit("Unhandled INT 17 call %2X",reg_ah);
+        case 0x00:		// PRINTER: Write Character
+            if(parallelPortObjects[reg_dx]!=0) {
+                if(parallelPortObjects[reg_dx]->Putchar(reg_al))
+                    reg_ah=parallelPortObjects[reg_dx]->getPrinterStatus();
+                else reg_ah=1;
+            }
+            break;
+        case 0x01:		// PRINTER: Initialize port
+            if(parallelPortObjects[reg_dx]!= 0) {
+                parallelPortObjects[reg_dx]->initialize();
+                reg_ah=parallelPortObjects[reg_dx]->getPrinterStatus();
+            }
+            break;
+        case 0x02:		// PRINTER: Get Status
+            if(parallelPortObjects[reg_dx] != 0)
+                reg_ah=parallelPortObjects[reg_dx]->getPrinterStatus();
+            //LOG_MSG("printer status: %x",reg_ah);
+            break;
 	};
 	return CBRET_NONE;
 }
+//--End of modifications
+
 
 static Bit8u INT14_Wait(Bit16u port, Bit8u mask, Bit8u timeout) {
 	double starttime = PIC_FullIndex();
@@ -839,7 +853,10 @@ public:
 	BIOS(Section* configuration):Module_base(configuration){
 		/* tandy DAC can be requested in tandy_sound.cpp by initializing this field */
 		bool use_tandyDAC=(real_readb(0x40,0xd4)==0xff);
-
+        
+		// Disney workaround
+		Bit16u disney_port = mem_readw(BIOS_ADDRESS_LPT1);
+        
 		/* Clear the Bios Data Area (0x400-0x5ff, 0x600- is accounted to DOS) */
 		for (Bit16u i=0;i<0x200;i++) real_writeb(0x40,i,0);
 
@@ -996,15 +1013,16 @@ public:
 		
 		// port timeouts
 		// always 1 second even if the port does not exist
-		mem_writeb(BIOS_LPT1_TIMEOUT,1);
-		mem_writeb(BIOS_LPT2_TIMEOUT,1);
-		mem_writeb(BIOS_LPT3_TIMEOUT,1);
+		BIOS_SetLPTPort(0, disney_port);
+		for(Bitu i = 1; i < 3; i++) BIOS_SetLPTPort(i, 0);
 		mem_writeb(BIOS_COM1_TIMEOUT,1);
 		mem_writeb(BIOS_COM2_TIMEOUT,1);
 		mem_writeb(BIOS_COM3_TIMEOUT,1);
 		mem_writeb(BIOS_COM4_TIMEOUT,1);
 		
 		/* detect parallel ports */
+        //--Disabled 2012-09-11: obviated by proper parallel port emulation
+        /*
 		Bitu ppindex=0; // number of lpt ports
 		if ((IO_Read(0x378)!=0xff)|(IO_Read(0x379)!=0xff)) {
 			// this is our LPT1
@@ -1038,6 +1056,8 @@ public:
 			mem_writew(BIOS_ADDRESS_LPT1,0x278);
 			ppindex++;
 		}
+         */
+        //--End of modifications
 
 		/* Setup equipment list */
 		// look http://www.bioscentral.com/misc/bda.htm
@@ -1045,11 +1065,15 @@ public:
 		//Bit16u config=0x4400;	//1 Floppy, 2 serial and 1 parallel 
 		Bit16u config = 0x0;
 		
+        //--Disabled 2012-09-11: obviated by proper parallel port emulation 
+        /*
 		// set number of parallel ports
 		// if(ppindex == 0) config |= 0x8000; // looks like 0 ports are not specified
 		//else if(ppindex == 1) config |= 0x0000;
 		if(ppindex == 2) config |= 0x4000;
 		else config |= 0xc000;	// 3 ports
+         */
+        //--End of modifications
 #if (C_FPU)
 		//FPU
 		config|=0x2;

@@ -614,4 +614,27 @@ static NSMutableArray *_profileClasses = nil;
 		}
 	}
 }
+
+- (NSString *) description
+{
+    //Format the bindings list sorted by usage, to group related usages together.
+    NSMutableString *sortedBindings = [NSMutableString stringWithCapacity: 500];
+    NSArray *sortedKeys = [self.bindings.allKeys sortedArrayUsingSelector: @selector(compare:)];
+    [sortedBindings appendString: @"{\n"];
+    for (DDHidUsage *key in sortedKeys)
+    {
+        id value = [self.bindings objectForKey: key];
+        [sortedBindings appendFormat: @"\t\"%@\" = \"%@\";\n", key, value];
+    }
+    [sortedBindings appendString: @"}\n"];
+    
+    return [NSString stringWithFormat: @"Controller profile of type: %@\nFrom controller: %@\nTo emulated joystick: %@\nAxes: %@\nButtons: %@\nHat switches: %@\nBindings: %@\n",
+            self.class,
+            self.device,
+            self.emulatedJoystick.class,
+            self.device.axisElements,
+            self.device.buttonElements,
+            self.device.povElements,
+            sortedBindings];
+}
 @end

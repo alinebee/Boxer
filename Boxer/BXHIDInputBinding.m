@@ -171,6 +171,10 @@
 	}
 }
 
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ binding to emulated axis: %@ unidirectional: %@", self.class, self.axis, self.isUnidirectional ? @"YES" : @"NO"];
+}
 @end
 
 
@@ -337,6 +341,10 @@
 		[target buttonUp: self.button];
 }
 
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ binding to emulated button: %i", self.class, self.button];
+}
 @end
 
 
@@ -411,6 +419,10 @@
     [(id)target setValue: [NSNumber numberWithFloat: axisValue] forKey: self.axis];
 }
 
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ binding to emulated axis: %@ value when pressed: %02f when released: %02f", self.class, self.axis, self.pressedValue, self.releasedValue];
+}
 @end
 
 
@@ -504,6 +516,10 @@
 	}
 }
 
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ binding to emulated button: %i threshold: %02f", self.class, self.button, self.threshold];
+}
 @end
 
 
@@ -580,6 +596,10 @@
     [(id <BXEmulatedFlightstick>)target POV: self.POVNumber changedTo: direction];
 }
 
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ binding to emulated POV number: %i", self.class, self.POVNumber];
+}
 @end
 
 
@@ -631,6 +651,10 @@
         [(id <BXEmulatedFlightstick>)target POV: self.POVNumber directionUp: self.direction];
 }
 
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ binding for direction: %i on emulated POV number: %i", self.class, self.POVNumber, self.direction];
+}
 @end
 
 @implementation BXPOVToAxes
@@ -719,6 +743,11 @@
     }
 }
 
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ binding to emulated left-right axis: %@ up-down axis: %@", self.class, self.xAxis, self.yAxis];
+}
+
 @end
 
 @implementation BXAxisToBindings
@@ -801,5 +830,9 @@
     event.axisPosition = rawValue;
 }
 
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ binding with positive binding: [%@] negative binding: [%@]", self.class, self.positiveBinding, self.negativeBinding];
+}
 @end
 

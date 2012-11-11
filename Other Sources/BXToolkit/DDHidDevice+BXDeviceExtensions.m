@@ -93,27 +93,32 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 
 - (BOOL) isEqualToDevice: (DDHidDevice *)device
 {
-	return [self hash] == [device hash];
+	return self.hash == device.hash;
 }
 
 - (NSUInteger) hash
 {
-	return (NSUInteger)[self locationId] + [self vendorId] + [self productId];
+	return self.serialNumber.hash;
 }
 
 - (NSArray *) elementsWithUsage: (DDHidUsage *)usage
 {
 	NSPredicate *matchingUsage = [NSPredicate predicateWithFormat: @"usage = %@", usage, nil];
-	return [[self elements] filteredArrayUsingPredicate: matchingUsage];
+	return [self.elements filteredArrayUsingPredicate: matchingUsage];
 }
 
 - (DDHidElement *) elementWithUsage: (DDHidUsage *)usage
 {
-    for (DDHidElement *element in [self elements])
+    for (DDHidElement *element in self.elements)
     {
-        if ([[element usage] isEqualToUsage: usage]) return element;
+        if ([element.usage isEqualToUsage: usage]) return element;
     }
     return nil;
+}
+
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ %@ (vendor ID 0x%04lx, product ID 0x%04lx)", self.manufacturer, self.productName, self.vendorId, self.productId];
 }
 
 @end
@@ -123,15 +128,15 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 
 - (NSArray *) sticks
 {
-	return mSticks;
+	return [[mSticks retain] autorelease];
 }
 
 - (NSArray *) axisElements
 {
 	NSMutableArray *axes = [[NSMutableArray alloc] initWithCapacity: 10];
 	
-	for (DDHidJoystickStick *stick in [self sticks])
-		[axes addObjectsFromArray: [stick axisElements]];
+	for (DDHidJoystickStick *stick in self.sticks)
+		[axes addObjectsFromArray: stick.axisElements];
 
 	return [axes autorelease];
 }
@@ -140,8 +145,8 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 {
 	NSMutableArray *povs = [[NSMutableArray alloc] initWithCapacity: 10];
 	
-	for (DDHidJoystickStick *stick in [self sticks])
-		[povs addObjectsFromArray: [stick povElements]];
+	for (DDHidJoystickStick *stick in self.sticks)
+		[povs addObjectsFromArray: stick.povElements];
 
 	return [povs autorelease];
 }
@@ -149,19 +154,19 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 - (NSArray *) axisElementsWithUsageID: (unsigned)usageID
 {
 	NSPredicate *matchingUsageID = [NSPredicate predicateWithFormat: @"usage.usageId = %i", usageID, nil];
-	return [[self axisElements] filteredArrayUsingPredicate: matchingUsageID];
+	return [self.axisElements filteredArrayUsingPredicate: matchingUsageID];
 }
 
 - (NSArray *) buttonElementsWithUsageID: (unsigned)usageID
 {
 	NSPredicate *matchingUsageID = [NSPredicate predicateWithFormat: @"usage.usageId = %i", usageID, nil];
-	return [[self buttonElements] filteredArrayUsingPredicate: matchingUsageID];
+	return [self.buttonElements filteredArrayUsingPredicate: matchingUsageID];
 }
 
 - (DDHidElement *) axisElementWithUsageID: (unsigned)usageID
 {
     DDHidElement *element;
-	for (DDHidJoystickStick *stick in [self sticks])
+	for (DDHidJoystickStick *stick in self.sticks)
     {
         element = [stick axisElementWithUsageID: usageID];
         if (element) return element;
@@ -171,9 +176,9 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 
 - (DDHidElement *) buttonElementWithUsageID: (unsigned)usageID
 {
-	for (DDHidElement *element in [self buttonElements])
+	for (DDHidElement *element in self.buttonElements)
     {
-        if ([[element usage] usageId] == usageID) return element;
+        if (element.usage.usageId == usageID) return element;
     }
     return nil;
 }
@@ -184,29 +189,25 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 
 - (NSArray *) axisElements
 {
-	NSMutableArray *axes = [mStickElements mutableCopy];
-	if (mXAxisElement) [axes addObject: mXAxisElement];
-	if (mYAxisElement) [axes addObject: mYAxisElement];
-	
-	return [axes autorelease];
+    return [[mStickElements retain] autorelease];
 }
 
 - (NSArray *) povElements
 {
-	return mPovElements;
+	return [[mPovElements retain] autorelease];
 }
 
 - (NSArray *) axisElementsWithUsageID: (unsigned)usageID
 {
 	NSPredicate *matchingUsageID = [NSPredicate predicateWithFormat: @"usage.usageId = %i", usageID, nil];
-	return [[self axisElements] filteredArrayUsingPredicate: matchingUsageID];
+	return [self.axisElements filteredArrayUsingPredicate: matchingUsageID];
 }
 
 - (DDHidElement *) axisElementWithUsageID: (unsigned)usageID
 {
-    for (DDHidElement *element in [self axisElements])
+    for (DDHidElement *element in self.axisElements)
     {
-        if ([[element usage] usageId] == usageID) return element;
+        if (element.usage.usageId == usageID) return element;
     }
     return nil;
 }

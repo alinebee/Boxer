@@ -82,6 +82,29 @@
 	if ([object isKindOfClass: [DDHidUsage class]] && [self isEqualToUsage: object]) return YES;
 	else return [super isEqual: object];
 }
+
+
+- (NSComparisonResult) compare: (DDHidUsage *)usage;
+{
+    unsigned myUsagePage = self.usagePage;
+    unsigned otherUsagePage = usage.usagePage;
+    
+    if (myUsagePage < otherUsagePage)
+        return NSOrderedAscending;
+    else if (myUsagePage > otherUsagePage)
+        return NSOrderedDescending;
+    
+    unsigned myUsageId = self.usageId;
+    unsigned otherUsageId = usage.usageId;
+    
+    if (myUsageId < otherUsageId)
+        return NSOrderedAscending;
+    else if (myUsageId > otherUsageId)
+        return NSOrderedDescending;
+    
+    return NSOrderedSame;
+}
+
 @end
 
 

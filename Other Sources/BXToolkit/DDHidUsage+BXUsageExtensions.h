@@ -33,4 +33,7 @@ DDHidUsage * BXUsageFromName(NSString *usageName);
 //Compares equality between usages.
 - (BOOL) isEqualToUsage: (DDHidUsage *)usage;
 
+//Orders usages by page and ID.
+- (NSComparisonResult) compare: (DDHidUsage *)usage;
+
 @end

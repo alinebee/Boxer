@@ -52,7 +52,6 @@
 #pragma mark -
 #pragma mark Concrete binding types
 
-
 //The base implementation of the BXHIDInputBinding class,
 //containing common logic used by all bindings.
 //Should not be used directly.
@@ -63,11 +62,11 @@
 //Translates an axis on an HID controller to an emulated joystick axis.
 @interface BXAxisToAxis: BXBaseHIDInputBinding
 {
-	NSString *axis;
-	BOOL unidirectional;
-	BOOL inverted;
-	float deadzone;
-	float previousValue;
+	NSString *_axis;
+	BOOL _unidirectional;
+	BOOL _inverted;
+	float _deadzone;
+	float _previousValue;
 }
 //Convenience method to return a binding preconfigured to send axis
 //input to the specified axis.
@@ -93,11 +92,11 @@
 //Used for emulating axes that don’t return to center.
 @interface BXAxisToAxisAdditive: BXAxisToAxis <BXPeriodicInputBinding>
 {
-    NSTimeInterval lastUpdated;
-    float ratePerSecond;
-    float emulatedDeadzone;
-    NSTimer *inputTimer;
-    id <BXPeriodicInputBindingDelegate> delegate;
+    NSTimeInterval _lastUpdated;
+    float _ratePerSecond;
+    float _emulatedDeadzone;
+    NSTimer *_inputTimer;
+    id <BXPeriodicInputBindingDelegate> _delegate;
 }
 
 //How much to increment the emulated axis per second if the controller axis input is at full strength.
@@ -113,7 +112,7 @@
 //Translates a button on an HID controller to an emulated joystick button.
 @interface BXButtonToButton: BXBaseHIDInputBinding
 {
-	NSUInteger button;
+	NSUInteger _button;
 }
 
 //Convenience method to return a binding preconfigured to send button
@@ -130,9 +129,9 @@
 //with specific axis values for the pressed/released state of the button.
 @interface BXButtonToAxis: BXBaseHIDInputBinding
 {
-	NSString *axis;
-	float pressedValue;
-	float releasedValue;
+	NSString *_axis;
+	float _pressedValue;
+	float _releasedValue;
 }
 
 //Convenience method to return a binding preconfigured to send button
@@ -155,10 +154,10 @@
 //with a specific threshold over which the button is considered pressed.
 @interface BXAxisToButton: BXBaseHIDInputBinding
 {
-	float threshold;
-	BOOL unidirectional;
-	NSUInteger button;
-	BOOL previousValue;
+	float _threshold;
+	BOOL _unidirectional;
+	NSUInteger _button;
+	BOOL _previousValue;
 }
 
 //Convenience method to return a binding preconfigured to send axis
@@ -186,7 +185,7 @@
 //Translates a POV switch or D-pad on an HID controller to an emulated POV switch.
 @interface BXPOVToPOV: BXBaseHIDInputBinding
 {
-	NSUInteger POVNumber;
+	NSUInteger _POVNumber;
 }
 
 //The POV number to apply to on the emulated joystick. Defaults to 0.
@@ -198,8 +197,8 @@
 //Translates a button to a single cardinal POV direction
 @interface BXButtonToPOV: BXBaseHIDInputBinding
 {
-	NSUInteger POVNumber;
-    BXEmulatedPOVDirection direction;
+	NSUInteger _POVNumber;
+    BXEmulatedPOVDirection _direction;
     
 }
 //The POV number to apply to on the emulated joystick. Defaults to 0.
@@ -217,8 +216,8 @@
 //on the emulated joystick, such that WE will set the X axis and NS will set the Y axis.
 @interface BXPOVToAxes: BXBaseHIDInputBinding
 {
-	NSString *xAxis;
-	NSString *yAxis;
+	NSString *_xAxis;
+	NSString *_yAxis;
 }
 
 //Convenience method to return a binding preconfigured to send POV
@@ -243,10 +242,10 @@
 //0.0.
 @interface BXAxisToBindings: BXBaseHIDInputBinding
 {
-	id <BXHIDInputBinding> positiveBinding;
-	id <BXHIDInputBinding> negativeBinding;
-	float previousValue;
-    float deadzone;
+	id <BXHIDInputBinding> _positiveBinding;
+	id <BXHIDInputBinding> _negativeBinding;
+	float _previousValue;
+    float _deadzone;
 }
 
 //Convenience method to return a binding preconfigured to split axis input

@@ -310,6 +310,8 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
         NSString *relativePath = [path pathRelativeToPath: self.resourcePath];
         [relativeLauncher setObject: relativePath forKey: BXLauncherPathKey];
         [relativeLaunchers addObject: relativeLauncher];
+        
+        [relativeLauncher release];
     }
     
     [self setGameInfo: relativeLaunchers forKey: BXLaunchersGameInfoKey];

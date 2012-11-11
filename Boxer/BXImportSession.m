@@ -508,6 +508,7 @@
                 [launcherInfo setObject: newName forKey: BXLauncherTitleKey];
                 [self.gamebox removeLauncherAtIndex: 0];
                 [self.gamebox insertLauncher: launcherInfo atIndex: 0];
+                [launcherInfo release];
             }
 		}
 		else

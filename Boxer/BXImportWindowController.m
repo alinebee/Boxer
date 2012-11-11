@@ -149,7 +149,7 @@
     toFrame = [toWindow fullyConstrainFrameRect: toFrame toScreen: fromWindow.screen];
     
     //Suppress the default Lion window animations...
-    NSWindowAnimationBehavior oldToBehavior, oldFromBehavior;
+    NSWindowAnimationBehavior oldToBehavior = NSWindowAnimationBehaviorDefault, oldFromBehavior = NSWindowAnimationBehaviorDefault;
     if ([toWindow respondsToSelector: @selector(setAnimationBehavior:)])
     {
         oldToBehavior = toWindow.animationBehavior;
@@ -196,7 +196,7 @@
     toFrame = [toWindow fullyConstrainFrameRect: toFrame toScreen: fromWindow.screen];
     
     //Suppress the default Lion window animations...
-    NSWindowAnimationBehavior oldToBehavior, oldFromBehavior;
+    NSWindowAnimationBehavior oldToBehavior = NSWindowAnimationBehaviorDefault, oldFromBehavior = NSWindowAnimationBehaviorDefault;
     if ([toWindow respondsToSelector: @selector(setAnimationBehavior:)])
     {
         oldToBehavior = toWindow.animationBehavior;

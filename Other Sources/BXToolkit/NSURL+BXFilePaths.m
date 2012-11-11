@@ -70,6 +70,7 @@
     NSString *path = [manager stringWithFileSystemRepresentation: representation
                                                           length: strlen(representation)];
     
+    [manager release];
     
     return [NSURL fileURLWithPath: path];
 }
@@ -93,7 +94,7 @@
 - (NSArray *) componentURLs
 {	
 	//Build an array of complete paths for each component of this URL
-	NSMutableArray *components = [[NSMutableArray alloc] initWithCapacity: 10];
+	NSMutableArray *components = [NSMutableArray arrayWithCapacity: 10];
     
     NSURL *currentURL = self, *parentURL = nil;
 	while (YES)

@@ -55,17 +55,15 @@ NSString * const BXBSNESShaderErrorDomain = @"BXBSNESShaderErrorDomain";
                              inContext: (CGLContextObj)context
                                  error: (NSError **)outError
 {
-    NSXMLDocument *definition = [[NSXMLDocument alloc] initWithContentsOfURL: shaderURL
-                                                                     options: 0
-                                                                       error: outError];
+    NSXMLDocument *definition = [[[NSXMLDocument alloc] initWithContentsOfURL: shaderURL
+                                                                      options: 0
+                                                                        error: outError] autorelease];
     
     if (definition)
     {
         return [self shadersWithDefinition: definition
                                  inContext: context
                                      error: outError];
-        
-        [definition release];
     }
     else return nil;
 }

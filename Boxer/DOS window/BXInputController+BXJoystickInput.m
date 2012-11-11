@@ -240,11 +240,15 @@
     [self.controllerProfiles removeAllObjects];
     if (joystick)
     {
-        NSArray *controllers = [[[NSApp delegate] joystickController] joystickDevices];
+        NSArray *controllers = [[NSApp delegate] joystickController].joystickDevices;
         for (DDHidJoystick *controller in controllers)
         {
             BXHIDControllerProfile *profile = [BXHIDControllerProfile profileForHIDDevice: controller
                                                                            emulatedJoystick: joystick];
+            
+#ifdef BOXER_DEBUG
+            NSLog(@"%@", profile);
+#endif
             
             NSNumber *locationID = [NSNumber numberWithLong: controller.locationId];
             [self.controllerProfiles setObject: profile forKey: locationID];

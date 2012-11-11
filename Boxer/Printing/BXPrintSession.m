@@ -151,17 +151,17 @@
     if (NSEqualSizes(size, NSZeroSize))
         size = NSMakeSize(8.5, 11.0);
     
+    //Start a new page in the PDF context.
     //N.B: we could use CGPDFContextBeginPage but that has a more complicated
     //calling structure for specifying art, crop etc. boxes, and we only care
     //about the media box.
     CGRect mediaBox = CGRectMake(0, 0, size.width * 72.0, size.height * 72.0);
     CGContextBeginPage(_CGPDFContext, &mediaBox);
     
-    //Prepare a new preview image
+    //Prepare a bitmap context into which we'll render a page preview.
     NSSize canvasSize = NSMakeSize(ceil(size.width * self.previewDPI.width),
                                    ceil(size.height * self.previewDPI.height));
     
-    //Add a custom representation to this image into which we'll draw the page preview.
     self._previewCanvas = [[[NSBitmapImageRep alloc] initWithBitmapDataPlanes: NULL
                                                                    pixelsWide: canvasSize.width
                                                                    pixelsHigh: canvasSize.height
@@ -173,10 +173,11 @@
                                                                   bytesPerRow: 0
                                                                  bitsPerPixel: 0] autorelease];
     
+    //Wrap this in an NSImage so upstream contexts can display the preview easily.
     NSImage *preview = [[[NSImage alloc] initWithSize: canvasSize] autorelease];
     [preview addRepresentation: self._previewCanvas];
     
-    //Add the new image into the array of page previews.
+    //Add the new image into our array of page previews.
     [self._mutablePagePreviews addObject: preview];
     
     self.pageInProgress = YES;

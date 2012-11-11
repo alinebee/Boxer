@@ -59,13 +59,6 @@ enum {
 #define VERTICAL_TABS_UNDEFINED 255
 #define UNIT_SIZE_UNDEFINED -1
 
-//By default, lengths parameters to ESC/P commands are specified in units of 1/60th of an inch
-#define BXESCPUnitSizeDefault 60.0
-#define BXESCPLineSpacingDefault 1 / 6.0 //1/6th of an inch, i.e. 12pt line height
-#define BXESCPCPIDefault 10.0 //Default character width of 10 characters per inch
-
-#define BXESCPBaselineOffset (20 / 180.0)    //The text baseline is positioned this many inches below the current vertical head position.
-
 #pragma mark -
 #pragma mark Private interface declaration
 
@@ -76,7 +69,6 @@ enum {
 
 //Overridden to make them read-write internally.
 @property (retain, nonatomic) NSMutableDictionary *textAttributes;
-@property (assign, nonatomic) NSPoint headPosition;
 @property (retain, nonatomic) BXPrintSession *currentSession;
 
 //The effective pitch in characters-per-inch, counting the current font settings.
@@ -177,6 +169,15 @@ enum {
 //Called after command processing is complete, to close up the command context.
 - (void) _endESCPCommand;
 
+
+#pragma mark -
+#pragma mark Geometry
+
+//Move the print head to the specified X or Y offset in page coordinates.
+//This notifies the delegate that the print head has moved.
+- (void) _moveHeadToX: (CGFloat)xOffset;
+- (void) _moveHeadToY: (CGFloat)yOffset;
+
 @end
 
 
@@ -229,11 +230,12 @@ enum {
 
 @synthesize headPosition = _headPosition;
 @synthesize defaultPageSize = _defaultPageSize;
-@synthesize currentPageSize = _pageSize;
+@synthesize pageSize = _pageSize;
 @synthesize leftMargin = _leftMargin;
 @synthesize rightMargin = _rightMargin;
 @synthesize topMargin = _topMargin;
 @synthesize bottomMargin = _bottomMargin;
+@synthesize lineSpacing = _lineSpacing;
 
 
 - (id) init
@@ -315,7 +317,7 @@ enum {
 - (NSPoint) convertPointFromPage: (NSPoint)pagePoint
 {
     return NSMakePoint(pagePoint.x * 72.0,
-                       (self.currentPageSize.height - pagePoint.y) * 72.0);
+                       (self.pageSize.height - pagePoint.y) * 72.0);
 }
 
 //Convert a point in user space into a coordinate in page inches.
@@ -323,7 +325,29 @@ enum {
 - (NSPoint) convertPointToPage: (NSPoint)userSpacePoint
 {
     return NSMakePoint(userSpacePoint.x / 72.0,
-                       self.currentPageSize.height - (userSpacePoint.y / 72.0));
+                       self.pageSize.height - (userSpacePoint.y / 72.0));
+}
+
+- (void) _moveHeadToX: (CGFloat)xOffset
+{
+    if (_headPosition.x != xOffset)
+    {
+        _headPosition.x = xOffset;
+        
+        if ([self.delegate respondsToSelector: @selector(printer:didMoveHeadToX:)])
+            [self.delegate printer: self didMoveHeadToX: xOffset];
+    }
+}
+
+- (void) _moveHeadToY: (CGFloat)yOffset
+{
+    if (_headPosition.y != yOffset)
+    {
+        _headPosition.y = yOffset;
+    
+        if ([self.delegate respondsToSelector: @selector(printer:didMoveHeadToY:)])
+            [self.delegate printer: self didMoveHeadToY: yOffset];
+    }
 }
 
 
@@ -913,10 +937,10 @@ enum {
 
 - (void) _startNewLine
 {
-    _headPosition.x = _leftMargin;
-    _headPosition.y += _lineSpacing;
+    [self _moveHeadToX: self.leftMargin];
+    [self _moveHeadToY: self.headPosition.y + self.lineSpacing];
     
-    if (_headPosition.y > _bottomMargin)
+    if (self.headPosition.y > self.bottomMargin)
         [self _startNewPageWithCarriageReturn: NO discardBlankPages: NO];
 }
 
@@ -947,6 +971,20 @@ enum {
     self.currentSession = nil;
 }
 
+- (void) cancelPrintSession
+{
+    //Commit the current page as long as it's not entirely blank
+    [self _startNewPageWithCarriageReturn: YES discardBlankPages: YES];
+    
+    if ([self.delegate respondsToSelector: @selector(printer:didCancelSession:)])
+    {
+        [self.delegate printer: self didCancelSession: self.currentSession];
+    }
+    
+    //Discard the current session without doing anything further with it.
+    self.currentSession = nil;
+}
+
 - (void) _startNewPageWithCarriageReturn: (BOOL)insertCarriageReturn
                        discardBlankPages: (BOOL)discardPreviousPageIfBlank
 {
@@ -968,7 +1006,7 @@ enum {
     //TWEAK: never insert a blank page if it would be the first page in the session.
     else if (!discardPreviousPageIfBlank && self.currentSession.numPages > 0)
     {
-        [self.currentSession insertBlankPageWithSize: self.currentPageSize];
+        [self.currentSession insertBlankPageWithSize: self.pageSize];
         addedPage = YES;
     }
     
@@ -976,9 +1014,9 @@ enum {
         [self.delegate printer: self didFinishPageInSession: self.currentSession];
     
     //Reset the head position to the top of the next page, and optionally reset to the left margin.
-    _headPosition.y = _topMargin;
     if (insertCarriageReturn)
-        _headPosition.x = _leftMargin;
+        [self _moveHeadToX: self.leftMargin];
+    [self _moveHeadToY: self.topMargin];
 }
 
 - (void) _prepareCanvasForPrinting
@@ -992,10 +1030,10 @@ enum {
     //Create a new page, if none is currently in progress.
     if (!self.currentSession.pageInProgress)
     {
-        [self.currentSession beginPageWithSize: self.currentPageSize];
+        [self.currentSession beginPageWithSize: self.pageSize];
         
-        if ([self.delegate respondsToSelector: @selector(printer:willStartPageInSession:)])
-            [self.delegate printer: self willStartPageInSession: self.currentSession];
+        if ([self.delegate respondsToSelector: @selector(printer:didStartPageInSession:)])
+            [self.delegate printer: self didStartPageInSession: self.currentSession];
     }
 }
 
@@ -1014,7 +1052,7 @@ enum {
         return;
     }
         
-    //If an MSB control mode is active, rewrite the most significant bit (bit 7).
+    //If an MSB control mode is active, rewrite the most significant bit (bit 7) to be 0 or 1.
     if (_msbMode == BXMSB0)
         byte &= ~(1 << 7);
     else if (_msbMode == BXMSB1)
@@ -1171,7 +1209,8 @@ enum {
             _bitmapBytesReadInColumn = 0;
             
             //Advance the print head past the current graphics column.
-            _headPosition.x +=  1 / _bitmapDPI.width;
+            CGFloat newX = self.headPosition.x + (1 / _bitmapDPI.width);
+            [self _moveHeadToX: newX];
             
             if ([self.delegate respondsToSelector: @selector(printer:didPrintToPageInSession:)])
                 [self.delegate printer: self didPrintToPageInSession: self.currentSession];
@@ -1199,6 +1238,7 @@ enum {
     //If our text attributes are dirty, rebuild them now
     if (_textAttributesNeedUpdate)
         [self _updateTextAttributes];
+    
     //Locate the unicode character to print
     unichar codepoint = _charMap[character];
     
@@ -1264,14 +1304,18 @@ enum {
     }
     
     //Advance the head past the string.
-    _headPosition.x += advance + self.effectiveLetterSpacing;
+    CGFloat newX = self.headPosition.x + advance + self.effectiveLetterSpacing;
     
     //Wrap the line if the character after this one would go over the right margin.
     //(This may also trigger a new page.)
-	if((_headPosition.x + advance) > _rightMargin)
+	if (newX + advance > self.rightMargin)
     {
         [self _startNewLine];
 	}
+    else
+    {
+        [self _moveHeadToX: newX];
+    }
     
     if ([self.delegate respondsToSelector: @selector(printer:didPrintToPageInSession:)])
         [self.delegate printer: self didPrintToPageInSession: self.currentSession];
@@ -1530,7 +1574,7 @@ enum {
 	else if (_currentESCPCommand == 'B')
     {
         //Vertical tab positions are specified as number of lines from top margin; convert this to a height in inches.
-        double tabPos = param * _lineSpacing;
+        double tabPos = param * self.lineSpacing;
         
         //Once we get a null sentinel or a tab position that's lower than the previous position,
         //treat that as the end of the command.
@@ -1635,9 +1679,9 @@ enum {
             if (effectiveUnitSize == UNIT_SIZE_UNDEFINED)
                 effectiveUnitSize = BXESCPUnitSizeDefault;
             
-            CGFloat newX = _leftMargin + (position / effectiveUnitSize);
-            if (newX <= _rightMargin)
-                _headPosition.x = newX;
+            CGFloat newX = self.leftMargin + (position / effectiveUnitSize);
+            if (newX <= self.rightMargin)
+                [self _moveHeadToX: newX];
         }
             break;
             
@@ -1658,7 +1702,7 @@ enum {
             
         case '+': // Set n/360-inch line spacing (ESC +)
         case IBM_FLAG+'3': // Set n/360-inch line spacing (FS 3)
-            _lineSpacing = params[0] / 360.0;
+            self.lineSpacing = params[0] / 360.0;
             break;
             
         case '-': // Turn underline on/off (ESC -)
@@ -1681,15 +1725,15 @@ enum {
             break;
             
         case '0': // Select 1/8-inch line spacing (ESC 0)
-            _lineSpacing = 1 / 8.0;
+            self.lineSpacing = 1 / 8.0;
             break;
             
         case '2': // Select 1/6-inch line spacing (ESC 2)
-            _lineSpacing = 1 / 6.0;
+            self.lineSpacing = 1 / 6.0;
             break;
             
         case '3': // Set n/180-inch line spacing (ESC 3)
-            _lineSpacing = params[0] / 180.0;
+            self.lineSpacing = params[0] / 180.0;
             break;
             
         case '4': // Select italic font (ESC 4)
@@ -1740,22 +1784,22 @@ enum {
             
         case 'A': // Set n/60-inch line spacing
         case IBM_FLAG+'A':
-            _lineSpacing = params[0] / 60.0;
+            self.lineSpacing = params[0] / 60.0;
             break;
             
         case 'C': // Set page length in lines (ESC C)
             //If the first parameter was specified, set the page length in lines
             if (params[0] > 0)
             {
-                _pageSize.height = _bottomMargin = (params[0] * _lineSpacing);
+                _pageSize.height = self.bottomMargin = (params[0] * self.lineSpacing);
                 break;
             }
             //Otherwise if the second parameter was specified, treat that as the page length in inches
             else if (_numParamsRead == 2)
             {
                 _pageSize.height = params[1];
-                _bottomMargin = _pageSize.height;
-                _topMargin = 0.0;
+                self.bottomMargin = _pageSize.height;
+                self.topMargin = 0.0;
                 break;
             }
             //Otherwise, flag that we're waiting for one more parameter and stop command parsing early
@@ -1784,10 +1828,12 @@ enum {
             
         case 'J': // Advance print position vertically (ESC J n)
         {
-            _headPosition.y += (params[0] / 180.0);
+            CGFloat newY = self.headPosition.y + (params[0] / 180.0);
             
-            if (_headPosition.y > _bottomMargin)
+            if (newY > self.bottomMargin)
                 [self _startNewPageWithCarriageReturn: NO discardBlankPages: NO];
+            else
+                [self _moveHeadToY: newY];
         }
             break;
             
@@ -1811,13 +1857,13 @@ enum {
             break;
             
         case 'N': // Set bottom margin (ESC N)
-            _topMargin = 0.0;
-            _bottomMargin = params[0] * _lineSpacing;
+            self.topMargin = 0.0;
+            self.bottomMargin = params[0] * self.lineSpacing;
             break;
             
         case 'O': // Cancel bottom (and top) margin
-            _topMargin = 0.0;
-            _bottomMargin = _pageSize.height;
+            self.topMargin = 0.0;
+            self.bottomMargin = self.pageSize.height;
             break;
             
         case 'P': // Select 10.5-point, 10-cpi (ESC P)
@@ -1826,7 +1872,7 @@ enum {
             break;
             
         case 'Q': // Set right margin
-            _rightMargin = (params[0] - 1) * self.characterWidth;
+            self.rightMargin = (params[0] - 1) * self.characterWidth;
             break;
             
         case 'R': // Select an international character set (ESC R)
@@ -1909,7 +1955,9 @@ enum {
             if (effectiveUnitSize == UNIT_SIZE_UNDEFINED)
                 effectiveUnitSize = (self.quality == BXESCPQualityDraft) ? 120.0 : 180.0;
             
-            _headPosition.x += offset / effectiveUnitSize;
+            CGFloat newX = self.headPosition.x + (offset / effectiveUnitSize);
+            if (newX >= self.leftMargin && newX < self.rightMargin)
+                [self _moveHeadToX: newX];
         }
             break;
         case 'a': // Select justification (ESC a)
@@ -1929,15 +1977,17 @@ enum {
             break;
             
         case IBM_FLAG+'F': // Select forward feed mode (FS F) - set reverse not implemented yet
-            if (_lineSpacing < 0) _lineSpacing *= -1;
+            if (self.lineSpacing < 0) self.lineSpacing *= -1;
             break;
             
         case 'j': // Reverse paper feed (ESC j)
         {
+            //IMPLEMENTATION NOTE: this parameter was deleted from the ESCP/2 spec
+            //and technically we ought to ignore it.
             double reverse = WIDEPARAM(params, 0) / 216.0;
-            //IMPLEMENTATION NOTE: the original implementation used to compare against
-            //left margin, which was almost certainly a copypaste mistake.
-            _headPosition.y = MAX(_headPosition.y - reverse, _topMargin);
+            
+            double newY = MAX(self.headPosition.y - reverse, self.topMargin);
+            [self _moveHeadToY: newY];
             break;
         }
             
@@ -1946,9 +1996,9 @@ enum {
             break;
             
         case 'l': // Set left margin (ESC l)
-            _leftMargin = (params[0] - 1) * self.characterWidth;
-            if (_headPosition.x < _leftMargin)
-                _headPosition.x = _leftMargin;
+            self.leftMargin = (params[0] - 1) * self.characterWidth;
+            if (self.headPosition.x < self.leftMargin)
+                [self _moveHeadToX: self.leftMargin];
             break;
             
         case 'p': // Turn proportional mode on/off (ESC p)
@@ -2055,8 +2105,8 @@ enum {
         case ESCP2_FLAG+'C': // Set page height in defined unit (ESC (C)
             if (params[0] != 0 && _unitSize > 0)
             {
-                _pageSize.height = _bottomMargin = WIDEPARAM(params, 2) * _unitSize;
-                _topMargin = 0.0;
+                _pageSize.height = self.bottomMargin = WIDEPARAM(params, 2) * _unitSize;
+                self.topMargin = 0.0;
             }
             break;
             
@@ -2071,12 +2121,12 @@ enum {
                 effectiveUnitSize = 360.0;
             
             int16_t offset = WIDEPARAM(params, 2);
-            CGFloat newPos = _topMargin + (offset * effectiveUnitSize);
+            CGFloat newPos = self.topMargin + (offset * effectiveUnitSize);
             
-            if (newPos > _bottomMargin)
+            if (newPos > self.bottomMargin)
                 [self _startNewPageWithCarriageReturn: NO discardBlankPages: NO];
             else
-                _headPosition.y = newPos;
+                [self _moveHeadToY: newPos];
         }
             break;
             
@@ -2091,31 +2141,32 @@ enum {
                 double newBottom = WIDEPARAM(params, 4) * _unitSize;
                 if (newTop < newBottom)
                 {
-                    if (newTop < _pageSize.height)
-                        _topMargin = newTop;
+                    if (newTop < self.pageSize.height)
+                        self.topMargin = newTop;
                     
-                    if (newBottom < _pageSize.height)
-                        _bottomMargin = newBottom;
-                        
-                    if (_headPosition.x < _topMargin)
-                        _headPosition.x = _topMargin;
+                    if (newBottom < self.pageSize.height)
+                        self.bottomMargin = newBottom;
+                    
+                    if (self.headPosition.x < self.topMargin)
+                        [self _moveHeadToY: self.topMargin];
                 }
             }
             break;
             
         case ESCP2_FLAG + 'v': // Set relative vertical print position (ESC (v)
         {
-            Real64 effectiveUnitSize = _unitSize;
+            double effectiveUnitSize = _unitSize;
             if (effectiveUnitSize == UNIT_SIZE_UNDEFINED)
                 effectiveUnitSize = 360.0;
             
             int16_t offset = WIDEPARAM(params, 2);
-            Real64 newPos = _headPosition.y + (offset * effectiveUnitSize);
-            if (newPos > _topMargin)
+            double newY = self.headPosition.y + (offset * effectiveUnitSize);
+            if (newY > self.topMargin)
             {
-                _headPosition.y = newPos;
-                if (_headPosition.y > _bottomMargin)
+                if (newY > self.bottomMargin)
                     [self _startNewPageWithCarriageReturn: NO discardBlankPages: NO];
+                else
+                    [self _moveHeadToY: newY];
             }
         }
             break;
@@ -2159,9 +2210,9 @@ enum {
         case '\b':	// Backspace (BS)
 		{
             double space = self.characterAdvance + self.effectiveLetterSpacing;
-			double newX = _headPosition.x - space;
-			if (newX >= _leftMargin)
-				_headPosition.x = newX;
+			double newX = self.headPosition.x - space;
+			if (newX >= self.leftMargin)
+                [self _moveHeadToX: newX];
 		}
             return YES;
             
@@ -2173,7 +2224,7 @@ enum {
 			for (i=0; i < _numHorizontalTabs; i++)
             {
                 double tabPos = _horizontalTabPositions[i];
-				if (tabPos > _headPosition.x)
+				if (tabPos > self.headPosition.x)
                 {
                     chosenTabPos = tabPos;
                     //IMPLEMENTATION NOTE: original implementation didn't break so would have ended up
@@ -2182,15 +2233,15 @@ enum {
                 }
             }
             
-			if (chosenTabPos >= 0 && chosenTabPos < _rightMargin)
-				_headPosition.x = chosenTabPos;
+			if (chosenTabPos >= 0 && chosenTabPos < self.rightMargin)
+                [self _moveHeadToX: chosenTabPos];
 		}
             return YES;
             
         case '\v':	// Tab vertically (VT)
             if (_numVerticalTabs == 0) // All tabs cancelled => Act like CR
             {
-                _headPosition.x = _leftMargin;
+                [self _moveHeadToX: self.leftMargin];
             }
             else if (_numVerticalTabs == VERTICAL_TABS_UNDEFINED) // No tabs set since reset => Act like LF
             {
@@ -2204,7 +2255,7 @@ enum {
                 for (i=0; i < _numVerticalTabs; i++)
                 {
                     double tabPos = _verticalTabPositions[i];
-                    if (tabPos > _headPosition.y)
+                    if (tabPos > self.headPosition.y)
                     {
                         chosenTabPos = tabPos;
                         //IMPLEMENTATION NOTE: original implementation didn't break so would have ended up
@@ -2214,10 +2265,10 @@ enum {
                 }
                 
                 // Nothing found => Act like FF
-                if (chosenTabPos > _bottomMargin || chosenTabPos == -1)
+                if (chosenTabPos > self.bottomMargin || chosenTabPos == -1)
                     [self _startNewPageWithCarriageReturn: NO discardBlankPages: NO];
                 else
-                    _headPosition.y = chosenTabPos;
+                    [self _moveHeadToY: chosenTabPos];
             }
             
             //Now that we're on a new line, terminate double-width mode
@@ -2230,7 +2281,7 @@ enum {
             return YES;
             
         case '\r':		// Carriage Return (CR)
-            _headPosition.x = _leftMargin;
+            [self _moveHeadToX: self.leftMargin];
             if (!self.autoFeed)
                 return YES;
             //If autoFeed is enabled, we drop down into the next case to automatically add a line feed
@@ -2319,8 +2370,8 @@ enum {
 	if (_initialized && resetIsOn && !resetWasOn)
         [self resetHard];
     
-	//When the strobe signal flicks on then off, read the next byte from the data register
-    //and print it.
+	//When the strobe signal flicks on then off, read the next byte
+    //from the data register and print it.
     BOOL strobeWasOn = (_controlRegister & BXEmulatedPrinterControlStrobe);
     BOOL strobeIsOn = (controlFlags & BXEmulatedPrinterControlStrobe);
 	if (strobeWasOn && !strobeIsOn)
@@ -2328,7 +2379,7 @@ enum {
         [self handleDataByte: self.dataRegister];
 	}
     
-    //CHECKME: should we toggle the auto-linefeed behaviour *before* processing the data?
+    //CHECKME: shouldn't we toggle the auto-linefeed behaviour *before* processing the data?
 	if (_initialized)
     {
         self.autoFeed = (controlFlags & BXEmulatedPrinterControlAutoFeed) == BXEmulatedPrinterControlAutoFeed;

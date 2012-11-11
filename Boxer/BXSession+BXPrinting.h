@@ -15,4 +15,7 @@
 - (IBAction) printDocument: (id)sender;
 - (IBAction) orderFrontPrintStatusPanel: (id)sender;
 
+- (IBAction) finishPrintSession: (id)sender;
+- (IBAction) cancelPrintSession: (id)sender;
+
 @end

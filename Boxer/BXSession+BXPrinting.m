@@ -48,6 +48,8 @@
 
 - (IBAction) orderFrontPrintStatusPanel: (id)sender
 {
+    [self.printStatusController showWindow: self];
+    /*
     if (!self.printStatusController.window.isVisible)
     {
         BXPrintStatusCompletionHandler handler = ^(BXPrintStatusPanelResult result) {
@@ -60,6 +62,17 @@
         [self.printStatusController beginSheetModalWithWindow: self.windowForSheet
                                             completionHandler: handler];
     }
+     */
+}
+
+- (IBAction) finishPrintSession: (id)sender
+{
+    [self.emulator.printer finishPrintSession];
+}
+
+- (IBAction) cancelPrintSession: (id)sender
+{
+    [self.emulator.printer cancelPrintSession];
 }
 
 /*
@@ -96,7 +109,7 @@
     NSSize sizeInPoints = self.printInfo.paperSize;
     
     //Apply our own page size as the default printer setup
-    printer.currentPageSize = NSMakeSize(sizeInPoints.width / 72.0, sizeInPoints.height / 72.0);
+    printer.pageSize = NSMakeSize(sizeInPoints.width / 72.0, sizeInPoints.height / 72.0);
     
     //Ignore the OSX printer margins: it seems most DOS programs will try to apply their own margins on top of this.
     /*
@@ -140,6 +153,12 @@
 
 - (void) printer: (BXEmulatedPrinter *)printer didFinishSession: (BXPrintSession *)session
 {
+    //Close the printer status panel and clean it up
+    [self.printStatusController.window orderOut: self];
+    
+    self.printStatusController.numPages = 0;
+    self.printStatusController.inProgress = NO;
+    
     //Convert the data into a new PDFDocument instance and call Apple's sneaky hidden API to print it.
     PDFDocument *PDF = [[PDFDocument alloc] initWithData: session.PDFData];
     if (PDF)
@@ -154,7 +173,13 @@
         
         [PDF release];
     }
+}
 
+- (void) printer: (BXEmulatedPrinter *)printer didCancelSession: (BXPrintSession *)session
+{
+    //Close the printer status panel and clean it up
+    [self.printStatusController.window orderOut: self];
+    
     self.printStatusController.numPages = 0;
     self.printStatusController.inProgress = NO;
 }

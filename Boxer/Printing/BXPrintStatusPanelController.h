@@ -36,8 +36,14 @@ typedef void(^BXPrintStatusCompletionHandler)(BXPrintStatusPanelResult result);
 //The number of pages printed so far, including the current page.
 @property (assign, nonatomic) NSUInteger numPages;
 
+//Whether any pages have been printed so far.
+@property (readonly, nonatomic) BOOL hasPages;
+
 //Whether the current page is still being printed.
 @property (assign, nonatomic, getter=isInProgress) BOOL inProgress;
+
+//Whether the "Print" button should be enabled. Will return NO while printing is in progress.
+@property (readonly, nonatomic) BOOL canPrint;
 
 //The localized descriptive name of the paper type the user should select in DOS.
 @property (copy, nonatomic) NSString *localizedPaperName;
@@ -48,13 +54,12 @@ typedef void(^BXPrintStatusCompletionHandler)(BXPrintStatusPanelResult result);
 
 //State properties for UI bindings
 //The bold status text to display in the panel: e.g. "Printer is idle", "Printing page 6", etc.
-@property (readonly, nonatomic) NSString *statusText;
+@property (readonly, nonatomic) NSString *printerStatus;
 
-//The small explanatory text to display in the panel: e.g. "Press “Print now” to print completed pages."
-@property (readonly, nonatomic) NSString *explanatoryText;
+//The small explanatory text to display in the panel,
+//explaining which port to print to and which paper size to use.
+@property (readonly, nonatomic) NSString *printerInstructions;
 
-//Whether to display a “Print now” button to the user.
-@property (readonly, nonatomic) BOOL canPrint;
 
 //Called by buttons in the window to finish the modal session with a particular result.
 - (IBAction) hide: (id)sender;

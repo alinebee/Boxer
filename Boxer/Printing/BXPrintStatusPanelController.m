@@ -25,6 +25,23 @@
 @synthesize activePrinterPort = _activePrinterPort;
 @synthesize localizedPaperName = _localizedPaperName;
 
+- (void) windowDidLoad
+{
+    [self.window setMovableByWindowBackground: YES];
+    [(NSPanel *)self.window setBecomesKeyOnlyIfNeeded: YES];
+	[self.window setFrameAutosaveName: @"PrintStatusPanel"];
+    
+    if ([self.window respondsToSelector: @selector(setAnimationBehavior:)])
+    {
+        self.window.animationBehavior = NSWindowAnimationBehaviorUtilityWindow;
+    }
+    
+    if ([self.window respondsToSelector: @selector(setCollectionBehavior:)])
+    {
+        self.window.collectionBehavior |= NSWindowCollectionBehaviorCanJoinAllSpaces | NSWindowCollectionBehaviorFullScreenAuxiliary;
+    }
+}
+
 - (void) dealloc
 {
     self.localizedPaperName = nil;
@@ -67,16 +84,10 @@
 }
 
 - (IBAction) print: (id)sender
-{    
+{
     [NSApp endSheet: self.window returnCode: BXPrintStatusPanelPrint];
 }
 
-- (void) windowDidLoad
-{
-    [super windowDidLoad];
-
-    //Set up the view structure here I guess
-}
 
 #pragma mark -
 #pragma mark UI bindings
@@ -99,12 +110,12 @@
     }
 }
 
-+ (NSSet *) keyPathsForValuesAffectingStatusText
++ (NSSet *) keyPathsForValuesAffectingPrinterStatus
 {
     return [NSSet setWithObjects: @"numPages", @"inProgress", nil];
 }
 
-- (NSString *) statusText
+- (NSString *) printerStatus
 {
     //Print session has not been started
     if (self.numPages == 0)
@@ -121,42 +132,52 @@
         }
         else
         {
-            format = NSLocalizedString(@"%u pages are ready to print.", @"Status text shown in print status panel when the emulated printer has finished printing for now. %u is the number of pages prepared so far.");
+            if (self.numPages > 1)
+            {
+                format = NSLocalizedString(@"%u pages are ready to print.", @"Status text shown in print status panel when multiple pages have been prepared. %u is the number of pages prepared so far.");
+            }
+            else
+            {
+                format = NSLocalizedString(@"1 page is ready to print.", @"Status text shown in print status panel when a single page has been prepared.");
+            }
         }
         
         return [NSString stringWithFormat: format, self.numPages];
     }
 }
 
-+ (NSSet *) keyPathsForValuesAffectingExplanatoryText
++ (NSSet *) keyPathsForValuesAffectingPrinterInstructions
 {
-    return [NSSet setWithObjects: @"canPrint", @"localizedPaperName", @"activePrinterPort", nil];
+    return [NSSet setWithObjects: @"localizedPaperName", @"activePrinterPort", nil];
 }
 
-- (NSString *) explanatoryText
+- (NSString *) printerInstructions
 {
-    if (self.canPrint)
-    {
-        return NSLocalizedString(@"Click “Print now” to print the completed pages.", @"Explanatory text shown once the printer has printed enough pages for us to activate printing.");
-    }
-    else
-    {
-        NSString *portName = [self.class localizedNameForPort: self.activePrinterPort];
-        NSString *format = NSLocalizedString(@"Instruct your DOS program to print to %1$@ using %2$@ paper.", @"Explanatory text shown while the printer is idle. %1$@ is the localized name of the port the user should choose in DOS (e.g. “LPT1”.) %2$@ is the localized name of the paper type they should choose in DOS (e.g. “A4”, “Letter”.)");
-        
-        return [NSString stringWithFormat: format, portName, self.localizedPaperName];
-    }
+    NSString *portName = [self.class localizedNameForPort: self.activePrinterPort];
+    NSString *format = NSLocalizedString(@"Instruct your DOS program to print to %1$@ using %2$@ paper.", @"Explanatory text shown while the printer is idle. %1$@ is the localized name of the port the user should choose in DOS (e.g. “LPT1”.) %2$@ is the localized name of the paper type they should choose in DOS (e.g. “A4”, “Letter”.)");
+    
+    return [NSString stringWithFormat: format, portName, self.localizedPaperName];
 }
 
++ (NSSet *) keyPathsForValuesAffectingHasPages
+{
+    return [NSSet setWithObject: @"numPages"];
+}
 
 + (NSSet *) keyPathsForValuesAffectingCanPrint
 {
-    return [NSSet setWithObjects: @"numPages", @"inProgress", nil];
+    return [NSSet setWithObjects: @"hasPages", @"inProgress", nil];
+}
+
+- (BOOL) hasPages
+{
+    return self.numPages > 0;
 }
 
 - (BOOL) canPrint
 {
-    return self.numPages > 0 && !self.inProgress;
+    return self.hasPages && !self.inProgress;
 }
+
 
 @end

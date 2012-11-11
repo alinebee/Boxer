@@ -102,6 +102,18 @@ typedef enum {
 //The base font size in points for fixed and multipoint fonts.
 #define BXESCPBaseFontSize 10.5
 
+//The default character width of 10 characters per inch
+#define BXESCPCPIDefault 10.0
+
+//By default, lengths parameters to ESC/P commands are specified in units of 1/60th of an inch
+#define BXESCPUnitSizeDefault 60.0
+
+//The Default line height of 1/6th of an inch, i.e. 12pt
+#define BXESCPLineSpacingDefault 1 / 6.0
+
+//The text baseline is positioned this many inches below the current vertical head position.
+#define BXESCPBaselineOffset (20 / 180.0)
+
 //Passed to characterAdvance to reset the character advance back
 //to the autocalculated width of a character in the current pitch.
 #define BXCharacterAdvanceAuto -1
@@ -109,6 +121,9 @@ typedef enum {
 #define BXEmulatedPrinterMaxVerticalTabs 16
 #define BXEmulatedPrinterMaxHorizontalTabs 32
 
+
+#pragma mark -
+#pragma mark Interface declaration
 
 @protocol BXEmulatedPrinterDelegate;
 @class BXPrintSession;
@@ -218,6 +233,7 @@ typedef enum {
 @property (assign, nonatomic) BOOL proportional;
 @property (assign, nonatomic) BOOL condensed;
 @property (assign, nonatomic) double letterSpacing;
+@property (assign, nonatomic) double lineSpacing;
 
 @property (assign, nonatomic) BOOL doubleWidth;
 @property (assign, nonatomic) BOOL doubleHeight;
@@ -265,7 +281,7 @@ typedef enum {
 
 //The size of the current page in inches. This may differ from defaultPageSize
 //if the DOS session has configured a different size itself.
-@property (assign, nonatomic) NSSize currentPageSize;
+@property (assign, nonatomic) NSSize pageSize;
 
 //Get/set the current page margins in inches. Note that the bottom and right margins
 //are measured as absolute distances from the top and left edges respectively.
@@ -302,13 +318,19 @@ typedef enum {
 //Resets the printer, restoring all settings to their defaults.
 - (void) reset;
 
-//Called to mark the end of a multiple-page print session and deliver
-//what the printer has produced so far.
+//Resets the printer and also clears the ack, so that the next
+//call to -acknowledge will return NO. Imitates switching the
+//printer off and back on again.
+- (void) resetHard;
+
+//Called by the upstream context to mark the end of a multi-page
+//print session and deliver what the printer has produced so far.
 - (void) finishPrintSession;
 
-//Resets the printer and also clears the ack, so that the next
-//call to -acknowledge will return NO.
-- (void) resetHard;
+//Called by the upstream context to discard the current print session
+//and start over with a new page.
+- (void) cancelPrintSession;
+
 
 #pragma mark -
 #pragma mark Parallel port methods
@@ -329,6 +351,9 @@ typedef enum {
 @end
 
 
+#pragma mark -
+#pragma mark Delegate protocol declaration
+
 @protocol BXEmulatedPrinterDelegate <NSObject>
 
 @optional
@@ -344,13 +369,20 @@ typedef enum {
 //Called when the printer finishes the specified session.
 - (void) printer: (BXEmulatedPrinter *)printer didFinishSession: (BXPrintSession *)session;
 
+//Called when the specified session has been cancelled and discarded.
+- (void) printer: (BXEmulatedPrinter *)printer didCancelSession: (BXPrintSession *)session;
+
 //Called when the printer begins a new page in the specified session.
-- (void) printer: (BXEmulatedPrinter *)printer willStartPageInSession: (BXPrintSession *)session;
+- (void) printer: (BXEmulatedPrinter *)printer didStartPageInSession: (BXPrintSession *)session;
 
 //Called every time the printer prints characters or graphics to the current page in the specified session.
 - (void) printer: (BXEmulatedPrinter *)printer didPrintToPageInSession: (BXPrintSession *)session;
 
 //Called when the printer finishes printing the current page in the specified session.
 - (void) printer: (BXEmulatedPrinter *)printer didFinishPageInSession: (BXPrintSession *)session;
+
+//Called when the printer moves the print head to the specified X and Y position on the current page.
+- (void) printer: (BXEmulatedPrinter *)printer didMoveHeadToX: (CGFloat)xOffset;
+- (void) printer: (BXEmulatedPrinter *)printer didMoveHeadToY: (CGFloat)yOffset;
 
 @end

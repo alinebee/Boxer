@@ -95,8 +95,14 @@
     }
 }
 
+- (void) printer: (BXEmulatedPrinter *)printer didStartPageInSession: (BXPrintSession *)session
+{
+    self.printStatusController.numPages = session.numPages;
+}
+
 - (void) printer: (BXEmulatedPrinter *)printer didFinishPageInSession: (BXPrintSession *)session
 {
+    self.printStatusController.numPages = session.numPages;
     [self.printStatusController.preview startNewPage: self];
 }
 

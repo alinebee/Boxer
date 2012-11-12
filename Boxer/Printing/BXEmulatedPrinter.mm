@@ -1228,7 +1228,7 @@ enum {
             for (row = 0; row < _bitmapHeight; row++)
             {
                 NSUInteger lineWidth = 0;
-                BOOL lastPixelOn = NO;
+                BOOL previousPixelOn = NO;
                 
                 //NOTE: we let the loop go one over the end of the row so that we can pinch off an end-of-row line tidily
                 for (col = 0; col <= _bitmapWidth; col++)
@@ -1254,9 +1254,10 @@ enum {
                     }
                     
                     //The run of pixels just finished: draw the line now
-                    else if (lastPixelOn)
+                    else if (previousPixelOn)
                     {
-                        CGRect line = CGRectMake(initialOffset.x + (dotSize.width * (col - lineWidth)),
+                        NSUInteger lineStartCol = col - lineWidth;
+                        CGRect line = CGRectMake(initialOffset.x + (dotSize.width * lineStartCol),
                                                  initialOffset.y - (dotSize.height * (row + 1)),
                                                  dotSize.width * lineWidth,
                                                  dotSize.height);
@@ -1270,7 +1271,7 @@ enum {
                         lineWidth = 0;
                     }
                     
-                    lastPixelOn = currentPixelOn;
+                    previousPixelOn = currentPixelOn;
                 }
             }
             
@@ -1286,7 +1287,7 @@ enum {
             CGColorRelease(cgColor);
             
             //Advance the print head beyond the bitmap data
-            CGFloat newX = self.headPosition.x + (dotSize.width * _bitmapWidth);
+            CGFloat newX = self.headPosition.x + (_bitmapWidth * (1 / _bitmapDPI.width));
             [self _moveHeadToX: newX];
             
             //Let the context know we printed something

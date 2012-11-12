@@ -128,6 +128,23 @@ enum {
 //Called when the DOS session prepares a bitmap drawing context.
 - (void) _prepareForBitmapWithDensity: (NSUInteger)density columns: (NSUInteger)numColumns;
 
+//Draws the specified bitmap data (expected to be 8-bits-per-pixel black and white) as a bitmap image
+//into the preview and PDF contexts. This gives slightly fuzzier output than the vectorized technique
+//below, but better rendering speeds and smaller PDF filesizes.
+- (void) _drawImageWithBitmapData: (NSData *)bitmapData
+                            width: (NSUInteger)pixelWidth
+                           height: (NSUInteger)pixelHeight
+                           inRect: (CGRect)imageRect
+                            color: (CGColorRef)color;
+
+//Draws the specified bitmap data (expected to be 8-bits-per-pixel black and white) as a series of
+//horizontal vector lines into the preview and PDF contexts. This is crisper than the bitmap technique
+//above at large magnifications, but slower and produces larger PDF files.
+- (void) _drawVectorizedBitmapData: (NSData *)bitmapData
+                             width: (NSUInteger)pixelWidth
+                            height: (NSUInteger)pixelHeight
+                            inRect: (CGRect)imageRect
+                             color: (CGColorRef)color;
 
 #pragma mark -
 #pragma mark Character mapping functions
@@ -1161,6 +1178,128 @@ enum {
     _bitmapCurrentRow = 0;
 }
 
+- (void) _drawImageWithBitmapData: (NSData *)bitmapData
+                            width: (NSUInteger)pixelWidth
+                           height: (NSUInteger)pixelHeight
+                           inRect: (CGRect)imageRect
+                            color: (CGColorRef)color
+{
+    CGDataProviderRef provider = CGDataProviderCreateWithCFData((CFDataRef)bitmapData);
+    //This inverts the image to match the behaviour of CGContextClipToMask,
+    //where 'empty' areas will get drawn with the fill color while 'solid'
+    //areas will be fully masked.
+    CGFloat rangeMapping[2] = { 255, 0 };
+    CGImageRef image = CGImageMaskCreate(pixelWidth, pixelHeight, 1, 8, pixelWidth, provider, rangeMapping, YES);
+    
+    //Draw into the preview and PDF context in turn.
+    NSArray *contexts = [NSArray arrayWithObjects:
+                         self.currentSession.previewContext,
+                         self.currentSession.PDFContext,
+                         nil];
+    
+    for (NSGraphicsContext *context in contexts)
+    {
+        CGContextRef ctx = (CGContextRef)context.graphicsPort;
+        CGContextSaveGState(ctx);
+            CGContextClipToMask(ctx, imageRect, image);
+            CGContextSetFillColorWithColor(ctx, color);
+            CGContextFillRect(ctx, imageRect);
+        CGContextRestoreGState(ctx);
+    }
+    
+    CGDataProviderRelease(provider);
+    CGImageRelease(image);
+}
+
+- (void) _drawVectorizedBitmapData: (NSData *)bitmapData
+                             width: (NSUInteger)pixelWidth
+                            height: (NSUInteger)pixelHeight
+                            inRect: (CGRect)imageRect
+                             color: (CGColorRef)color
+{
+    uint8_t *pixels = (uint8_t *)bitmapData.bytes;
+    
+    //Precalculate some values for our line-drawing further down
+    CGSize dotSize = CGSizeMake(imageRect.size.width / (CGFloat)pixelWidth,
+                                imageRect.size.height / (CGFloat)pixelHeight);
+    CGFloat topOffset = CGRectGetMaxY(imageRect);
+    
+    //Draw into the preview and PDF context in turn.
+    NSArray *contexts = [NSArray arrayWithObjects:
+                         self.currentSession.previewContext,
+                         self.currentSession.PDFContext,
+                         nil];
+    
+    for (NSGraphicsContext *context in contexts)
+    {
+        CGContextRef ctx = (CGContextRef)context.graphicsPort;
+        CGContextSaveGState(ctx);
+        CGContextSetFillColorWithColor(ctx, color);
+    }
+    
+    //Loop over each row of the bitmap looking for runs of pixels.
+    //We draw each run as a single rectangle, which results in a much tidier
+    //(and smaller) PDF than if we drew individual rects for each pixel.
+    //TODO: try generating an actual image with this data and drawing that,
+    //instead of drawing vector lines.
+    NSUInteger row, col;
+    for (row = 0; row < pixelHeight; row++)
+    {
+        NSUInteger lineWidth = 0;
+        BOOL previousPixelOn = NO;
+        
+        //NOTE: we let the loop go one over the end of the row so that we can pinch off an end-of-row line tidily
+        for (col = 0; col <= pixelWidth; col++)
+        {
+            BOOL currentPixelOn;
+            
+            //End of row: finish up the current line, if one is open
+            if (col == pixelWidth)
+            {
+                currentPixelOn = NO;
+            }
+            //Otherwise look up the value for this pixel from the bitmap
+            else
+            {
+                NSUInteger pixelOffset = (row * pixelWidth) + col;
+                currentPixelOn = pixels[pixelOffset];
+            }
+            
+            //The run of pixels continues: extend the current line
+            if (currentPixelOn)
+            {
+                lineWidth++;
+            }
+            
+            //The run of pixels just finished: draw the line now
+            else if (previousPixelOn)
+            {
+                NSUInteger lineStartCol = col - lineWidth;
+                CGRect line = CGRectMake(imageRect.origin.x + (dotSize.width * lineStartCol),
+                                         topOffset - (dotSize.height * (row + 1)),
+                                         dotSize.width * lineWidth,
+                                         dotSize.height);
+                
+                for (NSGraphicsContext *context in contexts)
+                {
+                    CGContextRef ctx = (CGContextRef)context.graphicsPort;
+                    CGContextFillRect(ctx, line);
+                }
+                
+                lineWidth = 0;
+            }
+            
+            previousPixelOn = currentPixelOn;
+        }
+    }
+    
+    for (NSGraphicsContext *context in contexts)
+    {
+        CGContextRef ctx = (CGContextRef)context.graphicsPort;
+        CGContextRestoreGState(ctx);
+    }
+}
+
 - (BOOL) _handleBitmapData: (uint8_t)byte
 {
     if (self.bitmapData)
@@ -1193,6 +1332,7 @@ enum {
         //Once we've got all the pixels for this image, render it into the page.
         if (_bitmapCurrentColumn >= _bitmapWidth)
         {
+            //Convert the current color into a CGColor for our draw methods to use.
             NSColor *printColor = [self.class _colorForColorCode: self.color];
             CGColorRef cgColor = CGColorCreateGenericCMYK(printColor.cyanComponent,
                                                           printColor.magentaComponent,
@@ -1200,86 +1340,20 @@ enum {
                                                           printColor.blackComponent,
                                                           printColor.alphaComponent);
             
-            NSPoint initialOffset = [self convertPointFromPage: self.headPosition];
             NSSize dotSize = NSMakeSize(72.0 / _bitmapDPI.width,
                                         72.0 / _bitmapDPI.height);
             
+            NSPoint offset = [self convertPointFromPage: self.headPosition];
+            NSSize bitmapSize = NSMakeSize(dotSize.width * _bitmapWidth,
+                                           dotSize.height * _bitmapHeight);
+            CGRect imageRect = CGRectMake(offset.x, offset.y - bitmapSize.height,
+                                          bitmapSize.width, bitmapSize.height);
+            
             [self _prepareCanvasForPrinting];
             
-            //Draw into the preview and PDF context in turn.
-            NSArray *contexts = [NSArray arrayWithObjects:
-                                 self.currentSession.previewContext,
-                                 self.currentSession.PDFContext,
-                                 nil];
-            
-            for (NSGraphicsContext *context in contexts)
-            {
-                CGContextRef ctx = (CGContextRef)context.graphicsPort;
-                CGContextSaveGState(ctx);
-                CGContextSetFillColorWithColor(ctx, cgColor);
-            }
-                
-            //Loop over each row of the bitmap looking for runs of pixels.
-            //We draw each run as a single rectangle, which results in a much tidier
-            //(and smaller) PDF than if we drew individual rects for each pixel.
-            //TODO: try generating an actual image with this data and drawing that,
-            //instead of drawing vector lines.
-            NSUInteger row, col;
-            for (row = 0; row < _bitmapHeight; row++)
-            {
-                NSUInteger lineWidth = 0;
-                BOOL previousPixelOn = NO;
-                
-                //NOTE: we let the loop go one over the end of the row so that we can pinch off an end-of-row line tidily
-                for (col = 0; col <= _bitmapWidth; col++)
-                {
-                    BOOL currentPixelOn;
-                    
-                    //End of row: finish up the current line, if one is open
-                    if (col == _bitmapWidth)
-                    {
-                        currentPixelOn = NO;
-                    }
-                    //Otherwise look up the value for this pixel from the bitmap
-                    else
-                    {
-                        NSUInteger pixelOffset = (row * _bitmapWidth) + col;
-                        currentPixelOn = (BOOL)pixels[pixelOffset];
-                    }
-                    
-                    //The run of pixels continues: extend the current line
-                    if (currentPixelOn)
-                    {
-                        lineWidth++;
-                    }
-                    
-                    //The run of pixels just finished: draw the line now
-                    else if (previousPixelOn)
-                    {
-                        NSUInteger lineStartCol = col - lineWidth;
-                        CGRect line = CGRectMake(initialOffset.x + (dotSize.width * lineStartCol),
-                                                 initialOffset.y - (dotSize.height * (row + 1)),
-                                                 dotSize.width * lineWidth,
-                                                 dotSize.height);
-                        
-                        for (NSGraphicsContext *context in contexts)
-                        {
-                            CGContextRef ctx = (CGContextRef)context.graphicsPort;
-                            CGContextFillRect(ctx, line);
-                        }
-                        
-                        lineWidth = 0;
-                    }
-                    
-                    previousPixelOn = currentPixelOn;
-                }
-            }
-            
-            for (NSGraphicsContext *context in contexts)
-            {
-                CGContextRef ctx = (CGContextRef)context.graphicsPort;
-                CGContextRestoreGState(ctx);
-            }
+            //Draw the bitmap into our rendering contexts, either as a straight image or as a vectorised path.
+            //[self _drawVectorizedBitmapData: self.bitmapData width: _bitmapWidth height: _bitmapHeight inRect: imageRect color: cgColor];
+            [self _drawImageWithBitmapData: self.bitmapData width: _bitmapWidth height: _bitmapHeight inRect: imageRect color: cgColor];
             
             //Discard the bitmap once we're done with it
             self.bitmapData = nil;

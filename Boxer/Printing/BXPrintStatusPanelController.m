@@ -397,7 +397,15 @@
 {
     self.previousPage.contents = self.currentPage.contents;
     self.currentPage.contents = nil;
-    self.feedOffset -= 1.0;
+    
+    //Move the feed offset immediately by one page so that the previous page
+    //lines up exactly with where the old current page was. Then, start a new
+    //animation from that point to the top of the new page.
+    [NSAnimationContext beginGrouping];
+        [NSAnimationContext currentContext].duration = 0;
+        [self.animator setFeedOffset: self.feedOffset - 1.0];
+    [NSAnimationContext endGrouping];
+    
     [self.animator setFeedOffset: 0.0];
 }
 

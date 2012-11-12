@@ -64,6 +64,8 @@ typedef enum {
     CALayer *_paperFeed;
     CALayer *_head;
     
+    CGImageRef _paperTexture;
+    
     CGFloat _headOffset;
     CGFloat _feedOffset;
     

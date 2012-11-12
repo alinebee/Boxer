@@ -621,9 +621,8 @@
 		9F7D9EFF1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */; };
 		9F7FC94C139EB38300D60320 /* RacingWheel.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7FC94B139EB38300D60320 /* RacingWheel.png */; };
 		9F839FB5150B81EF00337DD6 /* ScreenshotTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F839FB4150B81EF00337DD6 /* ScreenshotTemplate.pdf */; };
-		9F841F86165051C20011A545 /* LetterPaper.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F841F85165051C20011A545 /* LetterPaper.png */; };
 		9F843FE11226EB1100FD37F1 /* import.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F843FE01226EB1100FD37F1 /* import.png */; };
-		9F86C45B165060E7003D9C3B /* PrintStatusBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F86C45A165060E7003D9C3B /* PrintStatusBackground.jpg */; };
+		9F86C45B165060E7003D9C3B /* PrinterBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F86C45A165060E7003D9C3B /* PrinterBackground.jpg */; };
 		9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */; };
 		9F872481160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F872480160F7DF200400D8C /* BXSteppedShaderRenderer.m */; };
 		9F872482160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F872480160F7DF200400D8C /* BXSteppedShaderRenderer.m */; };
@@ -661,9 +660,10 @@
 		9F9E27C511F8C003003EE8F3 /* BXThemedSegmentedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27C411F8C003003EE8F3 /* BXThemedSegmentedCell.m */; };
 		9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */; };
 		9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */; };
-		9F9FF36616506C12005D1CC1 /* PrintStatusCover.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9FF36516506C12005D1CC1 /* PrintStatusCover.png */; };
-		9F9FF369165072C6005D1CC1 /* PrintStatusLighting.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9FF368165072C5005D1CC1 /* PrintStatusLighting.png */; };
-		9F9FF36B165074CB005D1CC1 /* PrintStatusClip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9FF36A165074CB005D1CC1 /* PrintStatusClip.png */; };
+		9F9FF36616506C12005D1CC1 /* PrinterCover.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9FF36516506C12005D1CC1 /* PrinterCover.png */; };
+		9F9FF369165072C6005D1CC1 /* PrinterLighting.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9FF368165072C5005D1CC1 /* PrinterLighting.png */; };
+		9F9FF36B165074CB005D1CC1 /* PrinterClip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9FF36A165074CB005D1CC1 /* PrinterClip.png */; };
+		9F9FF36D1650E204005D1CC1 /* PrinterPaper.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9FF36C1650E203005D1CC1 /* PrinterPaper.png */; };
 		9FA0C9E313D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA0C9E213D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m */; };
 		9FA1CF6813E5B44000416D74 /* BXMOMORacingControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA1CF6713E5B43F00416D74 /* BXMOMORacingControllerProfile.m */; };
 		9FA2C09215C8409000380261 /* BXDOSWindowBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA2C09115C8409000380261 /* BXDOSWindowBackgroundView.m */; };
@@ -1458,10 +1458,9 @@
 		9F81CFBA13EEAD6D008F0265 /* BXISOImagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXISOImagePrivate.h; sourceTree = "<group>"; };
 		9F81CFBB13EED386008F0265 /* BXISOImageConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXISOImageConstants.h; sourceTree = "<group>"; };
 		9F839FB4150B81EF00337DD6 /* ScreenshotTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ScreenshotTemplate.pdf; sourceTree = "<group>"; };
-		9F841F85165051C20011A545 /* LetterPaper.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LetterPaper.png; sourceTree = "<group>"; };
 		9F843FE01226EB1100FD37F1 /* import.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = import.png; sourceTree = "<group>"; };
 		9F84C86D157800DD00CCBCA7 /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
-		9F86C45A165060E7003D9C3B /* PrintStatusBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = PrintStatusBackground.jpg; sourceTree = "<group>"; };
+		9F86C45A165060E7003D9C3B /* PrinterBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = PrinterBackground.jpg; sourceTree = "<group>"; };
 		9F86DB3E1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMIDIDeviceMonitor.h; sourceTree = "<group>"; };
 		9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMIDIDeviceMonitor.m; sourceTree = "<group>"; };
 		9F87247F160F7DF200400D8C /* BXSteppedShaderRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSteppedShaderRenderer.h; sourceTree = "<group>"; };
@@ -1520,9 +1519,10 @@
 		9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrivePanelController.m; sourceTree = "<group>"; };
 		9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXIcons.h"; sourceTree = "<group>"; };
 		9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXIcons.m"; sourceTree = "<group>"; };
-		9F9FF36516506C12005D1CC1 /* PrintStatusCover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PrintStatusCover.png; sourceTree = "<group>"; };
-		9F9FF368165072C5005D1CC1 /* PrintStatusLighting.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PrintStatusLighting.png; sourceTree = "<group>"; };
-		9F9FF36A165074CB005D1CC1 /* PrintStatusClip.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PrintStatusClip.png; sourceTree = "<group>"; };
+		9F9FF36516506C12005D1CC1 /* PrinterCover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PrinterCover.png; sourceTree = "<group>"; };
+		9F9FF368165072C5005D1CC1 /* PrinterLighting.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PrinterLighting.png; sourceTree = "<group>"; };
+		9F9FF36A165074CB005D1CC1 /* PrinterClip.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PrinterClip.png; sourceTree = "<group>"; };
+		9F9FF36C1650E203005D1CC1 /* PrinterPaper.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PrinterPaper.png; sourceTree = "<group>"; };
 		9FA0C9E113D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DDHidUsage+BXUsageExtensions.h"; sourceTree = "<group>"; };
 		9FA0C9E213D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DDHidUsage+BXUsageExtensions.m"; sourceTree = "<group>"; };
 		9FA1CF6713E5B43F00416D74 /* BXMOMORacingControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMOMORacingControllerProfile.m; sourceTree = "<group>"; };
@@ -2970,11 +2970,11 @@
 		9F841F83165051AC0011A545 /* Printing */ = {
 			isa = PBXGroup;
 			children = (
-				9F9FF36A165074CB005D1CC1 /* PrintStatusClip.png */,
-				9F9FF368165072C5005D1CC1 /* PrintStatusLighting.png */,
-				9F9FF36516506C12005D1CC1 /* PrintStatusCover.png */,
-				9F86C45A165060E7003D9C3B /* PrintStatusBackground.jpg */,
-				9F841F85165051C20011A545 /* LetterPaper.png */,
+				9F9FF36C1650E203005D1CC1 /* PrinterPaper.png */,
+				9F9FF36A165074CB005D1CC1 /* PrinterClip.png */,
+				9F9FF368165072C5005D1CC1 /* PrinterLighting.png */,
+				9F9FF36516506C12005D1CC1 /* PrinterCover.png */,
+				9F86C45A165060E7003D9C3B /* PrinterBackground.jpg */,
 			);
 			name = Printing;
 			sourceTree = "<group>";
@@ -3768,11 +3768,11 @@
 				9FDFB47B15DBB530004EA615 /* StandaloneAbout.xib in Resources */,
 				9F44C5C515F274BE00FE0A88 /* PromptFreestandingTemplate.pdf in Resources */,
 				9F6785671649A791007FE89A /* PrintStatusPanel.xib in Resources */,
-				9F841F86165051C20011A545 /* LetterPaper.png in Resources */,
-				9F86C45B165060E7003D9C3B /* PrintStatusBackground.jpg in Resources */,
-				9F9FF36616506C12005D1CC1 /* PrintStatusCover.png in Resources */,
-				9F9FF369165072C6005D1CC1 /* PrintStatusLighting.png in Resources */,
-				9F9FF36B165074CB005D1CC1 /* PrintStatusClip.png in Resources */,
+				9F86C45B165060E7003D9C3B /* PrinterBackground.jpg in Resources */,
+				9F9FF36616506C12005D1CC1 /* PrinterCover.png in Resources */,
+				9F9FF369165072C6005D1CC1 /* PrinterLighting.png in Resources */,
+				9F9FF36B165074CB005D1CC1 /* PrinterClip.png in Resources */,
+				9F9FF36D1650E204005D1CC1 /* PrinterPaper.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

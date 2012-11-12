@@ -164,20 +164,24 @@
 {
     self.dpi = CGSizeMake(48, 48);
     self.pageSize = CGSizeMake(8.50 * self.dpi.width,
-                               11.0 * self.dpi.height);
+                               12.0 * self.dpi.height);
     self.feedOffset = 0;
     self.headOffset = 0;
+    
+    NSImage *paper = [NSImage imageNamed: @"PrinterPaper"];
+    _paperTexture = [paper CGImageForProposedRect: NULL context: nil hints: nil];
     
     CGPoint centerPoint = CGPointMake(NSMidX(self.bounds),
                                       NSMidY(self.bounds));
     
     CALayer *background = [CALayer layer];
-    background.contents = [NSImage imageNamed: @"PrintStatusBackground"];
+    background.contents = [NSImage imageNamed: @"PrinterBackground"];
+    background.contentsGravity = kCAGravityBottom;
     background.frame = NSRectToCGRect(self.bounds);
     background.delegate = self;
     
     CALayer *cover = [CALayer layer];
-    cover.contents = [NSImage imageNamed: @"PrintStatusCover"];
+    cover.contents = [NSImage imageNamed: @"PrinterCover"];
     cover.bounds = CGRectMake(0, 0, self.bounds.size.width, 36);
     cover.anchorPoint = CGPointMake(0.5, 0);
     cover.position = CGPointMake(centerPoint.x, 0);
@@ -185,12 +189,13 @@
     cover.delegate = self;
     
     CALayer *lighting = [CALayer layer];
-    lighting.contents = [NSImage imageNamed: @"PrintStatusLighting"];
+    lighting.contents = [NSImage imageNamed: @"PrinterLighting"];
     lighting.bounds = CGRectMake(0, 0, self.bounds.size.width, 240);
     lighting.anchorPoint = CGPointMake(0.5, 1);
     lighting.position = CGPointMake(centerPoint.x, self.bounds.size.height);
     lighting.compositingFilter = [CIFilter filterWithName: @"CISoftLightBlendMode"];
     lighting.delegate = self;
+    lighting.autoresizingMask = kCALayerMinYMargin;
     
     self.paperFeed = [CALayer layer];
     self.paperFeed.bounds = CGRectInset(CGRectMake(0, 0, self.pageSize.width, self.bounds.size.height), -0.5 * self.dpi.width, 0);
@@ -200,27 +205,38 @@
     self.paperFeed.shadowOffset = CGSizeMake(0, -2);
     self.paperFeed.shadowRadius = 3;
     self.paperFeed.shadowOpacity = 0.66;
+    self.paperFeed.autoresizingMask = kCALayerHeightSizable;
+    self.paperFeed.needsDisplayOnBoundsChange = YES;
     
     self.head = [CALayer layer];
     self.head.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
-    self.head.bounds = CGRectMake(0, 0, 30, 0);
+    self.head.bounds = CGRectMake(0, 0, 30, 12);
     self.head.anchorPoint = CGPointMake(0.5, 0);
     self.head.delegate = self;
     
     self.currentPage = [CALayer layer];
-    self.currentPage.anchorPoint = CGPointMake(0.5, 1); //Anchor at the center top of the page
+    self.currentPage.anchorPoint = CGPointMake(0.5, 1);
     self.currentPage.bounds = CGRectMake(0, 0, self.pageSize.width, self.pageSize.height);
     self.currentPage.delegate = self;
+    self.currentPage.contentsGravity = kCAGravityTop;
+    //Add a small shadow to thicken the preview and make it bolder
+    self.currentPage.shadowOffset = CGSizeZero;
+    self.currentPage.shadowOpacity = 0.5;
+    self.currentPage.shadowRadius = 0.25;
     
     self.previousPage = [CALayer layer];
     self.previousPage.anchorPoint = CGPointMake(0.5, 1);
     self.previousPage.bounds = CGRectMake(0, 0, self.pageSize.width, self.pageSize.height);
     self.previousPage.delegate = self;
+    self.previousPage.contentsGravity = kCAGravityTop;
+    self.previousPage.shadowOffset = CGSizeZero;
+    self.previousPage.shadowOpacity = 0.5;
+    self.previousPage.shadowRadius = 0.25;
     
-    CGFloat clipHeight = 95 + self.head.bounds.size.height;
+    CGFloat clipHeight = 104;
     
     CALayer *leftClip = [CALayer layer];
-    leftClip.contents = [NSImage imageNamed: @"PrintStatusClip"];
+    leftClip.contents = [NSImage imageNamed: @"PrinterClip"];
     leftClip.bounds = CGRectMake(0, 0, 50, 104);
     leftClip.anchorPoint = CGPointMake(0, 0.5);
     leftClip.position = CGPointMake(0, clipHeight);
@@ -239,12 +255,16 @@
     clipRoller.bounds = CGRectMake(0, 0, self.bounds.size.width, 96);
     clipRoller.position = CGPointMake(centerPoint.x, clipHeight);
     clipRoller.delegate = self;
+    clipRoller.shadowOffset = CGSizeZero;
+    clipRoller.shadowOpacity = 1;
+    clipRoller.shadowRadius = 30;
     
     [background addSublayer: clipRoller];
     [background addSublayer: self.paperFeed];
     [background addSublayer: self.currentPage];
     [background addSublayer: self.previousPage];
-    [background addSublayer: self.head];
+    //We don't bother showing the print head for now because it usually moves too fast for any animation to be visible 
+    //[background addSublayer: self.head];
     [background addSublayer: cover];
     [background addSublayer: leftClip];
     [background addSublayer: rightClip];
@@ -264,6 +284,9 @@
     self.paperFeed = nil;
     self.head = nil;
     
+    CGImageRelease(_paperTexture);
+    _paperTexture = NULL;
+    
     [super dealloc];
 }
 
@@ -274,10 +297,7 @@
         CGRect paperRect = [self.paperFeed convertRect: self.currentPage.bounds fromLayer: self.currentPage];
         paperRect = CGRectInset(paperRect, -0.5 * self.dpi.width, 0);
         
-        NSImage *paper = [NSImage imageNamed: @"LetterPaper"];
-        
-        CGImageRef image = [paper CGImageForProposedRect: NULL context: nil hints: nil];
-        CGContextDrawTiledImage(ctx, paperRect, image);
+        CGContextDrawTiledImage(ctx, paperRect, _paperTexture);
     }
 }
 
@@ -320,11 +340,12 @@
 
 - (void) _syncPagePosition
 {
-    CGFloat yPos = self.pageSize.height * self.feedOffset;
-    self.currentPage.position = CGPointMake(NSMidX(self.bounds),
-                                            yPos + self.head.frame.size.height);
+    //TWEAK: keep the 0-position slightly below the fold, so as not to show unprinted lines during slow printing.
+    CGFloat bottomOffset = 15;
+    CGFloat yPos = (self.pageSize.height * self.feedOffset) - bottomOffset;
     
-    self.previousPage.position = CGPointMake(NSMidX(self.bounds),
+    self.currentPage.position   = CGPointMake(NSMidX(self.bounds), yPos);
+    self.previousPage.position  = CGPointMake(NSMidX(self.bounds),
                                              CGRectGetMaxY(self.currentPage.frame) + self.previousPage.bounds.size.height);
     
     [self.paperFeed setNeedsDisplay];
@@ -350,7 +371,9 @@
 
 - (void) animateHeadToOffset: (CGFloat)headOffset
 {
-    [self.animator setHeadOffset: headOffset];
+    //Don't bother animating the head's position as it moves so fast any animation would be interrupted.
+    self.headOffset = headOffset;
+    //[self.animator setHeadOffset: headOffset];
 }
 
 - (void) animateFeedToOffset: (CGFloat)feedOffset

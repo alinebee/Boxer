@@ -15,7 +15,7 @@
 
 //After this many seconds of inactivity, Boxer will decide that the printer may have finished printing
 //and will enable printing.
-#define BXPrinterTimeout 1.0
+#define BXPrinterTimeout 2.0
 
 @interface PDFDocument (PDFDocumentPrivate)
 

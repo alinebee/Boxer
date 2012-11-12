@@ -49,20 +49,6 @@
 - (IBAction) orderFrontPrintStatusPanel: (id)sender
 {
     [self.printStatusController showWindow: self];
-    /*
-    if (!self.printStatusController.window.isVisible)
-    {
-        BXPrintStatusCompletionHandler handler = ^(BXPrintStatusPanelResult result) {
-            if (result == BXPrintStatusPanelPrint)
-            {
-                [self.emulator.printer finishPrintSession];
-            }
-        };
-        
-        [self.printStatusController beginSheetModalWithWindow: self.windowForSheet
-                                            completionHandler: handler];
-    }
-     */
 }
 
 - (IBAction) finishPrintSession: (id)sender
@@ -74,35 +60,6 @@
 {
     [self.emulator.printer cancelPrintSession];
 }
-
-/*
-- (void) _createPreviewWindowForPrinter: (BXEmulatedPrinter *)printer
-{
-    NSSize previewDPI = NSMakeSize(72.0, 72.0);
-    
-    NSRect contentRect = NSMakeRect(0, 0, printer.defaultPageSize.width * previewDPI.width,
-                                    printer.defaultPageSize.height * previewDPI.height);
-    
-    NSUInteger windowMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
-    NSWindow *previewWindow = [[NSWindow alloc] initWithContentRect: contentRect
-                                                          styleMask: windowMask
-                                                            backing: NSBackingStoreBuffered
-                                                              defer: NO];
-    
-    NSImageView *preview = [[NSImageView alloc] initWithFrame: contentRect];
-    preview.imageAlignment = NSImageAlignCenter;
-    preview.imageScaling = NSImageScaleProportionallyUpOrDown;
-    
-    previewWindow.title = @"Print Preview";
-    [previewWindow.contentView addSubview: preview];
-    
-    [previewWindow center];
-    [previewWindow setReleasedWhenClosed: YES];
-    [previewWindow makeKeyAndOrderFront: self];
-    
-    _printPreview = preview;
-}
-*/
 
 - (void) printerDidInitialize: (BXEmulatedPrinter *)printer
 {
@@ -122,18 +79,14 @@
 
 - (void) printer: (BXEmulatedPrinter *)printer didPrintToPageInSession: (BXPrintSession *)session
 {
-    //TODO: ping the print status controller to update with the new page preview
-    /*
-     _printPreview.image = session.currentPagePreview;
-     [_printPreview setNeedsDisplay: YES];
-     */
-    
     BOOL wasInProgress = self.printStatusController.inProgress;
     
     self.printStatusController.numPages = session.numPages;
     self.printStatusController.inProgress = YES;
     [NSObject cancelPreviousPerformRequestsWithTarget: self selector: @selector(_printerIdleTimeout) object: nil];
     [self performSelector: @selector(_printerIdleTimeout) withObject: nil afterDelay: BXPrinterTimeout];
+    
+    self.printStatusController.preview.currentPagePreview = session.currentPagePreview;
     
     //If this is the first thing we've printed since the printer was last idle, then show the print status again.
     if (!wasInProgress)
@@ -142,6 +95,23 @@
     }
 }
 
+- (void) printer: (BXEmulatedPrinter *)printer didFinishPageInSession: (BXPrintSession *)session
+{
+    [self.printStatusController.preview startNewPage: self];
+}
+
+- (void) printer: (BXEmulatedPrinter *)printer didMoveHeadToX: (CGFloat)xOffset
+{
+    CGFloat xRatio = xOffset / printer.pageSize.width;
+    [self.printStatusController.preview animateHeadToOffset: xRatio];
+}
+
+- (void) printer: (BXEmulatedPrinter *)printer didMoveHeadToY: (CGFloat)yOffset
+{
+    CGFloat yRatio = yOffset / printer.pageSize.height;
+    [self.printStatusController.preview animateFeedToOffset: yRatio];
+}
+     
 - (void) _printerIdleTimeout
 {
     self.printStatusController.inProgress = NO;
@@ -149,6 +119,12 @@
     //Once the printer appears to have finished printing,
     //redisplay the printer status panel if it's not already visible.
     [self orderFrontPrintStatusPanel: self];
+}
+
+- (void) printer: (BXEmulatedPrinter *)printer willBeginSession: (BXPrintSession *)session
+{
+    //Our print preview is 2/3rds scale, so don't bother rendering previews any larger than that
+    session.previewDPI = NSMakeSize(48.0, 48.0);
 }
 
 - (void) printer: (BXEmulatedPrinter *)printer didFinishSession: (BXPrintSession *)session

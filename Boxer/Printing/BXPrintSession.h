@@ -32,7 +32,8 @@
 #pragma mark Properties
 
 //The DPI at which to generate page previews.
-@property (readonly, nonatomic) NSSize previewDPI;
+//Changing this will only take effect on the next page preview generated.
+@property (assign, nonatomic) NSSize previewDPI;
 
 //Whether a page is in progress. Will be YES between calls to beginPageWithSize: and finishPage:
 @property (readonly, nonatomic) BOOL pageInProgress;

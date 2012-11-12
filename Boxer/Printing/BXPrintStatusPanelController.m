@@ -8,22 +8,15 @@
 
 #import "BXPrintStatusPanelController.h"
 #import "BXPrintSession.h"
-
-@interface BXPrintStatusPanelController ()
-
-@property (copy, nonatomic) BXPrintStatusCompletionHandler completionHandler;
-
-- (void) _statusPanelDidEnd: (NSWindow *)panel
-                 returnCode: (NSInteger)result
-                contextInfo: (void *)contextInfo;
-@end
+#import "BXGeometry.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation BXPrintStatusPanelController
-@synthesize completionHandler = _completionHandler;
 @synthesize numPages = _numPages;
 @synthesize inProgress = _inProgress;
 @synthesize activePrinterPort = _activePrinterPort;
 @synthesize localizedPaperName = _localizedPaperName;
+@synthesize preview = _preview;
 
 - (void) windowDidLoad
 {
@@ -45,47 +38,8 @@
 - (void) dealloc
 {
     self.localizedPaperName = nil;
+    self.preview = nil;
     [super dealloc];
-}
-
-- (void) beginSheetModalWithWindow: (NSWindow *)parentWindow
-                 completionHandler: (BXPrintStatusCompletionHandler)completionHandler
-{
-    self.completionHandler = completionHandler;
-
-    [NSApp beginSheet: self.window
-       modalForWindow: parentWindow
-        modalDelegate: self
-       didEndSelector: @selector(_statusPanelDidEnd:returnCode:contextInfo:)
-          contextInfo: NULL];
-}
-
-- (void) _statusPanelDidEnd: (NSWindow *)panel
-                 returnCode: (NSInteger)result
-                contextInfo: (void *)contextInfo
-{
-    BXPrintStatusPanelResult handlerResult;
-    if (result == BXPrintStatusPanelPrint)
-        handlerResult = BXPrintStatusPanelPrint;
-    else
-        handlerResult = BXPrintStatusPanelCancel;
-    
-    [panel orderOut: self];
-    
-    if (self.completionHandler)
-        self.completionHandler(handlerResult);
-    
-    self.completionHandler = nil;
-}
-
-- (IBAction) hide: (id)sender
-{
-    [NSApp endSheet: self.window returnCode: BXPrintStatusPanelCancel];
-}
-
-- (IBAction) print: (id)sender
-{
-    [NSApp endSheet: self.window returnCode: BXPrintStatusPanelPrint];
 }
 
 
@@ -179,5 +133,249 @@
     return self.hasPages && !self.inProgress;
 }
 
+@end
+
+
+@interface BXPrintPreview ()
+
+@property (retain, nonatomic) CALayer *currentPage;
+@property (retain, nonatomic) CALayer *previousPage;
+@property (retain, nonatomic) CALayer *paperFeed;
+@property (retain, nonatomic) CALayer *head;
+
+@property (assign, nonatomic) CGSize pageSize;
+@property (assign, nonatomic) CGSize dpi;
+
+@end
+
+@implementation BXPrintPreview
+
+@synthesize currentPage = _currentPage;
+@synthesize previousPage = _previousPage;
+@synthesize paperFeed = _paperFeed;
+@synthesize head = _head;
+
+@synthesize headOffset = _headOffset;
+@synthesize feedOffset = _feedOffset;
+@synthesize pageSize = _pageSize;
+@synthesize dpi = _dpi;
+
+- (void) awakeFromNib
+{
+    self.dpi = CGSizeMake(48, 48);
+    self.pageSize = CGSizeMake(8.50 * self.dpi.width,
+                               11.0 * self.dpi.height);
+    self.feedOffset = 0;
+    self.headOffset = 0;
+    
+    CGPoint centerPoint = CGPointMake(NSMidX(self.bounds),
+                                      NSMidY(self.bounds));
+    
+    CALayer *background = [CALayer layer];
+    background.contents = [NSImage imageNamed: @"PrintStatusBackground"];
+    background.frame = NSRectToCGRect(self.bounds);
+    background.delegate = self;
+    
+    CALayer *cover = [CALayer layer];
+    cover.contents = [NSImage imageNamed: @"PrintStatusCover"];
+    cover.bounds = CGRectMake(0, 0, self.bounds.size.width, 36);
+    cover.anchorPoint = CGPointMake(0.5, 0);
+    cover.position = CGPointMake(centerPoint.x, 0);
+    cover.compositingFilter = [CIFilter filterWithName: @"CIMultiplyBlendMode"];
+    cover.delegate = self;
+    
+    CALayer *lighting = [CALayer layer];
+    lighting.contents = [NSImage imageNamed: @"PrintStatusLighting"];
+    lighting.bounds = CGRectMake(0, 0, self.bounds.size.width, 240);
+    lighting.anchorPoint = CGPointMake(0.5, 1);
+    lighting.position = CGPointMake(centerPoint.x, self.bounds.size.height);
+    lighting.compositingFilter = [CIFilter filterWithName: @"CISoftLightBlendMode"];
+    lighting.delegate = self;
+    
+    self.paperFeed = [CALayer layer];
+    self.paperFeed.bounds = CGRectInset(CGRectMake(0, 0, self.pageSize.width, self.bounds.size.height), -0.5 * self.dpi.width, 0);
+    self.paperFeed.anchorPoint = CGPointMake(0.5, 0);
+    self.paperFeed.position = CGPointMake(centerPoint.x, 0);
+    self.paperFeed.delegate = self;
+    self.paperFeed.shadowOffset = CGSizeMake(0, -2);
+    self.paperFeed.shadowRadius = 3;
+    self.paperFeed.shadowOpacity = 0.66;
+    
+    self.head = [CALayer layer];
+    self.head.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
+    self.head.bounds = CGRectMake(0, 0, 30, 0);
+    self.head.anchorPoint = CGPointMake(0.5, 0);
+    self.head.delegate = self;
+    
+    self.currentPage = [CALayer layer];
+    self.currentPage.anchorPoint = CGPointMake(0.5, 1); //Anchor at the center top of the page
+    self.currentPage.bounds = CGRectMake(0, 0, self.pageSize.width, self.pageSize.height);
+    self.currentPage.delegate = self;
+    
+    self.previousPage = [CALayer layer];
+    self.previousPage.anchorPoint = CGPointMake(0.5, 1);
+    self.previousPage.bounds = CGRectMake(0, 0, self.pageSize.width, self.pageSize.height);
+    self.previousPage.delegate = self;
+    
+    CGFloat clipHeight = 95 + self.head.bounds.size.height;
+    
+    CALayer *leftClip = [CALayer layer];
+    leftClip.contents = [NSImage imageNamed: @"PrintStatusClip"];
+    leftClip.bounds = CGRectMake(0, 0, 50, 104);
+    leftClip.anchorPoint = CGPointMake(0, 0.5);
+    leftClip.position = CGPointMake(0, clipHeight);
+    leftClip.delegate = self;
+    
+    CALayer *rightClip = [CALayer layer];
+    rightClip.contents = leftClip.contents;
+    rightClip.bounds = leftClip.bounds;
+    rightClip.anchorPoint = CGPointMake(0, 0.5);
+    rightClip.position = CGPointMake(self.bounds.size.width, clipHeight);
+    rightClip.affineTransform = CGAffineTransformMakeScale(-1, 1);
+    rightClip.delegate = self;
+    
+    CALayer *clipRoller = [CALayer layer];
+    clipRoller.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
+    clipRoller.bounds = CGRectMake(0, 0, self.bounds.size.width, 96);
+    clipRoller.position = CGPointMake(centerPoint.x, clipHeight);
+    clipRoller.delegate = self;
+    
+    [background addSublayer: clipRoller];
+    [background addSublayer: self.paperFeed];
+    [background addSublayer: self.currentPage];
+    [background addSublayer: self.previousPage];
+    [background addSublayer: self.head];
+    [background addSublayer: cover];
+    [background addSublayer: leftClip];
+    [background addSublayer: rightClip];
+    [background addSublayer: lighting];
+    
+    self.layer = background;
+    self.wantsLayer = YES;
+    
+    [self _syncPagePosition];
+    [self _syncHeadPosition];
+}
+
+- (void) dealloc
+{
+    self.currentPage = nil;
+    self.previousPage = nil;
+    self.paperFeed = nil;
+    self.head = nil;
+    
+    [super dealloc];
+}
+
+- (void) drawLayer: (CALayer *)layer inContext: (CGContextRef)ctx
+{
+    if (layer == self.paperFeed)
+    {
+        CGRect paperRect = [self.paperFeed convertRect: self.currentPage.bounds fromLayer: self.currentPage];
+        paperRect = CGRectInset(paperRect, -0.5 * self.dpi.width, 0);
+        
+        NSImage *paper = [NSImage imageNamed: @"LetterPaper"];
+        
+        CGImageRef image = [paper CGImageForProposedRect: NULL context: nil hints: nil];
+        CGContextDrawTiledImage(ctx, paperRect, image);
+    }
+}
+
+- (BOOL) layer: (CALayer *)layer shouldInheritContentsScale: (CGFloat)newScale fromWindow: (NSWindow *)window
+{
+    return YES;
+}
+
+- (NSImage *) currentPagePreview
+{
+    return self.currentPage.contents;
+}
+
+- (NSImage *) previousPagePreview
+{
+    return self.previousPage.contents;
+}
+
+- (void) setCurrentPagePreview: (NSImage *)preview
+{
+    //The preview image supplied is likely to be the same object the previous image,
+    //but updated with new content; so force the layer to update itself by flipping
+    //the contents momentarily to nil.
+    //TODO: work out why a simple setNeedsDisplay isn't doing the job.
+    self.currentPage.contents = nil;
+    self.currentPage.contents = preview;
+}
+
+- (void) setPreviousPagePreview: (NSImage *)preview
+{
+    self.previousPage.contents = nil;
+    self.previousPage.contents = preview;
+}
+
+- (void) _syncHeadPosition
+{
+    CGFloat xPos = self.pageSize.width * self.headOffset;
+    self.head.position = CGPointMake(CGRectGetMinX(self.currentPage.frame) + xPos, 0);
+}
+
+- (void) _syncPagePosition
+{
+    CGFloat yPos = self.pageSize.height * self.feedOffset;
+    self.currentPage.position = CGPointMake(NSMidX(self.bounds),
+                                            yPos + self.head.frame.size.height);
+    
+    self.previousPage.position = CGPointMake(NSMidX(self.bounds),
+                                             CGRectGetMaxY(self.currentPage.frame) + self.previousPage.bounds.size.height);
+    
+    [self.paperFeed setNeedsDisplay];
+}
+
+- (void) setFeedOffset: (CGFloat)feedOffset
+{
+    if (feedOffset != self.feedOffset)
+    {
+        _feedOffset = feedOffset;
+        [self _syncPagePosition];
+    }
+}
+
+- (void) setHeadOffset: (CGFloat)headOffset
+{
+    if (headOffset != self.headOffset)
+    {
+        _headOffset = headOffset;
+        [self _syncHeadPosition];
+    }
+}
+
+- (void) animateHeadToOffset: (CGFloat)headOffset
+{
+    [self.animator setHeadOffset: headOffset];
+}
+
+- (void) animateFeedToOffset: (CGFloat)feedOffset
+{
+    [self.animator setFeedOffset: feedOffset];
+}
+
++ (id) defaultAnimationForKey: (NSString *)key
+{
+    if ([key isEqualToString: @"feedOffset"])
+    {
+		CABasicAnimation *animation = [CABasicAnimation animation];
+        animation.duration = 0.5;
+        return animation;
+    }
+    
+    return [super defaultAnimationForKey:key];
+}
+
+- (void) startNewPage: (id)sender
+{
+    self.previousPage.contents = self.currentPage.contents;
+    self.currentPage.contents = nil;
+    self.feedOffset -= 1.0;
+    [self.animator setFeedOffset: 0.0];
+}
 
 @end

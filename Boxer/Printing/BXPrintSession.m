@@ -13,7 +13,6 @@
 //Overridden to make these properties read-write.
 @property (assign, nonatomic) BOOL pageInProgress;
 @property (assign, nonatomic, getter=isFinished) BOOL finished;
-@property (assign, nonatomic) NSSize previewDPI;
 @property (assign, nonatomic) NSUInteger numPages;
 @property (retain, nonatomic) NSGraphicsContext *previewContext;
 @property (retain, nonatomic) NSGraphicsContext *PDFContext;
@@ -102,8 +101,10 @@
     //Use multiply blending so that overlapping printed colors will darken each other
     CGContextSetBlendMode((CGContextRef)(_previewContext.graphicsPort), kCGBlendModeMultiply);
     
-    //TODO: if previewDPI does not match the default number of points per inch (72x72),
-    //scale up the context transform to compensate.
+    //If previewDPI does not match the default number of points per inch (72x72),
+    //scale the context transform to compensate.
+    CGPoint scale = CGPointMake(self.previewDPI.width / 72.0, self.previewDPI.height / 72.0);
+    CGContextScaleCTM((CGContextRef)(_previewContext.graphicsPort), scale.x, scale.y);
 }
 
 - (void) finishSession

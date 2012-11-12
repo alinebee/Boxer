@@ -233,7 +233,7 @@
     self.previousPage.shadowOpacity = 0.5;
     self.previousPage.shadowRadius = 0.25;
     
-    CGFloat clipHeight = 104;
+    CGFloat clipHeight = 106;
     
     CALayer *leftClip = [CALayer layer];
     leftClip.contents = [NSImage imageNamed: @"PrinterClip"];

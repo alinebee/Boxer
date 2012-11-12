@@ -119,6 +119,9 @@
     //Once the printer appears to have finished printing,
     //redisplay the printer status panel if it's not already visible.
     [self orderFrontPrintStatusPanel: self];
+    
+    //Bounce to notify the user that we need their input.
+    [NSApp requestUserAttention: NSInformationalRequest];
 }
 
 - (void) printer: (BXEmulatedPrinter *)printer willBeginSession: (BXPrintSession *)session

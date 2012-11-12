@@ -85,6 +85,8 @@ enum {
 //is active, in which case it will be doubled also.
 @property (readonly, nonatomic) double effectiveLetterSpacing;
 
+@property (retain, nonatomic) NSMutableData *bitmapData;
+
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -227,6 +229,7 @@ enum {
 
 @synthesize currentSession = _currentSession;
 @synthesize textAttributes = _textAttributes;
+@synthesize bitmapData = _bitmapData;
 
 @synthesize headPosition = _headPosition;
 @synthesize defaultPageSize = _defaultPageSize;
@@ -256,6 +259,7 @@ enum {
 {
     self.currentSession = nil;
     self.textAttributes = nil;
+    self.bitmapData = nil;
     
     [super dealloc];
 }
@@ -880,7 +884,7 @@ enum {
     _printUpperControlCodes = NO;
     _numDataBytesToIgnore = 0;
     _numDataBytesToPrint = 0;
-    _bitmapBytesRemaining = 0;
+    self.bitmapData = nil;
     
     _unitSize = UNIT_SIZE_UNDEFINED;
     
@@ -1071,106 +1075,134 @@ enum {
 - (void) _prepareForBitmapWithDensity: (NSUInteger)density
                               columns: (NSUInteger)numColumns
 {
+    NSUInteger bytesPerColumn;
 	switch (density)
 	{
         case 0:
             _bitmapDPI = NSMakeSize(60, 60);
             _bitmapPrintAdjacent = YES;
-            _bitmapBytesPerColumn = 1;
+            bytesPerColumn = 1;
             break;
         case 1:
             _bitmapDPI = NSMakeSize(120, 60);
             _bitmapPrintAdjacent = YES;
-            _bitmapBytesPerColumn = 1;
+            bytesPerColumn = 1;
             break;
         case 2:
             _bitmapDPI = NSMakeSize(120, 60);
             _bitmapPrintAdjacent = NO;
-            _bitmapBytesPerColumn = 1;
+            bytesPerColumn = 1;
             break;
         case 3:
             _bitmapDPI = NSMakeSize(240, 60);
             _bitmapPrintAdjacent = NO;
-            _bitmapBytesPerColumn = 1;
+            bytesPerColumn = 1;
             break;
         case 4:
             _bitmapDPI = NSMakeSize(80, 60);
             _bitmapPrintAdjacent = YES;
-            _bitmapBytesPerColumn = 1;
+            bytesPerColumn = 1;
             break;
         case 6:
             _bitmapDPI = NSMakeSize(90, 60);
             _bitmapPrintAdjacent = YES;
-            _bitmapBytesPerColumn = 1;
+            bytesPerColumn = 1;
             break;
         case 32:
             _bitmapDPI = NSMakeSize(60, 180);
             _bitmapPrintAdjacent = YES;
-            _bitmapBytesPerColumn = 3;
+            bytesPerColumn = 3;
             break;
         case 33:
             _bitmapDPI = NSMakeSize(120, 180);
             _bitmapPrintAdjacent = YES;
-            _bitmapBytesPerColumn = 3;
+            bytesPerColumn = 3;
             break;
         case 38:
             _bitmapDPI = NSMakeSize(90, 180);
             _bitmapPrintAdjacent = YES;
-            _bitmapBytesPerColumn = 3;
+            bytesPerColumn = 3;
             break;
         case 39:
             _bitmapDPI = NSMakeSize(180, 180);
             _bitmapPrintAdjacent = YES;
-            _bitmapBytesPerColumn = 3;
+            bytesPerColumn = 3;
             break;
         case 40:
             _bitmapDPI = NSMakeSize(360, 180);
             _bitmapPrintAdjacent = NO;
-            _bitmapBytesPerColumn = 3;
+            bytesPerColumn = 3;
             break;
         case 71:
             _bitmapDPI = NSMakeSize(180, 360);
             _bitmapPrintAdjacent = YES;
-            _bitmapBytesPerColumn = 6;
+            bytesPerColumn = 6;
             break;
         case 72:
             _bitmapDPI = NSMakeSize(360, 360);
             _bitmapPrintAdjacent = NO;
-            _bitmapBytesPerColumn = 6;
+            bytesPerColumn = 6;
             break;
         case 73:
             _bitmapDPI = NSMakeSize(360, 360);
             _bitmapPrintAdjacent = YES;
-            _bitmapBytesPerColumn = 6;
+            bytesPerColumn = 6;
             break;
         default:
             NSLog(@"PRINTER: Unsupported bit image density %u", density);
 	}
     
-    _bitmapBytesRemaining = numColumns * _bitmapBytesPerColumn;
-    _bitmapBytesReadInColumn = 0;
+    _bitmapHeight = bytesPerColumn * 8;
+    _bitmapWidth = numColumns;
+    NSUInteger numPixels = _bitmapHeight * _bitmapWidth;
+    
+    self.bitmapData = [NSMutableData dataWithLength: numPixels];
+    _bitmapCurrentColumn = 0;
+    _bitmapCurrentRow = 0;
 }
 
 - (BOOL) _handleBitmapData: (uint8_t)byte
 {
-    if (_bitmapBytesRemaining)
+    if (self.bitmapData)
     {
-        //Add the specified byte to the current column.
-        _bitmapColumnData[_bitmapBytesReadInColumn] = byte;
-        _bitmapBytesReadInColumn++;
-        _bitmapBytesRemaining--;
+        //Draw the specified byte into the current column.
+        uint8_t *pixels = (uint8_t *)self.bitmapData.mutableBytes;
         
-        //Once we have a full column of bitmap data, draw it to the page
-        if (_bitmapBytesReadInColumn == _bitmapBytesPerColumn)
+        //Bitmap pixels are fed in as a column of 8 bits, ordered with the most significant bit at the top.
+        //We want to pour these columns into a regular 2-dimensional byte array, ordered from left to right
+        //and top to bottom, as that's easier for our draw routines to digest.
+        //So, we walk through the individual bits of the byte pulling out each pixel value and feeding it
+        //into our array of pixels.
+        for (NSUInteger mask=128; mask > 0; mask >>= 1)
+        {
+            BOOL pixelOn = (byte & mask);
+            
+            NSUInteger pixelOffset = (_bitmapCurrentRow * _bitmapWidth) + _bitmapCurrentColumn;
+            pixels[pixelOffset] = (pixelOn) ? 255 : 0;
+            
+            //Advance the row counter after reading each bit; once we hit the bottom of the column,
+            //advance the column counter so we start filling up next column.
+            _bitmapCurrentRow++;
+            if (_bitmapCurrentRow >= _bitmapHeight)
+            {
+                _bitmapCurrentRow = 0;
+                _bitmapCurrentColumn++;
+            }
+        }
+        
+        //Once we've got all the pixels for this image, render it into the page.
+        if (_bitmapCurrentColumn >= _bitmapWidth)
         {
             NSColor *printColor = [self.class _colorForColorCode: self.color];
+            CGColorRef cgColor = CGColorCreateGenericCMYK(printColor.cyanComponent,
+                                                          printColor.magentaComponent,
+                                                          printColor.yellowComponent,
+                                                          printColor.blackComponent,
+                                                          printColor.alphaComponent);
             
-            //Where to start printing the column from and how big each dot should be in user space coordinates.
-            NSRect dotRect;
-            dotRect.origin = [self convertPointFromPage: self.headPosition];
-            dotRect.size = NSMakeSize(72.0 / _bitmapDPI.width,
-                                      72.0 / _bitmapDPI.height);
-            dotRect.origin.y -= dotRect.size.height;
+            NSPoint initialOffset = [self convertPointFromPage: self.headPosition];
+            NSSize dotSize = NSMakeSize(72.0 / _bitmapDPI.width,
+                                        72.0 / _bitmapDPI.height);
             
             [self _prepareCanvasForPrinting];
             
@@ -1182,36 +1214,82 @@ enum {
             
             for (NSGraphicsContext *context in contexts)
             {
-                [NSGraphicsContext saveGraphicsState];
-                    [NSGraphicsContext setCurrentContext: context];
+                CGContextRef ctx = (CGContextRef)context.graphicsPort;
+                CGContextSaveGState(ctx);
+                CGContextSetFillColorWithColor(ctx, cgColor);
+            }
                 
-                    [printColor set];
+            //Loop over each row of the bitmap looking for runs of pixels.
+            //We draw each run as a single rectangle, which results in a much tidier
+            //(and smaller) PDF than if we drew individual rects for each pixel.
+            //TODO: try generating an actual image with this data and drawing that,
+            //instead of drawing vector lines.
+            NSUInteger row, col;
+            for (row = 0; row < _bitmapHeight; row++)
+            {
+                NSUInteger lineWidth = 0;
+                BOOL lastPixelOn = NO;
                 
-                    //Loop over each bit in each byte, printing a dot for each bit
-                    //that's on and leaving a space for each bit that's off
-                    NSUInteger byteIndex, bitIndex;
-                    for (byteIndex=0; byteIndex < _bitmapBytesPerColumn; byteIndex++)
+                //NOTE: we let the loop go one over the end of the row so that we can pinch off an end-of-row line tidily
+                for (col = 0; col <= _bitmapWidth; col++)
+                {
+                    BOOL currentPixelOn;
+                    
+                    //End of row: finish up the current line, if one is open
+                    if (col == _bitmapWidth)
                     {
-                        //Bits go from highest to lowest => left to right
-                        for (bitIndex=128; bitIndex > 0; bitIndex >>= 1)
-                        {
-                            //If the bit is active, draw a dot here
-                            if (_bitmapColumnData[byteIndex] & bitIndex)
-                            {
-                                NSRectFill(dotRect);
-                            }
-                            dotRect.origin.y -= dotRect.size.height;
-                        }
+                        currentPixelOn = NO;
                     }
-                [NSGraphicsContext restoreGraphicsState];
+                    //Otherwise look up the value for this pixel from the bitmap
+                    else
+                    {
+                        NSUInteger pixelOffset = (row * _bitmapWidth) + col;
+                        currentPixelOn = (BOOL)pixels[pixelOffset];
+                    }
+                    
+                    //The run of pixels continues: extend the current line
+                    if (currentPixelOn)
+                    {
+                        lineWidth++;
+                    }
+                    
+                    //The run of pixels just finished: draw the line now
+                    else if (lastPixelOn)
+                    {
+                        CGRect line = CGRectMake(initialOffset.x + (dotSize.width * (col - lineWidth)),
+                                                 initialOffset.y - (dotSize.height * (row + 1)),
+                                                 dotSize.width * lineWidth,
+                                                 dotSize.height);
+                        
+                        for (NSGraphicsContext *context in contexts)
+                        {
+                            CGContextRef ctx = (CGContextRef)context.graphicsPort;
+                            CGContextFillRect(ctx, line);
+                        }
+                        
+                        lineWidth = 0;
+                    }
+                    
+                    lastPixelOn = currentPixelOn;
+                }
             }
             
-            _bitmapBytesReadInColumn = 0;
+            for (NSGraphicsContext *context in contexts)
+            {
+                CGContextRef ctx = (CGContextRef)context.graphicsPort;
+                CGContextRestoreGState(ctx);
+            }
             
-            //Advance the print head past the current graphics column.
-            CGFloat newX = self.headPosition.x + (1 / _bitmapDPI.width);
+            //Discard the bitmap once we're done with it
+            self.bitmapData = nil;
+            
+            CGColorRelease(cgColor);
+            
+            //Advance the print head beyond the bitmap data
+            CGFloat newX = self.headPosition.x + (dotSize.width * _bitmapWidth);
             [self _moveHeadToX: newX];
             
+            //Let the context know we printed something
             if ([self.delegate respondsToSelector: @selector(printer:didPrintToPageInSession:)])
                 [self.delegate printer: self didPrintToPageInSession: self.currentSession];
         }

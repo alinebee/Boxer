@@ -8,7 +8,7 @@
 #import "BXEmulatedMT32.h"
 #import "RegexKitLite.h"
 #import "MT32Emu/Synth.h"
-#import "MT32Emu/Filestream.h"
+#import "MT32Emu/FileStream.h"
 #import "BXEmulatedMT32Delegate.h"
 
 

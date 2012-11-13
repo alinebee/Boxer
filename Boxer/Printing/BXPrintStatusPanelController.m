@@ -82,7 +82,7 @@
         NSString *format;
         if (self.inProgress)
         {
-            format = NSLocalizedString(@"Preparing page %u for printing…", @"Status text shown in print status panel when the emulated printer is in the middle of printing a page. %u is the current page number being printed.");
+            format = NSLocalizedString(@"Preparing page %u…", @"Status text shown in print status panel when the emulated printer is in the middle of printing a page. %u is the current page number being printed.");
         }
         else
         {

@@ -144,7 +144,7 @@
 								<object class="NSProgressIndicator" id="404721806">
 									<reference key="NSNextResponder" ref="361115452"/>
 									<int key="NSvFlags">292</int>
-									<string key="NSFrame">{{262, 22}, {16, 16}}</string>
+									<string key="NSFrame">{{269, 22}, {16, 16}}</string>
 									<reference key="NSSuperview" ref="361115452"/>
 									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="9593785"/>
@@ -212,7 +212,6 @@
 									<string key="NSFrame">{{375, 13}, {91, 32}}</string>
 									<reference key="NSSuperview" ref="361115452"/>
 									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView"/>
 									<string key="NSReuseIdentifierKey">_NS:9</string>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSButtonCell" key="NSCell" id="630813526">

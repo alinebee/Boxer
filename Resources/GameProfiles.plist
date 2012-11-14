@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20121026.1</string>
+	<string>20121114.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
 		<dict>
@@ -1560,6 +1560,7 @@
 				<string>Warcraft II</string>
 				<string>Space Quest VI</string>
 				<string>Lemmings 3D</string>
+                <string>The Riddle of Master Lu</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -1567,6 +1568,7 @@
 				<string>war2.exe</string>
 				<string>vesa.drv</string>
 				<string>l3d.exe</string>
+                <string>believe.it</string>
 			</array>
 		</dict>
 		<dict>

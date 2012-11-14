@@ -412,6 +412,10 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
         return NO;
     }
     
+    // Make sure MT32 is loud enough.
+    // 9.0 seems to be about right with SoundBlaster sfx
+    _synth->setOutputGain(9.0f);
+    
     return YES;
 }
 

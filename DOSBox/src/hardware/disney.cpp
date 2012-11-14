@@ -187,7 +187,6 @@ static void disney_write(Bitu port,Bitu val,Bitu iolen) {
 	disney.last_used=PIC_Ticks;
 	switch (port-DISNEY_BASE) {
 	case 0:		/* Data Port */
-	case 0x330-DISNEY_BASE:
 	{
 		disney.data=val;
 		// if data is written here too often without using the stereo
@@ -368,7 +367,6 @@ class DISNEY: public Module_base {
 private:
 	IO_ReadHandleObject ReadHandler;
 	IO_WriteHandleObject WriteHandler;
-	IO_WriteHandleObject WriteHandler_cvm;
 	//MixerObject MixerChan;
 public:
 	DISNEY(Section* configuration):Module_base(configuration) {
@@ -379,7 +377,6 @@ public:
 	
 		WriteHandler.Install(DISNEY_BASE,disney_write,IO_MB,3);
 		ReadHandler.Install(DISNEY_BASE,disney_read,IO_MB,3);
-		WriteHandler_cvm.Install(0x330,disney_write,IO_MB,1);
 	
 		disney.status=0x84;
 		disney.control=0;

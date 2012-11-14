@@ -359,6 +359,7 @@
 			<array>
 				<string>More memory</string>
 				<string>No GUS</string>
+				<string>No dynamic</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>

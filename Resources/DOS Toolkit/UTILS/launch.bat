@@ -2,9 +2,6 @@
 
 IF "%1"=="" goto usage
 
-rem Get the batchfile to delete itself as soon as it is launched
-echo @del %%%0 > %TEMP%\TEMPRUN.BAT
-
 rem Find the first executable that matches the search string
 locate %1 /x /f:1 /g /b8:"call" >> %TEMP%\TEMPRUN.BAT
 IF ERRORLEVEL 1 goto failure
@@ -14,7 +11,6 @@ call %TEMP%\TEMPRUN.BAT %2 %3 %4 %5 %6 %7 %8
 goto end
 
 :failure
-del %TEMP%\TEMPRUN.BAT > nul
 echo No program matching the name "%1" could be found.
 goto end
 
@@ -31,3 +27,5 @@ echo.          launch ultima*
 echo.
 
 :end
+rem Clean up after ourselves by deleting the temporary launcher batchfile.
+del %TEMP%\TEMPRUN.BAT > nul

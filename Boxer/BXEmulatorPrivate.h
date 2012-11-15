@@ -364,7 +364,6 @@ enum {
 - (void) _suspendAudio;
 - (void) _resumeAudio;
 
-
 //Returns the file path for the specified MT-32 ROM,
 //or nil if no such ROM is available. This calls
 //one of the delegate methods pathToMT32ControlROMForEmulator:
@@ -446,5 +445,17 @@ enum {
 
 //Whether we're able to paste text directly to the DOS prompt.
 - (BOOL) _canPasteToShell;
+
+@end
+
+
+#pragma mark -
+#pragma mark IO-related methods
+
+@interface BXEmulator (BXParallelInternals)
+
+//Called when the DOS session wants an emulated printer to be attached to the specified port.
+//(i.e., when any emulated parallel port has been configured to point to a printer.)
+- (void) _didRequestPrinterOnLPTPort: (NSUInteger)portNumber;
 
 @end

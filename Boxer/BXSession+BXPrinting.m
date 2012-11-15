@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXSession+BXPrinting.h"
+#import "BXSessionPrivate.h"
 #import "BXPrintSession.h"
 #import "BXPrintStatusPanelController.h"
 #import "BXEmulator.h"
@@ -27,20 +27,6 @@
 
 @implementation BXSession (BXPrinting)
 
-- (BXPrintStatusPanelController *) printStatusController
-{
-    //Create the print status window the first time it's needed
-    if (!_printStatusController)
-    {
-        _printStatusController = [[BXPrintStatusPanelController alloc] initWithWindowNibName: @"PrintStatusPanel"];
-        
-        _printStatusController.activePrinterPort = BXPrintStatusPortLPT1;
-        [_printStatusController bind: @"localizedPaperName" toObject: self withKeyPath: @"printInfo.localizedPaperName" options: nil];
-    }
-    
-    return [[_printStatusController retain] autorelease];
-}
-
 - (IBAction) printDocument: (id)sender
 {
     [self orderFrontPrintStatusPanel: sender];
@@ -48,6 +34,14 @@
 
 - (IBAction) orderFrontPrintStatusPanel: (id)sender
 {
+    if (!self.printStatusController)
+    {
+        self.printStatusController = [[BXPrintStatusPanelController alloc] initWithWindowNibName: @"PrintStatusPanel"];
+    }
+    
+    self.printStatusController.activePrinterPort = self.emulator.printer.port;
+    self.printStatusController.localizedPaperName = self.printInfo.localizedPaperName;
+    
     [self.printStatusController showWindow: self];
 }
 

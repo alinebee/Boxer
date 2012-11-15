@@ -12,6 +12,7 @@
 #import "BXSession+BXEmulatorControls.h"
 #import "BXSession+BXAudioControls.h"
 #import "BXSession+BXFileManager.h"
+#import "BXSession+BXPrinting.h"
 #import "BXSessionError.h"
 
 

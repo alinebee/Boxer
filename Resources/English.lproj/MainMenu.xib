@@ -1471,6 +1471,14 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
+								<object class="NSMenuItem" id="493707059">
+									<reference key="NSMenu" ref="540791426"/>
+									<string key="NSTitle">Printer Status</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
 							</object>
 							<string key="NSName">_NSWindowsMenu</string>
 						</object>
@@ -2582,6 +2590,14 @@
 					<int key="connectionID">2335</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">orderFrontPrintStatusPanel:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="493707059"/>
+					</object>
+					<int key="connectionID">2338</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
 						<reference key="source" ref="34920399"/>
@@ -3529,6 +3545,7 @@
 							<reference ref="987765231"/>
 							<reference ref="476483409"/>
 							<reference ref="100059276"/>
+							<reference ref="493707059"/>
 						</object>
 						<reference key="parent" ref="293253799"/>
 					</object>
@@ -4076,6 +4093,11 @@
 						<reference key="object" ref="328811895"/>
 						<reference key="parent" ref="176076355"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2336</int>
+						<reference key="object" ref="493707059"/>
+						<reference key="parent" ref="540791426"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -4268,6 +4290,7 @@
 					<string>2279.IBPluginDependency</string>
 					<string>2330.IBPluginDependency</string>
 					<string>2331.IBPluginDependency</string>
+					<string>2336.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>284.IBPluginDependency</string>
 					<string>285.IBPluginDependency</string>
@@ -4523,6 +4546,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -4537,7 +4561,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2335</int>
+			<int key="maxID">2338</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -5776,46 +5800,6 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">BXPrintStatusPanelController</string>
-					<string key="superclassName">NSWindowController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>hide:</string>
-							<string>print:</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>hide:</string>
-							<string>print:</string>
-						</object>
-						<object class="NSArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">hide:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">print:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXPrintStatusPanelController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">BXProgramPanelController</string>
 					<string key="superclassName">NSViewController</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -5915,10 +5899,12 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>cancelPrintSession:</string>
 							<string>decrementFrameSkip:</string>
 							<string>decrementSpeed:</string>
 							<string>exportGameState:</string>
 							<string>fastForward:</string>
+							<string>finishPrintSession:</string>
 							<string>importGameState:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
@@ -5942,6 +5928,8 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -5972,10 +5960,12 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>cancelPrintSession:</string>
 							<string>decrementFrameSkip:</string>
 							<string>decrementSpeed:</string>
 							<string>exportGameState:</string>
 							<string>fastForward:</string>
+							<string>finishPrintSession:</string>
 							<string>importGameState:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
@@ -6000,6 +5990,10 @@
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
+								<string key="name">cancelPrintSession:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">decrementFrameSkip:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -6013,6 +6007,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">fastForward:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">finishPrintSession:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

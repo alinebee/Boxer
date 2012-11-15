@@ -201,10 +201,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		self.videoHandler.emulator = self;
         
         self.keyBuffer = [[[BXKeyBuffer alloc] init] autorelease];
-        
-        self.printer = [[[BXEmulatedPrinter alloc] init] autorelease];
-        [self.printer bind: @"delegate" toObject: self withKeyPath: @"delegate" options: 0];
-        
     }
 	return self;
 }
@@ -748,6 +744,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @end
 
 
+
 #pragma mark -
 #pragma mark Private methods
 
@@ -869,7 +866,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 {
     [self.delegate emulator: self didFinishFrame: frame];
 }
-                           
+
 
 #pragma mark -
 #pragma mark Runloop handling
@@ -985,6 +982,25 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	//Clean up after DOSBox finishes
 	[self.videoHandler shutdown];
     control = NULL;
+}
+
+@end
+
+
+
+#pragma mark -
+#pragma mark Parallel port emulation
+
+@implementation BXEmulator (BXParallelInternals)
+
+- (void) _didRequestPrinterOnLPTPort: (NSUInteger)portNumber
+{
+    if (!self.printer)
+    {
+        self.printer = [[[BXEmulatedPrinter alloc] init] autorelease];
+        self.printer.port = (BXEmulatedPrinterPort)(portNumber + 1);
+        [self.printer bind: @"delegate" toObject: self withKeyPath: @"delegate" options: 0];
+    }
 }
 
 @end

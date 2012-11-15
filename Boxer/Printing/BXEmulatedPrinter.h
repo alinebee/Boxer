@@ -26,6 +26,12 @@ enum {
 typedef NSUInteger BXESCPLineStyle;
 
 typedef enum {
+    BXPrinterPortLPT1 = 1,
+    BXPrinterPortLPT2 = 2,
+    BXPrinterPortLPT3 = 3
+} BXEmulatedPrinterPort;
+
+typedef enum {
     BXESCPQualityDraft = 1,
     BXESCPQualityLQ = 2,
 } BXESCPQuality;
@@ -131,6 +137,7 @@ typedef enum {
 {
     id <BXEmulatedPrinterDelegate> _delegate;
     BOOL _initialized;
+    BXEmulatedPrinterPort _port;
     
     //The current contents of the write-only data and control registers
     uint8_t _dataRegister;
@@ -261,6 +268,10 @@ typedef enum {
 
 #pragma mark -
 #pragma mark Status properties
+
+//The parallel port to which this printer is attached. Defaults to BXPrinterPortLPT1.
+//This is for tracking purposes only and has no effect on the printer's behaviour.
+@property (assign, nonatomic) BXEmulatedPrinterPort port;
 
 //Whether the printer is currently busy and cannot respond to more data.
 //Used by the parallel connection.

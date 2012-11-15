@@ -536,9 +536,11 @@ Bitu boxer_PRINTER_readcontrol(Bitu port,Bitu iolen)
     return emulator.printer.controlRegister;
 }
 
-bool boxer_PRINTER_isInited()
+bool boxer_PRINTER_isInited(Bitu port)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
+    //Tell the emulator we actually want a printer
+    [emulator _didRequestPrinterOnLPTPort: port];
     return emulator.printer != nil;
 }
 

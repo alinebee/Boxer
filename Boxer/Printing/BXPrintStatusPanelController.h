@@ -7,17 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
-typedef enum {
-    BXPrintStatusPortLPT1 = 1,
-    BXPrintStatusPortLPT2 = 2,
-    BXPrintStatusPortLPT3 = 3
-} BXPrintStatusPort;
+#import "BXEmulatedPrinter.h"
 
 @class BXPrintPreview;
 @interface BXPrintStatusPanelController : NSWindowController
 {
-    BXPrintStatusPort _activePrinterPort;
+    BXEmulatedPrinterPort _activePrinterPort;
     NSString *_localizedPaperName;
     BOOL _inProgress;
     NSUInteger _numPages;
@@ -35,7 +30,7 @@ typedef enum {
 @property (copy, nonatomic) NSString *localizedPaperName;
 
 //Which printer port the emulated printer is attached to.
-@property (assign, nonatomic) BXPrintStatusPort activePrinterPort;
+@property (assign, nonatomic) BXEmulatedPrinterPort activePrinterPort;
 
 //The preview view into which page previews will be rendered.
 @property (retain, nonatomic) IBOutlet BXPrintPreview *preview;

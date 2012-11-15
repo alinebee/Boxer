@@ -159,7 +159,7 @@ extern "C" {
     void boxer_PRINTER_writecontrol(Bitu port,Bitu val, Bitu iolen);
     Bitu boxer_PRINTER_readcontrol(Bitu port,Bitu iolen);
     
-    bool boxer_PRINTER_isInited();
+    bool boxer_PRINTER_isInited(Bitu port);
     
     void boxer_log(char const* format,...);
     void boxer_die(char const *functionName, char const *fileName, int lineNumber, char const* format,...);

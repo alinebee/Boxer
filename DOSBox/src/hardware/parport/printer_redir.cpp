@@ -28,7 +28,7 @@
 
 CPrinterRedir::CPrinterRedir(Bitu nr, Bit8u initIrq, CommandLine* cmd)
                               :CParallel (cmd, nr, initIrq) {
-	InstallationSuccessful = boxer_PRINTER_isInited();
+	InstallationSuccessful = boxer_PRINTER_isInited(nr);
 }
 
 CPrinterRedir::~CPrinterRedir () {

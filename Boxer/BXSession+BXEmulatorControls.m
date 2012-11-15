@@ -409,9 +409,11 @@
 	if (theAction == @selector(revertShadowedChanges:)) return self.hasShadowedChanges;
 	if (theAction == @selector(mergeShadowedChanges:))  return self.hasShadowedChanges;
     
-    if (theAction == @selector(exportGameState:)) return self.hasShadowedChanges;
-	if (theAction == @selector(importGameState:))  return self.hasGamebox;
+    if (theAction == @selector(exportGameState:))   return self.hasShadowedChanges;
+	if (theAction == @selector(importGameState:))   return self.hasGamebox;
     
+    if (theAction == @selector(printDocument:) || theAction == @selector(orderFrontPrintStatusPanel:))
+        return self.emulator.printer != nil;
     
 	if (theAction == @selector(paste:))
 		return isShowingDOSView && [self canPasteFromPasteboard: [NSPasteboard generalPasteboard]];

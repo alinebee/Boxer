@@ -209,6 +209,7 @@ enum {
 
 @synthesize dataRegister = _dataRegister;
 
+@synthesize port = _port;
 @synthesize busy = _busy;
 @synthesize autoFeed = _autoFeed;
 
@@ -263,6 +264,7 @@ enum {
     self = [super init];
     if (self)
     {
+        self.port = BXPrinterPortLPT1;
         _controlRegister = BXEmulatedPrinterControlReset;
         _initialized = NO;
         

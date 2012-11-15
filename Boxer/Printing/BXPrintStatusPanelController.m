@@ -46,19 +46,19 @@
 #pragma mark -
 #pragma mark UI bindings
 
-+ (NSString *) localizedNameForPort: (BXPrintStatusPort)port
++ (NSString *) localizedNameForPort: (BXEmulatedPrinterPort)port
 {
     switch (port)
     {
-        case BXPrintStatusPortLPT1:
+        case BXPrinterPortLPT1:
             return NSLocalizedString(@"LPT1", @"Localized name for parallel port 1");
             break;
             
-        case BXPrintStatusPortLPT2:
+        case BXPrinterPortLPT2:
             return NSLocalizedString(@"LPT2", @"Localized name for parallel port 2");
             break;
             
-        case BXPrintStatusPortLPT3:
+        case BXPrinterPortLPT3:
             return NSLocalizedString(@"LPT3", @"Localized name for parallel port 3");
             break;
     }

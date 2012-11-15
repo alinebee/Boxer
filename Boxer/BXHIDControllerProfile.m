@@ -177,10 +177,15 @@ static NSMutableArray *_profileClasses = nil;
 	//Don't continue if we don't yet know what we're mapping to or from
 	if (!self.device || !self.emulatedJoystick) return;
 	
-	NSArray *axes			= self.device.axisElements;
-	NSArray *buttons		= self.device.buttonElements;
-	NSArray *POVs			= self.device.povElements;
-	
+	NSArray *axes       = self.device.axisElements;
+	NSArray *buttons	= self.device.buttonElements;
+	NSArray *POVs		= self.device.povElements;
+    
+    for (DDHidElement *element in axes)
+    {
+        NSLog(@"Axis: %@ Properties: %@", element.usage.usageName, element.properties);
+	}
+    
 	//If the controller has a D-pad, then bind it separately from the other buttons
 	NSDictionary *dPad = [self DPadElementsFromButtons: buttons];
 	if (dPad.count)
@@ -219,13 +224,25 @@ static NSMutableArray *_profileClasses = nil;
     //Unlike regular axis mapping, wheel axis mapping doesn't check the axis types of individual
     //axis elements. Instead it sorts all the axes by usage ID and maps them to the wheel based
     //on that enumeration order.
-    //DOCUMENT ME: why did we decide to go with this approach for wheels, instead of plucking out
-    //axes with certain usage IDs like we normally do?
+    
+    //We take this approach instead of mapping based on usage, because wheel controllers have not
+    //been tested extensively and I don't know which axis usages are commonly used for pedals.
+    //Instead we just assume that e.g. on a 3-axis wheel controller, the 2nd axis will be brake
+    //and the 3rd will be accelerator (regardless of their respective usages).
     
     DDHidElement *wheel, *accelerator, *brake;
     
     //Sort the elements by usage, in case the device enumerates them in a funny order.
-    NSArray *sortedElements = [elements sortedArrayUsingSelector: @selector(compareByUsage:)];
+    //TWEAK: we also filter out axes with duplicate usages, so that each usage will only appear once.
+    //FIXME: this is a huge amount of trouble to go to for a not-very-good heuristic.
+    NSMutableDictionary *elementsByUsage = [NSMutableDictionary dictionaryWithCapacity: elements.count];
+    for (DDHidElement *element in elements)
+    {
+        if ([elementsByUsage objectForKey: element.usage] == nil)
+            [elementsByUsage setObject: element forKey: element.usage];
+    }
+    NSArray *sortedElements = [elementsByUsage.allValues sortedArrayUsingSelector: @selector(compareByUsage:)];
+
     
     NSUInteger numAxes = sortedElements.count;
     //There's nothing we can do with a single-axis controller.
@@ -460,7 +477,9 @@ static NSMutableArray *_profileClasses = nil;
 	{
 		binding = [BXPOVToPOV binding];
 	}
-	else
+    //TWEAK: Don't map hat-switches on flightstick-style controllers to act as X/Y/wheel axes.
+    //This would be inappropriate for an actual hat-switch; the behaviour is only intended for D-pads.
+	else if (self.controllerStyle != BXControllerStyleFlightstick)
 	{
         //Otherwise, map the POV to the X and Y axes if available
 		if ([self.emulatedJoystick respondsToSelector: @selector(xAxis)] &&
@@ -617,24 +636,44 @@ static NSMutableArray *_profileClasses = nil;
 
 - (NSString *) description
 {
-    //Format the bindings list sorted by usage, to group related usages together.
-    NSMutableString *sortedBindings = [NSMutableString stringWithCapacity: 500];
+    NSMutableString *desc = [NSMutableString stringWithCapacity: 500];
+    
+    [desc appendFormat: @"Controller profile of type: %@\n", self.class];
+    [desc appendFormat: @"From controller: %@\n", self.device];
+    [desc appendFormat: @"To emulated joystick: %@\n", self.emulatedJoystick.class];
+    
+    //Print out all buttons on the controller.
+    [desc appendFormat: @"Buttons: %@\n", self.device.buttonElements];
+    
+    //Print out a breakdown of each stick's axes and POV elements.
+    NSUInteger stickIndex = 0;
+    for (DDHidJoystickStick *stick in self.device.sticks)
+    {
+        NSString *indentedStickDesc = [stick.description stringByReplacingOccurrencesOfString: @"\n"
+                                                                                   withString: @"\n\t"];
+        [desc appendFormat: @"Stick %i:\n\t%@\n", stickIndex, indentedStickDesc];
+        stickIndex++;
+    }
+    
+    //Print out the properties of each individual axis.
+    [desc appendString: @"Axis properties: {\n"];
+    for (DDHidElement *axis in self.device.axisElements)
+    {
+        [desc appendFormat: @"\t%@ = %@,\n", axis.usage.usageName, [axis.properties descriptionWithLocale: nil indent: 1]];
+    }
+    [desc appendString: @"}\n"];
+    
+    //Print out our dictionary of usage->binding mappings.
+    //IMPLEMENTATION NOTE: we sort this by usage to group similar usages (axes, buttons etc.) together.
     NSArray *sortedKeys = [self.bindings.allKeys sortedArrayUsingSelector: @selector(compare:)];
-    [sortedBindings appendString: @"{\n"];
+    [desc appendString: @"Bindings: {\n"];
     for (DDHidUsage *key in sortedKeys)
     {
         id value = [self.bindings objectForKey: key];
-        [sortedBindings appendFormat: @"\t\"%@\" = \"%@\";\n", key, value];
+        [desc appendFormat: @"\t%@ = %@,\n", key.usageName, value];
     }
-    [sortedBindings appendString: @"}\n"];
+    [desc appendString: @"}\n"];
     
-    return [NSString stringWithFormat: @"Controller profile of type: %@\nFrom controller: %@\nTo emulated joystick: %@\nAxes: %@\nButtons: %@\nHat switches: %@\nBindings: %@\n",
-            self.class,
-            self.device,
-            self.emulatedJoystick.class,
-            self.device.axisElements,
-            self.device.buttonElements,
-            self.device.povElements,
-            sortedBindings];
+    return desc;
 }
 @end

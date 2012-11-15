@@ -344,9 +344,13 @@
     CGFloat bottomOffset = 15;
     CGFloat yPos = (self.pageSize.height * self.feedOffset) - bottomOffset;
     
+    //Disable implicit movement animations on <10.7
+    [CATransaction begin];
+    [CATransaction setAnimationDuration: 0];
     self.currentPage.position   = CGPointMake(NSMidX(self.bounds), yPos);
     self.previousPage.position  = CGPointMake(NSMidX(self.bounds),
                                              CGRectGetMaxY(self.currentPage.frame) + self.previousPage.bounds.size.height);
+    [CATransaction commit];
     
     [self.paperFeed setNeedsDisplay];
 }
@@ -373,7 +377,6 @@
 {
     //Don't bother animating the head's position as it moves so fast any animation would be interrupted.
     self.headOffset = headOffset;
-    //[self.animator setHeadOffset: headOffset];
 }
 
 - (void) animateFeedToOffset: (CGFloat)feedOffset

@@ -499,7 +499,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	dosPath = [dosPath stringByReplacingOccurrencesOfString: @"/" withString: @"\\"];
     
     //If the path starts with a drive letter, pop it off
-	if ([dosPath length] >= 2 && [dosPath characterAtIndex: 1] == (unichar)':')
+	if (dosPath.length >= 2 && [dosPath characterAtIndex: 1] == (unichar)':')
 	{
 		NSString *driveLetter = [dosPath substringToIndex: 1];
 		//Snip off the drive letter from the front of the path
@@ -514,10 +514,12 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     
     //If the path was empty (e.g. nothing more than a drive letter)
     //then it represents the current or root path, so yes it exists
-    if (![dosPath length]) return YES;
+    if (!dosPath.length) return YES;
 	
     //Otherwise, ask the drive itself
-    return dosDrive->FileExists([dosPath cStringUsingEncoding: BXDirectStringEncoding]);
+    const char *cPath = [dosPath cStringUsingEncoding: BXDirectStringEncoding];
+    
+    return dosDrive->FileExists(cPath) || dosDrive->TestDir(cPath);
 }
 
 

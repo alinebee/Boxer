@@ -569,7 +569,7 @@ enum {
     }
     else
     {
-        _effectivePitch = (double)_fontPitch;
+        _effectivePitch = (double)self.fontPitch;
         
         if (self.condensed)
         {
@@ -593,7 +593,9 @@ enum {
         //This may then be scaled horizontally and/or vertically depending on the current font settings.
         fontSize = NSMakeSize(10.5, 10.5);
         fontSize.width *= (BXFontPitch10CPI / _effectivePitch);
-        fontSize.height *= (BXFontPitch10CPI / _effectivePitch);
+        //IMPLEMENTATION NOTE: there's no indication from the ESC/P docs that 10cpi, 12cpi and 15cpi fonts
+        //differ in height: only in width.
+        //fontSize.height *= (BXFontPitch10CPI / (CGFloat)self.fontPitch);
         
         //Apply double-width and double-height printing if desired
         if (self.doubleWidth || self.doubleWidthForLine)

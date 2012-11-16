@@ -108,6 +108,12 @@ typedef enum {
 //The base font size in points for fixed and multipoint fonts.
 #define BXESCPBaseFontSize 10.5
 
+//The relative scale of subscript/superscript characters in relation to regular characters.
+#define BXESCPSubscriptScale 0.75
+
+//The minimum font size a subscript/superscript character can be.
+#define BXESCPSubscriptMinFontSize 8.0
+
 //The default character width of 10 characters per inch
 #define BXESCPCPIDefault 10.0
 

@@ -569,9 +569,6 @@ enum {
     }
     else
     {
-        //Start with a base font size of 10.5pts for non-multipoint characters.
-        //This may then be scaled horizontally and/or vertically depending on the current font settings.
-        fontSize = NSMakeSize(10.5, 10.5);
         _effectivePitch = (double)_fontPitch;
         
         if (self.condensed)
@@ -592,7 +589,11 @@ enum {
             //15cpi pitch does not support condensed mode: evidently it's condensed enough already
         }
         
+        //Start with a base font size of 10.5pts for non-multipoint characters.
+        //This may then be scaled horizontally and/or vertically depending on the current font settings.
+        fontSize = NSMakeSize(10.5, 10.5);
         fontSize.width *= (BXFontPitch10CPI / _effectivePitch);
+        fontSize.height *= (BXFontPitch10CPI / _effectivePitch);
         
         //Apply double-width and double-height printing if desired
         if (self.doubleWidth || self.doubleWidthForLine)
@@ -607,13 +608,12 @@ enum {
 	}
     
     //Shrink superscripted and subscripted characters to 2/3rds their normal size,
-    //unless we're below the 8pt font-size threshold.
-    if ((self.superscript || self.subscript) && fontSize.height > 8.0)
+    //unless we're below the minimum font-size threshold.
+    if ((self.superscript || self.subscript) && fontSize.height > BXESCPSubscriptMinFontSize)
     {
-        double subscriptScale = 2.0/3.0;
-        fontSize.width *= subscriptScale;
-        fontSize.height *= subscriptScale;
-        _effectivePitch *= subscriptScale;
+        fontSize.width *= BXESCPSubscriptScale;
+        fontSize.height *= BXESCPSubscriptScale;
+        _effectivePitch /= BXESCPSubscriptScale;
     }
     
     NSAffineTransform *transform = [NSAffineTransform transform];
@@ -666,14 +666,9 @@ enum {
     //Apply super/subscripting
     if (self.superscript || self.subscript)
     {
-        //Move the baseline up 40% for superscripting, or down 30% for subscripting.
-        double heightRatio = (self.superscript) ? 0.4 : -0.3;
-        
-        //TODO: We could also base this on the font's ascender and descender, which might
-        //be more pleasing to the eye.
-        double baselineOffset = fontSize.height * heightRatio;
-        [self.textAttributes setObject: [NSNumber numberWithFloat: baselineOffset]
-                                forKey: NSBaselineOffsetAttributeName];
+        CGFloat offset = (self.superscript) ? -1 : 1;
+        [self.textAttributes setObject: [NSNumber numberWithFloat: offset]
+                                forKey: NSSuperscriptAttributeName];
     }
     
     _textAttributesNeedUpdate = NO;

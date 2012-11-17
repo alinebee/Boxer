@@ -28,6 +28,7 @@
 #import "BXInputController.h"
 #import "NSObject+BXPerformExtensions.h"
 #import "NSKeyedArchiver+BXArchivingAdditions.h"
+#import "BXUserNotificationDispatcher.h"
 
 #import "BXAppKitVersionHelpers.h"
 
@@ -1823,6 +1824,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     
 	[self.importQueue waitUntilAllOperationsAreFinished];
 	[self.scanQueue waitUntilAllOperationsAreFinished];
+    
+    //Remove any notifications that were posted by this session
+    [[BXUserNotificationDispatcher dispatcher] removeAllNotificationsOfType: nil fromSender: self];
 }
 
 

@@ -22,7 +22,7 @@
 
 #import "BXSession.h"
 
-#import <Carbon/Carbon.h> //For SetSystemUIMode()
+#import "BXUserNotificationDispatcher.h"
 
 
 #define BXMasterVolumeNumIncrements 12.0f
@@ -197,6 +197,9 @@
     //and let them finish in case they're performing critical operations
 	[self.generalQueue cancelAllOperations];
 	[self.generalQueue waitUntilAllOperationsAreFinished];
+    
+    //Remove any lingering notifications that were created by the app.
+    [[BXUserNotificationDispatcher dispatcher] removeAllNotifications];
 }
 
 

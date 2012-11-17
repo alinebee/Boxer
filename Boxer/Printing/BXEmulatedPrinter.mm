@@ -1351,8 +1351,8 @@ enum {
             [self _prepareCanvasForPrinting];
             
             //Draw the bitmap into our rendering contexts, either as a straight image or as a vectorised path.
-            //[self _drawVectorizedBitmapData: self.bitmapData width: _bitmapWidth height: _bitmapHeight inRect: imageRect color: cgColor];
-            [self _drawImageWithBitmapData: self.bitmapData width: _bitmapWidth height: _bitmapHeight inRect: imageRect color: cgColor];
+            [self _drawVectorizedBitmapData: self.bitmapData width: _bitmapWidth height: _bitmapHeight inRect: imageRect color: cgColor];
+            //[self _drawImageWithBitmapData: self.bitmapData width: _bitmapWidth height: _bitmapHeight inRect: imageRect color: cgColor];
             
             //Discard the bitmap once we're done with it
             self.bitmapData = nil;

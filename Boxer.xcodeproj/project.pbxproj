@@ -45,6 +45,8 @@
 		9F1E959A15BD88D700C3C6A0 /* UserDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F1E959915BD88D700C3C6A0 /* UserDefaults.plist */; };
 		9F1E959C15BD899500C3C6A0 /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F1E959B15BD899500C3C6A0 /* GameDefaults.plist */; };
 		9F1F00AB143F091300FF163A /* Audio.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F00AA143F091300FF163A /* Audio.png */; };
+		9F201E381657DB7F0086F1BB /* BXUserNotificationDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F201E371657DB7F0086F1BB /* BXUserNotificationDispatcher.m */; };
+		9F201E391657DB7F0086F1BB /* BXUserNotificationDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F201E371657DB7F0086F1BB /* BXUserNotificationDispatcher.m */; };
 		9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
 		9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
@@ -1006,6 +1008,8 @@
 		9F1E959915BD88D700C3C6A0 /* UserDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefaults.plist; sourceTree = "<group>"; };
 		9F1E959B15BD899500C3C6A0 /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
 		9F1F00AA143F091300FF163A /* Audio.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Audio.png; sourceTree = "<group>"; };
+		9F201E361657DB7F0086F1BB /* BXUserNotificationDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXUserNotificationDispatcher.h; sourceTree = "<group>"; };
+		9F201E371657DB7F0086F1BB /* BXUserNotificationDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXUserNotificationDispatcher.m; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = "/Volumes/Macintosh HD/System/Library/Frameworks/QTKit.framework"; sourceTree = "<absolute>"; };
 		9F2120F613015653002AB1B7 /* BXShelfArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShelfArt.h; sourceTree = "<group>"; };
@@ -2901,6 +2905,8 @@
 		9F7A8F230F8E705100D1AAD5 /* BXToolkit */ = {
 			isa = PBXGroup;
 			children = (
+				9F201E361657DB7F0086F1BB /* BXUserNotificationDispatcher.h */,
+				9F201E371657DB7F0086F1BB /* BXUserNotificationDispatcher.m */,
 				9FAB449615DEADE000900A4C /* Drawing */,
 				9F2C458315DB7DC3009F4477 /* OpenGL */,
 				9F9840FE15BEE5F700B50CDA /* Filesystem */,
@@ -4216,6 +4222,7 @@
 				9F596502163D8D910094FD6B /* BXSession+BXPrinting.m in Sources */,
 				9FF982111646C7640080F763 /* BXPrintSession.m in Sources */,
 				9F67855C1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */,
+				9F201E381657DB7F0086F1BB /* BXUserNotificationDispatcher.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4524,6 +4531,7 @@
 				9F596503163D8D910094FD6B /* BXSession+BXPrinting.m in Sources */,
 				9FF982121646C7640080F763 /* BXPrintSession.m in Sources */,
 				9F67855D1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */,
+				9F201E391657DB7F0086F1BB /* BXUserNotificationDispatcher.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

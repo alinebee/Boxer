@@ -10,8 +10,12 @@
 #import "BXPrintStatusPanelController.h"
 #import "BXEmulator.h"
 #import "BXEmulatedPrinter.h"
+#import "BXUserNotificationDispatcher.h"
 
 #import <Quartz/Quartz.h> //For PDFDocument
+
+
+NSString * const BXPagesReadyNotificationType = @"Pages ready";
 
 //After this many seconds of inactivity, Boxer will decide that the printer may have finished printing
 //and will enable printing.
@@ -34,11 +38,17 @@
 
 - (IBAction) orderFrontPrintStatusPanel: (id)sender
 {
+    //If printer emulation is disabled, refuse to show the print status panel.
+    if (self.emulator.printer == nil)
+        return;
+    
     if (!self.printStatusController)
     {
         self.printStatusController = [[BXPrintStatusPanelController alloc] initWithWindowNibName: @"PrintStatusPanel"];
+        [self addWindowController: self.printStatusController];
     }
     
+    //Update the properties of the window just before showing it
     self.printStatusController.activePrinterPort = self.emulator.printer.port;
     self.printStatusController.localizedPaperName = self.printInfo.localizedPaperName;
     
@@ -120,8 +130,46 @@
     //redisplay the printer status panel if it's not already visible.
     [self orderFrontPrintStatusPanel: self];
     
-    //Bounce to notify the user that we need their input.
-    [NSApp requestUserAttention: NSInformationalRequest];
+    //If we're in the background, post a notification to indicate that printing is ready.
+    if (![NSApp isActive] && [BXUserNotificationDispatcher userNotificationsAvailable])
+    {
+        BXUserNotificationDispatcher *dispatcher = [BXUserNotificationDispatcher dispatcher];
+        
+        NSUserNotification *notification = [[NSUserNotification alloc] init];
+        
+        notification.title = self.displayName;
+        notification.subtitle = self.printStatusController.printerStatus;
+        notification.hasActionButton = YES;
+        notification.actionButtonTitle = NSLocalizedString(@"Print", @"Button shown on user notifications when pages are ready to print.");
+        
+        [dispatcher removeAllNotificationsOfType: BXPagesReadyNotificationType fromSender: self];
+        
+        [dispatcher scheduleNotification: notification
+                                  ofType: BXPagesReadyNotificationType
+                              fromSender: self
+                            onActivation: ^(NSUserNotification *deliveredNotification) {
+            switch (deliveredNotification.activationType)
+            {
+                case NSUserNotificationActivationTypeContentsClicked:
+                    [self orderFrontPrintStatusPanel: self];
+                    break;
+                    
+                case NSUserNotificationActivationTypeActionButtonClicked:
+                    [self finishPrintSession: self];
+                    break;
+            }
+            
+            //Once the user has clicked on the notification, remove it from the notification area
+            [dispatcher removeNotification: deliveredNotification];
+        }];
+        
+        [notification release];
+    }
+    //If notifications are unsupported, then just bounce to notify the user that we need their input.
+    else
+    {
+        [NSApp requestUserAttention: NSInformationalRequest];
+    }
 }
 
 - (void) printer: (BXEmulatedPrinter *)printer willBeginSession: (BXPrintSession *)session
@@ -152,6 +200,9 @@
         
         [PDF release];
     }
+    
+    BXUserNotificationDispatcher *dispatcher = [BXUserNotificationDispatcher dispatcher];
+    [dispatcher removeAllNotificationsOfType: BXPagesReadyNotificationType fromSender: self];
 }
 
 - (void) printer: (BXEmulatedPrinter *)printer didCancelSession: (BXPrintSession *)session
@@ -161,6 +212,9 @@
     
     self.printStatusController.numPages = 0;
     self.printStatusController.inProgress = NO;
+    
+    BXUserNotificationDispatcher *dispatcher = [BXUserNotificationDispatcher dispatcher];
+    [dispatcher removeAllNotificationsOfType: BXPagesReadyNotificationType fromSender: self];
 }
 
 @end

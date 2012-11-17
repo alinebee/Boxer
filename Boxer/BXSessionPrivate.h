@@ -16,6 +16,15 @@
 #import "BXSessionError.h"
 
 
+#pragma mark -
+#pragma mark Private constants
+
+extern NSString * const BXPagesReadyNotificationType;
+extern NSString * const BXDriveImportedNotificationType;
+extern NSString * const BXGameImportedNotificationType;
+
+
+
 @class BXEmulatorConfiguration;
 @class BXCloseAlert;
 @class BXDrive;

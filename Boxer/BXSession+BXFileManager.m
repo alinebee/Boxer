@@ -33,6 +33,8 @@
 #import "BXPathEnumerator.h"
 #import "RegexKitLite.h"
 #import "BXBezelController.h"
+#import "BXUserNotificationDispatcher.h"
+#import "BXInspectorController.h"
 
 
 //Boxer will delay its handling of volume mount notifications by this many seconds,
@@ -2098,9 +2100,33 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
             }
 		}
 		
-		//Display a notification that this drive was successfully imported.
-        [[BXBezelController controller] showDriveImportedBezelForDrive: originalDrive
-                                                             toGamebox: self.gamebox];
+		//If we're active, display a notification that this drive was successfully imported.
+        if ([NSApp isActive])
+        {
+            [[BXBezelController controller] showDriveImportedBezelForDrive: originalDrive
+                                                                 toGamebox: self.gamebox];
+        }
+        //Otherwise, display a user notification to that effect.
+        else if ([BXUserNotificationDispatcher userNotificationsAvailable])
+        {
+            NSUserNotification *notification = [[NSUserNotification alloc] init];
+            
+            NSString *driveImportFormat = NSLocalizedString(@"Drive %@ imported",
+                                                            @"Subtitle of notification shown when a drive has finished importing. %@ is the letter of the drive.");
+            
+            notification.title = self.displayName;
+            notification.subtitle = [NSString stringWithFormat: driveImportFormat, originalDrive.letter];
+            
+            [[BXUserNotificationDispatcher dispatcher] scheduleNotification: notification
+                                                                     ofType: BXDriveImportedNotificationType
+                                                                 fromSender: self
+                                                               onActivation: ^(NSUserNotification *deliveredNotification) {
+                                                                   [[BXUserNotificationDispatcher dispatcher] removeNotification: deliveredNotification];
+                                                                   [[BXInspectorController controller] showDrivesPanel: self];
+                                                               }];
+            
+            [notification release];
+        }
 	}
     
 	else if (import.error)

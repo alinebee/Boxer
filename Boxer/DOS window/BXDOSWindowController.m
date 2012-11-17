@@ -646,14 +646,16 @@
 
 - (void) switchToPanel: (BXDOSWindowPanel)newPanel animate: (BOOL)animate
 {
+    BXDOSWindowPanel oldPanel = self.currentPanel;
+    
     //Don't bother if we're already displaying this panel.
-    if (newPanel == self.currentPanel)
+    if (newPanel == oldPanel)
         return;
     
     [self willChangeValueForKey: @"currentPanel"];
     
     NSView *viewForNewPanel = [self _viewForPanel: newPanel];
-    NSView *viewForOldPanel = [self _viewForPanel: self.currentPanel];
+    NSView *viewForOldPanel = [self _viewForPanel: oldPanel];
     
     //If we're switching to the loading panel, fire up the spinning animation before the transition begins.
     if (newPanel == BXDOSWindowLoadingPanel)
@@ -807,10 +809,11 @@
     {
         [self.window makeFirstResponder: self.inputView];
         
-        //Re-lock the mouse when switching to the DOS view.
-        if (self.window.isFullScreen || !self.inputController.trackMouseWhileUnlocked)
+        //Re-lock the mouse when switching from the launch panel to the DOS view.
+        if (self.window.isFullScreen || (!self.inputController.trackMouseWhileUnlocked && oldPanel == BXDOSWindowLaunchPanel))
         {
-            [self.inputController setMouseLocked: YES force: YES];
+            [self.inputController setMouseLocked: YES
+                                           force: self.window.isFullScreen];
             
             //TODO: let the app controller handle this, the way it handles the standard fullscreen notifications.
             if (self.window.isFullScreen)

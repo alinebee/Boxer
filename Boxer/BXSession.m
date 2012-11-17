@@ -15,6 +15,7 @@
 #import "BXBaseAppController.h"
 #import "BXDOSWindow.h"
 #import "BXDOSWindowControllerLion.h"
+#import "BXPrintStatusPanelController.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXCloseAlert.h"
 #import "NDAlias.h"
@@ -94,6 +95,10 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 
 NSString * const BXWillBeginInterruptionNotification = @"BXWillBeginInterruptionNotification";
 NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruptionNotification";
+
+NSString * const BXPagesReadyNotificationType       = @"BXPagesReady";
+NSString * const BXDriveImportedNotificationType    = @"BXDriveImported";
+NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 
 #pragma mark -
@@ -1062,6 +1067,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 {
     //If we were fast-forwarding, clear the bezel now.
     [self releaseFastForward: self];
+    
+    //Hide our print status panel.
+    [self.printStatusController.window orderOut: self];
     
 	//Flag that we're no longer emulating
 	self.emulating = NO;

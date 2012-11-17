@@ -55,6 +55,8 @@
 #import "BXAppKitVersionHelpers.h"
 #import "NSObject+BXPerformExtensions.h"
 
+#import "BXUserNotificationDispatcher.h"
+
 
 #pragma mark -
 #pragma mark Private method declarations
@@ -1281,8 +1283,29 @@
 	//Add to the recent documents list
 	[[NSDocumentController sharedDocumentController] noteNewRecentDocument: self];
 	
-	//Bounce to notify the user that we're done
-	[NSApp requestUserAttention: NSInformationalRequest];
+	//If we're not focused, let the user know via a notification that we're done
+    if (![NSApp isActive] && [BXUserNotificationDispatcher userNotificationsAvailable])
+	{
+        NSUserNotification *notification = [[NSUserNotification alloc] init];
+        
+        notification.title = self.displayName;
+        notification.subtitle = NSLocalizedString(@"Game imported successfully", @"Subtitle of user notification shown when a game finishes importing.");
+        
+        [[BXUserNotificationDispatcher dispatcher] scheduleNotification: notification
+                                                                 ofType: BXGameImportedNotificationType
+                                                             fromSender: self
+                                                           onActivation: ^(NSUserNotification *deliveredNotification) {
+                                                               [self showWindows];
+                                                               [[BXUserNotificationDispatcher dispatcher] removeNotification: deliveredNotification];
+                                                           }];
+        
+        [notification release];
+    }
+    //Otherwise, just bounce the dock icon to notify the user that we're done
+    else
+    {
+        [NSApp requestUserAttention: NSInformationalRequest];
+    }
 }
 
 

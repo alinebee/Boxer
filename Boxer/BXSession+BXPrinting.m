@@ -15,8 +15,6 @@
 #import <Quartz/Quartz.h> //For PDFDocument
 
 
-NSString * const BXPagesReadyNotificationType = @"Pages ready";
-
 //After this many seconds of inactivity, Boxer will decide that the printer may have finished printing
 //and will enable printing.
 #define BXPrinterTimeout 2.0
@@ -45,7 +43,6 @@ NSString * const BXPagesReadyNotificationType = @"Pages ready";
     if (!self.printStatusController)
     {
         self.printStatusController = [[BXPrintStatusPanelController alloc] initWithWindowNibName: @"PrintStatusPanel"];
-        [self addWindowController: self.printStatusController];
     }
     
     //Update the properties of the window just before showing it
@@ -151,10 +148,12 @@ NSString * const BXPagesReadyNotificationType = @"Pages ready";
             switch (deliveredNotification.activationType)
             {
                 case NSUserNotificationActivationTypeContentsClicked:
+                    [self showWindows];
                     [self orderFrontPrintStatusPanel: self];
                     break;
                     
                 case NSUserNotificationActivationTypeActionButtonClicked:
+                    [self showWindows];
                     [self finishPrintSession: self];
                     break;
             }

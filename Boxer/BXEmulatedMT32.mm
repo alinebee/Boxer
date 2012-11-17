@@ -10,6 +10,7 @@
 #import "MT32Emu/Synth.h"
 #import "MT32Emu/FileStream.h"
 #import "BXEmulatedMT32Delegate.h"
+#import "NSError+BXErrorHelpers.h"
 
 
 #pragma mark -
@@ -51,7 +52,8 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
 
 @implementation BXEmulatedMT32
 @synthesize delegate = _delegate;
-@synthesize PCMROMPath = _PCMROMPath, controlROMPath = _controlROMPath;
+@synthesize PCMROMPath = _PCMROMPath;
+@synthesize controlROMPath = _controlROMPath;
 @synthesize synthError = _synthError;
 @synthesize sampleRate = _sampleRate;
 
@@ -61,8 +63,10 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
 
 + (unsigned long long) PCMSizeForROMType: (BXMT32ROMType)ROMType
 {
-    if (ROMType == BXMT32ROMTypeCM32L) return 1024 * 1024;
-    else return 512 * 1024;
+    if (ROMType == BXMT32ROMTypeCM32L)
+        return BXCM32LPCMROMSize;
+    else
+        return BXMT32PCMROMSize;
 }
 
 + (BXMT32ROMType) typeOfControlROMAtPath: (NSString *)path
@@ -101,7 +105,7 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
     {
         //Measure how large the control ROM is
         [file seekToEndOfFile];
-        unsigned long long fileSize = [file offsetInFile];
+        unsigned long long fileSize = file.offsetInFile;
         [file seekToFileOffset: 0];
         
         //If the file matches our expected size for control ROMs, check what ROM type it is
@@ -116,7 +120,7 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
                 NSUInteger nameOffset = [[profile objectForKey: @"nameOffset"] unsignedIntegerValue];
                 
                 [file seekToFileOffset: nameOffset];
-                NSData *bytesInROM = [file readDataOfLength: [nameBytes length]];
+                NSData *bytesInROM = [file readDataOfLength: nameBytes.length];
                 
                 if ([bytesInROM isEqualToData: nameBytes])
                     return [[profile objectForKey: @"type"] unsignedIntegerValue];
@@ -185,11 +189,13 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
     //that's all MT32Emu::Synth uses to determine ROM viability.)
     
     [file seekToEndOfFile];
-    unsigned long long fileSize = [file offsetInFile];
+    unsigned long long fileSize = file.offsetInFile;
     [file seekToFileOffset: 0];
     
-    if      (fileSize == BXMT32PCMROMSize)  return BXMT32ROMTypeMT32;
-    else if (fileSize == BXCM32LPCMROMSize) return BXMT32ROMTypeCM32L;
+    if (fileSize == BXMT32PCMROMSize)
+        return BXMT32ROMTypeMT32;
+    else if (fileSize == BXCM32LPCMROMSize)
+        return BXMT32ROMTypeCM32L;
     else
     {
         if (outError)
@@ -211,10 +217,10 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
     
     //Validate both ROMs individually.
     BXMT32ROMType controlType   = [self typeOfControlROMAtPath: controlROMPath
-                                                         error: (outError) ? &controlError : nil];
+                                                         error: (outError) ? &controlError : NULL];
     
     BXMT32ROMType PCMType       = [self typeOfPCMROMAtPath: PCMROMPath
-                                                     error: (outError) ? &PCMError : nil];
+                                                     error: (outError) ? &PCMError : NULL];
     
     //If the ROM types could be determined and did match, we have a winner
     if (controlType != BXMT32ROMTypeUnknown && controlType == PCMType) return controlType;
@@ -225,13 +231,18 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
         if (outError)
         {   
             //If one or the other ROM was invalid, then treat that as the canonical error.
-            if ([[controlError domain] isEqualToString: BXEmulatedMT32ErrorDomain] && [controlError code] == BXEmulatedMT32InvalidROM) *outError = controlError; 
+            if ([controlError matchesDomain: BXEmulatedMT32ErrorDomain code: BXEmulatedMT32InvalidROM])
+                *outError = controlError;
             
-            else if ([[PCMError domain] isEqualToString: BXEmulatedMT32ErrorDomain] && [controlError code] == BXEmulatedMT32InvalidROM) *outError = PCMError; 
+            else if ([PCMError matchesDomain: BXEmulatedMT32ErrorDomain code: BXEmulatedMT32InvalidROM])
+                *outError = PCMError;
             
             //Otherwise, return the first error we got.
-            else if (controlError) *outError = controlError;
-            else if (PCMError) *outError = PCMError;
+            else if (controlError)
+                *outError = controlError;
+            
+            else if (PCMError)
+                *outError = PCMError;
             
             //If there were no actual errors, but the ROM types didn't match,
             //then flag this as a mismatch.
@@ -260,12 +271,13 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
                             delegate: (id <BXEmulatedMT32Delegate>)delegate
                                error: (NSError **)outError
 {
-    if ((self = [self init]))
+    self = [self init];
+    if (self)
     {
-        [self setPCMROMPath: PCMROM];
-        [self setControlROMPath: controlROM];
-        [self setSampleRate: BXMT32DefaultSampleRate];
-        [self setDelegate: delegate];
+        self.PCMROMPath = PCMROM;
+        self.controlROMPath = controlROM;
+        self.sampleRate = BXMT32DefaultSampleRate;
+        self.delegate = delegate;
         
         if (![self _prepareMT32EmulatorWithError: outError])
         {
@@ -290,9 +302,9 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
 {
     [self close];
     
-    [self setSynthError: nil], [_synthError release];
-    [self setPCMROMPath: nil], [_PCMROMPath release];
-    [self setControlROMPath: nil], [_controlROMPath release];
+    self.synthError = nil;
+    self.PCMROMPath = nil;
+    self.controlROMPath = nil;
     
     [super dealloc];
 }
@@ -312,7 +324,7 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
 - (void) handleMessage: (NSData *)message
 {
     NSAssert(_synth, @"handleMessage: called before successful initialization.");
-    NSAssert([message length] > 0, @"0-length message received by handleMessage:");
+    NSAssert(message.length > 0, @"0-length message received by handleMessage:");
     
     //MT32Emu's playMsg takes standard 3-byte MIDI messages as a 32-bit integer, which
     //is a terrible idea, but there you go. Thus we pack our byte array into such an
@@ -320,10 +332,10 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
     
     //IMPLEMENTATION NOTE: we use bitwise here, rather than just casting the array
     //to a UInt32, to avoid endianness bugs on PowerPC.
-    UInt8 *contents = (UInt8 *)[message bytes];
+    UInt8 *contents = (UInt8 *)message.bytes;
     UInt8 status = contents[0];
-    UInt8 data1 = ([message length] > 1) ? contents[1] : 0;
-    UInt8 data2 = ([message length] > 2) ? contents[2] : 0;
+    UInt8 data1 = (message.length > 1) ? contents[1] : 0;
+    UInt8 data2 = (message.length > 2) ? contents[2] : 0;
     
     UInt32 packedMsg = status + (data1 << 8) + (data2 << 16);
     
@@ -333,9 +345,9 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
 - (void) handleSysex: (NSData *)message
 {
     NSAssert(_synth, @"handleSysEx: called before successful initialization.");
-    NSAssert([message length] > 0, @"0-length message received by handleSysex:");
+    NSAssert(message.length > 0, @"0-length message received by handleSysex:");
     
-    _synth->playSysex((UInt8 *)[message bytes], [message length]);
+    _synth->playSysex((UInt8 *)message.bytes, message.length);
 }
 
 - (void) resume
@@ -367,7 +379,7 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
 {
     _synth->render((SInt16 *)buffer, numFrames);
 
-    *sampleRate = [self sampleRate];
+    *sampleRate = self.sampleRate;
     *format = BXAudioFormat16Bit | BXAudioFormatSigned | BXAudioFormatStereo;
     return YES;
 }
@@ -379,7 +391,7 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
 - (BOOL) _prepareMT32EmulatorWithError: (NSError **)outError
 {
     //Bail out early if we haven't been told where to find the necessary ROMs
-    if (![self PCMROMPath] || ![self controlROMPath])
+    if (!self.PCMROMPath || !self.controlROMPath)
     {
         if (outError)
         {
@@ -406,7 +418,8 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
     {
         //Pick up the initialization error we'll have received from
         //the callback, and post it back upstream
-        if (outError) *outError = [self synthError];
+        if (outError)
+            *outError = self.synthError;
 
         delete _synth;
         return NO;
@@ -417,14 +430,14 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
 
 - (NSString *) _pathToROMMatchingName: (NSString *)ROMName
 {
-    ROMName = [ROMName lowercaseString];
+    ROMName = ROMName.lowercaseString;
     if ([ROMName isMatchedByRegex: @"control"])
     {
-        return [self controlROMPath];
+        return self.controlROMPath;
     }
     else if ([ROMName isMatchedByRegex: @"pcm"])
     {
-        return [self PCMROMPath];
+        return self.PCMROMPath;
     }
     else return nil;
 }
@@ -437,7 +450,7 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
             {
                 NSString *message = [NSString stringWithCString: (const char *)reportData
                                                        encoding: NSASCIIStringEncoding];
-                [[self delegate] emulatedMT32: self didDisplayMessage: message];
+                [self.delegate emulatedMT32: self didDisplayMessage: message];
             }
             break;
         
@@ -447,9 +460,9 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
             {
                 NSString *ROMPath;
                 if (type == MT32Emu::ReportType_errorControlROM)
-                    ROMPath = [self controlROMPath];
+                    ROMPath = self.controlROMPath;
                 else
-                    ROMPath = [self PCMROMPath];
+                    ROMPath = self.PCMROMPath;
                 
                 NSDictionary *userInfo = nil;
                 if (ROMPath) userInfo = [NSDictionary dictionaryWithObject: ROMPath
@@ -479,7 +492,8 @@ MT32Emu::File * _openMT32ROM(void *userData, const char *filename)
     if (ROMPath)
     {
         MT32Emu::FileStream *file = new MT32Emu::FileStream();
-        if (!file->open([ROMPath fileSystemRepresentation]))
+        BOOL opened = file->open(ROMPath.fileSystemRepresentation);
+        if (!opened)
         {
             delete file;
             return NULL;

@@ -807,12 +807,14 @@
     {
         [self.window makeFirstResponder: self.inputView];
         
-        //Re-lock the mouse when switching to the DOS view, if we're in fullscreen.
-        if (self.window.isFullScreen)
+        //Re-lock the mouse when switching to the DOS view.
+        if (self.window.isFullScreen || !self.inputController.trackMouseWhileUnlocked)
         {
             [self.inputController setMouseLocked: YES force: YES];
+            
             //TODO: let the app controller handle this, the way it handles the standard fullscreen notifications.
-            [[BXBezelController controller] showFullscreenBezel];
+            if (self.window.isFullScreen)
+                [[BXBezelController controller] showFullscreenBezel];
         }
     }
     else
@@ -824,6 +826,9 @@
             [self.window makeFirstResponder: self.launchPanel];
         }
     }
+    
+    //Sync the cursor state, given that a different view may have just slid under the mouse.
+    [self.inputController cursorUpdate: nil];
     
     [self didChangeValueForKey: @"currentPanel"];
 }

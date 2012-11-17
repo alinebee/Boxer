@@ -445,8 +445,8 @@
 		9F5537FA1644321500B9447D /* BBURLTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5537F71644321500B9447D /* BBURLTransformer.m */; };
 		9F573C5A0F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */; };
 		9F573D390F8E69AF0089D8B7 /* BXGamebox.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573D380F8E69AF0089D8B7 /* BXGamebox.m */; };
-		9F57684915DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57684815DA27A300B50500 /* BXDOSWindowLoadingSpinner.m */; };
-		9F57684A15DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57684815DA27A300B50500 /* BXDOSWindowLoadingSpinner.m */; };
+		9F57684915DA27A300B50500 /* BXHUDSpinningProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57684815DA27A300B50500 /* BXHUDSpinningProgressIndicator.m */; };
+		9F57684A15DA27A300B50500 /* BXHUDSpinningProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F57684815DA27A300B50500 /* BXHUDSpinningProgressIndicator.m */; };
 		9F57684D15DA3DA600B50500 /* DOSWindowBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F57684C15DA3DA600B50500 /* DOSWindowBackground@2x.png */; };
 		9F57684E15DA3DA600B50500 /* DOSWindowBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F57684C15DA3DA600B50500 /* DOSWindowBackground@2x.png */; };
 		9F57685015DA3DAF00B50500 /* DOSWindowGrille@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F57684F15DA3DAF00B50500 /* DOSWindowGrille@2x.png */; };
@@ -1128,8 +1128,8 @@
 		9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXMountedVolumes.m"; sourceTree = "<group>"; };
 		9F573D370F8E69AF0089D8B7 /* BXGamebox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGamebox.h; sourceTree = "<group>"; };
 		9F573D380F8E69AF0089D8B7 /* BXGamebox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGamebox.m; sourceTree = "<group>"; };
-		9F57684715DA27A300B50500 /* BXDOSWindowLoadingSpinner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDOSWindowLoadingSpinner.h; sourceTree = "<group>"; };
-		9F57684815DA27A300B50500 /* BXDOSWindowLoadingSpinner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDOSWindowLoadingSpinner.m; sourceTree = "<group>"; };
+		9F57684715DA27A300B50500 /* BXHUDSpinningProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXHUDSpinningProgressIndicator.h; path = "DOS window/BXHUDSpinningProgressIndicator.h"; sourceTree = "<group>"; };
+		9F57684815DA27A300B50500 /* BXHUDSpinningProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXHUDSpinningProgressIndicator.m; path = "DOS window/BXHUDSpinningProgressIndicator.m"; sourceTree = "<group>"; };
 		9F57684C15DA3DA600B50500 /* DOSWindowBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DOSWindowBackground@2x.png"; sourceTree = "<group>"; };
 		9F57684F15DA3DAF00B50500 /* DOSWindowGrille@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DOSWindowGrille@2x.png"; sourceTree = "<group>"; };
 		9F57685915DA3DFC00B50500 /* StandaloneLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = StandaloneLogo.png; sourceTree = "<group>"; };
@@ -2266,8 +2266,6 @@
 				9FCA6D9515C85D8500E1650C /* BXLaunchPanelController.m */,
 				9FAEBE4D15D669AF00C9AC5F /* BXLaunchPanelButtonCell.h */,
 				9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */,
-				9F57684715DA27A300B50500 /* BXDOSWindowLoadingSpinner.h */,
-				9F57684815DA27A300B50500 /* BXDOSWindowLoadingSpinner.m */,
 			);
 			path = "DOS window";
 			sourceTree = "<group>";
@@ -2426,6 +2424,8 @@
 				9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */,
 				9FF1562714506DBA00545317 /* BXHUDProgressIndicator.h */,
 				9FF1562814506DBA00545317 /* BXHUDProgressIndicator.m */,
+				9F57684715DA27A300B50500 /* BXHUDSpinningProgressIndicator.h */,
+				9F57684815DA27A300B50500 /* BXHUDSpinningProgressIndicator.m */,
 				9FD012F913AB87E500AF6FE8 /* BXTemplateImageCell.h */,
 				9FD012FA13AB87E500AF6FE8 /* BXTemplateImageCell.m */,
 				9F60B0DA13AA418300F06BB1 /* BXCollectionItemView.h */,
@@ -4199,7 +4199,7 @@
 				9FA2C09215C8409000380261 /* BXDOSWindowBackgroundView.m in Sources */,
 				9FCA6D9615C85D8500E1650C /* BXLaunchPanelController.m in Sources */,
 				9FAEBE4F15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m in Sources */,
-				9F57684915DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */,
+				9F57684915DA27A300B50500 /* BXHUDSpinningProgressIndicator.m in Sources */,
 				9F2C458715DB7E77009F4477 /* BXGLHelpers.m in Sources */,
 				9F5DD13715E544710096D0E8 /* BXRippleShader.m in Sources */,
 				9F3DD6CC15EE8047003C9A25 /* BXCHFlightstickProUSB.m in Sources */,
@@ -4507,7 +4507,7 @@
 				9F458D9C15D83B8800DF9102 /* BXLaunchPanelButtonCell.m in Sources */,
 				9F458D9D15D83B8C00DF9102 /* BXLaunchPanelController.m in Sources */,
 				9F458D9E15D83B9000DF9102 /* BXDOSWindowBackgroundView.m in Sources */,
-				9F57684A15DA27A300B50500 /* BXDOSWindowLoadingSpinner.m in Sources */,
+				9F57684A15DA27A300B50500 /* BXHUDSpinningProgressIndicator.m in Sources */,
 				9FDFB46E15DBA38F004EA615 /* BXStandaloneAboutController.m in Sources */,
 				9FDFB48015DBC32D004EA615 /* BXGLHelpers.m in Sources */,
 				9F5DD13815E544710096D0E8 /* BXRippleShader.m in Sources */,

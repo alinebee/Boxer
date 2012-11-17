@@ -156,19 +156,9 @@
 
 - (void) awakeFromNib
 {
-    self.color = [NSColor whiteColor];
-    self.drawsBackground = NO;
-}
-
-- (void) drawRect: (NSRect)dirtyRect
-{
-	NSShadow *dropShadow = [NSShadow shadowWithBlurRadius: 3.0f
-                                                   offset: NSMakeSize(0.0f, 0.0f)
-                                                    color: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f]];
-	
-	[NSGraphicsContext saveGraphicsState];
-		[dropShadow set];
-		[super drawRect: dirtyRect];
-	[NSGraphicsContext restoreGraphicsState];
+    [super awakeFromNib];
+	self.dropShadow = [NSShadow shadowWithBlurRadius: 3.0f
+                                              offset: NSMakeSize(0.0f, 0.0f)
+                                               color: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f]];
 }
 @end

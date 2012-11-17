@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">12B19</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2549</string>
-		<string key="IBDocument.AppKitVersion">1187</string>
-		<string key="IBDocument.HIToolboxVersion">624.00</string>
+		<string key="IBDocument.SystemVersion">12C60</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
+		<string key="IBDocument.AppKitVersion">1187.34</string>
+		<string key="IBDocument.HIToolboxVersion">625.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2549</string>
+			<string key="NS.object.0">2844</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSButton</string>
@@ -57,7 +57,7 @@
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
 				<object class="NSView" key="NSWindowView" id="1006">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<array class="NSMutableArray" key="NSSubviews">
 						<object class="NSCustomView" id="773857734">
@@ -69,7 +69,6 @@
 									<int key="NSvFlags">268</int>
 									<string key="NSFrame">{{60, 3}, {64, 19}}</string>
 									<reference key="NSSuperview" ref="773857734"/>
-									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="912332772"/>
 									<string key="NSReuseIdentifierKey">_NS:9</string>
 									<bool key="NSEnabled">YES</bool>
@@ -112,7 +111,6 @@
 									<int key="NSvFlags">268</int>
 									<string key="NSFrame">{{20, 4}, {32, 18}}</string>
 									<reference key="NSSuperview" ref="773857734"/>
-									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="142680116"/>
 									<string key="NSReuseIdentifierKey">_NS:22</string>
 									<bool key="NSEnabled">YES</bool>
@@ -145,7 +143,6 @@
 											<int key="NSvFlags">298</int>
 											<string key="NSFrame">{{21, 5}, {72, 15}}</string>
 											<reference key="NSSuperview" ref="208389043"/>
-											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="609713258"/>
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<bool key="NSEnabled">YES</bool>
@@ -171,8 +168,6 @@
 											<int key="NSvFlags">297</int>
 											<string key="NSFrame">{{95, 4}, {27, 17}}</string>
 											<reference key="NSSuperview" ref="208389043"/>
-											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView"/>
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<bool key="NSEnabled">YES</bool>
 											<object class="NSButtonCell" key="NSCell" id="214898833">
@@ -204,7 +199,6 @@
 											<int key="NSvFlags">300</int>
 											<string key="NSFrame">{{0, 4}, {19, 17}}</string>
 											<reference key="NSSuperview" ref="208389043"/>
-											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="659387175"/>
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<bool key="NSEnabled">YES</bool>
@@ -231,7 +225,6 @@
 									</array>
 									<string key="NSFrame">{{493, 0}, {122, 26}}</string>
 									<reference key="NSSuperview" ref="773857734"/>
-									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="49776381"/>
 									<string key="NSReuseIdentifierKey">_NS:9</string>
 									<string key="NSClassName">NSView</string>
@@ -241,7 +234,6 @@
 									<int key="NSvFlags">269</int>
 									<string key="NSFrame">{{185, 6}, {270, 14}}</string>
 									<reference key="NSSuperview" ref="773857734"/>
-									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="208389043"/>
 									<int key="NSTag">2</int>
 									<bool key="NSEnabled">YES</bool>
@@ -275,7 +267,6 @@
 							</array>
 							<string key="NSFrameSize">{640, 26}</string>
 							<reference key="NSSuperview" ref="1006"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="38096588"/>
 							<string key="NSClassName">BXBottomBar</string>
 						</object>
@@ -304,8 +295,7 @@
 																	<int key="NSvFlags">4370</int>
 																	<string key="NSFrameSize">{480, 296}</string>
 																	<reference key="NSSuperview" ref="299863135"/>
-																	<reference key="NSWindow"/>
-																	<reference key="NSNextKeyView" ref="71412926"/>
+																	<reference key="NSNextKeyView" ref="707454198"/>
 																	<string key="NSReuseIdentifierKey">_NS:80</string>
 																	<string key="NSMinGridSize">{0, 0}</string>
 																	<string key="NSMaxGridSize">{0, 0}</string>
@@ -323,7 +313,6 @@
 															</array>
 															<string key="NSFrameSize">{480, 296}</string>
 															<reference key="NSSuperview" ref="485892903"/>
-															<reference key="NSWindow"/>
 															<reference key="NSNextKeyView" ref="34414584"/>
 															<string key="NSReuseIdentifierKey">_NS:78</string>
 															<reference key="NSDocView" ref="34414584"/>
@@ -338,7 +327,6 @@
 															<int key="NSvFlags">-2147483392</int>
 															<string key="NSFrame">{{234, 1}, {15, 143}}</string>
 															<reference key="NSSuperview" ref="485892903"/>
-															<reference key="NSWindow"/>
 															<reference key="NSNextKeyView" ref="773857734"/>
 															<string key="NSReuseIdentifierKey">_NS:82</string>
 															<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -352,7 +340,6 @@
 															<int key="NSvFlags">-2147483392</int>
 															<string key="NSFrame">{{-100, -100}, {233, 15}}</string>
 															<reference key="NSSuperview" ref="485892903"/>
-															<reference key="NSWindow"/>
 															<reference key="NSNextKeyView" ref="299863135"/>
 															<string key="NSReuseIdentifierKey">_NS:91</string>
 															<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -364,8 +351,7 @@
 													</array>
 													<string key="NSFrame">{{80, 97}, {480, 296}}</string>
 													<reference key="NSSuperview" ref="223608717"/>
-													<reference key="NSWindow"/>
-													<reference key="NSNextKeyView" ref="707454198"/>
+													<reference key="NSNextKeyView" ref="299863135"/>
 													<string key="NSReuseIdentifierKey">_NS:76</string>
 													<int key="NSsFlags">133648</int>
 													<reference key="NSVScroller" ref="71412926"/>
@@ -378,7 +364,6 @@
 											</array>
 											<string key="NSFrameSize">{640, 490}</string>
 											<reference key="NSSuperview" ref="601818829"/>
-											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="485892903"/>
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<string key="NSClassName">NSView</string>
@@ -392,15 +377,13 @@
 													<int key="NSvFlags">301</int>
 													<string key="NSFrame">{{242, 165}, {156, 160}}</string>
 													<reference key="NSSuperview" ref="653019913"/>
-													<reference key="NSWindow"/>
 													<reference key="NSNextKeyView" ref="223608717"/>
 													<string key="NSReuseIdentifierKey">_NS:9</string>
-													<string key="NSClassName">BXDOSWindowLoadingSpinner</string>
+													<string key="NSClassName">BXHUDSpinningProgressIndicator</string>
 												</object>
 											</array>
 											<string key="NSFrameSize">{640, 490}</string>
 											<reference key="NSSuperview" ref="601818829"/>
-											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="750629320"/>
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<string key="NSClassName">NSView</string>
@@ -414,7 +397,6 @@
 													<int key="NSvFlags">5394</int>
 													<string key="NSFrameSize">{640, 490}</string>
 													<reference key="NSSuperview" ref="450603396"/>
-													<reference key="NSWindow"/>
 													<reference key="NSNextKeyView" ref="653019913"/>
 													<bool key="NSViewWantsBestResolutionOpenGLSurface">YES</bool>
 													<object class="NSOpenGLPixelFormat" key="NSPixelFormat">
@@ -426,14 +408,12 @@
 											</array>
 											<string key="NSFrameSize">{640, 490}</string>
 											<reference key="NSSuperview" ref="601818829"/>
-											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="511833091"/>
 											<string key="NSClassName">BXInputView</string>
 										</object>
 									</array>
 									<string key="NSFrameSize">{640, 490}</string>
 									<reference key="NSSuperview" ref="89453087"/>
-									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="450603396"/>
 									<string key="NSReuseIdentifierKey">_NS:9</string>
 									<string key="NSClassName">NSView</string>
@@ -441,14 +421,11 @@
 							</array>
 							<string key="NSFrame">{{0, 26}, {640, 490}}</string>
 							<reference key="NSSuperview" ref="1006"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="601818829"/>
 							<string key="NSClassName">BXDOSWindowBackgroundView</string>
 						</object>
 					</array>
 					<string key="NSFrameSize">{640, 516}</string>
-					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="89453087"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
@@ -1539,14 +1516,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXDOSWindowController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXDOSWindowLoadingSpinner</string>
-					<string key="superclassName">YRKSpinningProgressIndicator</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXDOSWindowLoadingSpinner.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

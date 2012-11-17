@@ -1,20 +1,14 @@
-//
-//  BXDOSWindowLoadingSpinner.m
-//  Boxer
-//
-//  Created by Alun Bestor on 14/08/2012.
-//  Copyright (c) 2012 Alun Bestor and contributors. All rights reserved.
-//
+/*
+ Boxer is copyright 2011 Alun Bestor and contributors.
+ Boxer is released under the GNU General Public License 2.0. A full copy of this license can be
+ found in this XCode project at Resources/English.lproj/BoxerHelp/pages/legalese.html, or read
+ online at [http://www.gnu.org/licenses/gpl-2.0.txt].
+ */
 
-#import "BXDOSWindowLoadingSpinner.h"
+#import "BXHUDSpinningProgressIndicator.h"
 #import "NSShadow+BXShadowExtensions.h"
 
-@interface BXDOSWindowLoadingSpinner ()
-@property (retain, nonatomic) NSShadow *dropShadow;
-
-@end
-
-@implementation BXDOSWindowLoadingSpinner
+@implementation BXHUDSpinningProgressIndicator
 @synthesize dropShadow = _dropShadow;
 
 - (void) awakeFromNib

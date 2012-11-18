@@ -11,9 +11,9 @@
 
 @interface BXTemplateImageCell : NSImageCell
 {
-	NSColor *imageColor;
-	NSColor *disabledImageColor;
-	NSShadow *imageShadow;
+	NSColor *_imageColor;
+	NSColor *_disabledImageColor;
+	NSShadow *_imageShadow;
 }
 
 @property (copy, nonatomic) NSColor *imageColor;
@@ -24,4 +24,8 @@
 
 //A subclass of BXTemplateImageCell intended for HUD windows, that defaults to white with a soft black shadow.
 @interface BXHUDImageCell : BXTemplateImageCell
+@end
+
+//A subclass of BXTemplateImageCell using the indented appearance.
+@interface BXIndentedImageCell : BXTemplateImageCell
 @end

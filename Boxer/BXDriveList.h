@@ -33,7 +33,7 @@
 
 
 //BXDriveItemView displays each drive entry in the list.
-@interface BXDriveItemView : BXHUDCollectionItemView
+@interface BXDriveItemView : BXIndentedCollectionItemView
 @end
 
 

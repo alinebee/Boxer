@@ -39,3 +39,7 @@
 @interface BXHUDCollectionItemView : BXCollectionItemView
 @end
 
+
+
+@interface BXIndentedCollectionItemView : BXCollectionItemView
+@end

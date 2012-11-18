@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">12A269</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2549</string>
-		<string key="IBDocument.AppKitVersion">1187</string>
-		<string key="IBDocument.HIToolboxVersion">624.00</string>
+		<string key="IBDocument.SystemVersion">12C60</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
+		<string key="IBDocument.AppKitVersion">1187.34</string>
+		<string key="IBDocument.HIToolboxVersion">625.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2549</string>
+			<string key="NS.object.0">2844</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -100,7 +100,7 @@
 								<string key="NSToolbarItemMinSize">{0, 0}</string>
 								<string key="NSToolbarItemMaxSize">{0, 0}</string>
 								<bool key="NSToolbarItemEnabled">YES</bool>
-								<bool key="NSToolbarItemAutovalidates">YES</bool>
+								<bool key="NSToolbarItemAutovalidates">NO</bool>
 								<int key="NSToolbarItemTag">0</int>
 								<bool key="NSToolbarIsUserRemovable">YES</bool>
 								<int key="NSToolbarItemVisibilityPriority">0</int>
@@ -122,7 +122,7 @@
 								<string key="NSToolbarItemMinSize">{0, 0}</string>
 								<string key="NSToolbarItemMaxSize">{0, 0}</string>
 								<bool key="NSToolbarItemEnabled">YES</bool>
-								<bool key="NSToolbarItemAutovalidates">YES</bool>
+								<bool key="NSToolbarItemAutovalidates">NO</bool>
 								<int key="NSToolbarItemTag">1</int>
 								<bool key="NSToolbarIsUserRemovable">YES</bool>
 								<int key="NSToolbarItemVisibilityPriority">0</int>
@@ -144,7 +144,7 @@
 								<string key="NSToolbarItemMinSize">{0, 0}</string>
 								<string key="NSToolbarItemMaxSize">{0, 0}</string>
 								<bool key="NSToolbarItemEnabled">YES</bool>
-								<bool key="NSToolbarItemAutovalidates">YES</bool>
+								<bool key="NSToolbarItemAutovalidates">NO</bool>
 								<int key="NSToolbarItemTag">2</int>
 								<bool key="NSToolbarIsUserRemovable">YES</bool>
 								<int key="NSToolbarItemVisibilityPriority">0</int>
@@ -166,7 +166,7 @@
 								<string key="NSToolbarItemMinSize">{0, 0}</string>
 								<string key="NSToolbarItemMaxSize">{0, 0}</string>
 								<bool key="NSToolbarItemEnabled">YES</bool>
-								<bool key="NSToolbarItemAutovalidates">YES</bool>
+								<bool key="NSToolbarItemAutovalidates">NO</bool>
 								<int key="NSToolbarItemTag">3</int>
 								<bool key="NSToolbarIsUserRemovable">YES</bool>
 								<int key="NSToolbarItemVisibilityPriority">0</int>
@@ -183,7 +183,7 @@
 								<string key="NSToolbarItemMinSize">{1, 5}</string>
 								<string key="NSToolbarItemMaxSize">{20000, 32}</string>
 								<bool key="NSToolbarItemEnabled">YES</bool>
-								<bool key="NSToolbarItemAutovalidates">YES</bool>
+								<bool key="NSToolbarItemAutovalidates">NO</bool>
 								<int key="NSToolbarItemTag">-1</int>
 								<bool key="NSToolbarIsUserRemovable">YES</bool>
 								<int key="NSToolbarItemVisibilityPriority">0</int>
@@ -216,7 +216,7 @@
 								<string key="NSToolbarItemMinSize">{32, 5}</string>
 								<string key="NSToolbarItemMaxSize">{32, 32}</string>
 								<bool key="NSToolbarItemEnabled">YES</bool>
-								<bool key="NSToolbarItemAutovalidates">YES</bool>
+								<bool key="NSToolbarItemAutovalidates">NO</bool>
 								<int key="NSToolbarItemTag">-1</int>
 								<bool key="NSToolbarIsUserRemovable">YES</bool>
 								<int key="NSToolbarItemVisibilityPriority">0</int>
@@ -266,6 +266,7 @@
 							<int key="NSvFlags">18</int>
 							<string key="NSFrameSize">{532, 396}</string>
 							<reference key="NSSuperview" ref="1006"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="205068588"/>
 							<object class="NSMutableArray" key="NSTabViewItems">
 								<bool key="EncodedWithXMLCoder">YES</bool>
@@ -415,6 +416,7 @@
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{190, 41}, {221, 18}}</string>
 														<reference key="NSSuperview" ref="743371518"/>
+														<reference key="NSNextKeyView"/>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSButtonCell" key="NSCell" id="201726719">
 															<int key="NSCellFlags">-2080374784</int>
@@ -903,6 +905,7 @@
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{490, 16}, {25, 25}}</string>
 														<reference key="NSSuperview" ref="221307292"/>
+														<reference key="NSNextKeyView"/>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSButtonCell" key="NSCell" id="333411757">
 															<int key="NSCellFlags">67108864</int>
@@ -1097,6 +1100,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{114, 69}, {304, 28}}</string>
 														<reference key="NSSuperview" ref="831383934"/>
+														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="260665964"/>
 														<string key="NSReuseIdentifierKey">_NS:360</string>
 														<string key="NSAntiCompressionPriority">{250, 750}</string>
@@ -1122,6 +1126,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{111, 33}, {310, 32}}</string>
 														<reference key="NSSuperview" ref="831383934"/>
+														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="1023220269"/>
 														<string key="NSReuseIdentifierKey">_NS:687</string>
 														<bool key="NSEnabled">YES</bool>
@@ -1146,6 +1151,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{114, 69}, {304, 28}}</string>
 														<reference key="NSSuperview" ref="831383934"/>
+														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="369159514"/>
 														<string key="NSReuseIdentifierKey">_NS:360</string>
 														<string key="NSAntiCompressionPriority">{250, 750}</string>
@@ -1172,7 +1178,8 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{489, 17}, {25, 25}}</string>
 														<reference key="NSSuperview" ref="831383934"/>
-														<reference key="NSNextKeyView" ref="764053557"/>
+														<reference key="NSWindow"/>
+														<reference key="NSNextKeyView"/>
 														<string key="NSReuseIdentifierKey">_NS:3976</string>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSButtonCell" key="NSCell" id="126465048">
@@ -1196,6 +1203,7 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{114, 105}, {303, 28}}</string>
 														<reference key="NSSuperview" ref="831383934"/>
+														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="732864421"/>
 														<string key="NSReuseIdentifierKey">_NS:360</string>
 														<string key="NSAntiCompressionPriority">{250, 750}</string>
@@ -1217,6 +1225,7 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{96, 142}, {343, 18}}</string>
 														<reference key="NSSuperview" ref="831383934"/>
+														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="188649173"/>
 														<string key="NSReuseIdentifierKey">_NS:771</string>
 														<bool key="NSEnabled">YES</bool>
@@ -1241,6 +1250,7 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 												</object>
 												<string key="NSFrameSize">{532, 192}</string>
 												<reference key="NSSuperview" ref="205068588"/>
+												<reference key="NSWindow"/>
 												<reference key="NSNextKeyView" ref="66817421"/>
 												<string key="NSReuseIdentifierKey">_NS:1192</string>
 												<string key="NSClassName">NSView</string>
@@ -1248,6 +1258,7 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 										</object>
 										<string key="NSFrameSize">{532, 396}</string>
 										<reference key="NSSuperview" ref="764053557"/>
+										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="831383934"/>
 									</object>
 									<string key="NSLabel">Keyboard Preferences</string>
@@ -1266,6 +1277,7 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 					</object>
 					<string key="NSFrameSize">{532, 396}</string>
 					<reference key="NSSuperview"/>
+					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="764053557"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
@@ -2955,7 +2967,624 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 			<nil key="sourceID"/>
 			<int key="maxID">436</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes"/>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBPartialClassDescription">
+					<string key="className">BGHUDLabel</string>
+					<string key="superclassName">NSTextField</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BGHUDLabel.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXAppController</string>
+					<string key="superclassName">BXBaseAppController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>hideWelcomePanel:</string>
+							<string>orderFrontAboutPanel:</string>
+							<string>orderFrontFirstRunPanel:</string>
+							<string>orderFrontFirstRunPanelWithTransition:</string>
+							<string>orderFrontImportGamePanel:</string>
+							<string>orderFrontInspectorPanel:</string>
+							<string>orderFrontPreferencesPanel:</string>
+							<string>orderFrontWelcomePanel:</string>
+							<string>orderFrontWelcomePanelWithTransition:</string>
+							<string>revealCurrentSessionPath:</string>
+							<string>revealGamesFolder:</string>
+							<string>sendEmail:</string>
+							<string>showBugReportPage:</string>
+							<string>showCPUPanel:</string>
+							<string>showDonationPage:</string>
+							<string>showDrivesPanel:</string>
+							<string>showGamePanel:</string>
+							<string>showJoypadDownloadPage:</string>
+							<string>showMountPanel:</string>
+							<string>showMousePanel:</string>
+							<string>showPerianDownloadPage:</string>
+							<string>showUniversalAccessPrefsPane:</string>
+							<string>showWebsite:</string>
+							<string>toggleInspectorPanel:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>hideWelcomePanel:</string>
+							<string>orderFrontAboutPanel:</string>
+							<string>orderFrontFirstRunPanel:</string>
+							<string>orderFrontFirstRunPanelWithTransition:</string>
+							<string>orderFrontImportGamePanel:</string>
+							<string>orderFrontInspectorPanel:</string>
+							<string>orderFrontPreferencesPanel:</string>
+							<string>orderFrontWelcomePanel:</string>
+							<string>orderFrontWelcomePanelWithTransition:</string>
+							<string>revealCurrentSessionPath:</string>
+							<string>revealGamesFolder:</string>
+							<string>sendEmail:</string>
+							<string>showBugReportPage:</string>
+							<string>showCPUPanel:</string>
+							<string>showDonationPage:</string>
+							<string>showDrivesPanel:</string>
+							<string>showGamePanel:</string>
+							<string>showJoypadDownloadPage:</string>
+							<string>showMountPanel:</string>
+							<string>showMousePanel:</string>
+							<string>showPerianDownloadPage:</string>
+							<string>showUniversalAccessPrefsPane:</string>
+							<string>showWebsite:</string>
+							<string>toggleInspectorPanel:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">hideWelcomePanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">orderFrontAboutPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">orderFrontFirstRunPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">orderFrontFirstRunPanelWithTransition:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">orderFrontImportGamePanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">orderFrontInspectorPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">orderFrontPreferencesPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">orderFrontWelcomePanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">orderFrontWelcomePanelWithTransition:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">revealCurrentSessionPath:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">revealGamesFolder:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">sendEmail:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showBugReportPage:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showCPUPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showDonationPage:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showDrivesPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showGamePanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showJoypadDownloadPage:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showMountPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showMousePanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showPerianDownloadPage:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showUniversalAccessPrefsPane:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showWebsite:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">toggleInspectorPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXAppController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXBaseAppController</string>
+					<string key="superclassName">NSDocumentController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>decrementVolume:</string>
+							<string>incrementVolume:</string>
+							<string>maximizeVolume:</string>
+							<string>minimizeVolume:</string>
+							<string>openInDefaultApplication:</string>
+							<string>revealInFinder:</string>
+							<string>toggleMuted:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>decrementVolume:</string>
+							<string>incrementVolume:</string>
+							<string>maximizeVolume:</string>
+							<string>minimizeVolume:</string>
+							<string>openInDefaultApplication:</string>
+							<string>revealInFinder:</string>
+							<string>toggleMuted:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">decrementVolume:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">incrementVolume:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">maximizeVolume:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">minimizeVolume:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openInDefaultApplication:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">revealInFinder:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">toggleMuted:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>joypadController</string>
+							<string>joystickController</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>BXJoypadController</string>
+							<string>BXJoystickController</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>joypadController</string>
+							<string>joystickController</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">joypadController</string>
+								<string key="candidateClassName">BXJoypadController</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">joystickController</string>
+								<string key="candidateClassName">BXJoystickController</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXBaseAppController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXDelegatedView</string>
+					<string key="superclassName">NSView</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">_delegate</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<string key="NS.key.0">_delegate</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
+							<string key="name">_delegate</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXDelegatedView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXFilterGallery</string>
+					<string key="superclassName">NSView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXFilterGallery.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXFilterPortrait</string>
+					<string key="superclassName">NSButton</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXFilterPortrait.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXFilterPortraitCell</string>
+					<string key="superclassName">NSButtonCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXFilterPortraitCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXHUDLabel</string>
+					<string key="superclassName">BXThemedLabel</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXHUDLabel.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXJoypadController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXJoypadController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXJoystickController</string>
+					<string key="superclassName">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXJoystickController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXMT32ROMDropzone</string>
+					<string key="superclassName">NSButton</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXMT32ROMDropzone.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXPreferencesController</string>
+					<string key="superclassName">BXTabbedWindowController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>showAudioPreferencesHelp:</string>
+							<string>showDisplayPreferencesHelp:</string>
+							<string>showGamesFolderChooser:</string>
+							<string>showKeyboardPreferencesHelp:</string>
+							<string>showMT32ROMFileChooser:</string>
+							<string>showMT32ROMsInFinder:</string>
+							<string>toggleDefaultRenderingStyle:</string>
+							<string>toggleShelfAppearance:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>NSButton</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>showAudioPreferencesHelp:</string>
+							<string>showDisplayPreferencesHelp:</string>
+							<string>showGamesFolderChooser:</string>
+							<string>showKeyboardPreferencesHelp:</string>
+							<string>showMT32ROMFileChooser:</string>
+							<string>showMT32ROMsInFinder:</string>
+							<string>toggleDefaultRenderingStyle:</string>
+							<string>toggleShelfAppearance:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">showAudioPreferencesHelp:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showDisplayPreferencesHelp:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showGamesFolderChooser:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showKeyboardPreferencesHelp:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showMT32ROMFileChooser:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showMT32ROMsInFinder:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">toggleDefaultRenderingStyle:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">toggleShelfAppearance:</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>MT32ROMDropzone</string>
+							<string>MT32ROMOptions</string>
+							<string>currentGamesFolderItem</string>
+							<string>filterGallery</string>
+							<string>gamesFolderSelector</string>
+							<string>missingMT32ROMHelp</string>
+							<string>realMT32Help</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>BXMT32ROMDropzone</string>
+							<string>NSView</string>
+							<string>NSMenuItem</string>
+							<string>BXFilterGallery</string>
+							<string>NSPopUpButton</string>
+							<string>NSView</string>
+							<string>NSView</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>MT32ROMDropzone</string>
+							<string>MT32ROMOptions</string>
+							<string>currentGamesFolderItem</string>
+							<string>filterGallery</string>
+							<string>gamesFolderSelector</string>
+							<string>missingMT32ROMHelp</string>
+							<string>realMT32Help</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">MT32ROMDropzone</string>
+								<string key="candidateClassName">BXMT32ROMDropzone</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">MT32ROMOptions</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">currentGamesFolderItem</string>
+								<string key="candidateClassName">NSMenuItem</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">filterGallery</string>
+								<string key="candidateClassName">BXFilterGallery</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">gamesFolderSelector</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">missingMT32ROMHelp</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">realMT32Help</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXPreferencesController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXTabbedWindowController</string>
+					<string key="superclassName">NSWindowController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>takeSelectedTabViewItemFromSegment:</string>
+							<string>takeSelectedTabViewItemFromTag:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSSegmentedControl</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>takeSelectedTabViewItemFromSegment:</string>
+							<string>takeSelectedTabViewItemFromTag:</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">takeSelectedTabViewItemFromSegment:</string>
+								<string key="candidateClassName">NSSegmentedControl</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">takeSelectedTabViewItemFromTag:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>mainTabView</string>
+							<string>toolbarForTabs</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSTabView</string>
+							<string>NSToolbar</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>mainTabView</string>
+							<string>toolbarForTabs</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">mainTabView</string>
+								<string key="candidateClassName">NSTabView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">toolbarForTabs</string>
+								<string key="candidateClassName">NSToolbar</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXTabbedWindowController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXThemedLabel</string>
+					<string key="superclassName">BGHUDLabel</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXThemedLabel.h</string>
+					</object>
+				</object>
+			</object>
+		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">

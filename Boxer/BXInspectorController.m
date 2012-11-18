@@ -48,7 +48,7 @@
 + (BXInspectorController *)controller
 {
 	static BXInspectorController *singleton = nil;
-	if (!singleton) singleton = [[self alloc] initWithWindowNibName: @"InspectorPanel"];
+	if (!singleton) singleton = [[self alloc] initWithWindowNibName: @"Inspector"];
 	return singleton;
 }
 
@@ -105,13 +105,15 @@
 				if ([self.panelSelector.cell tagForSegment: segmentIndex] == BXGameInspectorPanelTag)
 					[self.panelSelector setEnabled: session.hasGamebox forSegment: segmentIndex];
 			}
-			
+            
 			//If the gamebox tab was already selected, then switch to the next tab
 			if (!session.hasGamebox &&
 				[self.tabView indexOfTabViewItem: self.tabView.selectedTabViewItem] == BXGameInspectorPanelTag)
 			{
 				[self.tabView selectTabViewItemAtIndex: BXCPUInspectorPanelTag];
 			}
+            
+            [self.toolbarForTabs validateVisibleItems];
 		}
 	}
 }
@@ -119,11 +121,11 @@
 - (void) showWindow: (id)sender
 {
 	//If there’s no session active, don’t allow the window to be shown
-	if (![[[NSApp delegate] currentSession] isEmulating]) return;
+	if (![[NSApp delegate] currentSession].isEmulating) return;
 	
 	[self loadWindow];
 	
-	[[self window] fadeInWithDuration: 0.2];
+	[self.window fadeInWithDuration: 0.2];
 	//[[self window] applyGaussianBlurWithRadius: BXInspectorPanelBlurRadius];
 	
 	isTemporarilyHidden = NO;
@@ -151,19 +153,19 @@
 	}
 	else if ([self isWindowLoaded])
 	{
-		[[self window] fadeOutWithDuration: 0.2];
+		[self.window fadeOutWithDuration: 0.2];
 		isTemporarilyHidden = NO;
 	}
 }
 
 - (BOOL) panelShown
 {
-	return [self isWindowLoaded] && [[self window] isVisible];
+	return self.isWindowLoaded && self.window.isVisible;
 }
 
 - (BOOL) windowShouldClose: (id)sender
 {
-	[[self window] fadeOutWithDuration: 0.2];
+	[self.window fadeOutWithDuration: 0.2];
 	isTemporarilyHidden = NO;
 	return NO;
 }
@@ -197,11 +199,11 @@
 #pragma mark -
 #pragma mark Tab selection
 
-- (IBAction) showGamePanel: (id)sender		{ [self setSelectedTabViewItemIndex: BXGameInspectorPanelTag];	[self showWindow: sender]; }
-- (IBAction) showCPUPanel: (id)sender		{ [self setSelectedTabViewItemIndex: BXCPUInspectorPanelTag];	[self showWindow: sender]; }
-- (IBAction) showMousePanel: (id)sender		{ [self setSelectedTabViewItemIndex: BXMouseInspectorPanelTag];	[self showWindow: sender]; }
-- (IBAction) showDrivesPanel: (id)sender	{ [self setSelectedTabViewItemIndex: BXDriveInspectorPanelTag];	[self showWindow: sender]; }
-- (IBAction) showJoystickPanel: (id)sender	{ [self setSelectedTabViewItemIndex: BXJoystickInspectorPanelTag];	[self showWindow: sender]; }
+- (IBAction) showGamePanel: (id)sender		{ self.selectedTabViewItemIndex = BXGameInspectorPanelTag;      [self showWindow: sender]; }
+- (IBAction) showCPUPanel: (id)sender		{ self.selectedTabViewItemIndex = BXCPUInspectorPanelTag;       [self showWindow: sender]; }
+- (IBAction) showMousePanel: (id)sender		{ self.selectedTabViewItemIndex = BXMouseInspectorPanelTag;     [self showWindow: sender]; }
+- (IBAction) showDrivesPanel: (id)sender	{ self.selectedTabViewItemIndex = BXDriveInspectorPanelTag;     [self showWindow: sender]; }
+- (IBAction) showJoystickPanel: (id)sender	{ self.selectedTabViewItemIndex = BXJoystickInspectorPanelTag;	[self showWindow: sender]; }
 
 - (void) tabView: (NSTabView *)tabView didSelectTabViewItem: (NSTabViewItem *)tabViewItem
 {
@@ -215,7 +217,7 @@
 		[[NSUserDefaults standardUserDefaults] setInteger: selectedIndex
 												   forKey: @"initialInspectorPanelIndex"];
 		
-		[[self panelSelector] selectSegmentWithTag: selectedIndex];
+		[self.panelSelector selectSegmentWithTag: selectedIndex];
 	}
 }
 
@@ -227,6 +229,15 @@
 
 - (BOOL) shouldSyncWindowTitleToTabLabel: (NSString *)label
 {
+    return YES;
+}
+
+- (BOOL) validateToolbarItem: (NSToolbarItem *)theItem
+{
+    if (theItem.tag == BXGameInspectorPanelTag)
+    {
+        return ([[NSApp delegate] currentSession].hasGamebox);
+    }
     return YES;
 }
 

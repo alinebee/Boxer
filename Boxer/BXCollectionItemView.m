@@ -8,6 +8,7 @@
 
 #import "BXCollectionItemView.h"
 #import "NSBezierPath+MCAdditions.h"
+#import "NSShadow+BXShadowExtensions.h"
 
 @implementation BXCollectionItemView
 @synthesize delegate;
@@ -58,7 +59,7 @@
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-	if ([[self delegate] isSelected])
+	if (self.delegate.isSelected)
 	{
 		[NSBezierPath clipRect: dirtyRect];
 		
@@ -107,6 +108,37 @@
 		[background release];
 		if (dropShadow)	[dropShadow release];
 		if (innerGlow)	[innerGlow release];
+	}
+}
+@end
+
+
+
+@implementation BXIndentedCollectionItemView
+
+- (void) viewWillDraw
+{
+    BOOL isSelected = self.delegate.isSelected;
+    NSColor *textColor = (isSelected) ? [NSColor whiteColor] : [NSColor blackColor];
+    
+    
+    for (id view in self.subviews)
+    {
+        if ([view isKindOfClass: [NSTextField class]])
+        {
+            ((NSTextField *)view).textColor = textColor;
+        }
+    }
+}
+
+- (void) drawRect: (NSRect)dirtyRect
+{
+	if (self.delegate.isSelected)
+	{
+		NSColor *selectionColor	= [NSColor alternateSelectedControlColor];
+        
+        [selectionColor set];
+        NSRectFill(dirtyRect);
 	}
 }
 @end

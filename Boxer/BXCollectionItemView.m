@@ -9,6 +9,7 @@
 #import "BXCollectionItemView.h"
 #import "NSBezierPath+MCAdditions.h"
 #import "NSShadow+BXShadowExtensions.h"
+#import "BXTemplateImageCell.h"
 
 @implementation BXCollectionItemView
 @synthesize delegate;
@@ -118,17 +119,48 @@
 
 - (void) viewWillDraw
 {
-    BOOL isSelected = self.delegate.isSelected;
-    NSColor *textColor = (isSelected) ? [NSColor whiteColor] : [NSColor blackColor];
+    NSColor *textColor;
+    NSColor *imageColor;
+    NSShadow *imageShadow, *innerShadow;
     
+    if (self.delegate.isSelected)
+    {
+        textColor = [NSColor whiteColor];
+        imageColor = [NSColor whiteColor];
+        imageShadow = [NSShadow shadowWithBlurRadius: 1.0
+                                              offset: NSMakeSize(0, -0.5)
+                                               color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]];
+        innerShadow = nil;
+    }
+    else
+    {
+        textColor = [NSColor blackColor];
+        imageColor = [NSColor colorWithCalibratedWhite: 0.66 alpha: 1.0];
+        imageShadow = [NSShadow shadowWithBlurRadius: 1.0
+                                              offset: NSMakeSize(0, -1)
+                                               color: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.75]];
+        
+        innerShadow = [NSShadow shadowWithBlurRadius: 2
+                                              offset: NSMakeSize(0, -0.5)
+                                               color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]];
+    }
     
     for (id view in self.subviews)
     {
         if ([view isKindOfClass: [NSTextField class]])
         {
-            ((NSTextField *)view).textColor = textColor;
+            [view setTextColor: textColor];
+        }
+        else if ([view isKindOfClass: [NSImageView class]] && [[view cell] isKindOfClass: [BXIndentedImageCell class]])
+        {
+            BXIndentedImageCell *cell = (BXIndentedImageCell *)[view cell];
+            cell.imageColor = imageColor;
+            cell.imageShadow = imageShadow;
+            cell.innerShadow = innerShadow;
         }
     }
+    
+    [super viewWillDraw];
 }
 
 - (void) drawRect: (NSRect)dirtyRect

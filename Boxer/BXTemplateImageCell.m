@@ -15,12 +15,14 @@
 @synthesize imageColor = _imageColor;
 @synthesize disabledImageColor = _disabledImageColor;
 @synthesize imageShadow = _imageShadow;
+@synthesize innerShadow = _innerShadow;
 
 - (void) dealloc
 {
     self.imageColor = nil;
     self.disabledImageColor = nil;
     self.imageShadow = nil;
+    self.innerShadow = nil;
 	[super dealloc];
 }
 
@@ -105,31 +107,39 @@
 
 @implementation BXIndentedImageCell
 
-- (NSColor *) imageColor
+- (void) awakeFromNib
 {
-    if (!_imageColor)
-        self.imageColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.25f];
-    
-    return _imageColor;
+    self.imageColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.25];
+    self.imageShadow = [NSShadow shadowWithBlurRadius: 1
+                                               offset: NSMakeSize(0, -1)
+                                                color: [NSColor colorWithCalibratedWhite: 1 alpha: 1]];
+    self.innerShadow = [NSShadow shadowWithBlurRadius: 2
+                                               offset: NSMakeSize(0, -0.5)
+                                                color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]];
 }
 
-- (NSColor *) disabledImageColor
+- (void) drawInteriorWithFrame: (NSRect)cellFrame inView: (NSView *)controlView
 {
-    if (!_disabledImageColor)
-        self.disabledImageColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f];
-    
-    return _disabledImageColor;
-}
-
-- (NSShadow *) imageShadow
-{
-    if (NO && !_imageShadow)
-    {
-        self.imageShadow = [NSShadow shadowWithBlurRadius: 1.0f
-                                                   offset: NSMakeSize(0, 1.0f)
-                                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5f]];
-    }
-    return _imageShadow;
+	//Apply our foreground colour and shadow when drawing any template image
+	if (self.image.isTemplate)
+	{
+		NSRect imageRegion = NSIntegralRect([self imageRectForBounds: cellFrame]);
+        
+        NSRect imageRect = [self.image imageRectAlignedInRect: imageRegion
+                                                    alignment: self.imageAlignment
+                                                      scaling: self.imageScaling];
+        
+        imageRect = NSIntegralRect(imageRect);
+        
+        NSGradient *gradient = [[[NSGradient alloc] initWithStartingColor: self.imageColor
+                                                              endingColor: self.imageColor] autorelease];
+		
+		[self.image drawInRect: imageRect withGradient: gradient dropShadow: self.imageShadow innerShadow: self.innerShadow];
+	}
+	else
+	{
+		[super drawInteriorWithFrame: cellFrame inView: controlView];
+	}
 }
 
 @end

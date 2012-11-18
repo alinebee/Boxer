@@ -133,7 +133,6 @@
     return [maskedImage autorelease];
 }
 
-
 - (void) drawInRect: (NSRect)dstSpacePortionRect
            fromRect: (NSRect)srcSpacePortionRect
           operation: (NSCompositingOperation)op 
@@ -189,4 +188,70 @@
         }   
     }
 }
+
+- (void) drawInRect: (NSRect)drawRect
+       withGradient: (NSGradient *)gradient
+         dropShadow: (NSShadow *)dropShadow
+        innerShadow: (NSShadow *)innerShadow
+{
+    NSAssert(self.isTemplate, @"drawInRect:withGradient:dropShadow:innerShadow: can only be used with template images.");
+    
+    NSSize size = drawRect.size;
+    
+    NSGraphicsContext *context = [NSGraphicsContext currentContext];
+    CGContextRef cgContext = (CGContextRef)context.graphicsPort;
+    
+    //First create a mask image
+    CGRect maskRect = NSRectToCGRect(drawRect);
+    CGImageRef imageMask = [self CGImageForProposedRect: &drawRect context: context hints: nil];
+    
+    //Create an inverted version of the mask
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef maskContext = CGBitmapContextCreate(NULL, size.width, size.height, 8, size.width * 4, colorSpace, kCGImageAlphaPremultipliedLast);
+    CGColorSpaceRelease(colorSpace);
+    CGContextSetBlendMode(maskContext, kCGBlendModeXOR);
+    CGContextDrawImage(maskContext, CGRectMake(0, 0, size.width, size.height), imageMask);
+    CGContextSetRGBFillColor(maskContext, 1.0, 1.0, 1.0, 1.0);
+    CGContextFillRect(maskContext, CGRectMake(0, 0, size.width, size.height));
+    CGImageRef invertedImageMask = CGBitmapContextCreateImage(maskContext);
+    
+    //Fill image area with gradient
+    if (gradient)
+    {
+        [NSGraphicsContext saveGraphicsState];
+        CGContextSaveGState(cgContext);
+            CGContextClipToMask(cgContext, maskRect, imageMask);
+            [gradient drawInRect: drawRect angle: 270.0];
+        CGContextRestoreGState(cgContext);
+        [NSGraphicsContext restoreGraphicsState];
+    }
+    
+    //Render the drop shadow
+    if (dropShadow)
+    {
+        [NSGraphicsContext saveGraphicsState];
+        CGContextSaveGState(cgContext);
+            [dropShadow set];
+            CGContextClipToMask(cgContext, maskRect, invertedImageMask);
+            CGContextDrawImage(cgContext, maskRect, imageMask);
+        CGContextRestoreGState(cgContext);
+        [NSGraphicsContext restoreGraphicsState];
+    }
+    
+    //Render the inner shadow
+    if (innerShadow)
+    {
+        [NSGraphicsContext saveGraphicsState];
+        CGContextSaveGState(cgContext);
+            [innerShadow set];
+            CGContextClipToMask(cgContext, maskRect, imageMask);
+            CGContextDrawImage(cgContext, maskRect, invertedImageMask);
+        CGContextRestoreGState(cgContext);
+        [NSGraphicsContext restoreGraphicsState];
+    }
+    
+    CGContextRelease(maskContext);
+    CGImageRelease(invertedImageMask);
+}
+
 @end

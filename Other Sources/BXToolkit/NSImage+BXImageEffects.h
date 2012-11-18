@@ -42,4 +42,10 @@
            fraction: (CGFloat)requestedAlpha
      respectFlipped: (BOOL)respectContextIsFlipped;
 
+//Draw a template image filled with the specified gradient and rendered
+//with the specified inner and drop shadows.
+- (void) drawInRect: (NSRect)drawRect
+       withGradient: (NSGradient *)fillGradient
+         dropShadow: (NSShadow *)dropShadow
+        innerShadow: (NSShadow *)innerShadow;
 @end

@@ -14,11 +14,13 @@
 	NSColor *_imageColor;
 	NSColor *_disabledImageColor;
 	NSShadow *_imageShadow;
+	NSShadow *_innerShadow;
 }
 
 @property (copy, nonatomic) NSColor *imageColor;
 @property (copy, nonatomic) NSColor *disabledImageColor;
 @property (copy, nonatomic) NSShadow *imageShadow;
+@property (copy, nonatomic) NSShadow *innerShadow;
 
 @end
 

@@ -495,9 +495,11 @@ enum {
     if (BXESCPColorBlack < 0 || color > BXESCPColorGreen)
         color = BXESCPColorBlack;
     
-    _color = color;
-    
-    _textAttributesNeedUpdate = YES;
+    if (self.color != color)
+    {
+        _color = color;
+        _textAttributesNeedUpdate = YES;
+    }
 }
 
 - (void) setUnderlined: (BOOL)flag

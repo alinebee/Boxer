@@ -48,6 +48,10 @@ extern NSString * const BXControllerProfileDPadDown;
 @property (retain, nonatomic) NSMutableDictionary *bindings;
 @property (assign, nonatomic) BXControllerStyle controllerStyle;
 
+
+#pragma mark -
+#pragma mark Bindings
+
 //Generates the input bindings for the controller to the emulated joystick.
 //Called whenever the controller or emulated joystick are changed.
 - (void) generateBindings;
@@ -95,6 +99,13 @@ extern NSString * const BXControllerProfileDPadDown;
 //Helper method for generating match definitions. For use by subclasses overriding matchedIDs.
 + (NSDictionary *) matchForVendorID: (long)vendorID
                           productID: (long)productID;
+
+#pragma mark -
+#pragma mark Event handling
+
+//Returns YES if the specified event should be dispatched to an available binding,
+//or NO if the event should be ignored. The default implementation always returns YES.
+- (BOOL) shouldDispatchHIDEvent: (BXHIDEvent *)event;
 
 @end
 

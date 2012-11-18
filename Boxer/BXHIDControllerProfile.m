@@ -203,14 +203,25 @@ static NSMutableArray *_profileClasses = nil;
 
 - (void) bindAxisElements: (NSArray *)elements
 {
+    //Sort the elements by usage, in case the device enumerates them in a funny order.
+    //TWEAK: we also filter out axes with duplicate usages, so that each usage will only appear once.
+    NSMutableDictionary *elementsByUsage = [NSMutableDictionary dictionaryWithCapacity: elements.count];
+    for (DDHidElement *element in elements)
+    {
+        if ([elementsByUsage objectForKey: element.usage] == nil)
+            [elementsByUsage setObject: element forKey: element.usage];
+    }
+    
+    NSArray *sortedElements = [elementsByUsage.allValues sortedArrayUsingSelector: @selector(compareByUsage:)];
+    
     //Custom binding logic for wheels, as each axis's role depends on what other axes are available
     if ([self.emulatedJoystick conformsToProtocol: @protocol(BXEmulatedWheel)])
     {
-        [self bindAxisElementsForWheel: elements];
+        [self bindAxisElementsForWheel: sortedElements];
     }
     else
     {
-        for (DDHidElement *element in elements)
+        for (DDHidElement *element in sortedElements)
         {
             id <BXHIDInputBinding> binding = [self generatedBindingForAxisElement: element];
             [self setBinding: binding forElement: element];
@@ -232,19 +243,7 @@ static NSMutableArray *_profileClasses = nil;
     
     DDHidElement *wheel, *accelerator, *brake;
     
-    //Sort the elements by usage, in case the device enumerates them in a funny order.
-    //TWEAK: we also filter out axes with duplicate usages, so that each usage will only appear once.
-    //FIXME: this is a huge amount of trouble to go to for a not-very-good heuristic.
-    NSMutableDictionary *elementsByUsage = [NSMutableDictionary dictionaryWithCapacity: elements.count];
-    for (DDHidElement *element in elements)
-    {
-        if ([elementsByUsage objectForKey: element.usage] == nil)
-            [elementsByUsage setObject: element forKey: element.usage];
-    }
-    NSArray *sortedElements = [elementsByUsage.allValues sortedArrayUsingSelector: @selector(compareByUsage:)];
-
-    
-    NSUInteger numAxes = sortedElements.count;
+    NSUInteger numAxes = elements.count;
     //There's nothing we can do with a single-axis controller.
     if (numAxes < 2)
         return;
@@ -278,32 +277,32 @@ static NSMutableArray *_profileClasses = nil;
     switch (style)
     {
         case BXControllerStyleGamepad:
-            wheel = [sortedElements objectAtIndex: 0];
+            wheel = [elements objectAtIndex: 0];
             
             //For twin-stick gamepads, map the steering to the left stick and the accelerator/brake
             //to the right stick. This is because steering control sucks if they're all on one axis.
             if (numAxes >= 4)
             {
-                accelerator = brake = [sortedElements objectAtIndex: 3];
+                accelerator = brake = [elements objectAtIndex: 3];
             }
             else
             {
-                accelerator = brake = [sortedElements objectAtIndex: 1];
+                accelerator = brake = [elements objectAtIndex: 1];
             }
             break;
             
         case BXControllerStyleWheel:
-            wheel = [sortedElements objectAtIndex: 0];
+            wheel = [elements objectAtIndex: 0];
             
             //For wheels that have 3 or more axes, assume the accelerator and brake are on separate axes.
             if (numAxes >= 3)
             {
-                brake       = [sortedElements objectAtIndex: 1];
-                accelerator = [sortedElements objectAtIndex: 2];
+                brake       = [elements objectAtIndex: 1];
+                accelerator = [elements objectAtIndex: 2];
             }
             else
             {   
-                accelerator = brake = [sortedElements objectAtIndex: 1];
+                accelerator = brake = [elements objectAtIndex: 1];
             }
             break;
         
@@ -311,8 +310,8 @@ static NSMutableArray *_profileClasses = nil;
         case BXControllerStyleJoystick:
         case BXControllerStyleFlightstick:
         default:
-            wheel = [sortedElements objectAtIndex: 0];
-            accelerator = brake = [sortedElements objectAtIndex: 1];
+            wheel = [elements objectAtIndex: 0];
+            accelerator = brake = [elements objectAtIndex: 1];
             break;
     }
     
@@ -502,13 +501,22 @@ static NSMutableArray *_profileClasses = nil;
 #pragma mark -
 #pragma mark Event handling
 
+//Overridden in subclasses where necessary
+- (BOOL) shouldDispatchHIDEvent: (BXHIDEvent *)event
+{
+    return YES;
+}
+
 //Send the event on to the appropriate binding for that element
 - (void) dispatchHIDEvent: (BXHIDEvent *)event
 {
-	id <BXHIDInputBinding> binding = [self bindingForElement: event.element];
-	
-	[binding processEvent: event
-                forTarget: self.emulatedJoystick];
+    if ([self shouldDispatchHIDEvent: event])
+    {
+        id <BXHIDInputBinding> binding = [self bindingForElement: event.element];
+        
+        [binding processEvent: event
+                    forTarget: self.emulatedJoystick];
+    }
 }
 
 - (void) binding: (id <BXPeriodicInputBinding>)binding didSendInputToTarget: (id <BXEmulatedJoystick>)target
@@ -585,7 +593,7 @@ static NSMutableArray *_profileClasses = nil;
 		if (direction != BXEmulatedPOVCentered)
 		{
 			BXButtonToPOV *binding = [BXButtonToPOV bindingWithDirection: direction];
-			[self setBinding: binding forElement: element];
+            [self setBinding: binding forElement: element];
 		}
 	}
 }

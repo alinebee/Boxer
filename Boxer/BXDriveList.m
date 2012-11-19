@@ -283,8 +283,13 @@
     NSView *itemView = [self viewForDrive: firstSelectedDrive];
     if (itemView)
     {
-        NSData *imageData = [itemView dataWithPDFInsideRect: [itemView bounds]];
-        return [[[NSImage alloc] initWithData: imageData] autorelease];
+        NSBitmapImageRep *imageRep = [itemView bitmapImageRepForCachingDisplayInRect: itemView.bounds];
+        [itemView cacheDisplayInRect: itemView.bounds toBitmapImageRep: imageRep];
+        NSImage *image = [[NSImage alloc] init];
+        [image addRepresentation: imageRep];
+        return [image autorelease];
+        //NSData *imageData = [itemView dataWithPDFInsideRect: [itemView bounds]];
+        //return [[[NSImage alloc] initWithData: imageData] autorelease];
     }
     else return nil;
 }

@@ -11,16 +11,21 @@
 
 @interface BXTemplateImageCell : NSImageCell
 {
-	NSColor *_imageColor;
-	NSColor *_disabledImageColor;
-	NSShadow *_imageShadow;
+	NSGradient *_imageFill;
+	NSGradient *_disabledImageFill;
+	NSShadow *_dropShadow;
 	NSShadow *_innerShadow;
 }
 
-@property (copy, nonatomic) NSColor *imageColor;
-@property (copy, nonatomic) NSColor *disabledImageColor;
-@property (copy, nonatomic) NSShadow *imageShadow;
+@property (copy, nonatomic) NSGradient *imageFill;
+@property (copy, nonatomic) NSGradient *disabledImageFill;
+@property (copy, nonatomic) NSShadow *dropShadow;
 @property (copy, nonatomic) NSShadow *innerShadow;
+
++ (NSGradient *) defaultImageFill;
++ (NSGradient *) defaultDisabledImageFill;
++ (NSShadow *) defaultDropShadow;
++ (NSShadow *) defaultInnerShadow;
 
 @end
 

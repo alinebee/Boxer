@@ -17,7 +17,7 @@
 //Returns the original prototype we were copied from, to access properties that weren't copied.
 - (NSView *) prototype
 {
-	NSView *prototype = [[[[self delegate] collectionView] itemPrototype] view];
+	NSView *prototype = self.delegate.collectionView.itemPrototype.view;
 	//If we're already a prototype, then return nil instead of a reference to self.
 	if (self != prototype) return prototype;
 	else return nil;
@@ -41,18 +41,20 @@
 - (NSMenu *) menuForEvent: (NSEvent *)theEvent
 {
 	//Select the item before displaying the menu
-	if (![[self delegate] isSelected])
-	{
-		[[self delegate] setSelected: YES];
-	}
+	if (!self.delegate.isSelected)
+		self.delegate.selected = YES;
 	
 	//NSCollectionView doesn't copy the menu when duplicating views, so we fall back
 	//on the original prototype's menu if we haven't been given one of our own.
 	NSMenu *menu = [super menuForEvent: theEvent];
-	if (!menu) menu = [[self prototype] menuForEvent: theEvent];
+	if (!menu)
+        menu = [self.prototype menuForEvent: theEvent];
 	
 	return menu;
 }
+
+//Implement in subclasses
+- (void) collectionViewItemDidChangeSelection {}
 
 @end
 
@@ -69,7 +71,7 @@
 		NSGradient *background	= [[NSGradient alloc] initWithStartingColor: selectionColor
 																endingColor: shadowColor];
 		
-		NSRect backgroundRect = NSInsetRect([self bounds], 5.0f, 3.0f);
+		NSRect backgroundRect = NSInsetRect(self.bounds, 5.0f, 3.0f);
 		NSBezierPath *backgroundPath = [NSBezierPath bezierPathWithRoundedRect: backgroundRect
 																	   xRadius: 3.0f
 																	   yRadius: 3.0f];
@@ -81,19 +83,17 @@
 		NSRect innerRect = NSInsetRect(backgroundRect, 2.0f, 2.0f);
 		if (!NSContainsRect(innerRect, dirtyRect))
 		{
-			dropShadow = [[NSShadow alloc] init];
-			[dropShadow setShadowOffset: NSMakeSize(0.0f, -0.5f)];
-			[dropShadow setShadowBlurRadius: 2.0f];
-			[dropShadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.85f]];
+            dropShadow = [NSShadow shadowWithBlurRadius: 2.0f
+                                                 offset: NSMakeSize(0.0f, -0.5f)
+                                                  color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.85]];
 			
-			innerGlow = [[NSShadow alloc] init];
-			[innerGlow setShadowOffset: NSZeroSize];
-			[innerGlow setShadowBlurRadius: 2.0f];
-			[innerGlow setShadowColor: [[NSColor whiteColor] colorWithAlphaComponent: 0.5f]];
+            innerGlow = [NSShadow shadowWithBlurRadius: 2.0f
+                                                offset: NSZeroSize
+                                                 color: [NSColor colorWithCalibratedWhite: 1 alpha: 0.5]];
 		}
 		
 		[NSGraphicsContext saveGraphicsState];
-			if (dropShadow) [dropShadow set];
+			[dropShadow set];
 		
 			//Necessary only so that drop shadow gets drawn: it won't be by NSGradient drawInBezierPath:angle:
 			[selectionColor set];
@@ -104,45 +104,47 @@
 		[NSGraphicsContext restoreGraphicsState];
 		
 		//Draw the glow last on top of everything else
-		if (innerGlow) [backgroundPath fillWithInnerShadow: innerGlow];
+		if (innerGlow)
+            [backgroundPath fillWithInnerShadow: innerGlow];
 		
 		[background release];
-		if (dropShadow)	[dropShadow release];
-		if (innerGlow)	[innerGlow release];
 	}
 }
+
+- (void) collectionViewItemDidChangeSelection
+{
+    [self setNeedsDisplay: YES];
+}
+
 @end
 
 
 
 @implementation BXIndentedCollectionItemView
 
-- (void) viewWillDraw
+- (void) collectionViewItemDidChangeSelection
 {
     NSColor *textColor;
-    NSColor *imageColor;
-    NSShadow *imageShadow, *innerShadow;
+    NSGradient *imageFill;
+    NSShadow *dropShadow, *innerShadow;
     
     if (self.delegate.isSelected)
     {
         textColor = [NSColor whiteColor];
-        imageColor = [NSColor whiteColor];
-        imageShadow = [NSShadow shadowWithBlurRadius: 1.0
-                                              offset: NSMakeSize(0, -0.5)
-                                               color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]];
+        imageFill = [[[NSGradient alloc] initWithStartingColor: [NSColor whiteColor]
+                                                   endingColor: [NSColor whiteColor]] autorelease];
+        
+        dropShadow = [NSShadow shadowWithBlurRadius: 1.0
+                                             offset: NSMakeSize(0, -1)
+                                              color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]];
         innerShadow = nil;
     }
     else
     {
         textColor = [NSColor blackColor];
-        imageColor = [NSColor colorWithCalibratedWhite: 0.66 alpha: 1.0];
-        imageShadow = [NSShadow shadowWithBlurRadius: 1.0
-                                              offset: NSMakeSize(0, -1)
-                                               color: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.75]];
-        
-        innerShadow = [NSShadow shadowWithBlurRadius: 2
-                                              offset: NSMakeSize(0, -0.5)
-                                               color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]];
+        imageFill = [BXIndentedImageCell defaultImageFill];
+        dropShadow = [BXIndentedImageCell defaultDropShadow];
+        innerShadow = [BXIndentedImageCell defaultInnerShadow];
     }
     
     for (id view in self.subviews)
@@ -154,13 +156,13 @@
         else if ([view isKindOfClass: [NSImageView class]] && [[view cell] isKindOfClass: [BXIndentedImageCell class]])
         {
             BXIndentedImageCell *cell = (BXIndentedImageCell *)[view cell];
-            cell.imageColor = imageColor;
-            cell.imageShadow = imageShadow;
+            cell.imageFill = imageFill;
+            cell.dropShadow = dropShadow;
             cell.innerShadow = innerShadow;
         }
     }
     
-    [super viewWillDraw];
+    [self setNeedsDisplay: YES];
 }
 
 - (void) drawRect: (NSRect)dirtyRect
@@ -181,6 +183,7 @@
 - (void) viewDidLoad
 {
     //Intended to be overridden in subclasses.
+    [(BXCollectionItemView *)self.view collectionViewItemDidChangeSelection];
 }
 
 - (id) copyWithZone: (NSZone *)zone
@@ -199,10 +202,10 @@
 //Redraw our view whenever we are selected or deselected
 - (void) setSelected: (BOOL)flag
 {
-	if (flag != [self isSelected])
+	if (flag != self.isSelected)
 	{
 		[super setSelected: flag];
-		[[self view] setNeedsDisplay: YES];
+        [(BXCollectionItemView *)self.view collectionViewItemDidChangeSelection];
 	}
 }
 

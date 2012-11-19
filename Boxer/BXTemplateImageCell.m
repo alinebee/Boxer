@@ -12,34 +12,43 @@
 
 
 @implementation BXTemplateImageCell
-@synthesize imageColor = _imageColor;
-@synthesize disabledImageColor = _disabledImageColor;
-@synthesize imageShadow = _imageShadow;
+@synthesize imageFill = _imageFill;
+@synthesize disabledImageFill = _disabledImageFill;
+@synthesize dropShadow = _dropShadow;
 @synthesize innerShadow = _innerShadow;
+
+- (void) awakeFromNib
+{
+    self.imageFill = [self.class defaultImageFill];
+    self.disabledImageFill = [self.class defaultDisabledImageFill];
+    self.dropShadow = [self.class defaultDropShadow];
+    self.innerShadow = [self.class defaultInnerShadow];
+}
 
 - (void) dealloc
 {
-    self.imageColor = nil;
-    self.disabledImageColor = nil;
-    self.imageShadow = nil;
+    self.imageFill = nil;
+    self.disabledImageFill = nil;
+    self.dropShadow = nil;
     self.innerShadow = nil;
+    
 	[super dealloc];
 }
 
 - (NSRect) imageRectForBounds: (NSRect)theRect
 {
     NSRect imageRect = [super imageRectForBounds: theRect];
-    if (self.imageShadow && self.image.isTemplate)
+    if (self.dropShadow && self.image.isTemplate)
     {
         //If we have a shadow set, then constrain the image region to accomodate the shadow
-        imageRect = [self.imageShadow insetRectForShadow: imageRect
-                                                 flipped: self.controlView.isFlipped];
+        imageRect = [self.dropShadow insetRectForShadow: imageRect
+                                                flipped: self.controlView.isFlipped];
     }
     return imageRect;
 }
 
 - (void) drawInteriorWithFrame: (NSRect)cellFrame inView: (NSView *)controlView
-{	
+{
 	//Apply our foreground colour and shadow when drawing any template image
 	if (self.image.isTemplate)
 	{
@@ -50,22 +59,11 @@
                                                       scaling: self.imageScaling];
         
         imageRect = NSIntegralRect(imageRect);
-        
-        NSColor *color = (self.isEnabled) ? self.imageColor : self.disabledImageColor;
-        
-        //Use the template image as a mask to create a new image composed entirely of one color.
-        NSImage *maskedImage = [self.image imageFilledWithColor: color
-                                                         atSize: imageRect.size];
+        NSGradient *fill = (self.isEnabled) ? self.imageFill : self.disabledImageFill;
 		
-		//Then, render the single-color image into the final context along with the drop shadow
-		[NSGraphicsContext saveGraphicsState];
-			[self.imageShadow set];
-			[maskedImage drawInRect: imageRect
-                           fromRect: NSZeroRect
-                          operation: NSCompositeSourceOver
-                           fraction: 1.0f
-                     respectFlipped: YES];
-		[NSGraphicsContext restoreGraphicsState];
+        [NSGraphicsContext saveGraphicsState];
+		[self.image drawInRect: imageRect withGradient: fill dropShadow: self.dropShadow innerShadow: self.innerShadow];
+        [NSGraphicsContext restoreGraphicsState];
 	}
 	else
 	{
@@ -73,32 +71,80 @@
 	}
 }
 
+- (void) setImageFill: (NSGradient *)imageFill
+{
+    if (![self.imageFill isEqual: imageFill])
+    {
+        [_imageFill release];
+        _imageFill = [imageFill copy];
+        
+        [self.controlView setNeedsDisplay: YES];
+    }
+}
+
+- (void) setDisabledImageFill: (NSGradient *)imageFill
+{
+    if (![self.disabledImageFill isEqual: imageFill])
+    {
+        [_disabledImageFill release];
+        _disabledImageFill = [imageFill copy];
+        
+        [self.controlView setNeedsDisplay: YES];
+    }
+}
+
+- (void) setDropShadow: (NSShadow *)dropShadow
+{
+    if (![self.dropShadow isEqual: dropShadow])
+    {
+        [_dropShadow release];
+        _dropShadow = [dropShadow copy];
+        
+        [self.controlView setNeedsDisplay: YES];
+    }
+}
+
+- (void) setInnerShadow: (NSShadow *)innerShadow
+{
+    if (![self.innerShadow isEqual: innerShadow])
+    {
+        [_innerShadow release];
+        _innerShadow = [innerShadow copy];
+        
+        [self.controlView setNeedsDisplay: YES];
+    }
+}
+
+//Override in subclasses
++ (NSGradient *) defaultImageFill           { return nil; }
++ (NSGradient *) defaultDisabledImageFill   { return nil; }
++ (NSShadow *) defaultDropShadow            { return nil; }
++ (NSShadow *) defaultInnerShadow           { return nil; }
+
 @end
 
 @implementation BXHUDImageCell
 
-- (NSColor *) imageColor
++ (NSGradient *) defaultImageFill
 {
-    if (!_imageColor) self.imageColor = [NSColor whiteColor];
-    return _imageColor;
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor whiteColor]
+                                          endingColor: [NSColor whiteColor]] autorelease];
 }
 
-- (NSColor *) disabledImageColor
++ (NSGradient *) defaultDisabledImageFill
 {
-    if (!_disabledImageColor)
-        self.disabledImageColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
-    
-    return _disabledImageColor;
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1 alpha: 0.5]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 1 alpha: 0.5]] autorelease];
 }
 
-- (NSShadow *) imageShadow
++ (NSShadow *) defaultDropShadow
 {
-    if (!_imageShadow)
-    {
-        self.imageShadow = [NSShadow shadowWithBlurRadius: 3.0f
-                                                   offset: NSMakeSize(0.0f, -1.0f)];
-    }
-    return _imageShadow;
+    return [NSShadow shadowWithBlurRadius: 3.0f offset: NSMakeSize(0.0f, -1.0f)];
+}
+
++ (NSShadow *) defaultInnerShadow
+{
+    return nil;
 }
 
 @end
@@ -107,39 +153,30 @@
 
 @implementation BXIndentedImageCell
 
-- (void) awakeFromNib
++ (NSGradient *) defaultImageFill
 {
-    self.imageColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.25];
-    self.imageShadow = [NSShadow shadowWithBlurRadius: 1
-                                               offset: NSMakeSize(0, -1)
-                                                color: [NSColor colorWithCalibratedWhite: 1 alpha: 1]];
-    self.innerShadow = [NSShadow shadowWithBlurRadius: 2
-                                               offset: NSMakeSize(0, -0.5)
-                                                color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]];
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.25]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.10]] autorelease];
 }
 
-- (void) drawInteriorWithFrame: (NSRect)cellFrame inView: (NSView *)controlView
++ (NSGradient *) defaultDisabledImageFill
 {
-	//Apply our foreground colour and shadow when drawing any template image
-	if (self.image.isTemplate)
-	{
-		NSRect imageRegion = NSIntegralRect([self imageRectForBounds: cellFrame]);
-        
-        NSRect imageRect = [self.image imageRectAlignedInRect: imageRegion
-                                                    alignment: self.imageAlignment
-                                                      scaling: self.imageScaling];
-        
-        imageRect = NSIntegralRect(imageRect);
-        
-        NSGradient *gradient = [[[NSGradient alloc] initWithStartingColor: self.imageColor
-                                                              endingColor: self.imageColor] autorelease];
-		
-		[self.image drawInRect: imageRect withGradient: gradient dropShadow: self.imageShadow innerShadow: self.innerShadow];
-	}
-	else
-	{
-		[super drawInteriorWithFrame: cellFrame inView: controlView];
-	}
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.15]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.05]] autorelease];
+}
+
++ (NSShadow *) defaultDropShadow
+{
+    return [NSShadow shadowWithBlurRadius: 1.0
+                                   offset: NSMakeSize(0, -1)
+                                    color: [NSColor colorWithCalibratedWhite: 1 alpha: 1]];
+}
+
++ (NSShadow *) defaultInnerShadow
+{
+    return [NSShadow shadowWithBlurRadius: 1.25
+                                   offset: NSMakeSize(0, -0.25)
+                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]];
 }
 
 @end

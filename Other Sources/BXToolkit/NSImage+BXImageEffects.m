@@ -219,7 +219,7 @@
     //Note that the inverted mask is larger than the original mask because it needs to cover the total dirty region:
     //otherwise it would inadvertently mask out parts of the drop shadow.
     //TODO: make this retina-capable
-    CGRect invertedMaskRect = NSRectToCGRect(totalDirtyRect);
+    CGRect invertedMaskRect = CGRectIntegral(NSRectToCGRect(totalDirtyRect));
     CGSize invertedMaskPixelSize = CGSizeMake(invertedMaskRect.size.width * pointSize.width,
                                               invertedMaskRect.size.height * pointSize.height);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();

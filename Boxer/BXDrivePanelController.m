@@ -35,7 +35,6 @@ enum {
 #pragma mark -
 #pragma mark Implementation
 
-
 @implementation BXDrivePanelController
 @synthesize driveControls = _driveControls;
 @synthesize driveActionsMenu = _driveActionsMenu;
@@ -96,6 +95,7 @@ enum {
     
 	[center addObserver: self selector: @selector(emulatorDriveDidMount:) name: @"BXDriveDidMountNotification" object: nil];
 }
+
 
 - (void) dealloc
 {
@@ -191,7 +191,6 @@ enum {
 
 - (IBAction) interactWithDriveOptions: (NSSegmentedControl *)sender
 {
-	SEL action = sender.action;
 	switch (sender.selectedSegment)
 	{
 		case BXAddDriveSegment:
@@ -203,11 +202,6 @@ enum {
 			break;
 			
 		case BXDriveActionsMenuSegment:
-			//An infuriating workaround for an NSSegmentedControl bug,
-			//whereby menus won't be shown if the control has an action set.
-            sender.action = NULL;
-			[sender mouseDown: [NSApp currentEvent]];
-            sender.action = action;
 			break;
 	}
 }
@@ -695,4 +689,15 @@ enum {
     [[NSCursor arrowCursor] set];
 }
 
+@end
+
+
+@implementation BXDriveOptionsSegmentedCell
+
+- (SEL) action
+{
+    if ([self menuForSegment: self.selectedSegment] != nil) return NULL;
+    
+    return [super action];
+}
 @end

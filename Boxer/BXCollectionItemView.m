@@ -9,7 +9,7 @@
 #import "BXCollectionItemView.h"
 #import "NSBezierPath+MCAdditions.h"
 #import "NSShadow+BXShadowExtensions.h"
-#import "BXTemplateImageCell.h"
+#import "BXThemedImageCell.h"
 
 @implementation BXCollectionItemView
 @synthesize delegate;
@@ -125,31 +125,14 @@
 - (void) collectionViewItemDidChangeSelection
 {
     NSColor *textColor;
-    NSGradient *imageFill;
-    NSGradient *disabledImageFill;
-    NSShadow *dropShadow, *innerShadow;
     
     if (self.delegate.isSelected)
     {
         textColor = [NSColor whiteColor];
-        imageFill = [[[NSGradient alloc] initWithStartingColor: [NSColor whiteColor]
-                                                   endingColor: [NSColor whiteColor]] autorelease];
-        
-        disabledImageFill = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1 alpha: 0.5]
-                                                           endingColor: [NSColor colorWithCalibratedWhite: 1 alpha: 0.5]] autorelease];
-        
-        dropShadow = [NSShadow shadowWithBlurRadius: 1.0
-                                             offset: NSMakeSize(0, -1)
-                                              color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]];
-        innerShadow = nil;
     }
     else
     {
         textColor = [NSColor blackColor];
-        imageFill = [BXIndentedImageCell defaultImageFill];
-        disabledImageFill = [BXIndentedImageCell defaultDisabledImageFill];
-        dropShadow = [BXIndentedImageCell defaultDropShadow];
-        innerShadow = [BXIndentedImageCell defaultInnerShadow];
     }
     
     for (id view in self.subviews)
@@ -160,11 +143,7 @@
         }
         else if ([view isKindOfClass: [NSImageView class]] && [[view cell] isKindOfClass: [BXIndentedImageCell class]])
         {
-            BXIndentedImageCell *cell = (BXIndentedImageCell *)[view cell];
-            cell.imageFill = imageFill;
-            cell.disabledImageFill = disabledImageFill;
-            cell.dropShadow = dropShadow;
-            cell.innerShadow = innerShadow;
+            ((BXIndentedImageCell *)[view cell]).selected = self.delegate.isSelected;
         }
         [view setNeedsDisplay: YES];
     }

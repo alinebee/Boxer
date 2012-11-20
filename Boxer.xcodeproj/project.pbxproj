@@ -276,7 +276,7 @@
 		9F2D308F15B8233800FAE848 /* BX360ControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD3A1E3139A358C00D0918E /* BX360ControllerProfile.m */; };
 		9F2D309015B8233800FAE848 /* BXSixaxisControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */; };
 		9F2D309115B8233800FAE848 /* BXCollectionItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F60B0DB13AA418300F06BB1 /* BXCollectionItemView.m */; };
-		9F2D309215B8233800FAE848 /* BXTemplateImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD012FA13AB87E500AF6FE8 /* BXTemplateImageCell.m */; };
+		9F2D309215B8233800FAE848 /* BXThemedImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD012FA13AB87E500AF6FE8 /* BXThemedImageCell.m */; };
 		9F2D309315B8233800FAE848 /* BXJoypadController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC637FF13C09B79004478A3 /* BXJoypadController.m */; };
 		9F2D309415B8233800FAE848 /* BX2ButtonJoystickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382113C0D54C004478A3 /* BX2ButtonJoystickLayout.m */; };
 		9F2D309515B8233800FAE848 /* BXJoypadLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382413C0D637004478A3 /* BXJoypadLayout.m */; };
@@ -806,7 +806,7 @@
 		9FCEDF3312B3DFFC00E856A4 /* SDL_sound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
 		9FD011BD10C2A02F00670CE1 /* BXGameboxPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */; };
 		9FD012E313AB845200AF6FE8 /* GamepadTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */; };
-		9FD012FB13AB87E500AF6FE8 /* BXTemplateImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD012FA13AB87E500AF6FE8 /* BXTemplateImageCell.m */; };
+		9FD012FB13AB87E500AF6FE8 /* BXThemedImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD012FA13AB87E500AF6FE8 /* BXThemedImageCell.m */; };
 		9FD1D6251364291600792011 /* DDHidDevice+BXDeviceExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D6241364291600792011 /* DDHidDevice+BXDeviceExtensions.m */; };
 		9FD1D7011364819E00792011 /* BXJoystickController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D7001364819E00792011 /* BXJoystickController.m */; };
 		9FD1D78A1364991100792011 /* BXHIDEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D7891364991100792011 /* BXHIDEvent.m */; };
@@ -1721,8 +1721,8 @@
 		9FD011BB10C2A02F00670CE1 /* BXGameboxPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGameboxPanelController.h; sourceTree = "<group>"; };
 		9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGameboxPanelController.m; sourceTree = "<group>"; };
 		9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = GamepadTemplate.pdf; sourceTree = "<group>"; };
-		9FD012F913AB87E500AF6FE8 /* BXTemplateImageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTemplateImageCell.h; sourceTree = "<group>"; };
-		9FD012FA13AB87E500AF6FE8 /* BXTemplateImageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTemplateImageCell.m; sourceTree = "<group>"; };
+		9FD012F913AB87E500AF6FE8 /* BXThemedImageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedImageCell.h; sourceTree = "<group>"; };
+		9FD012FA13AB87E500AF6FE8 /* BXThemedImageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedImageCell.m; sourceTree = "<group>"; };
 		9FD1D6231364291600792011 /* DDHidDevice+BXDeviceExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DDHidDevice+BXDeviceExtensions.h"; sourceTree = "<group>"; };
 		9FD1D6241364291600792011 /* DDHidDevice+BXDeviceExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DDHidDevice+BXDeviceExtensions.m"; sourceTree = "<group>"; };
 		9FD1D6FF1364819E00792011 /* BXJoystickController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXJoystickController.h; sourceTree = "<group>"; };
@@ -2441,8 +2441,6 @@
 				9FF1562814506DBA00545317 /* BXHUDProgressIndicator.m */,
 				9F57684715DA27A300B50500 /* BXHUDSpinningProgressIndicator.h */,
 				9F57684815DA27A300B50500 /* BXHUDSpinningProgressIndicator.m */,
-				9FD012F913AB87E500AF6FE8 /* BXTemplateImageCell.h */,
-				9FD012FA13AB87E500AF6FE8 /* BXTemplateImageCell.m */,
 				9F60B0DA13AA418300F06BB1 /* BXCollectionItemView.h */,
 				9F60B0DB13AA418300F06BB1 /* BXCollectionItemView.m */,
 				9FBEC4EE142CE8300016964A /* BXMT32LCDDisplay.h */,
@@ -3484,6 +3482,8 @@
 				9FD7B6B2145746CC00565CEB /* BXThemedButtonCell.m */,
 				9F26A9AB1458678B000184D1 /* BXThemedSliderCell.h */,
 				9F26A9AC1458678B000184D1 /* BXThemedSliderCell.m */,
+				9FD012F913AB87E500AF6FE8 /* BXThemedImageCell.h */,
+				9FD012FA13AB87E500AF6FE8 /* BXThemedImageCell.m */,
 			);
 			name = Themes;
 			sourceTree = "<group>";
@@ -4149,7 +4149,7 @@
 				9FD3A1E4139A358C00D0918E /* BX360ControllerProfile.m in Sources */,
 				9FD3A27F139A839600D0918E /* BXSixaxisControllerProfile.m in Sources */,
 				9F60B0DC13AA418300F06BB1 /* BXCollectionItemView.m in Sources */,
-				9FD012FB13AB87E500AF6FE8 /* BXTemplateImageCell.m in Sources */,
+				9FD012FB13AB87E500AF6FE8 /* BXThemedImageCell.m in Sources */,
 				9FC6380013C09B79004478A3 /* BXJoypadController.m in Sources */,
 				9FC6382213C0D54C004478A3 /* BX2ButtonJoystickLayout.m in Sources */,
 				9FC6382513C0D637004478A3 /* BXJoypadLayout.m in Sources */,
@@ -4453,7 +4453,7 @@
 				9F2D308F15B8233800FAE848 /* BX360ControllerProfile.m in Sources */,
 				9F2D309015B8233800FAE848 /* BXSixaxisControllerProfile.m in Sources */,
 				9F2D309115B8233800FAE848 /* BXCollectionItemView.m in Sources */,
-				9F2D309215B8233800FAE848 /* BXTemplateImageCell.m in Sources */,
+				9F2D309215B8233800FAE848 /* BXThemedImageCell.m in Sources */,
 				9F2D309315B8233800FAE848 /* BXJoypadController.m in Sources */,
 				9F2D309415B8233800FAE848 /* BX2ButtonJoystickLayout.m in Sources */,
 				9F2D309515B8233800FAE848 /* BXJoypadLayout.m in Sources */,

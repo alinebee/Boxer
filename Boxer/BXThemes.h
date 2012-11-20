@@ -42,6 +42,28 @@
 //The color with which to stroke the slider knob. Defaults to disabledStrokeColor.
 - (NSColor *) disabledSliderKnobStrokeColor;
 
+
+- (NSGradient *) imageFill;
+- (NSShadow *) imageInnerShadow;
+- (NSShadow *) imageDropShadow;
+
+- (NSGradient *) selectedImageFill;
+- (NSShadow *) selectedImageInnerShadow;
+- (NSShadow *) selectedImageDropShadow;
+
+- (NSGradient *) disabledImageFill;
+- (NSShadow *) disabledImageInnerShadow;
+- (NSShadow *) disabledImageDropShadow;
+
+- (NSGradient *) highlightedImageFill;
+- (NSShadow *) highlightedImageInnerShadow;
+- (NSShadow *) highlightedImageDropShadow;
+
+- (NSGradient *) pushedImageFill;
+- (NSShadow *) pushedImageInnerShadow;
+- (NSShadow *) pushedImageDropShadow;
+
+
 @end
 
 

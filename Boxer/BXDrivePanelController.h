@@ -12,6 +12,7 @@
 #import "BXOperationDelegate.h"
 #import "BXCollectionItemView.h"
 
+
 @class BXDriveList;
 @class BXDrive;
 @interface BXDrivePanelController : NSViewController <BXOperationDelegate>
@@ -96,3 +97,8 @@
            toPasteboard: (NSPasteboard *)pasteboard;
 
 @end
+
+//Overridden to fix some shitty menu behaviour in the standard NSSegmentedCell
+@interface BXDriveOptionsSegmentedCell : NSSegmentedCell
+@end
+

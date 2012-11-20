@@ -7,6 +7,7 @@
 
 
 #import "BXDriveList.h"
+#import "BXDriveItem.h"
 #import "BXBaseAppController.h"
 #import "BXDrive.h"
 #import "BXDrivePanelController.h"
@@ -24,22 +25,23 @@
 
 
 @implementation BXDriveItemButtonCell
-@synthesize hovered;
+@synthesize hovered = _hovered;
 
 - (id) initWithCoder: (NSCoder *)coder
 {
 	if ((self = [super initWithCoder: coder]))
 	{
-		[self setHighlightsBy: NSNoCellMask];
+        self.highlightsBy = NSNoCellMask;
 	}
 	return self;
 }
-- (void) mouseEntered: (NSEvent *)event	{ [self setHighlighted: YES]; }
-- (void) mouseExited: (NSEvent *)event	{ [self setHighlighted: NO]; }
-- (void) setHighlighted: (BOOL)hover
+- (void) mouseEntered: (NSEvent *)event	{ self.hovered = YES; }
+- (void) mouseExited: (NSEvent *)event	{ self.hovered = NO; }
+
+- (void) setHovered: (BOOL)hover
 {
-	hovered = hover;
-	[[self controlView] setNeedsDisplay: YES];
+	_hovered = hover;
+	[self.controlView setNeedsDisplay: YES];
 }
 
 - (BOOL) showsBorderOnlyWhileMouseInside
@@ -54,11 +56,11 @@
 	CGFloat opacity;
 	NSColor *tint;
 
-	if ([self isEnabled])
+	if (self.isEnabled)
 	{
         tint = [NSColor whiteColor];
-		if ([self isHighlighted])   opacity = 1.0f;
-		else if ([self isHovered])  opacity = 0.75f;
+		if (self.isHighlighted)     opacity = 1.0f;
+		else if (self.isHovered)    opacity = 0.75f;
         else                        opacity = 0.5f;
 	}
 	else
@@ -67,7 +69,7 @@
 		opacity = 0.25f;
 	}
 	
-	if ([image isTemplate])
+	if (image.isTemplate)
 	{
 		image = [image imageFilledWithColor: tint
                                      atSize: frame.size];
@@ -91,26 +93,47 @@
 
 - (NSColor *) textColor
 {
-    if ([self isEnabled])
-        return [NSColor whiteColor];
+    if (self.isHighlighted)
+    {
+        if (self.isEnabled)
+            return [NSColor whiteColor];
+        else
+            return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
+    }
     else
-        return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
+    {
+        return [NSColor blackColor];
+    }
 }
 
 - (NSColor *) backgroundColor
 {
-    if ([self isEnabled])
-        return [NSColor whiteColor];
+    if (self.isHighlighted)
+    {
+        if (self.isEnabled)
+            return [NSColor whiteColor];
+        else
+            return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
+    }
     else
-        return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
+    {
+        return [NSColor blackColor];
+    }
 }
 
 - (NSColor *) borderColor
 {
-    if ([self isEnabled])
-        return [NSColor whiteColor];
+    if (self.isHighlighted)
+    {
+        if (self.isEnabled)
+            return [NSColor whiteColor];
+        else
+            return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.25f];
+    }
     else
-        return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.25f];
+    {
+        return [NSColor blackColor];
+    }
 }
 
 - (NSShadow *) dropShadow
@@ -120,12 +143,12 @@
 
 - (NSShadow *) textShadow
 {
-    return [self dropShadow];
+    return self.dropShadow;
 }
 
 - (void) drawInteriorWithFrame: (NSRect)frame inView: (NSView *)controlView
 {
-    NSShadow *dropShadow = [self dropShadow];
+    NSShadow *dropShadow = self.dropShadow;
     NSRect frameForShadow = [dropShadow insetRectForShadow: frame flipped: NO];
     CGFloat cornerRadius = frameForShadow.size.height / 2;
     NSBezierPath *backgroundPill = [NSBezierPath bezierPathWithRoundedRect: frameForShadow
@@ -136,7 +159,6 @@
                                                                xRadius: cornerRadius - 0.5f
                                                                yRadius: cornerRadius - 0.5f];
     
-    
     //When active, we display the drive letter knocked out on a solid background.
     //To do this, we first render the regular text to a temporary image, and then
     //the pill on top with a special compositing mode to knock out the drive letter.
@@ -145,25 +167,25 @@
     //knockout effects and weird shadow behaviour and basically it just won't work.)
     
     NSImage *tempImage = [[NSImage alloc] init];
-    [tempImage setSize: frame.size];
+    tempImage.size = frame.size;
     
     [tempImage lockFocus];
         [super drawInteriorWithFrame: frame inView: controlView];
-        if ([self isEnabled])
+        if (self.isEnabled)
         {
-            [[self backgroundColor] set];
-            [[NSGraphicsContext currentContext] setCompositingOperation: NSCompositeSourceOut];
+            [self.backgroundColor set];
+            [NSGraphicsContext currentContext].compositingOperation = NSCompositeSourceOut;
             [backgroundPill fill];
         }
         else
         {
-            [[self borderColor] set];
+            [self.borderColor set];
             [borderPill stroke];
         }
     [tempImage unlockFocus];
     
     [[NSGraphicsContext currentContext] saveGraphicsState];
-        [[self dropShadow] set];
+        [self.dropShadow set];
     
         [tempImage drawInRect: frame
                      fromRect: NSZeroRect
@@ -194,18 +216,18 @@
     //If the user clicked on our own background, instead of a drive element, then clear the selection
 	if ([clickedView isEqual: self])
 	{
-		[self setSelectionIndexes: [NSIndexSet indexSet]];
+        self.selectionIndexes = [NSIndexSet indexSet];
 	}
     //Otherwise, go through the parents of the selected view to see if any of them are a drive element
     else
     {
         while (![clickedView isKindOfClass: [BXDriveItemView class]])
         {
-            clickedView = [clickedView superview];
+            clickedView = clickedView.superview;
             if ([clickedView isEqual: self]) return;
         }
         
-		[[(BXDriveItemView *)clickedView delegate] setSelected: YES];
+		[(BXDriveItemView *)clickedView delegate].selected = YES;
     }
 }
 
@@ -213,15 +235,15 @@
 //just so that we can stick in our own drag functionality. Fuck. You.
 - (void) mouseDown: (NSEvent *)theEvent
 {	
-	NSPoint clickPoint = [self convertPoint: [theEvent locationInWindow] fromView: nil];
+	NSPoint clickPoint = [self convertPoint: theEvent.locationInWindow fromView: nil];
 	[self _selectItemAtPoint: clickPoint];
 	
 	//If we have a selection, open a mouse tracking loop of our own here in mouseDown
 	//and break out of it for mouseUp and mouseDragged.
-    while ([[self selectionIndexes] count])
+    while (self.selectionIndexes.count)
 	{
-        NSEvent *eventInDrag = [[self window] nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask];
-        switch ([eventInDrag type])
+        NSEvent *eventInDrag = [self.window nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask];
+        switch (eventInDrag.type)
 		{
             case NSLeftMouseDragged: 
 				return [self mouseDragged: eventInDrag];
@@ -235,21 +257,24 @@
 - (void) mouseUp: (NSEvent *)theEvent
 {
     //If the user double-clicked, trigger a drive-mount action or a reveal action, depending on the Cmd key modifier
-	if ([theEvent clickCount] > 1)
+	if (theEvent.clickCount > 1)
 	{
         SEL action;
-        if ([theEvent modifierFlags] & NSCommandKeyMask) action = @selector(revealSelectedDrivesInFinder:);
-        else action = @selector(mountSelectedDrives:);
+        if (theEvent.modifierFlags & NSCommandKeyMask)
+            action = @selector(revealSelectedDrivesInFinder:);
+        else
+            action = @selector(mountSelectedDrives:);
         
-		[NSApp sendAction: action to: [self delegate] from: self];
+		[NSApp sendAction: action to: self.delegate from: self];
 	}
 }
 
 - (BXDriveItemView *) viewForDrive: (BXDrive *)drive
 {
-	for (BXDriveItemView *view in [self subviews])
+	for (BXDriveItemView *view in self.subviews)
 	{
-		if ([[[view delegate] representedObject] isEqual: drive]) return view;
+		if ([view.delegate.representedObject isEqual: drive])
+            return view;
 	}
 	return nil;
 }
@@ -257,10 +282,11 @@
 
 - (BXDriveItem *) itemForDrive: (BXDrive *)drive
 {
-	for (BXDriveItemView *view in [self subviews])
+	for (BXDriveItemView *view in self.subviews)
 	{
-        BXDriveItem *item = (id)[view delegate];
-		if ([[item representedObject] isEqual: drive]) return item;
+        BXDriveItem *item = (BXDriveItem *)view.delegate;
+		if ([item.representedObject isEqual: drive])
+            return item;
 	}
 	return nil;
 }
@@ -279,7 +305,7 @@
                                       offset: (NSPointPointer)dragImageOffset
 {
     //TODO: render images for all selected drives, once we allow more than one
-    BXDrive *firstSelectedDrive = [[self content] objectAtIndex: [indexes firstIndex]];
+    BXDrive *firstSelectedDrive = [self.content objectAtIndex: indexes.firstIndex];
     NSView *itemView = [self viewForDrive: firstSelectedDrive];
     if (itemView)
     {
@@ -288,34 +314,30 @@
         NSImage *image = [[NSImage alloc] init];
         [image addRepresentation: imageRep];
         return [image autorelease];
-        //NSData *imageData = [itemView dataWithPDFInsideRect: [itemView bounds]];
-        //return [[[NSImage alloc] initWithData: imageData] autorelease];
     }
     else return nil;
 }
 
 - (void) mouseDragged: (NSEvent *)theEvent
 {
-    NSIndexSet *indexes = [self selectionIndexes];
-    
     //Ignore the drag if we have nothing selected.
-    if (![indexes count]) return;
+    if (!self.selectionIndexes.count) return;
     
     //Make a new pasteboard and get our delegate to set it up for us
 	NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName: NSDragPboard];
     
-    BOOL continueDrag = [[self delegate] collectionView: self
-                                    writeItemsAtIndexes: [self selectionIndexes]
-                                           toPasteboard: pasteboard];
+    BOOL continueDrag = [self.delegate collectionView: self
+                                  writeItemsAtIndexes: self.selectionIndexes
+                                         toPasteboard: pasteboard];
     
     if (continueDrag)
     {
         //Choose one out of the selection to be the visible source of the drag
-        NSImage *draggedImage   = [self draggingImageForItemsAtIndexes: indexes
+        NSImage *draggedImage   = [self draggingImageForItemsAtIndexes: self.selectionIndexes
                                                              withEvent: theEvent
                                                                 offset: nil];
     
-        BXDrive *firstSelectedDrive = [[self content] objectAtIndex: [indexes firstIndex]];
+        BXDrive *firstSelectedDrive = [self.content objectAtIndex: self.selectionIndexes.firstIndex];
         NSView *itemView = [self viewForDrive: firstSelectedDrive];
         
         [itemView dragImage: draggedImage

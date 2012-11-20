@@ -126,6 +126,7 @@
 {
     NSColor *textColor;
     NSGradient *imageFill;
+    NSGradient *disabledImageFill;
     NSShadow *dropShadow, *innerShadow;
     
     if (self.delegate.isSelected)
@@ -133,6 +134,9 @@
         textColor = [NSColor whiteColor];
         imageFill = [[[NSGradient alloc] initWithStartingColor: [NSColor whiteColor]
                                                    endingColor: [NSColor whiteColor]] autorelease];
+        
+        disabledImageFill = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1 alpha: 0.5]
+                                                           endingColor: [NSColor colorWithCalibratedWhite: 1 alpha: 0.5]] autorelease];
         
         dropShadow = [NSShadow shadowWithBlurRadius: 1.0
                                              offset: NSMakeSize(0, -1)
@@ -143,6 +147,7 @@
     {
         textColor = [NSColor blackColor];
         imageFill = [BXIndentedImageCell defaultImageFill];
+        disabledImageFill = [BXIndentedImageCell defaultDisabledImageFill];
         dropShadow = [BXIndentedImageCell defaultDropShadow];
         innerShadow = [BXIndentedImageCell defaultInnerShadow];
     }
@@ -157,12 +162,15 @@
         {
             BXIndentedImageCell *cell = (BXIndentedImageCell *)[view cell];
             cell.imageFill = imageFill;
+            cell.disabledImageFill = disabledImageFill;
             cell.dropShadow = dropShadow;
             cell.innerShadow = innerShadow;
         }
+        [view setNeedsDisplay: YES];
     }
     
     [self setNeedsDisplay: YES];
+    
 }
 
 - (void) drawRect: (NSRect)dirtyRect

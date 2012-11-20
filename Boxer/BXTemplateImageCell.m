@@ -52,17 +52,19 @@
 	//Apply our foreground colour and shadow when drawing any template image
 	if (self.image.isTemplate)
 	{
-		NSRect imageRegion = NSIntegralRect([self imageRectForBounds: cellFrame]);
-        
+		NSRect imageRegion = [self imageRectForBounds: cellFrame];
         NSRect imageRect = [self.image imageRectAlignedInRect: imageRegion
                                                     alignment: self.imageAlignment
                                                       scaling: self.imageScaling];
         
         imageRect = NSIntegralRect(imageRect);
         NSGradient *fill = (self.isEnabled) ? self.imageFill : self.disabledImageFill;
-		
+        
         [NSGraphicsContext saveGraphicsState];
-		[self.image drawInRect: imageRect withGradient: fill dropShadow: self.dropShadow innerShadow: self.innerShadow];
+            [self.image drawInRect: imageRect
+                      withGradient: fill
+                        dropShadow: self.dropShadow
+                       innerShadow: self.innerShadow];
         [NSGraphicsContext restoreGraphicsState];
 	}
 	else
@@ -161,7 +163,7 @@
 
 + (NSGradient *) defaultDisabledImageFill
 {
-    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.15]
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.10]
                                           endingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.05]] autorelease];
 }
 

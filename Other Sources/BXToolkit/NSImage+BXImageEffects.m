@@ -195,7 +195,10 @@
          dropShadow: (NSShadow *)dropShadow
         innerShadow: (NSShadow *)innerShadow
 {
-    //FIXME: this function is not flipping-aware
+    //Check if we're rendering into a backing suitable for retina displays.
+    NSSize pointSize = NSMakeSize(1, 1);
+    if ([[NSView focusView] respondsToSelector: @selector(convertSizeToBacking:)])
+         pointSize = [[NSView focusView] convertSizeToBacking: pointSize];
     
     NSAssert(self.isTemplate, @"drawInRect:withGradient:dropShadow:innerShadow: can only be used with template images.");
     
@@ -217,21 +220,28 @@
     //otherwise it would inadvertently mask out parts of the drop shadow.
     //TODO: make this retina-capable
     CGRect invertedMaskRect = NSRectToCGRect(totalDirtyRect);
+    CGSize invertedMaskPixelSize = CGSizeMake(invertedMaskRect.size.width * pointSize.width,
+                                              invertedMaskRect.size.height * pointSize.height);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef maskContext = CGBitmapContextCreate(NULL,
-                                                     invertedMaskRect.size.width,
-                                                     invertedMaskRect.size.height,
+                                                     invertedMaskPixelSize.width,
+                                                     invertedMaskPixelSize.height,
                                                      8,
-                                                     invertedMaskRect.size.width * 4,
+                                                     invertedMaskPixelSize.width * 4,
                                                      colorSpace,
                                                      kCGImageAlphaPremultipliedLast);
     CGColorSpaceRelease(colorSpace);
     
     //Render the inverted mask by drawing the original mask into our temporary context and then XORing the result.
+    CGRect relativeMaskRect = CGRectMake((maskRect.origin.x - invertedMaskRect.origin.x) * pointSize.width,
+                                         (maskRect.origin.y - invertedMaskRect.origin.y) * pointSize.height,
+                                         maskRect.size.width * pointSize.width,
+                                         maskRect.size.height * pointSize.height);
+    
     CGContextSetBlendMode(maskContext, kCGBlendModeXOR);
-    CGContextDrawImage(maskContext, maskRect, imageMask);
+    CGContextDrawImage(maskContext, relativeMaskRect, imageMask);
     CGContextSetRGBFillColor(maskContext, 1.0, 1.0, 1.0, 1.0);
-    CGContextFillRect(maskContext, CGRectMake(0, 0, invertedMaskRect.size.width, invertedMaskRect.size.height));
+    CGContextFillRect(maskContext, CGRectMake(0, 0, invertedMaskPixelSize.width, invertedMaskPixelSize.height));
     CGImageRef invertedImageMask = CGBitmapContextCreateImage(maskContext);
     
     //To draw the drop shadow, render the original mask but clipped by the inverted mask:

@@ -40,9 +40,9 @@
 //A custom appearance for control buttons within drive item views.
 @interface BXDriveItemButtonCell : NSButtonCell
 {
-	BOOL hovered;
+	BOOL _hovered;
 }
-@property (assign, getter=isHovered) BOOL hovered;
+@property (assign, nonatomic, getter=isHovered) BOOL hovered;
 @end
 
 

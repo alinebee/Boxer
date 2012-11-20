@@ -16,19 +16,19 @@
 @class BXDrive;
 @interface BXDrivePanelController : NSViewController <BXOperationDelegate>
 {
-	IBOutlet NSSegmentedControl *driveControls;
-	IBOutlet NSMenu *driveActionsMenu;
-	IBOutlet BXDriveList *driveList;
+	NSSegmentedControl *_driveControls;
+	NSMenu *_driveActionsMenu;
+	BXDriveList *_driveList;
     
-    NSIndexSet *selectedDriveIndexes;
+    NSIndexSet *_selectedDriveIndexes;
 }
 
 #pragma mark -
 #pragma mark Properties
 
-@property (retain, nonatomic) BXDriveList *driveList;
-@property (retain, nonatomic) NSSegmentedControl *driveControls;
-@property (retain, nonatomic) NSMenu *driveActionsMenu;
+@property (retain, nonatomic) IBOutlet BXDriveList *driveList;
+@property (retain, nonatomic) IBOutlet NSSegmentedControl *driveControls;
+@property (retain, nonatomic) IBOutlet NSMenu *driveActionsMenu;
 
 //The list of drives to display for the current session.
 //This is pre-filtered with driveFilterPredicate.
@@ -71,9 +71,6 @@
 //Import the selected drives into the gamebox.
 - (IBAction) importSelectedDrives: (id)sender;
 
-//Cancel the import operation for the drive represented by the sender.
-- (IBAction) cancelImportForDrive: (id)sender;
-
 //Cancel the import operations for all currently selected drives.
 - (IBAction) cancelImportsForSelectedDrives: (id)sender;
 
@@ -98,67 +95,4 @@
     writeItemsAtIndexes: (NSIndexSet *)indexes
            toPasteboard: (NSPasteboard *)pasteboard;
 
-@end
-
-
-//BXDriveItem represents each drive in the list and acts
-//as a view controller for its corresponding BXDriveItemView.
-@interface BXDriveItem : BXCollectionItem
-{
-    BOOL importing;
-    
-    IBOutlet NSProgressIndicator *progressMeter;
-    IBOutlet NSTextField *progressMeterLabel;
-    IBOutlet NSButton *progressMeterCancel;
-    IBOutlet NSTextField *driveTypeLabel;
-    IBOutlet NSButton *driveToggleButton;
-    IBOutlet NSButton *driveRevealButton;
-    IBOutlet NSButton *driveImportButton;
-}
-
-//Progress meter fields within the drive item view.
-//These will be updated programmatically throughout the import progress.
-@property (retain, nonatomic) NSProgressIndicator *progressMeter;
-@property (retain, nonatomic) NSTextField *progressMeterLabel;
-@property (retain, nonatomic) NSButton *progressMeterCancel;
-@property (retain, nonatomic) NSTextField *driveTypeLabel;
-@property (retain, nonatomic) NSButton *driveToggleButton;
-@property (retain, nonatomic) NSButton *driveRevealButton;
-@property (retain, nonatomic) NSButton *driveImportButton;
-
-//The icon to display for the drive we represent.
-@property (readonly, nonatomic) NSImage *icon;
-
-//The type description to display for our drive.
-@property (readonly, nonatomic) NSString *typeDescription;
-
-//The icon to display on the insert/eject toggle.
-@property (readonly, nonatomic) NSImage *iconForToggle;
-
-//Tooltips for buttons in the drive item list.
-//(These have to be applied via bindings, because IB doesn't
-//let you assign tooltips >:( )
-@property (readonly, nonatomic) NSString *tooltipForToggle;
-@property (readonly, nonatomic) NSString *tooltipForBundle;
-@property (readonly, nonatomic) NSString *tooltipForReveal;
-@property (readonly, nonatomic) NSString *tooltipForCancel;
-
-
-//Whether this drive is currently mounted.
-@property (readonly, nonatomic, getter=isMounted) BOOL mounted;
-
-//Whether this drive is part of the current gamebox.
-@property (readonly, nonatomic, getter=isBundled) BOOL bundled;
-
-//Whether this drive is currently being imported into the gamebox.
-//Used to toggle the visibility of import progress fields in the drive item view.
-@property (assign, nonatomic, getter=isImporting) BOOL importing;
-
-
-//Import notifications dispatched by BXDrivePanelController,
-//to the drive item for the drive being imported.
-- (void) driveImportWillStart: (NSNotification *)notification;
-- (void) driveImportInProgress: (NSNotification *)notification;
-- (void) driveImportWasCancelled: (NSNotification *)notification;
-- (void) driveImportDidFinish: (NSNotification *)notification;
 @end

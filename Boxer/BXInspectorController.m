@@ -47,26 +47,28 @@
 
 + (BXInspectorController *)controller
 {
-	static BXInspectorController *singleton = nil;
-	if (!singleton) singleton = [[self alloc] initWithWindowNibName: @"Inspector"];
-	return singleton;
+    static BXInspectorController *controller = nil;
+    static dispatch_once_t pred;
+    
+    dispatch_once(&pred, ^{
+        controller = [[self alloc] initWithWindowNibName: @"Inspector"];
+    });
+    
+    return controller;
 }
 
 - (void) dealloc
 {
-	[self setPanelSelector: nil], [panelSelector release];
-	
+    self.panelSelector = nil;
+    
 	[super dealloc];
 }
 
 - (void) awakeFromNib
 {
-	[(NSPanel *)[self window] setBecomesKeyOnlyIfNeeded: YES];
-    //Leave inspector as floating panel for now, as it screws up royally with 10.7's
-    //fullscreen mode for some reason.
-    //[(NSPanel *)[self window] setFloatingPanel: NO];
-	
-	[[self window] setFrameAutosaveName: @"InspectorPanel"];
+	((NSPanel *)self.window).becomesKeyOnlyIfNeeded = YES;
+    self.window.movableByWindowBackground = YES;
+    self.window.frameAutosaveName = @"InspectorPanel";
 	
 	//Set the initial panel based on the user's last chosen panel (defaulting to the CPU panel)
 	NSInteger selectedIndex = [[NSUserDefaults standardUserDefaults] integerForKey: @"initialInspectorPanelIndex"];

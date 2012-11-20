@@ -432,6 +432,8 @@
 		9F45A46C109C9A0400593456 /* MountPanelOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A46A109C9A0400593456 /* MountPanelOptions.xib */; };
 		9F466AFC11A92C4B00C50965 /* UserDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F466AFB11A92C4B00C50965 /* UserDefaults.plist */; };
 		9F4971BB108EF02F00282261 /* BXEmulator+BXDOSFileSystem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */; };
+		9F4B1AFA165C122F001AE063 /* BXDriveItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4B1AF9165C122F001AE063 /* BXDriveItem.m */; };
+		9F4B1AFD165C1A50001AE063 /* InspectorJoystickItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F4B1AFC165C1A50001AE063 /* InspectorJoystickItem.xib */; };
 		9F4B5284122591960055022A /* prompt.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F4B5283122591960055022A /* prompt.icns */; };
 		9F4E042C0F67E72300427D50 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4E042B0F67E72300427D50 /* AudioToolbox.framework */; };
 		9F4FC1151592508100319428 /* BXSupersamplingRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4FC1141592508100319428 /* BXSupersamplingRenderer.m */; };
@@ -685,6 +687,7 @@
 		9FAD43C410A341F6007E8C0D /* UKMainThreadProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BF10A341F6007E8C0D /* UKMainThreadProxy.m */; };
 		9FADFE5511EC7E1700990E91 /* BXDigest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE5411EC7E1700990E91 /* BXDigest.m */; };
 		9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE9611EC932800990E91 /* NSData+HexStrings.m */; };
+		9FAE3492165C075800FC117A /* InspectorDriveItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FAE3494165C075800FC117A /* InspectorDriveItem.xib */; };
 		9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */; };
 		9FAEBE4F15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */; };
 		9FAEBE5215D678C800C9AC5F /* DOSWindowBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FAEBE5115D678C800C9AC5F /* DOSWindowBackground.png */; };
@@ -1107,6 +1110,9 @@
 		9F45A423109C867E00593456 /* BXMountPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMountPanelController.m; sourceTree = "<group>"; };
 		9F45A46B109C9A0400593456 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/MountPanelOptions.xib; sourceTree = "<group>"; };
 		9F466AFB11A92C4B00C50965 /* UserDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefaults.plist; sourceTree = "<group>"; };
+		9F4B1AF8165C122F001AE063 /* BXDriveItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveItem.h; sourceTree = "<group>"; };
+		9F4B1AF9165C122F001AE063 /* BXDriveItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDriveItem.m; sourceTree = "<group>"; };
+		9F4B1AFC165C1A50001AE063 /* InspectorJoystickItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InspectorJoystickItem.xib; sourceTree = "<group>"; };
 		9F4B5283122591960055022A /* prompt.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = prompt.icns; sourceTree = "<group>"; };
 		9F4E042B0F67E72300427D50 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		9F4FC1131592508100319428 /* BXSupersamplingRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSupersamplingRenderer.h; sourceTree = "<group>"; };
@@ -1559,6 +1565,7 @@
 		9FADFE5411EC7E1700990E91 /* BXDigest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDigest.m; sourceTree = "<group>"; };
 		9FADFE9511EC932800990E91 /* NSData+HexStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+HexStrings.h"; path = "../NSData+HexStrings.h"; sourceTree = "<group>"; };
 		9FADFE9611EC932800990E91 /* NSData+HexStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+HexStrings.m"; path = "../NSData+HexStrings.m"; sourceTree = "<group>"; };
+		9FAE3493165C075800FC117A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/InspectorDriveItem.xib; sourceTree = "<group>"; };
 		9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
 		9FAEBE4D15D669AF00C9AC5F /* BXLaunchPanelButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXLaunchPanelButtonCell.h; sourceTree = "<group>"; };
 		9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXLaunchPanelButtonCell.m; sourceTree = "<group>"; };
@@ -2289,6 +2296,8 @@
 				9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */,
 				9F9E27D411F8C173003EE8F3 /* BXDrivePanelController.h */,
 				9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */,
+				9F4B1AF8165C122F001AE063 /* BXDriveItem.h */,
+				9F4B1AF9165C122F001AE063 /* BXDriveItem.m */,
 			);
 			name = "Inspector panel";
 			sourceTree = "<group>";
@@ -2456,6 +2465,8 @@
 				9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */,
 				9F45A1C5109C3CB400593456 /* InspectorPanel.xib */,
 				9F6BF48416592EA600D9D66E /* Inspector.xib */,
+				9FAE3494165C075800FC117A /* InspectorDriveItem.xib */,
+				9F4B1AFC165C1A50001AE063 /* InspectorJoystickItem.xib */,
 				9F9A4CA410F67DD800E61965 /* Preferences.xib */,
 				9F45A1BB109C3C3900593456 /* About.xib */,
 				9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */,
@@ -3783,6 +3794,8 @@
 				9F9FF36B165074CB005D1CC1 /* PrinterClip.png in Resources */,
 				9F9FF36D1650E204005D1CC1 /* PrinterPaper.png in Resources */,
 				9F6BF48616592EA600D9D66E /* Inspector.xib in Resources */,
+				9FAE3492165C075800FC117A /* InspectorDriveItem.xib in Resources */,
+				9F4B1AFD165C1A50001AE063 /* InspectorJoystickItem.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4227,6 +4240,7 @@
 				9FF982111646C7640080F763 /* BXPrintSession.m in Sources */,
 				9F67855C1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */,
 				9F201E381657DB7F0086F1BB /* BXUserNotificationDispatcher.m in Sources */,
+				9F4B1AFA165C122F001AE063 /* BXDriveItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4715,6 +4729,14 @@
 				9FAA445511EB1CC40042B986 /* English */,
 			);
 			name = Configuration.strings;
+			sourceTree = "<group>";
+		};
+		9FAE3494165C075800FC117A /* InspectorDriveItem.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FAE3493165C075800FC117A /* en */,
+			);
+			name = InspectorDriveItem.xib;
 			sourceTree = "<group>";
 		};
 		9FB453A816442D2900BCF63B /* InfoPlist.strings */ = {

@@ -93,7 +93,7 @@
 - (NSShadow *) focusRing;
 @end
 
-//Lightly indented text for program panels.
+//Lightly indented text for program panels and inspector.
 @interface BXIndentedTheme : BXBaseTheme
 @end
 
@@ -101,6 +101,16 @@
 @interface BXIndentedHelpTextTheme : BXIndentedTheme
 @end
 
+//Style used for list items in inspector.
+@interface BXInspectorListTheme : BXIndentedTheme
+@end
+
+//Style used for selected list items in inspector.
+@interface BXInspectorListSelectionTheme : BXBaseTheme
+@end
+
+@interface BXInspectorListHelpTextTheme : BXIndentedHelpTextTheme
+@end
 
 //Lightly indented medium text for About panel.
 @interface BXAboutTheme : BXBaseTheme
@@ -112,4 +122,29 @@
 
 //Lightly indented bright text for About panel.
 @interface BXAboutLightTheme : BXAboutTheme
+@end
+
+
+@protocol BXThemable <NSObject>
+
+@required
+@property (copy, nonatomic) NSString *themeKey;
+
+
+//Base implementations for these are provided by BXThemableExtensions,
+//so they're automatically available on any object that implement this protocol.
+@optional
++ (NSString *) defaultThemeKey;
+@property (readonly, nonatomic) BGTheme *themeForKey;
+
+@end
+
+
+@interface NSObject (BXThemableExtensions)
+
+//The initial theme key for all instances of this object.
++ (NSString *) defaultThemeKey;
+
+@property (readonly, nonatomic) BGTheme *themeForKey;
+
 @end

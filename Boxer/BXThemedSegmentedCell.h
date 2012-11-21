@@ -10,15 +10,9 @@
 //support template image rendering, and generally make the code sane and maintainable.
 
 #import <BGHUDAppKit/BGHUDAppKit.h>
+#import "BXThemes.h"
 
-@interface BXThemedSegmentedCell : BGHUDSegmentedCell
-
-//The theme corresponding to the current theme key.
-@property (readonly, nonatomic) BGTheme *themeForKey;
-
-//The initial theme key for all instances of this cell.
-//Returns nil by default: intended to be implemented in subclasses.
-+ (NSString *) defaultThemeKey;
+@interface BXThemedSegmentedCell : BGHUDSegmentedCell <BXThemable>
 
 //Whether the specified segment should show its highlighted state.
 - (BOOL) isHighlightedForSegment: (NSInteger)segment;

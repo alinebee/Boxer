@@ -8,30 +8,20 @@
 //BXThemeImageCell renders its image as a template using a fill and shadow effects defined in a theme.
 
 #import <Cocoa/Cocoa.h>
+#import "BXThemes.h"
 
 @class BGTheme;
-@interface BXThemedImageCell : NSImageCell
+@interface BXThemedImageCell : NSImageCell <BXThemable>
 {
     NSString *_themeKey;
     BOOL _highlighted;
-    BOOL _selected;
-    BOOL _pushed;
 }
 
 //The current theme key.
 @property (copy, nonatomic) NSString *themeKey;
 
-//The theme corresponding to the current theme key.
-@property (readonly, nonatomic) BGTheme *themeForKey;
-
-//Toggles the highlighted, selected and pushed theme appearances.
+//Toggles the highlighted appearance for the image cell.
 @property (assign, nonatomic, getter=isHighlighted) BOOL highlighted;
-@property (assign, nonatomic, getter=isSelected) BOOL selected;
-@property (assign, nonatomic, getter=isPushed) BOOL pushed;
-
-//The initial theme key for all instances of this cell.
-//Returns nil by default: intended to be implemented in subclasses.
-+ (NSString *) defaultThemeKey;
 
 @end
 

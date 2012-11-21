@@ -11,6 +11,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "BXCollectionItemView.h"
+#import "BXThemedButtonCell.h"
 
 @class BXDrive;
 @class BXDriveItem;
@@ -38,7 +39,7 @@
 
 
 //A custom appearance for control buttons within drive item views.
-@interface BXDriveItemButtonCell : NSButtonCell
+@interface BXDriveItemButtonCell : BXThemedButtonCell
 {
 	BOOL _hovered;
 }
@@ -47,5 +48,8 @@
 
 
 //A custom appearance for drive labels.
-@interface BXDriveLetterCell : NSTextFieldCell
+@interface BXDriveLetterCell : NSTextFieldCell <BXThemable>
+{
+    NSString *_themeKey;
+}
 @end

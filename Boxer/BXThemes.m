@@ -10,6 +10,23 @@
 #import "NSShadow+BXShadowExtensions.h"
 
 
+@implementation NSObject (BXThemableExtensions)
+
++ (NSString *) defaultThemeKey
+{
+    return nil;
+}
+
+- (BGTheme *) themeForKey
+{
+    if ([self respondsToSelector: @selector(themeKey)])
+        return [[BGThemeManager keyedManager] themeForKey: [(id)self themeKey]];
+    else
+        return nil;
+}
+
+@end
+
 @implementation BGTheme (BXThemeExtensions)
 
 + (void) registerWithName: (NSString *)name
@@ -450,6 +467,7 @@
     return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.33]
                                           endingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.10]] autorelease];
 }
+
 - (NSShadow *) imageDropShadow
 {
     return [NSShadow shadowWithBlurRadius: 1.0
@@ -460,24 +478,6 @@
 {
     return [NSShadow shadowWithBlurRadius: 1.25
                                    offset: NSMakeSize(0, -0.25)
-                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]];
-}
-
-- (NSGradient *) selectedImageFill
-{
-    return [[[NSGradient alloc] initWithStartingColor: [NSColor whiteColor]
-                                          endingColor: [NSColor whiteColor]] autorelease];
-}
-
-- (NSShadow *) selectedImageInnerShadow
-{
-    return nil;
-}
-
-- (NSShadow *) selectedImageDropShadow
-{
-    return [NSShadow shadowWithBlurRadius: 1.0
-                                   offset: NSMakeSize(0, -1)
                                     color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]];
 }
 
@@ -522,6 +522,76 @@
 @end
 
 
+@implementation BXInspectorListTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+- (NSColor *) textColor
+{
+    return [NSColor blackColor];
+}
+
+- (NSShadow *) dropShadow
+{
+    return nil;
+}
+
+@end
+
+
+
+@implementation BXInspectorListSelectionTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+- (NSColor *) textColor
+{
+    return [NSColor whiteColor];
+}
+
+- (NSColor *) disabledTextColor
+{
+    return [NSColor colorWithCalibratedWhite: 1 alpha: 0.66];
+}
+
+- (NSShadow *) dropShadow
+{
+    return [NSShadow shadowWithBlurRadius: 2.0f
+                                   offset: NSMakeSize(0, -1.0f)
+                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.75f]];
+}
+
+- (NSShadow *) textShadow
+{
+    return [NSShadow shadowWithBlurRadius: 2.0f
+                                   offset: NSMakeSize(0, -1.0f)
+                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5f]];
+}
+
+- (NSShadow *) disabledImageDropShadow
+{
+    return [NSShadow shadowWithBlurRadius: 2.0f
+                                   offset: NSMakeSize(0, -1.0f)
+                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5f]];
+}
+@end
+
+
+@implementation BXInspectorListHelpTextTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+@end
+
 
 @implementation BXAboutTheme
 
@@ -530,7 +600,7 @@
     [self registerWithName: nil];
 }
 
-- (NSShadow *) textShadow	{ return [self dropShadow]; }
+- (NSShadow *) textShadow	{ return self.dropShadow; }
 
 - (NSShadow *) dropShadow
 {

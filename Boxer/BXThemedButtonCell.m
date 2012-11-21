@@ -13,11 +13,6 @@
 
 #pragma mark - Default theme handling
 
-- (BGTheme *) themeForKey
-{
-    return [[BGThemeManager keyedManager] themeForKey: self.themeKey];
-}
-
 + (NSString *) defaultThemeKey
 {
     return nil;

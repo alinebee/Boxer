@@ -11,9 +11,12 @@
 
 @implementation NSControl (BXThemedControls)
 
-- (BGTheme *) themeForKey
++ (NSString *) defaultThemeKey
 {
-    return [[BGThemeManager keyedManager] themeForKey: self.themeKey];
+    if ([[self cellClass] respondsToSelector: _cmd])
+        return [[self cellClass] defaultThemeKey];
+    else
+        return nil;
 }
 
 - (void) setThemeKey: (NSString *)key
@@ -38,16 +41,6 @@
 
 #pragma mark - Default theme handling
 
-- (BGTheme *) themeForKey
-{
-    return [[BGThemeManager keyedManager] themeForKey: self.themeKey];
-}
-
-+ (NSString *) defaultThemeKey
-{
-    return nil;
-}
-
 - (id) initWithCoder: (NSCoder *)coder
 {
     self = [super initWithCoder: coder];
@@ -65,10 +58,17 @@
 - (void) setEnabled: (BOOL)flag
 {
     [super setEnabled: flag];
-    //NOTE: calling setNeedsDisplay: doesn't help; only actually
-    //touching the value seems to force a redraw.
-    [self setStringValue: [self stringValue]];
+    //IMPLEMENTATION NOTE: this is the only way I've found to force
+    //a proper redraw. setNeedsDisplay: doesn't, nor updateCell: and their ilk.
+    self.stringValue = self.stringValue;
 }
+
+- (void) setThemeKey: (NSString *)key
+{
+    [super setThemeKey: key];
+    self.stringValue = self.stringValue;
+}
+
 @end
 
 @implementation BXThemedCheckboxCell

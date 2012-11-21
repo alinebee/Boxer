@@ -14,6 +14,7 @@
 #import "BXGeometry.h"
 #import "NSShadow+BXShadowExtensions.h"
 #import "NSImage+BXImageEffects.h"
+#import "BXThemes.h"
 
 
 @implementation BXDriveItemView
@@ -27,14 +28,21 @@
 @implementation BXDriveItemButtonCell
 @synthesize hovered = _hovered;
 
++ (NSString *) defaultThemeKey
+{
+    return @"BXInspectorListTheme";
+}
+
 - (id) initWithCoder: (NSCoder *)coder
 {
-	if ((self = [super initWithCoder: coder]))
-	{
+    self = [super initWithCoder: coder];
+    if (self)
+    {
         self.highlightsBy = NSNoCellMask;
-	}
-	return self;
+    }
+    return self;
 }
+
 - (void) mouseEntered: (NSEvent *)event	{ self.hovered = YES; }
 - (void) mouseExited: (NSEvent *)event	{ self.hovered = NO; }
 
@@ -85,6 +93,19 @@
 
 
 @implementation BXDriveLetterCell
+@synthesize themeKey = _themeKey;
+
++ (NSString *) defaultThemeKey
+{
+    return @"BXInspectorListTheme";
+}
+
+- (void) dealloc
+{
+    self.themeKey = nil;
+    
+    [super dealloc];
+}
 
 - (BOOL) drawsBackground
 {

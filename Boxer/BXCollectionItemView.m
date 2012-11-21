@@ -124,28 +124,23 @@
 
 - (void) collectionViewItemDidChangeSelection
 {
-    NSColor *textColor;
-    
+    NSString *themeKey;
     if (self.delegate.isSelected)
     {
-        textColor = [NSColor whiteColor];
+        themeKey = @"BXInspectorListSelectionTheme";
     }
     else
     {
-        textColor = [NSColor blackColor];
+        themeKey = @"BXInspectorListTheme";
     }
     
     for (id view in self.subviews)
     {
-        if ([view isKindOfClass: [NSTextField class]])
+        if ([view respondsToSelector: @selector(setThemeKey:)])
         {
-            [view setTextColor: textColor];
+            [view setThemeKey: themeKey];
+            [view setNeedsDisplay: YES];
         }
-        else if ([view isKindOfClass: [NSImageView class]] && [[view cell] isKindOfClass: [BXIndentedImageCell class]])
-        {
-            ((BXIndentedImageCell *)[view cell]).selected = self.delegate.isSelected;
-        }
-        [view setNeedsDisplay: YES];
     }
     
     [self setNeedsDisplay: YES];

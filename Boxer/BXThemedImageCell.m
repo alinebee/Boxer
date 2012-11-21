@@ -22,22 +22,10 @@
 
 @implementation BXThemedImageCell
 @synthesize themeKey = _themeKey;
-@synthesize pushed = _pushed;
-@synthesize selected = _selected;
 @synthesize highlighted = _highlighted;
 
 
 #pragma mark - Default theme handling
-
-- (BGTheme *) themeForKey
-{
-    return [[BGThemeManager keyedManager] themeForKey: self.themeKey];
-}
-
-+ (NSString *) defaultThemeKey
-{
-    return nil;
-}
 
 - (id) initWithCoder: (NSCoder *)coder
 {
@@ -60,12 +48,6 @@
 
 - (NSGradient *) _fillForCurrentState
 {
-    if (self.isPushed)
-        return self.themeForKey.pushedImageFill;
-    
-    if (self.isSelected)
-        return self.themeForKey.selectedImageFill;
-    
     if (self.isHighlighted)
         return self.themeForKey.highlightedImageFill;
     
@@ -77,12 +59,6 @@
 
 - (NSShadow *) _innerShadowForCurrentState
 {
-    if (self.isPushed)
-        return self.themeForKey.pushedImageInnerShadow;
-    
-    if (self.isSelected)
-        return self.themeForKey.selectedImageInnerShadow;
-    
     if (self.isHighlighted)
         return self.themeForKey.highlightedImageInnerShadow;
     
@@ -93,13 +69,7 @@
 }
 
 - (NSShadow *) _dropShadowForCurrentState
-{    
-    if (self.isPushed)
-        return self.themeForKey.pushedImageDropShadow;
-    
-    if (self.isSelected)
-        return self.themeForKey.selectedImageDropShadow;
-    
+{
     if (self.isHighlighted)
         return self.themeForKey.highlightedImageDropShadow;
     

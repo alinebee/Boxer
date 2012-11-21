@@ -9,15 +9,9 @@
 //Yet another reimplementation of a BGHUD cell class to fix squirrely rendering issues.
 
 #import <BGHUDAppKit/BGHUDAppKit.h>
+#import "BXThemes.h"
 
-@interface BXThemedSliderCell : BGHUDSliderCell
-
-//The theme corresponding to the current theme key.
-@property (readonly, nonatomic) BGTheme *themeForKey;
-
-//The initial theme key for all instances of this cell.
-//Returns nil by default: intended to be implemented in subclasses.
-+ (NSString *) defaultThemeKey;
+@interface BXThemedSliderCell : BGHUDSliderCell <BXThemable>
 
 //Given a knob frame, returns the rect that should be used for rendering
 //a round knob into it.

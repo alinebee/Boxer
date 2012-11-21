@@ -10,15 +10,9 @@
 //control over checkbox and radio button rendering.
 
 #import <BGHUDAppKit/BGHUDAppKit.h>
+#import "BXThemes.h"
 
-@interface BXThemedButtonCell : BGHUDButtonCell
-
-//The theme corresponding to the current theme key.
-@property (readonly, nonatomic) BGTheme *themeForKey;
-
-//The initial theme key for all instances of this cell.
-//Returns nil by default: intended to be implemented in subclasses.
-+ (NSString *) defaultThemeKey;
+@interface BXThemedButtonCell : BGHUDButtonCell <BXThemable>
 
 //Given an entire cell frame, returns the rect
 //in which to draw the checkbox/radio button.

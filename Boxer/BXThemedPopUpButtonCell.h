@@ -13,6 +13,13 @@
 
 @interface BXThemedPopUpButtonCell : BGHUDPopUpButtonCell
 
+//The theme corresponding to the current theme key.
+@property (readonly, nonatomic) BGTheme *themeForKey;
+
+//The initial theme key for all instances of this cell.
+//Returns nil by default: intended to be implemented in subclasses.
++ (NSString *) defaultThemeKey;
+
 //Returns a path with the arrows to render for popup buttons.
 - (NSBezierPath *) popUpArrowsForFrame: (NSRect)frame;
 

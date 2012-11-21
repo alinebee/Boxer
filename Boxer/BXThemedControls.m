@@ -7,10 +7,58 @@
 
 #import "BXThemedControls.h"
 
+#pragma mark - Control extensions
+
+@implementation NSControl (BXThemedControls)
+
+- (BGTheme *) themeForKey
+{
+    return [[BGThemeManager keyedManager] themeForKey: self.themeKey];
+}
+
+- (void) setThemeKey: (NSString *)key
+{
+    if ([self.cell respondsToSelector: _cmd])
+        [(id)self.cell setThemeKey: key];
+}
+
+- (NSString *) themeKey
+{
+    if ([self.cell respondsToSelector: _cmd])
+        return [(id)self.cell themeKey];
+    else
+        return nil;
+}
+@end
+
 #pragma mark -
 #pragma mark Base classes
 
 @implementation BXThemedLabel
+
+#pragma mark - Default theme handling
+
+- (BGTheme *) themeForKey
+{
+    return [[BGThemeManager keyedManager] themeForKey: self.themeKey];
+}
+
++ (NSString *) defaultThemeKey
+{
+    return nil;
+}
+
+- (id) initWithCoder: (NSCoder *)coder
+{
+    self = [super initWithCoder: coder];
+    if (self)
+    {
+        if (![coder containsValueForKey: @"themeKey"])
+            self.themeKey = [self.class defaultThemeKey];
+    }
+    return self;
+}
+
 
 //Fixes a BGHUDLabel/NSTextField bug where toggling enabledness
 //won't cause a redraw.
@@ -58,93 +106,93 @@
 
 @implementation BXHUDLabel
 
-- (NSString *)themeKey { return @"BXHUDTheme"; }
++ (NSString *) defaultThemeKey { return @"BXHUDTheme"; }
 
 @end
 
 @implementation BXHUDButtonCell
 
-- (NSString *)themeKey { return @"BXHUDTheme"; }
++ (NSString *) defaultThemeKey { return @"BXHUDTheme"; }
 
 @end
 
 @implementation BXHUDCheckboxCell
 
-- (NSString *)themeKey { return @"BXHUDTheme"; }
++ (NSString *) defaultThemeKey { return @"BXHUDTheme"; }
 
 @end
 
 @implementation BXHUDSliderCell
 
-- (NSString *)themeKey { return @"BXHUDTheme"; }
++ (NSString *) defaultThemeKey { return @"BXHUDTheme"; }
 
 @end
 
 @implementation BXHUDPopUpButtonCell
 
-- (NSString *)themeKey { return @"BXHUDTheme"; }
++ (NSString *) defaultThemeKey { return @"BXHUDTheme"; }
 
 @end
 
 @implementation BXHUDSegmentedCell
 
-- (NSString *)themeKey { return @"BXHUDTheme"; }
++ (NSString *) defaultThemeKey { return @"BXHUDTheme"; }
 
 @end
 
 
 @implementation BXBlueprintLabel
 
-- (NSString *)themeKey { return @"BXBlueprintTheme"; }
++ (NSString *) defaultThemeKey { return @"BXBlueprintTheme"; }
 
 @end
 
 @implementation BXBlueprintHelpTextLabel
 
-- (NSString *)themeKey { return @"BXBlueprintHelpTextTheme"; }
++ (NSString *) defaultThemeKey { return @"BXBlueprintHelpTextTheme"; }
 
 @end
 
 
 @implementation BXIndentedLabel
 
-- (NSString *)themeKey { return @"BXIndentedTheme"; }
++ (NSString *) defaultThemeKey { return @"BXIndentedTheme"; }
 
 @end
 
 @implementation BXIndentedHelpTextLabel
 
-- (NSString *)themeKey { return @"BXIndentedHelpTextTheme"; }
++ (NSString *) defaultThemeKey { return @"BXIndentedHelpTextTheme"; }
 
 @end
 
 @implementation BXIndentedCheckboxCell
 
-- (NSString *)themeKey { return @"BXIndentedTheme"; }
++ (NSString *) defaultThemeKey { return @"BXIndentedTheme"; }
 
 @end
 
 @implementation BXIndentedSliderCell
 
-- (NSString *)themeKey { return @"BXIndentedTheme"; }
++ (NSString *) defaultThemeKey { return @"BXIndentedTheme"; }
 
 @end
 
 
 @implementation BXAboutLabel
 
-- (NSString *)themeKey { return @"BXAboutTheme"; }
++ (NSString *) defaultThemeKey { return @"BXAboutTheme"; }
 
 @end
 
 @implementation BXAboutDarkLabel
 
-- (NSString *)themeKey { return @"BXAboutDarkTheme"; }
++ (NSString *) defaultThemeKey { return @"BXAboutDarkTheme"; }
 
 @end
 
 @implementation BXAboutLightLabel
 
-- (NSString *)themeKey { return @"BXAboutLightTheme"; }
++ (NSString *) defaultThemeKey { return @"BXAboutLightTheme"; }
 
 @end

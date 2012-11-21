@@ -14,10 +14,36 @@
 #import "BXThemedPopUpButtonCell.h"
 #import "BXThemedButtonCell.h"
 #import "BXThemedSliderCell.h"
+#import "BXThemedImageCell.h"
+
+//NSControl extension to allow passthroughs to themed cell properties
+@interface NSControl (BXThemedControls)
+
+//The theme corresponding to the current theme key.
+- (BGTheme *) themeForKey;
+
+//If the control wraps a themed cell, returns the cell's theme key.
+//Otherwise returns nil.
+- (NSString *) themeKey;
+
+//If the control wraps a themed cell, sets the cell's theme key.
+//Otherwise does nothing.
+- (void) setThemeKey: (NSString *)themeKey;
+
+@end
+
 
 //Base classes for our BGHUDAppKit-themed control subclasses.
 
 @interface BXThemedLabel : BGHUDLabel
+
+//The theme corresponding to the current theme key.
+@property (readonly, nonatomic) BGTheme *themeForKey;
+
+//The initial theme key for all instances of this cell.
+//Returns nil by default: intended to be implemented in subclasses.
++ (NSString *) defaultThemeKey;
+
 @end
 
 @interface BXThemedCheckboxCell : BXThemedButtonCell

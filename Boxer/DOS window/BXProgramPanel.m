@@ -147,7 +147,7 @@
 @implementation BXProgramItemButtonCell
 @synthesize programIsDefault, mouseIsInside;
 
-- (NSString *) themeKey { return @"BXIndentedTheme"; }
++ (NSString *) defaultThemeKey { return @"BXIndentedTheme"; }
 
 - (id) initWithCoder: (NSCoder *)aDecoder
 {

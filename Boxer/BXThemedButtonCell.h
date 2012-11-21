@@ -13,6 +13,13 @@
 
 @interface BXThemedButtonCell : BGHUDButtonCell
 
+//The theme corresponding to the current theme key.
+@property (readonly, nonatomic) BGTheme *themeForKey;
+
+//The initial theme key for all instances of this cell.
+//Returns nil by default: intended to be implemented in subclasses.
++ (NSString *) defaultThemeKey;
+
 //Given an entire cell frame, returns the rect
 //in which to draw the checkbox/radio button.
 - (NSRect) checkboxRectForBounds: (NSRect)frame;

@@ -273,7 +273,8 @@
 {
 	for (BXDriveItemView *view in self.subviews)
 	{
-		if ([view.delegate.representedObject isEqual: drive])
+        BXDriveItem *item = (BXDriveItem *)view.delegate;
+		if ([item.drive isEqual: drive])
             return view;
 	}
 	return nil;
@@ -285,7 +286,7 @@
 	for (BXDriveItemView *view in self.subviews)
 	{
         BXDriveItem *item = (BXDriveItem *)view.delegate;
-		if ([item.representedObject isEqual: drive])
+		if ([item.drive isEqual: drive])
             return item;
 	}
 	return nil;
@@ -306,11 +307,12 @@
 {
     //TODO: render images for all selected drives, once we allow more than one
     BXDrive *firstSelectedDrive = [self.content objectAtIndex: indexes.firstIndex];
-    NSView *itemView = [self viewForDrive: firstSelectedDrive];
+    BXDriveItemView *itemView = [self viewForDrive: firstSelectedDrive];
     if (itemView)
     {
         NSBitmapImageRep *imageRep = [itemView bitmapImageRepForCachingDisplayInRect: itemView.bounds];
         [itemView cacheDisplayInRect: itemView.bounds toBitmapImageRep: imageRep];
+        
         NSImage *image = [[NSImage alloc] init];
         [image addRepresentation: imageRep];
         return [image autorelease];
@@ -345,7 +347,7 @@
                      offset: NSZeroSize
                       event: theEvent
                  pasteboard: pasteboard
-                     source: [self delegate]
+                     source: self.delegate
                   slideBack: NO];
     }
 }

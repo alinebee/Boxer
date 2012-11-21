@@ -48,7 +48,7 @@
 @implementation BXLaunchPanelButtonCell
 @synthesize mouseIsInside = _mouseIsInside;
 
-- (NSString *) themeKey { return @"BXIndentedTheme"; }
++ (NSString *) defaultThemeKey { return @"BXIndentedTheme"; }
 
 //This has been overridden solely so that we will actually receive mouseEntered:
 //and mouseExited: events, since AppKit only sends those messages for buttons that

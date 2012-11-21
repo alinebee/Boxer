@@ -19,6 +19,30 @@
 
 @implementation BXThemedSegmentedCell
 
+#pragma mark - Default theme handling
+
+- (BGTheme *) themeForKey
+{
+    return [[BGThemeManager keyedManager] themeForKey: self.themeKey];
+}
+
++ (NSString *) defaultThemeKey
+{
+    return nil;
+}
+
+- (id) initWithCoder: (NSCoder *)coder
+{
+    self = [super initWithCoder: coder];
+    if (self)
+    {
+        if (![coder containsValueForKey: @"themeKey"])
+            self.themeKey = [self.class defaultThemeKey];
+    }
+    return self;
+}
+
+
 - (BOOL) isHighlightedForSegment: (NSInteger)segment
 {
 	BOOL isHighlighted;

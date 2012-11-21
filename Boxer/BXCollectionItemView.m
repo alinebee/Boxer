@@ -169,8 +169,8 @@
 
 - (void) viewDidLoad
 {
-    //Intended to be overridden in subclasses.
-    [(BXCollectionItemView *)self.view collectionViewItemDidChangeSelection];
+    if ([self.view respondsToSelector: @selector(collectionViewItemDidChangeSelection)])
+        [(id)self.view collectionViewItemDidChangeSelection];
 }
 
 - (id) copyWithZone: (NSZone *)zone
@@ -192,7 +192,8 @@
 	if (flag != self.isSelected)
 	{
 		[super setSelected: flag];
-        [(BXCollectionItemView *)self.view collectionViewItemDidChangeSelection];
+        if ([self.view respondsToSelector: @selector(collectionViewItemDidChangeSelection)])
+            [(id)self.view collectionViewItemDidChangeSelection];
 	}
 }
 

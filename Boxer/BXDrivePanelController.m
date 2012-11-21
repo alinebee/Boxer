@@ -603,20 +603,19 @@ enum {
     return self.view.window;
 }
 
-- (void) draggedImage: (NSImage *)image beganAt: (NSPoint)screenPoint
-{
-    for (BXDrive *drive in self.selectedDrives)
-    {
-        NSView *itemView = [self.driveList viewForDrive: drive];
-        itemView.hidden = YES;
-    }
-}
 
 //While dragging, this checks for valid Boxer windows under the cursor; if there aren't any, it displays
 //a disappearing item cursor (poof) to indicate the action will discard the dragged drive(s).
 - (void) draggedImage: (NSImage *)draggedImage
               movedTo: (NSPoint)screenPoint
 {
+    //Once the image is dragged away from its original location, hide the views represented by the image.
+    for (BXDrive *drive in self.selectedDrives)
+    {
+        NSView *itemView = [self.driveList viewForDrive: drive];
+        itemView.hidden = YES;
+    }
+    
 	NSPoint mousePoint = [NSEvent mouseLocation];
 	NSCursor *poof = [NSCursor disappearingItemCursor];
 	

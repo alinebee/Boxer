@@ -12,6 +12,31 @@
 
 @implementation BXThemedSliderCell
 
+#pragma mark - Default theme handling
+
+- (BGTheme *) themeForKey
+{
+    return [[BGThemeManager keyedManager] themeForKey: self.themeKey];
+}
+
++ (NSString *) defaultThemeKey
+{
+    return nil;
+}
+
+- (id) initWithCoder: (NSCoder *)coder
+{
+    self = [super initWithCoder: coder];
+    if (self)
+    {
+        if (![coder containsValueForKey: @"themeKey"])
+            self.themeKey = [self.class defaultThemeKey];
+    }
+    return self;
+}
+
+
+
 - (NSRect) roundKnobRectInBounds: (NSRect)theRect
 {
     NSRect knobRect = theRect;

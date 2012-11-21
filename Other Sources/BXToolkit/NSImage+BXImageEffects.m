@@ -195,7 +195,7 @@
          dropShadow: (NSShadow *)dropShadow
         innerShadow: (NSShadow *)innerShadow
 {
-    //Check if we're rendering into a backing suitable for retina displays.
+    //Check if we're rendering into a backing intended for retina displays.
     NSSize pointSize = NSMakeSize(1, 1);
     if ([[NSView focusView] respondsToSelector: @selector(convertSizeToBacking:)])
          pointSize = [[NSView focusView] convertSizeToBacking: pointSize];
@@ -218,8 +218,9 @@
     //Next, create an inverted version of the mask. We will use this to mask our drawing of the drop and inner shadows.
     //Note that the inverted mask is larger than the original mask because it needs to cover the total dirty region:
     //otherwise it would inadvertently mask out parts of the drop shadow.
-    //TODO: make this retina-capable
     CGRect invertedMaskRect = CGRectIntegral(NSRectToCGRect(totalDirtyRect));
+    //Because CGBitmapContexts are not retina-aware and use device pixels,
+    //we have to compensate accordingly when we're rendering for a retina backing.
     CGSize invertedMaskPixelSize = CGSizeMake(invertedMaskRect.size.width * pointSize.width,
                                               invertedMaskRect.size.height * pointSize.height);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();

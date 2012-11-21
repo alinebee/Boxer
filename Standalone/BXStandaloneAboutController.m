@@ -150,6 +150,6 @@ decisionListener: (id < WebPolicyDecisionListener >)listener
 
 @implementation BXStandaloneAboutLabel
 
-- (NSString *) themeKey { return @"BXStandaloneAboutTheme"; }
++ (NSString *) defaultThemeKey { return @"BXStandaloneAboutTheme"; }
 
 @end

@@ -26,15 +26,36 @@
 @synthesize selected = _selected;
 @synthesize highlighted = _highlighted;
 
-- (void) dealloc
-{
-    self.themeKey = nil;
-	[super dealloc];
-}
+
+#pragma mark - Default theme handling
 
 - (BGTheme *) themeForKey
 {
     return [[BGThemeManager keyedManager] themeForKey: self.themeKey];
+}
+
++ (NSString *) defaultThemeKey
+{
+    return nil;
+}
+
+- (id) initWithCoder: (NSCoder *)coder
+{
+    self = [super initWithCoder: coder];
+    if (self)
+    {
+        if (![coder containsValueForKey: @"themeKey"])
+            self.themeKey = [self.class defaultThemeKey];
+    }
+    return self;
+}
+
+
+
+- (void) dealloc
+{
+    self.themeKey = nil;
+	[super dealloc];
 }
 
 - (NSGradient *) _fillForCurrentState
@@ -131,7 +152,7 @@
 
 @implementation BXHUDImageCell
 
-- (NSString *) themeKey
++ (NSString *) defaultThemeKey
 {
     return @"BXHUDTheme";
 }
@@ -142,7 +163,7 @@
 
 @implementation BXIndentedImageCell
 
-- (NSString *) themeKey
++ (NSString *) defaultThemeKey
 {
     return @"BXIndentedTheme";
 }

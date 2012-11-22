@@ -148,3 +148,8 @@
 @property (readonly, nonatomic) BGTheme *themeForKey;
 
 @end
+
+
+//NSControl extension to allow passthroughs to themed cell properties
+@interface NSControl (BXThemedControls) <BXThemable>
+@end

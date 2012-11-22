@@ -7,35 +7,8 @@
 
 #import "BXThemedControls.h"
 
-#pragma mark - Control extensions
 
-@implementation NSControl (BXThemedControls)
-
-+ (NSString *) defaultThemeKey
-{
-    if ([[self cellClass] respondsToSelector: _cmd])
-        return [[self cellClass] defaultThemeKey];
-    else
-        return nil;
-}
-
-- (void) setThemeKey: (NSString *)key
-{
-    if ([self.cell respondsToSelector: _cmd])
-        [(id)self.cell setThemeKey: key];
-}
-
-- (NSString *) themeKey
-{
-    if ([self.cell respondsToSelector: _cmd])
-        return [(id)self.cell themeKey];
-    else
-        return nil;
-}
-@end
-
-#pragma mark -
-#pragma mark Base classes
+#pragma mark - Base classes
 
 @implementation BXThemedLabel
 

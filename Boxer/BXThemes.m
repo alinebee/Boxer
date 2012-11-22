@@ -10,6 +10,8 @@
 #import "NSShadow+BXShadowExtensions.h"
 
 
+#pragma mark - Control and cell extensions
+
 @implementation NSObject (BXThemableExtensions)
 
 + (NSString *) defaultThemeKey
@@ -26,6 +28,34 @@
 }
 
 @end
+
+@implementation NSControl (BXThemedControls)
+
++ (NSString *) defaultThemeKey
+{
+    if ([[self cellClass] respondsToSelector: _cmd])
+        return [[self cellClass] defaultThemeKey];
+    else
+        return nil;
+}
+
+- (void) setThemeKey: (NSString *)key
+{
+    if ([self.cell respondsToSelector: _cmd])
+        [(id)self.cell setThemeKey: key];
+}
+
+- (NSString *) themeKey
+{
+    if ([self.cell respondsToSelector: _cmd])
+        return [(id)self.cell themeKey];
+    else
+        return nil;
+}
+@end
+
+
+#pragma mark - Theme extensions
 
 @implementation BGTheme (BXThemeExtensions)
 
@@ -104,6 +134,8 @@
 
 @end
 
+
+#pragma mark - Concrete themes
 
 @implementation BXBaseTheme
 @end

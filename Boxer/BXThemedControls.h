@@ -17,11 +17,6 @@
 #import "BXThemedImageCell.h"
 #import "BXThemes.h"
 
-//NSControl extension to allow passthroughs to themed cell properties
-@interface NSControl (BXThemedControls) <BXThemable>
-@end
-
-
 //Base classes for our BGHUDAppKit-themed control subclasses.
 
 @interface BXThemedLabel : BGHUDLabel <BXThemable>

@@ -107,76 +107,73 @@
     [super dealloc];
 }
 
+- (void) setThemeKey: (NSString *)key
+{
+    if (![key isEqual: self.themeKey])
+    {
+        [_themeKey release];
+        _themeKey = [key copy];
+        
+        [self.controlView setNeedsDisplay: YES];
+    }
+}
+
 - (BOOL) drawsBackground
 {
     return NO;
 }
 
-- (NSColor *) textColor
-{
-    if (self.isHighlighted)
-    {
-        if (self.isEnabled)
-            return [NSColor whiteColor];
-        else
-            return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
-    }
-    else
-    {
-        return [NSColor blackColor];
-    }
-}
-
-- (NSColor *) backgroundColor
-{
-    if (self.isHighlighted)
-    {
-        if (self.isEnabled)
-            return [NSColor whiteColor];
-        else
-            return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
-    }
-    else
-    {
-        return [NSColor blackColor];
-    }
-}
-
-- (NSColor *) borderColor
-{
-    if (self.isHighlighted)
-    {
-        if (self.isEnabled)
-            return [NSColor whiteColor];
-        else
-            return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.25f];
-    }
-    else
-    {
-        return [NSColor blackColor];
-    }
-}
-
-- (NSShadow *) dropShadow
-{
-    return [NSShadow shadowWithBlurRadius: 3.0f offset: NSMakeSize(0, -1.0f)];
-}
-
-- (NSShadow *) textShadow
-{
-    return self.dropShadow;
-}
-
 - (void) drawInteriorWithFrame: (NSRect)frame inView: (NSView *)controlView
 {
-    NSShadow *dropShadow = self.dropShadow;
-    NSRect frameForShadow = [dropShadow insetRectForShadow: frame flipped: NO];
-    CGFloat cornerRadius = frameForShadow.size.height / 2;
-    NSBezierPath *backgroundPill = [NSBezierPath bezierPathWithRoundedRect: frameForShadow
+    BGTheme *theme = self.themeForKey;
+    
+    NSGradient *fill;
+    NSShadow *innerShadow, *dropShadow;
+    if (self.isEnabled)
+    {
+        fill = theme.imageFill;
+        innerShadow = theme.imageInnerShadow;
+        dropShadow = theme.imageDropShadow;
+    }
+    else
+    {
+        fill = theme.disabledImageFill;
+        innerShadow = theme.disabledImageInnerShadow;
+        dropShadow = theme.disabledImageDropShadow;
+    }
+    
+    CGFloat titleSize = [NSFont systemFontSizeForControlSize: self.controlSize];
+    NSFont *titleFont = [NSFont boldSystemFontOfSize: titleSize];
+    NSDictionary *titleAttribs = @{
+        NSForegroundColorAttributeName: [NSColor blackColor],
+        NSFontAttributeName: titleFont,
+    };
+    
+    frame = [self titleRectForBounds: controlView.bounds];
+    NSRect shadowedFrame = frame;
+    if (dropShadow)
+        shadowedFrame = [dropShadow insetRectForShadow: frame flipped: controlView.isFlipped];
+    
+    NSRect titleFrame = [self.stringValue boundingRectWithSize: frame.size
+                                                       options: NSStringDrawingUsesLineFragmentOrigin
+                                                    attributes: titleAttribs];
+    
+    titleFrame = alignInRectWithAnchor(titleFrame, frame, NSMakePoint(0.5, 1));
+    
+    NSRect pillFrame = NSZeroRect;
+    NSSize pillPadding = NSMakeSize(2.0, 2.0);
+    NSSize pillMargin = NSMakeSize(2.0, 0.0);
+    
+    pillFrame.size.width = frame.size.width - (pillMargin.width * 2);
+    pillFrame.size.height = MIN(titleFont.capHeight + (pillPadding.height * 2), shadowedFrame.size.height);
+    pillFrame = NSIntegralRect(centerInRect(pillFrame, titleFrame));
+    
+    CGFloat cornerRadius = pillFrame.size.height * 0.5;
+    NSBezierPath *backgroundPill = [NSBezierPath bezierPathWithRoundedRect: pillFrame
                                                                    xRadius: cornerRadius
                                                                    yRadius: cornerRadius];
     
-    NSBezierPath *borderPill = [NSBezierPath bezierPathWithRoundedRect: NSInsetRect(frameForShadow, 0.5f, 0.5f)
+    NSBezierPath *borderPill = [NSBezierPath bezierPathWithRoundedRect: NSInsetRect(pillFrame, 0.5f, 0.5f)
                                                                xRadius: cornerRadius - 0.5f
                                                                yRadius: cornerRadius - 0.5f];
     
@@ -191,29 +188,27 @@
     tempImage.size = frame.size;
     
     [tempImage lockFocus];
-        [super drawInteriorWithFrame: frame inView: controlView];
+        //[super drawInteriorWithFrame: frame inView: controlView];
+        [[NSColor blackColor] set];
+        [self.title drawWithRect: titleFrame options: NSStringDrawingUsesLineFragmentOrigin attributes: titleAttribs];
+    
         if (self.isEnabled)
         {
-            [self.backgroundColor set];
-            [NSGraphicsContext currentContext].compositingOperation = NSCompositeSourceOut;
+            [NSGraphicsContext currentContext].compositingOperation = NSCompositeXOR;
             [backgroundPill fill];
         }
         else
         {
-            [self.borderColor set];
             [borderPill stroke];
         }
     [tempImage unlockFocus];
     
-    [[NSGraphicsContext currentContext] saveGraphicsState];
-        [self.dropShadow set];
-    
-        [tempImage drawInRect: frame
-                     fromRect: NSZeroRect
-                    operation: NSCompositeSourceOver
-                     fraction: 1.0f
-               respectFlipped: YES];
-    [[NSGraphicsContext currentContext] restoreGraphicsState];
+    tempImage.template = YES;
+    [tempImage drawInRect: frame
+             withGradient: fill
+               dropShadow: dropShadow
+              innerShadow: innerShadow
+           respectFlipped: YES];
     
     [tempImage release];
 }

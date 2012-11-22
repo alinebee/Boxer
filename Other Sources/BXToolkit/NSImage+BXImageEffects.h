@@ -47,5 +47,6 @@
 - (void) drawInRect: (NSRect)drawRect
        withGradient: (NSGradient *)fillGradient
          dropShadow: (NSShadow *)dropShadow
-        innerShadow: (NSShadow *)innerShadow;
+        innerShadow: (NSShadow *)innerShadow
+     respectFlipped: (BOOL)respectContextIsFlipped;
 @end

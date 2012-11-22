@@ -10,6 +10,7 @@
 #import "BXBaseAppController.h"
 #import "BXSession+BXFileManager.h"
 #import "BXDriveImport.h"
+#import "BXThemes.h"
 
 @interface BXDriveItem ()
 
@@ -17,22 +18,28 @@
 //state of the drive item.
 - (void) _syncControlsShownWithAnimation: (BOOL)animate;
 - (void) _syncProgressShownWithAnimation: (BOOL)animate;
+- (void) _syncSelection;
+
 @end
 
 @implementation BXDriveItem
 @synthesize importing = _importing;
+@synthesize titleLabel = _titleLabel;
+@synthesize typeLabel = _typeLabel;
 @synthesize progressMeter = _progressMeter;
 @synthesize progressMeterLabel = _progressMeterLabel;
-@synthesize progressMeterCancel = _progressMeterCancel;
-@synthesize driveTypeLabel = _driveTypeLabel;
-@synthesize driveToggleButton = _driveToggleButton;
-@synthesize driveRevealButton = _driveRevealButton;
-@synthesize driveImportButton = _driveImportButton;
+@synthesize toggleButton = _toggleButton;
+@synthesize revealButton = _revealButton;
+@synthesize importButton = _importButton;
+@synthesize cancelButton = _cancelButton;
+@synthesize icon = _icon;
+@synthesize letterLabel = _letterLabel;
 
 - (void) viewDidLoad
 {
     [self _syncControlsShownWithAnimation: NO];
     [self _syncProgressShownWithAnimation: NO];
+    [self _syncSelection];
 }
 
 - (void) _syncControlsShownWithAnimation: (BOOL)animate
@@ -42,9 +49,9 @@
     
     [NSAnimationContext beginGrouping];
     [NSAnimationContext currentContext].duration = animate ? 0.25 : 0.0;
-    [self.driveToggleButton.animator setHidden: !showControls];
-    [self.driveRevealButton.animator setHidden: !showControls];
-    [self.driveImportButton.animator setHidden: !showImportControl];
+    [self.toggleButton.animator setHidden: !showControls];
+    [self.revealButton.animator setHidden: !showControls];
+    [self.importButton.animator setHidden: !showImportControl];
     [NSAnimationContext endGrouping];
 }
 
@@ -54,17 +61,38 @@
     
     [NSAnimationContext beginGrouping];
     [NSAnimationContext currentContext].duration = animate ? 0.25 : 0.0;
-    [self.driveTypeLabel.animator setHidden: showProgress];
+    [self.typeLabel.animator setHidden: showProgress];
     [self.progressMeter.animator setHidden: !showProgress];
     [self.progressMeterLabel.animator setHidden: !showProgress];
-    [self.progressMeterCancel.animator setHidden: !showProgress];
+    [self.cancelButton.animator setHidden: !showProgress];
     [NSAnimationContext endGrouping];
+}
+
+- (void) _syncSelection
+{
+    if (self.isSelected)
+    {
+        self.icon.themeKey = @"BXInspectorListSelectionTheme";
+        self.titleLabel.themeKey = @"BXInspectorListSelectionTheme";
+        self.letterLabel.themeKey = @"BXInspectorListSelectionTheme";
+        self.typeLabel.themeKey = @"BXInspectorListSelectionTheme";
+        self.progressMeterLabel.themeKey = @"BXInspectorListSelectionTheme";
+    }
+    else
+    {
+        self.icon.themeKey = @"BXInspectorListTheme";
+        self.titleLabel.themeKey = @"BXInspectorListTheme";
+        self.letterLabel.themeKey = @"BXInspectorListTheme";
+        self.typeLabel.themeKey = @"BXInspectorListHelpTextTheme";
+        self.progressMeterLabel.themeKey = @"BXInspectorListHelpTextTheme";
+    }
 }
 
 - (void) setSelected: (BOOL)flag
 {
     [super setSelected: flag];
     [self _syncControlsShownWithAnimation: NO];
+    [self _syncSelection];
 }
 
 - (void) setImporting: (BOOL)flag
@@ -82,11 +110,14 @@
 {
     self.progressMeter = nil;
     self.progressMeterLabel = nil;
-    self.progressMeterCancel = nil;
-    self.driveTypeLabel = nil;
-    self.driveToggleButton = nil;
-    self.driveRevealButton = nil;
-    self.driveImportButton = nil;
+    self.cancelButton = nil;
+    self.typeLabel = nil;
+    self.titleLabel = nil;
+    self.letterLabel = nil;
+    self.toggleButton = nil;
+    self.revealButton = nil;
+    self.importButton = nil;
+    self.icon = nil;
     
     [super dealloc];
 }
@@ -112,7 +143,7 @@
 }
 + (NSSet *) keyPathsForValuesAffectingMounted { return [NSSet setWithObject: @"drive.mounted"]; }
 
-- (NSImage *) icon
+- (NSImage *) driveImage
 {
     NSString *iconName;
     switch (self.drive.type)
@@ -146,25 +177,9 @@
     else
         return NSLocalizedString(@"Mount drive", @"Label/tooltip for mounting unmounted drives.");
 }
+
 + (NSSet *) keyPathsForValuesAffectingTooltipForToggle  { return [NSSet setWithObject: @"mounted"]; }
 
-
-- (NSString *) tooltipForReveal
-{
-    return NSLocalizedString(@"Show in Finder", @"Label/tooltip for opening drives in a Finder window.");
-}
-
-
-- (NSString *) tooltipForCancel
-{
-    return NSLocalizedString(@"Cancel Import", @"Label/tooltip for cancelling in-progress drive import.");
-}
-
-
-- (NSString *) tooltipForBundle
-{
-    return NSLocalizedString(@"Import into Gamebox", @"Menu item title/tooltip for importing drive into gamebox.");
-}
 
 
 - (NSString *) typeDescription
@@ -204,7 +219,7 @@
     self.progressMeter.doubleValue = transfer.currentProgress;
     
     //Enable the cancel button
-    self.progressMeterCancel.enabled = YES;
+    self.cancelButton.enabled = YES;
     
     //Set label text appropriately
     self.progressMeterLabel.stringValue = NSLocalizedString(@"Importing…", @"Initial drive import progress meter label, before transfer size is known.");
@@ -247,7 +262,7 @@
     [self.progressMeter startAnimation: self];
     
     //Disable the cancel button
-    self.progressMeterCancel.enabled = NO;
+    self.cancelButton.enabled = NO;
     
     //Change label text appropriately
     self.progressMeterLabel.stringValue = NSLocalizedString(@"Cancelling…",

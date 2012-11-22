@@ -120,31 +120,11 @@
 
 
 
-@implementation BXIndentedCollectionItemView
+@implementation BXInspectorListCollectionItemView
 
 - (void) collectionViewItemDidChangeSelection
 {
-    NSString *themeKey;
-    if (self.delegate.isSelected)
-    {
-        themeKey = @"BXInspectorListSelectionTheme";
-    }
-    else
-    {
-        themeKey = @"BXInspectorListTheme";
-    }
-    
-    for (id view in self.subviews)
-    {
-        if ([view respondsToSelector: @selector(setThemeKey:)])
-        {
-            [view setThemeKey: themeKey];
-            [view setNeedsDisplay: YES];
-        }
-    }
-    
     [self setNeedsDisplay: YES];
-    
 }
 
 - (void) drawRect: (NSRect)dirtyRect

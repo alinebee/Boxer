@@ -44,5 +44,5 @@
 
 
 
-@interface BXIndentedCollectionItemView : BXCollectionItemView
+@interface BXInspectorListCollectionItemView : BXCollectionItemView
 @end

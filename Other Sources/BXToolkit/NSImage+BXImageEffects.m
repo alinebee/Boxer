@@ -194,22 +194,28 @@
        withGradient: (NSGradient *)gradient
          dropShadow: (NSShadow *)dropShadow
         innerShadow: (NSShadow *)innerShadow
+     respectFlipped: (BOOL)respectContextIsFlipped
 {
+    
     //Check if we're rendering into a backing intended for retina displays.
     NSSize pointSize = NSMakeSize(1, 1);
     if ([[NSView focusView] respondsToSelector: @selector(convertSizeToBacking:)])
          pointSize = [[NSView focusView] convertSizeToBacking: pointSize];
+    
+    NSSize contextSize = [NSView focusView].bounds.size;
     
     NSAssert(self.isTemplate, @"drawInRect:withGradient:dropShadow:innerShadow: can only be used with template images.");
     
     NSGraphicsContext *context = [NSGraphicsContext currentContext];
     CGContextRef cgContext = (CGContextRef)context.graphicsPort;
     
+    BOOL drawFlipped = respectContextIsFlipped && context.isFlipped;
+    
     //The total area of the context that will be affected by our drawing,
     //including our drop shadow.
     NSRect totalDirtyRect = drawRect;
     if (dropShadow)
-        totalDirtyRect = [dropShadow expandedRectForShadow: drawRect flipped: context.isFlipped];
+        totalDirtyRect = [dropShadow expandedRectForShadow: drawRect flipped: drawFlipped];
     
     //First create a mask image from the alpha channel of this image. We will use this to mask our fill and drop-shadow drawing.
     CGRect maskRect = NSRectToCGRect(drawRect);
@@ -251,6 +257,12 @@
     {
         CGContextSaveGState(cgContext);
         [NSGraphicsContext saveGraphicsState];
+            if (drawFlipped)
+            {
+                CGContextTranslateCTM(cgContext, 0.0f, contextSize.height);
+                CGContextScaleCTM(cgContext, 1.0f, -1.0f);
+            }
+        
             [dropShadow set];
             CGContextClipToMask(cgContext, invertedMaskRect, invertedImageMask);
             CGContextDrawImage(cgContext, maskRect, imageMask);
@@ -263,12 +275,17 @@
     {
         CGContextSaveGState(cgContext);
         [NSGraphicsContext saveGraphicsState];
+            if (drawFlipped)
+            {
+                CGContextTranslateCTM(cgContext, 0.0f, contextSize.height);
+                CGContextScaleCTM(cgContext, 1.0f, -1.0f);
+            }
+        
             CGContextClipToMask(cgContext, maskRect, imageMask);
             [gradient drawInRect: drawRect angle: 270.0];
         [NSGraphicsContext restoreGraphicsState];
         CGContextRestoreGState(cgContext);
     }
-    
     
     //Finally, render the inner shadow by rendering the inverted mask by clipped by the original mask:
     //again so that only the shadow around the edges is drawn, and not the mask's contents.
@@ -276,6 +293,12 @@
     {
         CGContextSaveGState(cgContext);
         [NSGraphicsContext saveGraphicsState];
+            if (drawFlipped)
+            {
+                CGContextTranslateCTM(cgContext, 0.0f, contextSize.height);
+                CGContextScaleCTM(cgContext, 1.0f, -1.0f);
+            }
+        
             [innerShadow set];
             CGContextClipToMask(cgContext, maskRect, imageMask);
             CGContextDrawImage(cgContext, invertedMaskRect, invertedImageMask);

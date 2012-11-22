@@ -16,43 +16,44 @@
     
     NSProgressIndicator *_progressMeter;
     NSTextField *_progressMeterLabel;
-    NSButton *_progressMeterCancel;
-    NSTextField *_driveTypeLabel;
-    NSButton *_driveToggleButton;
-    NSButton *_driveRevealButton;
-    NSButton *_driveImportButton;
+    NSTextField *_titleLabel;
+    NSTextField *_typeLabel;
+    NSButton *_toggleButton;
+    NSButton *_revealButton;
+    NSButton *_importButton;
+    NSImageView *_icon;
+    NSTextField *_letterLabel;
+    NSButton *_cancelButton;
 }
 
-//Progress meter fields within the drive item view.
-//These will be updated programmatically throughout the import progress.
+#pragma mark - Outlet properties
 @property (retain, nonatomic) IBOutlet NSProgressIndicator *progressMeter;
 @property (retain, nonatomic) IBOutlet NSTextField *progressMeterLabel;
-@property (retain, nonatomic) IBOutlet NSButton *progressMeterCancel;
-@property (retain, nonatomic) IBOutlet NSTextField *driveTypeLabel;
-@property (retain, nonatomic) IBOutlet NSButton *driveToggleButton;
-@property (retain, nonatomic) IBOutlet NSButton *driveRevealButton;
-@property (retain, nonatomic) IBOutlet NSButton *driveImportButton;
+@property (retain, nonatomic) IBOutlet NSImageView *icon;
+@property (retain, nonatomic) IBOutlet NSTextField *letterLabel;
+@property (retain, nonatomic) IBOutlet NSTextField *titleLabel;
+@property (retain, nonatomic) IBOutlet NSTextField *typeLabel;
+@property (retain, nonatomic) IBOutlet NSButton *toggleButton;
+@property (retain, nonatomic) IBOutlet NSButton *revealButton;
+@property (retain, nonatomic) IBOutlet NSButton *importButton;
+@property (retain, nonatomic) IBOutlet NSButton *cancelButton;
+
+#pragma mark - Description properties
 
 //The drive to which this item corresponds. Derived automatically from representedObject.
 @property (readonly, nonatomic) BXDrive *drive;
 
 //The icon to display for the drive we represent.
-@property (readonly, nonatomic) NSImage *icon;
+@property (readonly, nonatomic) NSImage *driveImage;
 
 //The type description to display for our drive.
 @property (readonly, nonatomic) NSString *typeDescription;
 
-//The icon to display on the insert/eject toggle.
+//The icon and tooltip to display on the insert/eject toggle.
 @property (readonly, nonatomic) NSImage *iconForToggle;
-
-//Tooltips for buttons in the drive item list.
-//(These have to be applied via bindings, because IB doesn't
-//let you assign tooltips >:( )
 @property (readonly, nonatomic) NSString *tooltipForToggle;
-@property (readonly, nonatomic) NSString *tooltipForBundle;
-@property (readonly, nonatomic) NSString *tooltipForReveal;
-@property (readonly, nonatomic) NSString *tooltipForCancel;
 
+#pragma mark - Status properties
 
 //Whether this drive is currently mounted.
 @property (readonly, nonatomic, getter=isMounted) BOOL mounted;
@@ -64,6 +65,8 @@
 //Used to toggle the visibility of import progress fields in the drive item view.
 @property (assign, nonatomic, getter=isImporting) BOOL importing;
 
+
+#pragma mark - Notifications
 
 //Import notifications dispatched by BXDrivePanelController,
 //to the drive item for the drive being imported.

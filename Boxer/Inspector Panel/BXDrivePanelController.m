@@ -78,10 +78,6 @@ enum {
     
 	//Register the entire drive panel as a drag-drop target.
 	[self.view registerForDraggedTypes: [NSArray arrayWithObject: NSFilenamesPboardType]];
-	
-    //Insert ourselves into the responder chain for this view
-    self.nextResponder = self.view.nextResponder;
-    self.view.nextResponder = self;
     
 	//Assign the appropriate menu to the drive-actions button segment.
 	[self.driveControls setMenu: self.driveActionsMenu forSegment: BXDriveActionsMenuSegment];

@@ -6,12 +6,32 @@
  */
 
 
-#import "BXHUDProgressIndicator.h"
+#import "BXThemedProgressIndicator.h"
 #import "NSShadow+BXShadowExtensions.h"
 #import "NSBezierPath+MCAdditions.h"
 
+@interface BXThemedProgressIndicator ()
 
-@implementation BXHUDProgressIndicator
+@property (retain, nonatomic) NSTimer *animationTimer;
+
+//Called each time the animation timer fires.
+- (void) _performAnimation: (NSTimer *)timer;
+
+@end
+
+@implementation BXThemedProgressIndicator
+@synthesize animationTimer = _animationTimer;
+@synthesize themeKey = _themeKey;
+
+- (void) dealloc
+{
+    [self stopAnimation: self];
+    
+    self.animationTimer = nil;
+    self.themeKey = nil;
+    
+    [super dealloc];
+}
 
 - (BOOL) isOpaque
 {
@@ -65,8 +85,8 @@
     
     NSShadow *fillShadow = [NSShadow shadowWithBlurRadius: 2.0f offset: NSMakeSize(0.0f, -1.0f)];
     
-    NSRect fillRegion       = NSInsetRect([self bounds], 1.0f, 1.0f);
-    NSRect strokeRegion     = NSInsetRect([self bounds], 0.5f, 0.5f);
+    NSRect fillRegion       = NSInsetRect(self.bounds, 1.0f, 1.0f);
+    NSRect strokeRegion     = NSInsetRect(self.bounds, 0.5f, 0.5f);
     
     NSBezierPath *fillPath = [NSBezierPath bezierPathWithRoundedRect: fillRegion
                                                              xRadius: fillRegion.size.height / 2
@@ -77,18 +97,18 @@
                                                                yRadius: strokeRegion.size.height / 2];
     
     [NSGraphicsContext saveGraphicsState];
-    [strokeColor setStroke];
-    [fillColor setFill];
-    
-    [fillPath fill];
-    [fillPath fillWithInnerShadow: fillShadow];
-    [strokePath stroke];
+        [strokeColor setStroke];
+        [fillColor setFill];
+        
+        [fillPath fill];
+        [fillPath fillWithInnerShadow: fillShadow];
+        [strokePath stroke];
     [NSGraphicsContext restoreGraphicsState];
 }
 
 - (void) drawIndeterminateProgressInRect: (NSRect)dirtyRect
 {
-    NSRect progressRegion = NSInsetRect([self bounds], 2.0f, 2.0f);
+    NSRect progressRegion = NSInsetRect(self.bounds, 2.0f, 2.0f);
     
     if ([self needsToDrawRect: progressRegion])
     {
@@ -104,13 +124,12 @@
                                                                      endingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.25f]];
         
         [NSGraphicsContext saveGraphicsState];
-        [progressPath addClip];
-        
-        [progressGradient drawInBezierPath: progressPath
-                                     angle: 90.0f];
-        
-        [stripeColor setFill];
-        [stripePath fill];
+            [progressPath addClip];
+            
+            [progressGradient drawInBezierPath: progressPath angle: 90.0f];
+            
+            [stripeColor setFill];
+            [stripePath fill];
         [NSGraphicsContext restoreGraphicsState];
         
         [progressGradient release];
@@ -119,10 +138,10 @@
 
 - (void) drawProgressInRect: (NSRect)dirtyRect
 {
-    NSRect progressRegion = NSInsetRect([self bounds], 2.0f, 2.0f);
+    NSRect progressRegion = NSInsetRect(self.bounds, 2.0f, 2.0f);
     
     //Work out how full the progress bar should be, and calculate from that how much of the path to draw
-    double progress = ([self doubleValue] - [self minValue]) / ([self maxValue] - [self minValue]);
+    double progress = (self.doubleValue - self.minValue) / (self.maxValue - self.minValue);
     
     NSRect progressClip = progressRegion;
     progressClip.size.width = roundf(progressClip.size.width * (float)progress);
@@ -137,10 +156,10 @@
                                                                      endingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.66f]];
         
         [NSGraphicsContext saveGraphicsState];
-        [NSBezierPath clipRect: progressClip];
-        
-        [progressGradient drawInBezierPath: progressPath
-                                     angle: 90.0f];
+            [NSBezierPath clipRect: progressClip];
+            
+            [progressGradient drawInBezierPath: progressPath
+                                         angle: 90.0f];
         [NSGraphicsContext restoreGraphicsState];
         
         [progressGradient release];
@@ -151,7 +170,7 @@
 {
     [self drawSlotInRect: dirtyRect];
     
-    if ([self isIndeterminate])
+    if (self.isIndeterminate)
     {
         [self drawIndeterminateProgressInRect: dirtyRect];
     }
@@ -169,33 +188,31 @@
 //implementation causes nasty ugly overdraws for some goddamn reason.
 //Note that these do not perform threaded animation yet.
 
-- (void) performAnimation: (NSTimer *)timer
+- (void) _performAnimation: (NSTimer *)timer
 {
-    if ([self isIndeterminate])
+    if (self.isIndeterminate)
         [self setNeedsDisplay: YES];
 }
 
 - (void) startAnimation: (id)sender
 {
-    if (!animationTimer)
+    if (!self.animationTimer)
     {
         //Animate every 1/12th of a second, same as NSProgressIndicator.
-        animationTimer = [NSTimer scheduledTimerWithTimeInterval: 5.0/60.0
-                                                          target: self
-                                                        selector: @selector(performAnimation:)
-                                                        userInfo: nil
-                                                         repeats: YES];
-        [animationTimer retain];
+        self.animationTimer = [NSTimer scheduledTimerWithTimeInterval: 5.0/60.0
+                                                               target: self
+                                                             selector: @selector(_performAnimation:)
+                                                             userInfo: nil
+                                                              repeats: YES];
     }
 }
 
 - (void) stopAnimation: (id)sender
 {
-    if (animationTimer)
+    if (self.animationTimer)
     {
-        [animationTimer invalidate];
-        [animationTimer release];
-        animationTimer = nil;
+        [self.animationTimer invalidate];
+        self.animationTimer = nil;
     }
 }
 
@@ -203,16 +220,8 @@
 {
     [super viewDidMoveToWindow];
     
-    if (![self window])
+    if (!self.window)
         [self stopAnimation: self];
-}
-
-- (void) dealloc
-{
-    if (animationTimer)
-        [self stopAnimation: self];
-    
-    [super dealloc];
 }
 
 @end

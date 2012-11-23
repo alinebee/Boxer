@@ -210,13 +210,13 @@
 //These are passthroughs to the relevant methods on
 //BXDrivePanelController. This is only necessary because
 //cloned drive items don't seem to restore target-action
-//bindings correctly to the first responder; otherwise,
+//connections correctly to the first responder; otherwise,
 //we'd do it that way instead.
 
 - (IBAction) revealInFinder: (id)sender     { [NSApp sendAction: @selector(revealSelectedDrivesInFinder:) to: self.collectionView.delegate from: sender]; }
-- (IBAction) toggle: (id)sender             { [NSApp sendAction: @selector(toggleSelectedDrives:) to: nil from: sender]; }
-- (IBAction) import: (id)sender             { [NSApp sendAction: @selector(importSelectedDrives:) to: nil from: sender]; }
-- (IBAction) cancelImport: (id)sender       { [NSApp sendAction: @selector(cancelImportsForSelectedDrives:) to: nil from: sender]; }
+- (IBAction) toggle: (id)sender             { [NSApp sendAction: @selector(toggleSelectedDrives:) to: self.collectionView.delegate from: sender]; }
+- (IBAction) import: (id)sender             { [NSApp sendAction: @selector(importSelectedDrives:) to: self.collectionView.delegate from: sender]; }
+- (IBAction) cancelImport: (id)sender       { [NSApp sendAction: @selector(cancelImportsForSelectedDrives:) to: self.collectionView.delegate from: sender]; }
 
 
 #pragma mark - Drive import notifications

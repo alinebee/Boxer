@@ -39,7 +39,7 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSCustomView" id="538100461">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">266</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="NSTextField" id="1058072283">
@@ -304,7 +304,6 @@
 					</object>
 				</array>
 				<string key="NSFrameSize">{284, 48}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="786569398"/>
 				<bool key="NSViewIsLayerTreeHost">YES</bool>
 				<string key="NSClassName">BXDriveItemView</string>
@@ -928,7 +927,7 @@
 				</object>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="7.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="8.CustomClassName">BXHUDProgressIndicator</string>
+				<string key="8.CustomClassName">BXThemedProgressIndicator</string>
 				<string key="8.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<object class="NSMutableDictionary" key="9.IBAttributePlaceholdersKey">
 					<string key="NS.key.0">ToolTip</string>

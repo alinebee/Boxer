@@ -317,7 +317,7 @@
 		9F2D30B915B8233800FAE848 /* BXDummyMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */; };
 		9F2D30BB15B8233800FAE848 /* CALayer+BXLayerAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */; };
 		9F2D30BC15B8233800FAE848 /* BXExternalMT32+BXMT32Sysexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */; };
-		9F2D30BD15B8233800FAE848 /* BXHUDProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562814506DBA00545317 /* BXHUDProgressIndicator.m */; };
+		9F2D30BD15B8233800FAE848 /* BXThemedProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562814506DBA00545317 /* BXThemedProgressIndicator.m */; };
 		9F2D30BE15B8233800FAE848 /* BXHUDLevelIndicatorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */; };
 		9F2D30BF15B8233800FAE848 /* BXKeyboardEventTap.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562F14506F5C00545317 /* BXKeyboardEventTap.m */; };
 		9F2D30C015B8233800FAE848 /* BXBezelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F39A43A1452CE9100942D0F /* BXBezelView.m */; };
@@ -865,7 +865,7 @@
 		9FECE19011A31B8B00E0EBB6 /* BXBasicRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXBasicRenderer.m */; };
 		9FECE1C211A3244500E0EBB6 /* BXGLRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */; };
 		9FEF98011191E1EF002024DF /* BXEmulatedMouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXEmulatedMouse.mm */; };
-		9FF1562914506DBA00545317 /* BXHUDProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562814506DBA00545317 /* BXHUDProgressIndicator.m */; };
+		9FF1562914506DBA00545317 /* BXThemedProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562814506DBA00545317 /* BXThemedProgressIndicator.m */; };
 		9FF1562D14506E7200545317 /* BXHUDLevelIndicatorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */; };
 		9FF1563014506F5C00545317 /* BXKeyboardEventTap.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562F14506F5C00545317 /* BXKeyboardEventTap.m */; };
 		9FF1756D11B25F4E00D0FCDC /* BXInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1756C11B25F4E00D0FCDC /* BXInputView.m */; };
@@ -1812,8 +1812,8 @@
 		9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGLRenderingView.m; sourceTree = "<group>"; };
 		9FEF97FF1191E1EF002024DF /* BXEmulatedMouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedMouse.h; sourceTree = "<group>"; };
 		9FEF98001191E1EF002024DF /* BXEmulatedMouse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulatedMouse.mm; sourceTree = "<group>"; };
-		9FF1562714506DBA00545317 /* BXHUDProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHUDProgressIndicator.h; sourceTree = "<group>"; };
-		9FF1562814506DBA00545317 /* BXHUDProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHUDProgressIndicator.m; sourceTree = "<group>"; };
+		9FF1562714506DBA00545317 /* BXThemedProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedProgressIndicator.h; sourceTree = "<group>"; };
+		9FF1562814506DBA00545317 /* BXThemedProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedProgressIndicator.m; sourceTree = "<group>"; };
 		9FF1562B14506E7200545317 /* BXHUDLevelIndicatorCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHUDLevelIndicatorCell.h; sourceTree = "<group>"; };
 		9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHUDLevelIndicatorCell.m; sourceTree = "<group>"; };
 		9FF1562E14506F5C00545317 /* BXKeyboardEventTap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXKeyboardEventTap.h; sourceTree = "<group>"; };
@@ -2443,8 +2443,8 @@
 				9F39A43A1452CE9100942D0F /* BXBezelView.m */,
 				9FF1562B14506E7200545317 /* BXHUDLevelIndicatorCell.h */,
 				9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */,
-				9FF1562714506DBA00545317 /* BXHUDProgressIndicator.h */,
-				9FF1562814506DBA00545317 /* BXHUDProgressIndicator.m */,
+				9FF1562714506DBA00545317 /* BXThemedProgressIndicator.h */,
+				9FF1562814506DBA00545317 /* BXThemedProgressIndicator.m */,
 				9F57684715DA27A300B50500 /* BXHUDSpinningProgressIndicator.h */,
 				9F57684815DA27A300B50500 /* BXHUDSpinningProgressIndicator.m */,
 				9F60B0DA13AA418300F06BB1 /* BXCollectionItemView.h */,
@@ -4198,7 +4198,7 @@
 				9F586CEB143E41C200E840C8 /* BXMT32ROMDropzone.m in Sources */,
 				9F586CEE143E4A0100E840C8 /* CALayer+BXLayerAdditions.m in Sources */,
 				9F7D9EFF1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m in Sources */,
-				9FF1562914506DBA00545317 /* BXHUDProgressIndicator.m in Sources */,
+				9FF1562914506DBA00545317 /* BXThemedProgressIndicator.m in Sources */,
 				9FF1562D14506E7200545317 /* BXHUDLevelIndicatorCell.m in Sources */,
 				9FF1563014506F5C00545317 /* BXKeyboardEventTap.m in Sources */,
 				9F39A43B1452CE9100942D0F /* BXBezelView.m in Sources */,
@@ -4501,7 +4501,7 @@
 				9F2D30B915B8233800FAE848 /* BXDummyMIDIDevice.m in Sources */,
 				9F2D30BB15B8233800FAE848 /* CALayer+BXLayerAdditions.m in Sources */,
 				9F2D30BC15B8233800FAE848 /* BXExternalMT32+BXMT32Sysexes.m in Sources */,
-				9F2D30BD15B8233800FAE848 /* BXHUDProgressIndicator.m in Sources */,
+				9F2D30BD15B8233800FAE848 /* BXThemedProgressIndicator.m in Sources */,
 				9F2D30BE15B8233800FAE848 /* BXHUDLevelIndicatorCell.m in Sources */,
 				9F2D30BF15B8233800FAE848 /* BXKeyboardEventTap.m in Sources */,
 				9F2D30C015B8233800FAE848 /* BXBezelView.m in Sources */,

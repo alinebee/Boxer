@@ -612,6 +612,7 @@
                                    offset: NSMakeSize(0, -1.0f)
                                     color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5f]];
 }
+
 @end
 
 

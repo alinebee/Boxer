@@ -39,7 +39,7 @@
 
 
 //A custom appearance for control buttons within drive item views.
-@interface BXDriveItemButtonCell : BXThemedButtonCell
+@interface BXDriveItemButtonCell : NSButtonCell
 {
 	BOOL _hovered;
 }

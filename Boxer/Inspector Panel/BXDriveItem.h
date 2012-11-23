@@ -66,6 +66,14 @@
 @property (assign, nonatomic, getter=isImporting) BOOL importing;
 
 
+#pragma mark - Actions
+
+- (IBAction) revealInFinder: (id)sender;
+- (IBAction) toggle: (id)sender;
+- (IBAction) import: (id)sender;
+- (IBAction) cancelImport: (id)sender;
+
+
 #pragma mark - Notifications
 
 //Import notifications dispatched by BXDrivePanelController,

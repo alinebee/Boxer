@@ -160,13 +160,18 @@
     
     titleFrame = alignInRectWithAnchor(titleFrame, frame, NSMakePoint(0.5, 1));
     
-    NSRect pillFrame = NSZeroRect;
-    NSSize pillPadding = NSMakeSize(2.0, 2.0);
+    NSSize pillPadding = NSMakeSize(0.0, 2.0);
     NSSize pillMargin = NSMakeSize(2.0, 0.0);
     
-    pillFrame.size.width = frame.size.width - (pillMargin.width * 2);
-    pillFrame.size.height = MIN(titleFont.capHeight + (pillPadding.height * 2), shadowedFrame.size.height);
-    pillFrame = NSIntegralRect(centerInRect(pillFrame, titleFrame));
+    //Position the pill frame centered on the character being drawn,
+    //filling the cell horizontally but constrained vertically to the height of the character plus padding.
+    NSRect pillFrame = NSMakeRect(pillMargin.width,
+                                  (titleFrame.origin.y - titleFont.descender) - pillPadding.height,
+                                  frame.size.width - (pillMargin.width * 2),
+                                  titleFont.capHeight + (pillPadding.height * 2)
+    );
+    
+    pillFrame = NSIntegralRect(pillFrame);
     
     CGFloat cornerRadius = pillFrame.size.height * 0.5;
     NSBezierPath *backgroundPill = [NSBezierPath bezierPathWithRoundedRect: pillFrame

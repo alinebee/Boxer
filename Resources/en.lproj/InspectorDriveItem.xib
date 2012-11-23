@@ -122,6 +122,7 @@
 						</set>
 						<string key="NSFrame">{{10, 6}, {38, 38}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
+						<reference key="NSNextKeyView" ref="857624103"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="714609405">
@@ -145,6 +146,7 @@
 						<array class="NSMutableArray" key="NSSubviews"/>
 						<string key="NSFrame">{{217, 22}, {18, 18}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
+						<reference key="NSNextKeyView" ref="999769036"/>
 						<int key="NSTag">9</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="302127434">
@@ -172,6 +174,7 @@
 						<array class="NSMutableArray" key="NSSubviews"/>
 						<string key="NSFrame">{{236, 22}, {18, 18}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
+						<reference key="NSNextKeyView" ref="101752426"/>
 						<int key="NSTag">8</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="288943020">
@@ -199,6 +202,7 @@
 						<array class="NSMutableArray" key="NSSubviews"/>
 						<string key="NSFrame">{{255, 22}, {18, 18}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
+						<reference key="NSNextKeyView" ref="1020297771"/>
 						<int key="NSTag">7</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="1057637640">
@@ -406,35 +410,35 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">revealSelectedDrivesInFinder:</string>
-						<reference key="source" ref="1003"/>
+						<string key="label">revealInFinder:</string>
+						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="999769036"/>
 					</object>
-					<int key="connectionID">99</int>
+					<int key="connectionID">129</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">importSelectedDrives:</string>
-						<reference key="source" ref="1003"/>
-						<reference key="destination" ref="333940824"/>
-					</object>
-					<int key="connectionID">100</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleSelectedDrives:</string>
-						<reference key="source" ref="1003"/>
+						<string key="label">toggle:</string>
+						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="101752426"/>
 					</object>
-					<int key="connectionID">101</int>
+					<int key="connectionID">130</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">cancelImportsForSelectedDrives:</string>
-						<reference key="source" ref="1003"/>
+						<string key="label">import:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="333940824"/>
+					</object>
+					<int key="connectionID">131</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">cancelImport:</string>
+						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="228187998"/>
 					</object>
-					<int key="connectionID">102</int>
+					<int key="connectionID">132</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -940,7 +944,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">119</int>
+			<int key="maxID">132</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>

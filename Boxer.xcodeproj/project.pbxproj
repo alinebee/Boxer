@@ -704,7 +704,7 @@
 		9FB453B316442D3F00BCF63B /* app.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FB453A716442D2900BCF63B /* app.icns */; };
 		9FB453B416442D4200BCF63B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FB453A816442D2900BCF63B /* InfoPlist.strings */; };
 		9FB453B716442DAC00BCF63B /* Boxer Standalone.app in Resources */ = {isa = PBXBuildFile; fileRef = 9F2D317215B8233800FAE848 /* Boxer Standalone.app */; };
-		9FB453B816442ECE00BCF63B /* NSURL+BXFilePaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */; };
+		9FB453B816442ECE00BCF63B /* NSURL+BXFilePaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9FB4F9E411957B55006C8AC9 /* BXVideoFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4F9E311957B55006C8AC9 /* BXVideoFrame.m */; };
 		9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
 		9FB554220F6EAC5F00A33017 /* NSAlert+BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */; };

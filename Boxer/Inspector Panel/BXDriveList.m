@@ -150,10 +150,6 @@
     };
     
     frame = [self titleRectForBounds: controlView.bounds];
-    NSRect shadowedFrame = frame;
-    if (dropShadow)
-        shadowedFrame = [dropShadow insetRectForShadow: frame flipped: controlView.isFlipped];
-    
     NSRect titleFrame = [self.stringValue boundingRectWithSize: frame.size
                                                        options: NSStringDrawingUsesLineFragmentOrigin
                                                     attributes: titleAttribs];

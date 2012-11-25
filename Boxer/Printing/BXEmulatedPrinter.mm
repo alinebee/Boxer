@@ -1168,6 +1168,7 @@ enum {
             break;
         default:
             NSLog(@"PRINTER: Unsupported bit image density %u", density);
+            return;
 	}
     
     _bitmapHeight = bytesPerColumn * 8;

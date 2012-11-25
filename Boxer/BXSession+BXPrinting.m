@@ -42,7 +42,7 @@
     
     if (!self.printStatusController)
     {
-        self.printStatusController = [[BXPrintStatusPanelController alloc] initWithWindowNibName: @"PrintStatusPanel"];
+        self.printStatusController = [[[BXPrintStatusPanelController alloc] initWithWindowNibName: @"PrintStatusPanel"] autorelease];
     }
     
     //Update the properties of the window just before showing it

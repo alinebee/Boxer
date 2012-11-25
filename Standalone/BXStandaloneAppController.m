@@ -167,7 +167,7 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
             BXSession *session = [[BXSession alloc] initWithContentsOfURL: bundledGameboxURL
                                                                    ofType: typeName
                                                                     error: outError];
-            return session;
+            return [session autorelease];
         }
         else
         {

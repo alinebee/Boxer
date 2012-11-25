@@ -478,6 +478,7 @@
 		9F60B0DC13AA418300F06BB1 /* BXCollectionItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F60B0DB13AA418300F06BB1 /* BXCollectionItemView.m */; };
 		9F61931B1233D8F000F35AB4 /* BXTabbedWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */; };
 		9F61942412340F5400F35AB4 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F61942312340F5400F35AB4 /* ScriptingBridge.framework */; };
+		9F61B94E16625DF700B41546 /* BXInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F424206109D03F500111D28 /* BXInspectorController.m */; };
 		9F61F78313EC2D5100505436 /* BXImageAwareFileScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61F78213EC2D5100505436 /* BXImageAwareFileScan.m */; };
 		9F61FC8510DE3F7F00F3896C /* BXGameProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */; };
 		9F6311090F70F54300AB1155 /* BXHelpMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6311080F70F54300AB1155 /* BXHelpMenuController.m */; };
@@ -4557,6 +4558,7 @@
 				9FF982121646C7640080F763 /* BXPrintSession.m in Sources */,
 				9F67855D1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */,
 				9F201E391657DB7F0086F1BB /* BXUserNotificationDispatcher.m in Sources */,
+				9F61B94E16625DF700B41546 /* BXInspectorController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

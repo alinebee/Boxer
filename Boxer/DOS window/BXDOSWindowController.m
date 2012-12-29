@@ -206,7 +206,6 @@
 	//This is necessary because the order of windowDidLoad/setDocument: differs between OS X releases, and some
 	//of our members may have been nil when setDocument: was first called
 	self.document = self.document;
-    
 }
 
 
@@ -623,9 +622,10 @@
 	
 		return (!self.window.isFullScreen && self.window.isVisible);
 	}
+    
     else
     {
-        return YES;
+        return [super validateMenuItem: theItem];
     }
 }
 

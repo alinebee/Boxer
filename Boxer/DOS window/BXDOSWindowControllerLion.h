@@ -13,7 +13,7 @@
 
 @interface BXDOSWindowControllerLion : BXDOSWindowController
 {
-    BOOL statusBarShownBeforeFullScreen;
-    BOOL programPanelShownBeforeFullScreen;
+    BOOL _statusBarShownBeforeFullScreen;
+    BOOL _programPanelShownBeforeFullScreen;
 }
 @end

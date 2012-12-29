@@ -17,7 +17,7 @@ enum {
 	BXStartUpWithGamesFolder	= 2
 };
 
-
+@class BXInspectorController;
 @interface BXAppController : BXBaseAppController
 {
 	NSString *_gamesFolderPath;
@@ -26,6 +26,8 @@ enum {
 //Returns YES if there are other Boxer processes currently running, no otherwise.
 + (BOOL) otherBoxersActive;
 
+//A reference to the app's shared inspector panel controller, used for UI bindings.
+@property (readonly, nonatomic) BXInspectorController *inspectorController;
 
 #pragma mark -
 #pragma mark Opening documents

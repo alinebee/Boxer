@@ -283,7 +283,8 @@
     {
         newOptions &= ~NSApplicationPresentationDisableProcessSwitching;
         
-        //We want to unset any auto-hiding we did upstream, but only if we're not in fullscreen and don't have the menu-bar hidden (as these options insist on the dock remaining auto-hidden.)
+        //We want to unset any auto-hiding we did upstream, but only if we're not in fullscreen and don't have the menu-bar hidden
+        //(as these options insist on the dock remaining auto-hidden and will trigger an assertion if they're included.)
         if (!(newOptions & NSApplicationPresentationAutoHideMenuBar) && !(newOptions & NSApplicationPresentationFullScreen))
             newOptions &= ~NSApplicationPresentationAutoHideDock;
     }

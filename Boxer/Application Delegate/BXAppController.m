@@ -78,6 +78,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[super dealloc];
 }
 
+- (BXInspectorController *) inspectorController
+{
+    return [BXInspectorController controller];
+}
 
 #pragma mark -
 #pragma mark Application open/closing behaviour

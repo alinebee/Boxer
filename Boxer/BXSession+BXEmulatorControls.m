@@ -115,7 +115,7 @@
 
 - (IBAction) resume: (id)sender
 {
-    if (self.isEmulating && self.isPaused)
+    if (self.isEmulating && (self.isPaused || self.emulator.turboSpeed))
     {
         self.paused = NO;
         //Disable fast-forward upon resuming.
@@ -456,7 +456,7 @@
 {
 	SEL theAction = theItem.action;
 	
-    BOOL isShowingDOSView = (self.DOSWindowController.currentPanel == BXDOSWindowDOSView);
+    BOOL isShowingDOSView = self.DOSWindowController.DOSViewShown;
     
     NSString *title;
     //Pause menu item

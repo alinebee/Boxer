@@ -319,8 +319,6 @@
 
 - (void) showVolumeBezelForVolume: (float)volume
 {
-    if (!self.shouldShowVolumeNotifications) return;
-    
     NSView *bezel = self.volumeBezel;
     
     NSLevelIndicator *level = [bezel viewWithTag: BXBezelLevel];
@@ -377,16 +375,8 @@
 - (BOOL) shouldShowDriveNotifications
 {
     //Suppress drive notifications while the Drive Inspector panel is open.
-    
     BXInspectorController *inspector = [NSClassFromString(@"BXInspectorController") controller];
     return !(inspector.panelShown && inspector.selectedTabViewItemIndex == BXDriveInspectorPanelTag);
-}
-
-- (BOOL) shouldShowVolumeNotifications
-{
-    //Suppress volume notifications while the window's own volume indicator is visible.
-    BXDOSWindowController *windowController = [[NSApp delegate] currentSession].DOSWindowController;
-    return !windowController.statusBarShown || windowController.window.isFullScreen;
 }
 
 - (void) showDriveAddedBezelForDrive: (BXDrive *)drive

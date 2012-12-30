@@ -125,10 +125,6 @@ enum {
 //This will return NO if the Drives Inspector panel is open.
 - (BOOL) shouldShowDriveNotifications;
 
-//Whether to show volume notifications.
-//This will return NO if the window's statusbar volume control is currently visible.
-- (BOOL) shouldShowVolumeNotifications;
-
 - (void) showDriveAddedBezelForDrive: (BXDrive *)drive;
 - (void) showDriveRemovedBezelForDrive: (BXDrive *)drive;
 - (void) showDriveSwappedBezelFromDrive: (BXDrive *)fromDrive

@@ -637,10 +637,15 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 {
     NSURL *reopenURL = self.fileURL;
     
-    [self.gameSettings setObject: [NSNumber numberWithBool: showLaunchPanel] forKey: BXGameboxSettingsShowLaunchPanelKey];
+    [self.gameSettings setObject: @(showLaunchPanel)
+                          forKey: BXGameboxSettingsShowLaunchPanelKey];
     
     [self close];
-    [[NSApp delegate] openDocumentWithContentsOfURL: reopenURL display: YES error: NULL];
+    
+    if (reopenURL)
+        [[NSApp delegate] openDocumentWithContentsOfURL: reopenURL display: YES error: NULL];
+    else
+        [[NSApp delegate] openUntitledDocumentAndDisplay: YES error: NULL];
 }
 
 //Overridden solely so that NSDocumentController will call canCloseDocumentWithDelegate:

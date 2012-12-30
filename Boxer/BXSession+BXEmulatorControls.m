@@ -549,7 +549,7 @@
         return self.isEmulating && self.allowsLauncherPanel && (self.DOSWindowController.currentPanel != BXDOSWindowLaunchPanel);
     }
     
-    return [super validateMenuItem: theItem];
+    return YES;
 }
 
 

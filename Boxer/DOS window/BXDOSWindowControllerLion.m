@@ -38,7 +38,7 @@
     //by a touch event that includes a resting touch, then the event system may
     //try to send touchesCancelled: events to a now-deallocated view.
     //Turning off touch events just before window close seems to prevent this
-    //from happening, though the udnerlying bug is likely to get fixed in
+    //from happening, though the underlying bug is likely to get fixed in
     //a later Lion update.
     self.inputView.acceptsTouchEvents = NO;
 }

@@ -528,6 +528,25 @@
     return YES;
 }
 
+- (void) setLaunchPanelShown: (BOOL)show
+{
+    if (show)
+        [self performShowLaunchPanel: self];
+    else
+        [self performShowDOSView: self];
+}
+
++ (NSSet *) keyPathsForValuesAffectingLaunchPanelShown
+{
+    return [NSSet setWithObject: @"currentPanel"];
+}
+
+- (BOOL) launchPanelShown
+{
+    return self.currentPanel == BXDOSWindowLaunchPanel;
+}
+
+
 #pragma mark -
 #pragma mark Programmatic UI actions
 

@@ -86,6 +86,10 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //The current panel being displayed in the content area of the window.
 @property (readonly, nonatomic) BXDOSWindowPanel currentPanel;
 
+//Whether the launch panel is currently being displayed.
+//Used by UI bindings for toggling between the program list and the DOS view.
+@property (assign, nonatomic) BOOL launchPanelShown;
+
 //The view which displays the emulator's graphical output.
 @property (retain, nonatomic) IBOutlet NSView <BXFrameRenderingView> *renderingView;
 

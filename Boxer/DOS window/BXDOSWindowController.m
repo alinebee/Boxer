@@ -210,6 +210,21 @@
     self.loadingSpinner.usesThreadedAnimation = YES;
     
     
+    //Prepare menu representations for the toolbar items, which (being custom views)
+    //will otherwise have no functional menu form or text-only form.
+    //------------------------------------------------------------------------------
+    for (NSToolbarItem *toolbarItem in self.window.toolbar.items)
+    {
+        if (toolbarItem.action)
+        {
+            NSMenuItem *menuRep = [[NSMenuItem alloc] initWithTitle: toolbarItem.label action: toolbarItem.action keyEquivalent: @""];
+            menuRep.target = toolbarItem.target;
+            toolbarItem.menuFormRepresentation = menuRep;
+            [menuRep release];
+        }
+    }
+    
+    
 	//Reassign the document to ensure we've set up our view controllers with references the document/emulator
 	//This is necessary because the order of windowDidLoad/setDocument: differs between OS X releases, and some
 	//of our members may have been nil when setDocument: was first called
@@ -721,7 +736,7 @@ enum {
     
     else
     {
-        return [super validateMenuItem: theItem];
+        return YES;
     }
 }
 

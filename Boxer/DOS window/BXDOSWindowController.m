@@ -53,6 +53,8 @@
 @synthesize loadingPanel = _loadingPanel;
 @synthesize loadingSpinner = _loadingSpinner;
 
+@synthesize toolbarPlayControl = _toolbarPlayControl;
+
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
 - (BXSession *) document	{ return (BXSession *)[super document]; }
@@ -93,6 +95,8 @@
     self.statusBarController = nil;
     self.launchPanelController = nil;
     
+    self.toolbarPlayControl = nil;
+    
     self.inputView = nil;
     self.renderingView = nil;
     
@@ -115,6 +119,8 @@
     [self addObserver: self forKeyPath: @"document.currentPath" options: 0 context: nil];
     [self addObserver: self forKeyPath: @"document.paused" options: 0 context: nil];
     [self addObserver: self forKeyPath: @"document.autoPaused" options: 0 context: nil];
+    [self addObserver: self forKeyPath: @"document.emulating" options: 0 context: nil];
+    [self addObserver: self forKeyPath: @"document.emulator.turboSpeed" options: 0 context: nil];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
@@ -134,6 +140,8 @@
     [self removeObserver: self forKeyPath: @"document.currentPath"];
     [self removeObserver: self forKeyPath: @"document.paused"];
     [self removeObserver: self forKeyPath: @"document.autoPaused"];
+    [self removeObserver: self forKeyPath: @"document.emulating"];
+    [self removeObserver: self forKeyPath: @"document.emulator.turboSpeed"];
     
     [self unbind: @"aspectCorrected"];
     [self.renderingView unbind: @"renderingStyle"];
@@ -217,11 +225,20 @@
                          change: (NSDictionary *)change
                         context: (void *)context
 {
-    if ([keyPath isEqualToString: @"document.currentPath"] || 
-        [keyPath isEqualToString: @"document.paused"] ||
-        [keyPath isEqualToString: @"document.autoPaused"])
+    if ([keyPath isEqualToString: @"document.currentPath"])
     {
         [self synchronizeWindowTitleWithDocumentName];
+    }
+    else if ([keyPath isEqualToString: @"document.paused"] ||
+             [keyPath isEqualToString: @"document.autoPaused"])
+    {
+        [self synchronizeWindowTitleWithDocumentName];
+        [self _syncPlayControlSegments];
+    }
+    else if ([keyPath isEqualToString: @"document.emulator.turboSpeed"] ||
+             [keyPath isEqualToString: @"document.emulating"])
+    {
+        [self _syncPlayControlSegments];
     }
 }
 
@@ -536,14 +553,74 @@
         [self performShowDOSView: self];
 }
 
+- (BOOL) launchPanelShown
+{
+    return self.currentPanel == BXDOSWindowLaunchPanel;
+}
+
+- (void) setDOSViewShown: (BOOL)show
+{
+    if (show)
+        [self performShowDOSView: self];
+    else
+        [self performShowLaunchPanel: self];
+}
+
+- (BOOL) DOSViewShown
+{
+    return self.currentPanel == BXDOSWindowDOSView;
+}
+
 + (NSSet *) keyPathsForValuesAffectingLaunchPanelShown
 {
     return [NSSet setWithObject: @"currentPanel"];
 }
 
-- (BOOL) launchPanelShown
++ (NSSet *) keyPathsForValuesAffectingDOSViewShown
 {
-    return self.currentPanel == BXDOSWindowLaunchPanel;
+    return [NSSet setWithObject: @"currentPanel"];
+}
+
+#pragma mark -
+#pragma mark Toolbar management
+
+
+enum {
+    BXToolbarPauseSegment = 0,
+    BXToolbarPlaySegment = 1,
+    BXToolbarFastForwardSegment = 2,
+};
+
+- (IBAction) performPlayControlAction: (NSSegmentedControl *)sender
+{
+    BXSession *session = self.document;
+    switch (sender.selectedSegment)
+    {
+        case BXToolbarPauseSegment:
+            [session pause: sender];
+            break;
+        case BXToolbarPlaySegment:
+            [session resume: sender];
+            break;
+        case BXToolbarFastForwardSegment:
+            [session fastForward: sender];
+            break;
+    }
+    
+	[self _syncPlayControlSegments];
+}
+
+- (void) _syncPlayControlSegments
+{
+    BXSession *session = self.document;
+    self.toolbarPlayControl.enabled = (self.document.isEmulating && self.DOSViewShown);
+    
+    if (session.isPaused)
+        self.toolbarPlayControl.selectedSegment = BXToolbarPauseSegment;
+    else if (session.emulator.isTurboSpeed)
+        self.toolbarPlayControl.selectedSegment = BXToolbarFastForwardSegment;
+    else
+        self.toolbarPlayControl.selectedSegment = BXToolbarPlaySegment;
 }
 
 

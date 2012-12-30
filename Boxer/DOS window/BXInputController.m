@@ -74,9 +74,8 @@
 	self.nextResponder = self.view.nextResponder;
     self.view.nextResponder = self;
     
-	//Tell the view to accept touch events for 10.6 and above
-	if ([self.view respondsToSelector: @selector(setAcceptsTouchEvents:)])
-		self.view.acceptsTouchEvents = YES;
+	//Tell the view to accept touch events
+    self.view.acceptsTouchEvents = YES;
          
 	//Set up a cursor region in the view for mouse handling
 	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingEnabledDuringMouseDrag | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect | NSTrackingAssumeInside;

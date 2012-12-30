@@ -60,6 +60,7 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	BXInputController *_inputController;
 	BXStatusBarController *_statusBarController;
     BXLaunchPanelController *_launchPanelController;
+    NSSegmentedControl *_toolbarPlayControl;
 	
     NSSize _currentScaledSize;
 	NSSize _currentScaledResolution;
@@ -86,9 +87,10 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //The current panel being displayed in the content area of the window.
 @property (readonly, nonatomic) BXDOSWindowPanel currentPanel;
 
-//Whether the launch panel is currently being displayed.
+//Whether the launch panel/DOS view is currently being displayed.
 //Used by UI bindings for toggling between the program list and the DOS view.
 @property (assign, nonatomic) BOOL launchPanelShown;
+@property (assign, nonatomic) BOOL DOSViewShown;
 
 //The view which displays the emulator's graphical output.
 @property (retain, nonatomic) IBOutlet NSView <BXFrameRenderingView> *renderingView;
@@ -110,6 +112,9 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 //The status bar at the bottom of the window.
 @property (retain, nonatomic) IBOutlet NSView *statusBar;
+
+//The play/pause/fast-forward control in the toolbar.
+@property (retain, nonatomic) IBOutlet NSSegmentedControl *toolbarPlayControl;
 
 //Our loading indicator.
 @property (retain, nonatomic) IBOutlet YRKSpinningProgressIndicator *loadingSpinner;
@@ -169,9 +174,13 @@ extern NSString * const BXViewDidLiveResizeNotification;
 - (void) showDOSView;
 - (void) showLoadingPanel;
 
-
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleRenderingStyle: (id)sender;
+
+//Called when interacting with the play/pause/fast-forward control in the toolbar.
+//The action depends on which segment was clicked.
+- (IBAction) performPlayControlAction: (NSSegmentedControl *)sender;
+
 
 #pragma mark -
 #pragma mark Toggling UI components

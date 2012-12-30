@@ -695,6 +695,7 @@
 		9FAEBE5315D678C800C9AC5F /* DOSWindowBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FAEBE5115D678C800C9AC5F /* DOSWindowBackground.png */; };
 		9FAEBE5515D67C3A00C9AC5F /* DOSWindowGrille.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FAEBE5415D67C3A00C9AC5F /* DOSWindowGrille.png */; };
 		9FAEBE5615D67C3A00C9AC5F /* DOSWindowGrille.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FAEBE5415D67C3A00C9AC5F /* DOSWindowGrille.png */; };
+		9FB05B9E168FA0940051CE6F /* DocumentationTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FB05B9D168FA0940051CE6F /* DocumentationTemplate.pdf */; };
 		9FB446EB13D23BD900E69AF5 /* BXG25ControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB446EA13D23BD900E69AF5 /* BXG25ControllerProfile.m */; };
 		9FB4538F16442CDD00BCF63B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB4538E16442CDD00BCF63B /* Cocoa.framework */; };
 		9FB4539716442CDD00BCF63B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4539616442CDD00BCF63B /* main.m */; };
@@ -1573,6 +1574,7 @@
 		9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXLaunchPanelButtonCell.m; sourceTree = "<group>"; };
 		9FAEBE5115D678C800C9AC5F /* DOSWindowBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DOSWindowBackground.png; sourceTree = "<group>"; };
 		9FAEBE5415D67C3A00C9AC5F /* DOSWindowGrille.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DOSWindowGrille.png; sourceTree = "<group>"; };
+		9FB05B9D168FA0940051CE6F /* DocumentationTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DocumentationTemplate.pdf; sourceTree = "<group>"; };
 		9FB446EA13D23BD900E69AF5 /* BXG25ControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXG25ControllerProfile.m; sourceTree = "<group>"; };
 		9FB4538C16442CDD00BCF63B /* Boxer Bundler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Boxer Bundler.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FB4538E16442CDD00BCF63B /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -3272,6 +3274,7 @@
 				9F9606ED14F65B1A0072E90C /* Cover art */,
 				9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */,
 				9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */,
+				9FB05B9D168FA0940051CE6F /* DocumentationTemplate.pdf */,
 				9F44C5C415F274BE00FE0A88 /* PromptFreestandingTemplate.pdf */,
 				9FCA157C1597222D00C42D10 /* WelcomeSpotlight@2x.png */,
 				9FA9E27F121FD874006E20C4 /* PanelExpandTemplate.pdf */,
@@ -3803,6 +3806,7 @@
 				9F6BF48616592EA600D9D66E /* Inspector.xib in Resources */,
 				9FAE3492165C075800FC117A /* InspectorDriveItem.xib in Resources */,
 				9F9D47F4165E946F00E16DE7 /* InspectorJoystickItem.xib in Resources */,
+				9FB05B9E168FA0940051CE6F /* DocumentationTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -102,6 +102,9 @@
 
 - (void) dealloc
 {
+    //Tidy up our view's responder chain.
+    self.view.nextResponder = self.nextResponder;
+    
 	[self.cursorFade stopAnimation];
     
     self.cursorFade = nil;

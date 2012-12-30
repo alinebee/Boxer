@@ -7,11 +7,7 @@
 
 
 //BXInputView tracks keyboard and mouse input and passes them to its BXInputController.
-//It wraps a BXFrameRenderingView implementor and does no direct rendering itself,
-//besides a badged grey gradient background.
-
-//TODO: split this class up further so that BXInputView does no drawing of its own, but instead
-//defers to a wrapper background element
+//It wraps a BXFrameRenderingView implementor and does no rendering itself.
 
 #import <Cocoa/Cocoa.h>
 

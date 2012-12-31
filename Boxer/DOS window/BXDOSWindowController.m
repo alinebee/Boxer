@@ -215,10 +215,23 @@
     //------------------------------------------------------------------------------
     for (NSToolbarItem *toolbarItem in self.window.toolbar.items)
     {
-        if (toolbarItem.action)
+        //Pick up submenu representations from the toolbar views if available.
+        if (toolbarItem.view.menu)
         {
-            NSMenuItem *menuRep = [[NSMenuItem alloc] initWithTitle: toolbarItem.label action: toolbarItem.action keyEquivalent: @""];
+            NSMenuItem *menuRep = [[NSMenuItem alloc] init];
+            menuRep.submenu = toolbarItem.view.menu;
+            menuRep.title = toolbarItem.label;
+            toolbarItem.view.menu = nil;
+            toolbarItem.menuFormRepresentation = menuRep;
+            [menuRep release];
+        }
+        //Otherwise, synthesize a menu representation from the target-action of the toolbar item itself.
+        else if (toolbarItem.action)
+        {
+            NSMenuItem *menuRep = [[NSMenuItem alloc] init];
             menuRep.target = toolbarItem.target;
+            menuRep.action = toolbarItem.action;
+            menuRep.title = toolbarItem.label;
             toolbarItem.menuFormRepresentation = menuRep;
             [menuRep release];
         }
@@ -706,7 +719,7 @@ enum {
 	
     else if (theAction == @selector(toggleLaunchPanel:))
 	{
-		if (self.currentPanel == BXDOSWindowDOSView)
+		if (self.DOSViewShown)
 			theItem.title = NSLocalizedString(@"Show Launch Panel", @"View menu option for showing the launch panel.");
 		else
 			theItem.title = NSLocalizedString(@"Hide Launch Panel", @"View menu option for hiding the launch panel.");

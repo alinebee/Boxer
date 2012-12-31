@@ -617,7 +617,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (void) _mountQueuedSiblingsAtOffset: (NSInteger)offset
 {
-    for (BXDrive *currentDrive in [self mountedDrives])
+    for (BXDrive *currentDrive in self.mountedDrives)
     {
         BXDrive *siblingDrive = [self siblingOfQueuedDrive: currentDrive atOffset: offset];
         if (siblingDrive && ![siblingDrive isEqual: currentDrive])
@@ -631,7 +631,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
             if (mountError)
             {
                 [self presentError: mountError
-                    modalForWindow: [self windowForSheet]
+                    modalForWindow: self.windowForSheet
                           delegate: nil
                 didPresentSelector: NULL
                        contextInfo: NULL];

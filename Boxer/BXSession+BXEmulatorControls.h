@@ -150,6 +150,9 @@ enum
 - (IBAction) mountNextDrivesInQueues: (id)sender;
 - (IBAction) mountPreviousDrivesInQueues: (id)sender;
 
+//Whether we have any drive queues that can be cycled. Used for UI bindings.
+- (BOOL) canCycleDrivesInQueues;
+
 //Discard/merge the current game data.
 //The game be relaunched after the operation is complete.
 - (IBAction) revertShadowedChanges: (id)sender;

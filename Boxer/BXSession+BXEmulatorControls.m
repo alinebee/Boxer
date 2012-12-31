@@ -471,6 +471,25 @@
         
 		return self.isEmulating && isShowingDOSView;
 	}
+    
+    else if (theAction == @selector(pause:))
+    {
+        theItem.state = (self.isPaused) ? NSOnState : NSOffState;
+        return self.isEmulating && isShowingDOSView;
+    }
+    
+    else if (theAction == @selector(fastForward:))
+    {
+        theItem.state = (self.emulator.isTurboSpeed) ? NSOnState : NSOffState;
+        return self.isEmulating && isShowingDOSView;
+    }
+    
+    else if (theAction == @selector(resume:))
+    {
+        theItem.state = (!self.emulator.isTurboSpeed && !self.isPaused) ? NSOnState : NSOffState;
+        return self.isEmulating && isShowingDOSView;
+    }
+    
     //Menu item to switch to next disc in queue
     else if (theAction == @selector(mountNextDrivesInQueues:))
     {
@@ -1013,6 +1032,21 @@
 - (IBAction) mountPreviousDrivesInQueues: (id)sender
 {
     [self _mountQueuedSiblingsAtOffset: -1];
+}
+
++ (NSSet *) keyPathsForValuesAffectingCanCycleDrivesInQueues
+{
+    return [NSSet setWithObject: @"drives"];
+}
+
+- (BOOL) canCycleDrivesInQueues
+{
+    for (BXDrive *currentDrive in self.mountedDrives)
+    {
+        BXDrive *siblingDrive = [self siblingOfQueuedDrive: currentDrive atOffset: 1];
+        if (siblingDrive && ![siblingDrive isEqual: currentDrive]) return YES;
+    }
+    return NO;
 }
 
 @end

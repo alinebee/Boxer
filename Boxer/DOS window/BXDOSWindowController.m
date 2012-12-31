@@ -550,8 +550,8 @@
     if (self.currentPanel == BXDOSWindowLoadingPanel)
         return NO;
     
-    if (!self.document.emulator.isAtPrompt)
-        return NO;
+    //if (!self.document.emulator.isAtPrompt)
+    //    return NO;
     
     return YES;
 }

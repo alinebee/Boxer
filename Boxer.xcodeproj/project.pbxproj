@@ -41,6 +41,8 @@
 		9F1CBBA8120CB99D00C5E926 /* BXImportDropzone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBBA7120CB99D00C5E926 /* BXImportDropzone.m */; };
 		9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */; };
 		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
+		9F1D58F216921AD9007C32AD /* BunnyTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1D58F016921AD9007C32AD /* BunnyTemplate.pdf */; };
+		9F1D58F316921AD9007C32AD /* TurtleTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1D58F116921AD9007C32AD /* TurtleTemplate.pdf */; };
 		9F1DE9B214FB7F3800F9C91E /* NSObject+BXPerformExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1DE9B114FB7F3800F9C91E /* NSObject+BXPerformExtensions.m */; };
 		9F1E959A15BD88D700C3C6A0 /* UserDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F1E959915BD88D700C3C6A0 /* UserDefaults.plist */; };
 		9F1E959C15BD899500C3C6A0 /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F1E959B15BD899500C3C6A0 /* GameDefaults.plist */; };
@@ -497,8 +499,6 @@
 		9F6C1CDA14373AF600601ACB /* BXDummyMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */; };
 		9F70277B13D706CC00606B4C /* BXBezelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70277A13D706CC00606B4C /* BXBezelController.m */; };
 		9F70278413D72D8100606B4C /* BXThemedControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70278313D72D8100606B4C /* BXThemedControls.m */; };
-		9F70278713D730D000606B4C /* BunnyTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278513D730D000606B4C /* BunnyTemplate.png */; };
-		9F70278813D730D000606B4C /* TurtleTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278613D730D000606B4C /* TurtleTemplate.png */; };
 		9F70C19C129036C900A3627F /* Boxer.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 9F70C19B129036C900A3627F /* Boxer.sdef */; };
 		9F731AF513630820005E564F /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
 		9F731B1D13630B6D005E564F /* DDHidLib.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
@@ -1011,6 +1011,8 @@
 		9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Blueprint.jpg; sourceTree = "<group>"; };
 		9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulator.h; sourceTree = "<group>"; };
 		9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulator.mm; sourceTree = "<group>"; };
+		9F1D58F016921AD9007C32AD /* BunnyTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = BunnyTemplate.pdf; sourceTree = "<group>"; };
+		9F1D58F116921AD9007C32AD /* TurtleTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = TurtleTemplate.pdf; sourceTree = "<group>"; };
 		9F1DE9B014FB7F3800F9C91E /* NSObject+BXPerformExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+BXPerformExtensions.h"; sourceTree = "<group>"; };
 		9F1DE9B114FB7F3800F9C91E /* NSObject+BXPerformExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+BXPerformExtensions.m"; sourceTree = "<group>"; };
 		9F1E959915BD88D700C3C6A0 /* UserDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefaults.plist; sourceTree = "<group>"; };
@@ -1208,8 +1210,6 @@
 		9F70277A13D706CC00606B4C /* BXBezelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBezelController.m; sourceTree = "<group>"; };
 		9F70278213D72D8100606B4C /* BXThemedControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedControls.h; sourceTree = "<group>"; };
 		9F70278313D72D8100606B4C /* BXThemedControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedControls.m; sourceTree = "<group>"; };
-		9F70278513D730D000606B4C /* BunnyTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BunnyTemplate.png; sourceTree = "<group>"; };
-		9F70278613D730D000606B4C /* TurtleTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TurtleTemplate.png; sourceTree = "<group>"; };
 		9F70A02212F731A800D144D2 /* SystemEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemEvents.h; sourceTree = "<group>"; };
 		9F70C19B129036C900A3627F /* Boxer.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Boxer.sdef; sourceTree = "<group>"; };
 		9F731AF413630820005E564F /* DDHidLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DDHidLib.framework; sourceTree = "<group>"; };
@@ -3047,8 +3047,8 @@
 		9F9606E514F65A0B0072E90C /* Bezels */ = {
 			isa = PBXGroup;
 			children = (
-				9F70278513D730D000606B4C /* BunnyTemplate.png */,
-				9F70278613D730D000606B4C /* TurtleTemplate.png */,
+				9F1D58F016921AD9007C32AD /* BunnyTemplate.pdf */,
+				9F1D58F116921AD9007C32AD /* TurtleTemplate.pdf */,
 				9FFF635B14013F4D007E8B47 /* PauseTemplate.pdf */,
 				9FFF635C14013F4D007E8B47 /* PlayTemplate.pdf */,
 				9F8F374B14F9366F00E482FB /* FastForwardTemplate.pdf */,
@@ -3744,8 +3744,6 @@
 				9F7FC94C139EB38300D60320 /* RacingWheel.png in Resources */,
 				9FD012E313AB845200AF6FE8 /* GamepadTemplate.pdf in Resources */,
 				9F886FDB144CB6C30033CCD3 /* Bezel.xib in Resources */,
-				9F70278713D730D000606B4C /* BunnyTemplate.png in Resources */,
-				9F70278813D730D000606B4C /* TurtleTemplate.png in Resources */,
 				9F96969813E59CA100FB51EC /* NoJoystickTemplate.pdf in Resources */,
 				9FFF635F14013F4D007E8B47 /* HardDiskTemplate.pdf in Resources */,
 				9FFF636014013F4D007E8B47 /* CDROMTemplate.pdf in Resources */,
@@ -3811,6 +3809,8 @@
 				9F9D47F4165E946F00E16DE7 /* InspectorJoystickItem.xib in Resources */,
 				9FB05B9E168FA0940051CE6F /* DocumentationTemplate.pdf in Resources */,
 				9F4C10E11691E0D50092441A /* DiscSwapTemplate.pdf in Resources */,
+				9F1D58F216921AD9007C32AD /* BunnyTemplate.pdf in Resources */,
+				9F1D58F316921AD9007C32AD /* TurtleTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

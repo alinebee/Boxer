@@ -41,6 +41,11 @@ enum
 //The maximum frameskip level we can set
 #define BXMaxFrameskip 9
 
+typedef enum {
+    BXPaused,
+    BXPlaying,
+    BXFastForward,
+} BXPlaybackMode;
 
 @class BXEmulator;
 
@@ -78,6 +83,8 @@ enum
 @property (readonly, nonatomic) NSString *speedDescription;
 @property (readonly, nonatomic) NSString *frameskipDescription;
 
+//The current playback mode: paused, playing, fast-forwarding. Used for UI bindings.
+@property (assign, nonatomic) BXPlaybackMode playbackMode;
 
 #pragma mark -
 #pragma mark Class methods
@@ -125,7 +132,6 @@ enum
 - (IBAction) toggleFastForward: (id)sender;
 - (IBAction) fastForward: (id)sender;
 - (IBAction) releaseFastForward: (id)sender;
-
 
 //Caps the speed within minimum and maximum limits
 - (BOOL) validateCPUSpeed: (id *)ioValue error: (NSError **)outError;

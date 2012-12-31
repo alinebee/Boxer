@@ -52,13 +52,6 @@
 
 
 #pragma mark -
-#pragma mark UI synchronization
-
-//Called when the play/pause/fast-forward state of the emulator changes,
-//to update the appearance of the toolbar control.
-- (void) _syncPlayControlSegments;
-
-#pragma mark -
 #pragma mark Window sizing
 
 //Resize the window to fit the specified render size, with an optional smooth resize animation.

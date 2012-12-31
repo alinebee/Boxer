@@ -60,7 +60,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	BXInputController *_inputController;
 	BXStatusBarController *_statusBarController;
     BXLaunchPanelController *_launchPanelController;
-    NSSegmentedControl *_toolbarPlayControl;
 	
     NSSize _currentScaledSize;
 	NSSize _currentScaledResolution;
@@ -112,9 +111,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 //The status bar at the bottom of the window.
 @property (retain, nonatomic) IBOutlet NSView *statusBar;
-
-//The play/pause/fast-forward control in the toolbar.
-@property (retain, nonatomic) IBOutlet NSSegmentedControl *toolbarPlayControl;
 
 //Our loading indicator.
 @property (retain, nonatomic) IBOutlet YRKSpinningProgressIndicator *loadingSpinner;
@@ -176,10 +172,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleRenderingStyle: (id)sender;
-
-//Called when interacting with the play/pause/fast-forward control in the toolbar.
-//The action depends on which segment was clicked.
-- (IBAction) performPlayControlAction: (NSSegmentedControl *)sender;
 
 
 #pragma mark -

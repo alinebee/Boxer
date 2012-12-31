@@ -77,13 +77,13 @@
 							<object class="NSMutableString" key="NSToolbarItemIdentifier">
 								<characters key="NS.bytes">09AC3A20-E5A3-450E-B97C-B30E2F9938C9</characters>
 							</object>
-							<string key="NSToolbarItemLabel">Next Disc</string>
-							<string key="NSToolbarItemPaletteLabel">Next Disc</string>
+							<string key="NSToolbarItemLabel">Change Discs</string>
+							<string key="NSToolbarItemPaletteLabel">Change Discs</string>
 							<nil key="NSToolbarItemToolTip"/>
 							<object class="NSButton" key="NSToolbarItemView" id="865368050">
 								<reference key="NSNextResponder"/>
 								<int key="NSvFlags">266</int>
-								<string key="NSFrame">{{10, 14}, {40, 25}}</string>
+								<string key="NSFrame">{{20, 14}, {40, 25}}</string>
 								<reference key="NSSuperview"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView"/>
@@ -569,6 +569,7 @@
 												<string key="NSResourceName">FastForwardTemplate</string>
 											</object>
 											<string key="NSSegmentItemTooltip">Fast-forward the game</string>
+											<int key="NSSegmentItemTag">2</int>
 											<int key="NSSegmentItemImageScaling">0</int>
 										</object>
 									</array>
@@ -1061,22 +1062,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">performPlayControlAction:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="1061511487"/>
-					</object>
-					<int key="connectionID">1361</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">toolbarPlayControl</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="1061511487"/>
-					</object>
-					<int key="connectionID">1363</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">toggleInspectorPanel:</string>
 						<reference key="source" ref="1003"/>
 						<reference key="destination" ref="796006126"/>
@@ -1374,6 +1359,44 @@
 						<reference key="destination" ref="448048712"/>
 					</object>
 					<int key="connectionID">1396</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">selectedTag: document.playbackMode</string>
+						<reference key="source" ref="1061511487"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1061511487"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">selectedTag: document.playbackMode</string>
+							<string key="NSBinding">selectedTag</string>
+							<string key="NSKeyPath">document.playbackMode</string>
+							<dictionary key="NSOptions">
+								<integer value="1" key="NSMultipleValuesPlaceholder"/>
+								<integer value="1" key="NSNoSelectionPlaceholder"/>
+								<integer value="1" key="NSNotApplicablePlaceholder"/>
+								<integer value="1" key="NSNullPlaceholder"/>
+							</dictionary>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1411</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: DOSViewShown</string>
+						<reference key="source" ref="1061511487"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1061511487"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">enabled: DOSViewShown</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">DOSViewShown</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1415</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -1950,7 +1973,7 @@
 				<string key="1332.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="1336.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="1343.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<integer value="1" key="1344.IBNSSegmentedControlInspectorSelectedSegmentMetadataKey"/>
+				<integer value="2" key="1344.IBNSSegmentedControlInspectorSelectedSegmentMetadataKey"/>
 				<string key="1344.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="1345.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="1346.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1987,7 +2010,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1405</int>
+			<int key="maxID">1415</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2267,7 +2290,6 @@
 					<string key="superclassName">NSWindowController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
 						<string key="hideProgramPanel:">id</string>
-						<string key="performPlayControlAction:">NSSegmentedControl</string>
 						<string key="performShowDOSView:">id</string>
 						<string key="performShowLaunchPanel:">id</string>
 						<string key="showProgramPanel:">id</string>
@@ -2280,10 +2302,6 @@
 						<object class="IBActionInfo" key="hideProgramPanel:">
 							<string key="name">hideProgramPanel:</string>
 							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="performPlayControlAction:">
-							<string key="name">performPlayControlAction:</string>
-							<string key="candidateClassName">NSSegmentedControl</string>
 						</object>
 						<object class="IBActionInfo" key="performShowDOSView:">
 							<string key="name">performShowDOSView:</string>
@@ -2326,7 +2344,6 @@
 						<string key="renderingView">NSView</string>
 						<string key="statusBar">NSView</string>
 						<string key="statusBarController">BXStatusBarController</string>
-						<string key="toolbarPlayControl">NSSegmentedControl</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="inputController">
@@ -2372,10 +2389,6 @@
 						<object class="IBToOneOutletInfo" key="statusBarController">
 							<string key="name">statusBarController</string>
 							<string key="candidateClassName">BXStatusBarController</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="toolbarPlayControl">
-							<string key="name">toolbarPlayControl</string>
-							<string key="candidateClassName">NSSegmentedControl</string>
 						</object>
 					</dictionary>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">

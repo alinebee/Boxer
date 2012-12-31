@@ -102,6 +102,37 @@
 #pragma mark -
 #pragma mark Controlling CPU emulation
 
++ (NSSet *) keyPathsForValuesAffectingPlaybackMode
+{
+    return [NSSet setWithObjects: @"paused", @"emulator.turboSpeed", nil];
+}
+
+- (BXPlaybackMode) playbackMode
+{
+    if (self.isPaused)
+        return BXPaused;
+    else if (self.emulator.isTurboSpeed)
+        return BXFastForward;
+    else
+        return BXPlaying;
+}
+
+- (void) setPlaybackMode: (BXPlaybackMode)playbackMode
+{
+    switch (playbackMode)
+    {
+        case BXPaused:
+            [self pause: self];
+            break;
+        case BXPlaying:
+            [self resume: self];
+            break;
+        case BXFastForward:
+            [self fastForward: self];
+            break;
+    }
+}
+
 - (IBAction) pause: (id)sender
 {
     if (self.isEmulating && !self.isPaused)

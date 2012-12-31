@@ -385,6 +385,8 @@
 	//If we're at the maximum speed, bump it into auto-throttling mode
 	if (speed >= BXMaxSpeedThreshold) speed = BXAutoSpeed;
 	self.CPUSpeed = speed;
+    
+    [[BXBezelController controller] showCPUSpeedBezelForSpeed: speed];
 }
 
 - (NSInteger) sliderSpeed
@@ -408,7 +410,10 @@
 }
 
 
-- (BOOL) isDynamic	{ return self.emulator.coreMode == BXCoreDynamic; }
+- (BOOL) isDynamic
+{
+    return self.emulator.coreMode == BXCoreDynamic;
+}
 
 - (void) setDynamic: (BOOL)dynamic
 {

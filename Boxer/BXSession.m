@@ -120,7 +120,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 @synthesize gameSettings = _gameSettings;
 @synthesize drives = _drives;
 @synthesize executables = _executables;
-@synthesize documentation = _documentation;
 @synthesize emulating = _emulating;
 @synthesize paused = _paused;
 @synthesize autoPaused = _autoPaused;
@@ -254,7 +253,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     self.drives = nil;
     self.executables = nil;
-    self.documentation = nil;
     
     self.cachedIcon = nil;
     
@@ -998,43 +996,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             [self.DOSWindowController synchronizeWindowTitleWithDocumentName];
         }
     }
-}
-
-- (NSArray *) documentation
-{
-	//Generate our documentation cache the first time it is needed
-	if (!_documentation)
-	{
-		NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-		
-		NSArray *docPaths = [self.gamebox.documentation sortedArrayUsingSelector: @selector(pathDepthCompare:)];
-		
-		NSMutableSet *docNames = [[NSMutableSet alloc] initWithCapacity: docPaths.count];
-
-		_documentation = [[NSMutableArray alloc] initWithCapacity: docPaths.count];
-		
-		for (NSString *path in docPaths)
-		{
-			path = path.stringByStandardizingPath;
-			NSString *fileName = path.lastPathComponent;
-			
-			//If we already have a document with this name, skip it so we don't offer ambiguous choices
-			//TODO: this filtering should be done downstream in the UI controller, it's not our call
-			if (![docNames containsObject: fileName])
-			{
-				NSImage *icon		= [workspace iconForFile: path];
-				NSDictionary *data	= [NSDictionary dictionaryWithObjectsAndKeys:
-									   path,	@"path",
-									   icon,	@"icon",
-									   nil];
-				
-				[docNames addObject: fileName];
-				[_documentation addObject: data];
-			}
-		}
-		[docNames release];
-	}
-	return [[_documentation retain] autorelease];
 }
 
 + (NSSet *) keyPathsForValuesAffectingHasGamebox        { return [NSSet setWithObject: @"gamebox"]; }

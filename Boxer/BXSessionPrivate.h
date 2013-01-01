@@ -44,7 +44,6 @@ extern NSString * const BXGameImportedNotificationType;
 
 @property (readwrite, retain, nonatomic) NSDictionary *drives;
 @property (readwrite, retain, nonatomic) NSDictionary *executables;
-@property (readwrite, retain, nonatomic) NSArray *documentation;
 
 @property (retain, nonatomic) NSOperationQueue *importQueue;
 @property (retain, nonatomic) NSOperationQueue *scanQueue;

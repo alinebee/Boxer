@@ -121,10 +121,6 @@ typedef NSUInteger BXGameIdentifierType;
 //The unique identifier of this game.
 @property (copy, nonatomic) NSString *gameIdentifier;
 
-
-//An array of absolute file paths to documentation files found inside the gamebox.
-@property (readonly, nonatomic) NSArray *documentation;
-
 //An array of absolute file paths to DOS executables found inside the gamebox.
 @property (readonly, nonatomic) NSArray *executables;
 
@@ -135,7 +131,6 @@ typedef NSUInteger BXGameIdentifierType;
 
 //Returns the path at which the configuration file is located (or would be, if it doesn’t exist.)
 @property (readonly, nonatomic) NSString *configurationFilePath;
-
 
 //The path to the DOSBox configuration file for this package. Will be nil if one does not exist.
 @property (readonly, nonatomic) NSString *configurationFile;
@@ -167,9 +162,6 @@ typedef NSUInteger BXGameIdentifierType;
 //Re-casts the return value as a BXGamebox instead of an NSBundle
 + (BXGamebox *)bundleWithPath: (NSString *)path;
 
-
-+ (NSSet *) documentationTypes;			//UTIs recognised as documentation files.
-+ (NSSet *) documentationExclusions;	//Filename patterns for documentation to exclude from searches.
 + (NSSet *) executableExclusions;		//Filename patterns for executables to exclude from searches.
 
 
@@ -208,5 +200,40 @@ typedef NSUInteger BXGameIdentifierType;
 - (void) removeLauncher: (NSDictionary *)launcher;
 
 - (void) removeLauncherAtIndex: (NSUInteger)index;
+
+@end
+
+
+@interface BXGamebox (BXGameDocumentation)
+
+#pragma mark - Documentation autodiscovery
+
+//Returns an array of documentation found in the gamebox. If the gamebox has a documentation
+//folder, the contents of this folder will be returned; otherwise, the rest of the gamebox
+//will be searched for documentation.
+@property (readonly, nonatomic) NSArray *documentationURLs;
+
+
++ (NSSet *) documentationTypes;			//UTIs recognised as documentation files.
++ (NSSet *) documentationExclusions;	//Filename patterns for documentation to exclude from searches.
+
+//Returns all the documentation files in the specified filesystem location.
++ (NSArray *) URLsForDocumentationInLocation: (NSURL *)location searchSubdirectories: (BOOL)searchSubdirs;
+
+//Returns whether the file at the specified URL appears to be documentation.
++ (BOOL) isDocumentationFileAtURL: (NSURL *)URL;
+
+//Returns the URL for the documentation folder of this gamebox, if one exists.
+//If createIfMissing is YES, this folder will be created if it does not exist and will
+//be automatically populated with symlinks to documentation found elsewhere in the gamebox.
+//In the event that the folder could not be created, this will return nil and populate outError.
+//If createIfMissing is NO and the folder does not exist or is inaccessible, this will return nil
+//and outError will be populated with the reason the folder could not be accessed.
+- (NSURL *) documentationFolderURLCreatingIfMissing: (BOOL)createIfMissing error: (NSError **)outError;
+
+//Populates the documentation folder with symlinks to documentation found elsewhere
+//in the gamebox.
+//Note that this will not create the documentation folder if it does not already exist.
+- (BOOL) populateDocumentationFolderWithError: (out NSError **)outError;
 
 @end

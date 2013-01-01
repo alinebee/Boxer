@@ -80,7 +80,6 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 	
 	NSMutableDictionary *_drives;
 	NSMutableDictionary *_executables;
-	NSMutableArray *_documentation;
     NSImage *_cachedIcon;
 	
 	BXDOSWindowController *_DOSWindowController;
@@ -185,9 +184,6 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 
 //A lookup table of all known executables on mounted drives, organised by drive letter.
 @property (readonly, retain, nonatomic) NSDictionary *executables;
-
-//A cache of the documentation found in this session's gamebox.
-@property (readonly, retain, nonatomic) NSArray *documentation;
 
 //Whether the emulator is initialized and ready to receive instructions.
 @property (readonly, assign, getter=isEmulating) BOOL emulating;

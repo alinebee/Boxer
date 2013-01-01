@@ -14,6 +14,8 @@
 #import "BXDigest.h"
 #import "NSData+HexStrings.h"
 #import "BXPathEnumerator.h"
+#import "NSURL+BXFilePaths.h"
+#import "NSError+BXErrorHelpers.h"
 
 #pragma mark -
 #pragma mark Constants
@@ -50,9 +52,6 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 @interface BXGamebox ()
 @property (readwrite, retain, nonatomic) NSDictionary *gameInfo;
 
-//Arrays of paths to discovered files of particular types within the gamebox.
-//BXGamebox's documentation and executables accessors call these internal methods and cache the results.
-- (NSArray *) _foundDocumentation;
 - (NSArray *) _foundExecutables;
 - (NSArray *) _foundResourcesOfTypes: (NSSet *)fileTypes startingIn: (NSString *)basePath;
 
@@ -71,39 +70,6 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 @implementation BXGamebox
 @synthesize gameInfo = _gameInfo;
-
-+ (NSSet *) documentationTypes
-{
-	static NSSet *types = nil;
-	if (!types) types = [[NSSet alloc] initWithObjects:
-		@"public.jpeg",
-		@"public.plain-text",
-		@"public.png",
-		@"com.compuserve.gif",
-		@"com.adobe.pdf",
-		@"public.rtf",
-		@"com.microsoft.bmp",
-		@"com.microsoft.word.doc",
-		@"public.html",
-	nil];
-	return types;
-}
-
-//We ignore files with these names when considering which documentation files are likely to be worth showing
-//TODO: read this data from a configuration plist instead
-+ (NSSet *) documentationExclusions
-{
-	static NSSet *exclusions = nil;
-	if (!exclusions) exclusions = [[NSSet alloc] initWithObjects:
-		@"install.gif",
-		@"install.txt",
-		@"interp.txt",
-		@"order.txt",
-		@"orderfrm.txt",
-		@"license.txt",
-	nil];
-	return exclusions;
-}
 
 //We ignore files with these names when considering which programs are important enough to list
 //TODO: read this data from a configuration plist instead
@@ -498,11 +464,6 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	return [self _foundExecutables];
 }
 
-- (NSArray *) documentation
-{
-	return [self _foundDocumentation];
-}
-
 - (NSDictionary *) gameInfo
 {
 	//Load the game info from the gamebox's plist file the first time we need it.
@@ -616,24 +577,6 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	return [foundExecutables filteredArrayUsingPredicate: notExcluded];
 }
 
-- (NSArray *) _foundDocumentation
-{
-	//First, check if there is an explicitly-named documentation folder and use the contents of that if so
-	NSArray *docsFolderContents = [self pathsForResourcesOfType: nil inDirectory: BXDocumentationFolderName];
-	if (docsFolderContents.count)
-	{
-		NSPredicate *notHidden	= [NSPredicate predicateWithFormat: @"NOT lastPathComponent BEGINSWITH %@", @".", nil];
-		return [docsFolderContents filteredArrayUsingPredicate: notHidden];
-	}
-
-	//Otherwise, go trawling through the entire game package looking for likely documentation
-	NSArray *foundDocumentation	= [self _foundResourcesOfTypes: [self.class documentationTypes]
-                                                    startingIn: self.gamePath];
-	NSPredicate *notExcluded	= [NSPredicate predicateWithFormat: @"NOT lastPathComponent.lowercaseString IN %@", [self.class documentationExclusions]];
-
-	return [foundDocumentation filteredArrayUsingPredicate: notExcluded];
-}
-
 - (NSArray *) _foundResourcesOfTypes: (NSSet *)fileTypes startingIn: (NSString *)basePath
 {
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
@@ -681,6 +624,199 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 		return identifierWithUUID;
 	}
+}
+
+@end
+
+
+@implementation BXGamebox (BXGameDocumentation)
+
++ (NSSet *) documentationTypes
+{
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
+                         @"public.jpeg",
+                         @"public.plain-text",
+                         @"public.png",
+                         @"com.compuserve.gif",
+                         @"com.adobe.pdf",
+                         @"public.rtf",
+                         @"com.microsoft.bmp",
+                         @"com.microsoft.word.doc",
+                         @"public.html",
+                         nil];
+	return types;
+}
+
+//We ignore files whose names match this pattern when considering which documentation files are likely to be worth showing.
+//TODO: read this from a configuration plist instead.
++ (NSSet *) documentationExclusions
+{
+	static NSSet *exclusions = nil;
+	if (!exclusions) exclusions = [[NSSet alloc] initWithObjects:
+                                   @"(^|/)install",
+                                   @"(^|/)interp",
+                                   @"(^|/)order",
+                                   @"(^|/)orderfrm",
+                                   @"(^|/)license",
+                                   nil];
+	return exclusions;
+}
+
+- (NSURL *) documentationFolderURLCreatingIfMissing: (BOOL)createIfMissing error: (NSError **)outError
+{
+    NSURL *docsURL = [self.resourceURL URLByAppendingPathComponent: BXDocumentationFolderName isDirectory: YES];
+    
+    BOOL folderExists = [docsURL checkResourceIsReachableAndReturnError: outError];
+    
+    if (folderExists)
+        return docsURL;
+    
+    else if (createIfMissing)
+    {
+        //Auto-create the documentation folder, populating it with symlinks to discovered documentation
+        NSFileManager *manager = [[NSFileManager alloc] init];
+        BOOL created = [manager createDirectoryAtURL: docsURL withIntermediateDirectories: YES attributes: nil error: outError];
+        if (created)
+        {
+            //If we were not able to populate the folder with documentation for any reason,
+            //then delete the new folder.
+            BOOL populated = [self populateDocumentationFolderWithError: outError];
+            if (!populated)
+            {
+                [manager removeItemAtURL: docsURL error: NULL];
+                created = NO;
+            }
+        }
+        
+        [manager release];
+        
+        if (created)
+            return docsURL;
+        else
+            return nil;
+    }
+    else
+    {
+        return nil;
+    }
+}
+
+- (BOOL) populateDocumentationFolderWithError: (out NSError **)outError
+{
+    NSURL *docsURL = [self.resourceURL URLByAppendingPathComponent: BXDocumentationFolderName isDirectory: YES];
+    if ([docsURL checkResourceIsReachableAndReturnError: outError])
+    {
+        NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
+        
+        NSArray *foundDocumentation = [self.class URLsForDocumentationInLocation: self.bundleURL searchSubdirectories: YES];
+        for (NSURL *URL in foundDocumentation)
+        {
+            //Skip files that are rooted in the documentation folder itself.
+            if ([URL isBasedInURL: docsURL])
+                continue;
+            
+            NSString *fileName = URL.lastPathComponent;
+            NSURL *symlinkURL = [docsURL URLByAppendingPathComponent: fileName isDirectory: NO];
+            
+            NSError *symlinkError = nil;
+            BOOL symlinkCreated = [manager createSymbolicLinkAtURL: symlinkURL withDestinationURL: URL error: &symlinkError];
+            
+            if (!symlinkCreated)
+            {
+                //If the reason the symlink couldn't be created was because there already was a file with that name,
+                //then ignore the error; otherwise bail out immediately.
+                //IMPLEMENTATION NOTE: NSFileWriteFileExistsError was only defined in 10.7 and may not be returned
+                //by 10.6 and below. So, we also check if the symlink URL could be accessed, and if it could then
+                //we assume that the pre-existing file was the failure reason.
+                if ([symlinkError matchesDomain: NSCocoaErrorDomain code: NSFileWriteFileExistsError] ||
+                    [symlinkURL checkResourceIsReachableAndReturnError: NULL])
+                {
+                    continue;
+                }
+                //Otherwise, the error isn't one we know how to deal with and we should pass it upstream.
+                else
+                {
+                    if (outError)
+                        *outError = symlinkError;
+                    return NO;
+                }
+            }
+        }
+        
+        return YES;
+    }
+    else return NO;
+}
+
+- (NSArray *) documentationURLs
+{
+    NSURL *docsURL = [self documentationFolderURLCreatingIfMissing: NO error: NULL];
+    
+    //If the documentation folder exists, return everything inside it.
+    if ([docsURL checkResourceIsReachableAndReturnError: NULL])
+    {
+        NSArray *properties = @[NSURLTypeIdentifierKey];
+        NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL: docsURL
+                                                                 includingPropertiesForKeys: properties
+                                                                                    options: NSDirectoryEnumerationSkipsHiddenFiles
+                                                                               errorHandler: NULL];
+        
+        return enumerator.allObjects;
+    }
+    //Otherwise, search the rest of the gamebox for documentation.
+    else
+    {
+        return [self.class URLsForDocumentationInLocation: self.bundleURL searchSubdirectories: YES];
+    }
+}
+
++ (NSArray *) URLsForDocumentationInLocation: (NSURL *)location searchSubdirectories: (BOOL)searchSubdirs
+{
+    NSArray *properties = @[NSURLTypeIdentifierKey];
+    NSDirectoryEnumerationOptions options = NSDirectoryEnumerationSkipsHiddenFiles;
+    if (!searchSubdirs)
+        options |= NSDirectoryEnumerationSkipsSubdirectoryDescendants;
+    
+    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL: location
+                                                             includingPropertiesForKeys: properties
+                                                                                options: options
+                                                                           errorHandler: NULL];
+    
+    NSMutableArray *documentationURLs = [NSMutableArray array];
+    for (NSURL *URL in enumerator)
+    {
+        if ([self isDocumentationFileAtURL: URL])
+            [documentationURLs addObject: URL];
+    }
+    
+    return documentationURLs;
+}
+
++ (BOOL) isDocumentationFileAtURL: (NSURL *)URL
+{
+    NSString *fileType = nil;
+    [URL getResourceValue: &fileType forKey: NSURLTypeIdentifierKey error: NULL];
+    
+    //Check if the specified file is of a type we recognise as documentation.
+    //Note that we don't use our own smarter file:matchesTypes: NSWorkspace method for this,
+    //because there are some inherited filetypes that we want to avoid treating as documentation.
+    if (!fileType || ![[self documentationTypes] containsObject: fileType])
+        return NO;
+    
+    //Check if the specified file isn't on our blacklist of ignored documentation filenames.
+    NSString *fileName = URL.lastPathComponent;
+    for (NSString *pattern in [self documentationExclusions])
+    {
+        if ([fileName isMatchedByRegex: pattern
+                               options: RKLCaseless
+                               inRange: NSMakeRange(0, fileName.length)
+                                 error: nil])
+            return NO;
+    }
+    
+    //If we get this far, it checks out as a documentation file.
+    return YES;
 }
 
 @end

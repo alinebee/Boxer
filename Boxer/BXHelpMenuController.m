@@ -8,14 +8,15 @@
 #import "BXHelpMenuController.h"
 #import "BXSession.h"
 #import "BXBaseAppController.h"
+#import "BXGamebox.h"
 
 @interface BXHelpMenuController ()
 
 //Used internally to populate the help menu with items for the paths in BXHelpMenuController documentation.
 - (void) _populateMenu: (NSMenu *)menu withDocumentationFromSession: (BXSession *)session;
-- (NSMenuItem *) _insertItemForDocument: (NSDictionary *)docPath
-                                 toMenu: (NSMenu *)menu
-                                atIndex: (NSUInteger)index;
+- (NSMenuItem *) _insertItemForDocumentationURL: (NSURL *)documentationURL
+                                         toMenu: (NSMenu *)menu
+                                        atIndex: (NSUInteger)index;
 
 - (void) _populateMenu: (NSMenu *)menu withHelpLinks: (NSArray *)links;
 - (NSMenuItem *) _insertItemForLink: (NSDictionary *)linkInfo
@@ -34,7 +35,7 @@
 - (void) awakeFromNib
 {
     [[NSApp delegate] addObserver: self
-                       forKeyPath: @"currentSession.documentation"
+                       forKeyPath: @"currentSession.gamebox.documentationURLs"
                           options: 0
                           context: nil];
     
@@ -44,7 +45,7 @@
 
 - (void) dealloc
 {
-    [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.documentation"];
+    [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.gamebox.documentationURLs"];
     
     self.mobygamesItem = nil;
     self.replacementDocsItem = nil;
@@ -60,7 +61,7 @@
                         context: (void *)context
 {
     //Regenerate the documentation whenever it or the current session changes
-    if ([keyPath isEqualToString: @"currentSession.documentation"])
+    if ([keyPath isEqualToString: @"currentSession.gamebox.documentationURLs"])
     {
         _needsSessionDocsRefresh = YES;
     }
@@ -114,11 +115,9 @@
 
 - (IBAction) openDocumentFromMenuItem: (NSMenuItem *)sender
 {
-    NSString *documentPath = sender.representedObject;
-	if (documentPath)
-        [[NSWorkspace sharedWorkspace] openFile: documentPath
-                                withApplication: nil
-                                  andDeactivate: YES];
+    NSURL *documentURL = sender.representedObject;
+	if (documentURL)
+        [[NSWorkspace sharedWorkspace] openURL: documentURL];
 }
 
 
@@ -205,7 +204,7 @@
     while (menu.numberOfItems > insertionPoint + 1)
         [menu removeItemAtIndex: insertionPoint + 1];
     
-    NSArray *documentation = session.documentation;
+    NSArray *documentation = session.gamebox.documentationURLs;
     if (documentation.count > 0)
     {
         NSArray *sortedDocs = [documentation sortedArrayUsingDescriptors: [self.class sortCriteria]];
@@ -228,10 +227,10 @@
         insertionPoint++;
         [menu insertItemWithTitle: heading action: nil keyEquivalent: @"" atIndex: insertionPoint];
         
-        for (NSDictionary *document in sortedDocs)
+        for (NSURL *documentationURL in sortedDocs)
         {
             insertionPoint++;
-            [self _insertItemForDocument: document toMenu: menu atIndex: insertionPoint];
+            [self _insertItemForDocumentationURL: documentationURL toMenu: menu atIndex: insertionPoint];
         }
     }
     else
@@ -259,14 +258,17 @@
     return newItem;
 }
 
-- (NSMenuItem *) _insertItemForDocument: (NSDictionary *)documentInfo toMenu: (NSMenu *)menu atIndex: (NSUInteger)index
+- (NSMenuItem *) _insertItemForDocumentationURL: (NSURL *)documentationURL
+                                         toMenu: (NSMenu *)menu
+                                        atIndex: (NSUInteger)index
 {
-	SEL itemAction	= @selector(openDocumentFromMenuItem:);	//implemented by BXAppController
+	SEL itemAction	= @selector(openDocumentFromMenuItem:);
 	NSSize iconSize	= NSMakeSize(16, 16);
+    
+    NSImage *icon = nil;
+    [documentationURL getResourceValue: &icon forKey: NSURLEffectiveIconKey error: NULL];
 
-	NSImage *itemIcon	= [documentInfo objectForKey: @"icon"];
-	NSString *itemPath	= [documentInfo objectForKey: @"path"];
-	NSString *itemTitle	= [itemPath.lastPathComponent stringByDeletingPathExtension];
+	NSString *itemTitle	= documentationURL.lastPathComponent.stringByDeletingPathExtension;
 	
 	NSMenuItem *newItem = [menu	insertItemWithTitle: itemTitle
                                              action: itemAction
@@ -274,11 +276,15 @@
                                             atIndex: index];
 	
     newItem.target = self;
-	newItem.representedObject = itemPath;
+	newItem.representedObject = documentationURL;
     
-    itemIcon = [itemIcon copy];
-	itemIcon.size = iconSize;
-	newItem.image = [itemIcon autorelease];
+    //Resize the icon if one is available
+    if (icon)
+    {
+        icon = [icon copy];
+        icon.size = iconSize;
+        newItem.image = [icon autorelease];
+    }
     
 	return newItem;
 }
@@ -288,10 +294,10 @@
 	//Sort docs by extension then by filename, to group similar items together
 	NSSortDescriptor *sortByType, *sortByName;
 	SEL comparison = @selector(caseInsensitiveCompare:);
-	sortByType	= [[NSSortDescriptor alloc]	initWithKey: @"path.pathExtension"
+	sortByType	= [[NSSortDescriptor alloc]	initWithKey: @"pathExtension"
 											ascending: YES
 											selector: comparison];
-	sortByName	= [[NSSortDescriptor alloc]	initWithKey: @"path.lastPathComponent"
+	sortByName	= [[NSSortDescriptor alloc]	initWithKey: @"lastPathComponent"
 											ascending: YES
 											selector: comparison];
 	

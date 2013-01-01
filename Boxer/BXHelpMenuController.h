@@ -31,12 +31,12 @@
 
 //The array of sort descriptors we use to order documentation in the doc list.
 //These are ordered by extension and then by filename.
-+ (NSArray *) sortCriteria;
++ (NSArray *) documentationSortCriteria;
 
 //Returns the localised display strings used to label the "Find [current game] on Mobygames"
 //and "Find [current game] on ReplacementDocs" menu items.
-- (NSString *)mobygamesMenuTitle;
-- (NSString *)replacementDocsMenuTitle;
++ (NSString *) mobygamesMenuTitleForSession: (BXSession *)session;
++ (NSString *) replacementDocsMenuTitleForSession: (BXSession *)session;
 
 //Displays Boxer's main help. Currently this opens the Boxer online User Guide in the default browser. 
 - (IBAction) showHelp: (id)sender;

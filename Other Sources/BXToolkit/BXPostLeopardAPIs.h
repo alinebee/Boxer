@@ -185,4 +185,15 @@ extern NSString * const NSWindowDidChangeBackingPropertiesNotification;
 
 
 @interface NSFileManagerProxyCategory: BXFallbackProxyCategory
+
+//Reimplementations for OS X 10.6
+
+- (BOOL) createDirectoryAtURL: (NSURL *)URL
+  withIntermediateDirectories: (BOOL)createIntermediates
+                   attributes: (NSDictionary *)attributes
+                        error: (NSError **)error;
+
+- (BOOL)createSymbolicLinkAtURL: (NSURL *)URL
+             withDestinationURL: (NSURL *)destURL
+                         error :(NSError **)error;
 @end

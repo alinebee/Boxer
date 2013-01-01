@@ -204,6 +204,11 @@ typedef NSUInteger BXGameIdentifierType;
 @end
 
 
+typedef enum {
+    BXGameboxDocumentationRename,
+    BXGameboxDocumentationReplace,
+} BXGameboxDocumentationConflictBehaviour;
+
 @interface BXGamebox (BXGameDocumentation)
 
 #pragma mark - Documentation autodiscovery
@@ -212,7 +217,6 @@ typedef NSUInteger BXGameIdentifierType;
 //folder, the contents of this folder will be returned; otherwise, the rest of the gamebox
 //will be searched for documentation.
 @property (readonly, nonatomic) NSArray *documentationURLs;
-
 
 + (NSSet *) documentationTypes;			//UTIs recognised as documentation files.
 + (NSSet *) documentationExclusions;	//Filename patterns for documentation to exclude from searches.
@@ -229,11 +233,28 @@ typedef NSUInteger BXGameIdentifierType;
 //In the event that the folder could not be created, this will return nil and populate outError.
 //If createIfMissing is NO and the folder does not exist or is inaccessible, this will return nil
 //and outError will be populated with the reason the folder could not be accessed.
-- (NSURL *) documentationFolderURLCreatingIfMissing: (BOOL)createIfMissing error: (NSError **)outError;
+- (NSURL *) documentationFolderURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
 
 //Populates the documentation folder with symlinks to documentation found elsewhere
 //in the gamebox.
 //Note that this will not create the documentation folder if it does not already exist.
 - (BOOL) populateDocumentationFolderWithError: (out NSError **)outError;
+
+//Copies the file at the specified location into the documentation folder, creating it if it is missing.
+//Returns the URL of the imported documentation file on success, or nil and populates outError on failure.
+- (NSURL *) addDocumentationFileFromURL: (NSURL *)sourceURL
+                               ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
+                                  error: (out NSError **)outError;
+
+//Adds a symlink to the specified URL into the gamebox's documentation folder, creating it if it is missing.
+//Returns the URL of the symlink on success, or nil and populates outError on failure.
+- (NSURL *) addDocumentationSymlinkToURL: (NSURL *)sourceURL
+                                ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
+                                   error: (out NSError **)outError;
+
+//Removes the documentation file at the specified URL from the gamebox.
+//Will fail and do nothing if the specified URL is not located within the documentation folder.
+//Returns YES on success, or NO and populates outError on failure.
+- (BOOL) removeDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError;
 
 @end

@@ -124,10 +124,8 @@
 #pragma mark -
 #pragma mark Populating the menu
 
-- (NSString *)mobygamesMenuTitle
-{
-	BXSession *session = [[NSApp delegate] currentSession];
-	
++ (NSString *) mobygamesMenuTitleForSession: (BXSession *)session
+{	
 	if (session.hasGamebox)
 	{
 		NSString *format = NSLocalizedString(@"Find %@ at Mobygames",
@@ -140,10 +138,8 @@
 	}
 }
 
-- (NSString *)replacementDocsMenuTitle
-{
-	BXSession *session = [[NSApp delegate] currentSession];
-	
++ (NSString *)replacementDocsMenuTitleForSession: (BXSession *)session
+{	
 	if (session.hasGamebox)
 	{
 		NSString *format = NSLocalizedString(@"Find %@ at ReplacementDocs",
@@ -161,15 +157,16 @@
 //and set menu item titles appropriately
 - (void) menuNeedsUpdate: (NSMenu *)menu
 {
-    //Couldn't we update these more easily with bindings?
-	self.replacementDocsItem.title = self.replacementDocsMenuTitle;
-	self.mobygamesItem.title = self.mobygamesMenuTitle;
+    BXSession *session = [[NSApp delegate] currentSession];
+    
+	self.replacementDocsItem.title = [self.class replacementDocsMenuTitleForSession: session];
+	self.mobygamesItem.title = [self.class mobygamesMenuTitleForSession: session];
     
     //If the current session or its documentation have changed,
     //reconstruct the documentation list.
 	if (_needsSessionDocsRefresh && self.documentationDivider)
 	{
-        [self _populateMenu: menu withDocumentationFromSession: [[NSApp delegate] currentSession]];
+        [self _populateMenu: menu withDocumentationFromSession: session];
 		_needsSessionDocsRefresh = NO;
 	}
     
@@ -207,7 +204,7 @@
     NSArray *documentation = session.gamebox.documentationURLs;
     if (documentation.count > 0)
     {
-        NSArray *sortedDocs = [documentation sortedArrayUsingDescriptors: [self.class sortCriteria]];
+        NSArray *sortedDocs = [documentation sortedArrayUsingDescriptors: [self.class documentationSortCriteria]];
         NSString *heading;
         
         if ([[NSApp delegate] isStandaloneGameBundle])
@@ -235,7 +232,7 @@
     }
     else
     {
-        [self.documentationDivider setHidden: YES];
+        self.documentationDivider.hidden = YES;
     }
 }
 
@@ -283,13 +280,14 @@
     {
         icon = [icon copy];
         icon.size = iconSize;
-        newItem.image = [icon autorelease];
+        newItem.image = icon;
+        [icon release];
     }
     
 	return newItem;
 }
 
-+ (NSArray *) sortCriteria
++ (NSArray *) documentationSortCriteria
 {
 	//Sort docs by extension then by filename, to group similar items together
 	NSSortDescriptor *sortByType, *sortByName;

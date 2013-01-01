@@ -46,6 +46,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 #define BXGameIdentifierEXEDigestStubLength 65536
 
 
+
 #pragma mark -
 #pragma mark Private method declarations
 
@@ -629,6 +630,13 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 @end
 
 
+
+typedef enum {
+    BXGameboxDocumentationCopy,
+    BXGameboxDocumentationSymlink,
+} BXGameboxDocumentationOperation;
+
+
 @implementation BXGamebox (BXGameDocumentation)
 
 + (NSSet *) documentationTypes
@@ -707,46 +715,181 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     NSURL *docsURL = [self.resourceURL URLByAppendingPathComponent: BXDocumentationFolderName isDirectory: YES];
     if ([docsURL checkResourceIsReachableAndReturnError: outError])
     {
-        NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
-        
         NSArray *foundDocumentation = [self.class URLsForDocumentationInLocation: self.bundleURL searchSubdirectories: YES];
-        for (NSURL *URL in foundDocumentation)
-        {
-            //Skip files that are rooted in the documentation folder itself.
-            if ([URL isBasedInURL: docsURL])
-                continue;
+        for (NSURL *documentURL in foundDocumentation)
+        {   
+            NSURL *symlinkURL = [self addDocumentationSymlinkToURL: documentURL
+                                                          ifExists: BXGameboxDocumentationRename
+                                                             error: outError];
             
-            NSString *fileName = URL.lastPathComponent;
-            NSURL *symlinkURL = [docsURL URLByAppendingPathComponent: fileName isDirectory: NO];
-            
-            NSError *symlinkError = nil;
-            BOOL symlinkCreated = [manager createSymbolicLinkAtURL: symlinkURL withDestinationURL: URL error: &symlinkError];
-            
-            if (!symlinkCreated)
-            {
-                //If the reason the symlink couldn't be created was because there already was a file with that name,
-                //then ignore the error; otherwise bail out immediately.
-                //IMPLEMENTATION NOTE: NSFileWriteFileExistsError was only defined in 10.7 and may not be returned
-                //by 10.6 and below. So, we also check if the symlink URL could be accessed, and if it could then
-                //we assume that the pre-existing file was the failure reason.
-                if ([symlinkError matchesDomain: NSCocoaErrorDomain code: NSFileWriteFileExistsError] ||
-                    [symlinkURL checkResourceIsReachableAndReturnError: NULL])
-                {
-                    continue;
-                }
-                //Otherwise, the error isn't one we know how to deal with and we should pass it upstream.
-                else
-                {
-                    if (outError)
-                        *outError = symlinkError;
-                    return NO;
-                }
-            }
+            if (!symlinkURL)
+                return NO;
         }
         
         return YES;
     }
     else return NO;
+}
+
+- (NSURL *) _addDocumentationFromURL: (NSURL *)documentationURL
+                           operation: (BXGameboxDocumentationOperation)operation
+                            ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
+                               error: (out NSError **)outError
+{
+    NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
+    NSURL *docsURL = [self.resourceURL URLByAppendingPathComponent: BXDocumentationFolderName isDirectory: YES];
+    //Create the documentation URL if it's not already there, and fail if we cannot create it.
+    BOOL created = [manager createDirectoryAtURL: docsURL withIntermediateDirectories: YES attributes: nil error: outError];
+    if (!created)
+        return nil;
+    
+    //Skip files that are rooted in the documentation folder itself.
+    if ([documentationURL isBasedInURL: docsURL])
+        return documentationURL;
+    
+    //Make the copy/symlink in a temporary folder before moving it to the final documentation folder.
+    NSURL *intermediateBaseURL = [manager URLForDirectory: NSItemReplacementDirectory
+                                                 inDomain: NSUserDomainMask
+                                        appropriateForURL: docsURL
+                                                   create: YES
+                                                    error: outError];
+    
+    NSURL *intermediateURL;
+    if (intermediateBaseURL)
+    {
+        intermediateURL = [intermediateBaseURL URLByAppendingPathComponent: documentationURL.lastPathComponent isDirectory: NO];
+        
+        BOOL succeeded;
+        if (operation == BXGameboxDocumentationSymlink)
+        {
+            succeeded = [manager createSymbolicLinkAtURL: intermediateURL withDestinationURL: documentationURL error: outError];
+        }
+        else
+        {
+            succeeded = [manager copyItemAtURL: documentationURL toURL: intermediateURL error: outError];
+        }
+        
+        //If for some reason we couldn't copy or symlink, clean up our temporary folder before we bail out.
+        if (!succeeded)
+        {
+            [manager removeItemAtURL: intermediateBaseURL error: NULL];
+            return nil;
+        }
+    }
+    //If we couldn't create the temporary folder, bail out.
+    else
+    {
+        return nil;
+    }
+    
+    //Once we've created the intermediate file, try moving it to the final destination.
+    NSString *destinationName = documentationURL.lastPathComponent;
+    NSURL *destinationURL = [docsURL URLByAppendingPathComponent: destinationName isDirectory: NO];
+    NSUInteger increment = 1;
+    NSError *moveError = nil;
+    
+    [self willChangeValueForKey: @"documentationURLs"];
+    
+    while (![manager moveItemAtURL: intermediateURL toURL: destinationURL error: &moveError])
+    {
+        //If file couldn't be moved because there already was a file at the destination,
+        //then decide what to do based on our conflict resolution behaviour.
+        //IMPLEMENTATION NOTE: NSFileWriteFileExistsError was only defined in 10.7 and may not be returned
+        //by 10.6 and below. So, we also check if the symlink URL could be accessed, and if it could then
+        //we assume that this pre-existing file was the failure reason.
+        if ([moveError matchesDomain: NSCocoaErrorDomain code: NSFileWriteFileExistsError] ||
+            [destinationURL checkResourceIsReachableAndReturnError: NULL])
+        {
+            //If we should overwrite the existing item, or if the existing item is a symlink
+            //to this same resource, then simply replace it with the temporary file.
+            if (conflictBehaviour == BXGameboxDocumentationReplace || [destinationURL.URLByResolvingSymlinksInPath isEqual: documentationURL])
+            {
+                BOOL swapped = [manager replaceItemAtURL: destinationURL
+                                           withItemAtURL: intermediateURL
+                                          backupItemName: nil
+                                                 options: 0
+                                        resultingItemURL: NULL
+                                                   error: outError];
+                
+                //If we cannot replace the existing item then bail out. We'll clean up downstairs.
+                if (!swapped)
+                {
+                    destinationURL = nil;
+                    break;
+                }
+            }
+            //Otherwise, append a number to the destination name and try again.
+            else
+            {
+                increment += 1;
+                destinationName = [NSString stringWithFormat: @"%@ (%i).%@",
+                                   documentationURL.lastPathComponent.stringByDeletingPathExtension,
+                                   increment,
+                                   documentationURL.pathExtension];
+                destinationURL = [docsURL URLByAppendingPathComponent: destinationName isDirectory: NO];
+            }
+        }
+        //If the move operation failed for some other reason, the error isn't one we know how to deal with
+        //and we should pass it upstream.
+        else
+        {
+            if (outError)
+                *outError = moveError;
+            
+            destinationURL = nil;
+        }
+    }
+    
+    [self didChangeValueForKey: @"documentationURLs"];
+    
+    //Clean up our temporary folder on our way out, regardless of success or failure.
+    [manager removeItemAtURL: intermediateBaseURL error: NULL];
+    
+    return destinationURL;
+}
+
+- (NSURL *) addDocumentationFileFromURL: (NSURL *)documentationURL
+                               ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
+                                  error: (out NSError **)outError
+{
+    return [self _addDocumentationFromURL: documentationURL operation: BXGameboxDocumentationCopy ifExists: conflictBehaviour error: outError];
+}
+
+//Adds a symlink to the specified URL into the gamebox's documentation folder, creating it if it is missing.
+//Returns YES on success, or NO and populates outError on failure.
+- (NSURL *) addDocumentationSymlinkToURL: (NSURL *)documentationURL
+                                ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
+                                   error: (out NSError **)outError
+{
+    return [self _addDocumentationFromURL: documentationURL operation: BXGameboxDocumentationSymlink ifExists: conflictBehaviour error: outError];
+}
+
+- (BOOL) removeDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError
+{
+    NSURL *docsURL = [self documentationFolderURLCreatingIfMissing: NO error: NULL];
+    if ([documentationURL isBasedInURL: docsURL])
+    {
+        NSFileManager *manager = [[NSFileManager alloc] init];
+        
+        [self willChangeValueForKey: @"documentationURLs"];
+        BOOL removed = [manager removeItemAtURL: documentationURL error: outError];
+        [self didChangeValueForKey: @"documentationURLs"];
+        
+        [manager release];
+        
+        return removed;
+    }
+    else
+    {
+        //TODO: use a custom error code?
+        if (outError)
+        {
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                            code: NSFileWriteNoPermissionError
+                                        userInfo: @{ NSURLErrorKey: documentationURL }];
+        }
+        return NO;
+    }
 }
 
 - (NSArray *) documentationURLs

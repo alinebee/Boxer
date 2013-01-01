@@ -39,8 +39,11 @@ NSString * const NSWindowDidExitFullScreenNotification = @"NSWindowDidExitFullSc
 + (void) load
 {
     //Implementation for createDirectoryAtURL:withIntermediateDirectories:attributes:error:
-    SEL selector = @selector(createDirectoryAtURL:withIntermediateDirectories:attributes:error:);
-    [self addInstanceMethod: selector toClass: [NSFileManager class]];
+    SEL createDir = @selector(createDirectoryAtURL:withIntermediateDirectories:attributes:error:);
+    [self addInstanceMethod: createDir toClass: [NSFileManager class]];
+    
+    SEL createSymlink = @selector(createSymbolicLinkAtURL:withDestinationURL:error:);
+    [self addInstanceMethod: createSymlink toClass: [NSFileManager class]];
 }
 
 - (BOOL) createDirectoryAtURL: (NSURL *)URL
@@ -52,6 +55,16 @@ NSString * const NSWindowDidExitFullScreenNotification = @"NSWindowDidExitFullSc
                             withIntermediateDirectories: createIntermediates
                                              attributes: attributes
                                                   error: error];
+}
+
+- (BOOL)createSymbolicLinkAtURL: (NSURL *)URL
+             withDestinationURL: (NSURL *)destURL
+                          error :(NSError **)error
+{
+    return [(NSFileManager *)self createSymbolicLinkAtPath: URL.path
+                                       withDestinationPath: destURL.path
+                                                     error: error];
+    
 }
 
 @end

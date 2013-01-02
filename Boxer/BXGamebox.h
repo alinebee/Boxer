@@ -252,9 +252,9 @@ typedef enum {
                                 ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
                                    error: (out NSError **)outError;
 
-//Removes the documentation file at the specified URL from the gamebox.
-//Will fail and do nothing if the specified URL is not located within the documentation folder.
+//Moves the documentation file at the specified URL to the trash.
+//Will fail and do nothing if the specified URL is not located within the gamebox's documentation folder.
 //Returns YES on success, or NO and populates outError on failure.
-- (BOOL) removeDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError;
+- (BOOL) trashDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError;
 
 @end

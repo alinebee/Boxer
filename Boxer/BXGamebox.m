@@ -717,7 +717,7 @@ typedef enum {
     {
         NSArray *foundDocumentation = [self.class URLsForDocumentationInLocation: self.bundleURL searchSubdirectories: YES];
         for (NSURL *documentURL in foundDocumentation)
-        {   
+        {
             NSURL *symlinkURL = [self addDocumentationSymlinkToURL: documentURL
                                                           ifExists: BXGameboxDocumentationRename
                                                              error: outError];
@@ -852,7 +852,10 @@ typedef enum {
                                ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
                                   error: (out NSError **)outError
 {
-    return [self _addDocumentationFromURL: documentationURL operation: BXGameboxDocumentationCopy ifExists: conflictBehaviour error: outError];
+    return [self _addDocumentationFromURL: documentationURL
+                                operation: BXGameboxDocumentationCopy
+                                 ifExists: conflictBehaviour
+                                    error: outError];
 }
 
 //Adds a symlink to the specified URL into the gamebox's documentation folder, creating it if it is missing.
@@ -861,10 +864,13 @@ typedef enum {
                                 ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
                                    error: (out NSError **)outError
 {
-    return [self _addDocumentationFromURL: documentationURL operation: BXGameboxDocumentationSymlink ifExists: conflictBehaviour error: outError];
+    return [self _addDocumentationFromURL: documentationURL
+                                operation: BXGameboxDocumentationSymlink
+                                 ifExists: conflictBehaviour
+                                    error: outError];
 }
 
-- (BOOL) removeDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError
+- (BOOL) trashDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError
 {
     NSURL *docsURL = [self documentationFolderURLCreatingIfMissing: NO error: NULL];
     if ([documentationURL isBasedInURL: docsURL])
@@ -872,7 +878,27 @@ typedef enum {
         NSFileManager *manager = [[NSFileManager alloc] init];
         
         [self willChangeValueForKey: @"documentationURLs"];
-        BOOL removed = [manager removeItemAtURL: documentationURL error: outError];
+        
+        BOOL removed;
+        //Use the new file-trashing API introduced in 10.8 if it's available
+        if ([manager respondsToSelector: @selector(trashItemAtURL:resultingItemURL:error:)])
+        {
+            removed = [manager trashItemAtURL: documentationURL
+                             resultingItemURL: NULL
+                                        error: outError];
+        }
+        //Otherwise fall back on the crappy old NSWorkspace way of doing things
+        else
+        {
+            NSString *parentPath = documentationURL.URLByDeletingLastPathComponent.path;
+            NSString *fileName = documentationURL.lastPathComponent;
+            removed = [[NSWorkspace sharedWorkspace] performFileOperation: NSWorkspaceRecycleOperation
+                                                                   source: parentPath
+                                                              destination: @""
+                                                                    files: @[fileName]
+                                                                      tag: NULL];
+        }
+        
         [self didChangeValueForKey: @"documentationURLs"];
         
         [manager release];

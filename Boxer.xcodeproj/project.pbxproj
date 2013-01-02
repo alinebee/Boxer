@@ -674,6 +674,7 @@
 		9F9FF36B165074CB005D1CC1 /* PrinterClip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9FF36A165074CB005D1CC1 /* PrinterClip.png */; };
 		9F9FF36D1650E204005D1CC1 /* PrinterPaper.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9FF36C1650E203005D1CC1 /* PrinterPaper.png */; };
 		9FA0C9E313D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA0C9E213D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m */; };
+		9FA0D0CC1694D62100CEF2EA /* NSURL+BXQuickLookHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA0D0CB1694D62100CEF2EA /* NSURL+BXQuickLookHelpers.m */; };
 		9FA1CF6813E5B44000416D74 /* BXMOMORacingControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA1CF6713E5B43F00416D74 /* BXMOMORacingControllerProfile.m */; };
 		9FA2C09215C8409000380261 /* BXDOSWindowBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA2C09115C8409000380261 /* BXDOSWindowBackgroundView.m */; };
 		9FA54099139E85D800999940 /* 4ButtonJoystick.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FA54098139E85D800999940 /* 4ButtonJoystick.png */; };
@@ -1547,6 +1548,8 @@
 		9F9FF36C1650E203005D1CC1 /* PrinterPaper.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PrinterPaper.png; sourceTree = "<group>"; };
 		9FA0C9E113D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DDHidUsage+BXUsageExtensions.h"; sourceTree = "<group>"; };
 		9FA0C9E213D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DDHidUsage+BXUsageExtensions.m"; sourceTree = "<group>"; };
+		9FA0D0CA1694D62100CEF2EA /* NSURL+BXQuickLookHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+BXQuickLookHelpers.h"; sourceTree = "<group>"; };
+		9FA0D0CB1694D62100CEF2EA /* NSURL+BXQuickLookHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+BXQuickLookHelpers.m"; sourceTree = "<group>"; };
 		9FA1CF6713E5B43F00416D74 /* BXMOMORacingControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMOMORacingControllerProfile.m; sourceTree = "<group>"; };
 		9FA2C09015C8409000380261 /* BXDOSWindowBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDOSWindowBackgroundView.h; sourceTree = "<group>"; };
 		9FA2C09115C8409000380261 /* BXDOSWindowBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDOSWindowBackgroundView.m; sourceTree = "<group>"; };
@@ -2987,6 +2990,8 @@
 				9F5F12C515ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.m */,
 				9FB60E9015C5643200CD0D63 /* NSError+BXErrorHelpers.h */,
 				9FB60E9115C5643200CD0D63 /* NSError+BXErrorHelpers.m */,
+				9FA0D0CA1694D62100CEF2EA /* NSURL+BXQuickLookHelpers.h */,
+				9FA0D0CB1694D62100CEF2EA /* NSURL+BXQuickLookHelpers.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -4267,6 +4272,7 @@
 				9F4B1AFA165C122F001AE063 /* BXDriveItem.m in Sources */,
 				9FFE7104165E931600F99C3D /* BXJoystickItem.m in Sources */,
 				9F631D7D16947AE900AD06C4 /* BXDocumentationListController.m in Sources */,
+				9FA0D0CC1694D62100CEF2EA /* NSURL+BXQuickLookHelpers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

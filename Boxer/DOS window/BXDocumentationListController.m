@@ -9,6 +9,7 @@
 #import "BXDocumentationListController.h"
 #import "BXSession.h"
 #import "BXGamebox.h"
+#import "NSURL+BXQuickLookHelpers.h"
 
 @interface BXDocumentationListController ()
 
@@ -16,9 +17,13 @@
 //Repopulated whenever the gamebox announces that it has been updated.
 @property (readwrite, copy, nonatomic) NSArray *documentationURLs;
 
+//Called to repopulate and re-sort our local copy of the documentation URLs.
+- (void) _syncDocumentationURLs;
+
 @end
 
 @implementation BXDocumentationListController
+@synthesize documentationScrollView = _documentationScrollView;
 @synthesize documentationList = _documentationList;
 @synthesize documentationURLs = _documentationURLs;
 @synthesize documentationSelectionIndexes = _documentationSelectionIndexes;
@@ -36,6 +41,7 @@
     self = [self initWithNibName: @"DocumentationList" bundle: nil];
     if (self)
     {
+        self.documentationURLs = [NSMutableArray array];
         self.representedObject = session;
     }
     
@@ -57,8 +63,20 @@
     }
 }
 
+- (void) awakeFromNib
+{
+    if ([self.documentationScrollView respondsToSelector: @selector(setUsesPredominantAxisScrolling:)])
+        self.documentationScrollView.usesPredominantAxisScrolling = YES;
+    
+    if ([self.documentationScrollView respondsToSelector: @selector(setVerticalScrollElasticity:)])
+        self.documentationScrollView.verticalScrollElasticity = NSScrollElasticityNone;
+    
+	[self.view registerForDraggedTypes: @[NSFilenamesPboardType]];
+}
+
 - (void) dealloc
 {
+    self.documentationScrollView = nil;
     self.documentationList = nil;
     self.documentationURLs = nil;
     self.documentationSelectionIndexes = nil;
@@ -75,9 +93,43 @@
 {
     if ([keyPath isEqualToString: @"gamebox.documentationURLs"])
     {
-        //Make a copy of the documentation, since this list may be expensive to generate.
-        self.documentationURLs = [object valueForKeyPath: keyPath];
+        [self _syncDocumentationURLs];
     }
+}
+
+- (void) _syncDocumentationURLs
+{
+    //IMPLEMENTATION NOTE: when refreshing the documentation list, we want to disturb
+    //the existing entries as little as possible: specifically we want to avoid destroying
+    //and recreating entries for existing URLs, as this would cause their respective views
+    //to be destroyed and recreated as well.
+    
+    BXSession *session = (BXSession *)self.representedObject;
+    NSArray *newURLs = session.gamebox.documentationURLs;
+    NSArray *oldURLs = [self.documentationURLs copy]; //We take a copy as this array will mutate during iteration
+    
+    //To make sure the collection view sees what's happening, we do these permutations
+    //to the KVO wrapper instead of the underlying array.
+    NSMutableArray *notifier = [self mutableArrayValueForKey: @"documentationURLs"];
+    
+    //We don't get any information from upstream about which entries have been added and removed,
+    //so we work this out for ourselves: removing any URLs that are no longer in the new list,
+    //and adding any URLs that weren't in the old list.
+    for (NSURL *URL in oldURLs)
+    {
+        if (![newURLs containsObject: URL])
+            [notifier removeObject: URL];
+    }
+    for (NSURL *URL in newURLs)
+    {
+        if (![oldURLs containsObject: URL])
+            [notifier addObject: URL];
+    }
+    
+    //Finally, re-sort the documentation by filetype and filename.
+    [notifier sortUsingDescriptors: self.documentationSortCriteria];
+    
+    [oldURLs release];
 }
 
 + (NSSet *) keyPathsForValuesAffectingTitle
@@ -191,13 +243,6 @@
 
 #pragma mark - Drag-drop
 
-- (void) setView: (NSView *)view
-{
-    [super setView: view];
-    
-	[self.view registerForDraggedTypes: @[NSFilenamesPboardType]];
-}
-
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
 {
 	NSPasteboard *pboard = sender.draggingPasteboard;
@@ -258,11 +303,8 @@
 //Reimplemented to be read-write internally.
 @property (copy, nonatomic) NSImage *icon;
 
-//Loads up the icon for the documentation URL as it is displayed in Finder.
-- (void) _refreshFinderIcon;
-
-//Loads up a spotlight preview of the contents of the documentation URL.
-- (void) _refreshSpotlightPreview;
+//Loads up the icon (or spotlight preview) for the documentation URL as it is displayed in Finder.
+- (void) _refreshIcon;
 
 @end
 
@@ -271,25 +313,61 @@
 
 - (void) setRepresentedObject: representedObject
 {
-    [super setRepresentedObject: representedObject];
-    
-    [self _refreshFinderIcon];
-}
-
-- (void) _refreshFinderIcon
-{
-    if (self.representedObject)
+    if (representedObject != self.representedObject)
     {
-        NSImage *finderIcon = nil;
-        BOOL loadedIcon = [(NSURL *)self.representedObject getResourceValue: &finderIcon forKey: NSURLEffectiveIconKey error: NULL];
-        if (loadedIcon)
-            self.icon = finderIcon;
+        [super setRepresentedObject: representedObject];
+        [self _refreshIcon];
     }
 }
 
-- (void) _refreshSpotlightPreview
+- (void) _refreshIcon
 {
-    //Currently unimplemented
+    if (self.representedObject)
+    {
+        //First, check if the file has a custom icon. If so we will use this and be done with it.
+        NSImage *customIcon = nil;
+        BOOL loadedCustomIcon = [(NSURL *)self.representedObject getResourceValue: &customIcon forKey: NSURLCustomIconKey error: NULL];
+        
+        if (loadedCustomIcon && customIcon != nil)
+        {
+            self.icon = customIcon;
+            return;
+        }
+        //If the file doesn't have a custom icon, then initially display the default icon for this file type
+        //while we try to load a Quick Look thumbnail for the file.
+        else
+        {
+            //First, load and display Finder's standard icon for the file.
+            NSImage *defaultIcon = nil;
+            BOOL loadedDefaultIcon = [(NSURL *)self.representedObject getResourceValue: &defaultIcon forKey: NSURLEffectiveIconKey error: NULL];
+            if (loadedDefaultIcon && defaultIcon != nil)
+            {
+                self.icon = defaultIcon;
+            }
+            //Meanwhile, load in a quicklook preview for this file in the background.
+            NSURL *previewURL = [self.representedObject copy];
+            //Take retina displays into account when calculating the appropriate preview size.
+            NSSize thumbnailSize = self.view.bounds.size;
+            if ([self.view respondsToSelector: @selector(convertSizeToBacking:)])
+                thumbnailSize = [self.view convertSizeToBacking: thumbnailSize];
+            
+            //We perform this in an asynchronous block, because it can take a while
+            //to prepare the thumbnail.
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+            dispatch_async(queue, ^{
+                NSImage *thumbnail = [previewURL quickLookThumbnailWithSize: thumbnailSize iconStyle: YES];
+                
+                //Double-check that our represented object hasn't changed in the meantime.
+                if ([previewURL isEqual: self.representedObject])
+                {
+                    //Ensure we change the icon on the main thread, where the UI is doing its thing.
+                    [self performSelectorOnMainThread: @selector(setIcon:) withObject: thumbnail waitUntilDone: YES];
+                }
+            });
+            
+            [previewURL release];
+        }
+    }
 }
 
 + (NSSet *) keyPathsForValuesAffectingDisplayName
@@ -320,7 +398,7 @@
                                                                       xRadius: 8
                                                                       yRadius: 8];
         
-        NSColor *highlightColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.25];
+        NSColor *highlightColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.15];
         
         [highlightColor set];
         [highlightPath fill];

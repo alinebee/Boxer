@@ -17,9 +17,12 @@
     NSCollectionView *_documentationList;
     NSArray *_documentationURLs;
     NSIndexSet *_documentationSelectionIndexes;
+    NSScrollView *_documentationScrollView;
 }
 
 #pragma mark - Properties
+
+@property (retain, nonatomic) IBOutlet NSScrollView *documentationScrollView;
 
 //The collection view in which our documentation will be displayed.
 @property (retain, nonatomic) IBOutlet NSCollectionView *documentationList;

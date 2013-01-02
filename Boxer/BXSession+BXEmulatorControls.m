@@ -432,7 +432,7 @@
 	SEL theAction = theItem.action;
     
     BOOL isShowingDOSView = (self.DOSWindowController.currentPanel == BXDOSWindowDOSView);
-        
+    
 	if (theAction == @selector(incrementSpeed:))		return isShowingDOSView && !self.speedAtMaximum;
 	if (theAction == @selector(decrementSpeed:))		return isShowingDOSView && !self.speedAtMinimum;
 

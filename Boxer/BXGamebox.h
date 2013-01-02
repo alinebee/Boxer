@@ -235,8 +235,7 @@ typedef enum {
 //and outError will be populated with the reason the folder could not be accessed.
 - (NSURL *) documentationFolderURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
 
-//Populates the documentation folder with symlinks to documentation found elsewhere
-//in the gamebox.
+//Populates the documentation folder with symlinks to documentation found elsewhere in the gamebox.
 //Note that this will not create the documentation folder if it does not already exist.
 - (BOOL) populateDocumentationFolderWithError: (out NSError **)outError;
 

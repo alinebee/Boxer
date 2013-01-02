@@ -32,6 +32,8 @@
 #import "NSWindow+BXWindowDimensions.h"
 #import "BXGeometry.h"
 
+#import "BXDocumentationListController.h"
+
 
 @implementation BXDOSWindowController
 
@@ -52,6 +54,7 @@
 @synthesize aspectCorrected = _aspectCorrected;
 @synthesize loadingPanel = _loadingPanel;
 @synthesize loadingSpinner = _loadingSpinner;
+@synthesize documentationButton = _documentationButton;
 
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
@@ -429,6 +432,22 @@
 
 #pragma mark -
 #pragma mark UI actions
+
+- (IBAction) showDocumentationPopover: (id)sender
+{
+    if (self.document.hasGamebox && NSClassFromString(@"NSPopover") != nil)
+    {
+        NSPopover *docsPopover = [[NSPopover alloc] init];
+        docsPopover.contentViewController = [BXDocumentationListController documentationListForSession: self.document];
+        docsPopover.behavior = NSPopoverBehaviorSemitransient;
+        docsPopover.animates = YES;
+        
+        NSView *relativeView = self.documentationButton.view;
+        
+        [docsPopover showRelativeToRect: NSZeroRect ofView: relativeView preferredEdge: NSMinYEdge];
+        [docsPopover autorelease];
+    }
+}
 
 - (IBAction) toggleRenderingStyle: (id <NSValidatedUserInterfaceItem>)sender
 {

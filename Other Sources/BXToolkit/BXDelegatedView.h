@@ -14,10 +14,10 @@
 
 @interface BXDelegatedView : NSView
 {
-	IBOutlet id _delegate;
+    id _delegate;
 	NSDragOperation _draggingEnteredResponse;
 }
-@property (assign) id delegate;
+@property (assign) IBOutlet id delegate;
 
 #pragma mark -
 #pragma mark Drag-drop handling

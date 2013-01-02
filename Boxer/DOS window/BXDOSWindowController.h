@@ -60,6 +60,8 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	BXInputController *_inputController;
 	BXStatusBarController *_statusBarController;
     BXLaunchPanelController *_launchPanelController;
+    
+    NSToolbarItem *_documentationButton;
 	
     NSSize _currentScaledSize;
 	NSSize _currentScaledResolution;
@@ -82,6 +84,7 @@ extern NSString * const BXViewDidLiveResizeNotification;
 @property (retain, nonatomic) IBOutlet BXInputController *inputController;
 @property (retain, nonatomic) IBOutlet BXStatusBarController *statusBarController;
 @property (retain, nonatomic) IBOutlet BXLaunchPanelController *launchPanelController;
+@property (retain, nonatomic) IBOutlet NSToolbarItem *documentationButton;
 
 //The current panel being displayed in the content area of the window.
 @property (readonly, nonatomic) BXDOSWindowPanel currentPanel;
@@ -148,6 +151,9 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 #pragma mark -
 #pragma mark Interface actions
+
+//Display the documentation list popover below the documentation toolbar button.
+- (IBAction) showDocumentationPopover: (id)sender;
 
 //Toggle the status bar and program panel components on and off.
 - (IBAction) toggleStatusBarShown:		(id)sender;

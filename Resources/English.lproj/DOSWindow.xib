@@ -793,7 +793,7 @@
 							</object>
 						</object>
 					</dictionary>
-					<array class="NSMutableArray" key="NSToolbarIBAllowedItems">
+					<array key="NSToolbarIBAllowedItems">
 						<reference ref="869452336"/>
 						<reference ref="459980383"/>
 						<reference ref="842310763"/>
@@ -806,7 +806,7 @@
 						<reference ref="893238776"/>
 						<reference ref="719310762"/>
 					</array>
-					<array class="NSMutableArray" key="NSToolbarIBDefaultItems">
+					<array key="NSToolbarIBDefaultItems">
 						<reference ref="842310763"/>
 						<reference ref="924556485"/>
 						<reference ref="869452336"/>
@@ -1205,6 +1205,14 @@
 					<int key="connectionID">1254</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">documentationButton</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="924556485"/>
+					</object>
+					<int key="connectionID">1439</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">toggleInspectorPanel:</string>
 						<reference key="source" ref="1003"/>
@@ -1291,6 +1299,14 @@
 						<reference key="destination" ref="852973939"/>
 					</object>
 					<int key="connectionID">1435</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">showDocumentationPopover:</string>
+						<reference key="source" ref="1003"/>
+						<reference key="destination" ref="924556485"/>
+					</object>
+					<int key="connectionID">1437</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2298,7 +2314,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1435</int>
+			<int key="maxID">1439</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2580,6 +2596,7 @@
 						<string key="hideProgramPanel:">id</string>
 						<string key="performShowDOSView:">id</string>
 						<string key="performShowLaunchPanel:">id</string>
+						<string key="showDocumentationPopover:">id</string>
 						<string key="showProgramPanel:">id</string>
 						<string key="toggleLaunchPanel:">id</string>
 						<string key="toggleProgramPanelShown:">id</string>
@@ -2597,6 +2614,10 @@
 						</object>
 						<object class="IBActionInfo" key="performShowLaunchPanel:">
 							<string key="name">performShowLaunchPanel:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="showDocumentationPopover:">
+							<string key="name">showDocumentationPopover:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="showProgramPanel:">
@@ -2621,6 +2642,7 @@
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="documentationButton">NSToolbarItem</string>
 						<string key="inputController">BXInputController</string>
 						<string key="inputView">BXInputView</string>
 						<string key="launchPanel">NSView</string>
@@ -2634,6 +2656,10 @@
 						<string key="statusBarController">BXStatusBarController</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="documentationButton">
+							<string key="name">documentationButton</string>
+							<string key="candidateClassName">NSToolbarItem</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="inputController">
 							<string key="name">inputController</string>
 							<string key="candidateClassName">BXInputController</string>

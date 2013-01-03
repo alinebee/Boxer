@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <Quartz/Quartz.h>
 #import "BXCollectionItemView.h"
 
 //BXDocumentationListController manages the popup list of documentation for the gamebox.
@@ -65,8 +66,17 @@
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender;
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender;
 
+@end
+
+
+//The BXDocumentationPreviews category expands BXDocumentationListController to allow documentation to be shown in a QuickLook preview panel.
+@interface BXDocumentationListController (BXDocumentationPreviews) <QLPreviewPanelDelegate, QLPreviewPanelDataSource>
+
+//Displays a QuickLook preview panel for the specified documentation items.
+- (IBAction) previewSelectedDocumentationItems: (id)sender;
 
 @end
+
 
 
 //BXDocumentationItem manages each individual documentation file listed in the documentation popup.
@@ -88,4 +98,9 @@
 
 //Custom appearance for documentation items. Highlights the background when selected.
 @interface BXDocumentationWrapper : BXCollectionItemView
+@end
+
+
+//Custom subclass for documentation list collection view to tweak keyboard and mouse handling.
+@interface BXDocumentationList : NSCollectionView
 @end

@@ -10,6 +10,12 @@
 #import "BXSession.h"
 #import "BXGamebox.h"
 #import "NSURL+BXQuickLookHelpers.h"
+#import "NSView+BXDrawing.h"
+
+enum {
+    BXDocumentationItemIcon = 1,
+    BXDocumentationItemLabel = 2,
+};
 
 @interface BXDocumentationListController ()
 
@@ -72,10 +78,16 @@
         self.documentationScrollView.verticalScrollElasticity = NSScrollElasticityNone;
     
 	[self.view registerForDraggedTypes: @[NSFilenamesPboardType]];
+    
+    //Insert ourselves into the responder chain ahead of our view.
+    self.nextResponder = self.view.nextResponder;
+    self.view.nextResponder = self;
 }
 
 - (void) dealloc
 {
+    self.view.nextResponder = nil;
+    
     self.documentationScrollView = nil;
     self.documentationList = nil;
     self.documentationURLs = nil;
@@ -179,6 +191,9 @@
                                         options: NSWorkspaceLaunchDefault
                  additionalEventParamDescriptor: nil
                               launchIdentifiers: NULL];
+        
+        //Hide the at the same time
+        [self.view.window orderOut: self];
     }
 }
 
@@ -298,6 +313,156 @@
 @end
 
 
+//A private class to implement the QLPreviewItem protocol for BXDocumentPreviews.
+@interface BXDocumentationListPreviewItem : NSObject <QLPreviewItem>
+{
+    NSURL *_previewItemURL;
+}
+@property (copy, nonatomic) NSURL *previewItemURL;
+
++ (id) previewItemWithURL: (NSURL *)URL;
+
+@end
+
+@implementation BXDocumentationListPreviewItem
+@synthesize previewItemURL = _previewItemURL;
+
++ (id) previewItemWithURL: (NSURL *)URL
+{
+    BXDocumentationListPreviewItem *previewItem = [[self alloc] init];
+    previewItem.previewItemURL = URL;
+    return [previewItem autorelease];
+}
+
+- (void) dealloc
+{
+    self.previewItemURL = nil;
+    [super dealloc];
+}
+
+@end
+
+
+@implementation BXDocumentationListController (BXDocumentPreviews)
+
+#pragma mark - QLPreviewPanelController protocol implementations
+
+- (BOOL) acceptsPreviewPanelControl: (QLPreviewPanel *)panel
+{
+    return YES;
+}
+
+- (void) beginPreviewPanelControl: (QLPreviewPanel *)panel
+{
+    panel.delegate = self;
+    panel.dataSource = self;
+    panel.currentPreviewItemIndex = self.documentationSelectionIndexes.firstIndex;
+}
+
+- (void) endPreviewPanelControl: (QLPreviewPanel *)panel
+{
+    panel.delegate = nil;
+    panel.dataSource = nil;
+}
+
+#pragma mark - QLPreviewPanelDataSource protocol implementations
+
+- (NSInteger) numberOfPreviewItemsInPreviewPanel: (QLPreviewPanel *)panel
+{
+    return self.documentationURLs.count;
+}
+
+- (id <QLPreviewItem>) previewPanel: (QLPreviewPanel *)panel previewItemAtIndex: (NSInteger)index
+{
+    NSURL *URL = [self.documentationURLs objectAtIndex: index];
+    return [BXDocumentationListPreviewItem previewItemWithURL: URL];
+}
+
+#pragma mark - QLPreviewPanelDelegate protocol implementations
+
+- (NSRect) previewPanel: (QLPreviewPanel *)panel sourceFrameOnScreenForPreviewItem: (id<QLPreviewItem>)item
+{
+    NSInteger itemIndex = [self.documentationURLs indexOfObject: item.previewItemURL];
+    if (itemIndex != NSNotFound)
+    {
+        NSView *itemView = [self.documentationList itemAtIndex: itemIndex].view;
+        NSView *itemIcon = [itemView viewWithTag: BXDocumentationItemIcon];
+        
+        NSRect frameInList = [self.documentationList convertRect: itemIcon.bounds fromView: itemIcon];
+        
+        //Ensure that the frame is currently visible within the scroll view.
+        if (NSIntersectsRect(frameInList, self.documentationScrollView.documentVisibleRect))
+        {
+            NSRect frameInWindow = [self.documentationList convertRect: frameInList toView: nil];
+            NSRect frameOnScreen = [self.view.window convertRectToScreen: frameInWindow];
+        
+            return frameOnScreen;
+        }
+    }
+    
+    //If we can't determine a suitable source frame from which the specified item can zoom,
+    //then return an empty rect to make have the preview fade in instead.
+    return NSZeroRect;
+}
+
+- (NSImage *) previewPanel: (QLPreviewPanel *)panel transitionImageForPreviewItem: (id <QLPreviewItem>)item contentRect: (NSRect *)contentRect
+{
+    NSInteger itemIndex = [self.documentationURLs indexOfObject: item.previewItemURL];
+    
+    if (itemIndex != NSNotFound)
+    {
+        NSView *itemView = [self.documentationList itemAtIndex: itemIndex].view;
+        NSView *itemIcon = [itemView viewWithTag: BXDocumentationItemIcon];
+        
+        NSImage *snapshot = [itemIcon imageWithContentsOfRect: itemIcon.bounds];
+        return snapshot;
+    }
+    else return nil;
+}
+
+- (IBAction) previewSelectedDocumentationItems: (id)sender
+{
+    if ([QLPreviewPanel sharedPreviewPanelExists] && [QLPreviewPanel sharedPreviewPanel].isVisible)
+    {
+        [[QLPreviewPanel sharedPreviewPanel] orderOut: self];
+    }
+    else
+    {
+        [[QLPreviewPanel sharedPreviewPanel] makeKeyAndOrderFront: self];
+    }
+}
+
+- (void) setDocumentationSelectionIndexes: (NSIndexSet *)indexes
+{
+    if (![self.documentationSelectionIndexes isEqualToIndexSet: indexes])
+    {
+        [_documentationSelectionIndexes release];
+        _documentationSelectionIndexes = [indexes retain];
+    }
+    
+    [self synchronizePreviewToSelection];
+}
+
+- (void) synchronizePreviewToSelection
+{
+    if (![QLPreviewPanel sharedPreviewPanelExists])
+        return;
+    
+    QLPreviewPanel *panel = [QLPreviewPanel sharedPreviewPanel];
+    
+    //Only change the panel preview if a) we're in charge of the panel and
+    //b) the selection doesn't contain the current preview item.
+    if (panel.currentController == self &&
+        ![self.documentationSelectionIndexes containsIndex: panel.currentPreviewItemIndex])
+    {
+        panel.currentPreviewItemIndex = self.documentationSelectionIndexes.firstIndex;
+    }
+}
+
+@end
+
+
+
 @interface BXDocumentationItem ()
 
 //Reimplemented to be read-write internally.
@@ -355,7 +520,7 @@
             //to prepare the thumbnail.
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
             dispatch_async(queue, ^{
-                NSImage *thumbnail = [previewURL quickLookThumbnailWithSize: thumbnailSize iconStyle: YES];
+                NSImage *thumbnail = [previewURL quickLookThumbnailWithMaxSize: thumbnailSize iconStyle: YES];
                 
                 //Double-check that our represented object hasn't changed in the meantime.
                 if ([previewURL isEqual: self.representedObject])
@@ -405,4 +570,38 @@
     }
 }
 
+- (void) mouseDown: (NSEvent *)theEvent
+{
+    //Open the corresponding documentation item when the view is double-clicked.
+    if (theEvent.clickCount > 1)
+    {
+        //Ensure that the item is selected.
+        self.delegate.selected = YES;
+        [NSApp sendAction: @selector(openSelectedDocumentationItems:)
+                       to: nil
+                     from: self];
+    }
+    else
+    {
+        [super mouseDown: theEvent];
+    }
+}
+@end
+
+
+
+@implementation BXDocumentationList
+
+- (void) keyDown: (NSEvent *)theEvent
+{
+    //Trigger a preview when the space key is hit.
+    if ([theEvent.charactersIgnoringModifiers isEqualToString: @" "])
+    {
+        [NSApp sendAction: @selector(previewSelectedDocumentationItems:) to: nil from: self];
+    }
+    else
+    {
+        [super keyDown: theEvent];
+    }
+}
 @end

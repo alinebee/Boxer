@@ -11,7 +11,7 @@
 
 @implementation NSURL (BXQuickLookHelpers)
 
-- (NSImage *) quickLookThumbnailWithSize: (NSSize)pixelSize iconStyle: (BOOL)useIconStyle
+- (NSImage *) quickLookThumbnailWithMaxSize: (NSSize)pixelSize iconStyle: (BOOL)useIconStyle
 {
     //Oh my god I hate CF so much
     CFBooleanRef styleFlag = (useIconStyle) ? kCFBooleanTrue : kCFBooleanFalse;
@@ -31,7 +31,7 @@
     if (cgThumbnail)
     {
         NSImage *image = [[NSImage alloc] initWithCGImage: cgThumbnail
-                                                     size: pixelSize];
+                                                     size: NSZeroSize];
         
         CGImageRelease(cgThumbnail);
         

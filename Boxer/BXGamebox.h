@@ -239,21 +239,33 @@ typedef enum {
 //Note that this will not create the documentation folder if it does not already exist.
 - (BOOL) populateDocumentationFolderWithError: (out NSError **)outError;
 
-//Copies the file at the specified location into the documentation folder, creating it if it is missing.
-//Returns the URL of the imported documentation file on success, or nil and populates outError on failure.
+//Copies the file at the specified location into the documentation folder,
+//creating the folder first if it is missing.
+//If title is specified, it will be used as the filename for the imported file;
+//otherwise, the file's original name will be used.
+//In the event of a filename collision, conflictBehaviour determines whether
+//the file will be replaced or renamed (by appending a number to the filename).
+//Returns the URL of the imported file on success, or nil and populates outError on failure.
 - (NSURL *) addDocumentationFileFromURL: (NSURL *)sourceURL
+                              withTitle: (NSString *)title
                                ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
                                   error: (out NSError **)outError;
 
-//Adds a symlink to the specified URL into the gamebox's documentation folder, creating it if it is missing.
+//Adds a symlink to the specified URL into the gamebox's documentation folder,
+//creating the folder first if it is missing.
+//If title is specificied, it will be used as the filename for the imported file;
+//otherwise, the file's original name will be used.
+//In the event of a filename collision, conflictBehaviour determines whether
+//the file will be replaced or renamed (by appending a number to the filename).
 //Returns the URL of the symlink on success, or nil and populates outError on failure.
 - (NSURL *) addDocumentationSymlinkToURL: (NSURL *)sourceURL
+                               withTitle: (NSString *)title
                                 ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
                                    error: (out NSError **)outError;
 
 //Moves the documentation file at the specified URL to the trash.
 //Will fail and do nothing if the specified URL is not located within the gamebox's documentation folder.
-//Returns YES on success, or NO and populates outError on failure.
-- (BOOL) trashDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError;
+//Returns the URL of the item's new location in the trash  on success, or nil and populates outError on failure.
+- (NSURL *) trashDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError;
 
 @end

@@ -191,9 +191,14 @@ extern NSString * const NSWindowDidChangeBackingPropertiesNotification;
 - (BOOL) createDirectoryAtURL: (NSURL *)URL
   withIntermediateDirectories: (BOOL)createIntermediates
                    attributes: (NSDictionary *)attributes
-                        error: (NSError **)error;
+                        error: (out NSError **)error;
 
 - (BOOL)createSymbolicLinkAtURL: (NSURL *)URL
              withDestinationURL: (NSURL *)destURL
-                         error :(NSError **)error;
+                          error: (out NSError **)error;
+
+//Reimplementations for OS X 10.6 and 10.7
+- (BOOL) trashItemAtURL: (NSURL *)url
+       resultingItemURL: (out NSURL **)outResultingURL
+                  error: (out NSError **)error;
 @end

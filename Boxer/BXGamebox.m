@@ -719,6 +719,7 @@ typedef enum {
         for (NSURL *documentURL in foundDocumentation)
         {
             NSURL *symlinkURL = [self addDocumentationSymlinkToURL: documentURL
+                                                         withTitle: nil
                                                           ifExists: BXGameboxDocumentationRename
                                                              error: outError];
             
@@ -732,10 +733,11 @@ typedef enum {
 }
 
 - (NSURL *) _addDocumentationFromURL: (NSURL *)documentationURL
+                           withTitle: (NSString *)title
                            operation: (BXGameboxDocumentationOperation)operation
                             ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
                                error: (out NSError **)outError
-{
+{    
     NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
     NSURL *docsURL = [self.resourceURL URLByAppendingPathComponent: BXDocumentationFolderName isDirectory: YES];
     //Create the documentation URL if it's not already there, and fail if we cannot create it.
@@ -783,7 +785,10 @@ typedef enum {
     }
     
     //Once we've created the intermediate file, try moving it to the final destination.
-    NSString *destinationName = documentationURL.lastPathComponent;
+    if (!title.length)
+        title = documentationURL.lastPathComponent.stringByDeletingPathExtension;
+
+    NSString *destinationName = [title stringByAppendingPathExtension: documentationURL.pathExtension];
     NSURL *destinationURL = [docsURL URLByAppendingPathComponent: destinationName isDirectory: NO];
     NSUInteger increment = 1;
     NSError *moveError = nil;
@@ -822,10 +827,7 @@ typedef enum {
             else
             {
                 increment += 1;
-                destinationName = [NSString stringWithFormat: @"%@ (%i).%@",
-                                   documentationURL.lastPathComponent.stringByDeletingPathExtension,
-                                   increment,
-                                   documentationURL.pathExtension];
+                destinationName = [NSString stringWithFormat: @"%@ (%i).%@", title, increment, documentationURL.pathExtension];
                 destinationURL = [docsURL URLByAppendingPathComponent: destinationName isDirectory: NO];
             }
         }
@@ -849,10 +851,12 @@ typedef enum {
 }
 
 - (NSURL *) addDocumentationFileFromURL: (NSURL *)documentationURL
+                              withTitle: (NSString *)title
                                ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
                                   error: (out NSError **)outError
 {
     return [self _addDocumentationFromURL: documentationURL
+                                withTitle: (NSString *)title
                                 operation: BXGameboxDocumentationCopy
                                  ifExists: conflictBehaviour
                                     error: outError];
@@ -861,16 +865,18 @@ typedef enum {
 //Adds a symlink to the specified URL into the gamebox's documentation folder, creating it if it is missing.
 //Returns YES on success, or NO and populates outError on failure.
 - (NSURL *) addDocumentationSymlinkToURL: (NSURL *)documentationURL
+                               withTitle: (NSString *)title
                                 ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
                                    error: (out NSError **)outError
 {
     return [self _addDocumentationFromURL: documentationURL
+                                withTitle: (NSString *)title
                                 operation: BXGameboxDocumentationSymlink
                                  ifExists: conflictBehaviour
                                     error: outError];
 }
 
-- (BOOL) trashDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError
+- (NSURL *) trashDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError
 {
     NSURL *docsURL = [self documentationFolderURLCreatingIfMissing: NO error: NULL];
     if ([documentationURL isBasedInURL: docsURL])
@@ -879,31 +885,19 @@ typedef enum {
         
         [self willChangeValueForKey: @"documentationURLs"];
         
-        BOOL removed;
-        //Use the new file-trashing API introduced in 10.8 if it's available
-        if ([manager respondsToSelector: @selector(trashItemAtURL:resultingItemURL:error:)])
-        {
-            removed = [manager trashItemAtURL: documentationURL
-                             resultingItemURL: NULL
-                                        error: outError];
-        }
-        //Otherwise fall back on the crappy old NSWorkspace way of doing things
-        else
-        {
-            NSString *parentPath = documentationURL.URLByDeletingLastPathComponent.path;
-            NSString *fileName = documentationURL.lastPathComponent;
-            removed = [[NSWorkspace sharedWorkspace] performFileOperation: NSWorkspaceRecycleOperation
-                                                                   source: parentPath
-                                                              destination: @""
-                                                                    files: @[fileName]
-                                                                      tag: NULL];
-        }
+        NSURL *trashedURL = nil;
+        BOOL removed = [manager trashItemAtURL: documentationURL
+                              resultingItemURL: &trashedURL
+                                         error: outError];
         
         [self didChangeValueForKey: @"documentationURLs"];
         
         [manager release];
         
-        return removed;
+        if (removed)
+            return trashedURL;
+        else
+            return nil;
     }
     else
     {
@@ -914,7 +908,7 @@ typedef enum {
                                             code: NSFileWriteNoPermissionError
                                         userInfo: @{ NSURLErrorKey: documentationURL }];
         }
-        return NO;
+        return nil;
     }
 }
 

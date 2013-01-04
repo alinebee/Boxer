@@ -1,12 +1,11 @@
-//
-//  BXDocumentationListController.m
-//  Boxer
-//
-//  Created by Alun Bestor on 02/01/2013.
-//  Copyright (c) 2013 Alun Bestor and contributors. All rights reserved.
-//
+/*
+ Boxer is copyright 2013 Alun Bestor and contributors.
+ Boxer is released under the GNU General Public License 2.0. A full copy of this license can be
+ found in this XCode project at Resources/English.lproj/BoxerHelp/pages/legalese.html, or read
+ online at [http://www.gnu.org/licenses/gpl-2.0.txt].
+ */
 
-#import "BXDocumentationListController.h"
+#import "BXDocumentationBrowser.h"
 #import "BXSession.h"
 #import "BXGamebox.h"
 #import "NSURL+BXQuickLookHelpers.h"
@@ -17,7 +16,7 @@ enum {
     BXDocumentationItemLabel = 2,
 };
 
-@interface BXDocumentationListController ()
+@interface BXDocumentationBrowser ()
 
 //A copy of the gamebox's reported documentation.
 //Repopulated whenever the gamebox announces that it has been updated.
@@ -26,25 +25,33 @@ enum {
 //Called to repopulate and re-sort our local copy of the documentation URLs.
 - (void) _syncDocumentationURLs;
 
+//Called whenever the documentation changes to resize the window and re-layout the document list.
+- (void) _syncDocumentationListLayout;
+
+//Used internally by importDocumentationURLs: and removeDocumentationURLs: to handle importing
+//new documentation and restoring previously-deleted documentation (via Undo).
+- (BOOL) _importDocumentationURLs: (NSArray *)URLs
+             restoringDeletedURLs: (NSArray *)originalURLs;
+
 @end
 
-@implementation BXDocumentationListController
+@implementation BXDocumentationBrowser
 @synthesize documentationScrollView = _documentationScrollView;
 @synthesize documentationList = _documentationList;
 @synthesize documentationURLs = _documentationURLs;
 @synthesize documentationSelectionIndexes = _documentationSelectionIndexes;
-
+@synthesize delegate = _delegate;
 
 #pragma mark - Initialization and deallocation
 
-+ (id) documentationListForSession: (BXSession *)session
++ (id) browserForSession: (BXSession *)session
 {
     return [[[self alloc] initWithSession: session] autorelease];
 }
 
 - (id) initWithSession: (BXSession *)session
 {
-    self = [self initWithNibName: @"DocumentationList" bundle: nil];
+    self = [self initWithNibName: @"DocumentationBrowser" bundle: nil];
     if (self)
     {
         self.documentationURLs = [NSMutableArray array];
@@ -56,21 +63,22 @@ enum {
 
 - (void) setRepresentedObject: (id)representedObject
 {
-    if (self.representedObject != representedObject)
-    {
-        [self.representedObject removeObserver: self forKeyPath: @"gamebox.documentationURLs"];
-        
-        [super setRepresentedObject: representedObject];
-        
-        [self.representedObject addObserver: self
-                                 forKeyPath: @"gamebox.documentationURLs"
-                                    options: NSKeyValueObservingOptionInitial
-                                    context: NULL];
-    }
+    [self.representedObject removeObserver: self forKeyPath: @"gamebox.documentationURLs"];
+    
+    [super setRepresentedObject: representedObject];
+    
+    [self.representedObject addObserver: self
+                             forKeyPath: @"gamebox.documentationURLs"
+                                options: NSKeyValueObservingOptionInitial
+                                context: NULL];
 }
 
 - (void) awakeFromNib
 {
+    //Record how big the view is in the XIB: we'll use this as our minimum view size
+    //when growing/shrinking the view to account for more documentation items.
+    _minViewSize = self.view.frame.size;
+    
     if ([self.documentationScrollView respondsToSelector: @selector(setUsesPredominantAxisScrolling:)])
         self.documentationScrollView.usesPredominantAxisScrolling = YES;
     
@@ -82,10 +90,14 @@ enum {
     //Insert ourselves into the responder chain ahead of our view.
     self.nextResponder = self.view.nextResponder;
     self.view.nextResponder = self;
+    
+    [self _syncDocumentationListLayout];
 }
 
 - (void) dealloc
 {
+    self.representedObject = nil;
+    
     self.view.nextResponder = nil;
     
     self.documentationScrollView = nil;
@@ -139,9 +151,12 @@ enum {
     }
     
     //Finally, re-sort the documentation by filetype and filename.
-    [notifier sortUsingDescriptors: self.documentationSortCriteria];
+    [notifier sortUsingDescriptors: self.sortCriteria];
     
     [oldURLs release];
+    
+    //Once the documentation has been updated, re-layout the view appropriately.
+    [self _syncDocumentationListLayout];
 }
 
 + (NSSet *) keyPathsForValuesAffectingTitle
@@ -162,7 +177,7 @@ enum {
     return [self.documentationURLs objectsAtIndexes: self.documentationSelectionIndexes];
 }
 
-- (NSArray *) documentationSortCriteria
+- (NSArray *) sortCriteria
 {
 	//Sort docs by extension then by filename, to group similar items together
 	NSSortDescriptor *sortByType, *sortByName;
@@ -180,6 +195,35 @@ enum {
 }
 
 
+#pragma mark - UI layout
+
+- (void) _syncDocumentationListLayout
+{
+    if (self.documentationList)
+    {
+        //Work out the ideal width for displaying the current set of documentation.
+        NSSize minItemSize = self.documentationList.minItemSize;
+        if (NSEqualSizes(minItemSize, NSZeroSize))
+            minItemSize = self.documentationList.itemPrototype.view.frame.size;
+        
+        NSUInteger numItems = MIN(5U, self.documentationURLs.count); //Show a maximum of 5 abreast
+        CGFloat idealWidth = numItems * minItemSize.width;
+        
+        NSSize desiredSize = NSMakeSize(MAX(idealWidth, _minViewSize.width), self.view.frame.size.height);
+        
+        BOOL shouldResize = YES;
+        if ([self.delegate respondsToSelector: @selector(documentationBrowser:shouldResizeToSize:)])
+            shouldResize = [self.delegate documentationBrowser: self shouldResizeToSize: desiredSize];
+        
+        if (shouldResize)
+            [self.view setFrameSize: desiredSize];
+        
+        if ([self.documentationScrollView respondsToSelector: @selector(flashScrollers)])
+            [self.documentationScrollView flashScrollers];
+    }
+}
+
+
 #pragma mark - Interface actions
 
 - (IBAction) openSelectedDocumentationItems: (id)sender
@@ -192,8 +236,8 @@ enum {
                  additionalEventParamDescriptor: nil
                               launchIdentifiers: NULL];
         
-        //Hide the at the same time
-        [self.view.window orderOut: self];
+        if ([self.delegate respondsToSelector: @selector(documentationBrowser:didOpenURLs:)])
+            [self.delegate documentationBrowser: self didOpenURLs: self.selectedDocumentationURLs];
     }
 }
 
@@ -205,26 +249,178 @@ enum {
     }
 }
 
-- (IBAction) trashSelectedDocumentationItems: (id)sender
+- (BOOL) _importDocumentationURLs: (NSArray *)URLs
+             restoringDeletedURLs: (NSArray *)originalURLs
 {
     BXSession *session = self.representedObject;
-    for (NSURL *documentationURL in self.selectedDocumentationURLs)
+    
+    BOOL importedSuccessfully = YES;
+    
+    NSMutableArray *importedURLs = [NSMutableArray arrayWithCapacity: URLs.count];
+    NSUInteger offset=0;
+    for (NSURL *URL in URLs)
     {
-        NSError *trashError = nil;
-        BOOL trashed = [session.gamebox trashDocumentationURL: documentationURL error: &trashError];
+        NSError *importingError = nil;
+        NSString *title = nil;
         
-        if (!trashed && trashError != nil)
+        //If we're restoring a previously-deleted URL, then try to give it the same
+        //name as it previously had. This compensates for any renaming of the file
+        //when it was moved to the Trash.
+        if (originalURLs)
         {
-            [self presentError: trashError
-                modalForWindow: session.windowForSheet
-                      delegate: nil
-            didPresentSelector: NULL
-                   contextInfo: NULL];
+            NSURL *originalURL = [originalURLs objectAtIndex: offset];
+            title = originalURL.lastPathComponent.stringByDeletingPathExtension;
+        }
+        NSURL *importedURL = [session.gamebox addDocumentationFileFromURL: URL
+                                                                withTitle: title
+                                                                 ifExists: BXGameboxDocumentationRename
+                                                                    error: &importingError];
+        
+        if (importedURL)
+        {
+            [importedURLs addObject: importedURL];
+            offset++;
             
-            //Do not continue if trashing one of the items failed.
-            return;
+            //If we're restoring a previously-deleted URL, then clean up the source URL from the Trash.
+            if (originalURLs)
+                [[NSFileManager defaultManager] removeItemAtURL: URL error: NULL];
+        }
+        else
+        {
+            //Show the error to the user immediately.
+            if (importingError != nil)
+            {
+                [self presentError: importingError
+                    modalForWindow: [self.representedObject windowForSheet]
+                          delegate: nil
+                didPresentSelector: NULL
+                       contextInfo: NULL];
+            }
+            
+            //Don't continue importing further.
+            importedSuccessfully = NO;
+            break;
         }
     }
+    
+    if (importedURLs.count)
+    {
+        [self.undoManager registerUndoWithTarget: self
+                                        selector: @selector(removeDocumentationURLs:)
+                                          object: importedURLs];
+        
+        NSString *actionName;
+        
+        //Vary the title for the undo action, based on if it'll be recorded
+        //as a redo operation and based on how many URLs were imported.
+        if (importedURLs.count > 1)
+        {
+            NSString *actionNameFormat;
+            if (self.undoManager.isUndoing)
+                actionNameFormat = NSLocalizedString(@"Removal of %u manuals", @"Undo menu action title when removing multiple documentation items. %u is the number of items removed as an unsigned integer.");
+            else
+                actionNameFormat = NSLocalizedString(@"Importing of %u manuals", @"Undo menu action title when importing multiple documentation items. %u is the number of items imported as an unsigned integer.");
+            
+            actionName = [NSString stringWithFormat: actionNameFormat, importedURLs.count];
+        }
+        else
+        {
+            NSString *actionNameFormat;
+            if (self.undoManager.isUndoing)
+                actionNameFormat = NSLocalizedString(@"Removal of “%@”", @"Undo menu action title when removing a documentation item. %@ is the display name of the documentation item as it appears in the UI.");
+            else
+                actionNameFormat = NSLocalizedString(@"Importing of “%@”", @"Undo menu action title when importing a documentation item. %@ is the display name of the documentation item as it appears in the UI.");
+            
+            NSString *displayName = [importedURLs.lastObject lastPathComponent].stringByDeletingPathExtension;
+            actionName = [NSString stringWithFormat: actionNameFormat, displayName];
+        }
+        
+        [self.undoManager setActionName: actionName];
+    }
+    
+    return importedSuccessfully;
+}
+
+- (BOOL) importDocumentationURLs: (NSArray *)URLs
+{
+    return [self _importDocumentationURLs: URLs restoringDeletedURLs: nil];
+}
+    
+- (BOOL) removeDocumentationURLs: (NSArray *)URLs
+{
+    BXSession *session = self.representedObject;
+    
+    BOOL trashedSuccessfully = YES;
+    
+    NSMutableArray *trashedURLs = [NSMutableArray arrayWithCapacity: URLs.count];
+    for (NSURL *URL in URLs)
+    {
+        NSError *trashingError = nil;
+        NSURL *trashedURL = [session.gamebox trashDocumentationURL: URL error: &trashingError];
+        
+        if (trashedURL)
+        {
+            [trashedURLs addObject: trashedURL];
+        }
+        else
+        {
+            //Show the error to the user immediately.
+            if (trashingError != nil)
+            {
+                [self presentError: trashingError
+                    modalForWindow: [self.representedObject windowForSheet]
+                          delegate: nil
+                didPresentSelector: NULL
+                       contextInfo: NULL];
+            }
+            
+            //Don't continue importing further.
+            trashedSuccessfully = NO;
+            break;
+        }
+    }
+    
+    if (trashedURLs.count)
+    {
+        id undoProxy = [self.undoManager prepareWithInvocationTarget: self];
+        [undoProxy _importDocumentationURLs: trashedURLs restoringDeletedURLs: URLs];
+        
+        NSString *actionName;
+        
+        //Vary the title for the undo action, based on if it'll be recorded
+        //as a redo operation and based on how many URLs were imported.
+        if (trashedURLs.count > 1)
+        {
+            NSString *actionNameFormat;
+            if (self.undoManager.isUndoing)
+                actionNameFormat = NSLocalizedString(@"Importing of %u manuals", @"Undo menu action title when importing multiple documentation items. %u is the number of items imported as an unsigned integer.");
+            else
+                actionNameFormat = NSLocalizedString(@"Removal of %u manuals", @"Undo menu action title when removing multiple documentation items. %u is the number of items removed as an unsigned integer.");
+            
+            actionName = [NSString stringWithFormat: actionNameFormat, trashedURLs.count];
+        }
+        else
+        {
+            NSString *actionNameFormat;
+            if (self.undoManager.isUndoing)
+                actionNameFormat = NSLocalizedString(@"Importing of “%@”", @"Undo menu action title when importing a documentation item. %@ is the display name of the documentation item as it appears in the UI.");
+            else
+            actionNameFormat = NSLocalizedString(@"Removal of “%@”", @"Undo menu action title when removing a documentation item. %@ is the display name of the documentation item as it appears in the UI.");
+            
+            NSString *displayName = [trashedURLs.lastObject lastPathComponent].stringByDeletingPathExtension;
+            actionName = [NSString stringWithFormat: actionNameFormat, displayName];
+        }
+        
+        [self.undoManager setActionName: actionName];
+    }
+    
+    return trashedSuccessfully;
+}
+
+
+- (IBAction) trashSelectedDocumentationItems: (id)sender
+{
+    [self removeDocumentationURLs: self.selectedDocumentationURLs];
 }
 
 - (IBAction) showDocumentationFolderInFinder: (id)sender
@@ -275,38 +471,14 @@ enum {
 
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
 {
-    BXSession *session = self.representedObject;
 	NSPasteboard *pboard = sender.draggingPasteboard;
 	
     NSArray *droppedURLs = [pboard readObjectsForClasses: @[[NSURL class]]
                                                  options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];
         
-    BOOL importedAnything = NO;
+    BOOL imported = [self importDocumentationURLs: droppedURLs];
     
-    NSError *importError = nil;
-    for (NSURL *documentationURL in droppedURLs)
-    {
-        NSURL *importedURL = [session.gamebox addDocumentationFileFromURL: documentationURL
-                                                                 ifExists: BXGameboxDocumentationRename
-                                                                    error: &importError];
-        
-        if (importedURL != nil)
-        {
-            importedAnything = YES;
-        }
-        else
-        {
-            [self presentError: importError
-                modalForWindow: session.windowForSheet
-                      delegate: nil
-            didPresentSelector: NULL
-                   contextInfo: NULL];
-        }
-        
-        //TODO: scroll the view to focus on the last-added item.
-    }
-    
-	return importedAnything;
+	return imported;
 }
 
 
@@ -314,7 +486,7 @@ enum {
 
 
 //A private class to implement the QLPreviewItem protocol for BXDocumentPreviews.
-@interface BXDocumentationListPreviewItem : NSObject <QLPreviewItem>
+@interface BXDocumentationBrowserPreviewItem : NSObject <QLPreviewItem>
 {
     NSURL *_previewItemURL;
 }
@@ -324,12 +496,12 @@ enum {
 
 @end
 
-@implementation BXDocumentationListPreviewItem
+@implementation BXDocumentationBrowserPreviewItem
 @synthesize previewItemURL = _previewItemURL;
 
 + (id) previewItemWithURL: (NSURL *)URL
 {
-    BXDocumentationListPreviewItem *previewItem = [[self alloc] init];
+    BXDocumentationBrowserPreviewItem *previewItem = [[self alloc] init];
     previewItem.previewItemURL = URL;
     return [previewItem autorelease];
 }
@@ -343,7 +515,7 @@ enum {
 @end
 
 
-@implementation BXDocumentationListController (BXDocumentPreviews)
+@implementation BXDocumentationBrowser (BXDocumentPreviews)
 
 #pragma mark - QLPreviewPanelController protocol implementations
 
@@ -375,7 +547,7 @@ enum {
 - (id <QLPreviewItem>) previewPanel: (QLPreviewPanel *)panel previewItemAtIndex: (NSInteger)index
 {
     NSURL *URL = [self.documentationURLs objectAtIndex: index];
-    return [BXDocumentationListPreviewItem previewItemWithURL: URL];
+    return [BXDocumentationBrowserPreviewItem previewItemWithURL: URL];
 }
 
 #pragma mark - QLPreviewPanelDelegate protocol implementations
@@ -476,6 +648,12 @@ enum {
 @implementation BXDocumentationItem
 @synthesize icon = _icon;
 
+- (void) viewDidLoad
+{
+    //Prevent our icon view from interfering with drag operations
+    [[self.view viewWithTag: BXDocumentationItemIcon] unregisterDraggedTypes];
+}
+
 - (void) setRepresentedObject: representedObject
 {
     if (representedObject != self.representedObject)
@@ -559,9 +737,20 @@ enum {
 {
     if (self.delegate.isSelected)
     {
-        NSBezierPath *highlightPath = [NSBezierPath bezierPathWithRoundedRect: self.bounds
-                                                                      xRadius: 8
-                                                                      yRadius: 8];
+        NSImageView *icon = [self viewWithTag: BXDocumentationItemIcon];
+        NSTextField *label = [self viewWithTag: BXDocumentationItemLabel];
+        
+        CGFloat contentWidth = MAX(icon.frame.size.width, [label.cell cellSize].width);
+        CGFloat padding = 8.0;
+        CGFloat margin = 8.0;
+        
+        NSRect highlightRegion = NSInsetRect(self.bounds, margin, margin);
+        highlightRegion.size.width = MIN(contentWidth + (padding * 2), highlightRegion.size.width);
+        highlightRegion.origin.x = self.bounds.origin.x + ((self.bounds.size.width - highlightRegion.size.width) * 0.5);
+        
+        NSBezierPath *highlightPath = [NSBezierPath bezierPathWithRoundedRect: highlightRegion
+                                                                      xRadius: 8.0
+                                                                      yRadius: 8.0];
         
         NSColor *highlightColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.15];
         
@@ -569,6 +758,8 @@ enum {
         [highlightPath fill];
     }
 }
+
+- (BOOL) acceptsFirstMouse: (NSEvent *)theEvent { return YES; }
 
 - (void) mouseDown: (NSEvent *)theEvent
 {
@@ -592,16 +783,46 @@ enum {
 
 @implementation BXDocumentationList
 
+
+- (BOOL) acceptsFirstMouse: (NSEvent *)theEvent { return YES; }
+
 - (void) keyDown: (NSEvent *)theEvent
-{
-    //Trigger a preview when the space key is hit.
+{    
+    //Trigger a preview when the user presses Space.
     if ([theEvent.charactersIgnoringModifiers isEqualToString: @" "])
     {
         [NSApp sendAction: @selector(previewSelectedDocumentationItems:) to: nil from: self];
+    }
+    //Open the selected items when the user presses Return.
+    else if ([theEvent.charactersIgnoringModifiers isEqualToString: @"\r"])
+    {
+        [NSApp sendAction: @selector(openSelectedDocumentationItems:) to: nil from: self];
+    }
+    //Delete the selected items when the user presses Cmd+Backspace.
+    else if ([theEvent.charactersIgnoringModifiers isEqualToString: @"\x7f"] &&
+             (theEvent.modifierFlags & NSCommandKeyMask))
+    {
+        [NSApp sendAction: @selector(trashSelectedDocumentationItems:) to: nil from: self];
     }
     else
     {
         [super keyDown: theEvent];
     }
 }
+
+@end
+
+
+@implementation BXDocumentationDivider
+
+- (void) drawRect: (NSRect)dirtyRect
+{
+    NSGradient *gradient = [[NSGradient alloc] initWithStartingColor: [NSColor grayColor]
+                                                         endingColor: [NSColor clearColor]];
+    
+    [gradient drawInRect: self.bounds relativeCenterPosition: NSZeroPoint];
+    
+    [gradient release];
+}
+
 @end

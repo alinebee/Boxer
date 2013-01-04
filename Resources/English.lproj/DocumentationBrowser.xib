@@ -34,7 +34,7 @@
 		</object>
 		<array class="NSMutableArray" key="IBDocument.RootObjects" id="1000">
 			<object class="NSCustomObject" id="1001">
-				<string key="NSClassName">BXDocumentationListController</string>
+				<string key="NSClassName">BXDocumentationBrowser</string>
 			</object>
 			<object class="NSCustomObject" id="1003">
 				<string key="NSClassName">FirstResponder</string>
@@ -43,15 +43,32 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSCustomView" id="1005">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<array class="NSMutableArray" key="NSSubviews">
+					<object class="NSCustomView" id="887235279">
+						<reference key="NSNextResponder" ref="1005"/>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{20, 222}, {440, 1}}</string>
+						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSNextKeyView" ref="504448256"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<string key="NSClassName">BXDocumentationDivider</string>
+					</object>
+					<object class="NSCustomView" id="95452772">
+						<reference key="NSNextResponder" ref="1005"/>
+						<int key="NSvFlags">290</int>
+						<string key="NSFrame">{{20, 29}, {440, 1}}</string>
+						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSNextKeyView" ref="120434018"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<string key="NSClassName">BXDocumentationDivider</string>
+					</object>
 					<object class="NSTextField" id="120434018">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">290</int>
-						<string key="NSFrame">{{17, 8}, {398, 14}}</string>
+						<string key="NSFrame">{{17, 7}, {446, 14}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:1535</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="661646074">
@@ -89,9 +106,9 @@
 					<object class="NSTextField" id="1062088759">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{17, 239}, {398, 17}}</string>
+						<string key="NSFrame">{{17, 231}, {446, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="504448256"/>
+						<reference key="NSNextKeyView" ref="887235279"/>
 						<string key="NSReuseIdentifierKey">_NS:1535</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="685723779">
@@ -112,7 +129,7 @@
 					</object>
 					<object class="NSScrollView" id="504448256">
 						<reference key="NSNextResponder" ref="1005"/>
-						<int key="NSvFlags">290</int>
+						<int key="NSvFlags">266</int>
 						<array class="NSMutableArray" key="NSSubviews">
 							<object class="NSClipView" id="974789508">
 								<reference key="NSNextResponder" ref="504448256"/>
@@ -121,9 +138,9 @@
 									<object class="NSCollectionView" id="790300239">
 										<reference key="NSNextResponder" ref="974789508"/>
 										<int key="NSvFlags">4370</int>
-										<string key="NSFrameSize">{432, 200}</string>
+										<string key="NSFrameSize">{480, 192}</string>
 										<reference key="NSSuperview" ref="974789508"/>
-										<reference key="NSNextKeyView" ref="342156510"/>
+										<reference key="NSNextKeyView" ref="267198679"/>
 										<string key="NSReuseIdentifierKey">_NS:80</string>
 										<string key="NSMinGridSize">{0, 0}</string>
 										<string key="NSMaxGridSize">{0, 0}</string>
@@ -140,7 +157,7 @@
 										<int key="NSDraggingSourceMaskForNonLocal">0</int>
 									</object>
 								</array>
-								<string key="NSFrameSize">{432, 200}</string>
+								<string key="NSFrameSize">{480, 192}</string>
 								<reference key="NSSuperview" ref="504448256"/>
 								<reference key="NSNextKeyView" ref="790300239"/>
 								<string key="NSReuseIdentifierKey">_NS:78</string>
@@ -171,7 +188,7 @@
 								<int key="NSvFlags">-2147483392</int>
 								<string key="NSFrame">{{1, 144}, {233, 15}}</string>
 								<reference key="NSSuperview" ref="504448256"/>
-								<reference key="NSNextKeyView" ref="120434018"/>
+								<reference key="NSNextKeyView" ref="95452772"/>
 								<string key="NSReuseIdentifierKey">_NS:91</string>
 								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 								<int key="NSsFlags">1</int>
@@ -180,9 +197,9 @@
 								<double key="NSPercent">0.63157892227172852</double>
 							</object>
 						</array>
-						<string key="NSFrame">{{0, 30}, {432, 200}}</string>
+						<string key="NSFrame">{{0, 30}, {480, 192}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="267198679"/>
+						<reference key="NSNextKeyView" ref="974789508"/>
 						<string key="NSReuseIdentifierKey">_NS:76</string>
 						<int key="NSsFlags">133664</int>
 						<reference key="NSVScroller" ref="267198679"/>
@@ -194,22 +211,20 @@
 						<double key="NSMagnification">1</double>
 					</object>
 				</array>
-				<string key="NSFrameSize">{432, 272}</string>
-				<reference key="NSSuperview"/>
+				<string key="NSFrameSize">{480, 264}</string>
 				<reference key="NSNextKeyView" ref="1062088759"/>
 				<string key="NSClassName">BXDelegatedView</string>
 			</object>
 			<object class="NSCollectionViewItem" id="205414170"/>
 			<object class="NSView" id="979582564">
-				<reference key="NSNextResponder"/>
-				<int key="NSvFlags">261</int>
+				<nil key="NSNextResponder"/>
+				<int key="NSvFlags">258</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="NSTextField" id="253560263">
 						<reference key="NSNextResponder" ref="979582564"/>
 						<int key="NSvFlags">290</int>
-						<string key="NSFrame">{{5, 0}, {134, 37}}</string>
+						<string key="NSFrame">{{13, 16}, {134, 32}}</string>
 						<reference key="NSSuperview" ref="979582564"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:1535</string>
 						<int key="NSTag">2</int>
 						<bool key="NSEnabled">YES</bool>
@@ -248,7 +263,7 @@
 							<string>NeXT Encapsulated PostScript v1.2 pasteboard type</string>
 							<string>NeXT TIFF v4.0 pasteboard type</string>
 						</set>
-						<string key="NSFrame">{{8, 40}, {128, 128}}</string>
+						<string key="NSFrame">{{16, 48}, {128, 128}}</string>
 						<reference key="NSSuperview" ref="979582564"/>
 						<reference key="NSNextKeyView" ref="253560263"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -267,8 +282,7 @@
 						<bool key="NSEditable">YES</bool>
 					</object>
 				</array>
-				<string key="NSFrameSize">{144, 176}</string>
-				<reference key="NSSuperview"/>
+				<string key="NSFrameSize">{160, 192}</string>
 				<reference key="NSNextKeyView" ref="487645413"/>
 			</object>
 			<object class="NSMenu" id="335774492">
@@ -287,6 +301,14 @@
 							<string key="NSClassName">NSImage</string>
 							<string key="NSResourceName">NSMenuMixedState</string>
 						</object>
+					</object>
+					<object class="NSMenuItem" id="464241611">
+						<reference key="NSMenu" ref="335774492"/>
+						<string key="NSTitle">Quick Look</string>
+						<string key="NSKeyEquiv"/>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="65406277"/>
+						<reference key="NSMixedImage" ref="888908844"/>
 					</object>
 					<object class="NSMenuItem" id="22018308">
 						<reference key="NSMenu" ref="335774492"/>
@@ -334,14 +356,6 @@
 					<int key="connectionID">45</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">documentationList</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="790300239"/>
-					</object>
-					<int key="connectionID">56</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">trashSelectedDocumentationItems:</string>
 						<reference key="source" ref="1001"/>
@@ -350,12 +364,28 @@
 					<int key="connectionID">76</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">previewSelectedDocumentationItems:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="464241611"/>
+					</object>
+					<int key="connectionID">96</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">documentationScrollView</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="504448256"/>
 					</object>
-					<int key="connectionID">90</int>
+					<int key="connectionID">100</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">documentationList</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="790300239"/>
+					</object>
+					<int key="connectionID">101</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -528,33 +558,10 @@
 							<reference ref="504448256"/>
 							<reference ref="1062088759"/>
 							<reference ref="120434018"/>
+							<reference ref="95452772"/>
+							<reference ref="887235279"/>
 						</array>
 						<reference key="parent" ref="0"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">11</int>
-						<reference key="object" ref="504448256"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="790300239"/>
-							<reference ref="342156510"/>
-							<reference ref="267198679"/>
-						</array>
-						<reference key="parent" ref="1005"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">12</int>
-						<reference key="object" ref="790300239"/>
-						<reference key="parent" ref="504448256"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">13</int>
-						<reference key="object" ref="342156510"/>
-						<reference key="parent" ref="504448256"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">14</int>
-						<reference key="object" ref="267198679"/>
-						<reference key="parent" ref="504448256"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">15</int>
@@ -618,6 +625,7 @@
 							<reference ref="1073437415"/>
 							<reference ref="22018308"/>
 							<reference ref="922083430"/>
+							<reference ref="464241611"/>
 						</array>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Documentation Item Menu</string>
@@ -650,6 +658,46 @@
 						<reference key="object" ref="661646074"/>
 						<reference key="parent" ref="120434018"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">94</int>
+						<reference key="object" ref="464241611"/>
+						<reference key="parent" ref="335774492"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">11</int>
+						<reference key="object" ref="504448256"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="790300239"/>
+							<reference ref="342156510"/>
+							<reference ref="267198679"/>
+						</array>
+						<reference key="parent" ref="1005"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">14</int>
+						<reference key="object" ref="267198679"/>
+						<reference key="parent" ref="504448256"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">13</int>
+						<reference key="object" ref="342156510"/>
+						<reference key="parent" ref="504448256"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">12</int>
+						<reference key="object" ref="790300239"/>
+						<reference key="parent" ref="504448256"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">98</int>
+						<reference key="object" ref="95452772"/>
+						<reference key="parent" ref="1005"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">99</int>
+						<reference key="object" ref="887235279"/>
+						<reference key="parent" ref="1005"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -679,14 +727,98 @@
 				<string key="42.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="82.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="83.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="94.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="98.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="99.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">92</int>
+			<int key="maxID">101</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes"/>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<object class="IBPartialClassDescription">
+					<string key="className">BXCollectionItem</string>
+					<string key="superclassName">NSCollectionViewItem</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXCollectionItem.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXCollectionItemView</string>
+					<string key="superclassName">NSView</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">delegate</string>
+						<string key="NS.object.0">NSCollectionViewItem</string>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<string key="NS.key.0">delegate</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
+							<string key="name">delegate</string>
+							<string key="candidateClassName">NSCollectionViewItem</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXCollectionItemView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXDelegatedView</string>
+					<string key="superclassName">NSView</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">delegate</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<string key="NS.key.0">delegate</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
+							<string key="name">delegate</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXDelegatedView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXDocumentationDivider</string>
+					<string key="superclassName">NSView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXDocumentationDivider.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXDocumentationItem</string>
+					<string key="superclassName">BXCollectionItem</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXDocumentationItem.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXDocumentationList</string>
+					<string key="superclassName">NSCollectionView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXDocumentationList.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXDocumentationWrapper</string>
+					<string key="superclassName">BXCollectionItemView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXDocumentationWrapper.h</string>
+					</object>
+				</object>
+			</array>
+		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">

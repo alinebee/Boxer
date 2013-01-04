@@ -32,7 +32,7 @@
 #import "NSWindow+BXWindowDimensions.h"
 #import "BXGeometry.h"
 
-#import "BXDocumentationListController.h"
+#import "BXDocumentationBrowser.h"
 
 
 @implementation BXDOSWindowController
@@ -438,14 +438,14 @@
     if (self.document.hasGamebox && NSClassFromString(@"NSPopover") != nil)
     {
         NSPopover *docsPopover = [[NSPopover alloc] init];
-        docsPopover.contentViewController = [BXDocumentationListController documentationListForSession: self.document];
+        docsPopover.contentViewController = [BXDocumentationBrowser browserForSession: self.document];
         docsPopover.behavior = NSPopoverBehaviorSemitransient;
         docsPopover.animates = YES;
         
         NSView *relativeView = self.documentationButton.view;
         
         [docsPopover showRelativeToRect: NSZeroRect ofView: relativeView preferredEdge: NSMinYEdge];
-        [docsPopover autorelease];
+        [docsPopover release];
     }
 }
 
@@ -1247,6 +1247,11 @@
 
 #pragma mark -
 #pragma mark Handlers for window and application state changes
+
+- (NSUndoManager *) windowWillReturnUndoManager: (NSWindow *)window
+{
+    return self.document.undoManager;
+}
 
 //TODO: make BXInputController listen for these notifications itself
 - (void) windowWillBeginSheet: (NSNotification *)notification

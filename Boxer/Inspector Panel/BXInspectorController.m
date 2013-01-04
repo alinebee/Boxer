@@ -197,6 +197,11 @@
 	}
 }
 
+//Pass requests for a window manager on to the current session
+- (NSUndoManager *) windowWillReturnUndoManager: (NSWindow *)window
+{
+    return [[NSApp delegate] currentSession].undoManager;
+}
 
 #pragma mark -
 #pragma mark Tab selection

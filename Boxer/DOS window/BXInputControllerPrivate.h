@@ -18,7 +18,7 @@
 #import "BXEmulatedJoystick.h"
 #import "BXEmulatedMouse.h"
 
-#import "BXSession+BXEmulatorControls.h"
+#import "BXSession+BXUIControls.h"
 #import "BXDOSWindowController.h"
 
 

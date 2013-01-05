@@ -6,7 +6,7 @@
  */
 
 #import "BXInspectorController.h"
-#import "BXSession+BXEmulatorControls.h"
+#import "BXSession+BXUIControls.h"
 #import "BXEmulator.h"
 #import "BXDrive.h"
 #import "BXBaseAppController.h"

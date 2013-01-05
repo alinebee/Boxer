@@ -7,7 +7,7 @@
 
 #import "BXBaseAppController+BXHotKeys.h"
 #import "BXKeyboardEventTap.h"
-#import "BXSession+BXEmulatorControls.h"
+#import "BXSession+BXUIControls.h"
 
 //For various keycode definitions
 #import <IOKit/hidsystem/ev_keymap.h>

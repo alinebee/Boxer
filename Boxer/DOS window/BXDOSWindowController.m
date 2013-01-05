@@ -25,7 +25,7 @@
 
 #import "BXEmulator.h"
 
-#import "BXSession+BXEmulatorControls.h"
+#import "BXSession+BXUIControls.h"
 #import "BXSession+BXDragDrop.h"
 #import "BXImportSession.h"
 

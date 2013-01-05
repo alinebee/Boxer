@@ -9,7 +9,7 @@
 //BXSessionPrivate declares protected methods for BXSession and its subclasses.
 
 #import "BXSession.h"
-#import "BXSession+BXEmulatorControls.h"
+#import "BXSession+BXUIControls.h"
 #import "BXSession+BXAudioControls.h"
 #import "BXSession+BXFileManager.h"
 #import "BXSession+BXPrinting.h"

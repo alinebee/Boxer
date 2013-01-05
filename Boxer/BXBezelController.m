@@ -8,7 +8,7 @@
 #import "BXBezelController.h"
 #import "BXBaseAppController.h"
 #import "NSWindow+BXWindowEffects.h"
-#import "BXSession+BXEmulatorControls.h"
+#import "BXSession+BXUIControls.h"
 #import "BXDOSWindow.h"
 #import "BXDOSWindowController.h"
 #import "BXGeometry.h"

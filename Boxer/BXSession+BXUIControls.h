@@ -6,13 +6,11 @@
  */
 
 
-//The BXEmulatorControls category is responsible for bridging the session's UI with the underlying
-//emulator and gamebox features. Most of its methods are UI-facing.
-
+//The BXUIControls category is responsible for bridging the session's UI elements with the
+//underlying session, emulator and gamebox features. Most of its methods are UI-facing.
 
 #import <Cocoa/Cocoa.h>
 #import "BXSession.h"
-
 
 //The speed thresholds used by cpuClassFormatForSpeed: to appropriately describe
 //the current emulation speed in terms of CPU class.
@@ -49,7 +47,7 @@ typedef enum {
 
 @class BXEmulator;
 
-@interface BXSession (BXEmulatorControls)
+@interface BXSession (BXUIControls)
 
 #pragma mark -
 #pragma mark Properties

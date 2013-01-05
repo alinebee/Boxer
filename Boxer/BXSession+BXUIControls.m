@@ -28,7 +28,7 @@
 #import "BXFileTypes.h"
 
 
-@implementation BXSession (BXEmulatorControls)
+@implementation BXSession (BXUIControls)
 
 #pragma mark -
 #pragma mark Speed-related helper methods

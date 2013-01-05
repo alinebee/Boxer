@@ -85,7 +85,7 @@
 		9F2D2FA015B8233800FAE848 /* NSWindow+BXWindowDimensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowDimensions.m */; };
 		9F2D2FA115B8233800FAE848 /* BXGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35280F56C7B7001811F2 /* BXGeometry.m */; };
 		9F2D2FA215B8233800FAE848 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
-		9F2D2FA315B8233800FAE848 /* BXSession+BXEmulatorControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorControls.m */; };
+		9F2D2FA315B8233800FAE848 /* BXSession+BXUIControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXUIControls.m */; };
 		9F2D2FA415B8233800FAE848 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
 		9F2D2FA515B8233800FAE848 /* NSAlert+BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */; };
 		9F2D2FA615B8233800FAE848 /* BXHelpMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6311080F70F54300AB1155 /* BXHelpMenuController.m */; };
@@ -758,7 +758,7 @@
 		9FBF66AF11F35ADD00DAAB9A /* BXSingleFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */; };
 		9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */; };
 		9FC2F84013D60FBD00BD4F6B /* BXDualActionControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */; };
-		9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorControls.m */; };
+		9FC3B2550F62D9CE006DE439 /* BXSession+BXUIControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXUIControls.m */; };
 		9FC5353512F489F8005E7670 /* 35DisketteShine.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FC5353412F489F8005E7670 /* 35DisketteShine.icns */; };
 		9FC637FD13C09B11004478A3 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC637FC13C09B10004478A3 /* CoreServices.framework */; };
 		9FC6380013C09B79004478A3 /* BXJoypadController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC637FF13C09B79004478A3 /* BXJoypadController.m */; };
@@ -1660,8 +1660,8 @@
 		9FC1620C119E9AD700705EA5 /* BXCursorFadeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCursorFadeAnimation.h; sourceTree = "<group>"; };
 		9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCursorFadeAnimation.m; sourceTree = "<group>"; };
 		9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDualActionControllerProfile.m; sourceTree = "<group>"; };
-		9FC3B2530F62D9CE006DE439 /* BXSession+BXEmulatorControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXEmulatorControls.h"; sourceTree = "<group>"; };
-		9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXEmulatorControls.m"; sourceTree = "<group>"; };
+		9FC3B2530F62D9CE006DE439 /* BXSession+BXUIControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXUIControls.h"; sourceTree = "<group>"; };
+		9FC3B2540F62D9CE006DE439 /* BXSession+BXUIControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXUIControls.m"; sourceTree = "<group>"; };
 		9FC5353412F489F8005E7670 /* 35DisketteShine.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = 35DisketteShine.icns; sourceTree = "<group>"; };
 		9FC637FC13C09B10004478A3 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		9FC637FE13C09B79004478A3 /* BXJoypadController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXJoypadController.h; sourceTree = "<group>"; };
@@ -2431,8 +2431,8 @@
 				9FBC35210F56C7B7001811F2 /* BXSession.m */,
 				9FA85CD310A357A600E6457F /* BXSession+BXFileManager.h */,
 				9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */,
-				9FC3B2530F62D9CE006DE439 /* BXSession+BXEmulatorControls.h */,
-				9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorControls.m */,
+				9FC3B2530F62D9CE006DE439 /* BXSession+BXUIControls.h */,
+				9FC3B2540F62D9CE006DE439 /* BXSession+BXUIControls.m */,
 				9F3EDA151434A6E4009BFBA2 /* BXSession+BXAudioControls.h */,
 				9F3EDA161434A6E4009BFBA2 /* BXSession+BXAudioControls.m */,
 				9F76D45410CBE5C500C3B081 /* BXSession+BXDragDrop.h */,
@@ -3955,7 +3955,7 @@
 				9FBC35340F56C7B7001811F2 /* NSWindow+BXWindowDimensions.m in Sources */,
 				9FBC35360F56C7B7001811F2 /* BXGeometry.m in Sources */,
 				9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */,
-				9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorControls.m in Sources */,
+				9FC3B2550F62D9CE006DE439 /* BXSession+BXUIControls.m in Sources */,
 				9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */,
 				9FB554220F6EAC5F00A33017 /* NSAlert+BXAlert.m in Sources */,
 				9F6311090F70F54300AB1155 /* BXHelpMenuController.m in Sources */,
@@ -4302,7 +4302,7 @@
 				9F2D2FA015B8233800FAE848 /* NSWindow+BXWindowDimensions.m in Sources */,
 				9F2D2FA115B8233800FAE848 /* BXGeometry.m in Sources */,
 				9F2D2FA215B8233800FAE848 /* BXEmulator.mm in Sources */,
-				9F2D2FA315B8233800FAE848 /* BXSession+BXEmulatorControls.m in Sources */,
+				9F2D2FA315B8233800FAE848 /* BXSession+BXUIControls.m in Sources */,
 				9F2D2FA415B8233800FAE848 /* BXCloseAlert.m in Sources */,
 				9F2D2FA515B8233800FAE848 /* NSAlert+BXAlert.m in Sources */,
 				9F2D2FA615B8233800FAE848 /* BXHelpMenuController.m in Sources */,

@@ -23,6 +23,11 @@
 		9F0F2B9512AD3C8500CD7078 /* BXFileTransferSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F2B9412AD3C8500CD7078 /* BXFileTransferSet.m */; };
 		9F0F9EDA12108A9000ED7A64 /* BXSessionError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9ED912108A9000ED7A64 /* BXSessionError.m */; };
 		9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */; };
+		9F125C4016983A9D003B5B2B /* BXDocumentationPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F125C3F16983A9D003B5B2B /* BXDocumentationPanelController.m */; };
+		9F125C4116983F0C003B5B2B /* BXDocumentationBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F631D7B16947AE900AD06C4 /* BXDocumentationBrowser.m */; };
+		9F125C44169842F4003B5B2B /* DocumentationPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F125C42169842F4003B5B2B /* DocumentationPanel.xib */; };
+		9F125C4916984378003B5B2B /* InspectorDriveItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F125C4516984378003B5B2B /* InspectorDriveItem.xib */; };
+		9F125C4A16984378003B5B2B /* InspectorJoystickItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F125C4716984378003B5B2B /* InspectorJoystickItem.xib */; };
 		9F12F97C144875F400FC9645 /* DummyCD.iso in Resources */ = {isa = PBXBuildFile; fileRef = 9F12F97B144875F400FC9645 /* DummyCD.iso */; };
 		9F13F9D011F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */; };
 		9F160DE21236952600F8768E /* Sample Games in Resources */ = {isa = PBXBuildFile; fileRef = 9F160BD91236952400F8768E /* Sample Games */; };
@@ -414,7 +419,6 @@
 		9F3FB1B61306F9FB00DB8FBE /* NSApplication+BXScripting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1B51306F9FB00DB8FBE /* NSApplication+BXScripting.m */; };
 		9F3FB24E130714D700DB8FBE /* BXScriptableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB24D130714D700DB8FBE /* BXScriptableWindow.m */; };
 		9F424207109D03F500111D28 /* BXInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F424206109D03F500111D28 /* BXInspectorController.m */; };
-		9F424222109D061000111D28 /* InspectorPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1C5109C3CB400593456 /* InspectorPanel.xib */; };
 		9F42D9DF1172481800AC6F1F /* BXStatusBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F42D9DE1172481800AC6F1F /* BXStatusBarController.m */; };
 		9F438C5810E3D8C8007D30AD /* BXScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F438C5710E3D8C8007D30AD /* BXScroller.m */; };
 		9F444FCC12AEA28700A2D405 /* BXOperationSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F444FCB12AEA28700A2D405 /* BXOperationSet.m */; };
@@ -485,7 +489,6 @@
 		9F61F78313EC2D5100505436 /* BXImageAwareFileScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61F78213EC2D5100505436 /* BXImageAwareFileScan.m */; };
 		9F61FC8510DE3F7F00F3896C /* BXGameProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */; };
 		9F6311090F70F54300AB1155 /* BXHelpMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6311080F70F54300AB1155 /* BXHelpMenuController.m */; };
-		9F631D7D16947AE900AD06C4 /* BXDocumentationBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F631D7B16947AE900AD06C4 /* BXDocumentationBrowser.m */; };
 		9F631D8216947B2C00AD06C4 /* DocumentationBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F631D8016947B2C00AD06C4 /* DocumentationBrowser.xib */; };
 		9F676BF01235451B00924B8C /* Display.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F676BEF1235451B00924B8C /* Display.png */; };
 		9F67855C1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F67855A1649A6BC007FE89A /* BXPrintStatusPanelController.m */; };
@@ -664,7 +667,6 @@
 		9F9A4CA610F67DD800E61965 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA410F67DD800E61965 /* Preferences.xib */; };
 		9F9A4CA910F6824B00E61965 /* BXFilterGallery.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */; };
 		9F9AEE8914CB4AEA00728641 /* BXAppKitVersionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9AEE8814CB4AEA00728641 /* BXAppKitVersionHelpers.m */; };
-		9F9D47F4165E946F00E16DE7 /* InspectorJoystickItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F9D47F6165E946F00E16DE7 /* InspectorJoystickItem.xib */; };
 		9F9DF415153B058200233968 /* BXKeyBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F9DF414153B058200233968 /* BXKeyBuffer.mm */; };
 		9F9E27C511F8C003003EE8F3 /* BXThemedSegmentedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27C411F8C003003EE8F3 /* BXThemedSegmentedCell.m */; };
 		9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */; };
@@ -692,7 +694,6 @@
 		9FAD43C410A341F6007E8C0D /* UKMainThreadProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BF10A341F6007E8C0D /* UKMainThreadProxy.m */; };
 		9FADFE5511EC7E1700990E91 /* BXDigest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE5411EC7E1700990E91 /* BXDigest.m */; };
 		9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE9611EC932800990E91 /* NSData+HexStrings.m */; };
-		9FAE3492165C075800FC117A /* InspectorDriveItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FAE3494165C075800FC117A /* InspectorDriveItem.xib */; };
 		9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */; };
 		9FAEBE4F15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */; };
 		9FAEBE5215D678C800C9AC5F /* DOSWindowBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FAEBE5115D678C800C9AC5F /* DOSWindowBackground.png */; };
@@ -984,6 +985,11 @@
 		9F0F9ED912108A9000ED7A64 /* BXSessionError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSessionError.m; sourceTree = "<group>"; };
 		9F0F9EED1210901800ED7A64 /* BXMountedVolumesError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMountedVolumesError.h; sourceTree = "<group>"; };
 		9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMountedVolumesError.m; sourceTree = "<group>"; };
+		9F125C3E16983A9D003B5B2B /* BXDocumentationPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDocumentationPanelController.h; path = "Boxer/Documentation Panel/BXDocumentationPanelController.h"; sourceTree = SOURCE_ROOT; };
+		9F125C3F16983A9D003B5B2B /* BXDocumentationPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDocumentationPanelController.m; path = "Boxer/Documentation Panel/BXDocumentationPanelController.m"; sourceTree = SOURCE_ROOT; };
+		9F125C43169842F4003B5B2B /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DocumentationPanel.xib; sourceTree = "<group>"; };
+		9F125C4616984378003B5B2B /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/InspectorDriveItem.xib; sourceTree = "<group>"; };
+		9F125C4816984378003B5B2B /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/InspectorJoystickItem.xib; sourceTree = "<group>"; };
 		9F12F97B144875F400FC9645 /* DummyCD.iso */ = {isa = PBXFileReference; lastKnownFileType = file; path = DummyCD.iso; sourceTree = "<group>"; };
 		9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+BXTemporaryFiles.h"; sourceTree = "<group>"; };
 		9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+BXTemporaryFiles.m"; sourceTree = "<group>"; };
@@ -1112,7 +1118,6 @@
 		9F44E5E210D17A4C0081B8D2 /* BXEmulator+BXPaste.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXPaste.h"; sourceTree = "<group>"; };
 		9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXPaste.mm"; sourceTree = "<group>"; };
 		9F45A1BC109C3C3900593456 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/About.xib; sourceTree = "<group>"; };
-		9F45A1C6109C3CB400593456 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/InspectorPanel.xib; sourceTree = "<group>"; };
 		9F45A1C8109C3D1100593456 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/DOSWindow.xib; sourceTree = "<group>"; };
 		9F45A1CC109C3D3400593456 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		9F45A422109C867E00593456 /* BXMountPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMountPanelController.h; sourceTree = "<group>"; };
@@ -1533,7 +1538,6 @@
 		9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFilterGallery.m; sourceTree = "<group>"; };
 		9F9AEE8714CB4AEA00728641 /* BXAppKitVersionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAppKitVersionHelpers.h; sourceTree = "<group>"; };
 		9F9AEE8814CB4AEA00728641 /* BXAppKitVersionHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAppKitVersionHelpers.m; sourceTree = "<group>"; };
-		9F9D47F5165E946F00E16DE7 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/InspectorJoystickItem.xib; sourceTree = "<group>"; };
 		9F9DF413153B058200233968 /* BXKeyBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXKeyBuffer.h; sourceTree = "<group>"; };
 		9F9DF414153B058200233968 /* BXKeyBuffer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXKeyBuffer.mm; sourceTree = "<group>"; };
 		9F9E27C311F8C003003EE8F3 /* BXThemedSegmentedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedSegmentedCell.h; sourceTree = "<group>"; };
@@ -1578,7 +1582,6 @@
 		9FADFE5411EC7E1700990E91 /* BXDigest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDigest.m; sourceTree = "<group>"; };
 		9FADFE9511EC932800990E91 /* NSData+HexStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+HexStrings.h"; path = "../NSData+HexStrings.h"; sourceTree = "<group>"; };
 		9FADFE9611EC932800990E91 /* NSData+HexStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+HexStrings.m"; path = "../NSData+HexStrings.m"; sourceTree = "<group>"; };
-		9FAE3493165C075800FC117A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/InspectorDriveItem.xib; sourceTree = "<group>"; };
 		9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
 		9FAEBE4D15D669AF00C9AC5F /* BXLaunchPanelButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXLaunchPanelButtonCell.h; sourceTree = "<group>"; };
 		9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXLaunchPanelButtonCell.m; sourceTree = "<group>"; };
@@ -1985,6 +1988,7 @@
 				9F27133610C1253E0003CB58 /* DOS window */,
 				9F1CBA94120C7D4300C5E926 /* Game import window */,
 				9F27136610C127F90003CB58 /* Inspector panel */,
+				9F125C3C169838C6003B5B2B /* Documentation panel */,
 				9F9A4C9E10F67CEA00E61965 /* Preferences panel */,
 				9F24D2491224394D009C1817 /* Welcome wagon */,
 				9F496E3E108EEB9800282261 /* Alerts */,
@@ -2115,6 +2119,18 @@
 				9F61F78213EC2D5100505436 /* BXImageAwareFileScan.m */,
 			);
 			name = Operations;
+			sourceTree = "<group>";
+		};
+		9F125C3C169838C6003B5B2B /* Documentation panel */ = {
+			isa = PBXGroup;
+			children = (
+				9F631D7A16947AE900AD06C4 /* BXDocumentationBrowser.h */,
+				9F631D7B16947AE900AD06C4 /* BXDocumentationBrowser.m */,
+				9F125C3E16983A9D003B5B2B /* BXDocumentationPanelController.h */,
+				9F125C3F16983A9D003B5B2B /* BXDocumentationPanelController.m */,
+			);
+			name = "Documentation panel";
+			path = "Documentation Panel";
 			sourceTree = "<group>";
 		};
 		9F160E6E1236B28900F8768E /* Application Delegate */ = {
@@ -2295,8 +2311,6 @@
 				9FCA6D9515C85D8500E1650C /* BXLaunchPanelController.m */,
 				9FAEBE4D15D669AF00C9AC5F /* BXLaunchPanelButtonCell.h */,
 				9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */,
-				9F631D7A16947AE900AD06C4 /* BXDocumentationBrowser.h */,
-				9F631D7B16947AE900AD06C4 /* BXDocumentationBrowser.m */,
 			);
 			path = "DOS window";
 			sourceTree = "<group>";
@@ -2475,6 +2489,7 @@
 		9F496E4C108EEDF700282261 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
+				9F125C42169842F4003B5B2B /* DocumentationPanel.xib */,
 				9F631D8016947B2C00AD06C4 /* DocumentationBrowser.xib */,
 				9F6785651649A791007FE89A /* PrintStatusPanel.xib */,
 				9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */,
@@ -2483,10 +2498,9 @@
 				9F45A1C7109C3D1100593456 /* DOSWindow.xib */,
 				9FDE34111351DCDB000DCE44 /* DOSImportWindow.xib */,
 				9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */,
-				9F45A1C5109C3CB400593456 /* InspectorPanel.xib */,
 				9F6BF48416592EA600D9D66E /* Inspector.xib */,
-				9FAE3494165C075800FC117A /* InspectorDriveItem.xib */,
-				9F9D47F6165E946F00E16DE7 /* InspectorJoystickItem.xib */,
+				9F125C4516984378003B5B2B /* InspectorDriveItem.xib */,
+				9F125C4716984378003B5B2B /* InspectorJoystickItem.xib */,
 				9F9A4CA410F67DD800E61965 /* Preferences.xib */,
 				9F45A1BB109C3C3900593456 /* About.xib */,
 				9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */,
@@ -3697,7 +3711,6 @@
 				9F45A1C9109C3D1100593456 /* DOSWindow.xib in Resources */,
 				9F45A1CD109C3D3400593456 /* MainMenu.xib in Resources */,
 				9F45A46C109C9A0400593456 /* MountPanelOptions.xib in Resources */,
-				9F424222109D061000111D28 /* InspectorPanel.xib in Resources */,
 				9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */,
 				9FCBB2D110A61CA800C28B09 /* executable.icns in Resources */,
 				9FCBB2D210A61CA800C28B09 /* package.icns in Resources */,
@@ -3818,13 +3831,14 @@
 				9F9FF36B165074CB005D1CC1 /* PrinterClip.png in Resources */,
 				9F9FF36D1650E204005D1CC1 /* PrinterPaper.png in Resources */,
 				9F6BF48616592EA600D9D66E /* Inspector.xib in Resources */,
-				9FAE3492165C075800FC117A /* InspectorDriveItem.xib in Resources */,
-				9F9D47F4165E946F00E16DE7 /* InspectorJoystickItem.xib in Resources */,
 				9FB05B9E168FA0940051CE6F /* DocumentationTemplate.pdf in Resources */,
 				9F4C10E11691E0D50092441A /* DiscSwapTemplate.pdf in Resources */,
 				9F1D58F216921AD9007C32AD /* BunnyTemplate.pdf in Resources */,
 				9F1D58F316921AD9007C32AD /* TurtleTemplate.pdf in Resources */,
 				9F631D8216947B2C00AD06C4 /* DocumentationBrowser.xib in Resources */,
+				9F125C44169842F4003B5B2B /* DocumentationPanel.xib in Resources */,
+				9F125C4916984378003B5B2B /* InspectorDriveItem.xib in Resources */,
+				9F125C4A16984378003B5B2B /* InspectorJoystickItem.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4271,8 +4285,9 @@
 				9F201E381657DB7F0086F1BB /* BXUserNotificationDispatcher.m in Sources */,
 				9F4B1AFA165C122F001AE063 /* BXDriveItem.m in Sources */,
 				9FFE7104165E931600F99C3D /* BXJoystickItem.m in Sources */,
-				9F631D7D16947AE900AD06C4 /* BXDocumentationBrowser.m in Sources */,
 				9FA0D0CC1694D62100CEF2EA /* NSURL+BXQuickLookHelpers.m in Sources */,
+				9F125C4016983A9D003B5B2B /* BXDocumentationPanelController.m in Sources */,
+				9F125C4116983F0C003B5B2B /* BXDocumentationBrowser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4618,6 +4633,30 @@
 			name = BoxerHelp;
 			sourceTree = "<group>";
 		};
+		9F125C42169842F4003B5B2B /* DocumentationPanel.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F125C43169842F4003B5B2B /* English */,
+			);
+			name = DocumentationPanel.xib;
+			sourceTree = "<group>";
+		};
+		9F125C4516984378003B5B2B /* InspectorDriveItem.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F125C4616984378003B5B2B /* English */,
+			);
+			name = InspectorDriveItem.xib;
+			sourceTree = "<group>";
+		};
+		9F125C4716984378003B5B2B /* InspectorJoystickItem.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F125C4816984378003B5B2B /* English */,
+			);
+			name = InspectorJoystickItem.xib;
+			sourceTree = "<group>";
+		};
 		9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -4668,14 +4707,6 @@
 			);
 			name = About.xib;
 			path = ..;
-			sourceTree = "<group>";
-		};
-		9F45A1C5109C3CB400593456 /* InspectorPanel.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9F45A1C6109C3CB400593456 /* English */,
-			);
-			name = InspectorPanel.xib;
 			sourceTree = "<group>";
 		};
 		9F45A1C7109C3D1100593456 /* DOSWindow.xib */ = {
@@ -4764,28 +4795,12 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
-		9F9D47F6165E946F00E16DE7 /* InspectorJoystickItem.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9F9D47F5165E946F00E16DE7 /* en */,
-			);
-			name = InspectorJoystickItem.xib;
-			sourceTree = "<group>";
-		};
 		9FAA451411EB40180042B986 /* Configuration.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
 				9FAA445511EB1CC40042B986 /* English */,
 			);
 			name = Configuration.strings;
-			sourceTree = "<group>";
-		};
-		9FAE3494165C075800FC117A /* InspectorDriveItem.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9FAE3493165C075800FC117A /* en */,
-			);
-			name = InspectorDriveItem.xib;
 			sourceTree = "<group>";
 		};
 		9FB453A816442D2900BCF63B /* InfoPlist.strings */ = {

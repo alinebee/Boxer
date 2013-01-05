@@ -152,9 +152,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 #pragma mark -
 #pragma mark Interface actions
 
-//Display the documentation list popover below the documentation toolbar button.
-- (IBAction) showDocumentationPopover: (id)sender;
-
 //Toggle the status bar and program panel components on and off.
 - (IBAction) toggleStatusBarShown:		(id)sender;
 - (IBAction) toggleProgramPanelShown:	(id)sender;

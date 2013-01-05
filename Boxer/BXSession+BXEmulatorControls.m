@@ -20,6 +20,7 @@
 #import "BXDOSWindowController.h"
 #import "BXInputController.h"
 #import "BXBezelController.h"
+#import "BXDocumentationPanelController.h"
 
 #import "NSImage+BXSaveImages.h"
 #import "BXFileTypes.h"
@@ -451,6 +452,9 @@
     if (theAction == @selector(printDocument:) || theAction == @selector(orderFrontPrintStatusPanel:))
         return self.emulator.printer != nil;
     
+    if (theAction == @selector(toggleDocumentation:))
+        return self.hasGamebox;
+    
 	if (theAction == @selector(paste:))
 		return isShowingDOSView && [self canPasteFromPasteboard: [NSPasteboard generalPasteboard]];
 	
@@ -603,7 +607,6 @@
         //or if we're already at the launch panel.
         return self.isEmulating && self.allowsLauncherPanel && (self.DOSWindowController.currentPanel != BXDOSWindowLaunchPanel);
     }
-    
     return YES;
 }
 
@@ -1083,6 +1086,35 @@
         if (siblingDrive && ![siblingDrive isEqual: currentDrive]) return YES;
     }
     return NO;
+}
+
+
+- (IBAction) toggleDocumentation: (id)sender
+{
+    //Create a documentation panel the first time it is needed.
+    if (!self.documentationPanelController)
+        self.documentationPanelController = [BXDocumentationPanelController controller];
+    
+    if (self.documentationPanelController.isShown)
+    {
+        [self.documentationPanelController close];
+    }
+    else
+    {
+        //Check if we can display the documentation as a popover from our documentation button.
+        NSView *relativeView = self.DOSWindowController.documentationButton.view;
+        if (relativeView.window != nil)
+        {
+            [self.documentationPanelController displayForSession: self
+                                         inPopoverRelativeToRect: NSZeroRect
+                                                          ofView: relativeView
+                                                   preferredEdge: NSMinYEdge];
+        }
+        else
+        {
+            [self.documentationPanelController displayForSession: self];
+        }
+    }
 }
 
 @end

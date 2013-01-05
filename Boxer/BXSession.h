@@ -69,6 +69,7 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 @class BXGamebox;
 @class BXDOSWindowController;
 @class BXPrintStatusPanelController;
+@class BXDocumentationPanelController;
 @class UKFNSubscribeFileWatcher;
 
 @interface BXSession : NSDocument <BXEmulatorDelegate>
@@ -122,8 +123,9 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
     //Used by BXAudioControls
     NSMutableSet *_MT32MessagesReceived;
     
-    //The window controller used for displaying the current status of the printer.
     BXPrintStatusPanelController *_printStatusController;
+    
+    BXDocumentationPanelController *_documentationPanelController;
 }
 
 
@@ -138,6 +140,9 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 
 //The print status window, displayed as a sheet while printing is in progress.
 @property (retain, nonatomic) BXPrintStatusPanelController *printStatusController;
+
+//The documentation browser, displayed either as a panel or a popover.
+@property (retain, nonatomic) BXDocumentationPanelController *documentationPanelController;
 
 //The gamebox for this session. BXSession retrieves bundled drives, configuration files and
 //target program from this during emulator configuration.

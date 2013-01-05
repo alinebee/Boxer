@@ -32,8 +32,6 @@
 #import "NSWindow+BXWindowDimensions.h"
 #import "BXGeometry.h"
 
-#import "BXDocumentationBrowser.h"
-
 
 @implementation BXDOSWindowController
 
@@ -432,22 +430,6 @@
 
 #pragma mark -
 #pragma mark UI actions
-
-- (IBAction) showDocumentationPopover: (id)sender
-{
-    if (self.document.hasGamebox && NSClassFromString(@"NSPopover") != nil)
-    {
-        NSPopover *docsPopover = [[NSPopover alloc] init];
-        docsPopover.contentViewController = [BXDocumentationBrowser browserForSession: self.document];
-        docsPopover.behavior = NSPopoverBehaviorSemitransient;
-        docsPopover.animates = YES;
-        
-        NSView *relativeView = self.documentationButton.view;
-        
-        [docsPopover showRelativeToRect: NSZeroRect ofView: relativeView preferredEdge: NSMinYEdge];
-        [docsPopover release];
-    }
-}
 
 - (IBAction) toggleRenderingStyle: (id <NSValidatedUserInterfaceItem>)sender
 {

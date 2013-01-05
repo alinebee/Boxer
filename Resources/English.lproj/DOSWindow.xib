@@ -1302,11 +1302,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">showDocumentationPopover:</string>
+						<string key="label">toggleDocumentation:</string>
 						<reference key="source" ref="1003"/>
 						<reference key="destination" ref="924556485"/>
 					</object>
-					<int key="connectionID">1437</int>
+					<int key="connectionID">1440</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2314,7 +2314,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1439</int>
+			<int key="maxID">1440</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2596,7 +2596,6 @@
 						<string key="hideProgramPanel:">id</string>
 						<string key="performShowDOSView:">id</string>
 						<string key="performShowLaunchPanel:">id</string>
-						<string key="showDocumentationPopover:">id</string>
 						<string key="showProgramPanel:">id</string>
 						<string key="toggleLaunchPanel:">id</string>
 						<string key="toggleProgramPanelShown:">id</string>
@@ -2614,10 +2613,6 @@
 						</object>
 						<object class="IBActionInfo" key="performShowLaunchPanel:">
 							<string key="name">performShowLaunchPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showDocumentationPopover:">
-							<string key="name">showDocumentationPopover:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="showProgramPanel:">
@@ -3108,6 +3103,7 @@
 						<string key="resume:">id</string>
 						<string key="revertShadowedChanges:">id</string>
 						<string key="saveScreenshot:">id</string>
+						<string key="toggleDocumentation:">id</string>
 						<string key="toggleFastForward:">id</string>
 						<string key="togglePaused:">id</string>
 					</dictionary>
@@ -3206,6 +3202,10 @@
 						</object>
 						<object class="IBActionInfo" key="saveScreenshot:">
 							<string key="name">saveScreenshot:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="toggleDocumentation:">
+							<string key="name">toggleDocumentation:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="toggleFastForward:">

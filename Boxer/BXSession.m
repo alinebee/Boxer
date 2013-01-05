@@ -108,6 +108,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 @synthesize DOSWindowController = _DOSWindowController;
 @synthesize printStatusController = _printStatusController;
+@synthesize documentationPanelController = _documentationPanelController;
+
 @synthesize gamebox = _gamebox;
 @synthesize emulator = _emulator;
 @synthesize targetPath = _targetPath;
@@ -239,6 +241,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     self.DOSWindowController = nil;
     self.printStatusController = nil;
+    self.documentationPanelController = nil;
     self.emulator = nil;
     self.gamebox = nil;
     self.gameProfile = nil;
@@ -1034,8 +1037,9 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     //If we were fast-forwarding, clear the bezel now.
     [self releaseFastForward: self];
     
-    //Hide our print status panel.
+    //Hide our documentation and print status panel.
     [self.printStatusController.window orderOut: self];
+    [self.documentationPanelController close];
     
 	//Flag that we're no longer emulating
 	self.emulating = NO;

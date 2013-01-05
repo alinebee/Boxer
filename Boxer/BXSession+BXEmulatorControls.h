@@ -6,8 +6,8 @@
  */
 
 
-//The BXEmulatorControls category is responsible for bridging the session UI with the underlying
-//emulator state. Most of its methods are UI-facing.
+//The BXEmulatorControls category is responsible for bridging the session's UI with the underlying
+//emulator and gamebox features. Most of its methods are UI-facing.
 
 
 #import <Cocoa/Cocoa.h>
@@ -173,5 +173,9 @@ typedef enum {
 //This will show a confirmation first if there are programs running or drives being imported.
 - (IBAction) performRestart: (id)sender;
 - (IBAction) performRestartAtLaunchPanel: (id)sender;
+
+
+#pragma mark - Documentation display
+- (IBAction) toggleDocumentation: (id)sender;
 
 @end

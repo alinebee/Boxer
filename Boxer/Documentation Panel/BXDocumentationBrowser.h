@@ -9,18 +9,19 @@
 #import <Quartz/Quartz.h>
 #import "BXCollectionItemView.h"
 
-//BXDocumentationListController manages the popup list of documentation for the gamebox.
+//BXDocumentationBrowser manages the list of documentation for the gamebox.
 
 @class BXSession;
 @protocol BXDocumentationBrowserDelegate;
 @interface BXDocumentationBrowser : NSViewController <NSCollectionViewDelegate, NSDraggingDestination>
 {
-    NSCollectionView *_documentationList;
     NSArray *_documentationURLs;
     NSIndexSet *_documentationSelectionIndexes;
-    NSScrollView *_documentationScrollView;
     
-    NSSize _minViewSize;
+    NSScrollView *_documentationScrollView;
+    NSCollectionView *_documentationList;
+    NSTextField *_titleLabel;
+    NSTextField *_helpTextLabel;
     
     id <BXDocumentationBrowserDelegate> _delegate;
 }
@@ -28,13 +29,19 @@
 #pragma mark - Properties
 
 //The delegate to which we will send BXDocumentationBrowserDelegate messages.
-@property (assign, nonatomic) id <BXDocumentationBrowserDelegate> delegate;
+@property (assign, nonatomic) IBOutlet id <BXDocumentationBrowserDelegate> delegate;
 
 //The scrolling wrapper in which our documenation list is displayed.
-@property (retain, nonatomic) IBOutlet NSScrollView *documentationScrollView;
+@property (assign, nonatomic) IBOutlet NSScrollView *documentationScrollView;
+
+//The title at the top of the browser.
+@property (assign, nonatomic) IBOutlet NSTextField *titleLabel;
+
+//The help text displayed at the bottom of the browser.
+@property (assign, nonatomic) IBOutlet NSTextField *helpTextLabel;
 
 //The collection view in which our documentation will be displayed.
-@property (retain, nonatomic) IBOutlet NSCollectionView *documentationList;
+@property (assign, nonatomic) IBOutlet NSCollectionView *documentationList;
 
 //An array of NSURLs for the documentation files included in this gamebox.
 //This is mapped directly to the documentation URLs reported by the gamebox.
@@ -51,6 +58,9 @@
 //An array of the currently-selected documentation items.
 @property (readonly, nonatomic) NSArray *selectedDocumentationURLs;
 
+//The ideal size for displaying the browser without clipping.
+//This varies based on the number of documentation items and the length of the title.
+@property (readonly, nonatomic) NSSize intrinsicContentSize;
 
 #pragma mark - Constructors
 
@@ -92,10 +102,6 @@
 
 @protocol BXDocumentationBrowserDelegate <NSObject>
 
-//Called when the documentation list grows or shrinks, to ask permission to grow/shrink the view to match.
-//Can be used by the upstream context to resize the view manually instead.
-- (BOOL) documentationBrowser: (BXDocumentationBrowser *)browser shouldResizeToSize: (NSSize)contentSize;
-
 //Called when the user opens one or more documentation files from the list.
 - (void) documentationBrowser: (BXDocumentationBrowser *)browser didOpenURLs: (NSArray *)URLs;
 
@@ -128,8 +134,12 @@
 @end
 
 
-//Custom subclass for documentation list collection view to tweak keyboard and mouse handling.
+//Custom subclass for documentation list collection view to tweak keyboard and mouse handling
+//and to calculate our ideal display size.
 @interface BXDocumentationList : NSCollectionView
+
+@property (readonly, nonatomic) NSSize intrinsicContentSize;
+
 @end
 
 

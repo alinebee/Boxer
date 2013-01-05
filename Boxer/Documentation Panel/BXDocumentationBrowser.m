@@ -25,9 +25,6 @@ enum {
 //Called to repopulate and re-sort our local copy of the documentation URLs.
 - (void) _syncDocumentationURLs;
 
-//Called whenever the documentation changes to resize the window and re-layout the document list.
-- (void) _syncDocumentationListLayout;
-
 //Used internally by importDocumentationURLs: and removeDocumentationURLs: to handle importing
 //new documentation and restoring previously-deleted documentation (via Undo).
 - (BOOL) _importDocumentationURLs: (NSArray *)URLs
@@ -38,6 +35,9 @@ enum {
 @implementation BXDocumentationBrowser
 @synthesize documentationScrollView = _documentationScrollView;
 @synthesize documentationList = _documentationList;
+@synthesize titleLabel = _titleLabel;
+@synthesize helpTextLabel = _helpTextLabel;
+
 @synthesize documentationURLs = _documentationURLs;
 @synthesize documentationSelectionIndexes = _documentationSelectionIndexes;
 @synthesize delegate = _delegate;
@@ -54,7 +54,6 @@ enum {
     self = [self initWithNibName: @"DocumentationBrowser" bundle: nil];
     if (self)
     {
-        self.documentationURLs = [NSMutableArray array];
         self.representedObject = session;
     }
     
@@ -63,22 +62,21 @@ enum {
 
 - (void) setRepresentedObject: (id)representedObject
 {
-    [self.representedObject removeObserver: self forKeyPath: @"gamebox.documentationURLs"];
-    
-    [super setRepresentedObject: representedObject];
-    
-    [self.representedObject addObserver: self
-                             forKeyPath: @"gamebox.documentationURLs"
-                                options: NSKeyValueObservingOptionInitial
-                                context: NULL];
+    if (self.representedObject != representedObject)
+    {
+        [self.representedObject removeObserver: self forKeyPath: @"gamebox.documentationURLs"];
+        
+        [super setRepresentedObject: representedObject];
+        
+        [self.representedObject addObserver: self
+                                 forKeyPath: @"gamebox.documentationURLs"
+                                    options: NSKeyValueObservingOptionInitial
+                                    context: NULL];
+    }
 }
 
 - (void) awakeFromNib
 {
-    //Record how big the view is in the XIB: we'll use this as our minimum view size
-    //when growing/shrinking the view to account for more documentation items.
-    _minViewSize = self.view.frame.size;
-    
     if ([self.documentationScrollView respondsToSelector: @selector(setUsesPredominantAxisScrolling:)])
         self.documentationScrollView.usesPredominantAxisScrolling = YES;
     
@@ -90,18 +88,13 @@ enum {
     //Insert ourselves into the responder chain ahead of our view.
     self.nextResponder = self.view.nextResponder;
     self.view.nextResponder = self;
-    
-    [self _syncDocumentationListLayout];
 }
 
 - (void) dealloc
 {
     self.representedObject = nil;
-    
     self.view.nextResponder = nil;
     
-    self.documentationScrollView = nil;
-    self.documentationList = nil;
     self.documentationURLs = nil;
     self.documentationSelectionIndexes = nil;
     
@@ -123,45 +116,54 @@ enum {
 
 - (void) _syncDocumentationURLs
 {
-    //IMPLEMENTATION NOTE: when refreshing the documentation list, we want to disturb
-    //the existing entries as little as possible: specifically we want to avoid destroying
-    //and recreating entries for existing URLs, as this would cause their respective views
-    //to be destroyed and recreated as well.
-    
     BXSession *session = (BXSession *)self.representedObject;
     NSArray *newURLs = session.gamebox.documentationURLs;
-    NSArray *oldURLs = [self.documentationURLs copy]; //We take a copy as this array will mutate during iteration
-    
-    //To make sure the collection view sees what's happening, we do these permutations
-    //to the KVO wrapper instead of the underlying array.
-    NSMutableArray *notifier = [self mutableArrayValueForKey: @"documentationURLs"];
-    
-    //We don't get any information from upstream about which entries have been added and removed,
-    //so we work this out for ourselves: removing any URLs that are no longer in the new list,
-    //and adding any URLs that weren't in the old list.
-    for (NSURL *URL in oldURLs)
+    if (self.documentationURLs)
     {
-        if (![newURLs containsObject: URL])
-            [notifier removeObject: URL];
+        //IMPLEMENTATION NOTE: when refreshing an existing documentation list, we want to disturb
+        //the existing entries as little as possible: specifically we want to avoid destroying
+        //and recreating entries for existing URLs, as this would cause their respective views
+        //to be destroyed and recreated as well.
+        
+        NSArray *oldURLs = [self.documentationURLs copy]; //We take a copy as this array will mutate during iteration
+        
+        //To make sure the collection view sees what's happening, we do these permutations
+        //to the KVO wrapper instead of the underlying array.
+        NSMutableArray *notifier = [self mutableArrayValueForKey: @"documentationURLs"];
+        
+        //We don't get any information from upstream about which entries have been added and removed,
+        //so we work this out for ourselves: removing any URLs that are no longer in the new list,
+        //and adding any URLs that weren't in the old list.
+        for (NSURL *URL in oldURLs)
+        {
+            if (![newURLs containsObject: URL])
+                [notifier removeObject: URL];
+        }
+        for (NSURL *URL in newURLs)
+        {
+            if (![oldURLs containsObject: URL])
+                [notifier addObject: URL];
+        }
+        
+        //Finally, re-sort the documentation by filetype and filename.
+        [notifier sortUsingDescriptors: self.sortCriteria];
+        
+        [oldURLs release];
     }
-    for (NSURL *URL in newURLs)
+    else
     {
-        if (![oldURLs containsObject: URL])
-            [notifier addObject: URL];
+        NSArray *sortedURLs = [newURLs sortedArrayUsingDescriptors: self.sortCriteria];
+        self.documentationURLs = [NSMutableArray arrayWithArray: sortedURLs];
     }
     
-    //Finally, re-sort the documentation by filetype and filename.
-    [notifier sortUsingDescriptors: self.sortCriteria];
-    
-    [oldURLs release];
-    
-    //Once the documentation has been updated, re-layout the view appropriately.
-    [self _syncDocumentationListLayout];
+    //Flash the scrollbars (if any) to indicate that the content of the scroller has changed.
+    if ([self.documentationScrollView respondsToSelector: @selector(flashScrollers)])
+        [self.documentationScrollView flashScrollers];
 }
 
 + (NSSet *) keyPathsForValuesAffectingTitle
 {
-    return [NSSet setWithObject: @"representedObject"];
+    return [NSSet setWithObject: @"representedObject.displayName"];
 }
 
 - (NSString *) title
@@ -197,30 +199,40 @@ enum {
 
 #pragma mark - UI layout
 
-- (void) _syncDocumentationListLayout
++ (NSSet *) keyPathsForValuesAffectingIntrinsicContentSize
 {
-    if (self.documentationList)
-    {
-        //Work out the ideal width for displaying the current set of documentation.
-        NSSize minItemSize = self.documentationList.minItemSize;
-        if (NSEqualSizes(minItemSize, NSZeroSize))
-            minItemSize = self.documentationList.itemPrototype.view.frame.size;
-        
-        NSUInteger numItems = MIN(5U, self.documentationURLs.count); //Show a maximum of 5 abreast
-        CGFloat idealWidth = numItems * minItemSize.width;
-        
-        NSSize desiredSize = NSMakeSize(MAX(idealWidth, _minViewSize.width), self.view.frame.size.height);
-        
-        BOOL shouldResize = YES;
-        if ([self.delegate respondsToSelector: @selector(documentationBrowser:shouldResizeToSize:)])
-            shouldResize = [self.delegate documentationBrowser: self shouldResizeToSize: desiredSize];
-        
-        if (shouldResize)
-            [self.view setFrameSize: desiredSize];
-        
-        if ([self.documentationScrollView respondsToSelector: @selector(flashScrollers)])
-            [self.documentationScrollView flashScrollers];
-    }
+    return [NSSet setWithObjects: @"documentationURLs", @"title", nil];
+}
+
+- (NSSize) intrinsicContentSize
+{
+    NSRect containerBounds = self.view.bounds;
+    
+    //Base our ideal content size on the documentation list, taking into account
+    //how far the list's scroll view is from the edges of the wrapping view.
+    NSRect listFrame = self.documentationScrollView.frame;
+    NSSize idealListSize = self.documentationList.intrinsicContentSize;
+    
+    NSSize listMargin = NSMakeSize(containerBounds.size.width - listFrame.size.width,
+                                   containerBounds.size.height - listFrame.size.height);
+    
+    NSSize idealSize = NSMakeSize(idealListSize.width + listMargin.width,
+                                  idealListSize.height + listMargin.height);
+    
+    //Ensure the content size also accommodates the title and help-text
+    //(and their own margins), in case they're wider than the documentation list.
+    NSSize idealTitleSize       = [self.titleLabel.cell cellSize];
+    NSSize idealHelpTextSize    = [self.helpTextLabel.cell cellSize];
+    CGFloat titleMargin     = containerBounds.size.width - self.titleLabel.frame.size.width;
+    CGFloat helpTextMargin  = containerBounds.size.width - self.helpTextLabel.frame.size.width;
+    
+    idealSize.width = MAX(idealSize.width, idealTitleSize.width + titleMargin);
+    idealSize.width = MAX(idealSize.width, idealHelpTextSize.width + helpTextMargin);
+    
+    //IMPLEMENTATION NOTE: these calculations assume that all views are pinned to the
+    //edges of the container, so that their distance (margin) from each edge of the
+    //container will stay constant as the container is resized.
+    return idealSize;
 }
 
 
@@ -490,6 +502,7 @@ enum {
 {
     NSURL *_previewItemURL;
 }
+    
 @property (copy, nonatomic) NSURL *previewItemURL;
 
 + (id) previewItemWithURL: (NSURL *)URL;
@@ -748,6 +761,8 @@ enum {
         highlightRegion.size.width = MIN(contentWidth + (padding * 2), highlightRegion.size.width);
         highlightRegion.origin.x = self.bounds.origin.x + ((self.bounds.size.width - highlightRegion.size.width) * 0.5);
         
+        highlightRegion = NSIntegralRect(highlightRegion);
+        
         NSBezierPath *highlightPath = [NSBezierPath bezierPathWithRoundedRect: highlightRegion
                                                                       xRadius: 8.0
                                                                       yRadius: 8.0];
@@ -783,7 +798,6 @@ enum {
 
 @implementation BXDocumentationList
 
-
 - (BOOL) acceptsFirstMouse: (NSEvent *)theEvent { return YES; }
 
 - (void) keyDown: (NSEvent *)theEvent
@@ -810,6 +824,36 @@ enum {
     }
 }
 
+- (NSSize) intrinsicContentSize
+{
+    //TODO: should we fall back on super implementation for 10.7+?
+    
+    NSSize minItemSize = self.minItemSize;
+    if (NSEqualSizes(minItemSize, NSZeroSize))
+        minItemSize = self.itemPrototype.view.frame.size;
+    
+    NSUInteger numItems = self.content.count;
+    
+    NSUInteger numColumns, numRows;
+    
+    //If we have a maximum number of items per row,
+    //we'll wrap our items to multiple rows.
+    if (self.maxNumberOfColumns > 0)
+    {
+        numColumns = MIN(self.maxNumberOfColumns, numItems);
+        numRows = ceilf((float)numItems / (float)numColumns);
+    }
+    //Otherwise, we'll display all our items in a single row.
+    else
+    {
+        numColumns = numItems;
+        numRows = 1;
+    }
+    
+    return NSMakeSize(numColumns * minItemSize.width,
+                      numRows * minItemSize.height);
+}
+
 @end
 
 
@@ -817,7 +861,7 @@ enum {
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-    NSGradient *gradient = [[NSGradient alloc] initWithStartingColor: [NSColor grayColor]
+    NSGradient *gradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.15]
                                                          endingColor: [NSColor clearColor]];
     
     [gradient drawInRect: self.bounds relativeCenterPosition: NSZeroPoint];

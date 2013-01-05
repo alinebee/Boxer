@@ -16,6 +16,7 @@
 #import "BXDOSWindow.h"
 #import "BXDOSWindowControllerLion.h"
 #import "BXPrintStatusPanelController.h"
+#import "BXDocumentationPanelController.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXCloseAlert.h"
 #import "NDAlias.h"
@@ -1039,7 +1040,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     //Hide our documentation and print status panel.
     [self.printStatusController.window orderOut: self];
-    [self.documentationPanelController close];
     
 	//Flag that we're no longer emulating
 	self.emulating = NO;
@@ -1805,6 +1805,13 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     //Remove any notifications that were posted by this session
     [[BXUserNotificationDispatcher dispatcher] removeAllNotificationsOfType: nil fromSender: self];
+    
+    //Clean up our relationship with the documentation panel (which is otherwise a circular relationship.)
+    if (self.documentationPanelController.session == self)
+    {
+        [self.documentationPanelController close];
+        self.documentationPanelController.session = nil;
+    }
 }
 
 

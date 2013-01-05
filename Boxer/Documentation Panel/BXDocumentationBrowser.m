@@ -801,7 +801,7 @@ enum {
 - (BOOL) acceptsFirstMouse: (NSEvent *)theEvent { return YES; }
 
 - (void) keyDown: (NSEvent *)theEvent
-{    
+{
     //Trigger a preview when the user presses Space.
     if ([theEvent.charactersIgnoringModifiers isEqualToString: @" "])
     {

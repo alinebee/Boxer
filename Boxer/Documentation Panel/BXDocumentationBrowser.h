@@ -102,6 +102,8 @@
 
 @protocol BXDocumentationBrowserDelegate <NSObject>
 
+@optional
+
 //Called when the user opens one or more documentation files from the list.
 - (void) documentationBrowser: (BXDocumentationBrowser *)browser didOpenURLs: (NSArray *)URLs;
 

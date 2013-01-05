@@ -1501,6 +1501,15 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
+								<object class="NSMenuItem" id="1022000225">
+									<reference key="NSMenu" ref="540791426"/>
+									<string key="NSTitle">Game Documentation</string>
+									<string key="NSKeyEquiv">?</string>
+									<int key="NSKeyEquivModMask">1572864</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
 								<object class="NSMenuItem" id="493707059">
 									<reference key="NSMenu" ref="540791426"/>
 									<string key="NSTitle">Printer Status</string>
@@ -2644,6 +2653,14 @@
 					<int key="connectionID">2344</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleDocumentation:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="1022000225"/>
+					</object>
+					<int key="connectionID">2348</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
 						<reference key="source" ref="34920399"/>
@@ -3595,6 +3612,7 @@
 							<reference ref="476483409"/>
 							<reference ref="100059276"/>
 							<reference ref="493707059"/>
+							<reference ref="1022000225"/>
 						</object>
 						<reference key="parent" ref="293253799"/>
 					</object>
@@ -4162,6 +4180,11 @@
 						<reference key="object" ref="462242179"/>
 						<reference key="parent" ref="548981161"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2346</int>
+						<reference key="object" ref="1022000225"/>
+						<reference key="parent" ref="540791426"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -4358,6 +4381,7 @@
 					<string>2339.IBPluginDependency</string>
 					<string>2342.IBPluginDependency</string>
 					<string>2345.IBPluginDependency</string>
+					<string>2346.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>284.IBPluginDependency</string>
 					<string>285.IBPluginDependency</string>
@@ -4617,6 +4641,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -4631,7 +4656,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2345</int>
+			<int key="maxID">2348</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -4945,7 +4970,6 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>hideProgramPanel:</string>
-							<string>performPlayControlAction:</string>
 							<string>performShowDOSView:</string>
 							<string>performShowLaunchPanel:</string>
 							<string>showProgramPanel:</string>
@@ -4957,7 +4981,6 @@
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>id</string>
-							<string>NSSegmentedControl</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4972,7 +4995,6 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>hideProgramPanel:</string>
-							<string>performPlayControlAction:</string>
 							<string>performShowDOSView:</string>
 							<string>performShowLaunchPanel:</string>
 							<string>showProgramPanel:</string>
@@ -4986,10 +5008,6 @@
 							<object class="IBActionInfo">
 								<string key="name">hideProgramPanel:</string>
 								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">performPlayControlAction:</string>
-								<string key="candidateClassName">NSSegmentedControl</string>
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">performShowDOSView:</string>
@@ -5025,6 +5043,7 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>documentationButton</string>
 							<string>inputController</string>
 							<string>inputView</string>
 							<string>launchPanel</string>
@@ -5036,10 +5055,10 @@
 							<string>renderingView</string>
 							<string>statusBar</string>
 							<string>statusBarController</string>
-							<string>toolbarPlayControl</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSToolbarItem</string>
 							<string>BXInputController</string>
 							<string>BXInputView</string>
 							<string>NSView</string>
@@ -5051,13 +5070,13 @@
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>BXStatusBarController</string>
-							<string>NSSegmentedControl</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>documentationButton</string>
 							<string>inputController</string>
 							<string>inputView</string>
 							<string>launchPanel</string>
@@ -5069,10 +5088,13 @@
 							<string>renderingView</string>
 							<string>statusBar</string>
 							<string>statusBarController</string>
-							<string>toolbarPlayControl</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">documentationButton</string>
+								<string key="candidateClassName">NSToolbarItem</string>
+							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">inputController</string>
 								<string key="candidateClassName">BXInputController</string>
@@ -5116,10 +5138,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">statusBarController</string>
 								<string key="candidateClassName">BXStatusBarController</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">toolbarPlayControl</string>
-								<string key="candidateClassName">NSSegmentedControl</string>
 							</object>
 						</object>
 					</object>
@@ -6000,11 +6018,13 @@
 							<string>resume:</string>
 							<string>revertShadowedChanges:</string>
 							<string>saveScreenshot:</string>
+							<string>toggleDocumentation:</string>
 							<string>toggleFastForward:</string>
 							<string>togglePaused:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -6061,6 +6081,7 @@
 							<string>resume:</string>
 							<string>revertShadowedChanges:</string>
 							<string>saveScreenshot:</string>
+							<string>toggleDocumentation:</string>
 							<string>toggleFastForward:</string>
 							<string>togglePaused:</string>
 						</object>
@@ -6160,6 +6181,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">saveScreenshot:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">toggleDocumentation:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

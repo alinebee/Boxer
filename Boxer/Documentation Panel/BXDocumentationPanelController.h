@@ -7,19 +7,24 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "BXDocumentationBrowser.h"
 
 @class NSPopover;
-@class BXDocumentationBrowser;
 @class BXSession;
-@interface BXDocumentationPanelController : NSWindowController <NSPopoverDelegate>
+@interface BXDocumentationPanelController : NSWindowController <NSPopoverDelegate, BXDocumentationBrowserDelegate>
 {
     NSPopover *_popover;
     BXDocumentationBrowser *_popoverBrowser;
     BXDocumentationBrowser *_windowBrowser;
     NSSize _maxPopoverSize;
+    
+    BXSession *_session;
 }
 
 #pragma mark - Properties
+
+//The session whose documents are being displayed in the panel.
+@property (retain, nonatomic) BXSession *session;
 
 //Whether the panel is currently visible, either as a popover or as a window.
 @property (readonly, nonatomic, getter=isShown) BOOL shown;
@@ -48,7 +53,7 @@
 //Displays the documentation browser in a floating utility window.
 - (void) displayForSession: (BXSession *)session;
 
-//Hides our popover and/or window.
+//Hides the popover and/or window.
 - (void) close;
 
 

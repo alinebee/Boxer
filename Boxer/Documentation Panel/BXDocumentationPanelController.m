@@ -7,7 +7,6 @@
 //
 
 #import "BXDocumentationPanelController.h"
-#import "BXDocumentationBrowser.h"
 #import "NSWindow+BXWindowDimensions.h"
 
 @interface BXDocumentationPanelController ()
@@ -31,6 +30,7 @@
 @end
 
 @implementation BXDocumentationPanelController
+@synthesize session = _session;
 @synthesize popover = _popover;
 @synthesize windowBrowser = _windowBrowser;
 @synthesize popoverBrowser = _popoverBrowser;
@@ -58,6 +58,7 @@
     [self.popoverBrowser removeObserver: self forKeyPath: @"intrinsicContentSize"];
     [self.windowBrowser removeObserver: self forKeyPath: @"intrinsicContentSize"];
     
+    self.session = nil;
     self.popover = nil;
     self.popoverBrowser = nil;
     self.windowBrowser = nil;
@@ -68,12 +69,32 @@
 - (void) windowDidLoad
 {
     self.windowBrowser = [BXDocumentationBrowser browserForSession: nil];
+    self.windowBrowser.delegate = self;
+    self.windowBrowser.representedObject = self.session;
+    
     self.window.contentSize = self.windowBrowser.view.frame.size;
     self.window.contentView = self.windowBrowser.view;
     
+    //Fix the responder chain, which will have been reset when we assigned
+    //the browser's view as the content view of the window.
+    self.windowBrowser.nextResponder = self;
+    self.windowBrowser.view.nextResponder = self.windowBrowser;
+    
     [self.windowBrowser addObserver: self forKeyPath: @"intrinsicContentSize"
-                            options: 0
+                            options: NSKeyValueObservingOptionInitial
                             context: nil];
+}
+
+- (void) setSession: (BXSession *)session
+{
+    if (self.session != session)
+    {
+        [_session release];
+        _session = [session retain];
+        
+        self.popoverBrowser.representedObject = session;
+        self.windowBrowser.representedObject = session;
+    }
 }
 
 #pragma mark - Layout management
@@ -153,15 +174,17 @@
 {
     //If popovers are available, create one now and display it.
     if ([self.class supportsPopover])
-    {
+    {   
         //Create the popover and browser the first time they are needed.
         if (!self.popover)
         {
             self.popoverBrowser = [BXDocumentationBrowser browserForSession: session];
+            self.popoverBrowser.delegate = self;
             
             self.popover = [[[NSPopover alloc] init] autorelease];
-            self.popover.behavior = NSPopoverBehaviorSemitransient;
+            self.popover.behavior = NSPopoverBehaviorSemitransient; //Allows files to be drag-dropped into the popover
             self.popover.animates = YES;
+            self.popover.delegate = self;
             
             self.popover.contentViewController = self.popoverBrowser;
             
@@ -173,7 +196,7 @@
         
         [self willChangeValueForKey: @"shown"];
         
-        self.popoverBrowser.representedObject = session;
+        self.session = session;
         [self.popover showRelativeToRect: positioningRect ofView: positioningView preferredEdge: preferredEdge];
         
         [self didChangeValueForKey: @"shown"];
@@ -192,10 +215,7 @@
     //Ensure the window and associated browser are created.
     self.window;
     
-    //Ensure the browser knows which session it's representing.
-    //(This will populate the browser and will trigger the window to be resized.)
-    self.windowBrowser.representedObject = session;
-    
+    self.session = session;
     [self.window makeKeyAndOrderFront: self];
     
     [self didChangeValueForKey: @"shown"];
@@ -217,6 +237,23 @@
 - (BOOL) isShown
 {
     return (self.popover.isShown || (self.isWindowLoaded && self.window.isVisible));
+}
+
+/*
+ //Tear-off popovers are disabled for now because they screw up the responder chain
+ //and can cause rendering errors when the original popover is reused.
+- (NSWindow *) detachableWindowForPopover: (NSPopover *)popover
+{
+    return self.window;
+}
+ */
+
+#pragma mark - Delegate responses
+
+- (void) documentationBrowser: (BXDocumentationBrowser *)browser didOpenURLs: (NSArray *)URLs
+{
+    //Close our popover/window when the user opens a documentation file.
+    [self close];
 }
 
 @end

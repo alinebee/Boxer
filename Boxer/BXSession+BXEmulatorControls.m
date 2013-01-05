@@ -20,7 +20,9 @@
 #import "BXDOSWindowController.h"
 #import "BXInputController.h"
 #import "BXBezelController.h"
+
 #import "BXDocumentationPanelController.h"
+#import "BXInspectorController.h"
 
 #import "NSImage+BXSaveImages.h"
 #import "BXFileTypes.h"
@@ -1103,7 +1105,7 @@
     {
         //Check if we can display the documentation as a popover from our documentation button.
         NSView *relativeView = self.DOSWindowController.documentationButton.view;
-        if (relativeView.window != nil)
+        if (relativeView.window != nil && !self.DOSWindowController.window.isFullScreen)
         {
             [self.documentationPanelController displayForSession: self
                                          inPopoverRelativeToRect: NSZeroRect
@@ -1115,6 +1117,59 @@
             [self.documentationPanelController displayForSession: self];
         }
     }
+}
+
+
+#pragma mark -
+#pragma mark Responding to UI changes
+
+- (void) userDidToggleProgramPanel
+{
+    //If the user toggled the program panel while at the DOS prompt, record its state
+    //so that we'll return it to that state when they next return to the DOS prompt.
+    //(If they toggle it while running a game, we ignore the event because they're
+    //probably just messing around rather than indicating intent.)
+    if (self.emulator.isAtPrompt)
+    {
+        BOOL panelShown = self.DOSWindowController.programPanelShown;
+        [self.gameSettings setObject: [NSNumber numberWithBool: panelShown]
+                              forKey: BXGameboxSettingsShowProgramPanelKey];
+    }
+}
+
+- (void) userDidToggleFullScreen
+{
+    BOOL isInFullscreen = self.DOSWindowController.window.isFullScreen;
+    [self.gameSettings setObject: [NSNumber numberWithBool: isInFullscreen]
+                          forKey: BXGameboxSettingsStartUpInFullScreenKey];
+}
+
+- (void) userDidToggleLaunchPanel
+{
+    _userSwitchedToDOSPrompt = (self.DOSWindowController.currentPanel == BXDOSWindowDOSView);
+}
+
+- (void) didToggleMouseLocked
+{
+    BOOL locked = self.DOSWindowController.inputController.mouseLocked;
+    if (locked)
+    {
+        //Conceal the Inspector panel while the mouse is locked
+        [[BXInspectorController controller] hideIfVisible];
+        
+        //Close the documentation browser too
+        [self.documentationPanelController close];
+    }
+    else
+    {
+        //If we were previously concealing the Inspector, then reveal it now
+        [[BXInspectorController controller] revealIfHidden];
+    }
+    
+    //Let everybody else know we've grabbed the mouse
+    NSString *notification = (locked) ? BXSessionDidLockMouseNotification : BXSessionDidUnlockMouseNotification;
+    [[NSNotificationCenter defaultCenter] postNotificationName: notification
+                                                        object: self];
 }
 
 @end

@@ -206,7 +206,7 @@
 								<double key="NSPercent">0.63157892227172852</double>
 							</object>
 						</array>
-						<string key="NSFrame">{{0, 22}, {480, 192}}</string>
+						<string key="NSFrame">{{0, 30}, {480, 192}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="267198679"/>

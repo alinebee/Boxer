@@ -560,32 +560,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     }
 }
 
-- (void) userDidToggleProgramPanel
-{
-    //If the user toggled the program panel while at the DOS prompt, record its state
-    //so that we'll return it to that state when they next return to the DOS prompt.
-    //(If they toggle it while running a game, we ignore the event because they're
-    //probably just messing around rather than indicating intent.)
-    if (self.emulator.isAtPrompt)
-    {
-        BOOL panelShown = self.DOSWindowController.programPanelShown;
-        [self.gameSettings setObject: [NSNumber numberWithBool: panelShown]
-                              forKey: BXGameboxSettingsShowProgramPanelKey];
-    }
-}
-
-- (void) userDidToggleFullScreen
-{
-    BOOL isInFullscreen = self.DOSWindowController.window.isFullScreen;
-    [self.gameSettings setObject: [NSNumber numberWithBool: isInFullscreen]
-                          forKey: BXGameboxSettingsStartUpInFullScreenKey];
-}
-
-- (void) userDidToggleLaunchPanel
-{
-    _userSwitchedToDOSPrompt = (self.DOSWindowController.currentPanel == BXDOSWindowDOSView);
-}
-
 
 #pragma mark -
 #pragma mark Flow control

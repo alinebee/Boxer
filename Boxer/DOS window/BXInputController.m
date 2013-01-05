@@ -446,11 +446,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
             [self _applyMouseLockState: lock];
             _mouseLocked = lock;
             
-            //Let everybody know we've grabbed the mouse on behalf of our session
-            NSString *notification = (lock) ? BXSessionDidLockMouseNotification : BXSessionDidUnlockMouseNotification;
-            [[NSNotificationCenter defaultCenter] postNotificationName: notification
-                                                                object: self.representedObject]; 
-            
+            [self.representedObject didToggleMouseLocked];
         }
     }
 	

@@ -202,26 +202,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 #pragma mark -
-#pragma mark Application mode changes
-
-- (void) sessionDidUnlockMouse: (NSNotification *)notification
-{
-    [super sessionDidUnlockMouse: notification];
-	
-	//If we were previously concealing the Inspector, then reveal it now
-	[[BXInspectorController controller] revealIfHidden];
-}
-
-- (void) sessionDidLockMouse: (NSNotification *)notification
-{
-    [super sessionDidLockMouse: notification];
-	
-	//Conceal the Inspector panel while the mouse is locked
-	[[BXInspectorController controller] hideIfVisible];
-}
-
-
-#pragma mark -
 #pragma mark Document handling
 
 //Customise the open panel

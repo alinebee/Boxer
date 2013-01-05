@@ -175,7 +175,25 @@ typedef enum {
 - (IBAction) performRestartAtLaunchPanel: (id)sender;
 
 
-#pragma mark - Documentation display
+#pragma mark - Documentation
+
 - (IBAction) toggleDocumentation: (id)sender;
+
+
+#pragma mark - Responding to UI changes
+
+//Called when the user has manually changed the state of the program panel.
+//This records the state of the program panel to use next time the user starts up this gamebox.
+- (void) userDidToggleProgramPanel;
+
+//Called when the user has manually toggled full screen mode.
+//This records the fullscreen/windowed to use next time the user starts up this gamebox.
+- (void) userDidToggleFullScreen;
+
+//Called when the user manually switches from/to the launch panel to/from the DOS prompt.
+- (void) userDidToggleLaunchPanel;
+
+//Called when the mouse is locked or unlocked from the window. Hides/re-shows subsidiary windows.
+- (void) didToggleMouseLocked;
 
 @end

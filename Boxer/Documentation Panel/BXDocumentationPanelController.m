@@ -156,6 +156,7 @@
     NSUInteger oldCount = oldURLs.count, newCount = newURLs.count;
     
     //Freeze the size of the browser's existing documentation items while it updates, to prevent them reflowing.
+    //TODO: find a less destructive way to do this, e.g. by temporarily disabling
     NSCollectionView *collection = browser.documentationList;
     if (collection.content.count)
     {

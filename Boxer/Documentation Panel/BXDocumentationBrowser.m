@@ -80,8 +80,8 @@ enum {
     if ([self.documentationScrollView respondsToSelector: @selector(setUsesPredominantAxisScrolling:)])
         self.documentationScrollView.usesPredominantAxisScrolling = YES;
     
-    if ([self.documentationScrollView respondsToSelector: @selector(setVerticalScrollElasticity:)])
-        self.documentationScrollView.verticalScrollElasticity = NSScrollElasticityNone;
+    if ([self.documentationScrollView respondsToSelector: @selector(setHorizontalScrollElasticity:)])
+        self.documentationScrollView.horizontalScrollElasticity = NSScrollElasticityNone;
     
     self.documentationList.minItemSize = self.documentationList.itemPrototype.view.frame.size;
     

@@ -117,48 +117,47 @@ enum {
 - (void) _syncDocumentationURLs
 {
     BXSession *session = (BXSession *)self.representedObject;
-    NSArray *newURLs = session.gamebox.documentationURLs;
-    if (self.documentationURLs)
-    {
-        //IMPLEMENTATION NOTE: when refreshing an existing documentation list, we want to disturb
-        //the existing entries as little as possible: specifically we want to avoid destroying
-        //and recreating entries for existing URLs, as this would cause their respective views
-        //to be destroyed and recreated as well.
-        
-        NSArray *oldURLs = [self.documentationURLs copy]; //We take a copy as this array will mutate during iteration
-        
-        //To make sure the collection view sees what's happening, we do these permutations
-        //to the KVO wrapper instead of the underlying array.
-        NSMutableArray *notifier = [self mutableArrayValueForKey: @"documentationURLs"];
-        
-        //We don't get any information from upstream about which entries have been added and removed,
-        //so we work this out for ourselves: removing any URLs that are no longer in the new list,
-        //and adding any URLs that weren't in the old list.
-        for (NSURL *URL in oldURLs)
-        {
-            if (![newURLs containsObject: URL])
-                [notifier removeObject: URL];
-        }
-        for (NSURL *URL in newURLs)
-        {
-            if (![oldURLs containsObject: URL])
-                [notifier addObject: URL];
-        }
-        
-        //Finally, re-sort the documentation by filetype and filename.
-        [notifier sortUsingDescriptors: self.sortCriteria];
-        
-        [oldURLs release];
-    }
-    else
-    {
-        NSArray *sortedURLs = [newURLs sortedArrayUsingDescriptors: self.sortCriteria];
-        self.documentationURLs = [NSMutableArray arrayWithArray: sortedURLs];
-    }
+    NSArray *newURLs = [session.gamebox.documentationURLs sortedArrayUsingDescriptors: self.sortCriteria];
     
-    //Flash the scrollbars (if any) to indicate that the content of the scroller has changed.
-    if ([self.documentationScrollView respondsToSelector: @selector(flashScrollers)])
-        [self.documentationScrollView flashScrollers];
+    if (![newURLs isEqualToArray: self.documentationURLs])
+    {
+        if (self.documentationURLs)
+        {
+            //IMPLEMENTATION NOTE: when refreshing an existing documentation list, we want to disturb
+            //the existing entries as little as possible: specifically we want to avoid destroying
+            //and recreating an entry for the same URL, as this would cause its respective view
+            //to be destroyed and recreated as well.
+            
+            //So, we walk through the incoming URLs seeing which ones we already have entries for.
+            //If we already have an entry for a URL then we reuse our existing NSURL object;
+            //otherwise we adopt the new NSURL object. This preserves our existing documentation views.
+            
+            NSMutableArray *finalURLs = [NSMutableArray arrayWithCapacity: newURLs.count];
+            
+            NSArray *oldURLs = self.documentationURLs;
+            for (NSURL *URL in newURLs)
+            {
+                //Note that indexOfObject: uses an isEqual: equality comparison,
+                //rather than a == identity comparison.
+                //This means it will return URLs that match the new one but aren't the same object.
+                NSUInteger existingURLIndex = [oldURLs indexOfObject: URL];
+                if (existingURLIndex != NSNotFound)
+                    [finalURLs addObject: [oldURLs objectAtIndex: existingURLIndex]];
+                else
+                    [finalURLs addObject: URL];
+            }
+            
+            self.documentationURLs = finalURLs;
+        }
+        else
+        {
+            self.documentationURLs = [NSMutableArray arrayWithArray: newURLs];
+        }
+        
+        //Flash the scrollbars (if any) to indicate that the content of the scroller has changed.
+        if ([self.documentationScrollView respondsToSelector: @selector(flashScrollers)])
+            [self.documentationScrollView flashScrollers];
+    }
 }
 
 + (NSSet *) keyPathsForValuesAffectingTitle
@@ -172,6 +171,11 @@ enum {
     NSString *displayName = [(BXSession *)self.representedObject displayName];
     
     return [NSString stringWithFormat: titleFormat, displayName];
+}
+
++ (NSSet *) keyPathsForValuesAffectingSelectedDocumentationURLs
+{
+    return [NSSet setWithObjects: @"documentationURLs", @"documentationSelectionIndexes", nil];
 }
 
 - (NSArray *) selectedDocumentationURLs

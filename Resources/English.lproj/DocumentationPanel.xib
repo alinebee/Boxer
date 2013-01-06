@@ -41,7 +41,7 @@
 				<string key="NSWindowClass">NSPanel</string>
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
-				<string key="NSWindowContentMaxSize">{640, 480}</string>
+				<string key="NSWindowContentMaxSize">{640, 448}</string>
 				<object class="NSView" key="NSWindowView" id="593475654">
 					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
@@ -52,7 +52,7 @@
 					<string key="NSReuseIdentifierKey">_NS:21</string>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
-				<string key="NSMaxSize">{640, 496}</string>
+				<string key="NSMaxSize">{640, 464}</string>
 				<string key="NSFrameAutosaveName">DocumentationPanel</string>
 				<bool key="NSWindowIsRestorable">NO</bool>
 			</object>

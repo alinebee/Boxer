@@ -49,7 +49,7 @@
     self = [super initWithWindow: window];
     if (self)
     {
-        self.maxPopoverSize = NSMakeSize(640, 480);
+        self.maxPopoverSize = NSMakeSize(640, 448);
     }
     return self;
 }

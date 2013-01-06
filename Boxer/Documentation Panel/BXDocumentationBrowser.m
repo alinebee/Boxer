@@ -876,6 +876,8 @@ enum {
     
     NSUInteger numColumns, numRows;
     
+    if (!numItems) numItems = 1;
+    
     //If we have a maximum number of items per row,
     //we'll wrap our items to multiple rows.
     if (self.maxNumberOfColumns > 0)

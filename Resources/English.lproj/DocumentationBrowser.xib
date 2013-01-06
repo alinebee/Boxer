@@ -72,6 +72,7 @@
 						<string key="NSFrame">{{17, 7}, {446, 14}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:1535</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="661646074">
@@ -133,7 +134,7 @@
 					</object>
 					<object class="NSScrollView" id="504448256">
 						<reference key="NSNextResponder" ref="1005"/>
-						<int key="NSvFlags">266</int>
+						<int key="NSvFlags">274</int>
 						<array class="NSMutableArray" key="NSSubviews">
 							<object class="NSClipView" id="974789508">
 								<reference key="NSNextResponder" ref="504448256"/>
@@ -145,12 +146,12 @@
 										<string key="NSFrameSize">{480, 192}</string>
 										<reference key="NSSuperview" ref="974789508"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView" ref="267198679"/>
+										<reference key="NSNextKeyView" ref="342156510"/>
 										<string key="NSReuseIdentifierKey">_NS:80</string>
 										<string key="NSMinGridSize">{0, 0}</string>
 										<string key="NSMaxGridSize">{0, 0}</string>
-										<int key="NSMaxNumberOfGridRows">1</int>
-										<int key="NSMaxNumberOfGridColumns">0</int>
+										<int key="NSMaxNumberOfGridRows">0</int>
+										<int key="NSMaxNumberOfGridColumns">4</int>
 										<array key="NSBackgroundColors">
 											<object class="NSColor" id="341878427">
 												<int key="NSColorSpace">3</int>
@@ -194,7 +195,7 @@
 							<object class="NSScroller" id="342156510">
 								<reference key="NSNextResponder" ref="504448256"/>
 								<int key="NSvFlags">-2147483392</int>
-								<string key="NSFrame">{{1, 144}, {233, 15}}</string>
+								<string key="NSFrame">{{-100, -100}, {233, 15}}</string>
 								<reference key="NSSuperview" ref="504448256"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="95452772"/>
@@ -209,9 +210,9 @@
 						<string key="NSFrame">{{0, 30}, {480, 192}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="974789508"/>
+						<reference key="NSNextKeyView" ref="267198679"/>
 						<string key="NSReuseIdentifierKey">_NS:76</string>
-						<int key="NSsFlags">133664</int>
+						<int key="NSsFlags">133648</int>
 						<reference key="NSVScroller" ref="267198679"/>
 						<reference key="NSHScroller" ref="342156510"/>
 						<reference key="NSContentView" ref="974789508"/>
@@ -238,6 +239,7 @@
 						<string key="NSFrame">{{13, 16}, {134, 32}}</string>
 						<reference key="NSSuperview" ref="979582564"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:1535</string>
 						<int key="NSTag">2</int>
 						<bool key="NSEnabled">YES</bool>
@@ -847,7 +849,7 @@
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="delegate">id</string>
-						<string key="documentationList">NSCollectionView</string>
+						<string key="documentationList">BXDocumentationList</string>
 						<string key="documentationScrollView">NSScrollView</string>
 						<string key="helpTextLabel">NSTextField</string>
 						<string key="titleLabel">NSTextField</string>
@@ -859,7 +861,7 @@
 						</object>
 						<object class="IBToOneOutletInfo" key="documentationList">
 							<string key="name">documentationList</string>
-							<string key="candidateClassName">NSCollectionView</string>
+							<string key="candidateClassName">BXDocumentationList</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="documentationScrollView">
 							<string key="name">documentationScrollView</string>

@@ -63,10 +63,15 @@ enum {
         
         [super setRepresentedObject: representedObject];
         
-        [self.representedObject addObserver: self
-                                 forKeyPath: @"gamebox.documentationURLs"
-                                    options: NSKeyValueObservingOptionInitial
-                                    context: NULL];
+        if (self.representedObject)
+        {
+            [self.representedObject addObserver: self
+                                     forKeyPath: @"gamebox.documentationURLs"
+                                        options: 0
+                                        context: NULL];
+            
+            [self _syncDocumentationURLs];
+        }
     }
 }
 
@@ -116,7 +121,10 @@ enum {
 {
     if ([keyPath isEqualToString: @"gamebox.documentationURLs"])
     {
-        [self _syncDocumentationURLs];
+        //IMPLEMENTATION NOTE: we delay resyncing the URLs until the end of the run loop,
+        //in case there are numerous changes to the documentation going on.
+        [NSObject cancelPreviousPerformRequestsWithTarget: self selector: @selector(_syncDocumentationURLs) object: nil];
+        [self performSelector: @selector(_syncDocumentationURLs) withObject: nil afterDelay: 0];
     }
 }
 
@@ -346,8 +354,12 @@ enum {
         
         [self.undoManager setActionName: actionName];
         
+        //Once all imports are complete, select the newly-imported items.
+        //IMPLEMENTATION NOTE: we synchronize the URLs immediately as we do this to ensure
+        //all the new URLs are present in the documentation list. Otherwise, our URLs won’t
+        //be synchronized until the end of the event loop while we wait for more changes.
+        [self _syncDocumentationURLs];
         
-        //Select the newly-imported items.
         NSMutableIndexSet *selectionIndexes = [NSMutableIndexSet indexSet];
         for (NSURL *URL in importedURLs)
         {

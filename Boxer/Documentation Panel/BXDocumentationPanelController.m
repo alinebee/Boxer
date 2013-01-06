@@ -265,7 +265,7 @@
 
 - (NSUndoManager *) windowWillReturnUndoManager: (NSWindow *)window
 {
-    return self.undoManager;
+    return self.session.undoManager;
 }
 
 @end

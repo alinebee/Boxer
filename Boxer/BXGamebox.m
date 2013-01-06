@@ -71,6 +71,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 @implementation BXGamebox
 @synthesize gameInfo = _gameInfo;
+@synthesize undoDelegate = _undoDelegate;
 
 //We ignore files with these names when considering which programs are important enough to list
 //TODO: read this data from a configuration plist instead
@@ -95,6 +96,8 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 - (void) dealloc
 {
+    [self.undoDelegate removeAllUndoActionsForClient: self];
+    
     self.gameInfo = nil;
     
     [_launchers release], _launchers = nil;
@@ -633,6 +636,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 typedef enum {
     BXGameboxDocumentationCopy,
+    BXGameboxDocumentationMove,
     BXGameboxDocumentationSymlink,
 } BXGameboxDocumentationOperation;
 
@@ -847,6 +851,24 @@ typedef enum {
     //Clean up our temporary folder on our way out, regardless of success or failure.
     [manager removeItemAtURL: intermediateBaseURL error: NULL];
     
+    if (destinationURL != nil)
+    {
+        //If we succeeded, record an undo operation for this.
+        NSUndoManager *undoManager = [self.undoDelegate undoManagerForClient: self operation: _cmd];
+        if (undoManager)
+        {
+            id undoProxy = [undoManager prepareWithInvocationTarget: self];
+            //NOTE: error information will be lost if the document cannot be trashed,
+            //since we will have no upstream context for it.
+            [undoProxy trashDocumentationURL: destinationURL
+                                       error: NULL];
+        }
+        
+        //If this was a move operation and we succeeded, then finish by removing the original file.
+        if (operation == BXGameboxDocumentationMove)
+            [manager removeItemAtURL: documentationURL error: NULL];
+    }
+    
     return destinationURL;
 }
 
@@ -879,6 +901,7 @@ typedef enum {
 - (NSURL *) trashDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError
 {
     NSURL *docsURL = [self documentationFolderURLCreatingIfMissing: NO error: NULL];
+    
     if ([documentationURL isBasedInURL: docsURL])
     {
         NSFileManager *manager = [[NSFileManager alloc] init];
@@ -895,7 +918,24 @@ typedef enum {
         [manager release];
         
         if (removed)
+        {
+            NSUndoManager *undoManager = [self.undoDelegate undoManagerForClient: self operation: _cmd];
+            if (undoManager)
+            {
+                NSString *restoredTitle = documentationURL.lastPathComponent.stringByDeletingPathExtension;
+                
+                id undoProxy = [undoManager prepareWithInvocationTarget: self];
+                //NOTE: error information will be lost if the document cannot be restored,
+                //since we will have no upstream context for it.
+                [undoProxy _addDocumentationFromURL: trashedURL
+                                          withTitle: restoredTitle
+                                          operation: BXGameboxDocumentationMove
+                                           ifExists: BXGameboxDocumentationRename
+                                              error: NULL];
+            }
+            
             return trashedURL;
+        }
         else
             return nil;
     }

@@ -360,9 +360,10 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		[_gamebox release];
 		_gamebox = [gamebox retain];
 		
-		//Load up the settings and game profile for this gamebox while we're at it.
 		if (self.gamebox)
 		{
+            self.gamebox.undoDelegate = self;
+            //Load up the settings and game profile for this gamebox while we're at it.
 			[self _loadGameSettingsForGamebox: self.gamebox];
 		}
 	}
@@ -2046,6 +2047,20 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 - (void) _syncSuppressesDisplaySleep
 {
     self.suppressesDisplaySleep = [self _shouldSuppressDisplaySleep];
+}
+
+
+#pragma mark - Undo management
+
+- (NSUndoManager *) undoManagerForClient: (id <BXUndoable>)undoClient operation: (SEL)operation
+{
+    NSLog(@"Undo manager for client: %@ operation: %@", undoClient, NSStringFromSelector(operation));
+    return self.undoManager;
+}
+
+- (void) removeAllUndoActionsForClient: (id <BXUndoable>)undoClient
+{
+    [self.undoManager removeAllActionsWithTarget: undoClient];
 }
 
 @end

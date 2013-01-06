@@ -19,6 +19,7 @@
 
 #import "BXEmulatorDelegate.h"
 #import "BXGameProfile.h"
+#import "BXUndoExtensions.h"
 
 
 #pragma mark -
@@ -72,7 +73,7 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 @class BXDocumentationPanelController;
 @class UKFNSubscribeFileWatcher;
 
-@interface BXSession : NSDocument <BXEmulatorDelegate>
+@interface BXSession : NSDocument <BXEmulatorDelegate, BXUndoDelegate>
 {	
 	BXEmulator *_emulator;
 	BXGamebox *_gamebox;

@@ -240,14 +240,12 @@
     return (self.popover.isShown || (self.isWindowLoaded && self.window.isVisible));
 }
 
-/*
  //Tear-off popovers are disabled for now because they screw up the responder chain
  //and can cause rendering errors when the original popover is reused.
 - (NSWindow *) detachableWindowForPopover: (NSPopover *)popover
 {
     return self.window;
 }
- */
 
 #pragma mark - Delegate responses
 

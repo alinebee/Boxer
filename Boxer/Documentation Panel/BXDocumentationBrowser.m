@@ -25,11 +25,6 @@ enum {
 //Called to repopulate and re-sort our local copy of the documentation URLs.
 - (void) _syncDocumentationURLs;
 
-//Used internally by importDocumentationURLs: and removeDocumentationURLs: to handle importing
-//new documentation and restoring previously-deleted documentation (via Undo).
-- (BOOL) _importDocumentationURLs: (NSArray *)URLs
-             restoringDeletedURLs: (NSArray *)originalURLs;
-
 @end
 
 @implementation BXDocumentationBrowser
@@ -92,8 +87,6 @@ enum {
 
 - (void) dealloc
 {
-    [self.undoManager removeAllActionsWithTarget: self];
-    
     self.representedObject = nil;
     self.view.nextResponder = nil;
     
@@ -267,8 +260,7 @@ enum {
     }
 }
 
-- (BOOL) _importDocumentationURLs: (NSArray *)URLs
-             restoringDeletedURLs: (NSArray *)originalURLs
+- (BOOL) importDocumentationURLs: (NSArray *)URLs
 {
     BXSession *session = self.representedObject;
     
@@ -279,18 +271,8 @@ enum {
     for (NSURL *URL in URLs)
     {
         NSError *importingError = nil;
-        NSString *title = nil;
-        
-        //If we're restoring a previously-deleted URL, then try to give it the same
-        //name as it previously had. This compensates for any renaming of the file
-        //when it was moved to the Trash.
-        if (originalURLs)
-        {
-            NSURL *originalURL = [originalURLs objectAtIndex: offset];
-            title = originalURL.lastPathComponent.stringByDeletingPathExtension;
-        }
         NSURL *importedURL = [session.gamebox addDocumentationFileFromURL: URL
-                                                                withTitle: title
+                                                                withTitle: nil
                                                                  ifExists: BXGameboxDocumentationRename
                                                                     error: &importingError];
         
@@ -298,10 +280,6 @@ enum {
         {
             [importedURLs addObject: importedURL];
             offset++;
-            
-            //If we're restoring a previously-deleted URL, then clean up the source URL from the Trash.
-            if (originalURLs)
-                [[NSFileManager defaultManager] removeItemAtURL: URL error: NULL];
         }
         else
         {
@@ -321,33 +299,23 @@ enum {
         }
     }
     
+    //If we successfully imported anything, the gamebox should have recorded undos for each one:
+    //apply a suitable name for the overall undo operation.
     if (importedURLs.count)
     {
-        [self.undoManager registerUndoWithTarget: self
-                                        selector: @selector(removeDocumentationURLs:)
-                                          object: importedURLs];
-        
         NSString *actionName;
         
-        //Vary the title for the undo action, based on if it'll be recorded
-        //as a redo operation and based on how many URLs were imported.
         if (importedURLs.count > 1)
         {
-            NSString *actionNameFormat;
-            if (self.undoManager.isUndoing)
-                actionNameFormat = NSLocalizedString(@"Removal of %u manuals", @"Undo menu action title when removing multiple documentation items. %u is the number of items removed as an unsigned integer.");
-            else
-                actionNameFormat = NSLocalizedString(@"Importing of %u manuals", @"Undo menu action title when importing multiple documentation items. %u is the number of items imported as an unsigned integer.");
+            NSString *actionNameFormat = NSLocalizedString(@"Importing of %u manuals",
+                                                           @"Undo menu action title when importing multiple documentation items. %u is the number of items imported as an unsigned integer.");
             
             actionName = [NSString stringWithFormat: actionNameFormat, importedURLs.count];
         }
         else
         {
-            NSString *actionNameFormat;
-            if (self.undoManager.isUndoing)
-                actionNameFormat = NSLocalizedString(@"Removal of “%@”", @"Undo menu action title when removing a documentation item. %@ is the display name of the documentation item as it appears in the UI.");
-            else
-                actionNameFormat = NSLocalizedString(@"Importing of “%@”", @"Undo menu action title when importing a documentation item. %@ is the display name of the documentation item as it appears in the UI.");
+            NSString *actionNameFormat = NSLocalizedString(@"Importing of “%@”",
+                                                           @"Undo menu action title when importing a documentation item. %@ is the display name of the documentation item as it appears in the UI.");
             
             NSString *displayName = [importedURLs.lastObject lastPathComponent].stringByDeletingPathExtension;
             actionName = [NSString stringWithFormat: actionNameFormat, displayName];
@@ -359,11 +327,6 @@ enum {
     return importedSuccessfully;
 }
 
-- (BOOL) importDocumentationURLs: (NSArray *)URLs
-{
-    return [self _importDocumentationURLs: URLs restoringDeletedURLs: nil];
-}
-    
 - (BOOL) removeDocumentationURLs: (NSArray *)URLs
 {
     BXSession *session = self.representedObject;
@@ -398,32 +361,25 @@ enum {
         }
     }
     
+    //If we successfully trashed anything, the gamebox should have recorded undos for each one:
+    //apply a suitable name for the overall undo operation.
     if (trashedURLs.count)
     {
-        id undoProxy = [self.undoManager prepareWithInvocationTarget: self];
-        [undoProxy _importDocumentationURLs: trashedURLs restoringDeletedURLs: URLs];
-        
         NSString *actionName;
         
         //Vary the title for the undo action, based on if it'll be recorded
         //as a redo operation and based on how many URLs were imported.
         if (trashedURLs.count > 1)
         {
-            NSString *actionNameFormat;
-            if (self.undoManager.isUndoing)
-                actionNameFormat = NSLocalizedString(@"Importing of %u manuals", @"Undo menu action title when importing multiple documentation items. %u is the number of items imported as an unsigned integer.");
-            else
-                actionNameFormat = NSLocalizedString(@"Removal of %u manuals", @"Undo menu action title when removing multiple documentation items. %u is the number of items removed as an unsigned integer.");
+            NSString *actionNameFormat = NSLocalizedString(@"Removal of %u manuals",
+                                                           @"Undo menu action title when removing multiple documentation items. %u is the number of items removed as an unsigned integer.");
             
             actionName = [NSString stringWithFormat: actionNameFormat, trashedURLs.count];
         }
         else
         {
-            NSString *actionNameFormat;
-            if (self.undoManager.isUndoing)
-                actionNameFormat = NSLocalizedString(@"Importing of “%@”", @"Undo menu action title when importing a documentation item. %@ is the display name of the documentation item as it appears in the UI.");
-            else
-            actionNameFormat = NSLocalizedString(@"Removal of “%@”", @"Undo menu action title when removing a documentation item. %@ is the display name of the documentation item as it appears in the UI.");
+            NSString *actionNameFormat = NSLocalizedString(@"Removal of “%@”",
+                                                           @"Undo menu action title when removing a documentation item. %@ is the display name of the documentation item as it appears in the UI.");
             
             NSString *displayName = [trashedURLs.lastObject lastPathComponent].stringByDeletingPathExtension;
             actionName = [NSString stringWithFormat: actionNameFormat, displayName];

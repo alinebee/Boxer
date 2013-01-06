@@ -1840,6 +1840,7 @@
 		9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXVideoHandler.mm; sourceTree = "<group>"; };
 		9FF2E9BB11E6F4950051E485 /* BXEmulatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorConfiguration.h; sourceTree = "<group>"; };
 		9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorConfiguration.m; sourceTree = "<group>"; };
+		9FF5413C169990A100270658 /* BXUndoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXUndoExtensions.h; sourceTree = "<group>"; };
 		9FF68FF6157B9C6600F8B5BC /* BXTexture2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTexture2D.h; sourceTree = "<group>"; };
 		9FF68FF7157B9C6600F8B5BC /* BXTexture2D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTexture2D.m; sourceTree = "<group>"; };
 		9FF68FFE157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXTexture2D+BXVideoFrameExtensions.h"; sourceTree = "<group>"; };
@@ -3006,6 +3007,7 @@
 				9FB60E9115C5643200CD0D63 /* NSError+BXErrorHelpers.m */,
 				9FA0D0CA1694D62100CEF2EA /* NSURL+BXQuickLookHelpers.h */,
 				9FA0D0CB1694D62100CEF2EA /* NSURL+BXQuickLookHelpers.m */,
+				9FF5413C169990A100270658 /* BXUndoExtensions.h */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";

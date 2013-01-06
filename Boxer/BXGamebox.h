@@ -15,6 +15,7 @@
 //and we should instead be using an NSFileWrapper directory wrapper.
 
 #import <Cocoa/Cocoa.h>
+#import "BXUndoExtensions.h"
 
 
 #pragma mark Gamebox-related error constants
@@ -98,10 +99,11 @@ typedef NSUInteger BXGameIdentifierType;
 #pragma mark -
 #pragma mark Interface
 
-@interface BXGamebox : NSBundle
+@interface BXGamebox : NSBundle <BXUndoable>
 {
 	NSMutableDictionary *_gameInfo;
     NSMutableArray *_launchers;
+    id <BXUndoDelegate> _undoDelegate;
 }
 
 #pragma mark -
@@ -155,6 +157,9 @@ typedef NSUInteger BXGameIdentifierType;
 //The index in the launchers array of the default launcher.
 @property (assign, nonatomic) NSInteger defaultLauncherIndex;
 
+//The delegate from whom we will request an undo manager for undoable operations.
+@property (assign, nonatomic) id <BXUndoDelegate> undoDelegate;
+
 
 #pragma mark -
 #pragma mark Class methods
@@ -162,8 +167,8 @@ typedef NSUInteger BXGameIdentifierType;
 //Re-casts the return value as a BXGamebox instead of an NSBundle
 + (BXGamebox *)bundleWithPath: (NSString *)path;
 
-+ (NSSet *) executableExclusions;		//Filename patterns for executables to exclude from searches.
-
+//Filename patterns for executables to exclude from searches.
++ (NSSet *) executableExclusions;
 
 #pragma mark -
 #pragma mark Instance methods

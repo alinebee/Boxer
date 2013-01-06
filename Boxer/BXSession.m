@@ -2055,7 +2055,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 - (NSUndoManager *) undoManagerForClient: (id <BXUndoable>)undoClient operation: (SEL)operation
 {
-    NSLog(@"Undo manager for client: %@ operation: %@", undoClient, NSStringFromSelector(operation));
     return self.undoManager;
 }
 

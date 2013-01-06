@@ -158,6 +158,7 @@
 											</object>
 										</array>
 										<bool key="NSSelectable">YES</bool>
+										<bool key="NSAllowsMultipleSelection">YES</bool>
 										<int key="NSDraggingSourceMaskForLocal">-1</int>
 										<int key="NSDraggingSourceMaskForNonLocal">0</int>
 									</object>

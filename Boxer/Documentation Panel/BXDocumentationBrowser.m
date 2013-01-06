@@ -281,7 +281,6 @@ enum {
     BOOL importedSuccessfully = YES;
     
     NSMutableArray *importedURLs = [NSMutableArray arrayWithCapacity: URLs.count];
-    NSURL *originalURL = nil;
     
     for (NSURL *URL in URLs)
     {
@@ -293,7 +292,6 @@ enum {
         if (importedURL)
         {
             [importedURLs addObject: importedURL];
-            originalURL = URL;
         }
         else
         {
@@ -342,11 +340,25 @@ enum {
             NSString *actionNameFormat = NSLocalizedString(@"Importing of “%@”",
                                                            @"Undo menu action title when importing a documentation item. %@ is the display name of the documentation item as it appears in the UI.");
             
-            NSString *displayName = originalURL.lastPathComponent.stringByDeletingPathExtension;
+            NSString *displayName = [importedURLs.lastObject lastPathComponent].stringByDeletingPathExtension;
             actionName = [NSString stringWithFormat: actionNameFormat, displayName];
         }
         
         [self.undoManager setActionName: actionName];
+        
+        
+        //Select the newly-imported items.
+        NSMutableIndexSet *selectionIndexes = [NSMutableIndexSet indexSet];
+        for (NSURL *URL in importedURLs)
+        {
+            NSUInteger index = [self.documentationURLs indexOfObject: URL];
+            if (index != NSNotFound)
+                [selectionIndexes addIndex: index];
+            
+            if (!self.documentationList.allowsMultipleSelection)
+                break;
+        }
+        self.documentationSelectionIndexes = selectionIndexes;
     }
     
     return importedSuccessfully;
@@ -362,6 +374,10 @@ enum {
     NSURL *originalURL = nil;
     for (NSURL *URL in URLs)
     {
+        //If this URL is not one that we're allowed to trash, skip it without displaying any kind of error.
+        if (![session.gamebox canTrashDocumentationURL: URL])
+            continue;
+        
         NSError *trashingError = nil;
         NSURL *trashedURL = [session.gamebox trashDocumentationURL: URL error: &trashingError];
         
@@ -619,21 +635,6 @@ enum {
     else return nil;
 }
 
-- (IBAction) previewSelectedDocumentationItems: (id)sender
-{
-    if ([QLPreviewPanel sharedPreviewPanelExists] && [QLPreviewPanel sharedPreviewPanel].isVisible)
-    {
-        [[QLPreviewPanel sharedPreviewPanel] orderOut: self];
-    }
-    else
-    {
-        [[QLPreviewPanel sharedPreviewPanel] makeKeyAndOrderFront: self];
-        
-        if ([self.delegate respondsToSelector: @selector(documentationBrowser:didPreviewURLs:)])
-            [self.delegate documentationBrowser: self didPreviewURLs: self.selectedDocumentationURLs];
-    }
-}
-
 - (void) setDocumentationSelectionIndexes: (NSIndexSet *)indexes
 {
     if (![self.documentationSelectionIndexes isEqualToIndexSet: indexes])
@@ -652,12 +653,27 @@ enum {
     
     QLPreviewPanel *panel = [QLPreviewPanel sharedPreviewPanel];
     
-    //Only change the panel preview if a) we're in charge of the panel and
-    //b) the selection doesn't contain the current preview item.
-    if (panel.currentController == self &&
+    //Only change the panel preview if a) we're in charge of the panel
+    //and b) there's anything selected and c) the selection doesn't contain the current preview item.
+    if (panel.currentController == self && self.documentationSelectionIndexes.count &&
         ![self.documentationSelectionIndexes containsIndex: panel.currentPreviewItemIndex])
     {
         panel.currentPreviewItemIndex = self.documentationSelectionIndexes.firstIndex;
+    }
+}
+
+- (IBAction) previewSelectedDocumentationItems: (id)sender
+{
+    if ([QLPreviewPanel sharedPreviewPanelExists] && [QLPreviewPanel sharedPreviewPanel].isVisible)
+    {
+        [[QLPreviewPanel sharedPreviewPanel] orderOut: self];
+    }
+    else
+    {
+        [[QLPreviewPanel sharedPreviewPanel] makeKeyAndOrderFront: self];
+        
+        if ([self.delegate respondsToSelector: @selector(documentationBrowser:didPreviewURLs:)])
+            [self.delegate documentationBrowser: self didPreviewURLs: self.selectedDocumentationURLs];
     }
 }
 

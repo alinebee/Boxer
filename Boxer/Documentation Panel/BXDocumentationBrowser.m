@@ -133,10 +133,15 @@ enum {
 - (void) _syncDocumentationURLs
 {
     BXSession *session = (BXSession *)self.representedObject;
+    
+    NSArray *oldURLs = [self.documentationURLs copy];
     NSArray *newURLs = [session.gamebox.documentationURLs sortedArrayUsingDescriptors: self.sortCriteria];
     
     if (![newURLs isEqualToArray: self.documentationURLs])
     {
+        if ([self.delegate respondsToSelector: @selector(documentationBrowser:willUpdateFromURLs:toURLs:)])
+            [self.delegate documentationBrowser: self willUpdateFromURLs: oldURLs toURLs: newURLs];
+        
         if (self.documentationURLs)
         {
             //IMPLEMENTATION NOTE: when refreshing an existing documentation list, we want to disturb
@@ -150,7 +155,6 @@ enum {
             
             NSMutableArray *finalURLs = [NSMutableArray arrayWithCapacity: newURLs.count];
             
-            NSArray *oldURLs = self.documentationURLs;
             for (NSURL *URL in newURLs)
             {
                 //Note that indexOfObject: uses an isEqual: equality comparison,
@@ -170,9 +174,14 @@ enum {
             self.documentationURLs = [NSMutableArray arrayWithArray: newURLs];
         }
         
+        if ([self.delegate respondsToSelector: @selector(documentationBrowser:didUpdateFromURLs:toURLs:)])
+            [self.delegate documentationBrowser: self didUpdateFromURLs: oldURLs toURLs: newURLs];
+        
         //Flash the scrollbars (if any) to indicate that the content of the scroller has changed.
         if ([self.documentationScrollView respondsToSelector: @selector(flashScrollers)])
             [self.documentationScrollView flashScrollers];
+        
+        [oldURLs release];
     }
 }
 
@@ -219,19 +228,14 @@ enum {
 
 #pragma mark - UI layout
 
-+ (NSSet *) keyPathsForValuesAffectingIntrinsicContentSize
-{
-    return [NSSet setWithObjects: @"documentationURLs", @"title", nil];
-}
-
-- (NSSize) intrinsicContentSize
+- (NSSize) idealContentSizeForNumberOfItems: (NSUInteger)numItems
 {
     NSRect containerBounds = self.view.bounds;
     
     //Base our ideal content size on the documentation list, taking into account
     //how far the list's scroll view is from the edges of the wrapping view.
     NSRect listFrame = self.documentationScrollView.frame;
-    NSSize idealListSize = [self.documentationList minContentSizeForNumberOfItems: self.documentationURLs.count];
+    NSSize idealListSize = [self.documentationList minContentSizeForNumberOfItems: numItems];
     
     NSSize listMargin = NSMakeSize(containerBounds.size.width - listFrame.size.width,
                                    containerBounds.size.height - listFrame.size.height);
@@ -253,6 +257,16 @@ enum {
     //edges of the container, so that their distance (margin) from each edge of the
     //container will stay constant as the container is resized.
     return idealSize;
+}
+
++ (NSSet *) keyPathsForValuesAffectingIdealContentSize
+{
+    return [NSSet setWithObjects: @"documentationURLs", @"title", nil];
+}
+
+- (NSSize) idealContentSize
+{
+    return [self idealContentSizeForNumberOfItems: self.documentationURLs.count];
 }
 
 

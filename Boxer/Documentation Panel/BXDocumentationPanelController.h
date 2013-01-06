@@ -57,4 +57,12 @@
 - (void) close;
 
 
+#pragma mark - Layout
+
+- (NSRect) windowRectForIdealBrowserSize: (NSSize)targetSize;
+- (NSSize) popoverSizeForIdealBrowserSize: (NSSize)targetSize;
+
+//Resize the window/popover to be suitable for the current number of documentation items.
+- (void) sizeToFit;
+
 @end

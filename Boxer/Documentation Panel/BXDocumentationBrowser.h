@@ -61,7 +61,7 @@
 
 //The ideal size for displaying the browser without clipping.
 //This varies based on the number of documentation items and the length of the title.
-@property (readonly, nonatomic) NSSize intrinsicContentSize;
+@property (readonly, nonatomic) NSSize idealContentSize;
 
 #pragma mark - Constructors
 
@@ -89,6 +89,12 @@
 //Responding to attempts to drag new files into the documentation list.
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender;
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender;
+
+
+#pragma mark - UI layout
+
+//Returns the ideal size for the browser if it contained the specified number of documentation items.
+- (NSSize) idealContentSizeForNumberOfItems: (NSUInteger)numberOfItems;
 
 @end
 
@@ -122,6 +128,18 @@
 //Called when the browser wants to present an error, to return the window in which it should present the error modally.
 //If this returns nil, or is unimplemented, the error will be presented as application-modal instead.
 - (NSWindow *) documentationBrowser: (BXDocumentationBrowser *)browser windowForModalError: (NSError *)error;
+
+//Called just before the browser updates with new URLs. At this point the browser's documentationURLs property,
+//and the collection view's content property, will still contain the old URLs.
+- (void) documentationBrowser: (BXDocumentationBrowser *)browser
+           willUpdateFromURLs: (NSArray *)oldURLs
+                       toURLs: (NSArray *)URLs;
+
+//Called just after the browser updates with new URLs. At this point both the browser's documentationURLs
+//and the collection view's contents will have changed to the new URLs.
+- (void) documentationBrowser: (BXDocumentationBrowser *)browser
+            didUpdateFromURLs: (NSArray *)oldURLs
+                       toURLs: (NSArray *)URLs;
 
 @end
 

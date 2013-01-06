@@ -24,9 +24,10 @@
 @property (retain, nonatomic) BXDocumentationBrowser *popoverBrowser;
 @property (retain, nonatomic) BXDocumentationBrowser *windowBrowser;
 
-//Resize the window/popover to suit the documentation browser's preferred size.
-- (void) _syncWindowSize;
-- (void) _syncPopoverSize;
+
+//Resize the window/popover to accommodate the specified number of documentation items.
+- (void) _sizeWindowToFitNumberOfItems: (NSUInteger)numItems;
+- (void) _sizePopoverToFitNumberOfItems: (NSUInteger)numItems;
 
 @end
 
@@ -56,9 +57,6 @@
 
 - (void) dealloc
 {
-    [self.popoverBrowser removeObserver: self forKeyPath: @"intrinsicContentSize"];
-    [self.windowBrowser removeObserver: self forKeyPath: @"intrinsicContentSize"];
-    
     self.session = nil;
     self.popover = nil;
     self.popoverBrowser = nil;
@@ -80,10 +78,8 @@
     //the browser's view as the content view of the window.
     self.windowBrowser.nextResponder = self.windowBrowser.view.nextResponder;
     self.windowBrowser.view.nextResponder = self.windowBrowser;
-    
-    [self.windowBrowser addObserver: self forKeyPath: @"intrinsicContentSize"
-                            options: NSKeyValueObservingOptionInitial
-                            context: nil];
+
+    [self _sizeWindowToFitNumberOfItems: self.windowBrowser.documentationURLs.count];
 }
 
 - (void) setSession: (BXSession *)session
@@ -98,91 +94,105 @@
     }
 }
 
+
 #pragma mark - Layout management
 
-- (void) observeValueForKeyPath: (NSString *)keyPath
-                       ofObject: (id)object
-                         change: (NSDictionary *)change
-                        context: (void *)context
+- (NSRect) windowRectForIdealBrowserSize: (NSSize)targetSize
 {
-    if (object == self.windowBrowser && [keyPath isEqualToString: @"intrinsicContentSize"])
+    //Cap the desired size to our maximum and minimum window size
+    NSSize minSize = self.window.contentMinSize;
+    NSSize maxSize = self.window.contentMaxSize;
+    targetSize.width = MIN(maxSize.width, targetSize.width);
+    targetSize.width = MAX(minSize.width, targetSize.width);
+    targetSize.height = MIN(maxSize.height, targetSize.height);
+    targetSize.height = MAX(minSize.height, targetSize.height);
+    
+    //Resize the window from the top left corner.
+    NSPoint anchor = NSMakePoint(0.0, 1.0);
+    NSRect frameRect = [self.window frameRectForContentSize: targetSize
+                                            relativeToFrame: self.window.frame
+                                                 anchoredAt: anchor];
+    
+    return frameRect;
+}
+
+- (NSSize) popoverSizeForIdealBrowserSize: (NSSize)targetSize
+{
+    //Cap the desired size to our own maximum size
+    targetSize.width = MIN(targetSize.width, self.maxPopoverSize.width);
+    targetSize.height = MIN(targetSize.height, self.maxPopoverSize.height);
+    
+    return targetSize;
+}
+
+- (void) _sizeWindowToFitNumberOfItems: (NSUInteger)numItems
+{
+    if (self.windowBrowser)
     {
-        [self _syncWindowSize];
-    }
-    else if (object == self.popoverBrowser && [keyPath isEqualToString: @"intrinsicContentSize"])
-    {
-        [self _syncPopoverSize];
+        NSSize idealSize = [self.windowBrowser idealContentSizeForNumberOfItems: numItems];
+        NSRect windowRect = [self windowRectForIdealBrowserSize: idealSize];
+        [self.window setFrame: windowRect display: self.window.isVisible animate: self.window.isVisible];
     }
 }
 
-- (void) _syncWindowSize
+- (void) _sizePopoverToFitNumberOfItems: (NSUInteger)numItems
 {
-    if (self.isWindowLoaded)
+    if (self.popoverBrowser)
     {
-        NSSize targetSize = self.windowBrowser.intrinsicContentSize;
-        //Cap the content size to our maximum and minimum window size
-        NSSize minSize = self.window.contentMinSize;
-        NSSize maxSize = self.window.contentMaxSize;
-        targetSize.width = MIN(maxSize.width, targetSize.width);
-        targetSize.width = MAX(minSize.width, targetSize.width);
-        targetSize.height = MIN(maxSize.height, targetSize.height);
-        targetSize.height = MAX(minSize.height, targetSize.height);
-        
-        NSSize currentSize = [self.window.contentView frame].size;
-        if (!NSEqualSizes(targetSize, currentSize))
-        {
-            //Resize the window from the top left corner.
-            NSPoint anchor = NSMakePoint(0.0, 1.0);
-            NSRect frameRect = [self.window frameRectForContentSize: targetSize
-                                                    relativeToFrame: self.window.frame
-                                                         anchoredAt: anchor];
-            
-            //TWEAK: lock down the documentation browser's item size while we resize the window:
-            //otherwise the items will expand/contract based on the new space, and then resize
-            //again in the other direction once the items are added/removed from the view.
-            NSCollectionView *list = self.windowBrowser.documentationList;
-            NSSize oldMinSize = list.minItemSize;
-            NSSize oldMaxSize = list.maxItemSize;
-            NSSize lockedSize = [list frameForItemAtIndex: 0].size;
-            
-            list.minItemSize = list.maxItemSize = lockedSize;
-            
-            [self.window setFrame: frameRect display: YES animate: self.window.isVisible];
-            
-            list.minItemSize = oldMinSize;
-            list.maxItemSize = oldMaxSize;
-        }
+        NSSize idealSize = [self.popoverBrowser idealContentSizeForNumberOfItems: numItems];
+        NSSize popoverSize = [self popoverSizeForIdealBrowserSize: idealSize];
+        self.popover.contentSize = popoverSize;
     }
 }
 
-- (void) _syncPopoverSize
+- (void) sizeToFit
 {
-    if (self.popover)
+    [self _sizeWindowToFitNumberOfItems: self.windowBrowser.documentationURLs.count];
+    [self _sizePopoverToFitNumberOfItems: self.popoverBrowser.documentationURLs.count];
+}
+
+- (void) documentationBrowser: (BXDocumentationBrowser *)browser willUpdateFromURLs: (NSArray *)oldURLs toURLs: (NSArray *)newURLs
+{
+    NSUInteger oldCount = oldURLs.count, newCount = newURLs.count;
+    
+    //Freeze the size of the browser's existing documentation items while it updates, to prevent them reflowing.
+    NSCollectionView *collection = browser.documentationList;
+    if (collection.content.count)
     {
-        NSSize currentSize = self.popover.contentSize;
-        NSSize targetSize = self.popoverBrowser.intrinsicContentSize;
-        
-        //Cap the content size to our own maximum size
-        targetSize.width = MIN(targetSize.width, self.maxPopoverSize.width);
-        targetSize.height = MIN(targetSize.height, self.maxPopoverSize.height);
-        
-        if (!NSEqualSizes(currentSize, targetSize))
-        {
-            //TWEAK: lock down the documentation browser's item size while we resize the window:
-            //otherwise the items will expand/contract based on the new space, and then resize
-            //again in the other direction once the items are added/removed from the view.
-            NSCollectionView *list = self.popoverBrowser.documentationList;
-            NSSize oldMinSize = list.minItemSize;
-            NSSize oldMaxSize = list.maxItemSize;
-            NSSize lockedSize = [list frameForItemAtIndex: 0].size;
-            
-            list.minItemSize = list.maxItemSize = lockedSize;
-            
-            self.popover.contentSize = targetSize;
-            
-            list.minItemSize = oldMinSize;
-            list.maxItemSize = oldMaxSize;
-        }
+        NSSize lockedSize = [collection frameForItemAtIndex: 0].size;
+        collection.minItemSize = lockedSize;
+        collection.maxItemSize = lockedSize;
+    }
+    
+    //If items are being added to the browser, then expand the popover/window to accommodate them
+    //*before* they are added to the collection.
+    if (newCount > oldCount)
+    {
+        if (browser == self.windowBrowser)
+            [self _sizeWindowToFitNumberOfItems: newCount];
+        else
+            [self _sizePopoverToFitNumberOfItems: newCount];
+    }
+}
+
+- (void) documentationBrowser: (BXDocumentationBrowser *)browser didUpdateFromURLs: (NSArray *)oldURLs toURLs: (NSArray *)newURLs
+{
+    NSUInteger oldCount = oldURLs.count, newCount = newURLs.count;
+    
+    //Unfreeze the items to allow them to be re-laid-out.
+    //TODO: persist the original values and restore them afterward.
+    NSCollectionView *collection = browser.documentationList;
+    collection.minItemSize = NSZeroSize;
+    collection.maxItemSize = NSZeroSize;
+    
+    //If items were deleted from the browser, then shrink the popover/window
+    //after they're gone to accommodate the now-reduced browser dimensions.
+    if (newCount < oldCount)
+    {
+        if (browser == self.windowBrowser)
+            [self _sizeWindowToFitNumberOfItems: newCount];
+        else
+            [self _sizePopoverToFitNumberOfItems: newCount];
     }
 }
 
@@ -191,7 +201,7 @@
     if (!NSEqualSizes(self.maxPopoverSize, maxPopoverSize))
     {
         _maxPopoverSize = maxPopoverSize;
-        [self _syncPopoverSize];
+        [self _sizePopoverToFitNumberOfItems: self.popoverBrowser.documentationURLs.count];
     }
 }
 
@@ -223,10 +233,7 @@
             
             self.popover.contentViewController = self.popoverBrowser;
             
-            [self.popoverBrowser addObserver: self
-                                  forKeyPath: @"intrinsicContentSize"
-                                     options: NSKeyValueObservingOptionInitial
-                                     context: nil];
+            [self _sizePopoverToFitNumberOfItems: self.popoverBrowser.documentationURLs.count];
         }
         
         [self willChangeValueForKey: @"shown"];

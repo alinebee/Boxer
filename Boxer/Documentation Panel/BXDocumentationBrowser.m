@@ -229,7 +229,7 @@ enum {
     //Base our ideal content size on the documentation list, taking into account
     //how far the list's scroll view is from the edges of the wrapping view.
     NSRect listFrame = self.documentationScrollView.frame;
-    NSSize idealListSize = self.documentationList.intrinsicContentSize;
+    NSSize idealListSize = [self.documentationList minContentSizeForNumberOfItems: self.documentationURLs.count];
     
     NSSize listMargin = NSMakeSize(containerBounds.size.width - listFrame.size.width,
                                    containerBounds.size.height - listFrame.size.height);
@@ -866,15 +866,11 @@ enum {
     }
 }
 
-- (NSSize) intrinsicContentSize
+- (NSSize) minContentSizeForNumberOfItems: (NSUInteger)numItems
 {
-    //TODO: should we fall back on super implementation for 10.7+?
-    
     NSSize minItemSize = self.minItemSize;
     if (NSEqualSizes(minItemSize, NSZeroSize))
         minItemSize = self.itemPrototype.view.frame.size;
-    
-    NSUInteger numItems = self.content.count;
     
     NSUInteger numColumns, numRows;
     

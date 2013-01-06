@@ -12,6 +12,7 @@
 //BXDocumentationBrowser manages the list of documentation for the gamebox.
 
 @class BXSession;
+@class BXDocumentationList;
 @protocol BXDocumentationBrowserDelegate;
 @interface BXDocumentationBrowser : NSViewController <NSCollectionViewDelegate, NSDraggingDestination>
 {
@@ -19,7 +20,7 @@
     NSIndexSet *_documentationSelectionIndexes;
     
     NSScrollView *_documentationScrollView;
-    NSCollectionView *_documentationList;
+    BXDocumentationList *_documentationList;
     NSTextField *_titleLabel;
     NSTextField *_helpTextLabel;
     
@@ -41,7 +42,7 @@
 @property (assign, nonatomic) IBOutlet NSTextField *helpTextLabel;
 
 //The collection view in which our documentation will be displayed.
-@property (assign, nonatomic) IBOutlet NSCollectionView *documentationList;
+@property (assign, nonatomic) IBOutlet BXDocumentationList *documentationList;
 
 //An array of NSURLs for the documentation files included in this gamebox.
 //This is mapped directly to the documentation URLs reported by the gamebox.
@@ -152,7 +153,9 @@
 //and to calculate our ideal display size.
 @interface BXDocumentationList : NSCollectionView
 
-@property (readonly, nonatomic) NSSize intrinsicContentSize;
+//Returns the size the documentation list will need to be in order to display
+//the specified number of items without scrolling.
+- (NSSize) minContentSizeForNumberOfItems: (NSUInteger)numItems;
 
 @end
 

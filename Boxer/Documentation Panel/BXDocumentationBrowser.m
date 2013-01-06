@@ -92,6 +92,8 @@ enum {
 
 - (void) dealloc
 {
+    [self.undoManager removeAllActionsWithTarget: self];
+    
     self.representedObject = nil;
     self.view.nextResponder = nil;
     
@@ -524,7 +526,7 @@ enum {
 }
 
 - (void) dealloc
-{
+{   
     self.previewItemURL = nil;
     [super dealloc];
 }

@@ -8,6 +8,7 @@
 
 #import "BXDocumentationPanelController.h"
 #import "NSWindow+BXWindowDimensions.h"
+#import "BXSession.h"
 
 @interface BXDocumentationPanelController ()
 
@@ -77,7 +78,7 @@
     
     //Fix the responder chain, which will have been reset when we assigned
     //the browser's view as the content view of the window.
-    self.windowBrowser.nextResponder = self;
+    self.windowBrowser.nextResponder = self.windowBrowser.view.nextResponder;
     self.windowBrowser.view.nextResponder = self.windowBrowser;
     
     [self.windowBrowser addObserver: self forKeyPath: @"intrinsicContentSize"
@@ -254,6 +255,17 @@
 {
     //Close our popover/window when the user opens a documentation file.
     [self close];
+}
+
+- (void) documentationBrowser: (BXDocumentationBrowser *)browser didPreviewURLs: (NSArray *)URLs
+{
+    //Close our popover/window when the user opens the QuickLook preview.
+    [self close];
+}
+
+- (NSUndoManager *) windowWillReturnUndoManager: (NSWindow *)window
+{
+    return self.undoManager;
 }
 
 @end

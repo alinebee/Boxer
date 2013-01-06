@@ -72,7 +72,6 @@
 						<string key="NSFrame">{{17, 7}, {446, 14}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:1535</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="661646074">
@@ -146,7 +145,7 @@
 										<string key="NSFrameSize">{480, 192}</string>
 										<reference key="NSSuperview" ref="974789508"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView" ref="342156510"/>
+										<reference key="NSNextKeyView" ref="267198679"/>
 										<string key="NSReuseIdentifierKey">_NS:80</string>
 										<string key="NSMinGridSize">{0, 0}</string>
 										<string key="NSMaxGridSize">{0, 0}</string>
@@ -209,7 +208,7 @@
 						<string key="NSFrame">{{0, 30}, {480, 192}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="267198679"/>
+						<reference key="NSNextKeyView" ref="974789508"/>
 						<string key="NSReuseIdentifierKey">_NS:76</string>
 						<int key="NSsFlags">133664</int>
 						<reference key="NSVScroller" ref="267198679"/>
@@ -238,7 +237,6 @@
 						<string key="NSFrame">{{13, 16}, {134, 32}}</string>
 						<reference key="NSSuperview" ref="979582564"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:1535</string>
 						<int key="NSTag">2</int>
 						<bool key="NSEnabled">YES</bool>

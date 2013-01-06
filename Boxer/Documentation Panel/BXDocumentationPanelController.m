@@ -240,30 +240,53 @@
     return (self.popover.isShown || (self.isWindowLoaded && self.window.isVisible));
 }
 
- //Tear-off popovers are disabled for now because they screw up the responder chain
- //and can cause rendering errors when the original popover is reused.
+//Tear-off popovers are disabled for now because they screw up the responder chain
+//and can cause rendering errors when the original popover is reused.
+/*
 - (NSWindow *) detachableWindowForPopover: (NSPopover *)popover
 {
     return self.window;
 }
+ */
 
 #pragma mark - Delegate responses
 
+//Close our popover/window when the user performs any action.
 - (void) documentationBrowser: (BXDocumentationBrowser *)browser didOpenURLs: (NSArray *)URLs
 {
-    //Close our popover/window when the user opens a documentation file.
     [self close];
 }
 
 - (void) documentationBrowser: (BXDocumentationBrowser *)browser didPreviewURLs: (NSArray *)URLs
 {
-    //Close our popover/window when the user opens the QuickLook preview.
+    [self close];
+}
+
+- (void) documentationBrowser: (BXDocumentationBrowser *)browser didRevealURLs: (NSArray *)URLs
+{
     [self close];
 }
 
 - (NSUndoManager *) windowWillReturnUndoManager: (NSWindow *)window
 {
     return self.session.undoManager;
+}
+
+- (NSWindow *) documentationBrowser: (BXDocumentationBrowser *)browser windowForModalError: (NSError *)error
+{
+    if (self.isWindowLoaded && self.window.isVisible)
+        return self.window;
+    else
+        return self.session.windowForSheet;
+}
+
+- (NSError *) documentationBrowser: (BXDocumentationBrowser *)browser willPresentError: (NSError *)error
+{
+    //Close the documentation browser when an error will appear.
+    if (self.popover.isShown)
+        [self close];
+    
+    return error;
 }
 
 @end

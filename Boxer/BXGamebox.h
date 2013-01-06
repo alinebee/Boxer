@@ -223,6 +223,11 @@ typedef enum {
 //will be searched for documentation.
 @property (readonly, nonatomic) NSArray *documentationURLs;
 
+//Returns whether the gamebox has a documentation folder of its own.
+//If not, this can be created with populateDocumentationFolderWithError:.
+@property (readonly, nonatomic) BOOL hasDocumentationFolder;
+
+
 + (NSSet *) documentationTypes;			//UTIs recognised as documentation files.
 + (NSSet *) documentationExclusions;	//Filename patterns for documentation to exclude from searches.
 
@@ -243,6 +248,7 @@ typedef enum {
 //Populates the documentation folder with symlinks to documentation found elsewhere in the gamebox.
 //Note that this will not create the documentation folder if it does not already exist.
 - (BOOL) populateDocumentationFolderWithError: (out NSError **)outError;
+
 
 //Copies the file at the specified location into the documentation folder,
 //creating the folder first if it is missing.
@@ -273,4 +279,7 @@ typedef enum {
 //Returns the URL of the item's new location in the trash  on success, or nil and populates outError on failure.
 - (NSURL *) trashDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError;
 
+//Returns whether the specified documentation file can be removed from the gamebox.
+//Will return NO if the URL is not located within the documentation folder.
+- (BOOL) canTrashDocumentationURL: (NSURL *)documentationURL;
 @end

@@ -96,6 +96,17 @@ enum {
     [super dealloc];
 }
 
+#pragma mark - Error handling
+
+- (NSError *) willPresentError: (NSError *)error
+{
+    //Give our delegate a crack at the error before we present it
+    if ([self.delegate respondsToSelector: @selector(documentationBrowser:willPresentError:)])
+        error = [self.delegate documentationBrowser: self willPresentError: error];
+    
+    return [super willPresentError: error];
+}
+
 #pragma mark - Binding accessors
 
 - (void) observeValueForKeyPath: (NSString *)keyPath
@@ -257,6 +268,9 @@ enum {
     if (self.documentationSelectionIndexes.count)
     {
         [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: self.selectedDocumentationURLs];
+        
+        if ([self.delegate respondsToSelector: @selector(documentationBrowser:didRevealURLs:)])
+            [self.delegate documentationBrowser: self didRevealURLs: self.selectedDocumentationURLs];
     }
 }
 
@@ -286,11 +300,22 @@ enum {
             //Show the error to the user immediately.
             if (importingError != nil)
             {
-                [self presentError: importingError
-                    modalForWindow: [self.representedObject windowForSheet]
-                          delegate: nil
-                didPresentSelector: NULL
-                       contextInfo: NULL];
+                NSWindow *presentingWindow = nil;
+                if ([self.delegate respondsToSelector: @selector(documentationBrowser:windowForModalError:)])
+                    presentingWindow = [self.delegate documentationBrowser: self windowForModalError: importingError];
+                
+                if (presentingWindow)
+                {
+                    [self presentError: importingError
+                        modalForWindow: presentingWindow
+                              delegate: nil
+                    didPresentSelector: NULL
+                           contextInfo: NULL];
+                }
+                else
+                {
+                    [self presentError: importingError];
+                }
             }
             
             //Don't continue importing further.
@@ -350,11 +375,22 @@ enum {
             //Show the error to the user immediately.
             if (trashingError != nil)
             {
-                [self presentError: trashingError
-                    modalForWindow: [self.representedObject windowForSheet]
-                          delegate: nil
-                didPresentSelector: NULL
-                       contextInfo: NULL];
+                NSWindow *presentingWindow = nil;
+                if ([self.delegate respondsToSelector: @selector(documentationBrowser:windowForModalError:)])
+                    presentingWindow = [self.delegate documentationBrowser: self windowForModalError: trashingError];
+                
+                if (presentingWindow)
+                {
+                    [self presentError: trashingError
+                        modalForWindow: presentingWindow
+                              delegate: nil
+                    didPresentSelector: NULL
+                           contextInfo: NULL];
+                }
+                else
+                {
+                    [self presentError: trashingError];
+                }
             }
             
             //Don't continue trashing further.
@@ -415,11 +451,25 @@ enum {
 {
     BOOL hasSelectedItems = (self.documentationSelectionIndexes.count > 0);
     
-    if (menuItem.action == @selector(trashSelectedDocumentationItems:) ||
-        menuItem.action == @selector(revealSelectedDocumentationItemsInFinder:) ||
+    if (menuItem.action == @selector(revealSelectedDocumentationItemsInFinder:) ||
         menuItem.action == @selector(openSelectedDocumentationItems:))
     {
         return hasSelectedItems;
+    }
+    else if (menuItem.action == @selector(trashSelectedDocumentationItems:))
+    {
+        if (!hasSelectedItems)
+            return NO;
+        
+        //Check that all selected items are trashable.
+        for (NSURL *URL in self.selectedDocumentationURLs)
+        {
+            if (![[self.representedObject gamebox] canTrashDocumentationURL: URL])
+                return NO;
+        }
+        
+        //If we got this far it means all selected items are trashable.
+        return YES;
     }
     else
     {
@@ -578,6 +628,9 @@ enum {
     else
     {
         [[QLPreviewPanel sharedPreviewPanel] makeKeyAndOrderFront: self];
+        
+        if ([self.delegate respondsToSelector: @selector(documentationBrowser:didPreviewURLs:)])
+            [self.delegate documentationBrowser: self didPreviewURLs: self.selectedDocumentationURLs];
     }
 }
 
@@ -613,9 +666,6 @@ enum {
 
 
 @interface BXDocumentationItem ()
-
-//Reimplemented to be read-write internally.
-@property (copy, nonatomic) NSImage *icon;
 
 //Loads up the icon (or spotlight preview) for the documentation URL as it is displayed in Finder.
 - (void) _refreshIcon;

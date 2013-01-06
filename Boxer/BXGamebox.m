@@ -736,6 +736,12 @@ typedef enum {
     else return NO;
 }
 
+- (BOOL) hasDocumentationFolder
+{
+    NSURL *docsURL = [self.resourceURL URLByAppendingPathComponent: BXDocumentationFolderName isDirectory: YES];
+    return [docsURL checkResourceIsReachableAndReturnError: NULL];
+}
+
 - (NSURL *) _addDocumentationFromURL: (NSURL *)documentationURL
                            withTitle: (NSString *)title
                            operation: (BXGameboxDocumentationOperation)operation
@@ -900,9 +906,7 @@ typedef enum {
 
 - (NSURL *) trashDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError
 {
-    NSURL *docsURL = [self documentationFolderURLCreatingIfMissing: NO error: NULL];
-    
-    if ([documentationURL isBasedInURL: docsURL])
+    if ([self canTrashDocumentationURL: documentationURL])
     {
         NSFileManager *manager = [[NSFileManager alloc] init];
         
@@ -949,6 +953,19 @@ typedef enum {
                                         userInfo: @{ NSURLErrorKey: documentationURL }];
         }
         return nil;
+    }
+}
+
+- (BOOL) canTrashDocumentationURL: (NSURL *)documentationURL
+{
+    NSURL *docsURL = [self documentationFolderURLCreatingIfMissing: NO error: NULL];
+    if (docsURL)
+    {
+        return [documentationURL isBasedInURL: docsURL];
+    }
+    else
+    {
+        return NO;
     }
 }
 

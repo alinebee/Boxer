@@ -110,6 +110,18 @@
 //Called when the user opens a QuickLook preview on the specified items.
 - (void) documentationBrowser: (BXDocumentationBrowser *)browser didPreviewURLs: (NSArray *)URLs;
 
+//Called when the user shows the specified items in Finder.
+- (void) documentationBrowser: (BXDocumentationBrowser *)browser didRevealURLs: (NSArray *)URLs;
+
+//Called when the browser has encountered an error that it cannot deal with and will present it.
+//This is analoguous to willPresentError:, and likewise you can return a different error to customize
+//the error that will be displayed.
+- (NSError *) documentationBrowser: (BXDocumentationBrowser *)browser willPresentError: (NSError *)error;
+
+//Called when the browser wants to present an error, to return the window in which it should present the error modally.
+//If this returns nil, or is unimplemented, the error will be presented as application-modal instead.
+- (NSWindow *) documentationBrowser: (BXDocumentationBrowser *)browser windowForModalError: (NSError *)error;
+
 @end
 
 
@@ -123,7 +135,7 @@
 //The icon for the documentation file.
 //This will initially be the Finder file icon, but will be replaced with a Spotlight image preview
 //asynchronously.
-@property (readonly, copy, nonatomic) NSImage *icon;
+@property (retain, nonatomic) NSImage *icon;
 
 //The display name of the documentation file.
 //This will be the filename of the documentation file sans extension.

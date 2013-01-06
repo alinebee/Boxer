@@ -83,6 +83,8 @@ enum {
     if ([self.documentationScrollView respondsToSelector: @selector(setVerticalScrollElasticity:)])
         self.documentationScrollView.verticalScrollElasticity = NSScrollElasticityNone;
     
+    self.documentationList.minItemSize = self.documentationList.itemPrototype.view.frame.size;
+    
 	[self.view registerForDraggedTypes: @[NSFilenamesPboardType]];
     
     //Insert ourselves into the responder chain ahead of our view.

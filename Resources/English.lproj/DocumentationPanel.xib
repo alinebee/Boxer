@@ -37,7 +37,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{482, 166}, {480, 264}}</string>
 				<int key="NSWTFlags">611845120</int>
-				<string key="NSWindowTitle">Documentation</string>
+				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">NSPanel</string>
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>

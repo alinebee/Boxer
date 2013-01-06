@@ -128,13 +128,30 @@
         targetSize.height = MIN(maxSize.height, targetSize.height);
         targetSize.height = MAX(minSize.height, targetSize.height);
         
-        //Resize the window from the top left corner.
-        NSPoint anchor = NSMakePoint(0.0, 1.0);
-        NSRect frameRect = [self.window frameRectForContentSize: targetSize
-                                                relativeToFrame: self.window.frame
-                                                     anchoredAt: anchor];
-        
-        [self.window setFrame: frameRect display: YES animate: self.window.isVisible];
+        NSSize currentSize = [self.window.contentView frame].size;
+        if (!NSEqualSizes(targetSize, currentSize))
+        {
+            //Resize the window from the top left corner.
+            NSPoint anchor = NSMakePoint(0.0, 1.0);
+            NSRect frameRect = [self.window frameRectForContentSize: targetSize
+                                                    relativeToFrame: self.window.frame
+                                                         anchoredAt: anchor];
+            
+            //TWEAK: lock down the documentation browser's item size while we resize the window:
+            //otherwise the items will expand/contract based on the new space, and then resize
+            //again in the other direction once the items are added/removed from the view.
+            NSCollectionView *list = self.windowBrowser.documentationList;
+            NSSize oldMinSize = list.minItemSize;
+            NSSize oldMaxSize = list.maxItemSize;
+            NSSize lockedSize = [list frameForItemAtIndex: 0].size;
+            
+            list.minItemSize = list.maxItemSize = lockedSize;
+            
+            [self.window setFrame: frameRect display: YES animate: self.window.isVisible];
+            
+            list.minItemSize = oldMinSize;
+            list.maxItemSize = oldMaxSize;
+        }
     }
 }
 
@@ -142,13 +159,30 @@
 {
     if (self.popover)
     {
+        NSSize currentSize = self.popover.contentSize;
         NSSize targetSize = self.popoverBrowser.intrinsicContentSize;
         
         //Cap the content size to our own maximum size
         targetSize.width = MIN(targetSize.width, self.maxPopoverSize.width);
         targetSize.height = MIN(targetSize.height, self.maxPopoverSize.height);
         
-        self.popover.contentSize = targetSize;
+        if (!NSEqualSizes(currentSize, targetSize))
+        {
+            //TWEAK: lock down the documentation browser's item size while we resize the window:
+            //otherwise the items will expand/contract based on the new space, and then resize
+            //again in the other direction once the items are added/removed from the view.
+            NSCollectionView *list = self.popoverBrowser.documentationList;
+            NSSize oldMinSize = list.minItemSize;
+            NSSize oldMaxSize = list.maxItemSize;
+            NSSize lockedSize = [list frameForItemAtIndex: 0].size;
+            
+            list.minItemSize = list.maxItemSize = lockedSize;
+            
+            self.popover.contentSize = targetSize;
+            
+            list.minItemSize = oldMinSize;
+            list.maxItemSize = oldMaxSize;
+        }
     }
 }
 

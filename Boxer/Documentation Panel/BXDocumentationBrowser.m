@@ -267,7 +267,8 @@ enum {
     BOOL importedSuccessfully = YES;
     
     NSMutableArray *importedURLs = [NSMutableArray arrayWithCapacity: URLs.count];
-    NSUInteger offset=0;
+    NSURL *originalURL = nil;
+    
     for (NSURL *URL in URLs)
     {
         NSError *importingError = nil;
@@ -275,11 +276,10 @@ enum {
                                                                 withTitle: nil
                                                                  ifExists: BXGameboxDocumentationRename
                                                                     error: &importingError];
-        
         if (importedURL)
         {
             [importedURLs addObject: importedURL];
-            offset++;
+            originalURL = URL;
         }
         else
         {
@@ -317,7 +317,7 @@ enum {
             NSString *actionNameFormat = NSLocalizedString(@"Importing of “%@”",
                                                            @"Undo menu action title when importing a documentation item. %@ is the display name of the documentation item as it appears in the UI.");
             
-            NSString *displayName = [importedURLs.lastObject lastPathComponent].stringByDeletingPathExtension;
+            NSString *displayName = originalURL.lastPathComponent.stringByDeletingPathExtension;
             actionName = [NSString stringWithFormat: actionNameFormat, displayName];
         }
         
@@ -334,6 +334,7 @@ enum {
     BOOL trashedSuccessfully = YES;
     
     NSMutableArray *trashedURLs = [NSMutableArray arrayWithCapacity: URLs.count];
+    NSURL *originalURL = nil;
     for (NSURL *URL in URLs)
     {
         NSError *trashingError = nil;
@@ -342,6 +343,7 @@ enum {
         if (trashedURL)
         {
             [trashedURLs addObject: trashedURL];
+            originalURL = URL;
         }
         else
         {
@@ -355,7 +357,7 @@ enum {
                        contextInfo: NULL];
             }
             
-            //Don't continue importing further.
+            //Don't continue trashing further.
             trashedSuccessfully = NO;
             break;
         }
@@ -381,7 +383,7 @@ enum {
             NSString *actionNameFormat = NSLocalizedString(@"Removal of “%@”",
                                                            @"Undo menu action title when removing a documentation item. %@ is the display name of the documentation item as it appears in the UI.");
             
-            NSString *displayName = [trashedURLs.lastObject lastPathComponent].stringByDeletingPathExtension;
+            NSString *displayName = originalURL.lastPathComponent.stringByDeletingPathExtension;
             actionName = [NSString stringWithFormat: actionNameFormat, displayName];
         }
         

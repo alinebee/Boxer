@@ -1415,8 +1415,9 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         }
         
         if (event)
+        {
             [NSApp sendEvent: event];
-		
+		}
 		//If we're suspended, keep dispatching events until we are unpaused;
         //otherwise, exit once our original requested date has passed (which
         //will be after the first batch of events has been processed,

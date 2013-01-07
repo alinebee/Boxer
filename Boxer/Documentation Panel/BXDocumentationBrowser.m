@@ -740,7 +740,9 @@ enum {
     {
         //First, check if the file has a custom icon. If so we will use this and be done with it.
         NSImage *customIcon = nil;
-        BOOL loadedCustomIcon = [(NSURL *)self.representedObject getResourceValue: &customIcon forKey: NSURLCustomIconKey error: NULL];
+        BOOL loadedCustomIcon = [(NSURL *)self.representedObject getResourceValue: &customIcon
+                                                                           forKey: NSURLCustomIconKey
+                                                                            error: NULL];
         
         if (loadedCustomIcon && customIcon != nil)
         {
@@ -753,11 +755,15 @@ enum {
         {
             //First, load and display Finder's standard icon for the file.
             NSImage *defaultIcon = nil;
-            BOOL loadedDefaultIcon = [(NSURL *)self.representedObject getResourceValue: &defaultIcon forKey: NSURLEffectiveIconKey error: NULL];
+            BOOL loadedDefaultIcon = [(NSURL *)self.representedObject getResourceValue: &defaultIcon
+                                                                                forKey: NSURLEffectiveIconKey
+                                                                                 error: NULL];
+            
             if (loadedDefaultIcon && defaultIcon != nil)
             {
                 self.icon = defaultIcon;
             }
+            
             //Meanwhile, load in a quicklook preview for this file in the background.
             NSURL *previewURL = [self.representedObject copy];
             //Take retina displays into account when calculating the appropriate preview size.
@@ -771,8 +777,8 @@ enum {
             dispatch_async(queue, ^{
                 NSImage *thumbnail = [previewURL quickLookThumbnailWithMaxSize: thumbnailSize iconStyle: YES];
                 
-                //Double-check that our represented object hasn't changed in the meantime.
-                if ([previewURL isEqual: self.representedObject])
+                //Before applying the new icon, double-check that our represented URL hasn't changed in the meantime.
+                if (thumbnail && [previewURL isEqual: self.representedObject])
                 {
                     //Ensure we change the icon on the main thread, where the UI is doing its thing.
                     [self performSelectorOnMainThread: @selector(setIcon:) withObject: thumbnail waitUntilDone: YES];

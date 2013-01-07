@@ -175,7 +175,9 @@ typedef enum {
 
 #pragma mark - Documentation
 
-- (IBAction) toggleDocumentation: (id)sender;
+- (IBAction) showDocumentationBrowser: (id)sender;
+- (IBAction) hideDocumentationBrowser: (id)sender;
+- (IBAction) toggleDocumentationBrowser: (id)sender;
 
 
 #pragma mark - Responding to UI changes

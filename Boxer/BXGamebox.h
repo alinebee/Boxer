@@ -22,7 +22,9 @@
 
 extern NSString * const BXGameboxErrorDomain;
 enum {
-	BXTargetPathOutsideGameboxError
+	BXTargetPathOutsideGameboxError,    //Attempted to set gamebox's target path to a location outside the gamebox
+    BXGameboxLockedGameboxError,        //Attempted a mutation operation that was not possible because the gamebox is locked
+    BXDocumentationNotInFolderError,    //Attempted a destructive documentation operation on a URL that was not within the gamebox's documentation folder  
 };
 
 
@@ -94,7 +96,6 @@ enum {
 	BXGameIdentifierReverseDNS		= 3,	//Reverse-DNS (net.washboardabs.boxer)-style identifer.
 };
 typedef NSUInteger BXGameIdentifierType;
-
 
 #pragma mark -
 #pragma mark Interface
@@ -206,6 +207,20 @@ typedef NSUInteger BXGameIdentifierType;
 
 - (void) removeLauncherAtIndex: (NSUInteger)index;
 
+
+#pragma mark - Filesystem methods
+
+//Returns whether the gamebox's disk representation is currently locked and unable to be directly modified.
+//Will return YES if:
+//- The gamebox is on a read-only volume;
+//- The gamebox is not writable by Boxer (as determined by NSFileManager -isWritableFileAtPath:)
+//- The gamebox has been flagged as "locked" in Finder.
+//While the gamebox is locked, operations that rely on modifying the on-disk state of the gamebox will fail.
+//Note that even if this method returns NO, attempts to modify the gamebox's disk state may still fail
+//because of access restrictions.
+//Also note that this is *not* a KVO-compliant property: you must manually check the value each time.
+- (BOOL) isLocked;
+
 @end
 
 
@@ -222,6 +237,9 @@ typedef enum {
 //folder, the contents of this folder will be returned; otherwise, the rest of the gamebox
 //will be searched for documentation.
 @property (readonly, nonatomic) NSArray *documentationURLs;
+
+//Returns the eventual URL for the gamebox's documentation folder. This may not yet exist.
+@property (readonly, nonatomic) NSURL *documentationFolderURL;
 
 //Returns whether the gamebox has a documentation folder of its own.
 //If not, this can be created with populateDocumentationFolderWithError:.
@@ -245,9 +263,18 @@ typedef enum {
 //and outError will be populated with the reason the folder could not be accessed.
 - (NSURL *) documentationFolderURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
 
+//Creates a new empty documentation folder inside the gamebox if one doesn't already exist.
+//This can then be populated with populateDocumentationFolderWithError: if desired.
+//Returns YES if the folder was created or already existed, or NO and populates outError
+//if the folder could not be created (which will be the case if the gamebox is locked.)
+- (BOOL) createDocumentationFolderIfMissingWithError: (out NSError **)outError;
+
 //Populates the documentation folder with symlinks to documentation found elsewhere in the gamebox.
-//Note that this will not create the documentation folder if it does not already exist.
-- (BOOL) populateDocumentationFolderWithError: (out NSError **)outError;
+//If createIfMissing is YES, the folder will be created if it doesn't already exist.
+//Returns an array of populated documentation URLs if the folder was populated successfully,
+//or NO and returns outError if it could not be populated (including if the documentation folder
+//doesn't exist and createIfMissing was NO.)
+- (NSArray *) populateDocumentationFolderCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
 
 
 //Copies the file at the specified location into the documentation folder,
@@ -280,6 +307,10 @@ typedef enum {
 - (NSURL *) trashDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError;
 
 //Returns whether the specified documentation file can be removed from the gamebox.
-//Will return NO if the URL is not located within the documentation folder.
+//Will return NO if the gamebox is locked or the URL is not located within the documentation folder.
 - (BOOL) canTrashDocumentationURL: (NSURL *)documentationURL;
+
+//Returns whether the specified documentation file can be imported into the gamebox.
+//Will return NO if the gamebox is locked or has no documentation folder into which the file can go.
+- (BOOL) canAddDocumentationFromURL: (NSURL *)documentationURL;
 @end

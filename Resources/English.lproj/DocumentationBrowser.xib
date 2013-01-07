@@ -146,7 +146,7 @@
 										<string key="NSFrameSize">{480, 192}</string>
 										<reference key="NSSuperview" ref="974789508"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView" ref="342156510"/>
+										<reference key="NSNextKeyView" ref="95452772"/>
 										<string key="NSReuseIdentifierKey">_NS:80</string>
 										<string key="NSMinGridSize">{0, 0}</string>
 										<string key="NSMaxGridSize">{0, 0}</string>
@@ -184,7 +184,7 @@
 								<string key="NSFrame">{{-100, -100}, {15, 143}}</string>
 								<reference key="NSSuperview" ref="504448256"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="974789508"/>
+								<reference key="NSNextKeyView" ref="342156510"/>
 								<string key="NSReuseIdentifierKey">_NS:82</string>
 								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 								<reference key="NSTarget" ref="504448256"/>
@@ -198,7 +198,7 @@
 								<string key="NSFrame">{{-100, -100}, {233, 15}}</string>
 								<reference key="NSSuperview" ref="504448256"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="95452772"/>
+								<reference key="NSNextKeyView" ref="974789508"/>
 								<string key="NSReuseIdentifierKey">_NS:91</string>
 								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 								<int key="NSsFlags">1</int>
@@ -554,6 +554,22 @@
 					</object>
 					<int key="connectionID">37</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: helpText</string>
+						<reference key="source" ref="120434018"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="120434018"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">value: helpText</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">helpText</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">114</int>
+				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<array key="orderedObjects">
@@ -765,7 +781,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">107</int>
+			<int key="maxID">114</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -822,7 +838,6 @@
 						<string key="openSelectedDocumentationItems:">id</string>
 						<string key="previewSelectedDocumentationItems:">id</string>
 						<string key="revealSelectedDocumentationItemsInFinder:">id</string>
-						<string key="showDocumentationFolderInFinder:">id</string>
 						<string key="trashSelectedDocumentationItems:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
@@ -836,10 +851,6 @@
 						</object>
 						<object class="IBActionInfo" key="revealSelectedDocumentationItemsInFinder:">
 							<string key="name">revealSelectedDocumentationItemsInFinder:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showDocumentationFolderInFinder:">
-							<string key="name">showDocumentationFolderInFinder:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="trashSelectedDocumentationItems:">

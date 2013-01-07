@@ -10,6 +10,7 @@
 #import "BXGamebox.h"
 #import "NSURL+BXQuickLookHelpers.h"
 #import "NSView+BXDrawing.h"
+#import "BXBaseAppController.h"
 
 enum {
     BXDocumentationItemIcon = 1,
@@ -137,6 +138,9 @@ enum {
     NSArray *oldURLs = [self.documentationURLs copy];
     NSArray *newURLs = [session.gamebox.documentationURLs sortedArrayUsingDescriptors: self.sortCriteria];
     
+    //TODO: filter the URLs to trim out (or rename) duplicate-named entries, to clean up the documentation list
+    //when we're displaying autodiscovered URLs.
+    
     if (![newURLs isEqualToArray: self.documentationURLs])
     {
         if ([self.delegate respondsToSelector: @selector(documentationBrowser:willUpdateFromURLs:toURLs:)])
@@ -197,6 +201,45 @@ enum {
     
     return [NSString stringWithFormat: titleFormat, displayName];
 }
+
++ (NSSet *) keyPathsForValuesAffectingHelpText
+{
+    return [NSSet setWithObject: @"canModifyDocumentation"];
+}
+
+- (NSString *) helpText
+{
+    if (self.canModifyDocumentation)
+    {
+        return NSLocalizedString(@"Drag documentation here to add it to this game.",
+                                 @"Help text shown in documentation browser when the gamebox does not get contain any documentation.");
+    }
+    //If we're not able to import new documentation, then don't show any help text
+    else
+    {
+        return nil;
+    }
+}
+
++ (NSSet *) keyPathsForValuesAffectingCanModifyDocumentation
+{
+    return [NSSet setWithObjects: @"representedObject.gamebox.hasDocumentationFolder", @"representedObject.gamebox.isLocked", nil];
+}
+
+- (BOOL) canModifyDocumentation
+{
+    if (![[NSApp delegate] isStandaloneGameBundle])
+        return NO;
+    
+    if (![self.representedObject gamebox].hasDocumentationFolder)
+        return NO;
+    
+    if (![self.representedObject gamebox].isLocked)
+        return NO;
+    
+    return YES;
+}
+
 
 + (NSSet *) keyPathsForValuesAffectingSelectedDocumentationURLs
 {
@@ -479,18 +522,6 @@ enum {
     [self removeDocumentationURLs: self.selectedDocumentationURLs];
 }
 
-- (IBAction) showDocumentationFolderInFinder: (id)sender
-{
-    BXSession *session = self.representedObject;
-    NSURL *documentationURL = [session.gamebox documentationFolderURLCreatingIfMissing: YES error: NULL];
-    
-    //If the documentation folder couldn't be found or created, show the user the gamebox itself instead.
-    if (!documentationURL)
-        documentationURL = session.gamebox.bundleURL;
-    
-    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: @[documentationURL]];
-}
-
 - (BOOL) validateMenuItem: (NSMenuItem *)menuItem
 {
     BOOL hasSelectedItems = (self.documentationSelectionIndexes.count > 0);
@@ -502,6 +533,9 @@ enum {
     }
     else if (menuItem.action == @selector(trashSelectedDocumentationItems:))
     {
+        //Hide the menu item altogether if we cannot modify the documentation
+        menuItem.hidden = self.canModifyDocumentation;
+        
         if (!hasSelectedItems)
             return NO;
         
@@ -528,8 +562,8 @@ enum {
 {
 	NSPasteboard *pboard = sender.draggingPasteboard;
     
-	if ([pboard canReadObjectForClasses: @[[NSURL class]]
-                                options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }])
+	if (self.canModifyDocumentation && [pboard canReadObjectForClasses: @[[NSURL class]]
+                                                               options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }])
 	{
         return NSDragOperationCopy;
 	}
@@ -891,6 +925,7 @@ enum {
 - (NSSize) minContentSizeForNumberOfItems: (NSUInteger)numItems
 {
     NSSize minItemSize = self.minItemSize;
+    
     if (NSEqualSizes(minItemSize, NSZeroSize))
         minItemSize = self.itemPrototype.view.frame.size;
     

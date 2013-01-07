@@ -1302,11 +1302,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleDocumentation:</string>
+						<string key="label">toggleDocumentationBrowser:</string>
 						<reference key="source" ref="1003"/>
 						<reference key="destination" ref="924556485"/>
 					</object>
-					<int key="connectionID">1440</int>
+					<int key="connectionID">1441</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2314,7 +2314,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1440</int>
+			<int key="maxID">1441</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3085,6 +3085,7 @@
 						<string key="exportGameState:">id</string>
 						<string key="fastForward:">id</string>
 						<string key="finishPrintSession:">id</string>
+						<string key="hideDocumentationBrowser:">id</string>
 						<string key="importGameState:">id</string>
 						<string key="incrementFrameSkip:">id</string>
 						<string key="incrementSpeed:">id</string>
@@ -3103,7 +3104,8 @@
 						<string key="resume:">id</string>
 						<string key="revertShadowedChanges:">id</string>
 						<string key="saveScreenshot:">id</string>
-						<string key="toggleDocumentation:">id</string>
+						<string key="showDocumentationBrowser:">id</string>
+						<string key="toggleDocumentationBrowser:">id</string>
 						<string key="toggleFastForward:">id</string>
 						<string key="togglePaused:">id</string>
 					</dictionary>
@@ -3130,6 +3132,10 @@
 						</object>
 						<object class="IBActionInfo" key="finishPrintSession:">
 							<string key="name">finishPrintSession:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="hideDocumentationBrowser:">
+							<string key="name">hideDocumentationBrowser:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="importGameState:">
@@ -3204,8 +3210,12 @@
 							<string key="name">saveScreenshot:</string>
 							<string key="candidateClassName">id</string>
 						</object>
-						<object class="IBActionInfo" key="toggleDocumentation:">
-							<string key="name">toggleDocumentation:</string>
+						<object class="IBActionInfo" key="showDocumentationBrowser:">
+							<string key="name">showDocumentationBrowser:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="toggleDocumentationBrowser:">
+							<string key="name">toggleDocumentationBrowser:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="toggleFastForward:">

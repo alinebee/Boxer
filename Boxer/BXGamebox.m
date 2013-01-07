@@ -553,6 +553,32 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     self.gameInfo = nil;
 }
 
+- (BOOL) isLocked
+{
+    NSArray *keys = @[NSURLIsWritableKey, NSURLIsSystemImmutableKey, NSURLIsUserImmutableKey];
+    NSDictionary *flags = [self.bundleURL resourceValuesForKeys: keys error: NULL];
+    
+    BOOL locked = NO;
+    if (![[flags objectForKey: NSURLIsWritableKey] boolValue])
+    {
+        NSLog(@"Not writeable");
+        locked = YES;
+    }
+    
+    if ([[flags objectForKey: NSURLIsSystemImmutableKey] boolValue])
+    {
+        NSLog(@"System immutable");
+        locked = YES;
+    }
+    
+    if ([[flags objectForKey: NSURLIsUserImmutableKey] boolValue])
+    {
+        NSLog(@"User immutable");
+        locked = YES;
+    }
+    
+    return locked;
+}
 
 
 #pragma mark -
@@ -675,9 +701,14 @@ typedef enum {
 	return exclusions;
 }
 
+- (NSURL *) documentationFolderURL
+{
+    return [self.resourceURL URLByAppendingPathComponent: BXDocumentationFolderName isDirectory: YES];
+}
+
 - (NSURL *) documentationFolderURLCreatingIfMissing: (BOOL)createIfMissing error: (NSError **)outError
 {
-    NSURL *docsURL = [self.resourceURL URLByAppendingPathComponent: BXDocumentationFolderName isDirectory: YES];
+    NSURL *docsURL = self.documentationFolderURL;
     
     BOOL folderExists = [docsURL checkResourceIsReachableAndReturnError: outError];
     
@@ -686,27 +717,16 @@ typedef enum {
     
     else if (createIfMissing)
     {
-        //Auto-create the documentation folder, populating it with symlinks to discovered documentation
-        NSFileManager *manager = [[NSFileManager alloc] init];
-        BOOL created = [manager createDirectoryAtURL: docsURL withIntermediateDirectories: YES attributes: nil error: outError];
-        if (created)
+        //Auto-create the documentation folder and populate it with symlinks to discovered documentation
+        NSArray *populatedURLs = [self populateDocumentationFolderCreatingIfMissing: YES error: outError];
+        if (populatedURLs != nil)
         {
-            //If we were not able to populate the folder with documentation for any reason,
-            //then delete the new folder.
-            BOOL populated = [self populateDocumentationFolderWithError: outError];
-            if (!populated)
-            {
-                [manager removeItemAtURL: docsURL error: NULL];
-                created = NO;
-            }
-        }
-        
-        [manager release];
-        
-        if (created)
             return docsURL;
+        }
         else
+        {
             return nil;
+        }
     }
     else
     {
@@ -714,12 +734,32 @@ typedef enum {
     }
 }
 
-- (BOOL) populateDocumentationFolderWithError: (out NSError **)outError
+- (BOOL) createDocumentationFolderIfMissingWithError: (out NSError **)outError
 {
-    NSURL *docsURL = [self.resourceURL URLByAppendingPathComponent: BXDocumentationFolderName isDirectory: YES];
+    NSURL *docsURL = self.documentationFolderURL;
+    return [[NSFileManager defaultManager] createDirectoryAtURL: docsURL
+                                    withIntermediateDirectories: YES
+                                                     attributes: nil
+                                                          error: outError];
+}
+
+- (NSArray *) populateDocumentationFolderCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError
+{
+    NSURL *docsURL = self.documentationFolderURL;
+    //If desired, create the folder if it is missing. If it doesn't exist and we can't create it, bail out now.
+    if (createIfMissing)
+    {
+        BOOL createdOrExists = [self createDocumentationFolderIfMissingWithError: outError];
+        if (!createdOrExists)
+            return nil;
+    }
+    
+    //If the folder is now available, search the rest of the gamebox for documentation files to fill it with.
     if ([docsURL checkResourceIsReachableAndReturnError: outError])
     {
-        NSArray *foundDocumentation = [self.class URLsForDocumentationInLocation: self.bundleURL searchSubdirectories: YES];
+        NSArray *foundDocumentation = [self.class URLsForDocumentationInLocation: self.bundleURL
+                                                            searchSubdirectories: YES];
+        
         for (NSURL *documentURL in foundDocumentation)
         {
             NSURL *symlinkURL = [self addDocumentationSymlinkToURL: documentURL
@@ -727,19 +767,20 @@ typedef enum {
                                                           ifExists: BXGameboxDocumentationRename
                                                              error: outError];
             
+            //If any of the documentation items couldn't be created, bail out and treat the whole operation
+            //as having failed.
             if (!symlinkURL)
-                return NO;
+                return nil;
         }
         
-        return YES;
+        return self.documentationURLs;
     }
-    else return NO;
+    else return nil;
 }
 
 - (BOOL) hasDocumentationFolder
 {
-    NSURL *docsURL = [self.resourceURL URLByAppendingPathComponent: BXDocumentationFolderName isDirectory: YES];
-    return [docsURL checkResourceIsReachableAndReturnError: NULL];
+    return [self.documentationFolderURL checkResourceIsReachableAndReturnError: NULL];
 }
 
 - (NSURL *) _addDocumentationFromURL: (NSURL *)documentationURL
@@ -749,13 +790,13 @@ typedef enum {
                                error: (out NSError **)outError
 {    
     NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
-    NSURL *docsURL = [self.resourceURL URLByAppendingPathComponent: BXDocumentationFolderName isDirectory: YES];
     //Create the documentation URL if it's not already there, and fail if we cannot create it.
-    BOOL created = [manager createDirectoryAtURL: docsURL withIntermediateDirectories: YES attributes: nil error: outError];
+    NSURL *docsURL = self.documentationFolderURL;
+    BOOL created = [self createDocumentationFolderIfMissingWithError: outError];
     if (!created)
         return nil;
     
-    //Skip files that are rooted in the documentation folder itself.
+    //Do not import files that are already rooted in the documentation folder itself.
     if ([documentationURL isBasedInURL: docsURL])
         return documentationURL;
     
@@ -945,7 +986,8 @@ typedef enum {
     }
     else
     {
-        //TODO: use a custom error code?
+        //TODO: use a custom error, the one below will give an erroneous message
+        //about saving rather than deleting.
         if (outError)
         {
             *outError = [NSError errorWithDomain: NSCocoaErrorDomain
@@ -958,20 +1000,17 @@ typedef enum {
 
 - (BOOL) canTrashDocumentationURL: (NSURL *)documentationURL
 {
-    NSURL *docsURL = [self documentationFolderURLCreatingIfMissing: NO error: NULL];
-    if (docsURL)
-    {
-        return [documentationURL isBasedInURL: docsURL];
-    }
-    else
-    {
-        return NO;
-    }
+    return [documentationURL isBasedInURL: self.documentationFolderURL] && !self.isLocked;
+}
+
+- (BOOL) canAddDocumentationFromURL: (NSURL *)documentationURL
+{
+    return self.hasDocumentationFolder && !self.isLocked;
 }
 
 - (NSArray *) documentationURLs
 {
-    NSURL *docsURL = [self documentationFolderURLCreatingIfMissing: NO error: NULL];
+    NSURL *docsURL = self.documentationFolderURL;
     
     //If the documentation folder exists, return everything inside it.
     if ([docsURL checkResourceIsReachableAndReturnError: NULL])

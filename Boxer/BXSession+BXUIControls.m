@@ -454,7 +454,7 @@
     if (theAction == @selector(printDocument:) || theAction == @selector(orderFrontPrintStatusPanel:))
         return self.emulator.printer != nil;
     
-    if (theAction == @selector(toggleDocumentation:))
+    if (theAction == @selector(toggleDocumentationBrowser:))
         return self.hasGamebox;
     
 	if (theAction == @selector(paste:))
@@ -1090,37 +1090,54 @@
     return NO;
 }
 
-
-- (IBAction) toggleDocumentation: (id)sender
+- (void) showDocumentationBrowser: (id)sender
 {
     //Only gameboxes can have built-in documentation
     if (!self.hasGamebox)
         return;
     
-    //Create a documentation panel the first time it is needed.
+    //Check if our gamebox has a dedicated documentation folder.
+    //If it doesn't yet, attempt to create and populate it now so that the user
+    //will be able to add more documentation via the browser and remove unwanted documentation symlinks.
+    if (!self.gamebox.hasDocumentationFolder)
+        [self.gamebox populateDocumentationFolderCreatingIfMissing: YES error: NULL];
+    
+    //Create our documentation browser controller the first time it is needed.
     if (!self.documentationPanelController)
         self.documentationPanelController = [BXDocumentationPanelController controller];
     
-    if (self.documentationPanelController.isShown)
+    //Display the documentation as a popover from our documentation toolbar button if it is visible;
+    //otherwise display the browser in its own window.
+    NSView *relativeView = self.DOSWindowController.documentationButton.view;
+    if (relativeView.window != nil && !relativeView.isHiddenOrHasHiddenAncestor)
     {
-        [self.documentationPanelController close];
+        NSRectEdge preferredEdge = (relativeView.isFlipped) ? NSMaxYEdge : NSMinYEdge;
+        [self.documentationPanelController displayForSession: self
+                                     inPopoverRelativeToRect: NSZeroRect
+                                                      ofView: relativeView
+                                               preferredEdge: preferredEdge];
     }
     else
     {
-        //Check if we can display the documentation as a popover from our documentation button.
-        NSView *relativeView = self.DOSWindowController.documentationButton.view;
-        if (relativeView.window != nil && !self.DOSWindowController.window.isFullScreen)
-        {
-            NSRectEdge preferredEdge = (relativeView.isFlipped) ? NSMaxYEdge : NSMinYEdge;
-            [self.documentationPanelController displayForSession: self
-                                         inPopoverRelativeToRect: NSZeroRect
-                                                          ofView: relativeView
-                                                   preferredEdge: preferredEdge];
-        }
-        else
-        {
-            [self.documentationPanelController displayForSession: self];
-        }
+        [self.documentationPanelController displayForSession: self];
+    }
+}
+
+- (void) hideDocumentationBrowser: (id)sender
+{
+    [self.documentationPanelController close];
+}
+
+- (IBAction) toggleDocumentationBrowser: (id)sender
+{
+    //Hide the documentation browser if it was already open
+    if (self.documentationPanelController.isShown)
+    {
+        [self hideDocumentationBrowser: self];
+    }
+    else
+    {
+        [self showDocumentationBrowser: self];
     }
 }
 

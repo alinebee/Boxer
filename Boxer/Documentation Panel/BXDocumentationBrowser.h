@@ -63,6 +63,15 @@
 //This varies based on the number of documentation items and the length of the title.
 @property (readonly, nonatomic) NSSize idealContentSize;
 
+//The text that will be displayed in the help text label at the foot of the view.
+//Changes depending on how many documentation items there are and whether adding new documentation is possible.
+@property (readonly, nonatomic) NSString *helpText;
+
+//Whether we are able to add or remove documentation from the gamebox.
+//This is determined from the locked status of the gamebox,
+//the presence of a Documentation folder in the gamebox, and whether we are a standalone game app.
+@property (readonly, nonatomic) BOOL canModifyDocumentation;
+
 #pragma mark - Constructors
 
 //Returns a newly-created BXDocumentationListController instance
@@ -76,7 +85,6 @@
 - (IBAction) openSelectedDocumentationItems: (id)sender;
 - (IBAction) revealSelectedDocumentationItemsInFinder: (id)sender;
 - (IBAction) trashSelectedDocumentationItems: (id)sender;
-- (IBAction) showDocumentationFolderInFinder: (id)sender;
 
 //Helper methods for adding/removing documentation items.
 //These will register undo actions and will present error sheets if importing/removal fails.

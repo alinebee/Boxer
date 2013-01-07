@@ -84,6 +84,9 @@ typedef enum {
 //The current playback mode: paused, playing, fast-forwarding. Used for UI bindings.
 @property (assign, nonatomic) BXPlaybackMode playbackMode;
 
+//The title to use for the "Player Data" submenu in the File menu when this session is active.
+@property (readonly, nonatomic) NSString *playerDataMenuLabel;
+
 #pragma mark -
 #pragma mark Class methods
 

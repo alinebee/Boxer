@@ -412,6 +412,11 @@
 	return YES;
 }
 
++ (NSSet *) keyPathsForValuesAffectingSliderSpeed
+{
+    return [NSSet setWithObjects: @"emulating", @"CPUSpeed", @"autoSpeed", @"dynamic", nil];
+}
+
 
 - (BOOL) isDynamic
 {
@@ -669,7 +674,23 @@
 
 
 #pragma mark -
-#pragma mark Describing emulation state
+#pragma mark UI description bindings
+
+- (NSString *) playerDataMenuLabel
+{
+    if (self.hasGamebox)
+    {
+        NSString *format = NSLocalizedString(@"Player Data for “%@”", @"Label shown in File Menu for Player Data submenu. %@ is the display name of the current session.");
+        return [NSString stringWithFormat: format, self.displayName];
+    }
+    else
+        return nil;
+}
+
++ (NSSet *) keyPathsForValuesAffectingPlayerDataMenuLabel
+{
+    return [NSSet setWithObject: @"displayName, hasGamebox"];
+}
 
 - (NSString *) speedDescription
 {	
@@ -689,7 +710,6 @@
 	return [NSString stringWithFormat: format, self.frameskip + 1];
 }
 
-+ (NSSet *) keyPathsForValuesAffectingSliderSpeed			{ return [NSSet setWithObjects: @"emulating", @"CPUSpeed", @"autoSpeed", @"dynamic", nil]; }
 + (NSSet *) keyPathsForValuesAffectingSpeedDescription		{ return [NSSet setWithObject: @"sliderSpeed"]; }
 + (NSSet *) keyPathsForValuesAffectingFrameskipDescription	{ return [NSSet setWithObjects: @"emulating", @"frameskip", nil]; }
 
@@ -830,10 +850,10 @@
             
             confirmation.messageText = [NSString stringWithFormat: messageFormat, self.displayName];
             
-            confirmation.informativeText = NSLocalizedString(@"Your savegames and file modifications will be lost.",
+            confirmation.informativeText = NSLocalizedString(@"Your player data and changes to game files will be lost. This operation cannot be undone.",
                                                              @"Informative text of confirmation when reverting the current session to its original state.");
             
-            NSString *closeLabel	= NSLocalizedString(@"Revert and Relaunch", @"Label for button to confirm that the user wants to revert the current session to its original state.");
+            NSString *closeLabel	= NSLocalizedString(@"Reset and Relaunch", @"Label for button to confirm that the user wants to revert the current session to its original state.");
             NSString *cancelLabel	= NSLocalizedString(@"Cancel",	@"Cancel the current action and return to what the user was doing");
             
             [confirmation addButtonWithTitle: closeLabel];
@@ -855,6 +875,8 @@
 
 - (IBAction) mergeShadowedChanges: (id)sender
 {
+    //TODO: check here if the gamebox is writable, and show an error if not.
+    
     //Only proceed if we actually have something to revert.
     if (self.hasShadowedChanges)
     {
@@ -865,7 +887,7 @@
         
         confirmation.messageText = [NSString stringWithFormat: messageFormat, self.displayName];
         
-        confirmation.informativeText = NSLocalizedString(@"Your savegames and file modifications will become a permanent part of the gamebox for all users.",
+        confirmation.informativeText = NSLocalizedString(@"Your player data and changes to game files will become a permanent part of the gamebox. This operation cannot be undone.",
                                                          @"Informative text of confirmation when merging shadowed changes for the current session.");
         
 		NSString *closeLabel	= NSLocalizedString(@"Merge and Relaunch", @"Label for button to confirm that the user wants to merge their shadowed changes for the current session.");

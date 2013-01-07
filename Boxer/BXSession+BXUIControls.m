@@ -1093,6 +1093,10 @@
 
 - (IBAction) toggleDocumentation: (id)sender
 {
+    //Only gameboxes can have built-in documentation
+    if (!self.hasGamebox)
+        return;
+    
     //Create a documentation panel the first time it is needed.
     if (!self.documentationPanelController)
         self.documentationPanelController = [BXDocumentationPanelController controller];
@@ -1107,10 +1111,11 @@
         NSView *relativeView = self.DOSWindowController.documentationButton.view;
         if (relativeView.window != nil && !self.DOSWindowController.window.isFullScreen)
         {
+            NSRectEdge preferredEdge = (relativeView.isFlipped) ? NSMaxYEdge : NSMinYEdge;
             [self.documentationPanelController displayForSession: self
                                          inPopoverRelativeToRect: NSZeroRect
                                                           ofView: relativeView
-                                                   preferredEdge: NSMinYEdge];
+                                                   preferredEdge: preferredEdge];
         }
         else
         {

@@ -332,7 +332,14 @@ enum {
 {
     if (self.documentationSelectionIndexes.count)
     {
-        [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: self.selectedDocumentationURLs];
+        NSMutableArray *resolvedURLs = [NSMutableArray arrayWithCapacity: self.documentationSelectionIndexes.count];
+        for (NSURL *URL in self.selectedDocumentationURLs)
+        {
+            NSURL *resolvedURL = URL.URLByResolvingSymlinksInPath;
+            [resolvedURLs addObject: resolvedURL];
+        }
+        
+        [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: resolvedURLs];
         
         if ([self.delegate respondsToSelector: @selector(documentationBrowser:didRevealURLs:)])
             [self.delegate documentationBrowser: self didRevealURLs: self.selectedDocumentationURLs];
@@ -590,28 +597,35 @@ enum {
 //A private class to implement the QLPreviewItem protocol for BXDocumentPreviews.
 @interface BXDocumentationBrowserPreviewItem : NSObject <QLPreviewItem>
 {
-    NSURL *_previewItemURL;
+    NSURL *_originalURL;
 }
-    
-@property (copy, nonatomic) NSURL *previewItemURL;
+
+//The  in the documentation browser, used for matching up
+//between the preview and the browser.
+@property (copy, nonatomic) NSURL *originalURL;
 
 + (id) previewItemWithURL: (NSURL *)URL;
 
 @end
 
 @implementation BXDocumentationBrowserPreviewItem
-@synthesize previewItemURL = _previewItemURL;
+@synthesize originalURL = _originalURL;
 
 + (id) previewItemWithURL: (NSURL *)URL
 {
     BXDocumentationBrowserPreviewItem *previewItem = [[self alloc] init];
-    previewItem.previewItemURL = URL;
+    previewItem.originalURL = URL;
     return [previewItem autorelease];
+}
+
+- (NSURL *) previewItemURL
+{
+    return self.originalURL.URLByResolvingSymlinksInPath;
 }
 
 - (void) dealloc
 {   
-    self.previewItemURL = nil;
+    self.originalURL = nil;
     [super dealloc];
 }
 
@@ -655,9 +669,9 @@ enum {
 
 #pragma mark - QLPreviewPanelDelegate protocol implementations
 
-- (NSRect) previewPanel: (QLPreviewPanel *)panel sourceFrameOnScreenForPreviewItem: (id<QLPreviewItem>)item
+- (NSRect) previewPanel: (QLPreviewPanel *)panel sourceFrameOnScreenForPreviewItem: (BXDocumentationBrowserPreviewItem *)item
 {
-    NSInteger itemIndex = [self.documentationURLs indexOfObject: item.previewItemURL];
+    NSInteger itemIndex = [self.documentationURLs indexOfObject: item.originalURL];
     if (itemIndex != NSNotFound)
     {
         NSView *itemView = [self.documentationList itemAtIndex: itemIndex].view;
@@ -680,9 +694,9 @@ enum {
     return NSZeroRect;
 }
 
-- (NSImage *) previewPanel: (QLPreviewPanel *)panel transitionImageForPreviewItem: (id <QLPreviewItem>)item contentRect: (NSRect *)contentRect
+- (NSImage *) previewPanel: (QLPreviewPanel *)panel transitionImageForPreviewItem: (BXDocumentationBrowserPreviewItem *)item contentRect: (NSRect *)contentRect
 {
-    NSInteger itemIndex = [self.documentationURLs indexOfObject: item.previewItemURL];
+    NSInteger itemIndex = [self.documentationURLs indexOfObject: item.originalURL];
     
     if (itemIndex != NSNotFound)
     {
@@ -770,11 +784,15 @@ enum {
 {
     if (self.representedObject)
     {
+        //Fully resolve the path of our represented URL to ensure that we grab the icon of a proper file,
+        //not the icon of a symlink to that file.
+        NSURL *sourceURL = [(NSURL *)self.representedObject URLByResolvingSymlinksInPath];
+        
         //First, check if the file has a custom icon. If so we will use this and be done with it.
         NSImage *customIcon = nil;
-        BOOL loadedCustomIcon = [(NSURL *)self.representedObject getResourceValue: &customIcon
-                                                                           forKey: NSURLCustomIconKey
-                                                                            error: NULL];
+        BOOL loadedCustomIcon = [sourceURL getResourceValue: &customIcon
+                                                     forKey: NSURLCustomIconKey
+                                                      error: NULL];
         
         if (loadedCustomIcon && customIcon != nil)
         {
@@ -787,9 +805,9 @@ enum {
         {
             //First, load and display Finder's standard icon for the file.
             NSImage *defaultIcon = nil;
-            BOOL loadedDefaultIcon = [(NSURL *)self.representedObject getResourceValue: &defaultIcon
-                                                                                forKey: NSURLEffectiveIconKey
-                                                                                 error: NULL];
+            BOOL loadedDefaultIcon = [sourceURL getResourceValue: &defaultIcon
+                                                          forKey: NSURLEffectiveIconKey
+                                                           error: NULL];
             
             if (loadedDefaultIcon && defaultIcon != nil)
             {
@@ -797,7 +815,6 @@ enum {
             }
             
             //Meanwhile, load in a quicklook preview for this file in the background.
-            NSURL *previewURL = [self.representedObject copy];
             //Take retina displays into account when calculating the appropriate preview size.
             NSSize thumbnailSize = self.view.bounds.size;
             if ([self.view respondsToSelector: @selector(convertSizeToBacking:)])
@@ -807,17 +824,15 @@ enum {
             //to prepare the thumbnail.
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
             dispatch_async(queue, ^{
-                NSImage *thumbnail = [previewURL quickLookThumbnailWithMaxSize: thumbnailSize iconStyle: YES];
+                NSImage *thumbnail = [sourceURL quickLookThumbnailWithMaxSize: thumbnailSize iconStyle: YES];
                 
                 //Before applying the new icon, double-check that our represented URL hasn't changed in the meantime.
-                if (thumbnail && [previewURL isEqual: self.representedObject])
+                if (thumbnail && [sourceURL isEqual: [self.representedObject URLByResolvingSymlinksInPath]])
                 {
                     //Ensure we change the icon on the main thread, where the UI is doing its thing.
                     [self performSelectorOnMainThread: @selector(setIcon:) withObject: thumbnail waitUntilDone: YES];
                 }
             });
-            
-            [previewURL release];
         }
     }
 }

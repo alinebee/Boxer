@@ -45,6 +45,9 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 //When calculating a digest from the gamebox's EXEs, read only the first 64kb of each EXE.
 #define BXGameIdentifierEXEDigestStubLength 65536
 
+//The gamebox will cache the results of an isWritable check for this many seconds
+//to prevent repeated hits to the filesystem.
+#define BXGameboxWritableCheckCacheDuration 3.0
 
 
 #pragma mark -
@@ -553,31 +556,29 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     self.gameInfo = nil;
 }
 
-- (BOOL) isLocked
+- (BOOL) isWritable
 {
-    NSArray *keys = @[NSURLIsWritableKey, NSURLIsSystemImmutableKey, NSURLIsUserImmutableKey];
-    NSDictionary *flags = [self.bundleURL resourceValuesForKeys: keys error: NULL];
-    
-    BOOL locked = NO;
-    if (![[flags objectForKey: NSURLIsWritableKey] boolValue])
+    CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
+    BOOL cacheExpired = _nextWriteableCheckTime < now;
+    //Periodically re-check whether the gamebox is still writable.
+    if (cacheExpired)
     {
-        NSLog(@"Not writeable");
-        locked = YES;
+        NSNumber *writeableFlag = nil;
+        BOOL checkWriteable = [self.bundleURL getResourceValue: &writeableFlag forKey: NSURLIsWritableKey error: NULL];
+        
+        if (checkWriteable)
+        {
+            _lastWritableStatus = writeableFlag.boolValue;
+        }
+        //If we couldn't determine the writeability of the gamebox, assume the answer is no.
+        else
+        {
+            _lastWritableStatus = NO;
+        }
+        _nextWriteableCheckTime = now + BXGameboxWritableCheckCacheDuration;
     }
     
-    if ([[flags objectForKey: NSURLIsSystemImmutableKey] boolValue])
-    {
-        NSLog(@"System immutable");
-        locked = YES;
-    }
-    
-    if ([[flags objectForKey: NSURLIsUserImmutableKey] boolValue])
-    {
-        NSLog(@"User immutable");
-        locked = YES;
-    }
-    
-    return locked;
+    return _lastWritableStatus;
 }
 
 
@@ -1000,12 +1001,12 @@ typedef enum {
 
 - (BOOL) canTrashDocumentationURL: (NSURL *)documentationURL
 {
-    return [documentationURL isBasedInURL: self.documentationFolderURL] && !self.isLocked;
+    return [documentationURL isBasedInURL: self.documentationFolderURL] && self.isWritable;
 }
 
 - (BOOL) canAddDocumentationFromURL: (NSURL *)documentationURL
 {
-    return self.hasDocumentationFolder && !self.isLocked;
+    return self.hasDocumentationFolder && self.isWritable;
 }
 
 - (NSArray *) documentationURLs

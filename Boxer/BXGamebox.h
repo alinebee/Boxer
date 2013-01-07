@@ -105,6 +105,8 @@ typedef NSUInteger BXGameIdentifierType;
 	NSMutableDictionary *_gameInfo;
     NSMutableArray *_launchers;
     id <BXUndoDelegate> _undoDelegate;
+    BOOL _lastWritableStatus;
+    CFAbsoluteTime _nextWriteableCheckTime;
 }
 
 #pragma mark -
@@ -210,16 +212,14 @@ typedef NSUInteger BXGameIdentifierType;
 
 #pragma mark - Filesystem methods
 
-//Returns whether the gamebox's disk representation is currently locked and unable to be directly modified.
-//Will return YES if:
-//- The gamebox is on a read-only volume;
-//- The gamebox is not writable by Boxer (as determined by NSFileManager -isWritableFileAtPath:)
-//- The gamebox has been flagged as "locked" in Finder.
-//While the gamebox is locked, operations that rely on modifying the on-disk state of the gamebox will fail.
-//Note that even if this method returns NO, attempts to modify the gamebox's disk state may still fail
-//because of access restrictions.
+//Returns whether the gamebox's disk representation is currently writable to Boxer:
+//according to the NSURLFileIsWritableKey resource property of the bundle's URL.
+//To avoid hitting the filesystem constantly for checks, the result of the check will
+//be cached for a number of seconds.
+//Note that even if this method returns YES, attempts to modify the gamebox's disk state
+//may still fail because of access restrictions.
 //Also note that this is *not* a KVO-compliant property: you must manually check the value each time.
-- (BOOL) isLocked;
+- (BOOL) isWritable;
 
 @end
 

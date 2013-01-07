@@ -84,8 +84,6 @@ enum {
     if ([self.documentationScrollView respondsToSelector: @selector(setHorizontalScrollElasticity:)])
         self.documentationScrollView.horizontalScrollElasticity = NSScrollElasticityNone;
     
-    self.documentationList.minItemSize = self.documentationList.itemPrototype.view.frame.size;
-    
 	[self.view registerForDraggedTypes: @[NSFilenamesPboardType]];
     
     //Insert ourselves into the responder chain ahead of our view.
@@ -228,13 +226,13 @@ enum {
 
 - (BOOL) canModifyDocumentation
 {
-    if (![[NSApp delegate] isStandaloneGameBundle])
+    if ([[NSApp delegate] isStandaloneGameBundle])
         return NO;
     
     if (![self.representedObject gamebox].hasDocumentationFolder)
         return NO;
     
-    if (![self.representedObject gamebox].isLocked)
+    if (![self.representedObject gamebox].isWritable)
         return NO;
     
     return YES;
@@ -534,7 +532,7 @@ enum {
     else if (menuItem.action == @selector(trashSelectedDocumentationItems:))
     {
         //Hide the menu item altogether if we cannot modify the documentation
-        menuItem.hidden = self.canModifyDocumentation;
+        menuItem.hidden = !self.canModifyDocumentation;
         
         if (!hasSelectedItems)
             return NO;
@@ -924,10 +922,11 @@ enum {
 
 - (NSSize) minContentSizeForNumberOfItems: (NSUInteger)numItems
 {
-    NSSize minItemSize = self.minItemSize;
-    
-    if (NSEqualSizes(minItemSize, NSZeroSize))
-        minItemSize = self.itemPrototype.view.frame.size;
+    //IMPLEMENTATION NOTE: we could (and should) defer to our assigned minItemSize instead.
+    //However, upstream we use minItemSize and maxItemSize to temporarily lock the collection's
+    //items to a specific to prevent them from reflowing during a resize animation: and we don't
+    //want those forced temporary values to leak into our minimum size calculations here.
+    NSSize minItemSize = self.itemPrototype.view.frame.size;
     
     NSUInteger numColumns, numRows;
     

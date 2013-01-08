@@ -1122,7 +1122,13 @@
     //If it doesn't yet, attempt to create and populate it now so that the user
     //will be able to add more documentation via the browser and remove unwanted documentation symlinks.
     if (!self.gamebox.hasDocumentationFolder)
-        [self.gamebox populateDocumentationFolderCreatingIfMissing: YES error: NULL];
+    {
+        //TWEAK: disable undo registration while we create and populate the folder,
+        //as this is not in response to a user action.
+        [self.undoManager disableUndoRegistration];
+            [self.gamebox populateDocumentationFolderCreatingIfMissing: YES error: NULL];
+        [self.undoManager enableUndoRegistration];
+    }
     
     //Create our documentation browser controller the first time it is needed.
     if (!self.documentationPanelController)

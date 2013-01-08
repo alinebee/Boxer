@@ -707,41 +707,93 @@ typedef enum {
     return [self.resourceURL URLByAppendingPathComponent: BXDocumentationFolderName isDirectory: YES];
 }
 
-- (NSURL *) documentationFolderURLCreatingIfMissing: (BOOL)createIfMissing error: (NSError **)outError
-{
-    NSURL *docsURL = self.documentationFolderURL;
-    
-    BOOL folderExists = [docsURL checkResourceIsReachableAndReturnError: outError];
-    
-    if (folderExists)
-        return docsURL;
-    
-    else if (createIfMissing)
-    {
-        //Auto-create the documentation folder and populate it with symlinks to discovered documentation
-        NSArray *populatedURLs = [self populateDocumentationFolderCreatingIfMissing: YES error: outError];
-        if (populatedURLs != nil)
-        {
-            return docsURL;
-        }
-        else
-        {
-            return nil;
-        }
-    }
-    else
-    {
-        return nil;
-    }
-}
-
 - (BOOL) createDocumentationFolderIfMissingWithError: (out NSError **)outError
 {
     NSURL *docsURL = self.documentationFolderURL;
-    return [[NSFileManager defaultManager] createDirectoryAtURL: docsURL
-                                    withIntermediateDirectories: YES
-                                                     attributes: nil
-                                                          error: outError];
+    
+    //If the directory already exists, return now
+    if ([docsURL checkResourceIsReachableAndReturnError: NULL])
+    {
+        return YES;
+    }
+    //Otherwise, create the directory anew.
+    else
+    {
+        BOOL created = [[NSFileManager defaultManager] createDirectoryAtURL: docsURL
+                                                withIntermediateDirectories: YES
+                                                                 attributes: nil
+                                                                      error: outError];
+        
+        if (created)
+        {
+            //Record an undo operation to delete the new directory.
+            //Note that unlike trashDocumentationFolderWithError: this will completely delete the directory,
+            //including its contents: we assume that by the stage that this undo operation is performed,
+            //any subsequently-added documentation files will have been undone also.
+            NSUndoManager *undoManager = [self.undoDelegate undoManagerForClient: self operation: _cmd];
+            if (undoManager.isUndoRegistrationEnabled)
+            {
+                id undoProxy = [undoManager prepareWithInvocationTarget: self];
+                [undoProxy _removeDocumentationFolderWithError: NULL];
+            }
+        }
+        
+        return created;
+    }
+}
+
+- (BOOL) _removeDocumentationFolderWithError: (out NSError **)outError
+{
+    NSURL *docsURL = self.documentationFolderURL;
+    BOOL removed = [[NSFileManager defaultManager] removeItemAtURL: docsURL error: outError];
+    if (removed)
+    {
+        //Record an undo operation to recreate the documentation folder.
+        NSUndoManager *undoManager = [self.undoDelegate undoManagerForClient: self operation: _cmd];
+        if (undoManager.isUndoRegistrationEnabled)
+        {
+            id undoProxy = [undoManager prepareWithInvocationTarget: self];
+            [undoProxy createDocumentationFolderIfMissingWithError: NULL];
+        }
+    }
+    return removed;
+}
+
+- (NSURL *) trashDocumentationFolderWithError: (out NSError **)outError
+{
+    NSURL *docsURL = self.documentationFolderURL;
+    NSURL *trashedURL = nil;
+    
+    BOOL trashed = [[NSFileManager defaultManager] trashItemAtURL: docsURL resultingItemURL: &trashedURL error: outError];
+    if (trashed)
+    {
+        //Record an undo operation to put the item back from the trash
+        NSUndoManager *undoManager = [self.undoDelegate undoManagerForClient: self operation: _cmd];
+        if (undoManager.isUndoRegistrationEnabled)
+        {
+            id undoProxy = [undoManager prepareWithInvocationTarget: self];
+            [undoProxy _restoreTrashedDocumentationFolder: trashedURL error: NULL];
+        }
+    }
+    return trashedURL;
+}
+
+- (BOOL) _restoreTrashedDocumentationFolder: (NSURL *)trashedURL error: (NSError **)outError
+{
+    NSURL *restoredURL = self.documentationFolderURL;
+    
+    BOOL restored = [[NSFileManager defaultManager] moveItemAtURL: trashedURL toURL: restoredURL error: outError];
+    if (restored)
+    {
+        //Record an undo operation to re-trash the file
+        NSUndoManager *undoManager = [self.undoDelegate undoManagerForClient: self operation: _cmd];
+        if (undoManager.isUndoRegistrationEnabled)
+        {
+            id undoProxy = [undoManager prepareWithInvocationTarget: self];
+            [undoProxy trashDocumentationFolderWithError: NULL];
+        }
+    }
+    return restored;
 }
 
 - (NSArray *) populateDocumentationFolderCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError
@@ -903,7 +955,7 @@ typedef enum {
     {
         //If we succeeded, record an undo operation for this.
         NSUndoManager *undoManager = [self.undoDelegate undoManagerForClient: self operation: _cmd];
-        if (undoManager)
+        if (undoManager.isUndoRegistrationEnabled)
         {
             id undoProxy = [undoManager prepareWithInvocationTarget: self];
             //NOTE: error information will be lost if the document cannot be trashed,
@@ -966,7 +1018,7 @@ typedef enum {
         if (removed)
         {
             NSUndoManager *undoManager = [self.undoDelegate undoManagerForClient: self operation: _cmd];
-            if (undoManager)
+            if (undoManager.isUndoRegistrationEnabled)
             {
                 NSString *restoredTitle = documentationURL.lastPathComponent.stringByDeletingPathExtension;
                 

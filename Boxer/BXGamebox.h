@@ -255,19 +255,15 @@ typedef enum {
 //Returns whether the file at the specified URL appears to be documentation.
 + (BOOL) isDocumentationFileAtURL: (NSURL *)URL;
 
-//Returns the URL for the documentation folder of this gamebox, if one exists.
-//If createIfMissing is YES, this folder will be created if it does not exist and will
-//be automatically populated with symlinks to documentation found elsewhere in the gamebox.
-//In the event that the folder could not be created, this will return nil and populate outError.
-//If createIfMissing is NO and the folder does not exist or is inaccessible, this will return nil
-//and outError will be populated with the reason the folder could not be accessed.
-- (NSURL *) documentationFolderURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
-
 //Creates a new empty documentation folder inside the gamebox if one doesn't already exist.
 //This can then be populated with populateDocumentationFolderWithError: if desired.
 //Returns YES if the folder was created or already existed, or NO and populates outError
 //if the folder could not be created (which will be the case if the gamebox is locked.)
 - (BOOL) createDocumentationFolderIfMissingWithError: (out NSError **)outError;
+
+//Moves the documentation folder to the trash along with all its contents.
+//Returns the URL of the folder in the trash, or nil if the folder could not be trashed (including if it didn't exist.)
+- (NSURL *) trashDocumentationFolderWithError: (NSError **)outError;
 
 //Populates the documentation folder with symlinks to documentation found elsewhere in the gamebox.
 //If createIfMissing is YES, the folder will be created if it doesn't already exist.

@@ -719,6 +719,9 @@ typedef enum {
     //Otherwise, create the directory anew.
     else
     {
+        [self willChangeValueForKey: @"hasDocumentationFolder"];
+        [self willChangeValueForKey: @"documentationURLs"];
+        
         BOOL created = [[NSFileManager defaultManager] createDirectoryAtURL: docsURL
                                                 withIntermediateDirectories: YES
                                                                  attributes: nil
@@ -738,12 +741,18 @@ typedef enum {
             }
         }
         
+        [self didChangeValueForKey: @"documentationURLs"];
+        [self didChangeValueForKey: @"hasDocumentationFolder"];
+        
         return created;
     }
 }
 
 - (BOOL) _removeDocumentationFolderWithError: (out NSError **)outError
 {
+    [self willChangeValueForKey: @"hasDocumentationFolder"];
+    [self willChangeValueForKey: @"documentationURLs"];
+    
     NSURL *docsURL = self.documentationFolderURL;
     BOOL removed = [[NSFileManager defaultManager] removeItemAtURL: docsURL error: outError];
     if (removed)
@@ -756,11 +765,18 @@ typedef enum {
             [undoProxy createDocumentationFolderIfMissingWithError: NULL];
         }
     }
+    
+    [self didChangeValueForKey: @"documentationURLs"];
+    [self didChangeValueForKey: @"hasDocumentationFolder"];
+    
     return removed;
 }
 
 - (NSURL *) trashDocumentationFolderWithError: (out NSError **)outError
 {
+    [self willChangeValueForKey: @"hasDocumentationFolder"];
+    [self willChangeValueForKey: @"documentationURLs"];
+    
     NSURL *docsURL = self.documentationFolderURL;
     NSURL *trashedURL = nil;
     
@@ -775,11 +791,18 @@ typedef enum {
             [undoProxy _restoreTrashedDocumentationFolder: trashedURL error: NULL];
         }
     }
+    
+    [self didChangeValueForKey: @"documentationURLs"];
+    [self didChangeValueForKey: @"hasDocumentationFolder"];
+    
     return trashedURL;
 }
 
 - (BOOL) _restoreTrashedDocumentationFolder: (NSURL *)trashedURL error: (NSError **)outError
 {
+    [self willChangeValueForKey: @"hasDocumentationFolder"];
+    [self willChangeValueForKey: @"documentationURLs"];
+    
     NSURL *restoredURL = self.documentationFolderURL;
     
     BOOL restored = [[NSFileManager defaultManager] moveItemAtURL: trashedURL toURL: restoredURL error: outError];
@@ -793,6 +816,10 @@ typedef enum {
             [undoProxy trashDocumentationFolderWithError: NULL];
         }
     }
+    
+    [self didChangeValueForKey: @"documentationURLs"];
+    [self didChangeValueForKey: @"hasDocumentationFolder"];
+    
     return restored;
 }
 

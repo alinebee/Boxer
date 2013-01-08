@@ -702,6 +702,17 @@ typedef enum {
 	return exclusions;
 }
 
+- (void) refreshDocumentation
+{
+    [self willChangeValueForKey: @"hasDocumentationFolder"];
+    [self willChangeValueForKey: @"documentationURLs"];
+    
+    //This is where we'd clear any documentation cache, if we had one.
+    
+    [self didChangeValueForKey: @"documentationURLs"];
+    [self didChangeValueForKey: @"hasDocumentationFolder"];
+}
+
 - (NSURL *) documentationFolderURL
 {
     return [self.resourceURL URLByAppendingPathComponent: BXDocumentationFolderName isDirectory: YES];

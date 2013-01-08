@@ -224,6 +224,7 @@ typedef NSUInteger BXGameIdentifierType;
 @end
 
 
+#pragma mark - Documentation autodiscovery
 typedef enum {
     BXGameboxDocumentationRename,
     BXGameboxDocumentationReplace,
@@ -231,7 +232,7 @@ typedef enum {
 
 @interface BXGamebox (BXGameDocumentation)
 
-#pragma mark - Documentation autodiscovery
+#pragma mark - Documentation properties
 
 //Returns an array of documentation found in the gamebox. If the gamebox has a documentation
 //folder, the contents of this folder will be returned; otherwise, the rest of the gamebox
@@ -245,6 +246,7 @@ typedef enum {
 //If not, this can be created with populateDocumentationFolderWithError:.
 @property (readonly, nonatomic) BOOL hasDocumentationFolder;
 
+#pragma mark - Class helper methods
 
 + (NSSet *) documentationTypes;			//UTIs recognised as documentation files.
 + (NSSet *) documentationExclusions;	//Filename patterns for documentation to exclude from searches.
@@ -254,6 +256,15 @@ typedef enum {
 
 //Returns whether the file at the specified URL appears to be documentation.
 + (BOOL) isDocumentationFileAtURL: (NSURL *)URL;
+
+
+#pragma mark Documentation operations
+
+//Empties any documentation cache (there isn't one yet) and forces documentationURLs and hasDocumentationFolder
+//to be re-evaluated. This will signal changes to those properties over KVO.
+//This should be called after making changes to the gamebox's documentation folder outside of the BXGamebox API
+//(or e.g. after filesystem changes to the documentation folder have been detected) to force those changes to appear.
+- (void) refreshDocumentation;
 
 //Creates a new empty documentation folder inside the gamebox if one doesn't already exist.
 //This can then be populated with populateDocumentationFolderWithError: if desired.

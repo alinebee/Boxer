@@ -32,16 +32,6 @@
 //specified size. The resulting image will be a bitmap.
 - (NSImage *) imageMaskedByImage: (NSImage *)mask atSize: (NSSize)targetSize;
 
-
-//A partial implementation of 10.6's drawInRect:fromRect:operation:fraction:respectFlipped:hints
-//for 10.5. This does not support rendering hints but will correctly respect the graphics
-//context's flipped status.
-- (void) drawInRect: (NSRect)dstSpacePortionRect
-           fromRect: (NSRect)srcSpacePortionRect
-          operation: (NSCompositingOperation)op 
-           fraction: (CGFloat)requestedAlpha
-     respectFlipped: (BOOL)respectContextIsFlipped;
-
 //Draw a template image filled with the specified gradient and rendered
 //with the specified inner and drop shadows.
 - (void) drawInRect: (NSRect)drawRect

@@ -87,7 +87,8 @@
 			 fromRect: NSZeroRect
 			operation: NSCompositeSourceOver
 			 fraction: opacity
-       respectFlipped: YES];
+       respectFlipped: YES
+                hints: nil];
 }
 @end
 

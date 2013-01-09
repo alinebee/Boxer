@@ -129,7 +129,8 @@
                 fromRect: NSZeroRect
                operation: NSCompositeSourceOver
                 fraction: 1.0f
-          respectFlipped: YES];
+          respectFlipped: YES
+                   hints: nil];
         
         //Next, draw the glyph to show in this grid, if it's within
         //the range of our drawable characters
@@ -153,7 +154,8 @@
                                 fromRect: glyphRect
                                operation: NSCompositeDestinationIn
                                 fraction: 1.0f
-                          respectFlipped: YES];
+                          respectFlipped: YES
+                                   hints: nil];
             [maskedGlyph unlockFocus];
             
             //Then, draw the masked glyph into the itself
@@ -164,7 +166,8 @@
                            fromRect: NSZeroRect
                           operation: NSCompositeSourceOver
                            fraction: 1.0f
-                     respectFlipped: YES];
+                     respectFlipped: YES
+                              hints: nil];
             
             [maskedGlyph release];
         }

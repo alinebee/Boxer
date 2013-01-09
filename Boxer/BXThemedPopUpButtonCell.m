@@ -194,7 +194,8 @@
              fromRect: NSZeroRect
             operation: NSCompositeSourceAtop
              fraction: imageAlpha
-       respectFlipped: YES];
+       respectFlipped: YES
+                hints: nil];
     [NSGraphicsContext restoreGraphicsState];
 }
 

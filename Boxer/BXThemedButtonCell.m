@@ -371,7 +371,8 @@
                            fromRect: NSZeroRect
                           operation: NSCompositeSourceOver
                            fraction: opacity
-                     respectFlipped: YES];
+                     respectFlipped: YES
+                              hints: nil];
         [NSGraphicsContext restoreGraphicsState];
     }
     else
@@ -380,7 +381,8 @@
                  fromRect: NSZeroRect
                 operation: NSCompositeSourceOver
                  fraction: opacity
-           respectFlipped: YES];
+           respectFlipped: YES
+                    hints: nil];
     }
 }
 @end

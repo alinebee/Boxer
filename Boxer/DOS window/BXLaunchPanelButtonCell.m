@@ -313,7 +313,8 @@
                        fromRect: NSZeroRect
                       operation: NSCompositeSourceOver
                        fraction: 1.0f
-                 respectFlipped: YES];
+                 respectFlipped: YES
+                          hints: nil];
     [NSGraphicsContext restoreGraphicsState];
 }
 

@@ -11,7 +11,7 @@
 #import "BXSession.h"
 #import "BXSession+BXUIControls.h"
 #import "BXSession+BXAudioControls.h"
-#import "BXSession+BXFileManager.h"
+#import "BXSession+BXFileManagement.h"
 #import "BXSession+BXPrinting.h"
 #import "BXSessionError.h"
 
@@ -47,7 +47,6 @@ extern NSString * const BXGameImportedNotificationType;
 
 @property (retain, nonatomic) NSOperationQueue *importQueue;
 @property (retain, nonatomic) NSOperationQueue *scanQueue;
-@property (retain, nonatomic) UKFNSubscribeFileWatcher *watcher;
 
 @property (retain, nonatomic) NSMutableSet *MT32MessagesReceived;
 @property (copy, nonatomic) NSString *temporaryFolderPath;
@@ -158,7 +157,7 @@ extern NSString * const BXGameImportedNotificationType;
 - (void) _processEventsUntilDate: (NSDate *)date;
 @end
 
-@interface BXSession (BXFileManagerInternals)
+@interface BXSession (BXFileManagementInternals)
 
 - (void) _registerForFilesystemNotifications;
 - (void) _deregisterForFilesystemNotifications;

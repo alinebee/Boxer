@@ -6,7 +6,7 @@
  */
 
 #import "BXMountPanelController.h"
-#import "BXSession+BXFileManager.h"
+#import "BXSession+BXFileManagement.h"
 #import "BXFileTypes.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulatorErrors.h"

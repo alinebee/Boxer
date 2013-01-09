@@ -17,7 +17,7 @@
 #import "BXMountPanelController.h"
 #import "BXBezelController.h"
 
-#import "BXSession+BXFileManager.h"
+#import "BXSession+BXFileManagement.h"
 #import "BXGamebox.h"
 #import "BXImportSession.h"
 #import "BXEmulator.h"

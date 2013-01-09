@@ -6,13 +6,12 @@
  */
 
 
-//The BXFileManager category extends BXSession with methods for controlling the DOS filesystem
+//The BXFileManagement category extends BXSession with methods for controlling the DOS filesystem
 //and for responding to relevant changes in the OS X filesystem. It implements Boxer's policies
 //for opening files and folders from the OS X filesystem and creating new drives for them.
 
 #import "BXSession.h"
 #import "BXOperationDelegate.h"
-
 
 #pragma mark -
 #pragma mark Constants
@@ -124,7 +123,7 @@ typedef NSUInteger BXDriveMountOptions;
 @class BXExecutableScan;
 @protocol BXDriveImport;
 
-@interface BXSession (BXFileManager) <BXEmulatorFileSystemDelegate, BXOperationDelegate>
+@interface BXSession (BXFileManagement) <BXEmulatorFileSystemDelegate, BXOperationDelegate>
 
 //The 'principal' drive of the session, whose executables we will display in the programs panel
 //This is normally drive C, but otherwise is the first available drive letter with programs on it.

@@ -1001,7 +1001,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	//are reported to be present but cannot be found.
 	//IMPLEMENTATION NOTE: we can't just rely on SDL_CDNumDrives(), because that
 	//reports a generic CD device on OS X even when none is present.
-    //TODO: move this check upstream into BXFileManager, we shouldn't be inspecting
+    //TODO: move this check upstream into BXFileManagement, we shouldn't be inspecting
     //the state of the workspace at this level.
 	if (useCDAudio && SDL_CDNumDrives() > 0)
 	{

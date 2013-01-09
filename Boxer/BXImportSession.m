@@ -39,7 +39,7 @@
 #import "BXBinCueImageImport.h"
 
 #import "BXImportSession+BXImportPolicies.h"
-#import "BXSession+BXFileManager.h"
+#import "BXSession+BXFileManagement.h"
 
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSWorkspace+BXMountedVolumes.h"

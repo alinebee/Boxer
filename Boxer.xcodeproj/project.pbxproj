@@ -95,11 +95,7 @@
 		9F2D2FAA15B8233800FAE848 /* NSString+BXPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */; };
 		9F2D2FAE15B8233800FAE848 /* BXValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */; };
 		9F2D2FAF15B8233800FAE848 /* BXDrive.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69133210A2F62A00EA78CD /* BXDrive.m */; };
-		9F2D2FB015B8233800FAE848 /* UKFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */; };
-		9F2D2FB115B8233800FAE848 /* UKFNSubscribeFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BA10A341F6007E8C0D /* UKFNSubscribeFileWatcher.m */; };
-		9F2D2FB215B8233800FAE848 /* UKKQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BD10A341F6007E8C0D /* UKKQueue.m */; };
-		9F2D2FB315B8233800FAE848 /* UKMainThreadProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BF10A341F6007E8C0D /* UKMainThreadProxy.m */; };
-		9F2D2FB415B8233800FAE848 /* BXSession+BXFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */; };
+		9F2D2FB415B8233800FAE848 /* BXSession+BXFileManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA85CD410A357A600E6457F /* BXSession+BXFileManagement.m */; };
 		9F2D2FB515B8233800FAE848 /* BXThemes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F544A7F10AB44C40030FED5 /* BXThemes.m */; };
 		9F2D2FB615B8233800FAE848 /* NSBezierPath+MCAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DA1710AE22D8008DBBC1 /* NSBezierPath+MCAdditions.m */; };
 		9F2D2FB815B8233800FAE848 /* BXProgramPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DAD410AF1042008DBBC1 /* BXProgramPanel.m */; };
@@ -681,17 +677,13 @@
 		9FA2C09215C8409000380261 /* BXDOSWindowBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA2C09115C8409000380261 /* BXDOSWindowBackgroundView.m */; };
 		9FA54099139E85D800999940 /* 4ButtonJoystick.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FA54098139E85D800999940 /* 4ButtonJoystick.png */; };
 		9FA5D68311EB6CCC0012DFA5 /* BXLineEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA5D68211EB6CCC0012DFA5 /* BXLineEnumerator.m */; };
-		9FA85CD510A357A600E6457F /* BXSession+BXFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */; };
+		9FA85CD510A357A600E6457F /* BXSession+BXFileManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA85CD410A357A600E6457F /* BXSession+BXFileManagement.m */; };
 		9FA9E256121FD5BA006E20C4 /* DropzoneTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA9E255121FD5BA006E20C4 /* DropzoneTemplate.pdf */; };
 		9FA9E281121FD874006E20C4 /* PanelExpandTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA9E27F121FD874006E20C4 /* PanelExpandTemplate.pdf */; };
 		9FA9E282121FD874006E20C4 /* PanelCollapseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */; };
 		9FAA44A711EB24A90042B986 /* NSString+BXStringFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAA44A611EB24A90042B986 /* NSString+BXStringFormatting.m */; };
 		9FAA451511EB40180042B986 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; };
 		9FAD1DFD14641ECD00C3074E /* BXContinuousThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD1DFC14641ECD00C3074E /* BXContinuousThread.m */; };
-		9FAD43C010A341F6007E8C0D /* UKFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */; };
-		9FAD43C110A341F6007E8C0D /* UKFNSubscribeFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BA10A341F6007E8C0D /* UKFNSubscribeFileWatcher.m */; };
-		9FAD43C310A341F6007E8C0D /* UKKQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BD10A341F6007E8C0D /* UKKQueue.m */; };
-		9FAD43C410A341F6007E8C0D /* UKMainThreadProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BF10A341F6007E8C0D /* UKMainThreadProxy.m */; };
 		9FADFE5511EC7E1700990E91 /* BXDigest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE5411EC7E1700990E91 /* BXDigest.m */; };
 		9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE9611EC932800990E91 /* NSData+HexStrings.m */; };
 		9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */; };
@@ -1003,6 +995,8 @@
 		9F181339129990D5009BC4B2 /* BXGamesFolderPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGamesFolderPanelController.h; sourceTree = "<group>"; };
 		9F18133A129990D5009BC4B2 /* BXGamesFolderPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGamesFolderPanelController.m; sourceTree = "<group>"; };
 		9F18137B12999E39009BC4B2 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/GamesFolderPanelOptions.xib; sourceTree = "<group>"; };
+		9F18B7C2169DE6E500101848 /* VDKQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VDKQueue.h; sourceTree = "<group>"; };
+		9F18B7C3169DE6E500101848 /* VDKQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VDKQueue.m; sourceTree = "<group>"; };
 		9F18BE9313EB07190047C217 /* BXInstallerScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInstallerScan.h; sourceTree = "<group>"; };
 		9F18BE9413EB07190047C217 /* BXInstallerScan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInstallerScan.m; sourceTree = "<group>"; };
 		9F1920DF144B2BCB00B0617A /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -1560,8 +1554,8 @@
 		9FA54098139E85D800999940 /* 4ButtonJoystick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 4ButtonJoystick.png; sourceTree = "<group>"; };
 		9FA5D68111EB6CCC0012DFA5 /* BXLineEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXLineEnumerator.h; sourceTree = "<group>"; };
 		9FA5D68211EB6CCC0012DFA5 /* BXLineEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXLineEnumerator.m; sourceTree = "<group>"; };
-		9FA85CD310A357A600E6457F /* BXSession+BXFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXFileManager.h"; sourceTree = "<group>"; };
-		9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXFileManager.m"; sourceTree = "<group>"; };
+		9FA85CD310A357A600E6457F /* BXSession+BXFileManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXFileManagement.h"; sourceTree = "<group>"; };
+		9FA85CD410A357A600E6457F /* BXSession+BXFileManagement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXFileManagement.m"; sourceTree = "<group>"; };
 		9FA9E255121FD5BA006E20C4 /* DropzoneTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DropzoneTemplate.pdf; sourceTree = "<group>"; };
 		9FA9E27F121FD874006E20C4 /* PanelExpandTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PanelExpandTemplate.pdf; sourceTree = "<group>"; };
 		9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PanelCollapseTemplate.pdf; sourceTree = "<group>"; };
@@ -1570,14 +1564,6 @@
 		9FAA44A611EB24A90042B986 /* NSString+BXStringFormatting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BXStringFormatting.m"; sourceTree = "<group>"; };
 		9FAD1DFB14641ECD00C3074E /* BXContinuousThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXContinuousThread.h; sourceTree = "<group>"; };
 		9FAD1DFC14641ECD00C3074E /* BXContinuousThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXContinuousThread.m; sourceTree = "<group>"; };
-		9FAD43B710A341F6007E8C0D /* UKFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFileWatcher.h; sourceTree = "<group>"; };
-		9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKFileWatcher.m; sourceTree = "<group>"; };
-		9FAD43B910A341F6007E8C0D /* UKFNSubscribeFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFNSubscribeFileWatcher.h; sourceTree = "<group>"; };
-		9FAD43BA10A341F6007E8C0D /* UKFNSubscribeFileWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKFNSubscribeFileWatcher.m; sourceTree = "<group>"; };
-		9FAD43BC10A341F6007E8C0D /* UKKQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKKQueue.h; sourceTree = "<group>"; };
-		9FAD43BD10A341F6007E8C0D /* UKKQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKKQueue.m; sourceTree = "<group>"; };
-		9FAD43BE10A341F6007E8C0D /* UKMainThreadProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKMainThreadProxy.h; sourceTree = "<group>"; };
-		9FAD43BF10A341F6007E8C0D /* UKMainThreadProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKMainThreadProxy.m; sourceTree = "<group>"; };
 		9FADFE5311EC7E1700990E91 /* BXDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDigest.h; sourceTree = "<group>"; };
 		9FADFE5411EC7E1700990E91 /* BXDigest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDigest.m; sourceTree = "<group>"; };
 		9FADFE9511EC932800990E91 /* NSData+HexStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+HexStrings.h"; path = "../NSData+HexStrings.h"; sourceTree = "<group>"; };
@@ -2166,6 +2152,15 @@
 			path = YRKSpinningProgressIndicator;
 			sourceTree = "<group>";
 		};
+		9F18B7C0169DE6E500101848 /* VDKQueue */ = {
+			isa = PBXGroup;
+			children = (
+				9F18B7C2169DE6E500101848 /* VDKQueue.h */,
+				9F18B7C3169DE6E500101848 /* VDKQueue.m */,
+			);
+			path = VDKQueue;
+			sourceTree = "<group>";
+		};
 		9F1CBA55120C783800C5E926 /* Game import session */ = {
 			isa = PBXGroup;
 			children = (
@@ -2430,8 +2425,8 @@
 				9F25C1FD1212BB450025CB2C /* BXSessionPrivate.h */,
 				9FBC35140F56C7B7001811F2 /* BXSession.h */,
 				9FBC35210F56C7B7001811F2 /* BXSession.m */,
-				9FA85CD310A357A600E6457F /* BXSession+BXFileManager.h */,
-				9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */,
+				9FA85CD310A357A600E6457F /* BXSession+BXFileManagement.h */,
+				9FA85CD410A357A600E6457F /* BXSession+BXFileManagement.m */,
 				9FC3B2530F62D9CE006DE439 /* BXSession+BXUIControls.h */,
 				9FC3B2540F62D9CE006DE439 /* BXSession+BXUIControls.m */,
 				9F3EDA151434A6E4009BFBA2 /* BXSession+BXAudioControls.h */,
@@ -3238,21 +3233,6 @@
 			name = Drawing;
 			sourceTree = "<group>";
 		};
-		9FAD43B610A341F6007E8C0D /* UKKQueue */ = {
-			isa = PBXGroup;
-			children = (
-				9FAD43B710A341F6007E8C0D /* UKFileWatcher.h */,
-				9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */,
-				9FAD43B910A341F6007E8C0D /* UKFNSubscribeFileWatcher.h */,
-				9FAD43BA10A341F6007E8C0D /* UKFNSubscribeFileWatcher.m */,
-				9FAD43BC10A341F6007E8C0D /* UKKQueue.h */,
-				9FAD43BD10A341F6007E8C0D /* UKKQueue.m */,
-				9FAD43BE10A341F6007E8C0D /* UKMainThreadProxy.h */,
-				9FAD43BF10A341F6007E8C0D /* UKMainThreadProxy.m */,
-			);
-			path = UKKQueue;
-			sourceTree = "<group>";
-		};
 		9FB4539016442CDD00BCF63B /* Bundler */ = {
 			isa = PBXGroup;
 			children = (
@@ -3595,7 +3575,7 @@
 				9F80BC81123556AD00EBAB23 /* Finder.h */,
 				9F7A8F230F8E705100D1AAD5 /* BXToolkit */,
 				9F59DA1410AE22B9008DBBC1 /* MCAdditions */,
-				9FAD43B610A341F6007E8C0D /* UKKQueue */,
+				9F18B7C0169DE6E500101848 /* VDKQueue */,
 				9F8A974710E7DEF500A4B72A /* RegexKitLite */,
 				9FFF9714123269D1009B5EE5 /* NDAlias */,
 				9F1812B812996308009BC4B2 /* YRKSpinningProgressIndicator */,
@@ -3970,11 +3950,7 @@
 				9F687004109F83ED003C26E4 /* BXDriveList.m in Sources */,
 				9F69128C10A2DF8D00EA78CD /* BXValueTransformers.m in Sources */,
 				9F69133310A2F62A00EA78CD /* BXDrive.m in Sources */,
-				9FAD43C010A341F6007E8C0D /* UKFileWatcher.m in Sources */,
-				9FAD43C110A341F6007E8C0D /* UKFNSubscribeFileWatcher.m in Sources */,
-				9FAD43C310A341F6007E8C0D /* UKKQueue.m in Sources */,
-				9FAD43C410A341F6007E8C0D /* UKMainThreadProxy.m in Sources */,
-				9FA85CD510A357A600E6457F /* BXSession+BXFileManager.m in Sources */,
+				9FA85CD510A357A600E6457F /* BXSession+BXFileManagement.m in Sources */,
 				9F544A8010AB44C40030FED5 /* BXThemes.m in Sources */,
 				9F59DA1810AE22D8008DBBC1 /* NSBezierPath+MCAdditions.m in Sources */,
 				9F59DA9F10AEF9E0008DBBC1 /* BXCoverArt.m in Sources */,
@@ -4314,11 +4290,7 @@
 				9F2D2FAA15B8233800FAE848 /* NSString+BXPaths.m in Sources */,
 				9F2D2FAE15B8233800FAE848 /* BXValueTransformers.m in Sources */,
 				9F2D2FAF15B8233800FAE848 /* BXDrive.m in Sources */,
-				9F2D2FB015B8233800FAE848 /* UKFileWatcher.m in Sources */,
-				9F2D2FB115B8233800FAE848 /* UKFNSubscribeFileWatcher.m in Sources */,
-				9F2D2FB215B8233800FAE848 /* UKKQueue.m in Sources */,
-				9F2D2FB315B8233800FAE848 /* UKMainThreadProxy.m in Sources */,
-				9F2D2FB415B8233800FAE848 /* BXSession+BXFileManager.m in Sources */,
+				9F2D2FB415B8233800FAE848 /* BXSession+BXFileManagement.m in Sources */,
 				9F2D2FB515B8233800FAE848 /* BXThemes.m in Sources */,
 				9F2D2FB615B8233800FAE848 /* NSBezierPath+MCAdditions.m in Sources */,
 				9F2D2FB815B8233800FAE848 /* BXProgramPanel.m in Sources */,

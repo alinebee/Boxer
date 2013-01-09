@@ -25,7 +25,6 @@
 #import "BXEmulator+BXShell.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSString+BXPaths.h"
-#import "UKFNSubscribeFileWatcher.h"
 #import "NSWorkspace+BXExecutableTypes.h"
 #import "BXInputController.h"
 #import "NSObject+BXPerformExtensions.h"
@@ -132,7 +131,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 @synthesize importQueue = _importQueue;
 @synthesize scanQueue = _scanQueue;
-@synthesize watcher = _watcher;
 @synthesize temporaryFolderPath = _temporaryFolderPath;
 @synthesize MT32MessagesReceived = _MT32MessagesReceived;
 
@@ -201,7 +199,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		
 		self.importQueue = [[[NSOperationQueue alloc] init] autorelease];
 		self.scanQueue = [[[NSOperationQueue alloc] init] autorelease];
-		self.watcher = [[[UKFNSubscribeFileWatcher alloc] init] autorelease];
 	}
 	return self;
 }
@@ -262,7 +259,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     self.importQueue = nil;
     self.scanQueue = nil;
-    self.watcher = nil;
     
     self.temporaryFolderPath = nil;
     self.MT32MessagesReceived = nil;
@@ -357,6 +353,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 {	
 	if (gamebox != self.gamebox)
 	{
+        self.gamebox.undoDelegate = nil;
+        
 		[_gamebox release];
 		_gamebox = [gamebox retain];
 		

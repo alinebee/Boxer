@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXSession+BXFileManager.h"
+#import "BXSession+BXFileManagement.h"
 #import "BXSessionPrivate.h"
 #import "BXFileTypes.h"
 #import "BXBaseAppController+BXSupportFiles.h"
@@ -16,7 +16,6 @@
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulatorErrors.h"
 #import "BXEmulator+BXShell.h"
-#import "UKFNSubscribeFileWatcher.h"
 #import "BXShadowedFilesystem.h"
 #import "BXGamebox.h"
 #import "BXDrive.h"
@@ -29,6 +28,7 @@
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSWorkspace+BXExecutableTypes.h"
 #import "NSString+BXPaths.h"
+#import "NSURL+BXFilePaths.h"
 #import "NSFileManager+BXTemporaryFiles.h"
 #import "BXPathEnumerator.h"
 #import "RegexKitLite.h"
@@ -50,19 +50,18 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 //The methods in this category are not intended to be called outside BXSession.
 @interface BXSession (BXFileManagerPrivate)
 
-- (void) volumeDidMount:		(NSNotification *)theNotification;
-- (void) volumeWillUnmount:		(NSNotification *)theNotification;
-- (void) filesystemDidChange:	(NSNotification *)theNotification;
+- (void) _volumeDidMount:		(NSNotification *)theNotification;
+- (void) _volumeWillUnmount:	(NSNotification *)theNotification;
+- (void) _filesystemDidChange:	(NSNotification *)theNotification;
 
 - (void) _handleVolumeDidMount: (NSNotification *)theNotification;
 
-- (void) _startTrackingChangesAtPath:	(NSString *)path;
-- (void) _stopTrackingChangesAtPath:	(NSString *)path;
+- (void) _applicationDidBecomeActive: (NSNotification *)theNotification;
 
 @end
 
 
-@implementation BXSession (BXFileManager)
+@implementation BXSession (BXFileManagement)
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -1465,46 +1464,31 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 //Register ourselves as an observer for filesystem notifications
 - (void) _registerForFilesystemNotifications
 {
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSNotificationCenter *center = [workspace notificationCenter];
-	
-    if ([self _shouldAutoMountExternalVolumes])
+	if ([self _shouldAutoMountExternalVolumes])
     {
-        [center addObserver: self
-                   selector: @selector(volumeDidMount:)
-                       name: NSWorkspaceDidMountNotification
-                     object: workspace];
+        NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+        NSNotificationCenter *workspaceCenter = [workspace notificationCenter];
+        [workspaceCenter addObserver: self
+                            selector: @selector(_volumeDidMount:)
+                                name: NSWorkspaceDidMountNotification
+                              object: workspace];
         
-        [center addObserver: self
-                   selector: @selector(volumeWillUnmount:)
-                       name: NSWorkspaceWillUnmountNotification
-                     object: workspace];
+        [workspaceCenter addObserver: self
+                            selector: @selector(_volumeWillUnmount:)
+                                name: NSWorkspaceWillUnmountNotification
+                              object: workspace];
 
-        [center addObserver: self
-                   selector: @selector(volumeWillUnmount:)
-                       name: NSWorkspaceDidUnmountNotification
-                     object: workspace];
+        [workspaceCenter addObserver: self
+                            selector: @selector(_volumeWillUnmount:)
+                                name: NSWorkspaceDidUnmountNotification
+                              object: workspace];
 	}
     
-    [center addObserver: self
-               selector: @selector(filesystemDidChange:)
-                   name: UKFileWatcherWriteNotification
-                 object: self.watcher];
-    
-    [center addObserver: self
-               selector: @selector(filesystemDidChange:)
-                   name: UKFileWatcherDeleteNotification
-                 object: self.watcher];
-    
-    [center addObserver: self
-               selector: @selector(filesystemDidChange:)
-                   name: UKFileWatcherRenameNotification
-                 object: self.watcher];
-    
-    [center addObserver: self
-               selector: @selector(filesystemDidChange:)
-                   name: UKFileWatcherAccessRevocationNotification
-                 object: self.watcher];
+    NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+    [defaultCenter addObserver: self
+                      selector: @selector(_applicationDidBecomeActive:)
+                          name: NSApplicationDidBecomeActiveNotification
+                        object: NSApp];
 }
 
 - (void) _deregisterForFilesystemNotifications
@@ -1515,13 +1499,9 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	[center removeObserver: self name: NSWorkspaceDidMountNotification		object: workspace];
 	[center removeObserver: self name: NSWorkspaceDidUnmountNotification	object: workspace];
 	[center removeObserver: self name: NSWorkspaceWillUnmountNotification	object: workspace];
-	[center removeObserver: self name: UKFileWatcherWriteNotification		object: self.watcher];
-	[center removeObserver: self name: UKFileWatcherDeleteNotification		object: self.watcher];
-	[center removeObserver: self name: UKFileWatcherRenameNotification		object: self.watcher];
-	[center removeObserver: self name: UKFileWatcherAccessRevocationNotification object: self.watcher];
 }
 
-- (void) volumeDidMount: (NSNotification *)theNotification
+- (void) _volumeDidMount: (NSNotification *)theNotification
 {
 	//We decide what to do with audio CD volumes based on whether they have a corresponding
 	//data volume. Unfortunately, the volumes are reported as soon as they are mounted, so
@@ -1609,7 +1589,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 //However, it's also called again in response to NSVolumeDidUnmountNotifications, so that we can catch
 //unmounts that happened too suddenly to send a WillUnmount notification (which can happen when
 //pulling out a USB drive or mechanically ejecting a disk)
-- (void) volumeWillUnmount: (NSNotification *)theNotification
+- (void) _volumeWillUnmount: (NSNotification *)theNotification
 {
 	//Ignore unmount events if the emulator isn't actually running
 	if (!self.isEmulating) return;
@@ -1653,18 +1633,6 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	}
 }
 
-- (void) filesystemDidChange: (NSNotification *)theNotification
-{
-	NSString *path = [theNotification.userInfo objectForKey: @"path"];
-	if ([self.emulator pathIsDOSAccessible: path])
-        [self.emulator refreshMountedDrives];
-	
-	//Also check if the file was inside our gamebox - if so, flush the gamebox's caches
-	BXGamebox *package = self.gamebox;
-	if (package && [path hasPrefix: package.gamePath])
-        [package refresh];
-}
-
 
 #pragma mark -
 #pragma mark Emulator delegate methods
@@ -1679,20 +1647,11 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     //Add the drive to our set of known drives
     [self enqueueDrive: drive];
 	
-	if (!drive.isInternal)
+    //If this drive is part of the gamebox, and we're not a standalone app,
+    //scan it for executables to display in the program panel
+	if (![[NSApp delegate] isStandaloneGameBundle] && !drive.isInternal && [self driveIsBundled: drive])
 	{
-		NSString *drivePath = drive.path;
-	
-		[self _startTrackingChangesAtPath: drivePath];
-        if (drive.shadowPath)
-            [self _startTrackingChangesAtPath: drive.shadowPath];
-		
-		//If this drive is part of the gamebox, and we're not a standalone app,
-        //scan it for executables to display in the program panel
-        if ([self driveIsBundled: drive] && ![[NSApp delegate] isStandaloneGameBundle])
-		{
-			[self executableScanForDrive: drive startImmediately: YES];
-		}
+        [self executableScanForDrive: drive startImmediately: YES];
 	}
 }
 
@@ -1705,17 +1664,6 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     
     //Stop scanning for executables on the drive
     [self cancelExecutableScanForDrive: drive];
-    
-	if (!drive.isInternal)
-	{
-		NSString *path = drive.path;
-		//Stop tracking for changes on the drive, if there are no other drives mapping to that path either.
-		if (![self.emulator pathIsDOSAccessible: path])
-            [self _stopTrackingChangesAtPath: path];
-        
-        if (drive.shadowPath)
-            [self _stopTrackingChangesAtPath: drive.shadowPath];
-	}
 	
     //Remove the cached executable list when the drive is unmounted
 	if ([self.executables objectForKey: drive.letter])
@@ -2154,20 +2102,18 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 }
 
 
-- (void) _startTrackingChangesAtPath: (NSString *)path
-{
-	NSFileManager *manager = [NSFileManager defaultManager];
-	BOOL isFolder, exists = [manager fileExistsAtPath: path isDirectory: &isFolder];
-	//Note: UKFNSubscribeFileWatcher can only watch directories, not regular files 
-	if (exists && isFolder)
-	{
-		[self.watcher addPath: path];
-	}
-}
+#pragma mark - Monitoring filesystem changes
 
-- (void) _stopTrackingChangesAtPath: (NSString *)path
+- (void) _applicationDidBecomeActive: (NSNotification *)notification
 {
-	[self.watcher removePath: path];
+    //Clear the DOS directory cache whenever the user refocuses the application,
+    //in case filesystem changes were made while we were in the background.
+    [self.emulator refreshMountedDrives];
+    
+    //If the gamebox has a documentation folder, rescan that too:
+    //in case the user has added, removed or renamed documentation files.
+    if (self.gamebox.hasDocumentationFolder)
+        [self.gamebox refreshDocumentation];
 }
 
 @end

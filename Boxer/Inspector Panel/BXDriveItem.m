@@ -8,7 +8,7 @@
 #import "BXDriveItem.h"
 #import "BXDrive.h"
 #import "BXBaseAppController.h"
-#import "BXSession+BXFileManager.h"
+#import "BXSession+BXFileManagement.h"
 #import "BXDriveImport.h"
 #import "BXThemes.h"
 #import "BXDrivePanelController.h"

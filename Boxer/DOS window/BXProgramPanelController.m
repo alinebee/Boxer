@@ -8,7 +8,7 @@
 
 #import "BXProgramPanelController.h"
 #import "BXValueTransformers.h"
-#import "BXSession+BXFileManager.h"
+#import "BXSession+BXFileManagement.h"
 #import "BXProgramPanel.h"
 #import "BXGamebox.h"
 #import "BXEmulator+BXDOSFileSystem.h"

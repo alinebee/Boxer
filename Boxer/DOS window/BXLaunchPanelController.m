@@ -6,7 +6,7 @@
  */
 
 #import "BXLaunchPanelController.h"
-#import "BXSession+BXFileManager.h"
+#import "BXSession+BXFileManagement.h"
 #import "BXDrive.h"
 #import "BXGamebox.h"
 #import "BXEmulator+BXDOSFilesystem.h"

@@ -7,7 +7,7 @@
 
 
 #import "BXImportSession+BXImportPolicies.h"
-#import "BXSession+BXFileManager.h"
+#import "BXSession+BXFileManagement.h"
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "RegexKitLite.h"

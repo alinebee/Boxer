@@ -71,7 +71,6 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 @class BXDOSWindowController;
 @class BXPrintStatusPanelController;
 @class BXDocumentationPanelController;
-@class UKFNSubscribeFileWatcher;
 
 @interface BXSession : NSDocument <BXEmulatorDelegate, BXUndoDelegate>
 {	
@@ -114,8 +113,6 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 	
 	NSOperationQueue *_importQueue;
     NSOperationQueue *_scanQueue;
-	
-	UKFNSubscribeFileWatcher *_watcher;
 	
 	NSTimeInterval _programStartTime;
     
@@ -230,7 +227,7 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 #pragma mark Helper class methods
 
 //Autodetects and returns a profile for the specified path, using BXSession's rules
-//for autodetection (q.v. BXFileManager gameDetectionPointForPath:shouldRecurse:)
+//for autodetection (q.v. BXFileManagement gameDetectionPointForPath:shouldSearchSubfolders:)
 + (BXGameProfile *) profileForPath: (NSString *)path;
 
 //Generates and returns a new bootleg cover-art image for the specified package,

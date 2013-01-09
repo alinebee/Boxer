@@ -243,7 +243,8 @@ typedef enum {
 @property (readonly, nonatomic) NSURL *documentationFolderURL;
 
 //Returns whether the gamebox has a documentation folder of its own.
-//If not, this can be created with populateDocumentationFolderWithError:.
+//If not, this can be created with createDocumentationFolderIfMissingWithError:
+//or populateDocumentationFolderCreatingIfMissing:WithError:.
 @property (readonly, nonatomic) BOOL hasDocumentationFolder;
 
 #pragma mark - Class helper methods
@@ -260,20 +261,24 @@ typedef enum {
 
 #pragma mark Documentation operations
 
-//Empties any documentation cache (there isn't one yet) and forces documentationURLs and hasDocumentationFolder
+//Empties any documentation cache and forces documentationURLs and hasDocumentationFolder
 //to be re-evaluated. This will signal changes to those properties over KVO.
-//This should be called after making changes to the gamebox's documentation folder outside of the BXGamebox API
-//(or e.g. after filesystem changes to the documentation folder have been detected) to force those changes to appear.
+//This should be called after making changes to the gamebox's documentation folder outside
+//of the BXGamebox API (or e.g. after external filesystem changes to the documentation folder
+//have been detected) to force those changes to be signalled via the API.
 - (void) refreshDocumentation;
 
 //Creates a new empty documentation folder inside the gamebox if one doesn't already exist.
 //This can then be populated with populateDocumentationFolderWithError: if desired.
 //Returns YES if the folder was created or already existed, or NO and populates outError
 //if the folder could not be created (which will be the case if the gamebox is locked.)
+//This method registers an undo operation if the folder was created successfully.
 - (BOOL) createDocumentationFolderIfMissingWithError: (out NSError **)outError;
 
 //Moves the documentation folder to the trash along with all its contents.
-//Returns the URL of the folder in the trash, or nil if the folder could not be trashed (including if it didn't exist.)
+//Returns the URL of the folder in the trash, or nil if the folder could not be trashed
+//(including if it didn't exist.)
+//This method registers an undo operation if the folder was successfully moved to the trash.
 - (NSURL *) trashDocumentationFolderWithError: (NSError **)outError;
 
 //Populates the documentation folder with symlinks to documentation found elsewhere in the gamebox.
@@ -281,6 +286,7 @@ typedef enum {
 //Returns an array of populated documentation URLs if the folder was populated successfully,
 //or NO and returns outError if it could not be populated (including if the documentation folder
 //doesn't exist and createIfMissing was NO.)
+//This method registers undo operations for creating the folder and populating each documentation file.
 - (NSArray *) populateDocumentationFolderCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
 
 
@@ -291,6 +297,7 @@ typedef enum {
 //In the event of a filename collision, conflictBehaviour determines whether
 //the file will be replaced or renamed (by appending a number to the filename).
 //Returns the URL of the imported file on success, or nil and populates outError on failure.
+//This method registers an undo operation if the file was successfully added.
 - (NSURL *) addDocumentationFileFromURL: (NSURL *)sourceURL
                               withTitle: (NSString *)title
                                ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
@@ -303,6 +310,7 @@ typedef enum {
 //In the event of a filename collision, conflictBehaviour determines whether
 //the file will be replaced or renamed (by appending a number to the filename).
 //Returns the URL of the symlink on success, or nil and populates outError on failure.
+//This method registers an undo operation if the symlink was successfully added.
 - (NSURL *) addDocumentationSymlinkToURL: (NSURL *)sourceURL
                                withTitle: (NSString *)title
                                 ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
@@ -311,6 +319,7 @@ typedef enum {
 //Moves the documentation file at the specified URL to the trash.
 //Will fail and do nothing if the specified URL is not located within the gamebox's documentation folder.
 //Returns the URL of the item's new location in the trash  on success, or nil and populates outError on failure.
+//This method registers an undo operation if the file was successfully moved to the trash.
 - (NSURL *) trashDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError;
 
 //Returns whether the specified documentation file can be removed from the gamebox.

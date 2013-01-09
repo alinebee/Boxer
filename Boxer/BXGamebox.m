@@ -1038,7 +1038,7 @@ typedef enum {
 
 - (NSURL *) trashDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError
 {
-    if ([self canTrashDocumentationURL: documentationURL])
+    if ([documentationURL isBasedInURL: self.documentationFolderURL])
     {
         NSFileManager *manager = [[NSFileManager alloc] init];
         

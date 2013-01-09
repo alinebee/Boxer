@@ -11,6 +11,7 @@
 #import "NSURL+BXQuickLookHelpers.h"
 #import "NSView+BXDrawing.h"
 #import "BXBaseAppController.h"
+#import "NSError+BXErrorHelpers.h"
 
 enum {
     BXDocumentationItemIcon = 1,
@@ -462,7 +463,8 @@ enum {
             [trashedURLs addObject: trashedURL];
             originalURL = URL;
         }
-        else
+        //If the file didn't exist anymore then disregard the error.
+        else if (![trashingError matchesDomain: NSCocoaErrorDomain code: NSFileNoSuchFileError])
         {
             //Show the error to the user immediately.
             if (trashingError != nil)

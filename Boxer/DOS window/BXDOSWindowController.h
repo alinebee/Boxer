@@ -72,6 +72,8 @@ extern NSString * const BXViewDidLiveResizeNotification;
     NSSize _renderingViewSizeBeforeFullScreen;
     NSString *_autosaveNameBeforeFullScreen;
     
+    NSSize _maxFullscreenViewportSize;
+    
     BXDOSWindowPanel _currentPanel;
     BXRenderingStyle _renderingStyle;
 }
@@ -167,8 +169,8 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //Show/hide the launch panel.
 - (IBAction) toggleLaunchPanel: (id)sender;
 
-//Display the specified panel unconditionally, without validating it or
-//recording it as the user's own action.
+//Display the specified panel unconditionally, without validating it
+//or recording it as the user's own action.
 - (void) showLaunchPanel;
 - (void) showDOSView;
 - (void) showLoadingPanel;
@@ -176,6 +178,9 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleRenderingStyle: (id)sender;
 
+//Increase/decrease the draw size of the fullscreen window.
+- (IBAction) incrementFullscreenSize: (id)sender;
+- (IBAction) decrementFullscreenSize: (id)sender;
 
 #pragma mark -
 #pragma mark Toggling UI components

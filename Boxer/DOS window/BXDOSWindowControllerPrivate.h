@@ -32,6 +32,18 @@
 //This will differ from the actual render view size if in fullscreen mode.
 @property (readonly, nonatomic) NSSize windowedRenderingViewSize;
 
+//The maximum size at which the rendering view should render.
+//This will return NSZeroSize while in windowed mode or when no maxFullscreenViewportSize has been set.
+@property (readonly, nonatomic) NSSize maxViewportSizeUIBinding;
+
+//The maximum size at which the rendering view should render in fullscreen.
+@property (assign, nonatomic) NSSize maxFullscreenViewportSize;
+
+//Whether the fullscreen size is at its minimum/maximum extents.
+//Used to programmatically enable/disable UI items.
+@property (readonly, nonatomic) BOOL fullscreenSizeAtMinimum;
+@property (readonly, nonatomic) BOOL fullscreenSizeAtMaximum;
+
 //A property specifically for UI bindings to use. Toggling this will change the panel if allowed,
 //and flag that the change was made at the user's own request.
 @property (assign, nonatomic) BXDOSWindowPanel currentPanelUIBinding;
@@ -76,6 +88,11 @@
 //Will return NO for text-only frames, YES otherwise.
 - (BOOL) _shouldCorrectAspectRatioOfFrame: (BXVideoFrame *)frame;
 
+//Returns the next suitable fullscreen viewport size that's above/below the specified size.
+//Used by incrementFullscreenSize: and decrementFullscreenSize:.
++ (NSSize) _closestFullscreenSizeIntervalToSize: (NSSize)sourceSize
+                              forBaseResolution: (NSSize)baseResolution
+                                      ascending: (BOOL)ascending;
 
 #pragma mark -
 #pragma mark Delegate and notification methods

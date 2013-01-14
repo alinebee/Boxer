@@ -874,6 +874,36 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
+								<object class="NSMenuItem" id="4125615">
+									<reference key="NSMenu" ref="548981161"/>
+									<bool key="NSIsAlternate">YES</bool>
+									<string key="NSTitle">Enlarge Full Screen View</string>
+									<string key="NSKeyEquiv">+</string>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+								<object class="NSMenuItem" id="329529075">
+									<reference key="NSMenu" ref="548981161"/>
+									<bool key="NSIsAlternate">YES</bool>
+									<string key="NSTitle">Shrink Full Screen View</string>
+									<string key="NSKeyEquiv">-</string>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+								<object class="NSMenuItem" id="176784596">
+									<reference key="NSMenu" ref="548981161"/>
+									<bool key="NSIsDisabled">YES</bool>
+									<bool key="NSIsSeparator">YES</bool>
+									<string key="NSTitle"/>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
 								<object class="NSMenuItem" id="19860634">
 									<reference key="NSMenu" ref="548981161"/>
 									<string key="NSTitle">Lock Mouse to Window</string>
@@ -2687,6 +2717,22 @@
 					<int key="connectionID">2267</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">incrementFullscreenSize:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="4125615"/>
+					</object>
+					<int key="connectionID">2362</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">decrementFullscreenSize:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="329529075"/>
+					</object>
+					<int key="connectionID">2365</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
 						<reference key="source" ref="34920399"/>
@@ -3520,6 +3566,9 @@
 							<reference ref="462242179"/>
 							<reference ref="73303915"/>
 							<reference ref="1005738784"/>
+							<reference ref="176784596"/>
+							<reference ref="4125615"/>
+							<reference ref="329529075"/>
 						</object>
 						<reference key="parent" ref="605111885"/>
 					</object>
@@ -4266,6 +4315,21 @@
 						<reference key="object" ref="782761879"/>
 						<reference key="parent" ref="863557661"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2359</int>
+						<reference key="object" ref="176784596"/>
+						<reference key="parent" ref="548981161"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2360</int>
+						<reference key="object" ref="4125615"/>
+						<reference key="parent" ref="548981161"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2363</int>
+						<reference key="object" ref="329529075"/>
+						<reference key="parent" ref="548981161"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -4466,6 +4530,9 @@
 					<string>2350.IBPluginDependency</string>
 					<string>2351.IBPluginDependency</string>
 					<string>2355.IBPluginDependency</string>
+					<string>2359.IBPluginDependency</string>
+					<string>2360.IBPluginDependency</string>
+					<string>2363.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>284.IBPluginDependency</string>
 					<string>285.IBPluginDependency</string>
@@ -4729,6 +4796,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -4743,7 +4813,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2358</int>
+			<int key="maxID">2365</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -5056,7 +5126,9 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>decrementFullscreenSize:</string>
 							<string>hideProgramPanel:</string>
+							<string>incrementFullscreenSize:</string>
 							<string>performShowDOSView:</string>
 							<string>performShowLaunchPanel:</string>
 							<string>showProgramPanel:</string>
@@ -5067,6 +5139,8 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -5081,7 +5155,9 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>decrementFullscreenSize:</string>
 							<string>hideProgramPanel:</string>
+							<string>incrementFullscreenSize:</string>
 							<string>performShowDOSView:</string>
 							<string>performShowLaunchPanel:</string>
 							<string>showProgramPanel:</string>
@@ -5093,7 +5169,15 @@
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
+								<string key="name">decrementFullscreenSize:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">hideProgramPanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">incrementFullscreenSize:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

@@ -32,6 +32,24 @@
 #import "NSWindow+BXWindowDimensions.h"
 #import "BXGeometry.h"
 
+//The intervals along which we allow the viewport to be resized in fullscreen.
+//Used by incrementFullscreenSize and decrementFullscreenSize.
+
+#define BXNumFullscreenSizeIntervals 12
+static NSSize BXFullscreenSizeIntervals[BXNumFullscreenSizeIntervals] = {
+    { 320, 240 },
+    { 400, 300 },
+    { 512, 384 },
+    { 640, 480 },
+    { 800, 600 },
+    { 960, 720 },
+    { 1024, 768 },
+    { 1280, 960 },  //640x480@2x
+    { 1600, 1200 }, //800x600@2x
+    { 1920, 1440 }, //960x720@2x
+    { 2048, 1536 }, //1024x768@2x
+    { 2560, 1920 }, //1280x960@2x
+};
 
 @implementation BXDOSWindowController
 
@@ -53,6 +71,7 @@
 @synthesize loadingPanel = _loadingPanel;
 @synthesize loadingSpinner = _loadingSpinner;
 @synthesize documentationButton = _documentationButton;
+@synthesize maxFullscreenViewportSize = _maxFullscreenViewportSize;
 
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
@@ -128,6 +147,11 @@
       toObject: defaults
    withKeyPath: @"renderingStyle"
        options: nil];
+    
+    [self.renderingView bind: @"maxViewportSize"
+                    toObject: self
+                 withKeyPath: @"maxViewportSizeUIBinding"
+                     options: nil];
 }
 
 - (void) _removeObservers
@@ -137,7 +161,8 @@
     [self removeObserver: self forKeyPath: @"document.autoPaused"];
     
     [self unbind: @"aspectCorrected"];
-    [self.renderingView unbind: @"renderingStyle"];
+    [self unbind: @"renderingStyle"];
+    [self.renderingView unbind: @"maxViewportSize"];
 }
 
 
@@ -438,6 +463,141 @@
                                                forKey: @"renderingStyle"];
 }
 
++ (NSSize) _closestFullscreenSizeIntervalToSize: (NSSize)sourceSize
+                              forBaseResolution: (NSSize)baseResolution
+                                      ascending: (BOOL)ascending
+{
+    NSUInteger sizeIndex;
+    if (ascending)
+    {
+        //Work our way up the size intervals looking for the next size that is larger
+        //than the current one.
+        for (sizeIndex = 0; sizeIndex < BXNumFullscreenSizeIntervals; sizeIndex++)
+        {
+            NSSize nextSize = BXFullscreenSizeIntervals[sizeIndex];
+            
+            if (nextSize.width > sourceSize.width && nextSize.height > sourceSize.height)
+                return nextSize;
+        }
+        //If we got this far then the source size was larger than any of our intervals:
+        //return NSZeroSize, indicating we should use the native resolution of the display.
+        return NSZeroSize;
+    }
+    else
+    {
+        //Work our way down the size intervals looking for the next smallest size
+        //from the current one.
+        for (sizeIndex = BXNumFullscreenSizeIntervals; sizeIndex > 0; sizeIndex--)
+        {
+            NSSize prevSize = BXFullscreenSizeIntervals[sizeIndex-1];
+            
+            //If the next smallest size is smaller than the base resolution, then use the base resolution.
+            if (prevSize.width < baseResolution.width || prevSize.height < baseResolution.height)
+            {
+                return baseResolution;
+            }
+            else if (prevSize.width < sourceSize.width && prevSize.height < sourceSize.height)
+            {
+                return prevSize;
+            }
+        }
+        //If we got this far, then we're already at the minimum interval.
+        return BXFullscreenSizeIntervals[0];
+    }
+    
+    return NSZeroSize;
+}
+
+- (IBAction) incrementFullscreenSize: (id)sender
+{
+    NSSize screenSize = self.window.screen.frame.size;
+    NSSize currentSize = self.maxFullscreenViewportSize;
+    
+    //If no maximum size has been set, or the current maximum size is larger than the screen itself,
+    //the use the screen size as the maximum instead.
+    if (NSEqualSizes(currentSize, NSZeroSize) || !sizeFitsWithinSize(currentSize, screenSize))
+        currentSize = screenSize;
+    
+    NSSize baseSize = self.renderingView.currentFrame.scaledResolution;
+    
+    NSSize nextSize = [self.class _closestFullscreenSizeIntervalToSize: currentSize
+                                                     forBaseResolution: baseSize
+                                                             ascending: YES];
+    
+    //If the next size would be larger than the screen can display, then just use the native resolution.
+    if (!sizeFitsWithinSize(nextSize, screenSize))
+        nextSize = NSZeroSize;
+    
+    self.maxFullscreenViewportSize = nextSize;
+}
+
++ (NSSet *) keyPathsForValuesAffectingFullscreenSizeAtMaximum
+{
+    return [NSSet setWithObjects: @"maxFullscreenViewportSize", @"window.screen.frame", nil];
+}
+
+- (BOOL) fullscreenSizeAtMaximum
+{
+    //The viewport size is set to use the native display resolution
+    if (NSEqualSizes(self.maxFullscreenViewportSize, NSZeroSize))
+        return YES;
+    
+    //The set viewport size is larger than the native display resolution
+    if (!sizeFitsWithinSize(self.maxFullscreenViewportSize, self.window.screen.frame.size))
+        return YES;
+        
+    return NO;
+}
+
++ (NSSet *) keyPathsForValuesAffectingFullscreenSizeAtMinimum
+{
+    return [NSSet setWithObjects: @"maxFullscreenViewportSize", @"renderingView.currentFrame.baseResolution", nil];
+}
+
+- (BOOL) fullscreenSizeAtMinimum
+{
+    if (NSEqualSizes(self.maxFullscreenViewportSize, NSZeroSize))
+        return NO;
+    
+    //The set viewport size is smaller than the DOS resolution
+    if (!sizeFitsWithinSize(self.renderingView.currentFrame.baseResolution, self.maxFullscreenViewportSize))
+        return YES;
+    
+    //The set viewport size is at or smaller than the minimum fullscreen size
+    if (sizeFitsWithinSize(self.maxFullscreenViewportSize, BXFullscreenSizeIntervals[0]))
+        return YES;
+    
+    return NO;
+}
+
+- (IBAction) decrementFullscreenSize: (id)sender
+{
+    NSSize currentSize = self.maxFullscreenViewportSize;
+    if (NSEqualSizes(currentSize, NSZeroSize))
+        currentSize = self.window.screen.frame.size;
+    
+    NSSize baseSize = self.renderingView.currentFrame.scaledResolution;
+    
+    NSSize prevSize = [self.class _closestFullscreenSizeIntervalToSize: currentSize
+                                                     forBaseResolution: baseSize
+                                                             ascending: NO];
+    
+    self.maxFullscreenViewportSize = prevSize;
+}
+
++ (NSSet *) keyPathsForValuesAffectingMaxViewportSizeUIBinding
+{
+    return [NSSet setWithObjects: @"window.isFullScreen", @"maxFullscreenViewportSize", nil];
+}
+
+- (NSSize) maxViewportSizeUIBinding
+{
+    if (self.window.isFullScreen)
+        return self.maxFullscreenViewportSize;
+    else
+        return NSZeroSize;
+}
+
 - (void) setRenderingStyle: (BXRenderingStyle)style
 {
     if (self.renderingStyle != style)
@@ -689,6 +849,16 @@
 		return (!self.window.isFullScreen && self.window.isVisible);
 	}
     
+    else if (theAction == @selector(incrementFullscreenSize:))
+    {
+        return /*self.window.isFullScreen && */!self.fullscreenSizeAtMaximum;
+    }
+    
+    else if (theAction == @selector(decrementFullscreenSize:))
+    {
+        return /*self.window.isFullScreen && */!self.fullscreenSizeAtMinimum;
+    }
+    
     else
     {
         return YES;
@@ -913,6 +1083,10 @@
     else
         [frame useSquarePixels];
     
+    //TWEAK: increase our max fullscreen viewport size if it won't accommodate the new frame.
+    if (!NSEqualSizes(self.maxFullscreenViewportSize, NSZeroSize) && !sizeFitsWithinSize(frame.scaledResolution, self.maxFullscreenViewportSize))
+        self.maxFullscreenViewportSize = frame.scaledResolution;
+    
 	//Update the renderer with the new frame.
 	[self.renderingView updateWithFrame: frame];
     
@@ -929,8 +1103,6 @@
 		//bounds-change notifications so we can resize the window to match?
 		[self _resizeToAccommodateFrame: frame];
 	}
-    
-    //[self.renderingView setHidden: !hasFrame];
 }
 
 - (BOOL) _shouldCorrectAspectRatioOfFrame: (BXVideoFrame *)frame

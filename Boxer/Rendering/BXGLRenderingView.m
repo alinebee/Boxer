@@ -302,7 +302,6 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     {
         _maxViewportSize = maxViewportSize;
         
-        
         //Animate our viewport to the new viewport size if it's not already there.
         NSRect newViewport = [self viewportForFrame: self.currentFrame];
         if (!NSEqualRects(newViewport, _targetViewportRect))

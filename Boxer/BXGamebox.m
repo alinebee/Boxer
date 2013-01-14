@@ -881,15 +881,16 @@ typedef enum {
                                error: (out NSError **)outError
 {    
     NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
-    //Create the documentation URL if it's not already there, and fail if we cannot create it.
     NSURL *docsURL = self.documentationFolderURL;
-    BOOL created = [self createDocumentationFolderIfMissingWithError: outError];
-    if (!created)
-        return nil;
     
     //Do not import files that are already rooted in the documentation folder itself.
     if ([documentationURL isBasedInURL: docsURL])
         return documentationURL;
+    
+    //Create the documentation URL if it's not already there, and fail if we cannot create it.
+    BOOL created = [self createDocumentationFolderIfMissingWithError: outError];
+    if (!created)
+        return nil;
     
     //Make the copy/symlink in a temporary folder before moving it to the final documentation folder.
     NSURL *intermediateBaseURL = [manager URLForDirectory: NSItemReplacementDirectory
@@ -901,16 +902,21 @@ typedef enum {
     NSURL *intermediateURL;
     if (intermediateBaseURL)
     {
-        intermediateURL = [intermediateBaseURL URLByAppendingPathComponent: documentationURL.lastPathComponent isDirectory: NO];
+        intermediateURL = [intermediateBaseURL URLByAppendingPathComponent: documentationURL.lastPathComponent
+                                                               isDirectory: NO];
         
         BOOL succeeded;
         if (operation == BXGameboxDocumentationSymlink)
         {
-            succeeded = [manager createSymbolicLinkAtURL: intermediateURL withDestinationURL: documentationURL error: outError];
+            succeeded = [manager createSymbolicLinkAtURL: intermediateURL
+                                      withDestinationURL: documentationURL
+                                                   error: outError];
         }
         else
         {
-            succeeded = [manager copyItemAtURL: documentationURL toURL: intermediateURL error: outError];
+            succeeded = [manager copyItemAtURL: documentationURL
+                                         toURL: intermediateURL
+                                         error: outError];
         }
         
         //If for some reason we couldn't copy or symlink, clean up our temporary folder before we bail out.

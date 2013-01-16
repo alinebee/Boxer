@@ -32,25 +32,6 @@
 #import "NSWindow+BXWindowDimensions.h"
 #import "BXGeometry.h"
 
-//The intervals along which we allow the viewport to be resized in fullscreen.
-//Used by incrementFullscreenSize and decrementFullscreenSize.
-
-#define BXNumFullscreenSizeIntervals 12
-static NSSize BXFullscreenSizeIntervals[BXNumFullscreenSizeIntervals] = {
-    { 320, 240 },
-    { 400, 300 },
-    { 512, 384 },
-    { 640, 480 },
-    { 800, 600 },
-    { 960, 720 },
-    { 1024, 768 },
-    { 1280, 960 },  //640x480@2x
-    { 1600, 1200 }, //800x600@2x
-    { 1920, 1440 }, //960x720@2x
-    { 2048, 1536 }, //1024x768@2x
-    { 2560, 1920 }, //1280x960@2x
-};
-
 @implementation BXDOSWindowController
 
 #pragma mark -
@@ -463,72 +444,99 @@ static NSSize BXFullscreenSizeIntervals[BXNumFullscreenSizeIntervals] = {
                                                forKey: @"renderingStyle"];
 }
 
-+ (NSSize) _closestFullscreenSizeIntervalToSize: (NSSize)sourceSize
-                              forBaseResolution: (NSSize)baseResolution
-                                      ascending: (BOOL)ascending
++ (NSSize) _nextFullscreenSizeIntervalForSize: (NSSize)currentSize
+                           originalResolution: (NSSize)baseResolution
+                                    ascending: (BOOL)ascending
 {
-    NSUInteger sizeIndex;
+    NSSize snapInterval = baseResolution;
+    
+    //For lower resolutions, snap the fullscreen size to even multiples of the DOS resolution;
+    //For higher resolutions, also snap to halfway-intervals as well.
+    if (snapInterval.width >= 640.0)
+        snapInterval = NSMakeSize(snapInterval.width * 0.5,
+                                  snapInterval.height * 0.5);
+    
+    CGFloat currentScale = currentSize.width / snapInterval.width;
+    NSSize nextSize;
+    
     if (ascending)
     {
-        //Work our way up the size intervals looking for the next size that is larger
-        //than the current one.
-        for (sizeIndex = 0; sizeIndex < BXNumFullscreenSizeIntervals; sizeIndex++)
+        CGFloat nextScale = ceil(currentScale);
+        do
         {
-            NSSize nextSize = BXFullscreenSizeIntervals[sizeIndex];
-            
-            if (nextSize.width > sourceSize.width && nextSize.height > sourceSize.height)
-                return nextSize;
+            nextSize = NSMakeSize(snapInterval.width * nextScale,
+                                  snapInterval.height * nextScale);
+            nextScale += 1;
         }
-        //If we got this far then the source size was larger than any of our intervals:
-        //return NSZeroSize, indicating we should use the native resolution of the display.
-        return NSZeroSize;
+        while (nextSize.width <= currentSize.width || nextSize.height <= currentSize.height);
     }
     else
     {
-        //Work our way down the size intervals looking for the next smallest size
-        //from the current one.
-        for (sizeIndex = BXNumFullscreenSizeIntervals; sizeIndex > 0; sizeIndex--)
+        CGFloat nextScale = floor(currentScale);
+        do
         {
-            NSSize prevSize = BXFullscreenSizeIntervals[sizeIndex-1];
+            nextSize = NSMakeSize(snapInterval.width * nextScale,
+                                  snapInterval.height * nextScale);
             
-            //If the next smallest size is smaller than the base resolution, then use the base resolution.
-            if (prevSize.width < baseResolution.width || prevSize.height < baseResolution.height)
-            {
-                return baseResolution;
-            }
-            else if (prevSize.width < sourceSize.width && prevSize.height < sourceSize.height)
-            {
-                return prevSize;
-            }
+            nextScale -= 1;
         }
-        //If we got this far, then we're already at the minimum interval.
-        return BXFullscreenSizeIntervals[0];
+        while (nextSize.width >= currentSize.width || nextSize.height >= currentSize.height);
     }
     
-    return NSZeroSize;
+    //Cap the size to our minimum size, so that we'll never shrink below the original DOS resolution.
+    if (baseResolution.width > nextSize.width || baseResolution.height > nextSize.height)
+        nextSize = baseResolution;
+    
+    return nextSize;
 }
 
 - (IBAction) incrementFullscreenSize: (id)sender
 {
-    NSSize screenSize = self.window.screen.frame.size;
+    if (!self.window.isFullScreen)
+        return;
+    
+    NSSize canvasSize = self.renderingView.bounds.size;
     NSSize currentSize = self.maxFullscreenViewportSize;
+    if (NSEqualSizes(currentSize, NSZeroSize) || sizeFitsWithinSize(canvasSize, currentSize))
+        return;
     
-    //If no maximum size has been set, or the current maximum size is larger than the screen itself,
-    //the use the screen size as the maximum instead.
-    if (NSEqualSizes(currentSize, NSZeroSize) || !sizeFitsWithinSize(currentSize, screenSize))
-        currentSize = screenSize;
+    NSSize baseResolution = self.renderingView.currentFrame.scaledResolution;
     
-    NSSize baseSize = self.renderingView.currentFrame.scaledResolution;
+    NSSize nextSizeInterval = [self.class _nextFullscreenSizeIntervalForSize: currentSize
+                                                          originalResolution: baseResolution
+                                                                   ascending: YES];
     
-    NSSize nextSize = [self.class _closestFullscreenSizeIntervalToSize: currentSize
-                                                     forBaseResolution: baseSize
-                                                             ascending: YES];
+    //If the next increment is larger than the available canvas,
+    //then tell the rendering view to just use the whole canvas.
+    if (!sizeFitsWithinSize(nextSizeInterval, canvasSize))
+        nextSizeInterval = NSZeroSize;
     
-    //If the next size would be larger than the screen can display, then just use the native resolution.
-    if (!sizeFitsWithinSize(nextSize, screenSize))
-        nextSize = NSZeroSize;
+    self.maxFullscreenViewportSize = nextSizeInterval;
+}
+
+- (IBAction) decrementFullscreenSize: (id)sender
+{
+    if (!self.window.isFullScreen)
+        return;
     
-    self.maxFullscreenViewportSize = nextSize;
+    NSSize canvasSize = self.renderingView.bounds.size;
+    NSSize currentSize = self.maxFullscreenViewportSize;
+    if (NSEqualSizes(currentSize, NSZeroSize) || sizeFitsWithinSize(canvasSize, currentSize))
+        currentSize = canvasSize;
+        
+    NSSize baseResolution = self.renderingView.currentFrame.scaledResolution;
+    
+    NSSize prevSizeInterval = [self.class _nextFullscreenSizeIntervalForSize: currentSize
+                                                          originalResolution: baseResolution
+                                                                   ascending: NO];
+    
+    //If the previous increment is larger than the available canvas,
+    //then tell the rendering view to just use the whole canvas.
+    //(This can happen if the DOS resolution is larger than can actually fit on-screen.)
+    if (!sizeFitsWithinSize(prevSizeInterval, canvasSize))
+        prevSizeInterval = NSZeroSize;
+    
+    self.maxFullscreenViewportSize = prevSizeInterval;
 }
 
 + (NSSet *) keyPathsForValuesAffectingFullscreenSizeAtMaximum
@@ -559,30 +567,12 @@ static NSSize BXFullscreenSizeIntervals[BXNumFullscreenSizeIntervals] = {
     if (NSEqualSizes(self.maxFullscreenViewportSize, NSZeroSize))
         return NO;
     
-    //The set viewport size is smaller than the DOS resolution
-    if (!sizeFitsWithinSize(self.renderingView.currentFrame.baseResolution, self.maxFullscreenViewportSize))
-        return YES;
-    
-    //The set viewport size is at or smaller than the minimum fullscreen size
-    if (sizeFitsWithinSize(self.maxFullscreenViewportSize, BXFullscreenSizeIntervals[0]))
+    //Check if the current viewport size is at or smaller than the DOS resolution
+    NSSize minimumSize = self.renderingView.currentFrame.scaledResolution;
+    if (sizeFitsWithinSize(self.maxFullscreenViewportSize, minimumSize))
         return YES;
     
     return NO;
-}
-
-- (IBAction) decrementFullscreenSize: (id)sender
-{
-    NSSize currentSize = self.maxFullscreenViewportSize;
-    if (NSEqualSizes(currentSize, NSZeroSize))
-        currentSize = self.window.screen.frame.size;
-    
-    NSSize baseSize = self.renderingView.currentFrame.scaledResolution;
-    
-    NSSize prevSize = [self.class _closestFullscreenSizeIntervalToSize: currentSize
-                                                     forBaseResolution: baseSize
-                                                             ascending: NO];
-    
-    self.maxFullscreenViewportSize = prevSize;
 }
 
 + (NSSet *) keyPathsForValuesAffectingMaxViewportSizeUIBinding
@@ -851,12 +841,12 @@ static NSSize BXFullscreenSizeIntervals[BXNumFullscreenSizeIntervals] = {
     
     else if (theAction == @selector(incrementFullscreenSize:))
     {
-        return /*self.window.isFullScreen && */!self.fullscreenSizeAtMaximum;
+        return self.window.isFullScreen && !self.fullscreenSizeAtMaximum;
     }
     
     else if (theAction == @selector(decrementFullscreenSize:))
     {
-        return /*self.window.isFullScreen && */!self.fullscreenSizeAtMinimum;
+        return self.window.isFullScreen && !self.fullscreenSizeAtMinimum;
     }
     
     else

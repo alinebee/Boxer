@@ -16,12 +16,12 @@
 
 @interface BXDOSWindow : BXFullScreenCapableWindow
 {
-    IBOutlet NSView *actualContentView;
+    NSView *actualContentView;
 }
 //The 'real' content view by which our content size calculations will be constrained,
 //and which will fill the screen in fullscreen mode. This is distinct from the window's
 //top-level content view and does not include the program panel or statusbar views.
-@property (retain, nonatomic) NSView *actualContentView;
+@property (retain, nonatomic) IBOutlet NSView *actualContentView;
 
 //Return the current size of actualContentView.
 - (NSSize) actualContentViewSize;

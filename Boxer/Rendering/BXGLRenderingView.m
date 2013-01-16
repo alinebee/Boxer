@@ -227,14 +227,13 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 		NSSize frameSize = frame.scaledSize;
 		NSRect frameRect = NSMakeRect(0.0f, 0.0f, frameSize.width, frameSize.height);
 		
-        NSRect maxViewportRect = self.bounds;
-        //If we have a maximum viewport size, fit the frame within that.
-        if (!NSEqualSizes(self.maxViewportSize, NSZeroSize) && !sizeFitsWithinSize(maxViewportRect.size, self.maxViewportSize))
+        NSRect canvasRect = self.bounds;
+        NSRect maxViewportRect = canvasRect;
+        
+        //If we have a maximum viewport size, fit the frame within that; otherwise, just fill the canvas as best we can.
+        if (!NSEqualSizes(self.maxViewportSize, NSZeroSize) && sizeFitsWithinSize(self.maxViewportSize, canvasRect.size))
         {
-            maxViewportRect = resizeRectFromPoint(maxViewportRect, self.maxViewportSize, NSMakePoint(0.5f, 0.5f));
-            
-            //TODO: snap the viewport rect to an even multiple of the base resolution of the frame if it's close enough,
-            //using the same algorithm as we do in BXDOSWindowController when resizing the window.
+            maxViewportRect = resizeRectFromPoint(canvasRect, self.maxViewportSize, NSMakePoint(0.5f, 0.5f));
         }
 		return fitInRect(frameRect, maxViewportRect, NSMakePoint(0.5f, 0.5f));
 	}

@@ -90,9 +90,9 @@
 
 //Returns the next suitable fullscreen viewport size that's above/below the specified size.
 //Used by incrementFullscreenSize: and decrementFullscreenSize:.
-+ (NSSize) _closestFullscreenSizeIntervalToSize: (NSSize)sourceSize
-                              forBaseResolution: (NSSize)baseResolution
-                                      ascending: (BOOL)ascending;
++ (NSSize) _nextFullscreenSizeIntervalForSize: (NSSize)currentSize
+                           originalResolution: (NSSize)baseResolution
+                                    ascending: (BOOL)ascending;
 
 #pragma mark -
 #pragma mark Delegate and notification methods

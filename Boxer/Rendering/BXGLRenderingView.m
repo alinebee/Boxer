@@ -26,6 +26,8 @@
 @property (retain) BXRippleShader *rippleEffect2D;
 @property (retain) BXRippleShader *rippleEffectRectangle;
 
+@property (assign, nonatomic) NSRect viewportRect;
+
 @property (assign, nonatomic) CGPoint rippleOrigin;
 @property (assign, nonatomic) CGFloat rippleProgress;
 @property (assign, nonatomic) BOOL rippleReversed;
@@ -60,7 +62,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @implementation BXGLRenderingView
 @synthesize renderer = _renderer;
 @synthesize currentFrame = _currentFrame;
-@synthesize managesAspectRatio = _managesAspectRatio;
+@synthesize managesViewport = _managesViewport;
 @synthesize needsCVLinkDisplay = _needsCVLinkDisplay;
 @synthesize viewportRect = _viewportRect;
 @synthesize maxViewportSize = _maxViewportSize;
@@ -162,16 +164,12 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         [self.renderer updateWithFrame: frame];
     CGLUnlockContext(cgl_ctx);
     
-    //If the view changes aspect ratio, and we're responsible for the aspect ratio ourselves,
-    //then smoothly animate the transition to the new ratio. 
-    if (self.managesAspectRatio)
+    //If the frame changes size or aspect ratio, and we're responsible for the viewport ourselves,
+    //then smoothly animate the transition to the new size. 
+    if (self.managesViewport)
     {
-        NSRect newViewport = [self viewportForFrame: frame];
-        if (!NSEqualRects(newViewport, _targetViewportRect))
-        {
-            _targetViewportRect = newViewport;
-            [self.animator setViewportRect: newViewport];
-        }
+        [self setViewportRect: [self viewportForFrame: frame]
+                     animated: YES];
     }
     
     //If we're using a CV Link, don't tell Cocoa that we need redrawing:
@@ -189,7 +187,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     if ([key isEqualToString: @"viewportRect"])
     {
 		CABasicAnimation *animation = [CABasicAnimation animation];
-        animation.duration = 0.25;
+        animation.duration = 0.2;
         animation.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionEaseIn];
         animation.delegate = self;
         return animation;
@@ -222,7 +220,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 //Returns the rectangular region of the view into which the specified frame should be drawn.
 - (NSRect) viewportForFrame: (BXVideoFrame *)frame
 {
-    if (self.managesAspectRatio)
+    if (self.managesViewport)
 	{
 		NSSize frameSize = frame.scaledSize;
 		NSRect frameRect = NSMakeRect(0.0f, 0.0f, frameSize.width, frameSize.height);
@@ -235,7 +233,10 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         {
             maxViewportRect = resizeRectFromPoint(canvasRect, self.maxViewportSize, NSMakePoint(0.5f, 0.5f));
         }
-		return fitInRect(frameRect, maxViewportRect, NSMakePoint(0.5f, 0.5f));
+        
+        NSRect fittedViewportRect = fitInRect(frameRect, maxViewportRect, NSMakePoint(0.5f, 0.5f));
+        
+        return fittedViewportRect;
 	}
 	else
     {
@@ -243,15 +244,15 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     }
 }
 
-- (void) setManagesAspectRatio: (BOOL)enabled
+- (void) setManagesViewport: (BOOL)enabled
 {
-    if (self.managesAspectRatio != enabled)
+    if (self.managesViewport != enabled)
     {
-        _managesAspectRatio = enabled;
+        _managesViewport = enabled;
         
         //Update our viewport immediately to compensate for the change
-        _targetViewportRect = [self viewportForFrame: self.currentFrame];
-        self.viewportRect = _targetViewportRect;
+        [self setViewportRect: [self viewportForFrame: self.currentFrame]
+                     animated: NO];
     }
 }
 
@@ -267,6 +268,20 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
             self.needsCVLinkDisplay = YES;
         else
             self.needsDisplay = YES;
+    }
+}
+
+- (void) setViewportRect: (NSRect)newRect animated: (BOOL)animated
+{
+    if (!NSEqualRects(_targetViewportRect, newRect))
+    {
+        NSTimeInterval duration = (animated) ? 0.2 : 0;
+        
+        _targetViewportRect = newRect;
+        [NSAnimationContext beginGrouping];
+            [NSAnimationContext currentContext].duration = duration;
+            [self.animator setViewportRect: _targetViewportRect];
+        [NSAnimationContext endGrouping];
     }
 }
 
@@ -302,12 +317,8 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         _maxViewportSize = maxViewportSize;
         
         //Animate our viewport to the new viewport size if it's not already there.
-        NSRect newViewport = [self viewportForFrame: self.currentFrame];
-        if (!NSEqualRects(newViewport, _targetViewportRect))
-        {
-            _targetViewportRect = newViewport;
-            [self.animator setViewportRect: newViewport];
-        }
+        [self setViewportRect: [self viewportForFrame: self.currentFrame]
+                     animated: YES];
     }
 }
 
@@ -366,15 +377,16 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
             if (self.currentFrame)
                 [self.renderer updateWithFrame: self.currentFrame];
             
-            //Sync up the new renderer with our current state
+            //Sync up the new renderer with our current state.
             if (NSIsEmptyRect(self.viewportRect))
             {
-                _targetViewportRect = (self.currentFrame) ? [self viewportForFrame: self.currentFrame] : self.bounds;
-                //TODO: should we animate this change?
-                self.viewportRect = _targetViewportRect;
+                NSRect viewportRect = (self.currentFrame) ? [self viewportForFrame: self.currentFrame] : self.bounds;
+                [self setViewportRect: viewportRect animated: NO];
             }
-            [self _applyViewportToRenderer];
-        
+            else
+            {
+                [self _applyViewportToRenderer];
+            }
         CGLUnlockContext(self.openGLContext.CGLContextObj);
     }
 }
@@ -474,8 +486,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     [super reshape];
     
     //Instantly recalculate our viewport rect whenever the view changes shape.
-    _targetViewportRect = [self viewportForFrame: self.currentFrame];
-    self.viewportRect = _targetViewportRect;
+    [self setViewportRect: [self viewportForFrame: self.currentFrame] animated: NO];
 }
 
 - (void) viewDidEndLiveResize

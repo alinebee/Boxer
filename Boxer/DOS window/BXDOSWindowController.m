@@ -32,6 +32,12 @@
 #import "NSWindow+BXWindowDimensions.h"
 #import "BXGeometry.h"
 
+
+#pragma mark - Constants
+
+//%@ is the frame autosave name of the window
+NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
+
 @implementation BXDOSWindowController
 
 #pragma mark -
@@ -201,7 +207,7 @@
 	{
         [self setFrameAutosaveName: @"DOSWindow"];
 	}
-	
+    
 	//Ensure we get frame resize notifications from the rendering view.
 	self.renderingView.postsFrameChangedNotifications = YES;
 	
@@ -236,6 +242,14 @@
         }
     }
     
+    //Load up any previously saved fullscreen size.
+    if (self.window.frameAutosaveName)
+    {
+        NSString *fullscreenSizeKey = [NSString stringWithFormat: BXDOSWindowFullscreenSizeFormat, self.window.frameAutosaveName];
+        NSString *recordedFullscreenSize = [[NSUserDefaults standardUserDefaults] objectForKey: fullscreenSizeKey];
+        if (recordedFullscreenSize)
+            _maxFullscreenViewportSize = NSSizeFromString(recordedFullscreenSize);
+    }
     
 	//Reassign the document to ensure we've set up our view controllers with references the document/emulator
 	//This is necessary because the order of windowDidLoad/setDocument: differs between OS X releases, and some
@@ -483,7 +497,7 @@
         while (nextSize.width >= currentSize.width || nextSize.height >= currentSize.height);
     }
     
-    //Cap the size to our minimum size, so that we'll never shrink below the original DOS resolution.
+    //Cap the size to the base DOS resolution: we never want to display smaller than this.
     if (baseResolution.width > nextSize.width || baseResolution.height > nextSize.height)
         nextSize = baseResolution;
     
@@ -492,14 +506,18 @@
 
 - (IBAction) incrementFullscreenSize: (id)sender
 {
-    if (!self.window.isFullScreen)
+    if (!self.window.isFullScreen || self.fullscreenSizeAtMaximum)
         return;
     
     NSSize canvasSize = self.renderingView.bounds.size;
     NSSize currentSize = self.maxFullscreenViewportSize;
-    if (NSEqualSizes(currentSize, NSZeroSize) || sizeFitsWithinSize(canvasSize, currentSize))
-        return;
     
+    //If the game has switched to a higher resolution since the user last adjusted the viewport,
+    //it could be that the previously-set viewport size is smaller than the allowed minimum.
+    //In this case, use the minimum as our starting-point rather than the viewport size.
+    if (!sizeFitsWithinSize(self.minFullscreenViewportSize, currentSize))
+        currentSize = self.minFullscreenViewportSize;
+        
     NSSize baseResolution = self.renderingView.currentFrame.scaledResolution;
     
     NSSize nextSizeInterval = [self.class _nextFullscreenSizeIntervalForSize: currentSize
@@ -516,11 +534,14 @@
 
 - (IBAction) decrementFullscreenSize: (id)sender
 {
-    if (!self.window.isFullScreen)
+    if (!self.window.isFullScreen || self.fullscreenSizeAtMinimum)
         return;
     
     NSSize canvasSize = self.renderingView.bounds.size;
     NSSize currentSize = self.maxFullscreenViewportSize;
+    
+    //If the current viewport size is set to fill the fullscreen canvas, or was previously set to a larger size
+    //than the current fullscreen canvas, then use the canvas size as the starting point instead.
     if (NSEqualSizes(currentSize, NSZeroSize) || sizeFitsWithinSize(canvasSize, currentSize))
         currentSize = canvasSize;
         
@@ -539,6 +560,26 @@
     self.maxFullscreenViewportSize = prevSizeInterval;
 }
 
++ (NSSet *) keyPathsForValuesAffectingMinFullscreenViewportSize
+{
+    return [NSSet setWithObject: @"renderingView.currentFrame.scaledResolution"];
+}
+
+- (NSSize) minFullscreenViewportSize
+{
+    return self.renderingView.currentFrame.scaledResolution;
+}
+
++ (NSSet *) keyPathsForValuesAffectingFullscreenViewportFillsCanvas
+{
+    return [NSSet setWithObject: @"maxFullscreenViewportSize"];
+}
+
+- (BOOL) fullscreenViewportFillsCanvas
+{
+    return NSEqualSizes(self.maxFullscreenViewportSize, NSZeroSize);
+}
+
 + (NSSet *) keyPathsForValuesAffectingFullscreenSizeAtMaximum
 {
     return [NSSet setWithObjects: @"maxFullscreenViewportSize", @"window.screen.frame", nil];
@@ -546,12 +587,18 @@
 
 - (BOOL) fullscreenSizeAtMaximum
 {
-    //The viewport size is set to use the native display resolution
-    if (NSEqualSizes(self.maxFullscreenViewportSize, NSZeroSize))
+    //The viewport is set to use the entire fullscreen canvas
+    if (self.fullscreenViewportFillsCanvas)
         return YES;
     
-    //The set viewport size is larger than the native display resolution
-    if (!sizeFitsWithinSize(self.maxFullscreenViewportSize, self.window.screen.frame.size))
+    NSSize fullscreenCanvas;
+    if (self.window.isFullScreen)
+        fullscreenCanvas = self.renderingView.bounds.size;
+    else
+        fullscreenCanvas = self.window.screen.frame.size;
+    
+    //The current viewport size is larger than the entire canvas we'll have in fullscreen mode.
+    if (!sizeFitsWithinSize(self.maxFullscreenViewportSize, fullscreenCanvas))
         return YES;
         
     return NO;
@@ -564,28 +611,61 @@
 
 - (BOOL) fullscreenSizeAtMinimum
 {
-    if (NSEqualSizes(self.maxFullscreenViewportSize, NSZeroSize))
+    if (self.fullscreenViewportFillsCanvas)
         return NO;
     
-    //Check if the current viewport size is at or smaller than the DOS resolution
-    NSSize minimumSize = self.renderingView.currentFrame.scaledResolution;
-    if (sizeFitsWithinSize(self.maxFullscreenViewportSize, minimumSize))
+    if (!sizeFitsWithinSize(self.minFullscreenViewportSize, self.maxFullscreenViewportSize))
         return YES;
     
     return NO;
 }
 
+- (void) setMaxFullscreenViewportSize: (NSSize)viewportSize
+{
+    if (!NSEqualSizes(viewportSize, self.maxFullscreenViewportSize))
+    {
+        _maxFullscreenViewportSize = viewportSize;
+        
+        //Persist the new fullscreen viewport size in user defaults for this window type.
+        NSString *autosaveName = self.window.frameAutosaveName;
+        if (!autosaveName.length)
+            autosaveName = self.autosaveNameBeforeFullScreen;
+        
+        if (autosaveName)
+        {
+            NSString *fullscreenSizeKey = [NSString stringWithFormat: BXDOSWindowFullscreenSizeFormat, autosaveName];
+            
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            
+            if (NSEqualSizes(viewportSize, NSZeroSize))
+                [defaults removeObjectForKey: fullscreenSizeKey];
+            else
+            {
+                [defaults setObject: NSStringFromSize(viewportSize)
+                             forKey: fullscreenSizeKey];
+            }
+        }
+    }
+}
+
 + (NSSet *) keyPathsForValuesAffectingMaxViewportSizeUIBinding
 {
-    return [NSSet setWithObjects: @"window.isFullScreen", @"maxFullscreenViewportSize", nil];
+    return [NSSet setWithObjects: @"window.fullScreen", @"window.inFullScreenTransition", @"minFullscreenViewportSize", @"maxFullscreenViewportSize", nil];
 }
 
 - (NSSize) maxViewportSizeUIBinding
 {
-    if (self.window.isFullScreen)
-        return self.maxFullscreenViewportSize;
+    if (self.window.isFullScreen && !self.window.isInFullScreenTransition && !self.fullscreenViewportFillsCanvas)
+    {
+        if (sizeFitsWithinSize(self.minFullscreenViewportSize, self.maxFullscreenViewportSize))
+            return self.maxFullscreenViewportSize;
+        else
+            return self.minFullscreenViewportSize;
+    }
     else
+    {
         return NSZeroSize;
+    }
 }
 
 - (void) setRenderingStyle: (BXRenderingStyle)style
@@ -1073,10 +1153,6 @@
     else
         [frame useSquarePixels];
     
-    //TWEAK: increase our max fullscreen viewport size if it won't accommodate the new frame.
-    if (!NSEqualSizes(self.maxFullscreenViewportSize, NSZeroSize) && !sizeFitsWithinSize(frame.scaledResolution, self.maxFullscreenViewportSize))
-        self.maxFullscreenViewportSize = frame.scaledResolution;
-    
 	//Update the renderer with the new frame.
 	[self.renderingView updateWithFrame: frame];
     
@@ -1185,7 +1261,7 @@
 {
 	NSInteger snapThreshold	= BXWindowSnapThreshold;
 	
-	NSSize snapIncrement	= [self.renderingView currentFrame].scaledResolution;
+	NSSize snapIncrement	= self.renderingView.currentFrame.scaledResolution;
 	CGFloat aspectRatio		= aspectRatioOfSize(theWindow.contentAspectRatio);
 	
 	NSRect proposedFrame	= NSMakeRect(0, 0, proposedFrameSize.width, proposedFrameSize.height);
@@ -1223,21 +1299,6 @@
 	NSRect defaultViewFrame			= [theWindow contentRectForFrameRect: defaultFrame];
 	NSRect largestCleanViewFrame	= defaultViewFrame;
 	
-	//Constrain the proposed view frame to the largest even multiple of the base resolution
-	
-	//Disabled for now: our scaling is good enough now that we can afford to scale to uneven
-	//multiples, and this way we avoid returning a size that's the same as the current size
-	//(which makes the zoom button to appear to do nothing.)
-	
-	/*
-	 CGFloat aspectRatio				= aspectRatioOfSize([theWindow contentAspectRatio]);
-	 NSSize scaledResolution			= [[renderingView currentFrame] scaledResolution];
-	 
-	 largestCleanViewFrame.size.width -= ((NSInteger)defaultViewFrame.size.width % (NSInteger)scaledResolution.width);
-	 if (aspectRatio > 0)
-	 largestCleanViewFrame.size.height = round(largestCleanViewFrame.size.width / aspectRatio);
-	 */
-	
 	//Turn our new constrained view frame back into a suitably positioned window frame
 	standardFrame = [theWindow frameRectForContentRect: largestCleanViewFrame];	
 	
@@ -1265,7 +1326,7 @@
     
     [self.window setFrameAutosaveName: @""];
     
-    self.renderingView.managesAspectRatio = YES;
+    self.renderingView.managesViewport = YES;
     
     if (self.currentPanel == BXDOSWindowDOSView)
         [self.inputController setMouseLocked: YES force: YES];
@@ -1284,7 +1345,7 @@
     //Clean up all our preparations for fullscreen mode
     [self.window setFrameAutosaveName: self.autosaveNameBeforeFullScreen];
     
-    self.renderingView.managesAspectRatio = NO;
+    self.renderingView.managesViewport = NO;
     [self.inputController setMouseLocked: NO force: YES];
 }
 
@@ -1298,8 +1359,7 @@
 
 - (void) windowDidExitFullScreen: (NSNotification *)notification
 {
-    //Turn off aspect ratio correction again
-    self.renderingView.managesAspectRatio = NO;
+    self.renderingView.managesViewport = NO;
     
     //By this point, we have returned to our desired window size.
     //Delete the old autosaved size before restoring the original
@@ -1452,7 +1512,8 @@
 		//Tweak: ...unless the base resolution is actually larger than our view size, which can happen 
 		//if the base resolution is too large to fit on screen and hence the view is shrunk.
 		//In that case we use the target view size as the minimum instead.
-		if (!sizeFitsWithinSize(scaledResolution, viewSize)) minSize = viewSize;
+		if (!sizeFitsWithinSize(scaledResolution, viewSize))
+            minSize = viewSize;
 		
 		self.window.contentMinSize = minSize;
 	}

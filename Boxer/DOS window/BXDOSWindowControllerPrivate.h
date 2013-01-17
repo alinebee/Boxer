@@ -36,13 +36,18 @@
 //This will return NSZeroSize while in windowed mode or when no maxFullscreenViewportSize has been set.
 @property (readonly, nonatomic) NSSize maxViewportSizeUIBinding;
 
-//The maximum size at which the rendering view should render in fullscreen.
-@property (assign, nonatomic) NSSize maxFullscreenViewportSize;
-
 //Whether the fullscreen size is at its minimum/maximum extents.
 //Used to programmatically enable/disable UI items.
 @property (readonly, nonatomic) BOOL fullscreenSizeAtMinimum;
 @property (readonly, nonatomic) BOOL fullscreenSizeAtMaximum;
+
+//Whether the viewport will fill the screen in fullscreen mode.
+//Will be YES if maxFullscreenViewportSize is NSZeroSize.
+@property (readonly, nonatomic) BOOL fullscreenViewportFillsCanvas;
+
+//The minimum size to which the fullscreen viewport can be set.
+//Equivalent to the current DOS resolution after aspect-correction is applied.
+@property (readonly, nonatomic) NSSize minFullscreenViewportSize;
 
 //A property specifically for UI bindings to use. Toggling this will change the panel if allowed,
 //and flag that the change was made at the user's own request.

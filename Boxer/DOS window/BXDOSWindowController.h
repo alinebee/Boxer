@@ -126,6 +126,10 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //The current size of the DOS rendering viewport.
 @property (readonly, nonatomic) NSSize viewportSize;
 
+//The maximum drawing area to use when in fullscreen.
+//Defaults to NSZeroSize, which means that it will fill the available fullscreen area.
+@property (assign, nonatomic) NSSize maxFullscreenViewportSize;
+
 //Whether we should force DOS frames to use a 4:3 aspect ratio.
 //Changing this will resize the DOS window/fullscreen viewport to suit.
 @property (assign, nonatomic, getter=isAspectCorrected) BOOL aspectCorrected;

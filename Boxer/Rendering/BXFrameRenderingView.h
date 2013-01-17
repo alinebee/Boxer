@@ -41,8 +41,13 @@ typedef enum {
 //Returns whether the view should adjust its viewport to suit the aspect ratio
 //of the current frame, or whether this will be done by adjusting the dimensions
 //of the view itself.
-- (void) setManagesAspectRatio: (BOOL)managesAspectRatio;
-- (BOOL) managesAspectRatio;
+- (void) setManagesViewport: (BOOL)managesViewport;
+- (BOOL) managesViewport;
+
+//Get/set the maximum size that the viewport is allowed to reach, beyond which it should remain
+//the same size within the center of the view. Should only apply if managesViewport is YES.
+- (NSSize) maxViewportSize;
+- (void) setMaxViewportSize: (NSSize)size;
 
 //Tells the view to render the specified frame next time it is redrawn.
 //Will usually mark the view as needing display.
@@ -52,7 +57,6 @@ typedef enum {
 //to the view via updateWithFrame:.
 - (BXVideoFrame *) currentFrame;
 
-
 //Reports the maximum displayable frame size (which may be limited by e.g. OpenGL
 //maximum texture dimensions.) Frames larger than this will not be passed to updateWithFrame:.
 - (NSSize) maxFrameSize;
@@ -61,10 +65,6 @@ typedef enum {
 //This may be a portion of the total view size, when in fullscreen mode.
 - (NSRect) viewportRect;
 
-//Get/set the maximum size that the viewport is allowed to reach, beyond which it should remain
-//the same size within the center of the view.
-- (NSSize) maxViewportSize;
-- (void) setMaxViewportSize: (NSSize)size;
 
 //Called whenever the window changes color space or scaling factor.
 - (void) windowDidChangeBackingProperties: (NSNotification *)notification;

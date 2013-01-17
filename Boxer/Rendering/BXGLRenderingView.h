@@ -23,7 +23,7 @@
     BXVideoFrame *_currentFrame;
 	CVDisplayLinkRef _displayLink;
     BOOL _needsCVLinkDisplay;
-    BOOL _managesAspectRatio;
+    BOOL _managesViewport;
     NSRect _viewportRect;
     NSRect _targetViewportRect;
     NSSize _maxViewportSize;
@@ -46,10 +46,11 @@
 }
 
 @property (retain, nonatomic) BXBasicRenderer *renderer;
-@property (assign, nonatomic) BOOL managesAspectRatio;
-@property (assign, nonatomic) NSSize maxViewportSize;
-@property (assign, nonatomic) NSRect viewportRect;
 @property (assign, nonatomic) BXRenderingStyle renderingStyle;
+
+@property (assign, nonatomic) BOOL managesViewport;
+@property (assign, nonatomic) NSSize maxViewportSize;
+@property (readonly, nonatomic) NSRect viewportRect;
 
 
 //Returns the rectangular region of the view into which the specified frame will be drawn.
@@ -65,4 +66,10 @@
 
 - (void) showRippleAtPoint: (NSPoint)point
                    reverse: (BOOL)reverse;
+
+//Set the viewport (the area of the view in which the frame is rendered) to the specified rectangle.
+//If animated is YES, the viewport will be smoothly animated to the new size; otherwise the viewport
+//will be changed immediately (cancelling any in-progress animation.)
+- (void) setViewportRect: (NSRect)viewportRect animated: (BOOL)animated;
+
 @end

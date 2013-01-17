@@ -22,11 +22,11 @@
 
 @interface BXFullScreenCapableWindow : NSWindow {
 @private
-    BOOL fullScreen;
-    BOOL inFullScreenTransition;
+    BOOL _fullScreen;
+    BOOL _inFullScreenTransition;
     
-    NSRect windowedFrame;
-    NSUInteger windowedStyleMask;
+    NSRect _windowedFrame;
+    NSUInteger _windowedStyleMask;
 }
 
 #pragma mark -

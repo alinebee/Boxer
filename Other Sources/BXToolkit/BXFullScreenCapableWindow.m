@@ -48,7 +48,8 @@
 #pragma mark Implementation
 
 @implementation BXFullScreenCapableWindow
-@synthesize fullScreen, inFullScreenTransition;
+@synthesize fullScreen = _fullScreen;
+@synthesize inFullScreenTransition = _inFullScreenTransition;
 
 #pragma mark -
 #pragma mark UI actions and validation
@@ -56,7 +57,7 @@
 
 - (IBAction) toggleFullScreen: (id)sender
 {
-    [self setFullScreen: ![self isFullScreen] animate: YES];
+    [self setFullScreen: !self.isFullScreen animate: YES];
     
     if ([self.delegate respondsToSelector: @selector(window:didToggleFullScreenWithAnimation:)])
         [(id <BXFullScreenCapableWindowDelegate>)self.delegate window: self
@@ -65,7 +66,7 @@
 
 - (IBAction) toggleFullScreenWithoutAnimation: (id)sender
 {
-    [self setFullScreen: ![self isFullScreen] animate: NO];
+    [self setFullScreen: !self.isFullScreen animate: NO];
     
     if ([self.delegate respondsToSelector: @selector(window:didToggleFullScreenWithAnimation:)])
         [(id <BXFullScreenCapableWindowDelegate>)self.delegate window: self
@@ -77,18 +78,18 @@
 - (BOOL) windowShouldZoom: (NSWindow *)window
                   toFrame: (NSRect)newFrame
 {
-    if ([self isFullScreen] || [self isInFullScreenTransition]) return NO;
+    if (self.isFullScreen || self.isInFullScreenTransition) return NO;
     else return YES;
 }
 
 - (BOOL) validateUserInterfaceItem: (id<NSValidatedUserInterfaceItem>)theItem
 {
-    SEL theAction = [theItem action];
+    SEL theAction = theItem.action;
     
     //Prevent zooming while in fullscreen
     if (theAction == @selector(zoom:) || theAction == @selector(performZoom:))
     {
-        if ([self isFullScreen]) return NO;
+        if (self.isFullScreen) return NO;
     }
     
     //Let NSWindow decide about any other actions - including what
@@ -101,7 +102,7 @@
 //doesn't like interference
 - (void) close
 {
-    if ([self isFullScreen] && [self isVisible] && ![NSWindow instancesRespondToSelector: @selector(toggleFullScreen:)])
+    if (self.isFullScreen && self.isVisible && ![NSWindow instancesRespondToSelector: @selector(toggleFullScreen:)])
     {
         [self setFullScreen: NO animate: NO];
     }
@@ -124,22 +125,21 @@
 {
     //This is a no-op on Leopard, which does not support runtime modification of the style mask.
     if (![NSWindow instancesRespondToSelector: @selector(setStyleMask:)]) return;
-        
     
     //Test whether we're transitioning to/from fullscreen based on Lion's fullscreen mask.
-    BOOL wasInFullScreen    = ([self styleMask] & NSFullScreenWindowMask) == NSFullScreenWindowMask;
+    BOOL wasInFullScreen    = (self.styleMask & NSFullScreenWindowMask) == NSFullScreenWindowMask;
     BOOL willBeInFullScreen = (styleMask & NSFullScreenWindowMask) == NSFullScreenWindowMask;
     
     BOOL togglingFullScreen = (wasInFullScreen != willBeInFullScreen);
     
     if (togglingFullScreen)
     {
-        [self setInFullScreenTransition: YES];
-        [self setFullScreen: willBeInFullScreen];
+        self.inFullScreenTransition = YES;
+        self.fullScreen = willBeInFullScreen;
         
         if (willBeInFullScreen)
         {
-            windowedFrame = [self frame];
+            _windowedFrame = self.frame;
         }
     }
     
@@ -157,7 +157,7 @@
                                                      name: NSWindowDidExitFullScreenNotification
                                                    object: self];
         
-        [self setInFullScreenTransition: NO];
+        self.inFullScreenTransition = NO;
     }
     
 }
@@ -168,10 +168,10 @@
     //Unfortunately, we cannot do this any earlier in Lion's fullscreen transition
     //process because the very last FUCKING thing it does is unconditionally reset
     //the window back to the frame it had when we entered fullscreen.
-    if ([[self delegate] respondsToSelector: @selector(window:willReturnToFrame:)])
+    if ([self.delegate respondsToSelector: @selector(window:willReturnToFrame:)])
     {
-        NSRect windowFrame = [(id)[self delegate] window: self
-                                       willReturnToFrame: [self frame]];
+        NSRect windowFrame = [(id)self.delegate window: self
+                                     willReturnToFrame: self.frame];
         
         [self setFrame: windowFrame display: YES];
     }
@@ -185,7 +185,7 @@
 
 - (void) setFullScreen: (BOOL)flag animate: (BOOL)animate
 {
-    if ([self isFullScreen] == flag) return;
+    if (self.isFullScreen == flag) return;
     
     //Use Lion's own builtin fullscreen toggle if available
     if ([NSWindow instancesRespondToSelector: @selector(toggleFullScreen:)])
@@ -195,7 +195,7 @@
     //Otherwise, get on with rolling our own
     else
     {
-        NSRect fromFrame = [self frame];
+        NSRect fromFrame = self.frame;
         NSRect toFrame;
         
         [self setInFullScreenTransition: YES];
@@ -207,19 +207,18 @@
             [self _postWillEnterFullScreenNotification];
             
             //Back up original window states
-            windowedFrame = fromFrame;
-            windowedStyleMask = [self styleMask];
+            _windowedFrame = fromFrame;
+            _windowedStyleMask = self.styleMask;
             
             //Disable window resizing while in fullscreen mode
-            [self setStyleMask: windowedStyleMask & ~NSResizableWindowMask];
+            self.styleMask = _windowedStyleMask & ~NSResizableWindowMask;
              
-
-            NSRect contentFrame = [[self screen] frame];
+            NSRect contentFrame = self.screen.frame;
             
             //Allow the delegate to override our fullscreen content size
-            if ([[self delegate] respondsToSelector: @selector(window:willUseFullScreenContentSize:)])
+            if ([self.delegate respondsToSelector: @selector(window:willUseFullScreenContentSize:)])
             {
-                contentFrame.size = [(id)[self delegate] window: self willUseFullScreenContentSize: contentFrame.size];
+                contentFrame.size = [(id)self.delegate window: self willUseFullScreenContentSize: contentFrame.size];
             }
             
             toFrame = [self frameRectForContentRect: contentFrame];
@@ -229,17 +228,17 @@
         {
             [self _postWillExitFullScreenNotification];
             
-            [self setStyleMask: windowedStyleMask];
+            self.styleMask = _windowedStyleMask;
             
             //Calculate an appropriate frame for the intended windowed content size,
             //centering the final frame on the middle of the old frame's titlebar
             
-            toFrame = windowedFrame;
+            toFrame = _windowedFrame;
             
             //Allow the delegate override our final window frame
-            if ([[self delegate] respondsToSelector: @selector(window:willReturnToFrame:)])
+            if ([self.delegate respondsToSelector: @selector(window:willReturnToFrame:)])
             {
-                toFrame = [(id)[self delegate] window: self willReturnToFrame: toFrame];
+                toFrame = [(id)self.delegate window: self willReturnToFrame: toFrame];
             }
         }
         
@@ -251,7 +250,7 @@
                                                           fromFrame: fromFrame
                                                             toFrame: toFrame];
         
-        [self setInFullScreenTransition: NO];
+        self.inFullScreenTransition = NO;
         
         //Send the appropriate notification signals once we're done
         if (flag)   [self _postDidEnterFullScreenNotification];
@@ -273,11 +272,11 @@
 														   backing: NSBackingStoreBuffered
 															 defer: YES];
 	
-	[blankingWindow setOneShot: YES];
-	[blankingWindow setReleasedWhenClosed: YES];
+    blankingWindow.oneShot = YES;
+    blankingWindow.releasedWhenClosed = YES;
+    blankingWindow.backgroundColor = [NSColor blackColor];
+    blankingWindow.alphaValue = (flag) ? 0.0f : 1.0f;
 	[blankingWindow setFrame: toFrame display: NO];
-	[blankingWindow setBackgroundColor: [NSColor blackColor]];
-    [blankingWindow setAlphaValue: (flag) ? 0.0f : 1.0f];
 	
 	//Prepare the zoom-and-fade animation effects
 	NSString *fadeDirection	= (flag) ? NSViewAnimationFadeInEffect : NSViewAnimationFadeOutEffect;
@@ -301,11 +300,11 @@
 	[effects release];
     
     //Use our standard window-resize animation speed for the transition
-    [animation setAnimationBlockingMode: NSAnimationBlocking];
-	[animation setDuration: [self animationResizeTime: toFrame]];
+    animation.animationBlockingMode = NSAnimationBlocking;
+    animation.duration = [self animationResizeTime: toFrame];
     
     //Bring the blanking window in its initial state before we animate
-    [blankingWindow orderWindow: NSWindowBelow relativeTo: [self windowNumber]];
+    [blankingWindow orderWindow: NSWindowBelow relativeTo: self.windowNumber];
     
     //Aaaaand action!
     [animation startAnimation];
@@ -363,7 +362,7 @@
 //This allows us to fill the entire screen.
 - (NSRect) constrainFrameRect: (NSRect)frameRect toScreen: (NSScreen *)screen
 {
-	if ([self isFullScreen] || [self isInFullScreenTransition]) return frameRect;
+	if (self.isFullScreen || self.isInFullScreenTransition) return frameRect;
 	else return [super constrainFrameRect: frameRect toScreen: screen];
 }
 
@@ -376,10 +375,10 @@
 {
     NSNotification *notification = [NSNotification notificationWithName: notificationName
                                                                  object: self];
-    if ([[self delegate] respondsToSelector: delegateMethod])
+    if ([self.delegate respondsToSelector: delegateMethod])
     {
-        [[self delegate] performSelector: delegateMethod
-                              withObject: notification];
+        [self.delegate performSelector: delegateMethod
+                            withObject: notification];
     }
     
     [[NSNotificationCenter defaultCenter] postNotification: notification];

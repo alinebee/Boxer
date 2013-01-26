@@ -773,8 +773,11 @@
 			</array>
 			<key>BXDesignatedInstallers</key>
 			<array>
+				<string>config.bat</string>
 				<string>disc.bat</string>
 			</array>
+            <key>BXPreferredInstallationFolderPath</key>
+            <string></string>
 		</dict>
 		<dict>
 			<key>BXProfileIdentifier</key>

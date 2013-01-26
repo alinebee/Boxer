@@ -1023,18 +1023,22 @@
                 //(GOG games, Steam games etc.) or in a subfolder within drive C
                 //(almost everything else)
                 BOOL needsSubfolder = [self.class shouldUseSubfolderForSourceFilesAtPath: self.sourcePath];
+                NSString *subfolderPath	= self.gameProfile.preferredInstallationFolderPath;
                 
-                if (needsSubfolder)
+                if (needsSubfolder && ![subfolderPath isEqualToString: @""])
                 {
+                    //If the game profile didn't suggest a specific path then
+                    //just use a sanitised version of the source directory name.
+                    if (!subfolderPath)
+                    {
+                        //Ensure the destination name will be DOSBox-compatible
+                        subfolderPath = [self.class validDOSNameFromName: self.sourcePath.lastPathComponent];
+                    }
+                    
+                    NSString *destination = [self.rootDrivePath stringByAppendingPathComponent: subfolderPath];
+                    
                     //If we need to copy the source path into a subfolder of drive C,
                     //then do this as a regular file copy rather than a drive import.
-                    
-                    NSString *subfolderName	= self.sourcePath.lastPathComponent;
-                    //Ensure the destination name will be DOSBox-compatible
-                    NSString *safeName = [self.class validDOSNameFromName: subfolderName];
-                    
-                    NSString *destination = [self.rootDrivePath stringByAppendingPathComponent: safeName];
-                    
                     importOperation = [BXSingleFileTransfer transferFromPath: self.sourcePath
                                                                       toPath: destination
                                                                    copyFiles: YES];
@@ -1045,6 +1049,8 @@
                     //the source path as a new C drive in its place.
                     [manager removeItemAtPath: self.rootDrivePath error: nil];
                     driveToImport	= [BXDrive hardDriveFromPath: self.sourcePath atLetter: @"C"];
+                    //Don't bother with a volume label for drive C.
+                    driveToImport.volumeLabel = nil;
                     importOperation	= [self importOperationForDrive: driveToImport startImmediately: NO];
                 }
             }

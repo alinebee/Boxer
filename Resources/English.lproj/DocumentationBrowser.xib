@@ -336,7 +336,7 @@
 						<reference key="NSOnImage" ref="65406277"/>
 						<reference key="NSMixedImage" ref="888908844"/>
 					</object>
-					<object class="NSMenuItem" id="479791817">
+					<object class="NSMenuItem" id="686413566">
 						<reference key="NSMenu" ref="335774492"/>
 						<bool key="NSIsDisabled">YES</bool>
 						<bool key="NSIsSeparator">YES</bool>
@@ -348,7 +348,7 @@
 					</object>
 					<object class="NSMenuItem" id="922083430">
 						<reference key="NSMenu" ref="335774492"/>
-						<string key="NSTitle">Remove</string>
+						<string key="NSTitle">Remove from List</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="65406277"/>
@@ -603,10 +603,10 @@
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">hidden: canModifyDocumentation</string>
-						<reference key="source" ref="479791817"/>
+						<reference key="source" ref="686413566"/>
 						<reference key="destination" ref="1001"/>
 						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="479791817"/>
+							<reference key="NSSource" ref="686413566"/>
 							<reference key="NSDestination" ref="1001"/>
 							<string key="NSLabel">hidden: canModifyDocumentation</string>
 							<string key="NSBinding">hidden</string>
@@ -722,7 +722,7 @@
 							<reference ref="22018308"/>
 							<reference ref="922083430"/>
 							<reference ref="464241611"/>
-							<reference ref="479791817"/>
+							<reference ref="686413566"/>
 						</array>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Documentation Item Menu</string>
@@ -797,7 +797,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">115</int>
-						<reference key="object" ref="479791817"/>
+						<reference key="object" ref="686413566"/>
 						<reference key="parent" ref="335774492"/>
 					</object>
 				</array>

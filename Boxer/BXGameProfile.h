@@ -40,6 +40,7 @@ extern NSString * const BXGenericProfileIdentifier;
 	NSArray *_configurations;
     
     NSDictionary *_driveLabelMappings;
+    NSString *_preferredInstallationFolderPath;
 	NSArray *_installerPatterns;
     NSArray *_ignoredInstallerPatterns;
 	
@@ -98,6 +99,12 @@ extern NSString * const BXGenericProfileIdentifier;
 //Certain games misinterpret the TMP and TEMP variables and need this disabled.
 //Defaults to YES.
 @property (assign, nonatomic) BOOL shouldMountTempDrive;
+
+//The recommended path on drive C into which to import the game files
+//when importing an already-installed copy of this game.
+//Will be @"" if the root folder should be used, or nil if no particular path
+//is recommended.
+@property (copy, nonatomic) NSString *preferredInstallationFolderPath;
 
 //The type of media upon which this game was likely released: currently this
 //is used only for deciding on cover art, not for emulation decisions.

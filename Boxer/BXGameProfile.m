@@ -69,6 +69,7 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 @synthesize shouldImportMountCommands = _shouldImportMountCommands;
 @synthesize shouldImportLaunchCommands = _shouldImportLaunchCommands;
 @synthesize shouldImportSettings = _shouldImportSettings;
+@synthesize preferredInstallationFolderPath = _preferredInstallationFolderPath;
 
 
 + (BXReleaseMedium) mediumOfGameAtPath: (NSString *)basePath
@@ -245,6 +246,8 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 		if (importSettings)
             self.shouldImportSettings = importSettings.boolValue;
 		
+        self.preferredInstallationFolderPath = [profileDict objectForKey: @"BXPreferredInstallationFolderPath"];
+        
 		//Used by isDesignatedInstallerAtPath:
 		self.installerPatterns	= [profileDict objectForKey: @"BXDesignatedInstallers"];
         
@@ -267,6 +270,7 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
     self.driveLabelMappings = nil;
     self.installerPatterns = nil;
     self.ignoredInstallerPatterns = nil;
+    self.preferredInstallationFolderPath = nil;
 	
 	[super dealloc];
 }

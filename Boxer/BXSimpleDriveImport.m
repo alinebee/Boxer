@@ -43,18 +43,43 @@
 		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 		
 		NSSet *readyTypes = [[BXFileTypes mountableFolderTypes] setByAddingObjectsFromSet: [BXFileTypes mountableImageTypes]];
-		
+
+		//If the drive has a letter, then place that at the start of the name.
+		if (drive.letter)
+        {
+            importedName = drive.letter;
+        }
+        
 		//Files and folders of the above types don't need additional renaming before import:
         //we can just use their filename directly.
 		if ([workspace file: drivePath matchesTypes: readyTypes])
 		{
-			importedName = drivePath.lastPathComponent;
+            //TODO: strip out any leading drive letter, since the file being imported may already
+            //have been named by us before.
+            if (importedName.length)
+                importedName = [NSString stringWithFormat: @"%@ %@", importedName, drivePath.lastPathComponent];
+            else
+                importedName = drivePath.lastPathComponent;
 		}
 		//Otherwise: if it's a directory, it will need to be renamed as a mountable folder.
 		else if (isDir)
 		{
-			importedName = drive.volumeLabel;
-			
+            //Append the volume label to the name, if one was defined.
+            if (importedName.length)
+            {
+                if (drive.volumeLabel.length)
+                    importedName = [NSString stringWithFormat: @"%@ %@", importedName, drive.volumeLabel];
+            }
+            else
+            {
+                //Implementation note: if there's no drive letter, and no volume label,
+                //we make up a volume label to avoid having an empty filename.
+                if (drive.volumeLabel.length)
+                    importedName = drive.volumeLabel;
+                else
+                    importedName = [BXDrive preferredVolumeLabelForPath: drive.path];
+            }
+            
 			NSString *extension	= nil;
 			
 			//Give the mountable folder the proper file extension for its drive type
@@ -80,12 +105,13 @@
         else
         {
             NSString *baseName = drivePath.lastPathComponent.stringByDeletingPathExtension;
-            importedName = [baseName stringByAppendingPathExtension: @"iso"];
+            NSString *fileName = [baseName stringByAppendingPathExtension: @"iso"];
+            
+            if (importedName.length)
+                importedName = [NSString stringWithFormat: @"%@ %@", importedName, fileName];
+            else
+                importedName = fileName;
         }
-		
-		//If the drive has a letter, then prepend it in our standard format
-		if (drive.letter)
-            importedName = [NSString stringWithFormat: @"%@ %@", drive.letter, importedName];
 	}
 	return importedName;
 }

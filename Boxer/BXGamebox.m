@@ -1004,8 +1004,9 @@ typedef enum {
             id undoProxy = [undoManager prepareWithInvocationTarget: self];
             //NOTE: error information will be lost if the document cannot be trashed,
             //since we will have no upstream context for it.
-            [undoProxy trashDocumentationURL: destinationURL
-                                       error: NULL];
+            [undoProxy removeDocumentationURL: destinationURL
+                                 resultingURL: NULL
+                                        error: NULL];
         }
         
         //If this was a move operation and we succeeded, then finish by removing the original file.
@@ -1022,7 +1023,7 @@ typedef enum {
                                   error: (out NSError **)outError
 {
     return [self _addDocumentationFromURL: documentationURL
-                                withTitle: (NSString *)title
+                                withTitle: title
                                 operation: BXGameboxDocumentationCopy
                                  ifExists: conflictBehaviour
                                     error: outError];
@@ -1036,62 +1037,111 @@ typedef enum {
                                    error: (out NSError **)outError
 {
     return [self _addDocumentationFromURL: documentationURL
-                                withTitle: (NSString *)title
+                                withTitle: title
                                 operation: BXGameboxDocumentationSymlink
                                  ifExists: conflictBehaviour
                                     error: outError];
 }
 
-- (NSURL *) trashDocumentationURL: (NSURL *)documentationURL error: (out NSError **)outError
+- (BOOL) removeDocumentationURL: (NSURL *)documentationURL
+                   resultingURL: (out NSURL **)resultingURL
+                          error: (out NSError **)outError
 {
     if ([documentationURL isBasedInURL: self.documentationFolderURL])
     {
-        NSFileManager *manager = [[NSFileManager alloc] init];
+        //IMPLEMENTATION NOTE: NSFileManager's trashItemAtURL: does a Very Bad Thing and resolves symlinks
+        //without telling us, trashing the original file instead of the symlink. So, we first check if the
+        //specified URL is a symlink: if so, we delete it instead of trashing.
+        NSNumber *symlinkFlag = nil;
+        BOOL checked = [documentationURL getResourceValue: &symlinkFlag forKey: NSURLIsSymbolicLinkKey error: outError];
+        //If for some reason we cannot determine the properties of the file, bail out already.
+        if (!checked)
+            return NO;
         
-        [self willChangeValueForKey: @"documentationURLs"];
+        BOOL isSymlink = symlinkFlag.boolValue;
         
-        NSURL *trashedURL = nil;
-        BOOL removed = [manager trashItemAtURL: documentationURL
-                              resultingItemURL: &trashedURL
-                                         error: outError];
-        
-        [self didChangeValueForKey: @"documentationURLs"];
-        
-        [manager release];
-        
-        if (removed)
+        if (isSymlink)
         {
-            NSUndoManager *undoManager = [self.undoDelegate undoManagerForClient: self operation: _cmd];
-            if (undoManager.isUndoRegistrationEnabled)
-            {
-                NSString *restoredTitle = documentationURL.lastPathComponent.stringByDeletingPathExtension;
-                
-                id undoProxy = [undoManager prepareWithInvocationTarget: self];
-                //NOTE: error information will be lost if the document cannot be restored,
-                //since we will have no upstream context for it.
-                [undoProxy _addDocumentationFromURL: trashedURL
-                                          withTitle: restoredTitle
-                                          operation: BXGameboxDocumentationMove
-                                           ifExists: BXGameboxDocumentationRename
-                                              error: NULL];
-            }
+            NSURL *targetURL = documentationURL.URLByResolvingSymlinksInPath;
             
-            return trashedURL;
+            [self willChangeValueForKey: @"documentationURLs"];
+            
+            BOOL removed = [[NSFileManager defaultManager] removeItemAtURL: documentationURL
+                                                                     error: outError];
+            
+            [self didChangeValueForKey: @"documentationURLs"];
+            
+            if (removed)
+            {
+                NSUndoManager *undoManager = [self.undoDelegate undoManagerForClient: self operation: _cmd];
+                if (undoManager.isUndoRegistrationEnabled)
+                {
+                    NSString *restoredTitle = documentationURL.lastPathComponent.stringByDeletingPathExtension;
+                    
+                    id undoProxy = [undoManager prepareWithInvocationTarget: self];
+                    //NOTE: error information will be lost if the document cannot be restored,
+                    //since we will have no upstream context for it.
+                    [undoProxy _addDocumentationFromURL: targetURL
+                                              withTitle: restoredTitle
+                                              operation: BXGameboxDocumentationSymlink
+                                               ifExists: BXGameboxDocumentationRename
+                                                  error: NULL];
+                }
+                
+                if (resultingURL)
+                    *resultingURL = targetURL;
+                
+                return YES;
+            }
+            else
+                return NO;
         }
         else
-            return nil;
+        {
+            [self willChangeValueForKey: @"documentationURLs"];
+            
+            NSURL *trashedURL = nil;
+            BOOL removed = [[NSFileManager defaultManager] trashItemAtURL: documentationURL
+                                                         resultingItemURL: &trashedURL
+                                                                    error: outError];
+            
+            [self didChangeValueForKey: @"documentationURLs"];
+            
+            if (removed)
+            {
+                NSUndoManager *undoManager = [self.undoDelegate undoManagerForClient: self operation: _cmd];
+                if (undoManager.isUndoRegistrationEnabled)
+                {
+                    NSString *restoredTitle = documentationURL.lastPathComponent.stringByDeletingPathExtension;
+                    
+                    id undoProxy = [undoManager prepareWithInvocationTarget: self];
+                    //NOTE: error information will be lost if the document cannot be restored,
+                    //since we will have no upstream context for it.
+                    [undoProxy _addDocumentationFromURL: trashedURL
+                                              withTitle: restoredTitle
+                                              operation: BXGameboxDocumentationMove
+                                               ifExists: BXGameboxDocumentationRename
+                                                  error: NULL];
+                }
+                
+                if (resultingURL)
+                    *resultingURL = trashedURL;
+                
+                return YES;
+            }
+            else
+                return NO;
+        }
     }
     else
     {
-        //TODO: use a custom error, the one below will give an erroneous message
-        //about saving rather than deleting.
         if (outError)
         {
-            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
-                                            code: NSFileWriteNoPermissionError
+            *outError = [NSError errorWithDomain: BXGameboxErrorDomain
+                                            code: BXDocumentationNotInFolderError
                                         userInfo: @{ NSURLErrorKey: documentationURL }];
         }
-        return nil;
+        return NO;
     }
 }
 

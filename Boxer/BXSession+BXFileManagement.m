@@ -2113,7 +2113,9 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     //If the gamebox has a documentation folder, rescan that too:
     //in case the user has added, removed or renamed documentation files.
     if (self.gamebox.hasDocumentationFolder)
+    {
         [self.gamebox refreshDocumentation];
+    }
 }
 
 @end

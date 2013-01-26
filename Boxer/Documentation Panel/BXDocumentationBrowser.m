@@ -447,7 +447,7 @@ enum {
     
     BOOL trashedSuccessfully = YES;
     
-    NSMutableArray *trashedURLs = [NSMutableArray arrayWithCapacity: URLs.count];
+    NSUInteger numTrashed = 0;
     NSURL *originalURL = nil;
     for (NSURL *URL in URLs)
     {
@@ -456,11 +456,11 @@ enum {
             continue;
         
         NSError *trashingError = nil;
-        NSURL *trashedURL = [session.gamebox trashDocumentationURL: URL error: &trashingError];
+        BOOL trashed = [session.gamebox removeDocumentationURL: URL resultingURL: NULL error: &trashingError];
         
-        if (trashedURL)
+        if (trashed)
         {
-            [trashedURLs addObject: trashedURL];
+            numTrashed++;
             originalURL = URL;
         }
         //If the file didn't exist anymore then disregard the error.
@@ -495,18 +495,18 @@ enum {
     
     //If we successfully trashed anything, the gamebox should have recorded undos for each one:
     //apply a suitable name for the overall undo operation.
-    if (trashedURLs.count)
+    if (numTrashed > 0)
     {
         NSString *actionName;
         
         //Vary the title for the undo action, based on if it'll be recorded
         //as a redo operation and based on how many URLs were imported.
-        if (trashedURLs.count > 1)
+        if (numTrashed > 1)
         {
             NSString *actionNameFormat = NSLocalizedString(@"Removal of %u manuals",
                                                            @"Undo menu action title when removing multiple documentation items. %u is the number of items removed as an unsigned integer.");
             
-            actionName = [NSString stringWithFormat: actionNameFormat, trashedURLs.count];
+            actionName = [NSString stringWithFormat: actionNameFormat, numTrashed];
         }
         else
         {
@@ -540,9 +540,6 @@ enum {
     }
     else if (menuItem.action == @selector(trashSelectedDocumentationItems:))
     {
-        //Hide the menu item altogether if we cannot modify the documentation
-        menuItem.hidden = !self.canModifyDocumentation;
-        
         if (!hasSelectedItems)
             return NO;
         

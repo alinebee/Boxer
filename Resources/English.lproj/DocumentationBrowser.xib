@@ -336,9 +336,19 @@
 						<reference key="NSOnImage" ref="65406277"/>
 						<reference key="NSMixedImage" ref="888908844"/>
 					</object>
+					<object class="NSMenuItem" id="479791817">
+						<reference key="NSMenu" ref="335774492"/>
+						<bool key="NSIsDisabled">YES</bool>
+						<bool key="NSIsSeparator">YES</bool>
+						<string key="NSTitle"/>
+						<string key="NSKeyEquiv"/>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="65406277"/>
+						<reference key="NSMixedImage" ref="888908844"/>
+					</object>
 					<object class="NSMenuItem" id="922083430">
 						<reference key="NSMenu" ref="335774492"/>
-						<string key="NSTitle">Move to Trash</string>
+						<string key="NSTitle">Remove</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="65406277"/>
@@ -556,6 +566,26 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: canModifyDocumentation</string>
+						<reference key="source" ref="922083430"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="922083430"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">hidden: canModifyDocumentation</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">canModifyDocumentation</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">122</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: helpText</string>
 						<reference key="source" ref="120434018"/>
 						<reference key="destination" ref="1001"/>
@@ -569,6 +599,26 @@
 						</object>
 					</object>
 					<int key="connectionID">114</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: canModifyDocumentation</string>
+						<reference key="source" ref="479791817"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="479791817"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">hidden: canModifyDocumentation</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">canModifyDocumentation</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">123</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -672,6 +722,7 @@
 							<reference ref="22018308"/>
 							<reference ref="922083430"/>
 							<reference ref="464241611"/>
+							<reference ref="479791817"/>
 						</array>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Documentation Item Menu</string>
@@ -744,6 +795,11 @@
 						<reference key="object" ref="887235279"/>
 						<reference key="parent" ref="1005"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">115</int>
+						<reference key="object" ref="479791817"/>
+						<reference key="parent" ref="335774492"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -752,6 +808,7 @@
 				<string key="-3.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="1.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="11.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="115.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="12.CustomClassName">BXDocumentationList</string>
 				<reference key="12.IBCollectionViewIntegration.primaryColor" ref="341878427"/>
 				<string key="12.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -781,7 +838,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">114</int>
+			<int key="maxID">123</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">

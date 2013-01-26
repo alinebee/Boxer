@@ -134,7 +134,6 @@ enum {
 {
     BXSession *session = (BXSession *)self.representedObject;
     
-    NSArray *oldURLs = [self.documentationURLs copy];
     NSArray *newURLs = [session.gamebox.documentationURLs sortedArrayUsingDescriptors: self.sortCriteria];
     
     //TODO: filter the URLs to trim out (or rename) duplicate-named entries, to clean up the documentation list
@@ -142,6 +141,8 @@ enum {
     
     if (![newURLs isEqualToArray: self.documentationURLs])
     {
+        NSArray *oldURLs = [self.documentationURLs copy];
+        
         if ([self.delegate respondsToSelector: @selector(documentationBrowser:willUpdateFromURLs:toURLs:)])
             [self.delegate documentationBrowser: self willUpdateFromURLs: oldURLs toURLs: newURLs];
         

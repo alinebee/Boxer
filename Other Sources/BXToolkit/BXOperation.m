@@ -25,29 +25,34 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 
 
 @implementation BXOperation
-@synthesize delegate, contextInfo, notifyOnMainThread;
-@synthesize error;
-@synthesize willStartSelector, wasCancelledSelector, inProgressSelector, didFinishSelector;
+@synthesize delegate = _delegate;
+@synthesize contextInfo = _contextInfo;
+@synthesize notifiesOnMainThread = _notifiesOnMainThread;
+@synthesize error = _error;
+@synthesize willStartSelector = _willStartSelector;
+@synthesize wasCancelledSelector = _wasCancelledSelector;
+@synthesize inProgressSelector = _inProgressSelector;
+@synthesize didFinishSelector = _didFinishSelector;
 
 - (id) init
 {
-	if ((self = [super init]))
+    self = [super init];
+	if (self)
 	{
-		[self setNotifyOnMainThread: YES];
-		[self setWillStartSelector:		@selector(operationWillStart:)];
-		[self setInProgressSelector:	@selector(operationInProgress:)];
-		[self setWasCancelledSelector:	@selector(operationWasCancelled:)];
-		[self setDidFinishSelector:		@selector(operationDidFinish:)];
+        self.notifiesOnMainThread = YES;
+        self.willStartSelector = @selector(operationWillStart:);
+        self.inProgressSelector = @selector(operationInProgress:);
+        self.wasCancelledSelector = @selector(operationWasCancelled:);
+        self.didFinishSelector = @selector(operationDidFinish:);
 	}
 	return self;
 }
 
 - (void) dealloc
 {
-	[self setDelegate: nil];
-	
-	[self setContextInfo: nil], [contextInfo release];
-	[self setError: nil], [error release];
+    self.delegate = nil;
+    self.contextInfo = nil;
+    self.error = nil;
 	
 	[super dealloc];
 }
@@ -65,7 +70,7 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
     {
         [self willPerformOperation];
         //In case willPerformOperation has cancelled us already
-        if (![self isCancelled]) [self performOperation];
+        if (!self.isCancelled) [self performOperation];
         [self didPerformOperation];
     }
 }
@@ -73,7 +78,7 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 - (BOOL) shouldPerformOperation
 {
     //Don’t bother starting if we are already cancelled
-    return ![self isCancelled];
+    return !self.isCancelled;
 }
 
 - (void) willPerformOperation {}
@@ -84,15 +89,15 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 {	
 	//Only send a notification the first time we're cancelled,
 	//and only if we're in progress when we get cancelled
-	if (![self isCancelled] && [self isExecuting])
+	if (!self.isCancelled && self.isExecuting)
 	{
 		[super cancel];
-		if (![self error])
+		if (!self.error)
 		{
 			//If we haven't encountered a more serious error, set the error to indicate that this operation was cancelled.
-			[self setError: [NSError errorWithDomain: NSCocoaErrorDomain
-												code: NSUserCancelledError
-											userInfo: nil]];
+            self.error = [NSError errorWithDomain: NSCocoaErrorDomain
+                                             code: NSUserCancelledError
+                                         userInfo: nil];
 		}
 		[self _sendWasCancelledNotificationWithInfo: nil];
 	}
@@ -101,7 +106,7 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 
 - (BOOL) succeeded
 {
-    return ![self error];
+    return !self.error;
 }
 
 //The following are meant to be overridden by subclasses to provide more meaningful progress tracking.
@@ -117,7 +122,7 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 
 - (NSTimeInterval) timeRemaining
 {
-	return [self isFinished] ? 0.0 : BXUnknownTimeRemaining;
+	return self.isFinished ? 0.0 : BXUnknownTimeRemaining;
 }
 
 - (BOOL) isIndeterminate
@@ -132,17 +137,17 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 - (void) _sendWillStartNotificationWithInfo: (NSDictionary *)info
 {
 	//Don't send start notifications if we're already cancelled
-	if ([self isCancelled]) return;
+	if (self.isCancelled) return;
 	
 	[self _postNotificationName: BXOperationWillStart
-			   delegateSelector: [self willStartSelector]
+			   delegateSelector: self.willStartSelector
 	 				   userInfo: info];
 }
 
 - (void) _sendWasCancelledNotificationWithInfo: (NSDictionary *)info
 {
 	[self _postNotificationName: BXOperationWasCancelled
-			   delegateSelector: [self wasCancelledSelector]
+			   delegateSelector: self.wasCancelledSelector
 					   userInfo: info];
 }
 
@@ -150,29 +155,31 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 {
 	NSMutableDictionary *finishInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 									   [NSNumber numberWithBool: [self succeeded]], BXOperationSuccessKey,
-									   [self error], BXOperationErrorKey,
+									   self.error, BXOperationErrorKey,
 									   nil];
 
-	if (info) [finishInfo addEntriesFromDictionary: info];
+	if (info)
+        [finishInfo addEntriesFromDictionary: info];
 
 	[self _postNotificationName: BXOperationDidFinish
-			   delegateSelector: [self didFinishSelector]
+			   delegateSelector: self.didFinishSelector
 					   userInfo: finishInfo];
 }
 
 - (void) _sendInProgressNotificationWithInfo: (NSDictionary *)info
 {
 	//Don't send progress notifications if we're already cancelled
-	if ([self isCancelled]) return;
+	if (self.isCancelled) return;
 	
 	NSMutableDictionary *progressInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-										 [NSNumber numberWithFloat: [self currentProgress]],	BXOperationProgressKey,
-										 [NSNumber numberWithBool: [self isIndeterminate]],		BXOperationIndeterminateKey,
+										 [NSNumber numberWithFloat: self.currentProgress],	BXOperationProgressKey,
+										 [NSNumber numberWithBool: self.isIndeterminate],	BXOperationIndeterminateKey,
 										 nil];
-	if (info) [progressInfo addEntriesFromDictionary: info];
+	if (info)
+        [progressInfo addEntriesFromDictionary: info];
 	
 	[self _postNotificationName: BXOperationInProgress
-			   delegateSelector: [self inProgressSelector]
+			   delegateSelector: self.inProgressSelector
 					   userInfo: progressInfo];
 }
 
@@ -182,11 +189,12 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 					  userInfo: (NSDictionary *)userInfo
 {
 	//Extend the notification dictionary with context info
-	if ([self contextInfo])
+	if (self.contextInfo)
 	{
-		NSMutableDictionary *contextDict = [NSMutableDictionary dictionaryWithObject: [self contextInfo]
+		NSMutableDictionary *contextDict = [NSMutableDictionary dictionaryWithObject: self.contextInfo
 																			  forKey: BXOperationContextInfoKey];
-		if (userInfo) [contextDict addEntriesFromDictionary: userInfo];
+		if (userInfo)
+            [contextDict addEntriesFromDictionary: userInfo];
 		userInfo = contextDict;
 	}
 	
@@ -195,15 +203,15 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 																 object: self
 															   userInfo: userInfo];
 	
-	if ([[self delegate] respondsToSelector: selector])
+	if ([self.delegate respondsToSelector: selector])
 	{
-		if ([self notifyOnMainThread])
-			[(id)[self delegate] performSelectorOnMainThread: selector withObject: notification waitUntilDone: NO];
+		if (self.notifiesOnMainThread)
+			[(id)self.delegate performSelectorOnMainThread: selector withObject: notification waitUntilDone: NO];
 		else
-			[[self delegate] performSelector: selector withObject: notification];
+			[self.delegate performSelector: selector withObject: notification];
 	}
 	
-	if ([self notifyOnMainThread])
+	if (self.notifiesOnMainThread)
 		[center performSelectorOnMainThread: @selector(postNotification:) withObject: notification waitUntilDone: NO];		
 	else
 		[center postNotification: notification];

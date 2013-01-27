@@ -18,7 +18,7 @@
 #define NUM_USAGE_PAGES 4
 #define NUM_IDS (kHIDUsage_GD_DPadLeft + kHIDUsage_Sim_RearBrake + kHIDUsage_KeyboardRightGUI + 30)
         
-        NSUInteger usagePages[NUM_USAGE_PAGES][2] = {
+        unsigned usagePages[NUM_USAGE_PAGES][2] = {
             {kHIDPage_GenericDesktop,   kHIDUsage_GD_DPadLeft},
             {kHIDPage_Simulation,       kHIDUsage_Sim_RearBrake},
             {kHIDPage_KeyboardOrKeypad, kHIDUsage_KeyboardRightGUI},
@@ -29,11 +29,10 @@
         //iterating over the usage tables we care about
         namedUsages = [[NSMutableDictionary alloc] initWithCapacity: NUM_IDS];
         
-        NSUInteger i, currentID;
+        unsigned i, currentID;
         for (i=0; i < NUM_USAGE_PAGES; i++)
         {
-            NSUInteger currentPage = usagePages[i][0],
-                            numIDs = usagePages[i][1];
+            unsigned currentPage = usagePages[i][0], numIDs = usagePages[i][1];
             for (currentID=0; currentID <= numIDs; currentID++)
             {
                 DDHidUsage *usage = [DDHidUsage usageWithUsagePage: currentPage
@@ -52,8 +51,8 @@
 {
     if ((self = [super init]))
     {
-        mUsagePage  = [coder decodeIntegerForKey: @"usagePage"];
-        mUsageId    = [coder decodeIntegerForKey: @"usageID"];
+        mUsagePage  = (unsigned)[coder decodeIntegerForKey: @"usagePage"];
+        mUsageId    = (unsigned)[coder decodeIntegerForKey: @"usageID"];
     }
     
     return self;
@@ -73,8 +72,8 @@
 
 - (BOOL) isEqualToUsage: (DDHidUsage *)usage
 {
-	return [self isEqualToUsagePage: [usage usagePage]
-                            usageId: [usage usageId]];
+	return [self isEqualToUsagePage: usage.usagePage
+                            usageId: usage.usageId];
 }
 
 - (BOOL) isEqual: (id)object

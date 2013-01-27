@@ -686,7 +686,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 		[alert beginSheetModalForWindow: sheetWindow
 						  modalDelegate: self
 						 didEndSelector: @selector(drivesInUseAlertDidEnd:returnCode:contextInfo:)
-							contextInfo: [contextInfo retain]];
+							contextInfo: (__bridge void *)([contextInfo retain])];
 
         [alert release];
         

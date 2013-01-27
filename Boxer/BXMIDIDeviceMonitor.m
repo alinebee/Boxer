@@ -91,7 +91,7 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     //Create a MIDI client
-    OSStatus errCode = MIDIClientCreate((CFStringRef)@"Boxer MT-32 Scanner", _didReceiveMIDINotification, self, &_client);
+    OSStatus errCode = MIDIClientCreate((CFStringRef)@"Boxer MT-32 Scanner", _didReceiveMIDINotification, (__bridge void *)self, &_client);
     
     //Create the port we will use for sending out MIDI requests.
     if (errCode == noErr && ![self isCancelled])
@@ -121,9 +121,9 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     
     //Clean up once we're done.
     MIDIClientDispose(_client);
-    _client = NULL;
-    _inputPort = NULL;
-    _outputPort = NULL;
+    _client = (MIDIObjectRef)NULL;
+    _inputPort = (MIDIObjectRef)NULL;
+    _outputPort = (MIDIObjectRef)NULL;
     
     [pool drain];
 }
@@ -179,7 +179,7 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 
 void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 {
-    [(BXMIDIDeviceMonitor *)context _MIDINotificationReceived: message];
+    [(__bridge BXMIDIDeviceMonitor *)context _MIDINotificationReceived: message];
 }
 
 - (void) _MIDINotificationReceived: (const MIDINotification *)message
@@ -209,8 +209,8 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
             
             for (BXMIDIInputListener *listener in [NSArray arrayWithArray: _listeners])
             {
-                if ((type == kMIDIObjectType_Destination && [listener contextInfo] == endpoint) ||
-                    (type == kMIDIObjectType_Source && [listener source] == endpoint))
+                if ((type == kMIDIObjectType_Destination && endpoint == (MIDIEndpointRef)listener.contextInfo) ||
+                    (type == kMIDIObjectType_Source && endpoint == listener.source))
                 {
                     [listener stopListening];
                     [_listeners removeObject: listener];
@@ -303,7 +303,7 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 
 - (MIDIEndpointRef) _probableSourceForDestination: (MIDIEndpointRef)destination
 {
-    MIDIEntityRef entity = NULL;
+    MIDIEntityRef entity = (MIDIObjectRef)NULL;
     
     OSStatus errCode = MIDIEndpointGetEntity(destination, &entity);
     
@@ -341,7 +341,7 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     }
     
     //If we got this far, we couldn't find any suitable source.
-    return NULL;
+    return (MIDIObjectRef)NULL;
 }
 
 - (void) _scanDestination: (MIDIEndpointRef)destination
@@ -353,17 +353,17 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     if (source)
     {
         //Construct the MIDI message we want to send to this destination
-        NSData *request = [[self class] _MT32IdentityRequest];
+        NSData *request = [self.class _MT32IdentityRequest];
         
         UInt8 buffer[sizeof(MIDIPacketList)];
         MIDIPacketList *packets = (MIDIPacketList *)buffer;
         MIDIPacket *currentPacket = MIDIPacketListInit(packets);
         
-        MIDIPacketListAdd(packets, sizeof(buffer), currentPacket, (MIDITimeStamp)0, [request length], (const UInt8 *)[request bytes]);
+        MIDIPacketListAdd(packets, sizeof(buffer), currentPacket, (MIDITimeStamp)0, request.length, (const UInt8 *)request.bytes);
 
         //Set up a listener to receive responses from the device.
         BXMIDIInputListener *listener = [[BXMIDIInputListener alloc] initWithDelegate: self];
-        [listener listenToSource: source onPort: _inputPort contextInfo: destination];
+        [listener listenToSource: source onPort: _inputPort contextInfo: (void *)destination];
         
         //Send the request to the device.
         OSStatus errCode = MIDISend(_outputPort, destination, packets);
@@ -417,7 +417,7 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 
 void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void *connectionContext)
 {
-    [(BXMIDIInputListener *)connectionContext receivePackets: packets];
+    [(__bridge BXMIDIInputListener *)connectionContext receivePackets: packets];
 }
 
 + (MIDIPortRef) createListeningPortForClient: (MIDIClientRef)client
@@ -426,7 +426,7 @@ void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void
 {
     MIDIPortRef port;
     if (!portName) portName = @"MIDI In for Boxer MIDI Listener";
-    OSStatus errCode = MIDIInputPortCreate(client, (CFStringRef)portName, _didReceiveMIDIInput, NULL, &port);
+    OSStatus errCode = MIDIInputPortCreate(client, (__bridge CFStringRef)portName, _didReceiveMIDIInput, NULL, &port);
     
     if (errCode == noErr) return port;
     else
@@ -434,7 +434,7 @@ void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void
         if (outError) *outError = [NSError errorWithDomain: NSOSStatusErrorDomain
                                                       code: errCode
                                                   userInfo: nil];
-        return NULL;
+        return (MIDIObjectRef)NULL;
     }
 }
 
@@ -444,19 +444,21 @@ void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void
 
 - (id) init
 {
-    if ((self = [super init]))
+    self = [super init];
+    if (self)
     {
         _receivedData = [[NSMutableData alloc] initWithLength: 0];
-        [self setTimeout: BXMIDIInputListenerDefaultTimeout];
+        self.timeout = BXMIDIInputListenerDefaultTimeout;
     }
     return self;
 }
 
 - (id) initWithDelegate: (id <BXMIDIInputListenerDelegate>)delegate
 {
-    if ((self = [self init]))
+    self = [self init];
+    if (self)
     {
-        [self setDelegate: delegate];
+        self.delegate = delegate;
     }
     return self;
 }
@@ -479,7 +481,7 @@ void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void
 {
     NSAssert(![self isListening], @"Listener is already listening.");
     
-    OSStatus errCode = MIDIPortConnectSource(port, source, self);
+    OSStatus errCode = MIDIPortConnectSource(port, source, (__bridge void *)self);
     if (errCode == noErr)
     {
         _port = port;
@@ -500,14 +502,14 @@ void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void
 
 - (void) stopListening
 {
-    if ([self isListening])
+    if (self.isListening)
     {
         [self _cancelTimeout];
         MIDIPortDisconnectSource(_port, _source);
     }
     _notificationThread = nil;
-    _port = nil;
-    _source = nil;
+    _port = (MIDIObjectRef)NULL;
+    _source = (MIDIObjectRef)NULL;
 }
 
 
@@ -529,14 +531,14 @@ void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void
 
 - (BOOL) isListening
 {
-    return _port != nil;
+    return _port != 0;
 }
 
 - (void) setTimeout: (NSTimeInterval)timeout
 {
     _timeout = timeout;
     //Restart the timer whenever the timeout changes, as long as we're listening.
-    if ([self isListening]) [self _restartTimeout];
+    if (self.isListening) [self _restartTimeout];
 }
 
 
@@ -560,14 +562,14 @@ void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void
     //Make sure we're still listening. If we've been cancelled in between receiving
     //the original packet and getting around to recording it, then treat the packet
     //as though it never arrived.
-    if ([self isListening])
+    if (self.isListening)
     {
         [_receivedData appendData: data];
         [self _restartTimeout];
         
-        if ([[self delegate] respondsToSelector: @selector(MIDIInputListener:receivedData:)])
+        if ([self.delegate respondsToSelector: @selector(MIDIInputListener:receivedData:)])
         {
-            [[self delegate] MIDIInputListener: self receivedData: data];
+            [self.delegate MIDIInputListener: self receivedData: data];
         }
     }
 }
@@ -575,13 +577,13 @@ void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void
 - (void) _timeout
 {
     //Only send a notification if we're actually in the middle of listening.
-    if ([self isListening])
+    if (self.isListening)
     {
         BOOL stop = YES;
         
-        if ([[self delegate] respondsToSelector: @selector(MIDIInputListenerShouldStopListeningAfterTimeout:)])
+        if ([self.delegate respondsToSelector: @selector(MIDIInputListenerShouldStopListeningAfterTimeout:)])
         {
-            stop = [[self delegate] MIDIInputListenerShouldStopListeningAfterTimeout: self];
+            stop = [self.delegate MIDIInputListenerShouldStopListeningAfterTimeout: self];
         }
         if (stop) [self stopListening];
     }
@@ -597,10 +599,10 @@ void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void
 - (void) _restartTimeout
 {
     [self _cancelTimeout];
-    if ([self timeout] > 0 && [self isListening])
+    if (self.timeout > 0 && self.isListening)
         [self performSelector: @selector(_timeout)
                    withObject: nil
-                   afterDelay: [self timeout]];
+                   afterDelay: self.timeout];
 }
 
 @end

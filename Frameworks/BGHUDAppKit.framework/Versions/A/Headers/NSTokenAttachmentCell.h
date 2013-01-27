@@ -32,12 +32,12 @@
 - (void)setTextColor:(id)fp8;
 - (id)pullDownImage;
 - (id)menu;
-- (struct _NSSize)cellSizeForBounds:(NSRect)fp8;
-- (struct _NSSize)cellSize;
+- (NSSize)cellSizeForBounds:(NSRect)fp8;
+- (NSSize)cellSize;
 - (NSRect)drawingRectForBounds:(NSRect)fp8;
 - (NSRect)titleRectForBounds:(NSRect)fp8;
-- (NSRect)cellFrameForTextContainer:(id)fp8 proposedLineFragment:(NSRect)fp12 glyphPosition:(struct _NSPoint)fp28 characterIndex:(unsigned int)fp36;
-- (struct _NSPoint)cellBaselineOffset;
+- (NSRect)cellFrameForTextContainer:(id)fp8 proposedLineFragment:(NSRect)fp12 glyphPosition:(NSPoint)fp28 characterIndex:(unsigned int)fp36;
+- (NSPoint)cellBaselineOffset;
 - (NSRect)pullDownRectForBounds:(NSRect)fp8;
 - (void)drawTokenWithFrame:(NSRect)fp8 inView:(id)fp24;
 - (void)drawInteriorWithFrame:(NSRect)fp8 inView:(id)fp24;

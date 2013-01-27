@@ -15,19 +15,19 @@
 @class BXImportWindowController;
 @interface BXImportFinishedPanelController : NSViewController
 {
-	IBOutlet BXImportWindowController *controller;
-	IBOutlet BXImportIconDropzone *iconView;
-	IBOutlet NSTextField *nameField;
+	__unsafe_unretained BXImportWindowController *_controller;
+	BXImportIconDropzone *_iconView;
+	NSTextField *_nameField;
 }
 
 //A reference to our window controller.
-@property (assign, nonatomic) BXImportWindowController *controller;
+@property (assign, nonatomic) IBOutlet BXImportWindowController *controller;
 
 //The image well that displays the gamebox icon.
-@property (retain, nonatomic) BXImportIconDropzone *iconView;
+@property (retain, nonatomic) IBOutlet BXImportIconDropzone *iconView;
 
 //The text field that allows the gamebox's name to be edited.
-@property (retain, nonatomic) NSTextField *nameField;
+@property (retain, nonatomic) IBOutlet NSTextField *nameField;
 
 //The gamebox’s icon itself.
 @property (retain, nonatomic) NSImage *gameboxIcon;

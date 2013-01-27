@@ -26,8 +26,10 @@ NSString * const BXHIDDeviceKey = @"BXHIDDeviceKey";
 #pragma mark Private method declarations
 
 @interface BXHIDMonitor ()
+
 - (void) _deviceRefAdded: (IOHIDDeviceRef) ioDeviceRef;
 - (void) _deviceRefRemoved: (IOHIDDeviceRef) ioDeviceRef;
+
 @end
 
 
@@ -35,19 +37,19 @@ NSString * const BXHIDDeviceKey = @"BXHIDDeviceKey";
 #pragma mark Implementation
 
 @implementation BXHIDMonitor
-@synthesize delegate;
+@synthesize delegate = _delegate;
 
 
 static void _deviceAdded(void *context, IOReturn result, void *sender, IOHIDDeviceRef ioDeviceRef)
 {
 	if (result == kIOReturnSuccess && ioDeviceRef)
-		[(BXHIDMonitor *)context _deviceRefAdded: ioDeviceRef];
+		[(__bridge BXHIDMonitor *)context _deviceRefAdded: ioDeviceRef];
 }
 
 static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDeviceRef ioDeviceRef)
 {
 	if (result == kIOReturnSuccess && ioDeviceRef)
-		[(BXHIDMonitor *)context _deviceRefRemoved: ioDeviceRef];
+		[(__bridge BXHIDMonitor *)context _deviceRefRemoved: ioDeviceRef];
 }
 
 
@@ -56,40 +58,40 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 
 + (NSDictionary *) joystickDescriptor
 {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithInteger: kHIDPage_GenericDesktop],	(NSString *)CFSTR(kIOHIDDeviceUsagePageKey),
-			[NSNumber numberWithInteger: kHIDUsage_GD_Joystick],	(NSString *)CFSTR(kIOHIDDeviceUsageKey),
-			nil];
+	return @{
+        (NSString *)CFSTR(kIOHIDDeviceUsagePageKey): @(kHIDPage_GenericDesktop),
+        (NSString *)CFSTR(kIOHIDDeviceUsageKey): @(kHIDUsage_GD_Joystick),
+    };
 }
 
 + (NSDictionary *) gamepadDescriptor
 {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithInteger: kHIDPage_GenericDesktop],	(NSString *)CFSTR(kIOHIDDeviceUsagePageKey),
-			[NSNumber numberWithInteger: kHIDUsage_GD_GamePad],		(NSString *)CFSTR(kIOHIDDeviceUsageKey),
-			nil];
+	return @{
+        (NSString *)CFSTR(kIOHIDDeviceUsagePageKey): @(kHIDPage_GenericDesktop),
+        (NSString *)CFSTR(kIOHIDDeviceUsageKey): @(kHIDUsage_GD_GamePad),
+    };
 }
 
 + (NSDictionary *) keyboardDescriptor
 {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithInteger: kHIDPage_GenericDesktop],	(NSString *)CFSTR(kIOHIDDeviceUsagePageKey),
-			[NSNumber numberWithInteger: kHIDUsage_GD_Keyboard],	(NSString *)CFSTR(kIOHIDDeviceUsageKey),
-			nil];
+	return @{
+        (NSString *)CFSTR(kIOHIDDeviceUsagePageKey): @(kHIDPage_GenericDesktop),
+        (NSString *)CFSTR(kIOHIDDeviceUsageKey): @(kHIDUsage_GD_Keyboard),
+    };
 }
 
 + (NSDictionary *) mouseDescriptor
 {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithInteger: kHIDPage_GenericDesktop],	(NSString *)CFSTR(kIOHIDDeviceUsagePageKey),
-			[NSNumber numberWithInteger: kHIDUsage_GD_Mouse],		(NSString *)CFSTR(kIOHIDDeviceUsageKey),
-			nil];
+	return @{
+        (NSString *)CFSTR(kIOHIDDeviceUsagePageKey): @(kHIDPage_GenericDesktop),
+        (NSString *)CFSTR(kIOHIDDeviceUsageKey): @(kHIDUsage_GD_Mouse),
+    };
 }
 
 
 - (NSArray *) matchedDevices
 {
-	return [[knownDevices allValues] sortedArrayUsingSelector: @selector(compareByLocationId:)];
+	return [_knownDevices.allValues sortedArrayUsingSelector: @selector(compareByLocationId:)];
 }
 
 
@@ -100,8 +102,8 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 {
 	if ((self = [super init]))
 	{
-		ioManager = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
-		knownDevices = [[NSMutableDictionary alloc] initWithCapacity: 10];
+		_ioManager = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
+		_knownDevices = [[NSMutableDictionary alloc] initWithCapacity: 10];
 	}
 	return self;
 }
@@ -112,11 +114,10 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
     
 	[self stopObserving];
 	
-	[self setDelegate: nil];
-	
-	CFRelease(ioManager), ioManager = nil;
-	
-	[knownDevices release], knownDevices = nil;
+    self.delegate = nil;
+    
+	CFRelease(_ioManager), _ioManager = NULL;
+	[_knownDevices release], _knownDevices = nil;
 	
 	[super dealloc];
 }
@@ -127,28 +128,28 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 
 - (void) observeDevicesMatching: (NSArray *)descriptors
 {
-	[knownDevices removeAllObjects];
+	[_knownDevices removeAllObjects];
 	
-	IOHIDManagerSetDeviceMatchingMultiple(ioManager, (CFArrayRef)descriptors);
+	IOHIDManagerSetDeviceMatchingMultiple(_ioManager, (__bridge CFArrayRef)descriptors);
 	
-	IOHIDManagerRegisterDeviceMatchingCallback(ioManager, _deviceAdded, self);
-	IOHIDManagerRegisterDeviceRemovalCallback(ioManager, _deviceRemoved, self);
+	IOHIDManagerRegisterDeviceMatchingCallback(_ioManager, _deviceAdded, (__bridge void *)self);
+	IOHIDManagerRegisterDeviceRemovalCallback(_ioManager, _deviceRemoved, (__bridge void *)self);
 	
-	IOHIDManagerScheduleWithRunLoop(ioManager, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-	IOHIDManagerOpen(ioManager, kIOHIDOptionsTypeNone);
+	IOHIDManagerScheduleWithRunLoop(_ioManager, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+	IOHIDManagerOpen(_ioManager, kIOHIDOptionsTypeNone);
 	
 }
 
 - (void) stopObserving
 {
 	[self willChangeValueForKey: @"matchingDevices"];
-	[knownDevices removeAllObjects];
+	[_knownDevices removeAllObjects];
 	[self didChangeValueForKey: @"matchingDevices"];
 	
-	IOHIDManagerUnscheduleFromRunLoop(ioManager, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-	IOHIDManagerRegisterDeviceMatchingCallback(ioManager, NULL, NULL);
-	IOHIDManagerRegisterDeviceRemovalCallback(ioManager, NULL, NULL);
-	IOHIDManagerClose(ioManager, kIOHIDOptionsTypeNone);
+	IOHIDManagerUnscheduleFromRunLoop(_ioManager, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+	IOHIDManagerRegisterDeviceMatchingCallback(_ioManager, NULL, NULL);
+	IOHIDManagerRegisterDeviceRemovalCallback(_ioManager, NULL, NULL);
+	IOHIDManagerClose(_ioManager, kIOHIDOptionsTypeNone);
 }
 
 - (void) _deviceRefAdded: (IOHIDDeviceRef)ioDeviceRef
@@ -159,7 +160,7 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 		NSNumber *key = [NSNumber numberWithUnsignedInteger: (NSUInteger)ioDeviceRef];
 		
 		[self willChangeValueForKey: @"matchedDevices"];
-		[knownDevices setObject: device forKey: key];
+		[_knownDevices setObject: device forKey: key];
 		[self didChangeValueForKey: @"matchedDevices"];
 		 
 		[self deviceAdded: device];
@@ -168,12 +169,12 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 - (void) _deviceRefRemoved: (IOHIDDeviceRef)ioDeviceRef
 {
 	NSNumber *key = [NSNumber numberWithUnsignedInteger: (NSUInteger)ioDeviceRef];
-	DDHidDevice *device = [knownDevices objectForKey: key];
+	DDHidDevice *device = [_knownDevices objectForKey: key];
 	if (device)
 	{
 		[device retain];
 		[self willChangeValueForKey: @"matchedDevices"];
-		[knownDevices removeObjectForKey: key];
+		[_knownDevices removeObjectForKey: key];
 		[self didChangeValueForKey: @"matchedDevices"];
 		
 		[self deviceRemoved: device];
@@ -183,25 +184,25 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 
 - (void) deviceAdded: (DDHidDevice *)device
 {
-	if ([delegate respondsToSelector: @selector(monitor:didAddHIDDevice:)])
+	if ([self.delegate respondsToSelector: @selector(monitor:didAddHIDDevice:)])
 	{
-		[delegate monitor: self didAddHIDDevice: device];
+		[self.delegate monitor: self didAddHIDDevice: device];
 	}
 	
 	NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];
-	NSDictionary *userInfo = [NSDictionary dictionaryWithObject: device forKey: BXHIDDeviceKey];
+	NSDictionary *userInfo = @{ BXHIDDeviceKey: device };
 	[center postNotificationName: BXHIDDeviceAdded object: self userInfo: userInfo];
 }
 
 - (void) deviceRemoved: (DDHidDevice *)device
 {
-	if ([delegate respondsToSelector: @selector(monitor:didRemoveHIDDevice:)])
+	if ([self.delegate respondsToSelector: @selector(monitor:didRemoveHIDDevice:)])
 	{
-		[delegate monitor: self didRemoveHIDDevice: device];
+		[self.delegate monitor: self didRemoveHIDDevice: device];
 	}
 	
 	NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];
-	NSDictionary *userInfo = [NSDictionary dictionaryWithObject: device forKey: BXHIDDeviceKey];
+	NSDictionary *userInfo = @{ BXHIDDeviceKey: device };
 	[center postNotificationName: BXHIDDeviceRemoved object: self userInfo: userInfo];
 }
 

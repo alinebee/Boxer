@@ -18,7 +18,7 @@
 < NSOpenSavePanelDelegate >
 #endif
 {
-    BXImportWindowController *_controller;
+    __unsafe_unretained BXImportWindowController *_controller;
     NSPopUpButton *_installerSelector;
 }
 

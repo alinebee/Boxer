@@ -140,7 +140,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
                                 kCGEventTapOptionDefault,
                                 eventTypes,
                                 _handleEventFromTap,
-                                self);
+                                (__bridge void *)self);
         
         if (_tap)
         {
@@ -251,7 +251,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 #ifdef BOXER_DEBUG
                 //If the event could not be converted into a cocoa event, give up
                 CFStringRef eventDesc = CFCopyDescription(event);
-                NSLog(@"Could not convert CGEvent: %@", (NSString *)eventDesc);
+                NSLog(@"Could not convert CGEvent: %@", (__bridge NSString *)eventDesc);
                 CFRelease(eventDesc);
 #endif
             }
@@ -320,7 +320,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     CGEventRef returnedEvent = event;
     
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    BXKeyboardEventTap *tap = (BXKeyboardEventTap *)userInfo;
+    BXKeyboardEventTap *tap = (__bridge BXKeyboardEventTap *)userInfo;
     if (tap)
     {
         returnedEvent = [tap _handleEvent: event ofType: type fromProxy: proxy];

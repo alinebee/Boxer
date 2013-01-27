@@ -42,7 +42,7 @@
 
 
 @implementation BXWelcomeButton
-@synthesize draggingDelegate;
+@synthesize draggingDelegate = _draggingDelegate;
 
 //Ignore state altogether (overrides BXFilterPortrait behaviour of highlighting when state changes)
 - (void) setState: (NSInteger)value {}

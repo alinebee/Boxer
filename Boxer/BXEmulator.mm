@@ -134,7 +134,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 								  isAuto: (BOOL)isAutoSpeed
 {
 	if (isAutoSpeed) return @"max";
-	else return [NSString stringWithFormat: @"fixed %i", speed]; 
+	else return [NSString stringWithFormat: @"fixed %ld", (long)speed];
 }
 
 + (NSString *) configStringForCoreMode: (BXCoreMode)mode

@@ -157,14 +157,14 @@
 		CGSWindowFilterRef filter = NULL;
 	
 		//Create a CoreImage gaussian blur filter.
-		CGSNewCIFilterByName(conn, (CFStringRef)filterName, &filter);
+		CGSNewCIFilterByName(conn, (__bridge CFStringRef)filterName, &filter);
 		
 		if (filter)
 		{
-			CGSWindowID windowNumber = [self windowNumber];
-			NSInteger compositingType = (NSInteger)backgroundOnly;
+			CGSWindowID windowNumber = (CGSWindowID)self.windowNumber;
+			int compositingType = (int)backgroundOnly;
 			
-			CGSSetCIFilterValuesFromDictionary(conn, filter, (CFDictionaryRef)filterOptions);
+			CGSSetCIFilterValuesFromDictionary(conn, filter, (__bridge CFDictionaryRef)filterOptions);
 			
 			CGSAddWindowFilter(conn, windowNumber, filter, compositingType);
 			
@@ -209,7 +209,7 @@
 		spec.unknown1 = 0;
 		spec.type = type;
 		spec.option = direction | CGSTransparentBackgroundMask;
-		spec.wid = [self windowNumber];
+		spec.wid = (CGSWindow)self.windowNumber;
 		spec.backColour = NULL;
 		
 		int handle = 0;

@@ -137,7 +137,7 @@ extern NSString * const BXShadowedDeletionMarkerExtension;
 {
     NSDirectoryEnumerator *_sourceEnumerator;
     NSDirectoryEnumerator *_shadowEnumerator;
-    NSDirectoryEnumerator *_currentEnumerator;
+    __unsafe_unretained NSDirectoryEnumerator *_currentEnumerator;
     
     NSArray *_propertyKeys;
     NSDirectoryEnumerationOptions _options;

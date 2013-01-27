@@ -669,7 +669,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		[alert beginSheetModalForWindow: window
 						  modalDelegate: self
 						 didEndSelector: @selector(_gamesFolderPromptDidEnd:returnCode:window:)
-							contextInfo: window];
+							contextInfo: (__bridge void *)(window)];
 	}
 	else
 	{

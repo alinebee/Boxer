@@ -15,12 +15,15 @@
 #import "NSWorkspace+BXFileTypes.h"
 
 @implementation BXImportFinishedPanelController
-@synthesize controller, iconView, nameField;
+@synthesize controller = _controller;
+@synthesize iconView = _iconView;
+@synthesize nameField = _nameField;
 
 - (void) dealloc
 {
     self.iconView = nil;
     self.nameField = nil;
+    
 	[super dealloc];
 }
 
@@ -36,11 +39,11 @@
 	{
 		if (icon)
 		{
-            controller.document.representedIcon = [BXCoverArt coverArtWithImage: icon];
+            self.controller.document.representedIcon = [BXCoverArt coverArtWithImage: icon];
 		}
 		else
 		{
-			[controller.document generateBootlegIcon];
+			[self.controller.document generateBootlegIcon];
 		}		
 	}
 }
@@ -57,7 +60,7 @@
 
 - (NSImage *) gameboxIcon
 {
-	NSImage *icon = controller.document.representedIcon;
+	NSImage *icon = self.controller.document.representedIcon;
 	if (!icon) icon = [NSImage imageNamed: @"package"];
 	return icon;
 }
@@ -68,7 +71,7 @@
 
 - (IBAction) revealGamebox: (id)sender
 {
-	NSString *gameboxPath = controller.document.gamebox.bundlePath;
+	NSString *gameboxPath = self.controller.document.gamebox.bundlePath;
 	[[NSApp delegate] revealInFinder: gameboxPath];
 }
 
@@ -81,10 +84,10 @@
 	NSWindow *window = self.nameField.window;
 	if (!window.firstResponder || [window makeFirstResponder: nil])
 	{
-		NSURL *packageURL = controller.document.gamebox.bundleURL;
+		NSURL *packageURL = self.controller.document.gamebox.bundleURL;
 		
 		//Close down the import process.
-		[controller.document close];
+		[self.controller.document close];
 		
 		//Open the newly-minted gamebox in a DOS session.
 		[[NSApp delegate] openDocumentWithContentsOfURL: packageURL display: YES error: NULL];		
@@ -98,7 +101,7 @@
 
 - (IBAction) searchForCoverArt: (id)sender
 {
-	NSString *search = controller.document.displayName;
+	NSString *search = self.controller.document.displayName;
 	[[NSApp delegate] searchURLFromKey: @"CoverArtSearchURL" withSearchString: search];
 }
 

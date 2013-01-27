@@ -374,18 +374,18 @@ void *boxer_openLocalDirectory(const char *path, DOS_Drive *drive)
                                     fakeEntries, @"fakeEntries",
                                     nil];
     
-    return enumeratorInfo;
+    return (__bridge void *)enumeratorInfo;
 }
 
 void boxer_closeLocalDirectory(void *handle)
 {
-    NSDictionary *enumeratorInfo = (NSDictionary *)handle;
+    NSDictionary *enumeratorInfo = (__bridge NSDictionary *)handle;
     [enumeratorInfo release];
 }
 
 bool boxer_getNextDirectoryEntry(void *handle, char *outName, bool &isDirectory)
 {
-    NSDictionary *enumeratorInfo = (NSDictionary *)handle;
+    NSDictionary *enumeratorInfo = (__bridge NSDictionary *)handle;
     NSMutableArray *fakeEntries = [enumeratorInfo objectForKey: @"fakeEntries"];
     
     if (fakeEntries.count)

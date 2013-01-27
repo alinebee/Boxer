@@ -343,7 +343,7 @@
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@ binding to emulated button: %i", self.class, self.button];
+    return [NSString stringWithFormat: @"%@ binding to emulated button: %lu", self.class, (unsigned long)self.button];
 }
 @end
 
@@ -518,7 +518,7 @@
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@ binding to emulated button: %i threshold: %02f", self.class, self.button, self.threshold];
+    return [NSString stringWithFormat: @"%@ binding to emulated button: %lu threshold: %02f", self.class, (unsigned long)self.button, self.threshold];
 }
 @end
 
@@ -598,7 +598,7 @@
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@ binding to emulated POV number: %i", self.class, self.POVNumber];
+    return [NSString stringWithFormat: @"%@ binding to emulated POV number: %lu", self.class, (unsigned long)self.POVNumber];
 }
 @end
 
@@ -653,7 +653,7 @@
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@ binding for direction: %i on emulated POV number: %i", self.class, self.POVNumber, self.direction];
+    return [NSString stringWithFormat: @"%@ binding for direction: %li on emulated POV number: %lu", self.class, (long)self.direction, (unsigned long)self.POVNumber];
 }
 @end
 

@@ -190,7 +190,7 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 {
 	OSStatus status;
 	status = FSFileOperationScheduleWithRunLoop(_fileOp, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-	NSAssert1(!status, @"Could not schedule file operation in current run loop, FSFileOperationScheduleWithRunLoop returned error code: %li", status);
+	NSAssert1(!status, @"Could not schedule file operation in current run loop, FSFileOperationScheduleWithRunLoop returned error code: %li", (long)status);
 	
 	NSString *destinationBase = self.destinationPath.stringByDeletingLastPathComponent;
 	
@@ -216,7 +216,7 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	const char *srcPath = self.sourcePath.fileSystemRepresentation;
 	//FSPathCopyObjectAsync expects the destination base path and filename to be provided separately
 	const char *destPath = destinationBase.fileSystemRepresentation;
-	CFStringRef destName = (CFStringRef)(self.destinationPath.lastPathComponent);
+	CFStringRef destName = (__bridge CFStringRef)(self.destinationPath.lastPathComponent);
 	
 	_stage = kFSOperationStageUndefined;
 	

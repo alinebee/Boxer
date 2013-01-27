@@ -88,7 +88,7 @@
     BXSession *session = self.representedObject;
     NSString *path = URL.path;
     
-    BXDriveType preferredType	= self.driveType.selectedItem.tag;
+    BXDriveType preferredType	= (BXDriveType)self.driveType.selectedItem.tag;
     NSString *preferredLetter	= self.driveLetter.selectedItem.representedObject;
     BOOL readOnly				= self.readOnlyToggle.state;
     
@@ -193,7 +193,7 @@
 		
 		
 		//Now determine what the automatic options will do for the selected path
-		BXDriveType selectedType	= self.driveType.selectedItem.tag;
+		BXDriveType selectedType	= (BXDriveType)self.driveType.selectedItem.tag;
 		BXDriveType preferredType	= [BXDrive preferredTypeForPath: path];
 
 		BXDrive *fakeDrive			= [BXDrive driveFromPath: path atLetter: nil withType: selectedType];

@@ -37,7 +37,7 @@
 #pragma mark -
 #pragma mark Helper class methods
 
-+ (NSUInteger) emulatedJoystickButtonForJoypadButton: (JoyInputIdentifier)button
++ (BXEmulatedJoystickButton) emulatedJoystickButtonForJoypadButton: (JoyInputIdentifier)button
 {
     switch (button)
     {
@@ -54,7 +54,7 @@
             return BXEmulatedJoystickButton4;
             
         default:
-            return NSNotFound;
+            return BXEmulatedJoystickUnknownButton;
     }
 }
 
@@ -265,20 +265,21 @@
 - (void) joypadDevice: (JoypadDevice *)device
              buttonUp: (JoyInputIdentifier)button
 {
-    id joystick = self.emulatedJoystick;
+    id <BXEmulatedJoystick> joystick = self.emulatedJoystick;
     BXEmulatedKeyboard *keyboard = self.emulatedKeyboard;
     
     BOOL isWheel = [joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
+    BOOL isFlightstick = [joystick conformsToProtocol: @protocol(BXEmulatedFlightstick)];
     switch (button)
     {
         case kJoyInputRButton:
             //Gas pedal
-            if (isWheel) [joystick setAcceleratorAxis: 0.0f];
+            if (isWheel) [(id <BXEmulatedWheel>)joystick setAcceleratorAxis: 0.0f];
             break;
         
         case kJoyInputLButton:
             //Brake pedal
-            if (isWheel) [joystick setBrakeAxis: 0.0f];
+            if (isWheel) [(id <BXEmulatedWheel>)joystick setBrakeAxis: 0.0f];
             break;
             
         case kJoyInputSelectButton:
@@ -293,26 +294,26 @@
             
         //'Fake' d-pad buttons for compact flightstick hat switch layouts
         case BXJoyInputFakeDPadButtonUp:
-            [joystick POV: 0 directionUp: BXEmulatedPOVNorth];
+            if (isFlightstick) [(id <BXEmulatedFlightstick>)joystick POV: 0 directionUp: BXEmulatedPOVNorth];
             break;
             
         case BXJoyInputFakeDPadButtonDown:
-            [joystick POV: 0 directionUp: BXEmulatedPOVSouth];
+            if (isFlightstick) [(id <BXEmulatedFlightstick>)joystick POV: 0 directionUp: BXEmulatedPOVSouth];
             break;
             
         case BXJoyInputFakeDPadButtonLeft:
-            [joystick POV: 0 directionUp: BXEmulatedPOVWest];
+            if (isFlightstick) [(id <BXEmulatedFlightstick>)joystick POV: 0 directionUp: BXEmulatedPOVWest];
             break;
             
         case BXJoyInputFakeDPadButtonRight:
-            [joystick POV: 0 directionUp: BXEmulatedPOVEast];
+            if (isFlightstick) [(id <BXEmulatedFlightstick>)joystick POV: 0 directionUp: BXEmulatedPOVEast];
             break;
         
         default:
         {
-            NSUInteger joyButton = [[self class] emulatedJoystickButtonForJoypadButton: button];
+            BXEmulatedJoystickButton joyButton = [self.class emulatedJoystickButtonForJoypadButton: button];
         
-            if (joyButton != NSNotFound)
+            if (joyButton != BXEmulatedJoystickUnknownButton)
                 [joystick buttonUp: joyButton];
         }
     }
@@ -323,20 +324,21 @@
 {
     [self _warnIfJoystickInactive];
 
-    id joystick = self.emulatedJoystick;
+    id <BXEmulatedJoystick> joystick = self.emulatedJoystick;
     BXEmulatedKeyboard *keyboard = self.emulatedKeyboard;
     
     BOOL isWheel = [joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
+    BOOL isFlightstick = [joystick conformsToProtocol: @protocol(BXEmulatedFlightstick)];
     switch (button)
     {
         case kJoyInputRButton:
             //Gas pedal
-            if (isWheel) [joystick setAcceleratorAxis: 1.0f];
+            if (isWheel) [(id <BXEmulatedWheel>)joystick setAcceleratorAxis: 1.0f];
             break;
             
         case kJoyInputLButton:
             //Brake pedal
-            if (isWheel) [joystick setBrakeAxis: 1.0f];
+            if (isWheel) [(id <BXEmulatedWheel>)joystick setBrakeAxis: 1.0f];
             break;
             
         case kJoyInputSelectButton:
@@ -351,26 +353,26 @@
         
         //'Fake' d-pad buttons for compact flightstick hat switch layouts
         case BXJoyInputFakeDPadButtonUp:
-            [joystick POV: 0 directionDown: BXEmulatedPOVNorth];
+            if (isFlightstick) [(id <BXEmulatedFlightstick>)joystick POV: 0 directionDown: BXEmulatedPOVNorth];
             break;
             
         case BXJoyInputFakeDPadButtonDown:
-            [joystick POV: 0 directionDown: BXEmulatedPOVSouth];
+            if (isFlightstick) [(id <BXEmulatedFlightstick>)joystick POV: 0 directionDown: BXEmulatedPOVSouth];
             break;
             
         case BXJoyInputFakeDPadButtonLeft:
-            [joystick POV: 0 directionDown: BXEmulatedPOVWest];
+            if (isFlightstick) [(id <BXEmulatedFlightstick>)joystick POV: 0 directionDown: BXEmulatedPOVWest];
             break;
             
         case BXJoyInputFakeDPadButtonRight:
-            [joystick POV: 0 directionDown: BXEmulatedPOVEast];
+            if (isFlightstick) [(id <BXEmulatedFlightstick>)joystick POV: 0 directionDown: BXEmulatedPOVEast];
             break;
 
         default:
         {
-            NSUInteger joyButton = [self.class emulatedJoystickButtonForJoypadButton: button];
+            BXEmulatedJoystickButton joyButton = [self.class emulatedJoystickButtonForJoypadButton: button];
             
-            if (joyButton != NSNotFound)
+            if (joyButton != BXEmulatedJoystickUnknownButton)
                 [joystick buttonDown: joyButton];
         }
     }

@@ -14,7 +14,7 @@
 
 @interface BXDelegatedView : NSView
 {
-    id _delegate;
+    __unsafe_unretained id _delegate;
 	NSDragOperation _draggingEnteredResponse;
 }
 @property (assign) IBOutlet id delegate;

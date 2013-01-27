@@ -39,7 +39,17 @@
         
         [invocation invoke];
     }
-    else [self performSelector: selector withObject: nil];
+    else
+    {
+        //Clang will flag a warning about performSelector:withObject: calls with variable selectors under ARC,
+        //because it has no way to tell whether any of the selectors we're calling may return a retained object.
+        //We suppress the warning for this case on the assumption that the user won't be calling any such
+        //methods since we discard the return value.
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        [self performSelector: selector withObject: nil];
+# pragma clang diagnostic pop
+    }
 }
 
 - (void) performSelector: (SEL)selector afterDelay: (NSTimeInterval)delay withValues: (void *)arg1, ...

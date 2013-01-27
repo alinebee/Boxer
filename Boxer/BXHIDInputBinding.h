@@ -96,7 +96,7 @@
     float _ratePerSecond;
     float _emulatedDeadzone;
     NSTimer *_inputTimer;
-    id <BXPeriodicInputBindingDelegate> _delegate;
+    __unsafe_unretained id <BXPeriodicInputBindingDelegate> _delegate;
 }
 
 //How much to increment the emulated axis per second if the controller axis input is at full strength.
@@ -112,15 +112,15 @@
 //Translates a button on an HID controller to an emulated joystick button.
 @interface BXButtonToButton: BXBaseHIDInputBinding
 {
-	NSUInteger _button;
+	BXEmulatedJoystickButton _button;
 }
 
 //Convenience method to return a binding preconfigured to send button
 //input as the specified button.
-+ (id) bindingWithButton: (NSUInteger)button;
++ (id) bindingWithButton: (BXEmulatedJoystickButton)button;
 
 //The BXEmulatedButton constant of the button to bind to on the emulated joystick.
-@property (assign, nonatomic) NSUInteger button;
+@property (assign, nonatomic) BXEmulatedJoystickButton button;
 
 @end
 
@@ -156,13 +156,13 @@
 {
 	float _threshold;
 	BOOL _unidirectional;
-	NSUInteger _button;
+	BXEmulatedJoystickButton _button;
 	BOOL _previousValue;
 }
 
 //Convenience method to return a binding preconfigured to send axis
 //input as the specified button.
-+ (id) bindingWithButton: (NSUInteger)button;
++ (id) bindingWithButton: (BXEmulatedJoystickButton)button;
 
 //The normalized axis value over which the button will be treated as pressed.
 //Ignores polarity to treat positive and negative axis values the same,
@@ -177,7 +177,7 @@
 @property (assign, nonatomic, getter=isUnidirectional) BOOL unidirectional;
 
 //The BXEmulatedButton constant of the button to bind to on the emulated joystick.
-@property (assign, nonatomic) NSUInteger button;
+@property (assign, nonatomic) BXEmulatedJoystickButton button;
 
 @end
 
@@ -222,8 +222,8 @@
 
 //Convenience method to return a binding preconfigured to send POV
 //input to the specified axes.
-+ (id) bindingWithXAxis: (NSString *)x
-                  YAxis: (NSString *)y;
++ (id) bindingWithXAxis: (NSString *)xAxis
+                  YAxis: (NSString *)yAxis;
 
 //The axis to set on the emulated joystick for WE input.
 //Defaults to xAxisChangedTo:
@@ -250,13 +250,13 @@
 
 //Convenience method to return a binding preconfigured to split axis input
 //to the specified axes, specified as property key names.
-+ (id) bindingWithPositiveAxis: (NSString *)positive
-                  negativeAxis: (NSString *)negative;
++ (id) bindingWithPositiveAxis: (NSString *)positiveAxis
+                  negativeAxis: (NSString *)negativeAxis;
 
 //Convenience method to return a binding preconfigured to split axis input
 //to the specified buttons.
-+ (id) bindingWithPositiveButton: (NSUInteger)positive
-                  negativeButton: (NSUInteger)negative;
++ (id) bindingWithPositiveButton: (BXEmulatedJoystickButton)positiveButton
+                  negativeButton: (BXEmulatedJoystickButton)negativeButton;
 
 //The binding to which to pass positive axis values.
 @property (retain, nonatomic) id <BXHIDInputBinding> positiveBinding;

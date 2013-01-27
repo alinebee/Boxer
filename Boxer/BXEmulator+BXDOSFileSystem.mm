@@ -739,17 +739,17 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 //Used internally to match DOS drive letters to the DOSBox drive array
 - (NSUInteger)_indexOfDriveLetter: (NSString *)driveLetter
 {
-	NSUInteger index = [[[self class] driveLetters] indexOfObject: [driveLetter uppercaseString]];
+	NSUInteger index = [[self.class driveLetters] indexOfObject: driveLetter.uppercaseString];
 	NSAssert1(index != NSNotFound,	@"driveLetter %@ passed to _indexOfDriveLetter: was not a valid DOS drive letter.", driveLetter);
-	NSAssert2(index < DOS_DRIVES,	@"driveIndex %u derived from %@ in _indexOfDriveLetter: was beyond the range of DOSBox's drive array.", index, driveLetter);
+	NSAssert2(index < DOS_DRIVES,	@"driveIndex %lu derived from %@ in _indexOfDriveLetter: was beyond the range of DOSBox's drive array.", (unsigned long)index, driveLetter);
 	return index;
 }
 
 - (NSString *)_driveLetterForIndex: (NSUInteger)index
 {
-	NSAssert1(index < [[[self class] driveLetters] count],
-			  @"index %u passed to _driveLetterForIndex: was beyond the range of available drive letters.", index);
-	return [[[self class] driveLetters] objectAtIndex: index];
+	NSAssert1(index < [self.class driveLetters].count,
+			  @"index %lu passed to _driveLetterForIndex: was beyond the range of available drive letters.", (unsigned long)index);
+	return [[self.class driveLetters] objectAtIndex: index];
 }
 
 //Returns the Boxer drive that matches the specified DOSBox drive, or nil if no drive was found
@@ -814,14 +814,14 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 - (BOOL) _addDOSBoxDrive: (DOS_Drive *)drive
                  atIndex: (NSUInteger)index
 {
-	NSAssert1(index < DOS_DRIVES, @"index %u passed to _addDOSBoxDrive was beyond the range of DOSBox's drive array.", index);
+	NSAssert1(index < DOS_DRIVES, @"index %lu passed to _addDOSBoxDrive was beyond the range of DOSBox's drive array.", (unsigned long)index);
 	
 	//There was already a drive at that index, bail out
 	//TODO: populate an NSError object as well?
 	if (Drives[index]) return NO;
 	
 	Drives[index] = drive;
-	mem_writeb(Real2Phys(dos.tables.mediaid)+(index)*2, drive->GetMediaByte());
+	mem_writeb(Real2Phys(dos.tables.mediaid)+((PhysPt)index)*2, drive->GetMediaByte());
 	
 	return YES;
 }
@@ -834,7 +834,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     //(We don't treat this as an error situation either.)
 	if (!Drives[index]) return NO;
 	
-    NSInteger result = DriveManager::UnmountDrive(index);
+    NSInteger result = DriveManager::UnmountDrive((int)index);
 	if (result == BXDOSBoxUnmountSuccess)
 	{
         [self _closeFilesForDOSBoxDriveAtIndex: index];
@@ -880,7 +880,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 //Generates a BXDrive object from a DOSBox drive entry.
 - (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)index
 {
-	NSAssert1(index < DOS_DRIVES, @"index %u passed to _driveFromDOSBoxDriveAtIndex was beyond the range of DOSBox's drive array.", index);
+	NSAssert1(index < DOS_DRIVES, @"index %lu passed to _driveFromDOSBoxDriveAtIndex was beyond the range of DOSBox's drive array.", (unsigned long)index);
 	if (Drives[index])
 	{
 		NSString *driveLetter	= [[[self class] driveLetters] objectAtIndex: index];
@@ -994,7 +994,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
 	BXDriveGeometry geometry = BXCDROMGeometry;
 	 
-	NSInteger SDLCDNum = -1;
+	int SDLCDNum = -1;
 	
 	//Check that any audio CDs are actually present before enabling CD audio:
 	//this fixes Warcraft II's copy protection, which will fail if audio tracks

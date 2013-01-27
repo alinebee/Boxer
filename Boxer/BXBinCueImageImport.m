@@ -198,8 +198,8 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 		CFStringRef pathRef = CFDictionaryGetValue(description, kDADiskDescriptionDevicePathKey);
 		CFNumberRef sizeRef = CFDictionaryGetValue(description, kDADiskDescriptionMediaSizeKey);
 		
-		devicePath	= [[(NSString *)pathRef copy] autorelease];
-		diskSize	= [(NSNumber *)sizeRef unsignedLongLongValue];
+		devicePath	= [[(__bridge NSString *)pathRef copy] autorelease];
+		diskSize	= [(__bridge NSNumber *)sizeRef unsignedLongLongValue];
 		
 		CFRelease(description);
 	}

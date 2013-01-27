@@ -305,8 +305,8 @@ enum {
 - (NSMenuItem *) _programMenuItemForPath: (NSString *)path onDrive: (BXDrive *)drive
 {
 	BXDisplayPathTransformer *pathFormat = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];
-	[pathFormat setUseFilesystemDisplayPath: NO];
-	
+    pathFormat.usesFilesystemDisplayPath = NO;
+    
 	BXEmulator *emulator = self.session.emulator;
 	
 	NSMenuItem *item = [[NSMenuItem alloc] init];

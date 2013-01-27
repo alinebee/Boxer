@@ -160,7 +160,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 
 @interface BXInputController (BXJoypadInputInternals)
 
-+ (NSUInteger) emulatedJoystickButtonForJoypadButton: (JoyInputIdentifier)button;
++ (BXEmulatedJoystickButton) emulatedJoystickButtonForJoypadButton: (JoyInputIdentifier)button;
 + (BXEmulatedPOVDirection) emulatedJoystickPOVDirectionForDPadState: (NSUInteger)state;
 
 //Called whenever a Joypad disconnects/reconnects to reset internal tracking values.

@@ -20,7 +20,7 @@
 + (NSString *) keyboardLayoutForCurrentInputMethod
 {
 	TISInputSourceRef keyboardRef	= TISCopyCurrentKeyboardLayoutInputSource();
-	NSString *inputSourceID			= (NSString *)TISGetInputSourceProperty(keyboardRef, kTISPropertyInputSourceID);
+	NSString *inputSourceID			= (__bridge NSString *)TISGetInputSourceProperty(keyboardRef, kTISPropertyInputSourceID);
 	CFRelease(keyboardRef);
 	
 	return [self keyboardLayoutForInputSourceID: inputSourceID];
@@ -263,7 +263,7 @@
 		for (i=0; i<NUM_FLAGS; i++)
 		{
 			NSUInteger flag			= flagMappings[i][0];
-			BXDOSKeyCode keyCode	= flagMappings[i][1];
+			BXDOSKeyCode keyCode	= (BXDOSKeyCode)flagMappings[i][1];
 			  
 			BOOL isPressed	= (newModifiers & flag) == flag;
 			BOOL wasPressed	= (_lastModifiers & flag) == flag;

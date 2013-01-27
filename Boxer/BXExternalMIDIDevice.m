@@ -136,28 +136,28 @@
         [self pause];
         
         MIDIPortDispose(_port);
-        _port = NULL;
+        _port = (MIDIObjectRef)NULL;
     }
     
     if (_client)
     {
         MIDIClientDispose(_client);
-        _client = NULL;
+        _client = (MIDIObjectRef)NULL;
     }
     
     //This does not need disposing, because we did not create it ourselves
-    _destination = NULL;
+    _destination = (MIDIObjectRef)NULL;
 }
 
 - (BOOL) _connectToDestination: (MIDIEndpointRef)destination
                          error: (NSError **)outError
 {
     //Create a MIDI client and port
-    OSStatus errCode = MIDIClientCreate((CFStringRef)[self.class defaultClientName], NULL, NULL, &_client);
+    OSStatus errCode = MIDIClientCreate((__bridge CFStringRef)[self.class defaultClientName], NULL, NULL, &_client);
     
     if (errCode == noErr)
     {
-        errCode = MIDIOutputPortCreate(_client, (CFStringRef)[self.class defaultPortName], &_port);
+        errCode = MIDIOutputPortCreate(_client, (__bridge CFStringRef)[self.class defaultPortName], &_port);
     }
     
     if (errCode != noErr)
@@ -171,7 +171,7 @@
         if (_client)
         {
             MIDIClientDispose(_client);
-            _client = NULL;
+            _client = (MIDIObjectRef)NULL;
         }
         return NO;
     }
@@ -193,7 +193,7 @@
                                 error: (NSError **)outError
 {
     ItemCount numDestinations = MIDIGetNumberOfDestinations();
-    MIDIEndpointRef destination = NULL;
+    MIDIEndpointRef destination = (MIDIObjectRef)NULL;
     if (destIndex < numDestinations)
         destination = MIDIGetDestination(destIndex);
     
@@ -217,7 +217,7 @@
 {
     MIDIEndpointRef destination;
     MIDIObjectType type;
-    OSStatus errCode = MIDIObjectFindByUniqueID(uniqueID, (MIDIObjectRef)&destination, &type);
+    OSStatus errCode = MIDIObjectFindByUniqueID(uniqueID, (MIDIObjectRef *)&destination, &type);
     
     if (errCode == noErr && type != kMIDIObjectType_Destination)
         errCode = kMIDIObjectNotFound;

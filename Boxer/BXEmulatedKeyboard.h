@@ -43,7 +43,7 @@ typedef KBD_KEYS BXDOSKeyCode;
     
 	NSString *_preferredLayout;
     
-    NSTimer *_pendingKeypresses;
+    __unsafe_unretained NSTimer *_pendingKeypresses;
 }
 
 //NOTE: these are only readwrite for the sake of BXCoalface.

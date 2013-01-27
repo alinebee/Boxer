@@ -66,7 +66,7 @@
 
 @interface BXMIDIInputListener : NSObject
 {
-    id <BXMIDIInputListenerDelegate> _delegate;
+    __unsafe_unretained id <BXMIDIInputListenerDelegate> _delegate;
     MIDIPortRef _port;
     MIDIEndpointRef _source;
     void * _contextInfo;

@@ -347,7 +347,7 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
     NSAssert(_synth, @"handleSysEx: called before successful initialization.");
     NSAssert(message.length > 0, @"0-length message received by handleSysex:");
     
-    _synth->playSysex((UInt8 *)message.bytes, message.length);
+    _synth->playSysex((UInt8 *)message.bytes, (UInt32)message.length);
 }
 
 - (void) resume
@@ -377,7 +377,7 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
                    sampleRate: (NSUInteger *)sampleRate
                        format: (BXAudioFormat *)format
 {
-    _synth->render((SInt16 *)buffer, numFrames);
+    _synth->render((SInt16 *)buffer, (UInt32)numFrames);
 
     *sampleRate = self.sampleRate;
     *format = BXAudioFormat16Bit | BXAudioFormatSigned | BXAudioFormatStereo;
@@ -411,7 +411,7 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
     properties.openFile = &_openMT32ROM;
     properties.closeFile = &_closeMT32ROM;
     properties.printDebug = &_logMT32DebugMessage;
-    properties.sampleRate = [self sampleRate];
+    properties.sampleRate = self.sampleRate;
     properties.baseDir = NULL;
     
     if (!_synth->open(properties))
@@ -487,7 +487,7 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
 MT32Emu::File * _openMT32ROM(void *userData, const char *filename)
 {
     NSString *requestedROMName = [NSString stringWithUTF8String: filename];
-    NSString *ROMPath = [(BXEmulatedMT32 *)userData _pathToROMMatchingName: requestedROMName];
+    NSString *ROMPath = [(__bridge BXEmulatedMT32 *)userData _pathToROMMatchingName: requestedROMName];
     
     if (ROMPath)
     {
@@ -510,7 +510,7 @@ void _closeMT32ROM(void *userData, MT32Emu::File *file)
 
 int _reportMT32Message(void *userData, MT32Emu::ReportType type, const void *reportData)
 {
-    [(BXEmulatedMT32 *)userData _reportMT32MessageOfType: type data: reportData];
+    [(__bridge BXEmulatedMT32 *)userData _reportMT32MessageOfType: type data: reportData];
     return 0;
 }
 

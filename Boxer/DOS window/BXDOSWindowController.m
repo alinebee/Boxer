@@ -453,7 +453,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 - (IBAction) toggleRenderingStyle: (id <NSValidatedUserInterfaceItem>)sender
 {
-	BXRenderingStyle style = sender.tag;
+	BXRenderingStyle style = (BXRenderingStyle)sender.tag;
 	[[NSUserDefaults standardUserDefaults] setInteger: style
                                                forKey: @"renderingStyle"];
 }
@@ -876,7 +876,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 	if (theAction == @selector(toggleRenderingStyle:))
 	{
-		BXRenderingStyle renderingStyle = theItem.tag;
+		BXRenderingStyle renderingStyle = (BXRenderingStyle)theItem.tag;
 		if (renderingStyle == self.renderingView.renderingStyle)
         {
             theItem.state = NSOnState;

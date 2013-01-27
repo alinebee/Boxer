@@ -32,19 +32,24 @@
 //input sources.
 @interface BXRollingAverageTransformer : NSValueTransformer
 {
-	NSNumber *previousAverage;
-	NSUInteger windowSize;
+	float _previousAverage;
+    BOOL _hasAverage;
+	NSUInteger _windowSize;
 }
 - (id) initWithWindowSize: (NSUInteger)size;
+
 @end
 
 //Returns the NSNumber equivalents of YES or NO based on whether an array's size is within the min and max range of the transformer.
 //Registered as BXIsEmpty and BXIsNotEmpty by BXAppController, which are used for detecting whether an array is empty or not.
 @interface BXArraySizeTransformer : NSValueTransformer
 {
-	NSUInteger minSize;
-	NSUInteger maxSize;
+	NSUInteger _minSize;
+	NSUInteger _maxSize;
 }
+@property (assign, nonatomic) NSUInteger minSize;
+@property (assign, nonatomic) NSUInteger maxSize;
+
 - (id) initWithMinSize: (NSUInteger)min maxSize: (NSUInteger)max;
 @end
 
@@ -61,8 +66,8 @@
 #define MAX_BANDS 32
 @interface BXBandedValueTransformer: NSValueTransformer
 {
-	double bandThresholds[MAX_BANDS];
-    NSUInteger numBands;
+	double _bandThresholds[MAX_BANDS];
+    NSUInteger _numBands;
 }
 
 - (id) initWithThresholds: (double *)thresholds count: (NSUInteger)count;
@@ -90,15 +95,15 @@
 //Converts a POSIX file path into a representation suitable for display.
 @interface BXDisplayPathTransformer: NSValueTransformer
 {
-	NSString *joiner;
-	NSString *ellipsis;
-	NSUInteger maxComponents;
-	BOOL useFilesystemDisplayPath;
+	NSString *_joiner;
+	NSString *_ellipsis;
+	NSUInteger _maxComponents;
+	BOOL _usesFilesystemDisplayPath;
 }
 @property (copy, nonatomic) NSString *joiner;
 @property (copy, nonatomic) NSString *ellipsis;
 @property (assign, nonatomic) NSUInteger maxComponents;
-@property (assign, nonatomic) BOOL useFilesystemDisplayPath;
+@property (assign, nonatomic) BOOL usesFilesystemDisplayPath;
 
 - (id) initWithJoiner: (NSString *)joinString
 			 ellipsis: (NSString *)ellipsisString
@@ -114,11 +119,11 @@
 //an NSAttributedString rather than an NSString.
 @interface BXIconifiedDisplayPathTransformer: BXDisplayPathTransformer
 {
-	NSImage *missingFileIcon;
-	NSMutableDictionary *textAttributes;
-	NSMutableDictionary *iconAttributes;
-	NSSize iconSize;
-	BOOL hideSystemRoots;
+	NSImage *_missingFileIcon;
+	NSMutableDictionary *_textAttributes;
+	NSMutableDictionary *_iconAttributes;
+	NSSize _iconSize;
+	BOOL _hidesSystemRoots;
 }
 //The file icon to use for files/folders that don't yet exist.
 //If left as nil, will use NSWorkspace's default icon for missing files.
@@ -137,7 +142,7 @@
 
 //Whether to hide the / and /Users/ subpaths in displayed paths.
 //This imitates the behaviour of NSPathControl et. al.
-@property (assign, nonatomic) BOOL hideSystemRoots;
+@property (assign, nonatomic) BOOL hidesSystemRoots;
 
 //Returns an icon-and-label attributed string for the specified path.
 //defaultIcon specifies the icon to use if the path does not exist.
@@ -153,7 +158,7 @@
 //Resizes an NSImage to the target size.
 @interface BXImageSizeTransformer: NSValueTransformer
 {
-	NSSize size;
+	NSSize _size;
 }
 @property (assign, nonatomic) NSSize size;
 

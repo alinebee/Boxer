@@ -30,9 +30,9 @@ extern NSString * const BXHIDDeviceKey;
 
 @interface BXHIDMonitor: NSObject
 {
-	IOHIDManagerRef ioManager;
-	NSMutableDictionary *knownDevices;
-	id <BXHIDMonitorDelegate> delegate;
+	IOHIDManagerRef _ioManager;
+	NSMutableDictionary *_knownDevices;
+	__unsafe_unretained id <BXHIDMonitorDelegate> _delegate;
 }
 
 #pragma mark -

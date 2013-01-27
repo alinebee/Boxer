@@ -646,7 +646,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 		UUID = CFUUIDCreate(kCFAllocatorDefault);
 		UUIDString = CFUUIDCreateString(kCFAllocatorDefault, UUID);
 		
-		NSString *identifierWithUUID = [NSString stringWithString: (NSString *)UUIDString];
+		NSString *identifierWithUUID = [NSString stringWithString: (__bridge NSString *)UUIDString];
 		
 		CFRelease(UUID);
 		CFRelease(UUIDString);
@@ -975,7 +975,8 @@ typedef enum {
             else
             {
                 increment += 1;
-                destinationName = [NSString stringWithFormat: @"%@ (%i).%@", title, increment, documentationURL.pathExtension];
+                destinationName = [NSString stringWithFormat: @"%@ (%lu).%@", title, (unsigned long)
+                                   increment, documentationURL.pathExtension];
                 destinationURL = [docsURL URLByAppendingPathComponent: destinationName isDirectory: NO];
             }
         }
@@ -1043,6 +1044,14 @@ typedef enum {
                                     error: outError];
 }
 
+- (BOOL) _isSymlinkAtURL: (NSURL *)URL
+{
+    NSNumber *symlinkFlag = nil;
+    BOOL checked = [URL getResourceValue: &symlinkFlag forKey: NSURLIsSymbolicLinkKey error: NULL];
+    
+    return (checked && symlinkFlag.boolValue);
+}
+
 - (BOOL) removeDocumentationURL: (NSURL *)documentationURL
                    resultingURL: (out NSURL **)resultingURL
                           error: (out NSError **)outError
@@ -1051,16 +1060,8 @@ typedef enum {
     {
         //IMPLEMENTATION NOTE: NSFileManager's trashItemAtURL: does a Very Bad Thing and resolves symlinks
         //without telling us, trashing the original file instead of the symlink. So, we first check if the
-        //specified URL is a symlink: if so, we delete it instead of trashing.
-        NSNumber *symlinkFlag = nil;
-        BOOL checked = [documentationURL getResourceValue: &symlinkFlag forKey: NSURLIsSymbolicLinkKey error: outError];
-        //If for some reason we cannot determine the properties of the file, bail out already.
-        if (!checked)
-            return NO;
-        
-        BOOL isSymlink = symlinkFlag.boolValue;
-        
-        if (isSymlink)
+        //specified URL is a symlink: if so, we delete it instead of trashing.        
+        if ([self _isSymlinkAtURL: documentationURL])
         {
             NSURL *targetURL = documentationURL.URLByResolvingSymlinksInPath;
             

@@ -104,7 +104,7 @@ typedef NSUInteger BXGameIdentifierType;
 {
 	NSMutableDictionary *_gameInfo;
     NSMutableArray *_launchers;
-    id <BXUndoDelegate> _undoDelegate;
+    __unsafe_unretained id <BXUndoDelegate> _undoDelegate;
     BOOL _lastWritableStatus;
     CFAbsoluteTime _nextWriteableCheckTime;
 }

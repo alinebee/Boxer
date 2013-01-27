@@ -16,7 +16,7 @@ extern CGPathRef CGContextCopyPath(CGContextRef context);
 
 static void CGPathCallback(void *info, const CGPathElement *element)
 {
-	NSBezierPath *path = info;
+	NSBezierPath *path = (NSBezierPath *)info;
 	CGPoint *points = element->points;
 	
 	switch (element->type) {
@@ -56,7 +56,7 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 + (NSBezierPath *)bezierPathWithCGPath:(CGPathRef)pathRef
 {
 	NSBezierPath *path = [NSBezierPath bezierPath];
-	CGPathApply(pathRef, path, CGPathCallback);
+	CGPathApply(pathRef, (void *)path, CGPathCallback);
 	
 	return path;
 }
@@ -67,12 +67,12 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 	CGMutablePathRef thePath = CGPathCreateMutable();
 	if (!thePath) return nil;
 	
-	unsigned int elementCount = [self elementCount];
+	NSInteger elementCount = [self elementCount];
 	
 	// The maximum number of points is 3 for a NSCurveToBezierPathElement.
 	// (controlPoint1, controlPoint2, and endPoint)
 	NSPoint controlPoints[3];
-	unsigned int i;
+	NSInteger i;
 	for (i = 0; i < elementCount; i++) {
 		switch ([self elementAtIndex:i associatedPoints:controlPoints]) {
 			case NSMoveToBezierPathElement:

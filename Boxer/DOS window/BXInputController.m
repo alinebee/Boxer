@@ -143,7 +143,7 @@
 			[joypadController removeObserver: self forKeyPath: @"hasJoypadDevices"];
 			
             CFNotificationCenterRef cfCenter = CFNotificationCenterGetDistributedCenter();
-            CFNotificationCenterRemoveObserver(cfCenter, self, kTISNotifySelectedKeyboardInputSourceChanged, NULL);
+            CFNotificationCenterRemoveObserver(cfCenter, (__bridge const void *)(self), kTISNotifySelectedKeyboardInputSourceChanged, NULL);
 			
 			[self didResignKey];
 		}
@@ -211,7 +211,7 @@
             
 			//Listen for changes to the keyboard input method
             CFNotificationCenterRef cfCenter = CFNotificationCenterGetDistributedCenter();
-            CFNotificationCenterAddObserver(cfCenter, self, &_inputSourceChanged,
+            CFNotificationCenterAddObserver(cfCenter, (__bridge const void *)(self), &_inputSourceChanged,
                                             kTISNotifySelectedKeyboardInputSourceChanged, NULL,
                                             CFNotificationSuspensionBehaviorCoalesce);
             
@@ -425,7 +425,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
                          const void *object,
                          CFDictionaryRef userInfo)
 {
-    [(BXInputController *)observer performSelectorOnMainThread: @selector(_syncKeyboardLayout)
+    [(__bridge BXInputController *)observer performSelectorOnMainThread: @selector(_syncKeyboardLayout)
                                                     withObject: nil
                                                  waitUntilDone: NO];
 }

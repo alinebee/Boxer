@@ -24,11 +24,11 @@
 
 @interface BXEmulatedMouse: NSObject
 {
-	BOOL active;
-	NSPoint position;
+	BOOL _active;
+	NSPoint _position;
 	
-	BXMouseButtonMask pressedButtons;
-    NSTimeInterval lastButtonDown[BXMouseButtonMax];
+	BXMouseButtonMask _pressedButtons;
+    NSTimeInterval _lastButtonDown[BXMouseButtonMax];
 }
 
 

@@ -318,7 +318,6 @@
 		9F2D30B715B8233800FAE848 /* BXSession+BXAudioControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA161434A6E4009BFBA2 /* BXSession+BXAudioControls.m */; };
 		9F2D30B815B8233800FAE848 /* BXExternalMT32.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA1A1434B48D009BFBA2 /* BXExternalMT32.m */; };
 		9F2D30B915B8233800FAE848 /* BXDummyMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */; };
-		9F2D30BB15B8233800FAE848 /* CALayer+BXLayerAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */; };
 		9F2D30BC15B8233800FAE848 /* BXExternalMT32+BXMT32Sysexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */; };
 		9F2D30BD15B8233800FAE848 /* BXThemedProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562814506DBA00545317 /* BXThemedProgressIndicator.m */; };
 		9F2D30BE15B8233800FAE848 /* BXHUDLevelIndicatorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */; };
@@ -460,7 +459,6 @@
 		9F57685B15DA3DFC00B50500 /* StandaloneLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F57685915DA3DFC00B50500 /* StandaloneLogo.png */; };
 		9F57685C15DA3DFC00B50500 /* StandaloneLogo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F57685A15DA3DFC00B50500 /* StandaloneLogo@2x.png */; };
 		9F586CEB143E41C200E840C8 /* BXMT32ROMDropzone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F586CEA143E41C200E840C8 /* BXMT32ROMDropzone.m */; };
-		9F586CEE143E4A0100E840C8 /* CALayer+BXLayerAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */; };
 		9F586CF1143E51DD00E840C8 /* CM32L.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F586CEF143E51DD00E840C8 /* CM32L.png */; };
 		9F586CF2143E51DD00E840C8 /* MT32.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F586CF0143E51DD00E840C8 /* MT32.png */; };
 		9F58BB5113DD975F00358512 /* BXFileScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58BB5013DD975F00358512 /* BXFileScan.m */; };
@@ -468,7 +466,7 @@
 		9F596502163D8D910094FD6B /* BXSession+BXPrinting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F596501163D8D910094FD6B /* BXSession+BXPrinting.m */; };
 		9F596503163D8D910094FD6B /* BXSession+BXPrinting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F596501163D8D910094FD6B /* BXSession+BXPrinting.m */; };
 		9F59D99810AE0956008DBBC1 /* BoxArtShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F59D99710AE0956008DBBC1 /* BoxArtShine.png */; };
-		9F59DA1810AE22D8008DBBC1 /* NSBezierPath+MCAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DA1710AE22D8008DBBC1 /* NSBezierPath+MCAdditions.m */; };
+		9F59DA1810AE22D8008DBBC1 /* NSBezierPath+MCAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DA1710AE22D8008DBBC1 /* NSBezierPath+MCAdditions.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9F59DA9F10AEF9E0008DBBC1 /* BXCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DA9E10AEF9E0008DBBC1 /* BXCoverArt.m */; };
 		9F59DAD510AF1042008DBBC1 /* BXProgramPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DAD410AF1042008DBBC1 /* BXProgramPanel.m */; };
 		9F59DD2310AF6129008DBBC1 /* Grille.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F59DD2210AF6129008DBBC1 /* Grille.png */; };
@@ -505,7 +503,7 @@
 		9F731B1D13630B6D005E564F /* DDHidLib.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
 		9F731B2E136323D2005E564F /* BXHIDMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F731B2D136323D2005E564F /* BXHIDMonitor.m */; };
 		9F731B52136331A9005E564F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731B51136331A9005E564F /* IOKit.framework */; };
-		9F740BDE142A24A400BA66B4 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F740BDD142A24A400BA66B4 /* RegexKitLite.m */; };
+		9F740BDE142A24A400BA66B4 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F740BDD142A24A400BA66B4 /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9F765649119403520082A06A /* BXInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F765648119403520082A06A /* BXInputController.m */; };
 		9F76D1B910CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */; };
 		9F76D45610CBE5C500C3B081 /* BXSession+BXDragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */; };
@@ -889,15 +887,15 @@
 		9FFF636314013F4D007E8B47 /* EjectTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635D14013F4D007E8B47 /* EjectTemplate.pdf */; };
 		9FFF636414013F4D007E8B47 /* InsertTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635E14013F4D007E8B47 /* InsertTemplate.pdf */; };
 		9FFF636C140150C3007E8B47 /* DisketteTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF636B140150C3007E8B47 /* DisketteTemplate.pdf */; };
-		9FFF9728123269D1009B5EE5 /* NDAlias+AliasFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */; };
-		9FFF9729123269D1009B5EE5 /* NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9718123269D1009B5EE5 /* NDAlias.m */; };
-		9FFF972A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m */; };
-		9FFF972B123269D1009B5EE5 /* NDResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971C123269D1009B5EE5 /* NDResourceFork.m */; };
-		9FFF972C123269D1009B5EE5 /* NSOpenPanel+NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971F123269D1009B5EE5 /* NSOpenPanel+NDAlias.m */; };
-		9FFF972D123269D1009B5EE5 /* NSPathControl+NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9721123269D1009B5EE5 /* NSPathControl+NDAlias.m */; };
-		9FFF972E123269D1009B5EE5 /* NSSavePanel+NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9723123269D1009B5EE5 /* NSSavePanel+NDAlias.m */; };
-		9FFF972F123269D1009B5EE5 /* NSString+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9725123269D1009B5EE5 /* NSString+NDCarbonUtilities.m */; };
-		9FFF9730123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */; };
+		9FFF9728123269D1009B5EE5 /* NDAlias+AliasFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		9FFF9729123269D1009B5EE5 /* NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9718123269D1009B5EE5 /* NDAlias.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		9FFF972A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		9FFF972B123269D1009B5EE5 /* NDResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971C123269D1009B5EE5 /* NDResourceFork.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		9FFF972C123269D1009B5EE5 /* NSOpenPanel+NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971F123269D1009B5EE5 /* NSOpenPanel+NDAlias.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		9FFF972D123269D1009B5EE5 /* NSPathControl+NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9721123269D1009B5EE5 /* NSPathControl+NDAlias.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		9FFF972E123269D1009B5EE5 /* NSSavePanel+NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9723123269D1009B5EE5 /* NSSavePanel+NDAlias.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		9FFF972F123269D1009B5EE5 /* NSString+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9725123269D1009B5EE5 /* NSString+NDCarbonUtilities.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		9FFF9730123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9FFF97951232B718009B5EE5 /* BXMultiPanelWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */; };
 		B7900B3E13E47D9E00B37913 /* BXPrecisionProControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = B7900B3D13E47D9E00B37913 /* BXPrecisionProControllerProfile.m */; };
 /* End PBXBuildFile section */
@@ -1155,8 +1153,6 @@
 		9F57685A15DA3DFC00B50500 /* StandaloneLogo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "StandaloneLogo@2x.png"; sourceTree = "<group>"; };
 		9F586CE9143E41C200E840C8 /* BXMT32ROMDropzone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMT32ROMDropzone.h; sourceTree = "<group>"; };
 		9F586CEA143E41C200E840C8 /* BXMT32ROMDropzone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMT32ROMDropzone.m; sourceTree = "<group>"; };
-		9F586CEC143E4A0100E840C8 /* CALayer+BXLayerAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CALayer+BXLayerAdditions.h"; sourceTree = "<group>"; };
-		9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CALayer+BXLayerAdditions.m"; sourceTree = "<group>"; };
 		9F586CEF143E51DD00E840C8 /* CM32L.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CM32L.png; sourceTree = "<group>"; };
 		9F586CF0143E51DD00E840C8 /* MT32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MT32.png; sourceTree = "<group>"; };
 		9F58BB4F13DD975F00358512 /* BXFileScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFileScan.h; sourceTree = "<group>"; };
@@ -3217,8 +3213,6 @@
 				9FBC35280F56C7B7001811F2 /* BXGeometry.m */,
 				9FC8B071121807AD004F6DA2 /* NSView+BXDrawing.h */,
 				9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */,
-				9F586CEC143E4A0100E840C8 /* CALayer+BXLayerAdditions.h */,
-				9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */,
 				9FBC35190F56C7B7001811F2 /* NSWindow+BXWindowDimensions.h */,
 				9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowDimensions.m */,
 				9FD23D53129AE3B600B2100B /* NSWindow+BXWindowEffects.h */,
@@ -4051,6 +4045,107 @@
 				9FCC2FF41366FA820013F083 /* BXInputController+BXKeyboardInput.m in Sources */,
 				9FC9E4E1136725190095DCDE /* BXEmulatedJoystick.mm in Sources */,
 				9FC9E58F1367514C0095DCDE /* BXCHFlightstick.mm in Sources */,
+				9FFE1F831390F70C005C438A /* BXThrustmasterFCS.mm in Sources */,
+				9F06C6D313992E1F00B19DF1 /* BXHIDControllerProfile.m in Sources */,
+				9F06C6E113993FB100B19DF1 /* BXHIDInputBinding.m in Sources */,
+				9FD3A1E4139A358C00D0918E /* BX360ControllerProfile.m in Sources */,
+				9FD3A27F139A839600D0918E /* BXSixaxisControllerProfile.m in Sources */,
+				9F60B0DC13AA418300F06BB1 /* BXCollectionItemView.m in Sources */,
+				9FD012FB13AB87E500AF6FE8 /* BXThemedImageCell.m in Sources */,
+				9FC6380013C09B79004478A3 /* BXJoypadController.m in Sources */,
+				9FC6382213C0D54C004478A3 /* BX2ButtonJoystickLayout.m in Sources */,
+				9FC6382513C0D637004478A3 /* BXJoypadLayout.m in Sources */,
+				9FC6382913C0DB4F004478A3 /* BX4ButtonJoystickLayout.m in Sources */,
+				9FC6382F13C0E01C004478A3 /* BX4ButtonWheelLayout.m in Sources */,
+				9FC6383213C0E245004478A3 /* BX2ButtonWheelLayout.m in Sources */,
+				9F87EF7A13C232B600326608 /* BXFlightstickLayout.m in Sources */,
+				9F5B6B7213C3529500E9CA18 /* BXInputController+BXJoypadInput.m in Sources */,
+				9FB446EB13D23BD900E69AF5 /* BXG25ControllerProfile.m in Sources */,
+				9FA0C9E313D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m in Sources */,
+				9FC2F84013D60FBD00BD4F6B /* BXDualActionControllerProfile.m in Sources */,
+				9F70277B13D706CC00606B4C /* BXBezelController.m in Sources */,
+				9F70278413D72D8100606B4C /* BXThemedControls.m in Sources */,
+				9FCA702213DAE6F5006C5DF8 /* BXCoalfaceDrives.mm in Sources */,
+				9F8F482513DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m in Sources */,
+				9F58BB5113DD975F00358512 /* BXFileScan.m in Sources */,
+				9F58BB5413DDAC3A00358512 /* BXExecutableScan.m in Sources */,
+				9F0C0BD713E1751E0039C081 /* BXDOSWindowControllerLion.m in Sources */,
+				9FD95D6A13E2A45C005EF2C0 /* BXFullScreenCapableWindow.m in Sources */,
+				B7900B3E13E47D9E00B37913 /* BXPrecisionProControllerProfile.m in Sources */,
+				9FA1CF6813E5B44000416D74 /* BXMOMORacingControllerProfile.m in Sources */,
+				9F18BE9513EB07190047C217 /* BXInstallerScan.m in Sources */,
+				9F61F78313EC2D5100505436 /* BXImageAwareFileScan.m in Sources */,
+				9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */,
+				9FB642A313FEB71D00385DD3 /* BXISOImage.m in Sources */,
+				9FB642A413FEB71D00385DD3 /* BXBinCueImage.m in Sources */,
+				9FE1B61313FFBE430001640C /* NSImage+BXImageEffects.m in Sources */,
+				9F740BDE142A24A400BA66B4 /* RegexKitLite.m in Sources */,
+				9F34BE40142B700100A69FAF /* BXCoalfaceAudio.mm in Sources */,
+				9F34BE5F142B851800A69FAF /* BXEmulator+BXAudio.mm in Sources */,
+				9F34BE62142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m in Sources */,
+				9FBEC4F0142CE8300016964A /* BXMT32LCDDisplay.m in Sources */,
+				9F902C24142E183500843B01 /* BXMIDISynth.m in Sources */,
+				9F902C27142E198100843B01 /* BXEmulatedMT32.mm in Sources */,
+				9F902C2A142E199100843B01 /* BXExternalMIDIDevice.m in Sources */,
+				9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m in Sources */,
+				9F3EDA171434A6E4009BFBA2 /* BXSession+BXAudioControls.m in Sources */,
+				9F3EDA1B1434B48D009BFBA2 /* BXExternalMT32.m in Sources */,
+				9F6C1CDA14373AF600601ACB /* BXDummyMIDIDevice.m in Sources */,
+				9F586CEB143E41C200E840C8 /* BXMT32ROMDropzone.m in Sources */,
+				9F7D9EFF1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m in Sources */,
+				9FF1562914506DBA00545317 /* BXThemedProgressIndicator.m in Sources */,
+				9FF1562D14506E7200545317 /* BXHUDLevelIndicatorCell.m in Sources */,
+				9FF1563014506F5C00545317 /* BXKeyboardEventTap.m in Sources */,
+				9F39A43B1452CE9100942D0F /* BXBezelView.m in Sources */,
+				9FD7B6B0145745D800565CEB /* BXThemedPopUpButtonCell.m in Sources */,
+				9FD7B6B3145746CC00565CEB /* BXThemedButtonCell.m in Sources */,
+				9F26A9AD1458678B000184D1 /* BXThemedSliderCell.m in Sources */,
+				9FAD1DFD14641ECD00C3074E /* BXContinuousThread.m in Sources */,
+				9F6891A014B0F6D800641C62 /* BXTFlightControllerProfile.m in Sources */,
+				9F9AEE8914CB4AEA00728641 /* BXAppKitVersionHelpers.m in Sources */,
+				9F8F374914F91FEB00E482FB /* BXApplication.m in Sources */,
+				9F8F374F14F9442D00E482FB /* BXBaseAppController+BXHotKeys.m in Sources */,
+				9F1DE9B214FB7F3800F9C91E /* NSObject+BXPerformExtensions.m in Sources */,
+				9FD8BEE414FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m in Sources */,
+				9F9DF415153B058200233968 /* BXKeyBuffer.mm in Sources */,
+				9F887105156F85F9006CDB5F /* BXFileTypes.m in Sources */,
+				9FE3237E157A42B3004492E8 /* BXShader.m in Sources */,
+				9FE32382157A7498004492E8 /* BXBSNESShader.m in Sources */,
+				9FF68FF8157B9C6600F8B5BC /* BXTexture2D.m in Sources */,
+				9FF69000157BE82C00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m in Sources */,
+				9F4FC1151592508100319428 /* BXSupersamplingRenderer.m in Sources */,
+				9F4FC118159253DA00319428 /* BXShaderRenderer.m in Sources */,
+				9F5F12C615ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.m in Sources */,
+				9FCB7B1015B844AB00CC7CC7 /* BXBaseAppController.m in Sources */,
+				9F98410215BEE64400B50CDA /* BXShadowedFilesystem.m in Sources */,
+				9FB60E8E15C5552F00CD0D63 /* NSURL+BXFilePaths.m in Sources */,
+				9FB60E9215C5643200CD0D63 /* NSError+BXErrorHelpers.m in Sources */,
+				9FA2C09215C8409000380261 /* BXDOSWindowBackgroundView.m in Sources */,
+				9FCA6D9615C85D8500E1650C /* BXLaunchPanelController.m in Sources */,
+				9FAEBE4F15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m in Sources */,
+				9F57684915DA27A300B50500 /* BXHUDSpinningProgressIndicator.m in Sources */,
+				9F2C458715DB7E77009F4477 /* BXGLHelpers.m in Sources */,
+				9F5DD13715E544710096D0E8 /* BXRippleShader.m in Sources */,
+				9F3DD6CC15EE8047003C9A25 /* BXCHFlightstickProUSB.m in Sources */,
+				9F872481160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */,
+				9F872486160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */,
+				501F283B161303DA00B1ED53 /* BXBuiltinShaderRenderers.m in Sources */,
+				9FD6AA0E16314A5B002B774E /* directlpt_linux.cpp in Sources */,
+				9FD6AA1016314A5B002B774E /* directlpt_win32.cpp in Sources */,
+				9FD6AA1216314A5B002B774E /* filelpt.cpp in Sources */,
+				9FD6AA1416314A5B002B774E /* parport.cpp in Sources */,
+				9FD6AA1816314A5B002B774E /* printer_charmaps.cpp in Sources */,
+				9FD6AA1A16314A5B002B774E /* printer_redir.cpp in Sources */,
+				9FD6AA2016315278002B774E /* BXEmulatedPrinter.mm in Sources */,
+				9F596502163D8D910094FD6B /* BXSession+BXPrinting.m in Sources */,
+				9FF982111646C7640080F763 /* BXPrintSession.m in Sources */,
+				9F67855C1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */,
+				9F201E381657DB7F0086F1BB /* BXUserNotificationDispatcher.m in Sources */,
+				9F4B1AFA165C122F001AE063 /* BXDriveItem.m in Sources */,
+				9FFE7104165E931600F99C3D /* BXJoystickItem.m in Sources */,
+				9FA0D0CC1694D62100CEF2EA /* NSURL+BXQuickLookHelpers.m in Sources */,
+				9F125C4016983A9D003B5B2B /* BXDocumentationPanelController.m in Sources */,
+				9F125C4116983F0C003B5B2B /* BXDocumentationBrowser.m in Sources */,
 				9F77217612B38C4400072AE8 /* callback.cpp in Sources */,
 				9F77217712B38C4400072AE8 /* core_dyn_x86.cpp in Sources */,
 				9F77217812B38C4400072AE8 /* core_dynrec.cpp in Sources */,
@@ -4164,108 +4259,6 @@
 				9F7721E912B38C4400072AE8 /* shell_batch.cpp in Sources */,
 				9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */,
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
-				9FFE1F831390F70C005C438A /* BXThrustmasterFCS.mm in Sources */,
-				9F06C6D313992E1F00B19DF1 /* BXHIDControllerProfile.m in Sources */,
-				9F06C6E113993FB100B19DF1 /* BXHIDInputBinding.m in Sources */,
-				9FD3A1E4139A358C00D0918E /* BX360ControllerProfile.m in Sources */,
-				9FD3A27F139A839600D0918E /* BXSixaxisControllerProfile.m in Sources */,
-				9F60B0DC13AA418300F06BB1 /* BXCollectionItemView.m in Sources */,
-				9FD012FB13AB87E500AF6FE8 /* BXThemedImageCell.m in Sources */,
-				9FC6380013C09B79004478A3 /* BXJoypadController.m in Sources */,
-				9FC6382213C0D54C004478A3 /* BX2ButtonJoystickLayout.m in Sources */,
-				9FC6382513C0D637004478A3 /* BXJoypadLayout.m in Sources */,
-				9FC6382913C0DB4F004478A3 /* BX4ButtonJoystickLayout.m in Sources */,
-				9FC6382F13C0E01C004478A3 /* BX4ButtonWheelLayout.m in Sources */,
-				9FC6383213C0E245004478A3 /* BX2ButtonWheelLayout.m in Sources */,
-				9F87EF7A13C232B600326608 /* BXFlightstickLayout.m in Sources */,
-				9F5B6B7213C3529500E9CA18 /* BXInputController+BXJoypadInput.m in Sources */,
-				9FB446EB13D23BD900E69AF5 /* BXG25ControllerProfile.m in Sources */,
-				9FA0C9E313D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m in Sources */,
-				9FC2F84013D60FBD00BD4F6B /* BXDualActionControllerProfile.m in Sources */,
-				9F70277B13D706CC00606B4C /* BXBezelController.m in Sources */,
-				9F70278413D72D8100606B4C /* BXThemedControls.m in Sources */,
-				9FCA702213DAE6F5006C5DF8 /* BXCoalfaceDrives.mm in Sources */,
-				9F8F482513DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m in Sources */,
-				9F58BB5113DD975F00358512 /* BXFileScan.m in Sources */,
-				9F58BB5413DDAC3A00358512 /* BXExecutableScan.m in Sources */,
-				9F0C0BD713E1751E0039C081 /* BXDOSWindowControllerLion.m in Sources */,
-				9FD95D6A13E2A45C005EF2C0 /* BXFullScreenCapableWindow.m in Sources */,
-				B7900B3E13E47D9E00B37913 /* BXPrecisionProControllerProfile.m in Sources */,
-				9FA1CF6813E5B44000416D74 /* BXMOMORacingControllerProfile.m in Sources */,
-				9F18BE9513EB07190047C217 /* BXInstallerScan.m in Sources */,
-				9F61F78313EC2D5100505436 /* BXImageAwareFileScan.m in Sources */,
-				9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */,
-				9FB642A313FEB71D00385DD3 /* BXISOImage.m in Sources */,
-				9FB642A413FEB71D00385DD3 /* BXBinCueImage.m in Sources */,
-				9FE1B61313FFBE430001640C /* NSImage+BXImageEffects.m in Sources */,
-				9F740BDE142A24A400BA66B4 /* RegexKitLite.m in Sources */,
-				9F34BE40142B700100A69FAF /* BXCoalfaceAudio.mm in Sources */,
-				9F34BE5F142B851800A69FAF /* BXEmulator+BXAudio.mm in Sources */,
-				9F34BE62142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m in Sources */,
-				9FBEC4F0142CE8300016964A /* BXMT32LCDDisplay.m in Sources */,
-				9F902C24142E183500843B01 /* BXMIDISynth.m in Sources */,
-				9F902C27142E198100843B01 /* BXEmulatedMT32.mm in Sources */,
-				9F902C2A142E199100843B01 /* BXExternalMIDIDevice.m in Sources */,
-				9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m in Sources */,
-				9F3EDA171434A6E4009BFBA2 /* BXSession+BXAudioControls.m in Sources */,
-				9F3EDA1B1434B48D009BFBA2 /* BXExternalMT32.m in Sources */,
-				9F6C1CDA14373AF600601ACB /* BXDummyMIDIDevice.m in Sources */,
-				9F586CEB143E41C200E840C8 /* BXMT32ROMDropzone.m in Sources */,
-				9F586CEE143E4A0100E840C8 /* CALayer+BXLayerAdditions.m in Sources */,
-				9F7D9EFF1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m in Sources */,
-				9FF1562914506DBA00545317 /* BXThemedProgressIndicator.m in Sources */,
-				9FF1562D14506E7200545317 /* BXHUDLevelIndicatorCell.m in Sources */,
-				9FF1563014506F5C00545317 /* BXKeyboardEventTap.m in Sources */,
-				9F39A43B1452CE9100942D0F /* BXBezelView.m in Sources */,
-				9FD7B6B0145745D800565CEB /* BXThemedPopUpButtonCell.m in Sources */,
-				9FD7B6B3145746CC00565CEB /* BXThemedButtonCell.m in Sources */,
-				9F26A9AD1458678B000184D1 /* BXThemedSliderCell.m in Sources */,
-				9FAD1DFD14641ECD00C3074E /* BXContinuousThread.m in Sources */,
-				9F6891A014B0F6D800641C62 /* BXTFlightControllerProfile.m in Sources */,
-				9F9AEE8914CB4AEA00728641 /* BXAppKitVersionHelpers.m in Sources */,
-				9F8F374914F91FEB00E482FB /* BXApplication.m in Sources */,
-				9F8F374F14F9442D00E482FB /* BXBaseAppController+BXHotKeys.m in Sources */,
-				9F1DE9B214FB7F3800F9C91E /* NSObject+BXPerformExtensions.m in Sources */,
-				9FD8BEE414FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m in Sources */,
-				9F9DF415153B058200233968 /* BXKeyBuffer.mm in Sources */,
-				9F887105156F85F9006CDB5F /* BXFileTypes.m in Sources */,
-				9FE3237E157A42B3004492E8 /* BXShader.m in Sources */,
-				9FE32382157A7498004492E8 /* BXBSNESShader.m in Sources */,
-				9FF68FF8157B9C6600F8B5BC /* BXTexture2D.m in Sources */,
-				9FF69000157BE82C00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m in Sources */,
-				9F4FC1151592508100319428 /* BXSupersamplingRenderer.m in Sources */,
-				9F4FC118159253DA00319428 /* BXShaderRenderer.m in Sources */,
-				9F5F12C615ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.m in Sources */,
-				9FCB7B1015B844AB00CC7CC7 /* BXBaseAppController.m in Sources */,
-				9F98410215BEE64400B50CDA /* BXShadowedFilesystem.m in Sources */,
-				9FB60E8E15C5552F00CD0D63 /* NSURL+BXFilePaths.m in Sources */,
-				9FB60E9215C5643200CD0D63 /* NSError+BXErrorHelpers.m in Sources */,
-				9FA2C09215C8409000380261 /* BXDOSWindowBackgroundView.m in Sources */,
-				9FCA6D9615C85D8500E1650C /* BXLaunchPanelController.m in Sources */,
-				9FAEBE4F15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m in Sources */,
-				9F57684915DA27A300B50500 /* BXHUDSpinningProgressIndicator.m in Sources */,
-				9F2C458715DB7E77009F4477 /* BXGLHelpers.m in Sources */,
-				9F5DD13715E544710096D0E8 /* BXRippleShader.m in Sources */,
-				9F3DD6CC15EE8047003C9A25 /* BXCHFlightstickProUSB.m in Sources */,
-				9F872481160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */,
-				9F872486160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */,
-				501F283B161303DA00B1ED53 /* BXBuiltinShaderRenderers.m in Sources */,
-				9FD6AA0E16314A5B002B774E /* directlpt_linux.cpp in Sources */,
-				9FD6AA1016314A5B002B774E /* directlpt_win32.cpp in Sources */,
-				9FD6AA1216314A5B002B774E /* filelpt.cpp in Sources */,
-				9FD6AA1416314A5B002B774E /* parport.cpp in Sources */,
-				9FD6AA1816314A5B002B774E /* printer_charmaps.cpp in Sources */,
-				9FD6AA1A16314A5B002B774E /* printer_redir.cpp in Sources */,
-				9FD6AA2016315278002B774E /* BXEmulatedPrinter.mm in Sources */,
-				9F596502163D8D910094FD6B /* BXSession+BXPrinting.m in Sources */,
-				9FF982111646C7640080F763 /* BXPrintSession.m in Sources */,
-				9F67855C1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */,
-				9F201E381657DB7F0086F1BB /* BXUserNotificationDispatcher.m in Sources */,
-				9F4B1AFA165C122F001AE063 /* BXDriveItem.m in Sources */,
-				9FFE7104165E931600F99C3D /* BXJoystickItem.m in Sources */,
-				9FA0D0CC1694D62100CEF2EA /* NSURL+BXQuickLookHelpers.m in Sources */,
-				9F125C4016983A9D003B5B2B /* BXDocumentationPanelController.m in Sources */,
-				9F125C4116983F0C003B5B2B /* BXDocumentationBrowser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4513,7 +4506,6 @@
 				9F2D30B715B8233800FAE848 /* BXSession+BXAudioControls.m in Sources */,
 				9F2D30B815B8233800FAE848 /* BXExternalMT32.m in Sources */,
 				9F2D30B915B8233800FAE848 /* BXDummyMIDIDevice.m in Sources */,
-				9F2D30BB15B8233800FAE848 /* CALayer+BXLayerAdditions.m in Sources */,
 				9F2D30BC15B8233800FAE848 /* BXExternalMT32+BXMT32Sysexes.m in Sources */,
 				9F2D30BD15B8233800FAE848 /* BXThemedProgressIndicator.m in Sources */,
 				9F2D30BE15B8233800FAE848 /* BXHUDLevelIndicatorCell.m in Sources */,
@@ -5030,7 +5022,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
+				CLANG_WARN__ARC_BRIDGE_CAST_NONARC = NO;
 				COMBINE_HIDPI_IMAGES = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5053,7 +5047,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
-				VALID_ARCHS = i386;
 			};
 			name = Debug;
 		};
@@ -5061,7 +5054,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
+				CLANG_WARN__ARC_BRIDGE_CAST_NONARC = NO;
 				COMBINE_HIDPI_IMAGES = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5080,7 +5075,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
-				VALID_ARCHS = i386;
 			};
 			name = Release;
 		};

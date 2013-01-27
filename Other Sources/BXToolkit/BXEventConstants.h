@@ -14,14 +14,12 @@
 #define BXMaxSystemKeyCode 256
 
 //These correspond to NSEvent's mouse button numbers
-enum {
+typedef enum {
 	BXMouseButtonLeft	= 0,
 	BXMouseButtonRight	= 1,
 	BXMouseButtonMiddle	= 2,
     BXMouseButtonMax    = 3
-};
-
-typedef NSUInteger BXMouseButton;
+} BXMouseButton;
 
 
 //These correspond to NSEvent's pressedMouseButton masks

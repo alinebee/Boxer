@@ -447,7 +447,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         if (status == kCVReturnSuccess)
         {
             //Set the renderer output callback function
-            CVDisplayLinkSetOutputCallback(_displayLink, &BXDisplayLinkCallback, self);
+            CVDisplayLinkSetOutputCallback(_displayLink, &BXDisplayLinkCallback, (__bridge void *)(self));
             
             // Set the display link for the current renderer
             CGLPixelFormatObj cglPixelFormat = self.pixelFormat.CGLPixelFormatObj;
@@ -637,7 +637,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	//Needed because we're operating in a different thread
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	
-	BXGLRenderingView *view = (BXGLRenderingView *)displayLinkContext;
+	BXGLRenderingView *view = (__bridge BXGLRenderingView *)displayLinkContext;
     
     if (view.needsCVLinkDisplay && !view.inViewAnimation)
         [view display];

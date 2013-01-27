@@ -165,7 +165,7 @@
     NSAssert(_synthUnit != NULL, @"handleSysEx: called before successful initialization.");
     NSAssert(message.length > 0, @"0-length message received by handleSysex:");
     
-    MusicDeviceSysEx(_synthUnit, (UInt8 *)message.bytes, message.length);
+    MusicDeviceSysEx(_synthUnit, (UInt8 *)message.bytes, (UInt32)message.length);
 }
 
 - (void) pause
@@ -242,7 +242,7 @@
     {
         OSStatus errCode = noErr;
         
-        CFURLRef cfURL = (CFURLRef)URL;
+        CFURLRef cfURL = (__bridge CFURLRef)URL;
         errCode = AudioUnitSetProperty(_synthUnit,
                                        kMusicDeviceProperty_SoundBankURL,
                                        kAudioUnitScope_Global,
@@ -256,7 +256,7 @@
             //If the soundfont cannot be loaded (e.g. incompatible file type)
             //the synth unit may be left in an unusable state. So, reset it
             //back to the previous soundfont we had, which may be the system soundfont.
-            CFURLRef previousURL = (CFURLRef)self.soundFontURL;
+            CFURLRef previousURL = (__bridge CFURLRef)self.soundFontURL;
             if (previousURL)
             {
                 AudioUnitSetProperty(_synthUnit,

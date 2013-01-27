@@ -141,7 +141,7 @@ typedef enum {
 @class BXPrintSession;
 @interface BXEmulatedPrinter : NSObject
 {
-    id <BXEmulatedPrinterDelegate> _delegate;
+    __unsafe_unretained id <BXEmulatedPrinterDelegate> _delegate;
     BOOL _initialized;
     BXEmulatedPrinterPort _port;
     

@@ -399,10 +399,10 @@
 	
 	//Check if a gamebox already exists at that location;
 	//if so, append an incremented extension until we land on a name that isn't taken
-	NSUInteger suffix = 2;
+	unsigned int suffix = 2;
 	while ([manager fileExistsAtPath: path])
 	{
-		path = [[basePath stringByAppendingFormat: @" (%u)", suffix++, nil] stringByAppendingPathExtension: extension];
+		path = [[basePath stringByAppendingFormat: @" (%u)", suffix++] stringByAppendingPathExtension: extension];
 	}
 	
 	NSDictionary *hideFileExtension = [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]

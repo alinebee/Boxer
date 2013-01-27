@@ -69,7 +69,7 @@
         NSUInteger regionOffset = dirtyRegion.location * pitch;
         
         NSAssert2(regionOffset < frame.frameData.length,
-                  @"Dirty region offset exceeded frame size: %u (limit %u)", regionOffset, frame.frameData.length);
+                  @"Dirty region offset exceeded frame size: %lu (limit %lu)", (unsigned long)regionOffset, (unsigned long)frame.frameData.length);
         
         //Uggghhhh, pointer arithmetic
         const void *regionBytes = frame.bytes + regionOffset;

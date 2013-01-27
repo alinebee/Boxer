@@ -20,10 +20,10 @@
 
 @interface BXWelcomeButton : BXFilterPortrait
 {
-	IBOutlet id <BXWelcomeButtonDraggingDelegate> draggingDelegate;
+	__unsafe_unretained id <BXWelcomeButtonDraggingDelegate> _draggingDelegate;
 }
 //The delegate used for drag-drop operations.
-@property (assign) id <BXWelcomeButtonDraggingDelegate> draggingDelegate;
+@property (assign) IBOutlet id <BXWelcomeButtonDraggingDelegate> draggingDelegate;
 @property (assign, nonatomic, getter=isHighlighted) BOOL highlighted;
 
 @end

@@ -410,7 +410,7 @@
 
 - (IBAction) toggleDefaultRenderingStyle: (id <NSValidatedUserInterfaceItem>)sender
 {
-	BXRenderingStyle style = sender.tag;
+	BXRenderingStyle style = (BXRenderingStyle)sender.tag;
 	[[NSUserDefaults standardUserDefaults] setInteger: style forKey: @"renderingStyle"];
 }
 

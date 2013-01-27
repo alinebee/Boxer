@@ -70,7 +70,7 @@ typedef struct {
 
 @interface BXVideoHandler : NSObject
 {
-	BXEmulator *_emulator;
+	__unsafe_unretained BXEmulator *_emulator;
 	BXVideoFrame *_currentFrame;
 	
 	NSInteger _currentVideoMode;

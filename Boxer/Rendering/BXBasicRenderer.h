@@ -35,7 +35,7 @@ extern NSString * const BXRendererErrorDomain;
 @interface BXBasicRenderer : NSObject
 {
     CGLContextObj _context;
-    id <BXRendererDelegate> _delegate;
+    __unsafe_unretained id <BXRendererDelegate> _delegate;
     
 	BXVideoFrame *_currentFrame;
 	CGRect _viewport;

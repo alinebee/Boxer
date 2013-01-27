@@ -146,7 +146,7 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 - (NSRange) dirtyRegionAtIndex: (NSUInteger)regionIndex
 {
     NSAssert1(regionIndex < self.numDirtyRegions,
-              @"dirtyRegionAtIndex: called with index out of range: %u", regionIndex);
+              @"dirtyRegionAtIndex: called with index out of range: %lu", (unsigned long)regionIndex);
     
     return _dirtyRegions[regionIndex];
 }

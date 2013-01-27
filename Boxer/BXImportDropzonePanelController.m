@@ -23,7 +23,9 @@
 
 
 @implementation BXImportDropzonePanelController
-@synthesize dropzone, controller, spinner;
+@synthesize dropzone = _dropzone;
+@synthesize controller = _controller;
+@synthesize spinner = _spinner;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -31,18 +33,18 @@
 - (void) awakeFromNib
 {
 	//Set up the dropzone panel to support drag-drop operations
-	[[self view] registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
+	[self.view registerForDraggedTypes: @[NSFilenamesPboardType]];
 	
-	[[self spinner] setUsesThreadedAnimation: YES];
+    self.spinner.usesThreadedAnimation = YES;
 	//Since the spinner is on a separate view that's only added to the window
 	//when it's spinnin' time, we can safely start it animating now
-	[[self spinner] startAnimation: self];
+	[self.spinner startAnimation: self];
 }
 
 - (void) dealloc
 {
-	[self setDropzone: nil], [dropzone release];
-	[self setSpinner: nil], [spinner release];
+    self.dropzone = nil;
+    self.spinner = nil;
 	
 	[super dealloc];
 }
@@ -93,35 +95,36 @@
 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
 {
-	NSPasteboard *pboard = [sender draggingPasteboard];
-	if ([[pboard types] containsObject: NSFilenamesPboardType])
+	NSPasteboard *pboard = sender.draggingPasteboard;
+	if ([pboard.types containsObject: NSFilenamesPboardType])
 	{
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		BXImportSession *importer = [[self controller] document];
+		BXImportSession *importer = self.controller.document;
 		for (NSString *path in filePaths)
 		{
 			//If any of the dropped files cannot be imported, reject the drop
-			if (![[importer class] canImportFromSourcePath: path]) return NSDragOperationNone;
+			if (![importer.class canImportFromSourcePath: path]) return NSDragOperationNone;
 		}
 		
-		[[self dropzone] setHighlighted: YES];
+        self.dropzone.highlighted = YES;
+        
 		return NSDragOperationCopy;
 	}
 	else return NSDragOperationNone;
 }
 
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
-{	
-	[[self dropzone] setHighlighted: NO];
-	NSPasteboard *pboard = [sender draggingPasteboard];
+{
+    self.dropzone.highlighted = NO;
+	NSPasteboard *pboard = sender.draggingPasteboard;
 	
-    if ([[pboard types] containsObject: NSFilenamesPboardType])
+    if ([pboard.types containsObject: NSFilenamesPboardType])
 	{
         NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		BXImportSession *importer = [[self controller] document];
+		BXImportSession *importer = self.controller.document;
 		for (NSString *path in filePaths)
 		{
-			if ([[importer class] canImportFromSourcePath: path])
+			if ([importer.class canImportFromSourcePath: path])
 			{
 				//Defer import to give the drag operation and animations time to clean up
 				[importer performSelector: @selector(importFromSourcePath:) withObject: path afterDelay: 0.5];
@@ -134,7 +137,7 @@
 
 - (void)draggingExited: (id <NSDraggingInfo>)sender
 {
-	[[self dropzone] setHighlighted: NO];
+    self.dropzone.highlighted = NO;
 }
 
 @end

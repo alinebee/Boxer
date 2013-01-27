@@ -219,7 +219,6 @@
 
 
 @implementation BXDriveList
-@synthesize delegate;
 
 - (BOOL) mouseDownCanMoveWindow	{ return NO; }
 

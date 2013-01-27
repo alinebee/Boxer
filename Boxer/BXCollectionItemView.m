@@ -12,7 +12,7 @@
 #import "BXThemedImageCell.h"
 
 @implementation BXCollectionItemView
-@synthesize delegate;
+@synthesize delegate = _delegate;
 
 //Returns the original prototype we were copied from, to access properties that weren't copied.
 - (NSView *) prototype

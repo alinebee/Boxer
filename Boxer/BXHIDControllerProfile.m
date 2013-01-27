@@ -659,7 +659,7 @@ static NSMutableArray *_profileClasses = nil;
     {
         NSString *indentedStickDesc = [stick.description stringByReplacingOccurrencesOfString: @"\n"
                                                                                    withString: @"\n\t"];
-        [desc appendFormat: @"Stick %i:\n\t%@\n", stickIndex, indentedStickDesc];
+        [desc appendFormat: @"Stick %lu:\n\t%@\n", (long)stickIndex, indentedStickDesc];
         stickIndex++;
     }
     

@@ -14,7 +14,7 @@
 @class BXImportWindowController;
 @interface BXImportFinalizingPanelController : NSViewController
 {
-    BXImportWindowController *_controller;
+    __unsafe_unretained BXImportWindowController *_controller;
 }
 
 #pragma mark -

@@ -36,10 +36,10 @@
 		//Read the file in as chunks of BXDigestChunkSize length
 		while ((chunk = [file readDataOfLength: BXDigestChunkSize]) && [chunk length])
 		{
-			CC_SHA1_Update(&context, [chunk bytes], [chunk length]);
+			CC_SHA1_Update(&context, chunk.bytes, (CC_LONG)chunk.length);
 			
 			//Stop reading if we go over the desired length for this file 
-			if (readLength && [file offsetInFile] >= readLength) break;
+			if (readLength && file.offsetInFile >= readLength) break;
 		}
 			   
 		[file closeFile];

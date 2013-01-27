@@ -298,7 +298,7 @@ enum {
 	}
     
     //If we get this far, no matching codepage could be found.
-    NSLog(@"No charmap found for codepage %u", codepage);
+    NSLog(@"No charmap found for codepage %lu", (unsigned long)codepage);
     return NULL;
 }
 
@@ -764,7 +764,7 @@ enum {
     {
         //If we have no matching map for this codepage then fall back on CP437,
         //which we know we have a map for.
-        NSLog(@"Unsupported codepage %i. Using CP437 instead.", codepage);
+        NSLog(@"Unsupported codepage %lu. Using CP437 instead.", (unsigned long)codepage);
         mapToUse = [self.class _charmapForCodepage: 437];
     }
     
@@ -1167,7 +1167,7 @@ enum {
             bytesPerColumn = 6;
             break;
         default:
-            NSLog(@"PRINTER: Unsupported bit image density %u", density);
+            NSLog(@"PRINTER: Unsupported bit image density %lu", (unsigned long)density);
             return;
 	}
     
@@ -1186,7 +1186,7 @@ enum {
                            inRect: (CGRect)imageRect
                             color: (CGColorRef)color
 {
-    CGDataProviderRef provider = CGDataProviderCreateWithCFData((CFDataRef)bitmapData);
+    CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)bitmapData);
     //This inverts the image to match the behaviour of CGContextClipToMask,
     //where 'empty' areas will get drawn with the fill color while 'solid'
     //areas will be fully masked.

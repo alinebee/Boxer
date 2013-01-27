@@ -76,7 +76,7 @@ extern NSString * const shellProcessPath;
 
 @interface BXEmulator : NSObject
 {
-	id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate> _delegate;
+	__unsafe_unretained id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate> _delegate;
 	BXVideoHandler *_videoHandler;
 	BXEmulatedKeyboard *_keyboard;
 	BXEmulatedMouse *_mouse;

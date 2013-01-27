@@ -10,6 +10,7 @@
 #import "BXBaseAppController+BXSupportFiles.h"
 #import "BXEmulator+BXAudio.h"
 #import "BXMIDIDeviceMonitor.h"
+#import "NSError+BXErrorHelpers.h"
 
 #import "BXEmulatedMT32.h"
 #import "BXMIDISynth.h"
@@ -62,9 +63,9 @@
     
     //Check if the device the emulator is already using is a suitable match,
     //and just return that if so.
-    if ([self MIDIDevice: [theEmulator activeMIDIDevice] meetsDescription: description])
+    if ([self MIDIDevice: theEmulator.activeMIDIDevice meetsDescription: description])
     {
-        return [theEmulator activeMIDIDevice];
+        return theEmulator.activeMIDIDevice;
     }
     
     //Use a dummy MIDI device if MIDI music is disabled.
@@ -78,8 +79,8 @@
     //If we can't find any suitable external device, then fall back on internal devices.
     if (preferExternal)
     {
-        MIDIUniqueID uniqueID       = [[description objectForKey: BXMIDIExternalDeviceUniqueIDKey] integerValue];
-        ItemCount destinationIndex  = [[description objectForKey: BXMIDIExternalDeviceIndexKey] integerValue];
+        MIDIUniqueID uniqueID       = (MIDIUniqueID)[[description objectForKey: BXMIDIExternalDeviceUniqueIDKey] integerValue];
+        ItemCount destinationIndex  = (ItemCount)[[description objectForKey: BXMIDIExternalDeviceIndexKey] integerValue];
         BOOL needsMT32Delays        = [[description objectForKey: BXMIDIExternalDeviceNeedsMT32SysexDelaysKey] boolValue];
         
         //Note that we don't check here what kind of music the game is trying to play:
@@ -98,7 +99,8 @@
             device = [[deviceClass alloc] initWithDestinationAtIndex: destinationIndex error: NULL];
         }
         
-        if (device) return [device autorelease];
+        if (device)
+            return [device autorelease];
         
         //If we cannot connect to an external MIDI device, keep going and
         //fall back on internal MIDI devices.
@@ -111,7 +113,7 @@
         NSArray *deviceIDs = [[NSApp delegate] MIDIDeviceMonitor].discoveredMT32s;
         for (NSNumber *deviceID in deviceIDs)
         {
-            device = [[BXExternalMT32 alloc] initWithDestinationAtUniqueID: deviceID.integerValue
+            device = [[BXExternalMT32 alloc] initWithDestinationAtUniqueID: (MIDIUniqueID)deviceID.integerValue
                                                                      error: NULL];
             
             if (device) return [device autorelease];
@@ -128,8 +130,7 @@
         {
             //If we don't have the ROMs for MT-32 emulation, warn the user
             //that we can't play their game's music properly.
-            if ([[emulatedMT32Error domain] isEqualToString: BXEmulatedMT32ErrorDomain] &&
-                [emulatedMT32Error code] == BXEmulatedMT32MissingROM)
+            if ([emulatedMT32Error matchesDomain: BXEmulatedMT32ErrorDomain code: BXEmulatedMT32MissingROM])
             {
                 [[BXBezelController controller] showMT32MissingBezel];
             }
@@ -166,7 +167,8 @@
     BXMIDIMusicType musicType = [[description objectForKey: BXMIDIMusicTypeKey] integerValue];
     
     
-    if (musicType == BXMIDIMusicDisabled) return ([device isKindOfClass: [BXDummyMIDIDevice class]]);
+    if (musicType == BXMIDIMusicDisabled)
+        return ([device isKindOfClass: [BXDummyMIDIDevice class]]);
     
     
     //Check external devices to make sure they meet external-device-specific requirements.
@@ -179,7 +181,7 @@
     
         //Check that the device supports the correct sysex delay requirements.
         NSNumber *needsDelay = [description objectForKey: BXMIDIExternalDeviceNeedsMT32SysexDelaysKey];
-        if ([needsDelay boolValue] && ![device isKindOfClass: [BXExternalMT32 class]]) return NO;
+        if (needsDelay.boolValue && ![device isKindOfClass: [BXExternalMT32 class]]) return NO;
         
         //Compare the ID that was asked for against the actual ID of the connected device.
         NSNumber *specifiedID = [description objectForKey: BXMIDIExternalDeviceUniqueIDKey];

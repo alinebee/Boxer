@@ -13,7 +13,7 @@
 
 #import <DDHidLib/DDHidLib.h>
 
-enum {
+typedef enum {
 	BXHIDUnknownEventType = -1,
 	BXHIDKeyDown,
 	BXHIDKeyUp,
@@ -26,9 +26,7 @@ enum {
 	BXHIDJoystickButtonUp,
 	BXHIDJoystickAxisChanged,
 	BXHIDJoystickPOVSwitchChanged
-};
-
-typedef NSInteger BXHIDEventType;
+} BXHIDEventType;
 
 enum {
 	BXHIDPOVCentered	= -1,
@@ -47,17 +45,17 @@ typedef NSInteger BXHIDPOVSwitchDirection;
 
 @interface BXHIDEvent : NSObject
 {
-	BXHIDEventType type;
-	DDHidDevice *device;
-	DDHidElement *element;
-	DDHidJoystickStick *stick;
+	BXHIDEventType _type;
+	DDHidDevice *_device;
+	DDHidElement *_element;
+	DDHidJoystickStick *_stick;
 	
-	NSUInteger stickNumber;
-	NSUInteger POVNumber;
+	NSUInteger _stickNumber;
+	NSUInteger _POVNumber;
 	
-	NSInteger axisDelta;
-	NSInteger axisPosition;
-	NSInteger POVDirection;
+	NSInteger _axisDelta;
+	NSInteger _axisPosition;
+	NSInteger _POVDirection;
 }
 
 #pragma mark -

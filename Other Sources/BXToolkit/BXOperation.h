@@ -61,17 +61,17 @@ extern NSString * const BXOperationIndeterminateKey;
 
 @interface BXOperation : NSOperation
 {
-	id <BXOperationDelegate> delegate;
-	id contextInfo;
+	__unsafe_unretained id <BXOperationDelegate> _delegate;
+	id _contextInfo;
 	
-	SEL willStartSelector;
-	SEL inProgressSelector;
-	SEL wasCancelledSelector;
-	SEL didFinishSelector;
+	SEL _willStartSelector;
+	SEL _inProgressSelector;
+	SEL _wasCancelledSelector;
+	SEL _didFinishSelector;
 	
-	BOOL notifyOnMainThread;
+	BOOL _notifiesOnMainThread;
 	
-	NSError *error;
+	NSError *_error;
 }
 
 #pragma mark -
@@ -94,7 +94,7 @@ extern NSString * const BXOperationIndeterminateKey;
 
 //Whether delegate and NSNotificationCenter notifications should be sent on the main
 //thread or on the operation's current thread. Defaults to YES (the main thread).
-@property (assign) BOOL notifyOnMainThread;
+@property (assign) BOOL notifiesOnMainThread;
 
 #pragma mark -
 #pragma mark Operation status properties

@@ -22,7 +22,7 @@
                                                  &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     
     CGImageRef cgThumbnail = QLThumbnailImageCreate(CFAllocatorGetDefault(),
-                                                    (CFURLRef)self,
+                                                    (__bridge CFURLRef)self,
                                                     NSSizeToCGSize(pixelSize),
                                                     options);
     

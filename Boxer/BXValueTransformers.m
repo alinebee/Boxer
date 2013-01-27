@@ -58,39 +58,36 @@
 
 - (id) initWithWindowSize: (NSUInteger)size
 {
-	if ((self = [super init]))
+    self = [self init];
+	if (self)
 	{
-		windowSize = size;
+		_windowSize = size;
+        _hasAverage = NO;
 	}
 	return self;
-}
-				  
-- (void) dealloc
-{
-	[previousAverage release]; previousAverage = nil;
-	[super dealloc];
 }
 
 - (NSNumber *) transformedValue: (NSNumber *)value
 {
 	NSNumber *newAverage;
-	if (previousAverage)
+	if (_hasAverage)
 	{
-		CGFloat oldAvg	= [previousAverage floatValue],
-				val		= [value floatValue],
+		float   oldAvg  = _previousAverage,
+                val		= value.floatValue,
 				newAvg;
 		
-		newAvg = (val + (oldAvg * (windowSize - 1))) / windowSize;
+		newAvg = (val + (oldAvg * (_windowSize - 1))) / _windowSize;
 		
 		newAverage = [NSNumber numberWithFloat: newAvg];
+        _previousAverage = newAvg;
 	}
 	else
 	{
 		newAverage = value;
+        _previousAverage = value.floatValue;
+        _hasAverage = YES;
 	}
 	
-	[previousAverage release];
-	previousAverage = [newAverage retain];
 	return newAverage;
 }
 
@@ -98,24 +95,27 @@
 
 
 @implementation BXArraySizeTransformer
+@synthesize minSize = _minSize;
+@synthesize maxSize = _maxSize;
 
 + (Class) transformedValueClass			{ return [NSNumber class]; }
 + (BOOL) allowsReverseTransformation	{ return NO; }
 
 - (id) initWithMinSize: (NSUInteger)min maxSize: (NSUInteger)max
 {
-	if ((self = [super init]))
+    self = [super init];
+	if (self)
 	{
-		minSize = min;
-		maxSize = max;
+		self.minSize = min;
+		self.maxSize = max;
 	}
 	return self;
 }
 
 - (NSNumber *) transformedValue: (NSArray *)value
 {
-	NSUInteger count = [value count];
-	BOOL isInRange = (count >= minSize && count <= maxSize);
+	NSUInteger count = value.count;
+	BOOL isInRange = (count >= self.minSize && count <= self.maxSize);
 	return [NSNumber numberWithBool: isInRange];
 }
 @end
@@ -137,17 +137,19 @@
 
 - (id) init
 {
-    if ((self = [super init]))
+    self = [super init];
+    if (self)
     {
-        bandThresholds[0] = 0.0;
-        numBands = 1;
+        _bandThresholds[0] = 0.0;
+        _numBands = 1;
     }
     return self;
 }
 
 - (id) initWithThresholds: (double *)thresholds count: (NSUInteger)count
 {
-	if ((self = [self init]))
+    self = [self init];
+	if (self)
 	{
 		[self setThresholds: thresholds count: count];
 	}
@@ -161,16 +163,16 @@
     
     NSUInteger i;
     for (i=0; i < count; i++)
-        bandThresholds[i] = thresholds[i];
+        _bandThresholds[i] = thresholds[i];
     
-    numBands = count;
+    _numBands = count;
 }
 
 //Return the 0.0->1.0 ratio that corresponds to the specified banded value
 - (NSNumber *) transformedValue: (NSNumber *)value
 {
 	double bandedValue = value.doubleValue;
-    double minValue = bandThresholds[0], maxValue = bandThresholds[numBands-1];
+    double minValue = _bandThresholds[0], maxValue = _bandThresholds[_numBands-1];
     
 	//Save us some odious calculations by doing bounds checking up front
 	if (bandedValue <= minValue) return [NSNumber numberWithDouble: 0.0];
@@ -180,22 +182,22 @@
 	NSUInteger bandNum;
 	
 	//How much of the overall range each band occupies
-	double bandSpread		= 1.0 / (numBands - 1);
+	double bandSpread		= 1.0 / (_numBands - 1);
 	
 	double upperThreshold	= 0.0;
 	double lowerThreshold	= 0.0;
 	double bandRange		= 0.0;
 
 	//Now figure out which band this value falls into
-	for (bandNum = 1; bandNum < numBands; bandNum++)
+	for (bandNum = 1; bandNum < _numBands; bandNum++)
 	{
-		upperThreshold = bandThresholds[bandNum];
+		upperThreshold = _bandThresholds[bandNum];
 		//We've found the band, stop looking now
 		if (bandedValue < upperThreshold) break;
 	}
 	
 	//Now populate the limits and range of the band
-	lowerThreshold	= bandThresholds[bandNum - 1];
+	lowerThreshold	= _bandThresholds[bandNum - 1];
 	bandRange		= upperThreshold - lowerThreshold;
 	
 	//Now work out where in the band we fall
@@ -212,7 +214,7 @@
 - (NSNumber *) reverseTransformedValue: (NSNumber *)value
 {
 	double fieldRatio = value.doubleValue;
-    double minValue = bandThresholds[0], maxValue = bandThresholds[numBands-1];
+    double minValue = _bandThresholds[0], maxValue = _bandThresholds[_numBands-1];
 	
 	//Save us some odious calculations by doing bounds checking up front
 	if		(fieldRatio >= 1.0) return [NSNumber numberWithDouble: maxValue];
@@ -221,16 +223,16 @@
 	//Now get to work!
 	
 	//How much of the overall range each band occupies
-	double bandSpread	= 1.0 / (numBands - 1);
+	double bandSpread	= 1.0 / (_numBands - 1);
 	double upperThreshold, lowerThreshold, bandRange;
 	
 	//First work out which band the field's ratio falls into
 	NSUInteger bandNum = (NSUInteger)floor(fieldRatio / bandSpread);
-    NSAssert1(bandNum < numBands - 1, @"Calculated band number out of range: %u", bandNum);
+    NSAssert1(bandNum < _numBands - 1, @"Calculated band number out of range: %lu", (unsigned long)bandNum);
 	
 	//Grab the upper and lower points of this band's range
-	lowerThreshold	= bandThresholds[bandNum];
-    upperThreshold	= bandThresholds[bandNum + 1];
+	lowerThreshold	= _bandThresholds[bandNum];
+    upperThreshold	= _bandThresholds[bandNum + 1];
     bandRange		= upperThreshold - lowerThreshold;
 	
 	//Work out where within the band our current ratio falls
@@ -242,6 +244,7 @@
 	
 	return [NSNumber numberWithDouble: bandedValue];
 }
+
 @end
 
 
@@ -257,7 +260,7 @@
 
 - (NSString *) transformedValue: (NSString *)text
 {
-	return [[[text substringToIndex: 1] capitalizedString] stringByAppendingString: [text substringFromIndex: 1]];
+	return [[text substringToIndex: 1].capitalizedString stringByAppendingString: [text substringFromIndex: 1]];
 }
 @end
 
@@ -278,27 +281,31 @@
 
 - (NSString *) transformedValue: (NSString *)path
 {
-	NSFileManager *manager	= [NSFileManager defaultManager];
+	NSFileManager *manager = [NSFileManager defaultManager];
 	return [manager displayNameAtPath: path];
 }
 @end
 
 
 @implementation BXDisplayPathTransformer
-@synthesize joiner, ellipsis, maxComponents, useFilesystemDisplayPath;
+@synthesize joiner = _joiner;
+@synthesize ellipsis = _ellipsis;
+@synthesize maxComponents = _maxComponents;
+@synthesize usesFilesystemDisplayPath = _usesFilesystemDisplayPath;
+
 + (Class) transformedValueClass			{ return [NSString class]; }
 + (BOOL) allowsReverseTransformation	{ return NO; }
 
-- (id) initWithJoiner: (NSString *)joinString
-			 ellipsis: (NSString *)ellipsisString
-		maxComponents: (NSUInteger)components
+- (id) initWithJoiner: (NSString *)joiner
+			 ellipsis: (NSString *)ellipsis
+		maxComponents: (NSUInteger)maxComponents
 {
 	if ((self = [super init]))
 	{
-		[self setJoiner: joinString];
-		[self setEllipsis: ellipsisString];
-		[self setMaxComponents: components];
-		[self setUseFilesystemDisplayPath: YES];
+        self.joiner = joiner;
+        self.ellipsis = ellipsis;
+        self.maxComponents = maxComponents;
+        self.usesFilesystemDisplayPath = YES;
 	}
 	return self;
 }
@@ -313,9 +320,9 @@
 - (NSArray *) _componentsForPath: (NSString *)path
 {		
 	NSArray *components = nil;
-	if (useFilesystemDisplayPath)
+	if (self.usesFilesystemDisplayPath)
 	{
-		components	= [[NSFileManager defaultManager] componentsToDisplayForPath: path];
+		components = [[NSFileManager defaultManager] componentsToDisplayForPath: path];
 	}
 	
 	//If NSFileManager couldn't derive display names for this path,
@@ -323,7 +330,7 @@
 	if (!components)
 	{
 		//Fix for 10.5 leaving in / when breaking up "C:/DOSPATH"
-		components = [[path pathComponents] filteredArrayUsingPredicate: [NSPredicate predicateWithFormat: @"SELF != '/'"]];
+		components = [path.pathComponents filteredArrayUsingPredicate: [NSPredicate predicateWithFormat: @"SELF != '/'"]];
 	}
 	return components;
 }
@@ -333,17 +340,18 @@
 	if (!path) return nil;
 	
 	NSMutableArray *components = [[self _componentsForPath: path] mutableCopy];
-	NSUInteger count = [components count];
+	NSUInteger count = components.count;
 	BOOL shortened = NO;
 
-	if (maxComponents > 0 && count > maxComponents)
+	if (self.maxComponents > 0 && count > self.maxComponents)
 	{
-		[components removeObjectsInRange: NSMakeRange(0, count - maxComponents)];
+		[components removeObjectsInRange: NSMakeRange(0, count - self.maxComponents)];
 		shortened = YES;
 	}
 	
-	NSString *displayPath = [components componentsJoinedByString: [self joiner]];
-	if (shortened && [self ellipsis]) displayPath = [[self ellipsis] stringByAppendingString: displayPath];
+	NSString *displayPath = [components componentsJoinedByString: self.joiner];
+	if (shortened && self.ellipsis)
+        displayPath = [self.ellipsis stringByAppendingString: displayPath];
 	
 	[components release];
 	return displayPath;
@@ -351,15 +359,20 @@
 
 - (void) dealloc
 {
-	[self setJoiner: nil],		[joiner release];
-	[self setEllipsis: nil],	[ellipsis release];
+    self.joiner = nil;
+    self.ellipsis = nil;
+
 	[super dealloc];
 }
 @end
 
 
 @implementation BXIconifiedDisplayPathTransformer
-@synthesize missingFileIcon, textAttributes, iconAttributes, iconSize, hideSystemRoots;
+@synthesize missingFileIcon = _missingFileIcon;
+@synthesize textAttributes = _textAttributes;
+@synthesize iconAttributes = _iconAttributes;
+@synthesize iconSize = _iconSize;
+@synthesize hidesSystemRoots = _hidesSystemRoots;
 
 + (Class) transformedValueClass { return [NSAttributedString class]; }
 
@@ -367,25 +380,26 @@
 			 ellipsis: (NSString *)ellipsisString
 		maxComponents: (NSUInteger)components
 {
-	if ((self = [super initWithJoiner: joinString ellipsis: ellipsisString maxComponents: components]))
+    self = [super initWithJoiner: joinString ellipsis: ellipsisString maxComponents: components];
+	if (self)
 	{
-		[self setIconSize: NSMakeSize(16.0f, 16.0f)];
-		[self setTextAttributes: [NSMutableDictionary dictionaryWithObjectsAndKeys:
-								  [NSFont systemFontOfSize: 0], NSFontAttributeName,
-								  nil]];
+        self.iconSize = NSMakeSize(16, 16);
+        self.textAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                               [NSFont systemFontOfSize: 0], NSFontAttributeName,
+                               nil];
 		
-		[self setIconAttributes: [NSMutableDictionary dictionaryWithObjectsAndKeys:
-								  [NSNumber numberWithFloat: -3.0f], NSBaselineOffsetAttributeName,
-								  nil]];
+        self.iconAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                               [NSNumber numberWithFloat: -3.0f], NSBaselineOffsetAttributeName,
+                               nil];
 	}
 	return self;
 }
 
 - (void) dealloc
 {
-	[self setMissingFileIcon: nil], [missingFileIcon release];
-	[self setTextAttributes: nil], [textAttributes release];
-	[self setIconAttributes: nil], [iconAttributes release];
+    self.missingFileIcon = nil;
+    self.textAttributes = nil;
+    self.iconAttributes = nil;
 	[super dealloc];
 }
 
@@ -410,21 +424,22 @@
 	}
 	else
 	{
-		displayName = [path lastPathComponent];
+		displayName = path.lastPathComponent;
 		//If no fallback icon was specified, use whatever icon NSWorkspace provides for nonexistent files.
 		icon = (defaultIcon) ? defaultIcon : [workspace iconForFile: path];
 	}
 	
 	NSTextAttachment *iconAttachment = [[NSTextAttachment alloc] init];
-	NSTextAttachmentCell *iconCell = (NSTextAttachmentCell *)[iconAttachment attachmentCell];
-	[iconCell setImage: icon];
-	[[iconCell image] setSize: [self iconSize]];
+	NSTextAttachmentCell *iconCell = (NSTextAttachmentCell *)iconAttachment.attachmentCell;
+    iconCell.image = icon;
+    iconCell.image.size = self.iconSize;
 	
 	NSMutableAttributedString *component = [[NSAttributedString attributedStringWithAttachment: iconAttachment] mutableCopy];
-	[component addAttributes: [self iconAttributes] range: NSMakeRange(0, [component length])];
+	[component addAttributes: self.iconAttributes
+                       range: NSMakeRange(0, component.length)];
 	
 	NSAttributedString *label = [[NSAttributedString alloc] initWithString: [@" " stringByAppendingString: displayName]
-																attributes: [self textAttributes]];
+																attributes: self.textAttributes];
 	
 	[component appendAttributedString: label];
 	
@@ -438,16 +453,16 @@
 {
 	if (!path) return nil;
 	
-	NSMutableArray *components = [[path fullPathComponents] mutableCopy];
+	NSMutableArray *components = [path.fullPathComponents mutableCopy];
 	
 	//Bail out early if the path is empty
-	if (![components count])
+	if (!components.count)
     {
         [components release];
 		return [[[NSAttributedString alloc] init] autorelease];
 	}
 	//Hide common system root directories
-	if ([self hideSystemRoots])
+	if (self.hidesSystemRoots)
 	{
 		[components removeObject: @"/"];
 		[components removeObject: @"/Users"];
@@ -455,21 +470,23 @@
 	}
 	
 	NSMutableAttributedString *displayPath = [[NSMutableAttributedString alloc] init];
-	NSAttributedString *attributedJoiner = [[NSAttributedString alloc] initWithString: [self joiner] attributes: [self textAttributes]];
+	NSAttributedString *attributedJoiner = [[NSAttributedString alloc] initWithString: self.joiner
+                                                                           attributes: self.textAttributes];
 	
 	//Truncate the path with ellipses if there are too many components
-	NSUInteger count = [components count];
-	if (maxComponents > 0 && count > maxComponents)
+	NSUInteger count = components.count;
+	if (self.maxComponents > 0 && count > self.maxComponents)
 	{
-		[components removeObjectsInRange: NSMakeRange(0, count - maxComponents)];
+		[components removeObjectsInRange: NSMakeRange(0, count - self.maxComponents)];
 		
-		NSAttributedString *attributedEllipsis = [[NSAttributedString alloc] initWithString: [self ellipsis] attributes: [self textAttributes]];
+		NSAttributedString *attributedEllipsis = [[NSAttributedString alloc] initWithString: self.ellipsis
+                                                                                 attributes: self.textAttributes];
 		[displayPath appendAttributedString: attributedEllipsis];
 		[attributedEllipsis release];
 	}
 
 	NSImage *folderIcon = [NSImage imageNamed: @"NSFolder"];
-	NSUInteger i, numComponents = [components count];
+	NSUInteger i, numComponents = components.count;
 	for (i = 0; i < numComponents; i++)
 	{
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -477,7 +494,7 @@
 		NSString *subPath = [components objectAtIndex: i];
 		
 		//Use regular folder icon for all missing path components except for the final one
-		NSImage *defaultIcon = (i == numComponents - 1) ? [self missingFileIcon] : folderIcon;
+		NSImage *defaultIcon = (i == numComponents - 1) ? self.missingFileIcon : folderIcon;
 		
 		NSAttributedString *componentString = [self componentForPath: subPath withDefaultIcon: defaultIcon];
 		
@@ -499,23 +516,24 @@
 #pragma mark Image transformers
 
 @implementation BXImageSizeTransformer
-@synthesize size;
+@synthesize size = _size;
 
 + (Class) transformedValueClass			{ return [NSImage class]; }
 + (BOOL) allowsReverseTransformation	{ return NO; }
 
 - (id) initWithSize: (NSSize)targetSize
 {
-	if ((self = [super init]))
+    self = [super init];
+	if (self)
 	{
-		[self setSize: targetSize];
+        self.size = targetSize;
 	}
 	return self;
 }
 - (NSImage *) transformedValue: (NSImage *)image
 {
 	NSImage *resizedImage = [image copy];
-	[resizedImage setSize: [self size]];
+	resizedImage.size = self.size;
 	return [resizedImage autorelease];
 }
 

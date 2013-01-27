@@ -14,7 +14,7 @@
 - (id) performDefaultImplementation
 {
 	NSError *importError = nil;
-	NSURL *fileURL = [self directParameter];
+	NSURL *fileURL = self.directParameter;
 	
 	if (fileURL)
 	{
@@ -28,8 +28,8 @@
 	
 	if (importError)
 	{
-		[self setScriptErrorNumber: [importError code]];
-		[self setScriptErrorString: [importError localizedDescription]];
+        self.scriptErrorNumber = (int)importError.code;
+        self.scriptErrorString = importError.localizedDescription;
 	}
 	return nil;
 }

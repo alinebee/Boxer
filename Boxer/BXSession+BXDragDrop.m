@@ -8,6 +8,7 @@
 #import "BXSessionPrivate.h"
 #import "BXFileTypes.h"
 #import "BXDOSWindowController.h"
+#import "BXDOSWindow.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXPaste.h"
 #import "BXEmulatorErrors.h"

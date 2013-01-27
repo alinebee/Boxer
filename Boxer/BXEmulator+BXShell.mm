@@ -498,7 +498,13 @@ nil];
 			//If we respond to that selector, then handle it ourselves
 			if ([self respondsToSelector: selector])
 			{
+                //Clang will flag a warning about performSelector:withObject: calls with variable selectors under ARC,
+                //because it has no way to tell whether any of the selectors we're calling may return a retained object.
+                //We suppress the warning for this case because we know the methods we're calling don't return anything.
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 				[self performSelector: selector withObject: argumentString];
+# pragma clang diagnostic pop
                 returnValue = YES;
 			}
 			//Otherwise, pass the selector up to the application as an action call,

@@ -40,11 +40,11 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		for (NSString *fileName in [components subarrayWithRange: usefulComponents])
 		{
-			if ([fileName length])
+			if (fileName.length)
 			{
                 //Normalize escaped quotes
-                fileName = [fileName stringByReplacingOccurrencesOfString: @"\\\"" withString: @"\""];
-				[paths addObject: fileName];
+                NSString *normalizedName = [fileName stringByReplacingOccurrencesOfString: @"\\\"" withString: @"\""];
+				[paths addObject: normalizedName];
 				break;
 			}
 		}

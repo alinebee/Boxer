@@ -109,7 +109,7 @@
     BXIconifiedDisplayPathTransformer *pathTransformer = [[BXIconifiedDisplayPathTransformer alloc]
                                                           initWithJoiner: @" ▸ " maxComponents: 0];
     pathTransformer.missingFileIcon = [NSImage imageNamed: @"gamefolder"];
-    pathTransformer.hideSystemRoots = YES;
+    pathTransformer.hidesSystemRoots = YES;
     
     NSMutableParagraphStyle *pathStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     pathStyle.lineBreakMode = NSLineBreakByTruncatingMiddle;

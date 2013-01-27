@@ -81,8 +81,8 @@
     //Create a new PDF context and its associated data object,
     //into which we shall pour PDF data from the context.
     self._mutablePDFData = [NSMutableData data];
-    _PDFDataConsumer = CGDataConsumerCreateWithCFData((CFMutableDataRef)self._mutablePDFData);
-    _CGPDFContext = CGPDFContextCreate(_PDFDataConsumer, NULL, (CFDictionaryRef)[self.class _defaultPDFInfo]);
+    _PDFDataConsumer = CGDataConsumerCreateWithCFData((__bridge CFMutableDataRef)self._mutablePDFData);
+    _CGPDFContext = CGPDFContextCreate(_PDFDataConsumer, NULL, (__bridge CFDictionaryRef)[self.class _defaultPDFInfo]);
     
     self.PDFContext = [NSGraphicsContext graphicsContextWithGraphicsPort: _CGPDFContext
                                                                  flipped: NO];

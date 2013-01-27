@@ -328,7 +328,7 @@
 		[alert beginSheetModalForWindow: self.windowForSheet
 						  modalDelegate: self
 						 didEndSelector: @selector(_closeAlertDidEnd:returnCode:contextInfo:)
-							contextInfo: [callback retain]];
+							contextInfo: (__bridge void *)([callback retain])];
 	}
 	else
 	{

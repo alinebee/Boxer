@@ -19,10 +19,6 @@
 @class BXDrivePanelController;
 
 @interface BXDriveList : NSCollectionView
-{
-	BXDrivePanelController *delegate;
-}
-@property (assign, nonatomic) IBOutlet BXDrivePanelController *delegate;
 
 //Returns the view that represents the specified drive.
 - (BXDriveItemView *) viewForDrive: (BXDrive *)drive;

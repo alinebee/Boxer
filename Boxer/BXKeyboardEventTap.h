@@ -17,7 +17,7 @@
     CFRunLoopSourceRef _source;
     BOOL _enabled;
     BOOL _usesDedicatedThread;
-    id <BXKeyboardEventTapDelegate> _delegate;
+    __unsafe_unretained id <BXKeyboardEventTapDelegate> _delegate;
 }
 
 //The delegate whom we will ask for event-capture decisions.

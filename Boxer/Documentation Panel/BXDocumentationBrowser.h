@@ -19,12 +19,12 @@
     NSArray *_documentationURLs;
     NSIndexSet *_documentationSelectionIndexes;
     
-    NSScrollView *_documentationScrollView;
-    BXDocumentationList *_documentationList;
-    NSTextField *_titleLabel;
-    NSTextField *_helpTextLabel;
+    __unsafe_unretained NSScrollView *_documentationScrollView;
+    __unsafe_unretained BXDocumentationList *_documentationList;
+    __unsafe_unretained NSTextField *_titleLabel;
+    __unsafe_unretained NSTextField *_helpTextLabel;
     
-    id <BXDocumentationBrowserDelegate> _delegate;
+    __unsafe_unretained id <BXDocumentationBrowserDelegate> _delegate;
 }
 
 #pragma mark - Properties

@@ -55,9 +55,9 @@ typedef NSUInteger BXMT32ROMType;
 {
     NSString *_PCMROMPath;
     NSString *_controlROMPath;
-    id <BXEmulatedMT32Delegate> _delegate;
+    __unsafe_unretained id <BXEmulatedMT32Delegate> _delegate;
     NSError *_synthError;
-    NSUInteger _sampleRate;
+    unsigned int _sampleRate;
     
 #ifdef __cplusplus
     MT32Emu::Synth *_synth;
@@ -67,7 +67,7 @@ typedef NSUInteger BXMT32ROMType;
 @property (copy, nonatomic) NSString *PCMROMPath;
 @property (copy, nonatomic) NSString *controlROMPath;
 @property (assign, nonatomic) id <BXEmulatedMT32Delegate> delegate;
-@property (assign, nonatomic) NSUInteger sampleRate;
+@property (assign, nonatomic) unsigned int sampleRate;
 
 - (id <BXMIDIDevice>) initWithPCMROM: (NSString *)PCMROM
                           controlROM: (NSString *)controlROM

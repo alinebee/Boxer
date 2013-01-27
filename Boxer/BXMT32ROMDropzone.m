@@ -79,7 +79,7 @@
     self.titleLayer.alignmentMode = kCAAlignmentCenter;
     
     self.titleLayer.foregroundColor = CGColorGetConstantColor(kCGColorWhite);
-    self.titleLayer.font            = [NSFont boldSystemFontOfSize: 0];
+    self.titleLayer.font            = (__bridge CFTypeRef)([NSFont boldSystemFontOfSize: 0]);
     self.titleLayer.fontSize        = 16.0f;
     
     self.titleLayer.shadowOffset = CGSizeMake(0, -1.0f);

@@ -12,6 +12,7 @@
 #import "NSView+BXDrawing.h"
 #import "BXBaseAppController.h"
 #import "NSError+BXErrorHelpers.h"
+#import "NSBezierPath+MCAdditions.h"
 
 enum {
     BXDocumentationItemIcon = 1,
@@ -850,16 +851,48 @@ enum {
 @end
 
 
+@interface BXDocumentationWrapper ()
+
+@property (assign, nonatomic) CGFloat highlightStrength;
+
+@end
+
 @implementation BXDocumentationWrapper
+@synthesize highlightStrength = _highlightStrength;
+
++ (id) defaultAnimationForKey: (NSString *)key
+{
+    if ([key isEqualToString: @"highlightStrength"])
+    {
+		CABasicAnimation *animation = [CABasicAnimation animation];
+        animation.duration = 0.2;
+        animation.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionEaseIn];
+        animation.delegate = self;
+        return animation;
+    }
+    else
+    {
+        return [super defaultAnimationForKey: key];
+    }
+}
 
 - (void) collectionViewItemDidChangeSelection
 {
-    [self setNeedsDisplay: YES];
+    [self.animator setHighlightStrength: (self.delegate.isSelected) ? 1 : 0];
+}
+
+- (void) setHighlightStrength: (CGFloat)strength
+{
+    if (self.highlightStrength != strength)
+    {
+        _highlightStrength = strength;
+        [self setNeedsDisplay: YES];
+    }
 }
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-    if (self.delegate.isSelected)
+    if (self.highlightStrength > 0)
     {
         NSImageView *icon = [self viewWithTag: BXDocumentationItemIcon];
         NSTextField *label = [self viewWithTag: BXDocumentationItemLabel];
@@ -874,14 +907,28 @@ enum {
         
         highlightRegion = NSIntegralRect(highlightRegion);
         
-        NSBezierPath *highlightPath = [NSBezierPath bezierPathWithRoundedRect: highlightRegion
-                                                                      xRadius: 8.0
-                                                                      yRadius: 8.0];
-        
-        NSColor *highlightColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.15];
-        
-        [highlightColor set];
-        [highlightPath fill];
+        if ([self needsToDrawRect: highlightRegion])
+        {
+            CGFloat cornerRadius = 8.0;
+            CGFloat strokeWidth = 2.0;
+            NSBezierPath *strokePath = [NSBezierPath bezierPathWithRoundedRect: NSInsetRect(highlightRegion, strokeWidth * 0.5, strokeWidth * 0.5)
+                                                                       xRadius: cornerRadius - (strokeWidth * 0.5)
+                                                                       yRadius: cornerRadius - (strokeWidth * 0.5)];
+            
+            NSBezierPath *fillPath = [NSBezierPath bezierPathWithRoundedRect: NSInsetRect(highlightRegion, strokeWidth, strokeWidth)
+                                                                     xRadius: cornerRadius - strokeWidth
+                                                                     yRadius: cornerRadius - strokeWidth];
+            
+            NSColor *fillColor      = [NSColor colorWithCalibratedWhite: 0 alpha: 0.15 * self.highlightStrength];
+            NSColor *strokeColor    = [NSColor colorWithCalibratedWhite: 1.0 alpha: 1.0 * self.highlightStrength];
+            
+            [strokeColor setStroke];
+            [strokePath setLineWidth: 2];
+            [strokePath stroke];
+            
+            [fillColor setFill];
+            [fillPath fill];
+        }
     }
 }
 

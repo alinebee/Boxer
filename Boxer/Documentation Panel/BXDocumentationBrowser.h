@@ -172,6 +172,9 @@
 
 //Custom appearance for documentation items. Highlights the background when selected.
 @interface BXDocumentationWrapper : BXCollectionItemView
+{
+    CGFloat _highlightStrength;
+}
 @end
 
 

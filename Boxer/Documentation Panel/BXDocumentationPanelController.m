@@ -301,7 +301,7 @@
 
 - (void) documentationBrowser: (BXDocumentationBrowser *)browser didPreviewURLs: (NSArray *)URLs
 {
-    [self close];
+    //[self close];
 }
 
 - (void) documentationBrowser: (BXDocumentationBrowser *)browser didRevealURLs: (NSArray *)URLs

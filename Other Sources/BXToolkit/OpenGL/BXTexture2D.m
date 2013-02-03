@@ -92,7 +92,7 @@
         //and check what texture size we'll need.
         //(For rectangle textures, we can use the content size as the size
         //of the texture itself; otherwise, we need a power of two texture
-        //size large enough to accomodate the content size.)
+        //size large enough to accommodate the content size.)
         _textureSize = [self.class textureSizeNeededForContentSize: contentSize withType: type];
         
         if (_type == GL_TEXTURE_RECTANGLE_ARB)

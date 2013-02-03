@@ -614,6 +614,14 @@
         //or if we're already at the launch panel.
         return self.isEmulating && self.allowsLauncherPanel && (self.DOSWindowController.currentPanel != BXDOSWindowLaunchPanel);
     }
+    else if (theAction == @selector(revertShadowedChanges:) || theAction == @selector(mergeShadowedChanges:) || theAction == @selector(exportGameState:))
+    {
+        return self.hasGamebox && self.hasShadowedChanges;
+    }
+    else if (theAction == @selector(importGameState:))
+    {
+        return self.hasGamebox;
+    }
     return YES;
 }
 
@@ -853,7 +861,7 @@
             confirmation.informativeText = NSLocalizedString(@"Your player data and changes to game files will be lost. This operation cannot be undone.",
                                                              @"Informative text of confirmation when reverting the current session to its original state.");
             
-            NSString *closeLabel	= NSLocalizedString(@"Reset and Relaunch", @"Label for button to confirm that the user wants to revert the current session to its original state.");
+            NSString *closeLabel	= NSLocalizedString(@"Revert and Relaunch", @"Label for button to confirm that the user wants to revert the current session to its original state.");
             NSString *cancelLabel	= NSLocalizedString(@"Cancel",	@"Cancel the current action and return to what the user was doing");
             
             [confirmation addButtonWithTitle: closeLabel];

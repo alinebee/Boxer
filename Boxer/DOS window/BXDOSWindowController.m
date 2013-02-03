@@ -520,16 +520,16 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
         
     NSSize baseResolution = self.renderingView.currentFrame.scaledResolution;
     
-    NSSize nextSizeInterval = [self.class _nextFullscreenSizeIntervalForSize: currentSize
-                                                          originalResolution: baseResolution
-                                                                   ascending: YES];
+    NSSize nextSize = [self.class _nextFullscreenSizeIntervalForSize: currentSize
+                                                  originalResolution: baseResolution
+                                                           ascending: YES];
     
-    //If the next increment is larger than the available canvas,
+    //If the next increment is the same or larger than the available canvas,
     //then tell the rendering view to just use the whole canvas.
-    if (!sizeFitsWithinSize(nextSizeInterval, canvasSize))
-        nextSizeInterval = NSZeroSize;
+    if (nextSize.width >= canvasSize.width || nextSize.height >= canvasSize.height)
+        nextSize = NSZeroSize;
     
-    self.maxFullscreenViewportSize = nextSizeInterval;
+    self.maxFullscreenViewportSize = nextSize;
 }
 
 - (IBAction) decrementFullscreenSize: (id)sender
@@ -547,17 +547,18 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
         
     NSSize baseResolution = self.renderingView.currentFrame.scaledResolution;
     
-    NSSize prevSizeInterval = [self.class _nextFullscreenSizeIntervalForSize: currentSize
-                                                          originalResolution: baseResolution
-                                                                   ascending: NO];
+    NSSize prevSize = [self.class _nextFullscreenSizeIntervalForSize: currentSize
+                                                  originalResolution: baseResolution
+                                                           ascending: NO];
     
-    //If the previous increment is larger than the available canvas,
+    //If the previous increment is equal to or larger than the available canvas,
     //then tell the rendering view to just use the whole canvas.
-    //(This can happen if the DOS resolution is larger than can actually fit on-screen.)
-    if (!sizeFitsWithinSize(prevSizeInterval, canvasSize))
-        prevSizeInterval = NSZeroSize;
+    //(Even though we're reducing the size, this case could still happen if the DOS
+    //resolution is larger than we can actually fit on-screen.)
+    if (prevSize.width >= canvasSize.width || prevSize.height >= canvasSize.height)
+        prevSize = NSZeroSize;
     
-    self.maxFullscreenViewportSize = prevSizeInterval;
+    self.maxFullscreenViewportSize = prevSize;
 }
 
 + (NSSet *) keyPathsForValuesAffectingMinFullscreenViewportSize
@@ -598,7 +599,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
         fullscreenCanvas = self.window.screen.frame.size;
     
     //The current viewport size is larger than the entire canvas we'll have in fullscreen mode.
-    if (!sizeFitsWithinSize(self.maxFullscreenViewportSize, fullscreenCanvas))
+    if (self.maxFullscreenViewportSize.width >= fullscreenCanvas.width ||
+        self.maxFullscreenViewportSize.height >= fullscreenCanvas.height)
         return YES;
         
     return NO;
@@ -606,7 +608,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 + (NSSet *) keyPathsForValuesAffectingFullscreenSizeAtMinimum
 {
-    return [NSSet setWithObjects: @"maxFullscreenViewportSize", @"renderingView.currentFrame.baseResolution", nil];
+    return [NSSet setWithObjects: @"maxFullscreenViewportSize", @"minFullscreenViewportSize", nil];
 }
 
 - (BOOL) fullscreenSizeAtMinimum
@@ -614,7 +616,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     if (self.fullscreenViewportFillsCanvas)
         return NO;
     
-    if (!sizeFitsWithinSize(self.minFullscreenViewportSize, self.maxFullscreenViewportSize))
+    if (self.minFullscreenViewportSize.width >= self.maxFullscreenViewportSize.width ||
+        self.minFullscreenViewportSize.height >= self.maxFullscreenViewportSize.height)
         return YES;
     
     return NO;

@@ -112,11 +112,11 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     //Trim extra whitespace from additional parameters.
     params = [params stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
     
-    //Determine the desired drive type from the -t parameter, if present.
     BXDriveType type = BXDriveAutodetect;
-    NSString *label;
+    NSString *label = nil;
     if (params.length)
     {
+        //Determine the desired drive type from the -t parameter, if present.
         NSString *typePattern = @"-t\\s(cdrom|iso|floppy|hdd|dir)";
         NSString *typeParam = [params componentsMatchedByRegex: typePattern
                                                        options: RKLCaseless
@@ -134,6 +134,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
             else if ([typeParam isEqualToString: @"hdd"] || [typeParam isEqualToString: @"dir"])
                 type = BXDriveHardDisk;
         }
+        
+        //Determine any custom label for the game from the -label parameter, if present.
         
         //Matches -label VOLUMELABEL, -label "VOLUMELABEL", -label 'VOLUMELABEL',
         //though it's possible that DOSBox itself doesn't accept the latter two forms

@@ -235,16 +235,15 @@
 
 - (void) _syncControllerProfiles
 {
-    id <BXEmulatedJoystick> joystick = self.emulatedJoystick;
-    
     [self.controllerProfiles removeAllObjects];
-    if (joystick)
+    if (self.emulatedJoystick)
     {
         NSArray *controllers = [[NSApp delegate] joystickController].joystickDevices;
         for (DDHidJoystick *controller in controllers)
         {
             BXHIDControllerProfile *profile = [BXHIDControllerProfile profileForHIDDevice: controller
-                                                                           emulatedJoystick: joystick];
+                                                                         emulatedJoystick: self.emulatedJoystick
+                                                                                 keyboard: self.emulatedKeyboard];
             
 #ifdef BOXER_DEBUG
             NSLog(@"%@", profile);

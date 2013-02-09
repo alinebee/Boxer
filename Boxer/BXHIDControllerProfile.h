@@ -21,6 +21,7 @@
 
 @class DDHidJoystick;
 @class DDHidElement;
+@class BXEmulatedKeyboard;
 @protocol BXEmulatedJoystick;
 @protocol BXHIDInputBinding;
 
@@ -38,6 +39,7 @@ typedef enum {
 {
 	DDHidJoystick *_device;
 	id <BXEmulatedJoystick> _emulatedJoystick;
+	BXEmulatedKeyboard *_emulatedKeyboard;
 	NSMutableDictionary *_bindings;
     BXControllerStyle _controllerStyle;
 }
@@ -45,8 +47,9 @@ typedef enum {
 //The HID controller whose inputs we are converting from.
 @property (retain, nonatomic) DDHidJoystick *device;
 
-//The emulated joystick whose inputs we are converting to.
+//The emulated joystick and keyboard whose inputs we are converting to.
 @property (retain, nonatomic) id <BXEmulatedJoystick> emulatedJoystick;
+@property (retain, nonatomic) BXEmulatedKeyboard *emulatedKeyboard;
 
 //A dictionary of DDHidUsage -> BXHIDInputBinding mappings.
 @property (readonly, retain, nonatomic) NSMutableDictionary *bindings;
@@ -57,10 +60,12 @@ typedef enum {
 //Returns a BXControllerProfile that maps the specified HID controller
 //to the specified emulated joystick.
 + (id) profileForHIDDevice: (DDHidJoystick *)device
-          emulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick;
+          emulatedJoystick: (id <BXEmulatedJoystick>)joystick
+                  keyboard: (BXEmulatedKeyboard *)keyboard;
 
 - (id) initWithHIDDevice: (DDHidJoystick *)device
-        emulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick;
+        emulatedJoystick: (id <BXEmulatedJoystick>)joystick
+                keyboard: (BXEmulatedKeyboard *)keyboard;
 
 //Set/get the specified input binding for the specified element usage
 - (id <BXHIDInputBinding>) bindingForElement: (DDHidElement *)element;

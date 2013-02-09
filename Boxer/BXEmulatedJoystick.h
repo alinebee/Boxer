@@ -102,9 +102,8 @@ enum {
 //Used for filtering out unsupported joysticks when running games that are known to have problems with them.
 + (BOOL) requiresFullJoystickSupport;
 
-//The number of buttons the joystick responds to.
-//TODO: make this a class property?
-@property (readonly, nonatomic) NSUInteger numButtons;
+//The number of buttons that joysticks of this type respond to.
++ (NSUInteger) numButtons;
 
 //Called by BXEmulator when the device is plugged/unplugged.
 - (void) didConnect;

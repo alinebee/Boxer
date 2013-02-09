@@ -21,7 +21,7 @@
 #define BXDefaultAdditiveAxisInputRate 30.0 //30 frames per second
 
 
-@interface BXBaseHIDInputBinding ()
+@interface BXBaseEmulatedJoystickInputBinding ()
 
 //Convert DDHidElement integer axis value into a floating-point range from -1.0 to 1.0.
 + (float) _normalizedAxisValue: (NSInteger)axisValue;
@@ -32,7 +32,12 @@
 @end
 
 
-@implementation BXBaseHIDInputBinding
+@implementation BXBaseEmulatedJoystickInputBinding
+
++ (BOOL) supportsTarget: (id)target
+{
+    return [target conformsToProtocol: @protocol(BXEmulatedJoystick)];
+}
 
 + (id) binding
 {
@@ -249,7 +254,7 @@
         float currentValue = [[target valueForKey: self.axis] floatValue];
         float newValue = currentValue + increment;
         
-        //Apply a deadzone to the incremeneted value to snap very low values to 0.
+        //Apply a deadzone to the incremented value to snap very low values to 0.
         //This makes it easier to center the input.
         if ((ABS(newValue) - self.emulatedDeadzone) < 0) newValue = 0;
         

@@ -20,12 +20,15 @@
 
 @protocol BXHIDInputBinding <NSObject, NSCoding>
 
+//Whether this binding can talk to the specified target.
++ (BOOL) supportsTarget: (id)target;
+
 //Return an input binding of the appropriate type initialized with default values.
 + (id) binding;
 
 //Translate the specified event and perform the appropriate action on the destination joystick.
 - (void) processEvent: (BXHIDEvent *)event
-			forTarget: (id <BXEmulatedJoystick>)target;
+			forTarget: (id)target;
 
 @end
 
@@ -34,7 +37,7 @@
 //It has a delegate to which it sends notification messages whenever it posts input.
 
 @protocol BXPeriodicInputBindingDelegate;
-@protocol BXPeriodicInputBinding <BXHIDInputBinding>
+@protocol BXPeriodicInputBinding <NSObject>
 
 @property (assign, nonatomic) id <BXPeriodicInputBindingDelegate> delegate;
 
@@ -44,7 +47,7 @@
 
 //Posted to the delegate whenever the specified binding sends its input.
 //(It is up to the delegate to interrogate the binding as to what that input was.)
-- (void) binding: (id <BXPeriodicInputBinding>) binding didSendInputToTarget: (id <BXEmulatedJoystick>)target;
+- (void) binding: (id <BXPeriodicInputBinding>) binding didSendInputToTarget: (id)target;
 
 @end
 
@@ -52,15 +55,18 @@
 #pragma mark -
 #pragma mark Concrete binding types
 
-//The base implementation of the BXHIDInputBinding class,
-//containing common logic used by all bindings.
-//Should not be used directly.
-@interface BXBaseHIDInputBinding: NSObject <BXHIDInputBinding>
+//The base implementation of the BXHIDInputBinding protocol for talking to emulated joysticks.
+//Contains common logic used by all joystick-related bindings. Should not be used directly.
+@interface BXBaseEmulatedJoystickInputBinding: NSObject <BXHIDInputBinding>
+@end
+
+
+@interface BXBaseEmulatedKeyboardInputBinding: NSObject <BXHIDInputBinding>
 @end
 
 
 //Translates an axis on an HID controller to an emulated joystick axis.
-@interface BXAxisToAxis: BXBaseHIDInputBinding
+@interface BXAxisToAxis: BXBaseEmulatedJoystickInputBinding
 {
 	NSString *_axis;
 	BOOL _unidirectional;
@@ -110,7 +116,7 @@
 
 
 //Translates a button on an HID controller to an emulated joystick button.
-@interface BXButtonToButton: BXBaseHIDInputBinding
+@interface BXButtonToButton: BXBaseEmulatedJoystickInputBinding
 {
 	BXEmulatedJoystickButton _button;
 }
@@ -127,7 +133,7 @@
 
 //Translates a button on an HID controller to an emulated joystick axis,
 //with specific axis values for the pressed/released state of the button.
-@interface BXButtonToAxis: BXBaseHIDInputBinding
+@interface BXButtonToAxis: BXBaseEmulatedJoystickInputBinding
 {
 	NSString *_axis;
 	float _pressedValue;
@@ -152,7 +158,7 @@
 
 //Translates an axis on an HID controller to an emulated joystick button,
 //with a specific threshold over which the button is considered pressed.
-@interface BXAxisToButton: BXBaseHIDInputBinding
+@interface BXAxisToButton: BXBaseEmulatedJoystickInputBinding
 {
 	float _threshold;
 	BOOL _unidirectional;
@@ -183,7 +189,7 @@
 
 
 //Translates a POV switch or D-pad on an HID controller to an emulated POV switch.
-@interface BXPOVToPOV: BXBaseHIDInputBinding
+@interface BXPOVToPOV: BXBaseEmulatedJoystickInputBinding
 {
 	NSUInteger _POVNumber;
 }
@@ -195,7 +201,7 @@
 
 
 //Translates a button to a single cardinal POV direction
-@interface BXButtonToPOV: BXBaseHIDInputBinding
+@interface BXButtonToPOV: BXBaseEmulatedJoystickInputBinding
 {
 	NSUInteger _POVNumber;
     BXEmulatedPOVDirection _direction;
@@ -214,7 +220,7 @@
 
 //Translates a POV switch or D-pad on an HID controller to a pair of X and Y axes
 //on the emulated joystick, such that WE will set the X axis and NS will set the Y axis.
-@interface BXPOVToAxes: BXBaseHIDInputBinding
+@interface BXPOVToAxes: BXBaseEmulatedJoystickInputBinding
 {
 	NSString *_xAxis;
 	NSString *_yAxis;
@@ -240,7 +246,7 @@
 //input is positive or negative. The binding for the current polarity will be
 //sent the full axis value, while the opposite binding will be sent a value of
 //0.0.
-@interface BXAxisToBindings: BXBaseHIDInputBinding
+@interface BXAxisToBindings: BXBaseEmulatedJoystickInputBinding
 {
 	id <BXHIDInputBinding> _positiveBinding;
 	id <BXHIDInputBinding> _negativeBinding;

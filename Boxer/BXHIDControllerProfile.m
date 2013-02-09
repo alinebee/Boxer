@@ -14,6 +14,7 @@
 
 @synthesize device = _device;
 @synthesize emulatedJoystick = _emulatedJoystick;
+@synthesize emulatedKeyboard = _emulatedKeyboard;
 @synthesize bindings = _bindings;
 @synthesize controllerStyle = _controllerStyle;
 
@@ -85,12 +86,14 @@ static NSMutableArray *_profileClasses = nil;
 #pragma mark Initialization and deallocation
 
 + (id) profileForHIDDevice: (DDHidJoystick *)device
-          emulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick
+          emulatedJoystick: (id <BXEmulatedJoystick>)joystick
+                  keyboard: (BXEmulatedKeyboard *)keyboard
 {
 	Class profileClass = [self profileClassForDevice: device];
 	
 	return [[[profileClass alloc] initWithHIDDevice: device
-                                   emulatedJoystick: emulatedJoystick] autorelease];
+                                   emulatedJoystick: joystick
+                                           keyboard: keyboard] autorelease];
 }
 
 
@@ -106,13 +109,15 @@ static NSMutableArray *_profileClasses = nil;
 }
 
 - (id) initWithHIDDevice: (DDHidJoystick *)device
-        emulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick 
+        emulatedJoystick: (id <BXEmulatedJoystick>)joystick
+                keyboard: (BXEmulatedKeyboard *)keyboard
 {
     self = [self init];
 	if (self)
 	{
         self.device = device;
-        self.emulatedJoystick = emulatedJoystick;
+        self.emulatedJoystick = joystick;
+        self.emulatedKeyboard = keyboard;
 	}
 	return self;
 }
@@ -367,7 +372,7 @@ static NSMutableArray *_profileClasses = nil;
     //thumbstick-clicks, and we don't want to bind those automatically.
 	NSUInteger maxButtons = 8;
 	
-	NSUInteger numEmulatedButtons = self.emulatedJoystick.numButtons;
+	NSUInteger numEmulatedButtons = [self.emulatedJoystick.class numButtons];
 	NSUInteger realButton = element.usage.usageId;
     
 	//Wrap controller buttons so that they'll fit within the number of emulated buttons

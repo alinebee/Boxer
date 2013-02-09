@@ -64,7 +64,7 @@ enum {
 {
     if (element.usage.usageId == BXCHFlightstickProUSBThrottleAxis && [self.emulatedJoystick supportsAxis: BXAxisThrottle])
     {
-        return [BXAxisToAxis bindingWithAxis: BXAxisThrottle];
+        return [self bindingFromAxisElement: element toAxis: BXAxisThrottle];
     }
     else
     {

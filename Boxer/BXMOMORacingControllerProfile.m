@@ -122,12 +122,11 @@ enum {
             break;
     }
     
-	BXButtonToButton *binding = nil;
+	BXHIDButtonBinding *binding = nil;
     NSUInteger numEmulatedButtons = [self.emulatedJoystick.class numButtons];
     if (emulatedButton != BXEmulatedJoystickUnknownButton && emulatedButton <= numEmulatedButtons)
     {
-        binding = [BXButtonToButton binding];
-        binding.button = emulatedButton;
+        binding = [self bindingFromButtonElement: element toButton: emulatedButton];
     }
 	
 	return binding;
@@ -138,19 +137,20 @@ enum {
 {
     for (DDHidElement *element in elements)
     {
-        id <BXHIDInputBinding> binding;
-        switch(element.usage.usageId)
+        BXHIDAxisBinding *binding;
+        switch (element.usage.usageId)
         {
             case BXMOMORacingWheelAxis:
-                binding = [BXAxisToAxis bindingWithAxis: BXAxisWheel];
-                ((BXAxisToAxis *)binding).deadzone = BXMOMORacingWheelDeadzone;
+                binding = [self bindingFromAxisElement: element toAxis: BXAxisWheel];
+                binding.deadzone = BXMOMORacingWheelDeadzone;
                 break;
                 
             case BXMOMORacingPedalAxis:
-                binding = [BXAxisToBindings bindingWithPositiveAxis: BXAxisBrake
-                                                       negativeAxis: BXAxisAccelerator];
+                binding = [self bindingFromAxisElement: element
+                                        toPositiveAxis: BXAxisBrake
+                                          negativeAxis: BXAxisAccelerator];
                 
-                ((BXAxisToBindings *)binding).deadzone = BXMOMORacingPedalDeadzone;
+                binding.deadzone = BXMOMORacingPedalDeadzone;
                 break;
                 
             default:

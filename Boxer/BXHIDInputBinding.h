@@ -10,15 +10,92 @@
 
 
 #import <Cocoa/Cocoa.h>
-#import "BXEmulatedJoystick.h"
+#import "BXHIDEvent.h"
+#import "BXOutputBinding.h"
 
-@class BXHIDEvent;
-@class DDHidUsage;
-@class BXEmulatedKeyboard;
+#pragma mark - Protocols
 
-#pragma mark -
-#pragma mark Protocols
+@protocol BXHIDInputBinding <NSObject>
 
+//Returns an autoreleased instance of the class.
++ (id) binding;
+
+//Handles the specified HID event and passes it on to any output bindings.
+- (void) processEvent: (BXHIDEvent *)event;
+
+@end
+
+
+@interface BXHIDButtonBinding : NSObject <BXHIDInputBinding>
+{
+    id <BXOutputBinding> _outputBinding;
+}
+
+//This binding will be sent 1.0 when the joystick button is pressed, and 0.0 when released.
+@property (retain, nonatomic) id <BXOutputBinding> outputBinding;
+
++ (id) bindingWithOutputBinding: (id <BXOutputBinding>)outputBinding;
+
+@end
+
+
+@interface BXHIDAxisBinding : NSObject <BXHIDInputBinding>
+{
+    id <BXOutputBinding> _positiveBinding;
+    id <BXOutputBinding> _negativeBinding;
+    
+    BOOL _inverted;
+    float _deadzone;
+    BOOL _unidirectional;
+}
+
+//This binding will be sent the absolute axis value when the axis is positive,
+//and 0.0 when the axis is centered or negative.
+@property (retain, nonatomic) id <BXOutputBinding> positiveBinding;
+
+//This binding will be sent the absolute axis value when the axis is negative,
+//and 0.0 when the axis is centered or positive.
+@property (retain, nonatomic) id <BXOutputBinding> negativeBinding;
+
+//If YES, axis input will be flipped (meaning the negative binding will be triggered
+//when the axis is positive, and vice-versa).
+@property (assign, nonatomic, getter=isInverted) BOOL inverted;
+
+//The deadzone below which all values will be snapped to 0.
+@property (assign, nonatomic) float deadzone;
+
+//Whether this is a trigger-style axis with only one direction of travel.
+//If YES, the full -1.0->1.0 input range will be mapped to 0.0->1.0 before inverting.
+@property (assign, nonatomic, getter=isUnidirectional) BOOL unidirectional;
+
++ (id) bindingWithPositiveBinding: (id <BXOutputBinding>)positiveBinding
+                  negativeBinding: (id <BXOutputBinding>)negativeBinding;
+
+@end
+
+
+@interface BXHIDPOVSwitchBinding : NSObject <BXHIDInputBinding>
+{
+    NSMutableDictionary *_outputBindings;
+    BXHIDPOVSwitchDirection _previousDirection;
+}
+
+//Creates a new binding from interleaved pairs of bindings and directions, followed by a nil sentinel.
++ (id) bindingWithOutputBindingsAndDirections: (id <BXOutputBinding>)binding, ... NS_REQUIRES_NIL_TERMINATION;
+
+//Set/get the binding for a particular cardinal POV direction.
+//This binding will be sent 1.0 when the POV is pressed in that direction,
+//and 0.0 when the POV is released or switches to another direction.
+//If a direction is not explicitly bound, then the bindings for the
+//two directions on either side will be triggered simultaneously instead.
+- (id <BXOutputBinding>) bindingForDirection: (BXHIDPOVSwitchDirection)direction;
+- (void) setBinding: (id <BXOutputBinding>)binding forDirection: (BXHIDPOVSwitchDirection) direction;
+
+@end
+
+
+
+/*
 @protocol BXHIDInputBinding <NSObject, NSCoding>
 
 //Returns whether bindings of this type can talk to the specified target.
@@ -55,25 +132,15 @@
 @end
 
 
-#pragma mark -
-#pragma mark Concrete binding types
+#pragma mark - Emulated joystick bindings
 
 //The base implementation of the BXHIDInputBinding protocol for talking to emulated joysticks.
 //Contains common logic used by all joystick-related bindings. Should not be used directly.
-@interface BXBaseEmulatedJoystickInputBinding: NSObject <BXHIDInputBinding>
+@interface BXBaseEmulatedJoystickInputBinding : NSObject <BXHIDInputBinding>
 {
     id <BXEmulatedJoystick> _target;
 }
 @property (retain, nonatomic) id <BXEmulatedJoystick> target;
-
-@end
-
-
-@interface BXBaseEmulatedKeyboardInputBinding: NSObject <BXHIDInputBinding>
-{
-    BXEmulatedKeyboard *_target;
-}
-@property (retain, nonatomic) BXEmulatedKeyboard *target;
 
 @end
 
@@ -263,8 +330,8 @@
 {
 	id <BXHIDInputBinding> _positiveBinding;
 	id <BXHIDInputBinding> _negativeBinding;
-	float _previousValue;
     float _deadzone;
+    float _previousValue;
 }
 
 //Convenience method to return a binding preconfigured to split axis input
@@ -287,3 +354,75 @@
 @property (assign, nonatomic) float deadzone;
 
 @end
+
+
+//Triggers a separate binding for each cardinal direction on the POV.
+//This will synthesize BXHIDButtonDown and BXHIDButtonUp events to send
+//to the individual bindings (which are thus expected to respond to button events).
+//Diagonals can have their own individual bindings; if no explicit binding
+//is given for a diagonal, then the adjacent horizontal and vertical bindings
+//will be triggered instead.
+@interface BXPOVToBindings : BXBaseEmulatedJoystickInputBinding
+{
+    NSMutableDictionary *_bindings;
+    BXHIDPOVSwitchDirection _previousValue;
+}
+
+//Creates a new binding from interleaved pairs of bindings and directions, followed by a nil sentinel.
++ (id) bindingWithBindingsAndDirections: (id <BXHIDInputBinding>)binding, ... NS_REQUIRES_NIL_TERMINATION;
+
+- (id <BXHIDInputBinding>) bindingForDirection: (BXHIDPOVSwitchDirection)direction;
+- (void) setBinding: (id <BXHIDInputBinding>)binding forDirection: (BXHIDPOVSwitchDirection) direction;
+
+@end
+
+
+#pragma mark - Emulated keyboard bindings
+
+//The base implementation of the BXHIDInputBinding protocol for talking to emulated keyboards.
+//Contains common logic used by all keyboard-related bindings. Should not be used directly.
+@interface BXBaseEmulatedKeyboardInputBinding : NSObject <BXHIDInputBinding>
+{
+    BXEmulatedKeyboard *_target;
+    BXDOSKeyCode _keyCode;
+}
+@property (retain, nonatomic) BXEmulatedKeyboard *target;
+
+//The keycode that will be triggered by this binding.
+@property (assign, nonatomic) BXDOSKeyCode keyCode;
+
+//Convenience method to return a binding preconfigured with the specified key code.
++ (id) bindingWithKeyCode: (BXDOSKeyCode)keyCode;
+- (id) initWithKeyCode: (BXDOSKeyCode)keyCode;
+
+@end
+
+
+//Translates an HID controller button into an emulated keypress.
+@interface BXButtonToKey : BXBaseEmulatedKeyboardInputBinding
+@end
+
+//Translates HID controller axis input into an emulated keypress,
+//which will be triggered when the axis is over a certain threshold.
+@interface BXAxisToKey: BXBaseEmulatedKeyboardInputBinding
+{
+	float _threshold;
+	BOOL _unidirectional;
+	BOOL _previousValue;
+}
+
+//The normalized axis value over which the button will be treated as pressed.
+//Ignores polarity to treat positive and negative axis values the same,
+//measuring only distance from 0.
+//Defaults to 0.25f.
+@property (assign, nonatomic) float threshold;
+
+//Whether the axis input represents a unidirectional trigger. Defaults to NO.
+//If YES, then the axis input will be normalized to 0->1.0 before considering
+//the threshold.
+//(Note that this works slightly differently to unidirectional on BXAxisToAxis.)
+@property (assign, nonatomic, getter=isUnidirectional) BOOL unidirectional;
+
+@end
+
+*/

@@ -484,6 +484,8 @@
 		9F61FC8510DE3F7F00F3896C /* BXGameProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */; };
 		9F6311090F70F54300AB1155 /* BXHelpMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6311080F70F54300AB1155 /* BXHelpMenuController.m */; };
 		9F631D8216947B2C00AD06C4 /* DocumentationBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F631D8016947B2C00AD06C4 /* DocumentationBrowser.xib */; };
+		9F6463F716C67415008B65BF /* BXOutputBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6463F616C67415008B65BF /* BXOutputBinding.m */; };
+		9F6463F816C67415008B65BF /* BXOutputBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6463F616C67415008B65BF /* BXOutputBinding.m */; };
 		9F676BF01235451B00924B8C /* Display.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F676BEF1235451B00924B8C /* Display.png */; };
 		9F67855C1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F67855A1649A6BC007FE89A /* BXPrintStatusPanelController.m */; };
 		9F67855D1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F67855A1649A6BC007FE89A /* BXPrintStatusPanelController.m */; };
@@ -1190,6 +1192,8 @@
 		9F631D7A16947AE900AD06C4 /* BXDocumentationBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDocumentationBrowser.h; sourceTree = "<group>"; };
 		9F631D7B16947AE900AD06C4 /* BXDocumentationBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDocumentationBrowser.m; sourceTree = "<group>"; };
 		9F631D8116947B2C00AD06C4 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/DocumentationBrowser.xib; sourceTree = "<group>"; };
+		9F6463F516C67414008B65BF /* BXOutputBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXOutputBinding.h; path = Input/BXOutputBinding.h; sourceTree = "<group>"; };
+		9F6463F616C67415008B65BF /* BXOutputBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXOutputBinding.m; path = Input/BXOutputBinding.m; sourceTree = "<group>"; };
 		9F675DE30F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXDOSFileSystem.h"; sourceTree = "<group>"; };
 		9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXDOSFileSystem.mm"; sourceTree = "<group>"; };
 		9F676BEF1235451B00924B8C /* Display.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Display.png; sourceTree = "<group>"; };
@@ -3349,6 +3353,8 @@
 				9F06C6E013993FB100B19DF1 /* BXHIDInputBinding.m */,
 				9FF1562E14506F5C00545317 /* BXKeyboardEventTap.h */,
 				9FF1562F14506F5C00545317 /* BXKeyboardEventTap.m */,
+				9F6463F516C67414008B65BF /* BXOutputBinding.h */,
+				9F6463F616C67415008B65BF /* BXOutputBinding.m */,
 			);
 			name = Input;
 			sourceTree = "<group>";
@@ -4259,6 +4265,7 @@
 				9F7721E912B38C4400072AE8 /* shell_batch.cpp in Sources */,
 				9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */,
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
+				9F6463F716C67415008B65BF /* BXOutputBinding.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4564,6 +4571,7 @@
 				9F67855D1649A6BC007FE89A /* BXPrintStatusPanelController.m in Sources */,
 				9F201E391657DB7F0086F1BB /* BXUserNotificationDispatcher.m in Sources */,
 				9F61B94E16625DF700B41546 /* BXInspectorController.m in Sources */,
+				9F6463F816C67415008B65BF /* BXOutputBinding.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

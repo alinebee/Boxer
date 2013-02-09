@@ -118,6 +118,8 @@ static NSMutableArray *_profileClasses = nil;
         self.device = device;
         self.emulatedJoystick = joystick;
         self.emulatedKeyboard = keyboard;
+        
+        [self generateBindings];
 	}
 	return self;
 }
@@ -135,64 +137,12 @@ static NSMutableArray *_profileClasses = nil;
 #pragma mark -
 #pragma mark Property accessors
 
-- (void) setDevice: (DDHidJoystick *)device
-{
-	if (![device isEqual: _device])
-	{
-		[_device release];
-		_device = [device retain];
-		
-		[self generateBindings];
-	}
-}
-
-- (void) setEmulatedJoystick: (id <BXEmulatedJoystick>)joystick
-{
-	if (![joystick isEqual: _emulatedJoystick])
-	{
-		[_emulatedJoystick release];
-		_emulatedJoystick = [joystick retain];
-		
-		[self generateBindings];
-	}
-}
-
-- (void) setEmulatedKeyboard: (BXEmulatedKeyboard *)keyboard
-{
-    if (keyboard != self.emulatedKeyboard)
-    {
-        [_emulatedKeyboard release];
-        _emulatedKeyboard = [keyboard retain];
-        
-        if (self.bindings.count)
-        {
-            for (id <BXHIDInputBinding> binding in self.bindings.objectEnumerator)
-                [self syncTargetForBinding: binding];
-        }
-        else
-        {
-            [self generateBindings];
-        }
-    }
-}
-
 - (void) setBinding: (id <BXHIDInputBinding>)binding
 		 forElement: (DDHidElement *)element
 {
 	DDHidUsage *key = element.usage;
 	if (binding == nil) [self.bindings removeObjectForKey: key];
 	else [self.bindings setObject: binding forKey: key];
-    
-    //When adopting a binding, set its target to our emulated joystick or keyboard as appropriate.
-    [self syncTargetForBinding: binding];
-}
-
-- (void) syncTargetForBinding: (id <BXHIDInputBinding>)binding
-{
-    if ([binding.class supportsTarget: self.emulatedJoystick])
-        binding.target = self.emulatedJoystick;
-    else if ([binding.class supportsTarget: self.emulatedKeyboard])
-        binding.target = self.emulatedKeyboard;
 }
 
 - (id <BXHIDInputBinding>) bindingForElement: (DDHidElement *)element
@@ -263,7 +213,6 @@ static NSMutableArray *_profileClasses = nil;
         }
     }
 }
-
 
 - (void) bindAxisElementsForWheel: (NSArray *)elements
 {
@@ -350,25 +299,23 @@ static NSMutableArray *_profileClasses = nil;
             break;
     }
     
-    
-    BXAxisToAxis *wheelBinding = [BXAxisToAxis bindingWithAxis: BXAxisWheel];
+    BXHIDAxisBinding *wheelBinding = [self bindingFromAxisElement: wheel toAxis: BXAxisWheel];
     [self setBinding: wheelBinding forElement: wheel];
     
     //If the same input is used for both brake and accelerator, map them as a split axis binding.
     if (brake == accelerator)
     {
-        BXAxisToBindings *splitBinding = [BXAxisToBindings bindingWithPositiveAxis: BXAxisBrake
-                                                                      negativeAxis: BXAxisAccelerator];
+        BXHIDAxisBinding *splitBinding = [self bindingFromAxisElement: accelerator
+                                                       toPositiveAxis: BXAxisBrake
+                                                         negativeAxis: BXAxisAccelerator];
         
         [self setBinding: splitBinding forElement: accelerator];
     }
     //Otherwise map them to the individual axis elements as unidirectional inputs.
     else
     {
-        BXAxisToAxis *acceleratorBinding   = [BXAxisToAxis bindingWithAxis: BXAxisAccelerator];
-        BXAxisToAxis *brakeBinding         = [BXAxisToAxis bindingWithAxis: BXAxisBrake];
-        acceleratorBinding.unidirectional = YES;
-        brakeBinding.unidirectional = YES;
+        BXHIDAxisBinding *acceleratorBinding    = [self bindingFromTriggerElement: accelerator toAxis: BXAxisAccelerator];
+        BXHIDAxisBinding *brakeBinding          = [self bindingFromTriggerElement: brake toAxis: BXAxisBrake];
         
         [self setBinding: acceleratorBinding forElement: accelerator];
         [self setBinding: brakeBinding forElement: brake];
@@ -408,8 +355,9 @@ static NSMutableArray *_profileClasses = nil;
 	//Wrap controller buttons so that they'll fit within the number of emulated buttons
 	if (realButton <= maxButtons)
 	{
-		NSUInteger emulatedButton = ((realButton - 1) % numEmulatedButtons) + 1;
-        return [BXButtonToButton bindingWithButton: emulatedButton];
+		BXEmulatedJoystickButton emulatedButton = ((realButton - 1) % numEmulatedButtons) + 1;
+        
+        return [self bindingFromButtonElement: element toButton: emulatedButton];
 	}
 	else return nil;
 }
@@ -447,27 +395,28 @@ static NSMutableArray *_profileClasses = nil;
 			normalizedAxis = axis;
 	}
 
+    BXHIDAxisBinding *axisBinding = nil;
 	//Then, assign behaviour based on its normalized position
 	switch (normalizedAxis)
 	{
 		case kHIDUsage_GD_X:
 			if ([self.emulatedJoystick supportsAxis: BXAxisX])
-                return [BXAxisToAxis bindingWithAxis: BXAxisX];
+                axisBinding = [self bindingFromAxisElement: element toAxis: BXAxisX];
             
 			break;
 			
 		case kHIDUsage_GD_Y:
 			if ([self.emulatedJoystick supportsAxis: BXAxisY])
-                return [BXAxisToAxis bindingWithAxis: BXAxisY];
+                axisBinding = [self bindingFromAxisElement: element toAxis: BXAxisY];
             
 			break;
 			
 		case kHIDUsage_GD_Rx:
             if ([self.emulatedJoystick supportsAxis: BXAxisRudder])
-                return [BXAxisToAxis bindingWithAxis: BXAxisRudder];
+                axisBinding = [self bindingFromAxisElement: element toAxis: BXAxisRudder];
             
             else if ([self.emulatedJoystick supportsAxis: BXAxisX2])
-                return [BXAxisToAxis bindingWithAxis: BXAxisX2];
+                axisBinding = [self bindingFromAxisElement: element toAxis: BXAxisX2];
             
         	break;
 			
@@ -479,7 +428,7 @@ static NSMutableArray *_profileClasses = nil;
                 //can be mapped directly to the emulated throttle.
                 if (self.controllerStyle == BXControllerStyleFlightstick)
                 {
-                    return [BXAxisToAxis bindingWithAxis: BXAxisThrottle];
+                    axisBinding = [self bindingFromAxisElement: element toAxis: BXAxisThrottle];
                 }
                 //Otherwise, use an additive axis instead of an absolute one.
                 //This works best for axes that spring back to center:
@@ -488,18 +437,16 @@ static NSMutableArray *_profileClasses = nil;
                 //while returning the device axis to center will stop the change.
                 else
                 {
-                    BXAxisToAxisAdditive *binding = [BXAxisToAxisAdditive bindingWithAxis: BXAxisThrottle];
-                    binding.delegate = self;
-                    return binding;
+                    axisBinding = [self bindingFromAxisElement: element toAdditiveThrottleAxis: BXAxisThrottle];
                 }
             }
             else if ([self.emulatedJoystick supportsAxis: BXAxisY2])
-                return [BXAxisToAxis bindingWithAxis: BXAxisY2];
+                axisBinding = [self bindingFromAxisElement: element toAxis: BXAxisY2];
             
 			break;
 	}
     
-    return nil;
+    return axisBinding;
 }
 
 - (id <BXHIDInputBinding>) generatedBindingForPOVElement: (DDHidElement *)element
@@ -509,23 +456,24 @@ static NSMutableArray *_profileClasses = nil;
     //Map POV directly to POV on emulated joystick, if available
 	if ([self.emulatedJoystick conformsToProtocol: @protocol(BXEmulatedFlightstick)])
 	{
-		binding = [BXPOVToPOV binding];
+		binding = [self bindingFromPOVElement: element toPOV: 0];
 	}
     //TWEAK: Don't map hat-switches on flightstick-style controllers to act as X/Y/wheel axes.
     //This would be inappropriate for an actual hat-switch; the behaviour is only intended for D-pads.
 	else if (self.controllerStyle != BXControllerStyleFlightstick)
 	{
-        //Otherwise, map the POV to the X and Y axes if available
-		if ([self.emulatedJoystick respondsToSelector: @selector(xAxis)] &&
-            [self.emulatedJoystick respondsToSelector: @selector(yAxis)])
+        
+        //Otherwise, map the POV's left and right directions to the wheel axis if available
+		if ([self.emulatedJoystick supportsAxis: BXAxisWheel])
 		{
-			binding = [BXPOVToAxes bindingWithXAxis: BXAxisX YAxis: BXAxisY];
+			binding = [self bindingFromPOVElement: element toHorizontalAxis: BXAxisWheel verticalAxis: nil];
 		}
         
-        //Otherwise, map the POV's left and right directions to the wheel axis if available 
-		if ([self.emulatedJoystick respondsToSelector: @selector(wheelAxis)])
+        //Otherwise, map the POV to the X and Y axes if available
+		else if ([self.emulatedJoystick supportsAxis: BXAxisX] &&
+                 [self.emulatedJoystick supportsAxis: BXAxisY])
 		{
-			binding = [BXPOVToAxes bindingWithXAxis: BXAxisWheel YAxis: nil];
+            binding = [self bindingFromPOVElement: element toHorizontalAxis: BXAxisX verticalAxis: BXAxisY];
 		}
 	}
     
@@ -533,8 +481,201 @@ static NSMutableArray *_profileClasses = nil;
 }
 
 
-#pragma mark -
-#pragma mark Event handling
+#pragma mark - Binding generation helpers
+
+- (id <BXHIDInputBinding>) bindingFromAxisElement: (DDHidElement *)element
+                                           toAxis: (NSString *)axisName
+{
+    return [self bindingFromAxisElement: element toPositiveAxis: axisName negativeAxis: axisName];
+}
+
+- (id <BXHIDInputBinding>) bindingFromAxisElement: (DDHidElement *)element
+                                   toPositiveAxis: (NSString *)positiveAxisName
+                                     negativeAxis: (NSString *)negativeAxisName
+{
+    id positiveBinding = [BXEmulatedJoystickAxisBinding bindingWithJoystick: self.emulatedJoystick
+                                                                       axis: positiveAxisName
+                                                                   polarity: kBXAxisPositive];
+    
+    id negativeBinding = [BXEmulatedJoystickAxisBinding bindingWithJoystick: self.emulatedJoystick
+                                                                       axis: negativeAxisName
+                                                                   polarity: kBXAxisNegative];
+    
+    return [BXHIDAxisBinding bindingWithPositiveBinding: positiveBinding negativeBinding: negativeBinding];
+}
+
+- (id <BXHIDInputBinding>) bindingFromButtonElement: (DDHidElement *)element
+                                           toButton: (BXEmulatedJoystickButton)button
+{
+    id outputBinding = [BXEmulatedJoystickButtonBinding bindingWithJoystick: self.emulatedJoystick button: button];
+    return [BXHIDButtonBinding bindingWithOutputBinding: outputBinding];
+}
+
+- (id <BXHIDInputBinding>) bindingFromButtonElement: (DDHidElement *)element
+                                             toAxis: (NSString *)axisName
+                                           polarity: (BXAxisPolarity)polarity
+{
+    id outputBinding = [BXEmulatedJoystickAxisBinding bindingWithJoystick: self.emulatedJoystick axis: axisName polarity: polarity];
+    return [BXHIDButtonBinding bindingWithOutputBinding: outputBinding];
+}
+
+- (id <BXHIDInputBinding>) bindingFromButtonElement: (DDHidElement *)element
+                                              toPOV: (NSUInteger)POVNumber
+                                          direction: (BXEmulatedPOVDirection)direction
+{
+    id outputBinding = [BXEmulatedJoystickPOVDirectionBinding bindingWithJoystick: self.emulatedJoystick POV: POVNumber direction: direction];
+    return [BXHIDButtonBinding bindingWithOutputBinding: outputBinding];
+}
+
+- (id <BXHIDInputBinding>) bindingFromTriggerElement: (DDHidElement *)element
+                                              toAxis: (NSString *)axisName
+{
+    id positiveBinding = [BXEmulatedJoystickAxisBinding bindingWithJoystick: self.emulatedJoystick
+                                                                       axis: axisName
+                                                                   polarity: kBXAxisPositive];
+    
+    BXHIDAxisBinding *binding = [BXHIDAxisBinding bindingWithPositiveBinding: positiveBinding negativeBinding: nil];
+    binding.unidirectional = YES;
+    binding.deadzone = BXHIDControllerProfileTriggerAxisDeadzone;
+    return binding;
+}
+
+- (id <BXHIDInputBinding>) bindingFromTriggerElement: (DDHidElement *)element
+                                            toButton: (BXEmulatedJoystickButton)button
+{
+    id positiveBinding = [BXEmulatedJoystickButtonBinding bindingWithJoystick: self.emulatedJoystick
+                                                                       button: button];
+    
+    BXHIDAxisBinding *binding = [BXHIDAxisBinding bindingWithPositiveBinding: positiveBinding negativeBinding: nil];
+    binding.unidirectional = YES;
+    binding.deadzone = BXHIDControllerProfileTriggerAxisDeadzone;
+    return binding;
+}
+
+- (id <BXHIDInputBinding>) bindingFromAxisElement: (DDHidElement *)element
+                           toAdditiveThrottleAxis: (NSString *)axisName
+{
+    BXEmulatedJoystickAxisAdditiveBinding *positiveBinding = [BXEmulatedJoystickAxisAdditiveBinding bindingWithJoystick: self.emulatedJoystick
+                                                                                                                   axis: axisName
+                                                                                                                   rate: BXHIDControllerProfileAdditiveThrottleRate];
+    
+    BXEmulatedJoystickAxisAdditiveBinding *negativeBinding = [BXEmulatedJoystickAxisAdditiveBinding bindingWithJoystick: self.emulatedJoystick
+                                                                                                                   axis: axisName
+                                                                                                                   rate: -BXHIDControllerProfileAdditiveThrottleRate];
+    
+    positiveBinding.delegate = self;
+    positiveBinding.outputThreshold = BXHIDControllerProfileAdditiveThrottleSnapThreshold;
+    negativeBinding.delegate = self;
+    negativeBinding.outputThreshold = BXHIDControllerProfileAdditiveThrottleSnapThreshold;
+    
+    return [BXHIDAxisBinding bindingWithPositiveBinding: positiveBinding negativeBinding: negativeBinding];
+}
+
+- (id <BXHIDInputBinding>) bindingFromPOVElement: (DDHidElement *)element toPOV: (NSUInteger)POVNumber
+{
+    BXHIDPOVSwitchBinding *binding = [BXHIDPOVSwitchBinding binding];
+    
+    BXHIDPOVSwitchDirection from[8] = {
+        BXHIDPOVNorth,
+        BXHIDPOVNorthEast,
+        BXHIDPOVEast,
+        BXHIDPOVSouthEast,
+        BXHIDPOVSouth,
+        BXHIDPOVSouthWest,
+        BXHIDPOVWest,
+        BXHIDPOVNorthWest,
+    };
+    
+    BXEmulatedPOVDirection to[8] = {
+        BXEmulatedPOVNorth,
+        BXEmulatedPOVNorthEast,
+        BXEmulatedPOVEast,
+        BXEmulatedPOVSouthEast,
+        BXEmulatedPOVSouth,
+        BXEmulatedPOVSouthWest,
+        BXEmulatedPOVWest,
+        BXEmulatedPOVNorthWest,
+    };
+    
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    for (NSUInteger i=0; i<8; i++)
+    {
+        id outputBinding = [BXEmulatedJoystickPOVDirectionBinding bindingWithJoystick: self.emulatedJoystick
+                                                                                  POV: POVNumber
+                                                                            direction: to[i]];
+        
+        [binding setBinding: outputBinding forDirection: from[i]];
+    }
+    [pool drain];
+    
+    return binding;
+}
+
+- (id <BXHIDInputBinding>) bindingFromPOVElement: (DDHidElement *)element
+                                toHorizontalAxis: (NSString *)horizAxis
+                                    verticalAxis: (NSString *)vertAxis
+{
+    BXHIDPOVSwitchBinding *binding = [BXHIDPOVSwitchBinding binding];
+    
+    if (horizAxis)
+    {
+        [binding setBinding: [BXEmulatedJoystickAxisBinding bindingWithJoystick: self.emulatedJoystick axis: horizAxis polarity: kBXAxisNegative]
+               forDirection: BXHIDPOVWest];
+        
+        [binding setBinding: [BXEmulatedJoystickAxisBinding bindingWithJoystick: self.emulatedJoystick axis: horizAxis polarity: kBXAxisPositive]
+               forDirection: BXHIDPOVEast];
+    }
+    
+    if (vertAxis)
+    {
+        [binding setBinding: [BXEmulatedJoystickAxisBinding bindingWithJoystick: self.emulatedJoystick axis: vertAxis polarity: kBXAxisNegative]
+               forDirection: BXHIDPOVNorth];
+        
+        [binding setBinding: [BXEmulatedJoystickAxisBinding bindingWithJoystick: self.emulatedJoystick axis: vertAxis polarity: kBXAxisPositive]
+               forDirection: BXHIDPOVSouth];
+    }
+    
+    return binding;
+}
+
+- (id <BXHIDInputBinding>) bindingFromButtonElement: (DDHidElement *)element toKeyCode: (BXDOSKeyCode)keyCode
+{
+    id outputBinding = [BXEmulatedKeyboardKeyBinding bindingWithKeyboard: self.emulatedKeyboard keyCode: keyCode];
+    
+    return [BXHIDButtonBinding bindingWithOutputBinding: outputBinding];
+}
+
+- (id <BXHIDInputBinding>) bindingFromTriggerElement: (DDHidElement *)element toKeyCode: (BXDOSKeyCode)keyCode
+{
+    id positiveBinding = [BXEmulatedKeyboardKeyBinding bindingWithKeyboard: self.emulatedKeyboard keyCode: keyCode];
+    
+    BXHIDAxisBinding *binding = [BXHIDAxisBinding bindingWithPositiveBinding: positiveBinding negativeBinding: nil];
+    binding.unidirectional = YES;
+    binding.deadzone = BXHIDControllerProfileTriggerAxisDeadzone;
+    return binding;
+}
+
+- (id <BXHIDInputBinding>) bindingFromButtonElement: (DDHidElement *)element
+                                           toTarget: (id)target
+                                             action: (SEL)action
+{
+    id positiveBinding = [BXTargetActionBinding bindingWithTarget: target pressedAction: action releasedAction: NULL];
+    return [BXHIDButtonBinding bindingWithOutputBinding: positiveBinding];
+}
+
+- (id <BXHIDInputBinding>) bindingFromTriggerElement: (DDHidElement *)element
+                                            toTarget: (id)target
+                                              action: (SEL)action
+{
+    id positiveBinding = [BXTargetActionBinding bindingWithTarget: target pressedAction: action releasedAction: NULL];
+    
+    BXHIDAxisBinding *binding = [BXHIDAxisBinding bindingWithPositiveBinding: positiveBinding negativeBinding: nil];
+    binding.unidirectional = YES;
+    binding.deadzone = BXHIDControllerProfileTriggerAxisDeadzone;
+    return binding;
+}
+
+#pragma mark - Event handling
 
 //Overridden in subclasses where necessary
 - (BOOL) shouldDispatchHIDEvent: (BXHIDEvent *)event
@@ -553,13 +694,12 @@ static NSMutableArray *_profileClasses = nil;
     }
 }
 
-- (void) binding: (id <BXPeriodicInputBinding>)binding didSendInputToTarget: (id <BXEmulatedJoystick>)target
+- (void) outputBindingDidUpdate: (BXEmulatedJoystickAxisAdditiveBinding *)binding
 {
     //Display a notification bezel showing the current state of any additive throttle axis.
-    if ([binding isKindOfClass: [BXAxisToAxisAdditive class]]
-        && [[(BXAxisToAxisAdditive *)binding axis] isEqualToString: BXAxisThrottle])
+    if ([binding isKindOfClass: [BXEmulatedJoystickAxisAdditiveBinding class]] && [binding.axisName isEqualToString: BXAxisThrottle])
     {
-        float throttleValue = [(id <BXEmulatedFlightstick>)target throttleAxis];
+        float throttleValue = [(id <BXEmulatedFlightstick>)binding.joystick throttleAxis];
         [[BXBezelController controller] showThrottleBezelForValue: throttleValue];
     }
 }
@@ -626,7 +766,7 @@ static NSMutableArray *_profileClasses = nil;
 		
 		if (direction != BXEmulatedPOVCentered)
 		{
-			BXButtonToPOV *binding = [BXButtonToPOV bindingWithDirection: direction];
+			id <BXHIDInputBinding> binding = [self bindingFromButtonElement: element toPOV: POVNumber direction: direction];
             [self setBinding: binding forElement: element];
 		}
 	}
@@ -640,37 +780,34 @@ static NSMutableArray *_profileClasses = nil;
 	{
 		DDHidElement *element = [padElements objectForKey: key];
 		
-		float pressedValue = 0;
 		NSString *axis = nil;
+        BXAxisPolarity polarity = kBXAxisPositive;
 		
 		//Oh for a switch statement
 		if ([key isEqualToString: BXControllerProfileDPadUp])
 		{
-			pressedValue = -1.0f;
 			axis = yAxis;
+            polarity = kBXAxisNegative;
 		}
 		else if ([key isEqualToString: BXControllerProfileDPadDown])
 		{
-			pressedValue = 1.0f;
 			axis = yAxis;
+            polarity = kBXAxisPositive;
 		}
 		else if ([key isEqualToString: BXControllerProfileDPadLeft])
 		{
-			pressedValue = -1.0f;
 			axis = xAxis;
+            polarity = kBXAxisNegative;
 		}
 		else if ([key isEqualToString: BXControllerProfileDPadRight])
 		{
-			pressedValue = 1.0f;
 			axis = xAxis;
+            polarity = kBXAxisPositive;
 		}
 		
 		if (axis)
 		{
-			BXButtonToAxis *binding = [BXButtonToAxis binding];
-            binding.pressedValue = pressedValue;
-            binding.axis = axis;
-            
+            id <BXHIDInputBinding> binding = [self bindingFromButtonElement: element toAxis: axis polarity: polarity];
 			[self setBinding: binding forElement: element];
 		}
 	}

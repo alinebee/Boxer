@@ -43,7 +43,7 @@ enum {
 typedef NSInteger BXHIDPOVSwitchDirection;
 
 
-@interface BXHIDEvent : NSObject
+@interface BXHIDEvent : NSObject <NSCopying>
 {
 	BXHIDEventType _type;
 	DDHidDevice *_device;

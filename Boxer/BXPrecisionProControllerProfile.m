@@ -65,7 +65,7 @@ enum {
 {
     if (element.usage.usageId == BXPrecisionProThrottleAxis && [self.emulatedJoystick supportsAxis: BXAxisThrottle])
     {
-        return [BXAxisToAxis bindingWithAxis: BXAxisThrottle];
+        return [self bindingFromAxisElement: element toAxis: BXAxisThrottle];
     }
     return [super generatedBindingForAxisElement: element];
 }

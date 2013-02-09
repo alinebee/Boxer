@@ -9,6 +9,7 @@
 //Custom controller profile for the PS3 Sixaxis controller, which is all over the goddamn place.
 
 #import "BXHIDControllerProfilePrivate.h"
+#import "BXSession+BXUIControls.h"
 
 
 #pragma mark -
@@ -111,44 +112,51 @@ enum {
     switch (element.usage.usageId)
     {
         case BXSixaxisControllerXButton:
-            binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton1];
+            binding = [self bindingFromButtonElement: element toButton: BXEmulatedJoystickButton1];
             break;
             
         case BXSixaxisControllerCircleButton:
-            binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton2];
+            binding = [self bindingFromButtonElement: element toButton: BXEmulatedJoystickButton2];
             break;
         
         case BXSixaxisControllerSquareButton:
-            binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton3];
+            binding = [self bindingFromButtonElement: element toButton: BXEmulatedJoystickButton3];
             break;
         
         case BXSixaxisControllerTriangleButton:
-            binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton4];
+            binding = [self bindingFromButtonElement: element toButton: BXEmulatedJoystickButton4];
             break;
             
         case BXSixaxisControllerLeftTrigger:
             if (isWheel)
-                binding = [BXButtonToAxis bindingWithAxis: BXAxisBrake];
+                binding = [self bindingFromButtonElement: element toAxis: BXAxisBrake polarity: kBXAxisPositive];
             else
-                binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton2];
+                binding = [self bindingFromButtonElement: element toButton: BXEmulatedJoystickButton2];
             break;
             
         case BXSixaxisControllerRightTrigger:
             if (isWheel)
-                binding = [BXButtonToAxis bindingWithAxis: BXAxisAccelerator];
+                binding = [self bindingFromButtonElement: element toAxis: BXAxisAccelerator polarity: kBXAxisPositive];
             else
-                binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton1];
+                binding = [self bindingFromButtonElement: element toButton: BXEmulatedJoystickButton1];
             break;
             
         case BXSixaxisControllerLeftShoulder:
-            binding = [BXButtonToButton bindingWithButton:
-                       isWheel ? BXEmulatedJoystickButton2 : BXEmulatedJoystickButton4];
+            binding = [self bindingFromButtonElement: element
+                                            toButton: (isWheel ? BXEmulatedJoystickButton2 : BXEmulatedJoystickButton4)];
             break;
             
         case BXSixaxisControllerRightShoulder:
-            binding = [BXButtonToButton bindingWithButton:
-                       isWheel ? BXEmulatedJoystickButton1 : BXEmulatedJoystickButton3];
+            binding = [self bindingFromButtonElement: element
+                                            toButton: (isWheel ? BXEmulatedJoystickButton1 : BXEmulatedJoystickButton3)];
             break;
+            
+        case BXSixaxisControllerStartButton:
+            binding = [self bindingFromButtonElement: element toTarget: nil action: @selector(togglePaused:)];
+            
+        case BXSixaxisControllerSelectButton:
+            binding = [self bindingFromButtonElement: element toKeyCode: KBD_esc];
+            
         
         default:
             //Leave all other buttons unbound

@@ -30,7 +30,7 @@
 	if (direction < 0 || direction > 36000) return BXHIDPOVCentered;
 	
 	NSInteger ordinal = rintf(direction / 4500.0f);
-	if (ordinal > 7) ordinal = 0;
+    ordinal = ordinal % 8;
 	return ordinal * 4500;
 }
 
@@ -40,7 +40,7 @@
 	if (direction < 0 || direction > 36000) return BXHIDPOVCentered;
 	
 	NSInteger ordinal = rintf(direction / 9000.0f);
-	if (ordinal > 3) ordinal = 0;
+    ordinal = ordinal % 4;
 	return ordinal * 9000;
 }
 
@@ -99,9 +99,30 @@
 	[super dealloc];
 }
 
+#pragma mark - Copying
 
-#pragma mark -
-#pragma mark Usage reporting
+- (id) copyWithZone: (NSZone *)zone
+{
+    BXHIDEvent *copy = [[self.class allocWithZone: zone] init];
+    copy.type = self.type;
+    
+    copy.device = self.device;
+    copy.element = self.element;
+    
+    copy.stick = self.stick;
+    copy.stickNumber = self.stickNumber;
+    
+    copy.axisDelta = self.axisDelta;
+    copy.axisPosition = self.axisPosition;
+    
+    copy.POVNumber = self.POVNumber;
+    copy.POVDirection = self.POVDirection;
+    
+    return copy;
+}
+
+
+#pragma mark - Usage reporting
 
 - (NSUInteger) axis
 {

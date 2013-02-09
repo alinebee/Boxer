@@ -11,11 +11,11 @@
 #import "BXHIDControllerProfile.h"
 #import "BXEmulatedJoystick.h"
 #import "BXHIDInputBinding.h"
+#import "BXOutputBinding.h"
 #import "DDHidDevice+BXDeviceExtensions.h"
 
 
-#pragma mark -
-#pragma mark Constants
+#pragma mark - Constants
 
 //Dictionary keys for BXDPadBinding methods
 extern NSString * const BXControllerProfileDPadLeft;
@@ -37,12 +37,15 @@ extern NSString * const BXControllerProfileDPadDown;
 #define BXHIDVendorIDBigBen 0x146b
 
 
+#define BXHIDControllerProfileAdditiveThrottleRate 2.0
+#define BXHIDControllerProfileAdditiveThrottleSnapThreshold 0.05
+#define BXHIDControllerProfileTriggerAxisDeadzone 0.25
 
-#pragma mark -
-#pragma mark Private interface
+
+#pragma mark - Private interface
 
 
-@interface BXHIDControllerProfile () <BXPeriodicInputBindingDelegate>
+@interface BXHIDControllerProfile () <BXPeriodicOutputBindingDelegate>
 
 //Overridden to be settable in object constructor/destructor
 @property (retain, nonatomic) NSMutableDictionary *bindings;
@@ -72,9 +75,59 @@ extern NSString * const BXControllerProfileDPadDown;
 - (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element;
 - (id <BXHIDInputBinding>) generatedBindingForPOVElement: (DDHidElement *)element;
 
-//Sets the specified binding's target to our own emulated joystick or keyboard, whichever the binding accepts.
-//Called when the binding is first loaded and whenever the joystick or keyboard changes.
-- (void) syncTargetForBinding: (id <BXHIDInputBinding>)binding;
+
+#pragma mark - Binding generation helpers
+
+- (id <BXHIDInputBinding>) bindingFromAxisElement: (DDHidElement *)element
+                                           toAxis: (NSString *)axisName;
+
+- (id <BXHIDInputBinding>) bindingFromAxisElement: (DDHidElement *)element
+                                   toPositiveAxis: (NSString *)positiveAxisName
+                                     negativeAxis: (NSString *)negativeAxisName;
+
+- (id <BXHIDInputBinding>) bindingFromAxisElement: (DDHidElement *)element
+                           toAdditiveThrottleAxis: (NSString *)axisName;
+
+- (id <BXHIDInputBinding>) bindingFromTriggerElement: (DDHidElement *)element
+                                              toAxis: (NSString *)axisName;
+
+- (id <BXHIDInputBinding>) bindingFromTriggerElement: (DDHidElement *)element
+                                            toButton: (BXEmulatedJoystickButton)button;
+
+- (id <BXHIDInputBinding>) bindingFromTriggerElement: (DDHidElement *)element
+                                           toKeyCode: (BXDOSKeyCode)keyCode;
+
+- (id <BXHIDInputBinding>) bindingFromTriggerElement: (DDHidElement *)element
+                                            toTarget: (id)target
+                                              action: (SEL)action;
+
+- (id <BXHIDInputBinding>) bindingFromButtonElement: (DDHidElement *)element
+                                           toButton: (BXEmulatedJoystickButton)button;
+
+- (id <BXHIDInputBinding>) bindingFromButtonElement: (DDHidElement *)element
+                                           toTarget: (id)target
+                                             action: (SEL)action;
+
+- (id <BXHIDInputBinding>) bindingFromButtonElement: (DDHidElement *)element
+                                             toAxis: (NSString *)axisName
+                                           polarity: (BXAxisPolarity)polarity;
+
+- (id <BXHIDInputBinding>) bindingFromButtonElement: (DDHidElement *)element
+                                              toPOV: (NSUInteger)POVNumber
+                                          direction: (BXEmulatedPOVDirection)direction;
+
+- (id <BXHIDInputBinding>) bindingFromButtonElement: (DDHidElement *)element
+                                          toKeyCode: (BXDOSKeyCode)keyCode;
+
+
+
+- (id <BXHIDInputBinding>) bindingFromPOVElement: (DDHidElement *)element
+                                           toPOV: (NSUInteger)POVNumber;
+
+- (id <BXHIDInputBinding>) bindingFromPOVElement: (DDHidElement *)element
+                                toHorizontalAxis: (NSString *)horizAxis
+                                    verticalAxis: (NSString *)vertAxis;
+
 
 
 #pragma mark -

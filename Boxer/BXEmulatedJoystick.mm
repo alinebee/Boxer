@@ -141,7 +141,7 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 - (float) positionForAxis: (NSString *)axis
 {
-    return [[self valueForKey: axis] floatValue]; 
+    return [[self valueForKey: axis] floatValue];
 }
 
 

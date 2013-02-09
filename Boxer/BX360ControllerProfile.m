@@ -12,6 +12,7 @@
 
 #import "BXHIDControllerProfilePrivate.h"
 #import "DDHidUsage+BXUsageExtensions.h"
+#import "BXSession+BXUIControls.h"
 
 
 #pragma mark -
@@ -153,18 +154,26 @@ enum {
 {
 	id <BXHIDInputBinding> binding = nil;
 	BOOL isWheel =	[self.emulatedJoystick conformsToProtocol: @protocol(BXEmulatedWheel)];
-					 
+
 	switch (element.usage.usageId)
 	{
 		case BX360ControllerLeftShoulder:
-            binding = [BXButtonToButton bindingWithButton:
-                       isWheel ? BXEmulatedJoystickButton2 : BXEmulatedJoystickButton4];
+            binding = [self bindingFromButtonElement: element
+                                            toButton: (isWheel ? BXEmulatedJoystickButton2 : BXEmulatedJoystickButton4)];
 			break;
             
 		case BX360ControllerRightShoulder:
-			binding = [BXButtonToButton bindingWithButton:
-                       isWheel ? BXEmulatedJoystickButton1 : BXEmulatedJoystickButton3];
+			binding = [self bindingFromButtonElement: element
+                                            toButton: (isWheel ? BXEmulatedJoystickButton1 : BXEmulatedJoystickButton3)];
 			break;
+            
+        case BX360ControllerBackButton:
+            binding = [self bindingFromButtonElement: element toKeyCode: KBD_esc];
+            break;
+        
+        case BX360ControllerStartButton:
+            binding = [self bindingFromButtonElement: element toTarget: nil action: @selector(togglePaused:)];
+            break;
             
         default:
             binding = [super generatedBindingForButtonElement: element];
@@ -181,13 +190,11 @@ enum {
 	switch (element.usage.usageId)
 	{
 		case BX360ControllerLeftTrigger:
-			binding = [BXAxisToButton bindingWithButton: BXEmulatedJoystickButton2];
-			((BXAxisToButton *)binding).unidirectional = YES;
+            binding = [self bindingFromTriggerElement: element toButton: BXEmulatedJoystickButton2];
 			break;
 		
 		case BX360ControllerRightTrigger:
-			binding = [BXAxisToButton bindingWithButton: BXEmulatedJoystickButton1];
-			((BXAxisToButton *)binding).unidirectional = YES;
+            binding = [self bindingFromTriggerElement: element toButton: BXEmulatedJoystickButton1];
 			break;
 			
 		default:
@@ -205,22 +212,21 @@ enum {
         switch (element.usage.usageId)
         {
             case BX360ControllerLeftStickX:
-                binding = [BXAxisToAxis bindingWithAxis: BXAxisWheel];
+                binding = [self bindingFromAxisElement: element toAxis: BXAxisWheel];
                 break;
                 
             case BX360ControllerRightStickY:
-                binding = [BXAxisToBindings bindingWithPositiveAxis: BXAxisBrake
-                                                       negativeAxis: BXAxisAccelerator];
+                binding = [self bindingFromAxisElement: element
+                                        toPositiveAxis: BXAxisBrake
+                                          negativeAxis: BXAxisAccelerator];
                 break;
                 
             case BX360ControllerLeftTrigger:
-                binding = [BXAxisToAxis bindingWithAxis: BXAxisBrake];
-                ((BXAxisToAxis *)binding).unidirectional = YES;
+                binding = [self bindingFromTriggerElement: element toAxis: BXAxisBrake];
                 break;
                 
             case BX360ControllerRightTrigger:
-                binding = [BXAxisToAxis bindingWithAxis: BXAxisAccelerator];
-                ((BXAxisToAxis *)binding).unidirectional = YES;
+                binding = [self bindingFromTriggerElement: element toAxis: BXAxisAccelerator];
                 break;
                 
             default:

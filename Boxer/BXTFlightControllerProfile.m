@@ -50,12 +50,12 @@ enum {
     if (element.usage.usageId == BXTFlightThrottleAxis &&
         [self.emulatedJoystick supportsAxis: BXAxisThrottle])
     {
-        return [BXAxisToAxis bindingWithAxis: BXAxisThrottle];
+        return [self bindingFromAxisElement: element toAxis: BXAxisThrottle];
     }
     else if (element.usage.usageId == BXTFlightRudderAxis &&
              [self.emulatedJoystick supportsAxis: BXAxisRudder])
     {
-        return [BXAxisToAxis bindingWithAxis: BXAxisRudder];
+        return [self bindingFromAxisElement: element toAxis: BXAxisRudder];
     }
     else
     {

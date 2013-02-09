@@ -15,10 +15,10 @@
 @interface BXEmulatorConfiguration : NSObject
 {
 	//Our private storage of configuration sections
-	NSMutableDictionary *sections;
+	NSMutableDictionary *_sections;
 	
-	NSString *preamble;
-	NSString *startupCommandsPreamble;
+	NSString *_preamble;
+	NSString *_startupCommandsPreamble;
 }
 
 #pragma mark -

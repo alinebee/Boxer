@@ -1717,7 +1717,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	BOOL fileExists = [manager fileExistsAtPath: filePath];
 	
 	//Save the configuration if any changes have been made, or if the file at that path does not exist.
-	if (!fileExists || ![configuration isEmpty])
+	if (!fileExists || !configuration.isEmpty)
 	{
 		BXEmulatorConfiguration *gameboxConf = [BXEmulatorConfiguration configurationWithContentsOfFile: filePath error: nil];
 		
@@ -1734,7 +1734,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		//Add comment preambles to saved configuration
 		gameboxConf.preamble = NSLocalizedStringFromTable(@"Configuration preamble", @"Configuration",
                                                           @"Used by generated configuration files as a commented header at the top of the file.");
-        gameboxConf.startupCommandsPreamble = NSLocalizedStringFromTable(@"Configuration preamble", @"Configuration",
+        gameboxConf.startupCommandsPreamble = NSLocalizedStringFromTable(@"Preamble for startup commands", @"Configuration",
                                                                          @"Used in generated configuration files as a commented header underneath the [autoexec] section.");
 		
 		

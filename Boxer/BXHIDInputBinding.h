@@ -14,21 +14,24 @@
 
 @class BXHIDEvent;
 @class DDHidUsage;
+@class BXEmulatedKeyboard;
 
 #pragma mark -
 #pragma mark Protocols
 
 @protocol BXHIDInputBinding <NSObject, NSCoding>
 
-//Whether this binding can talk to the specified target.
+//Returns whether bindings of this type can talk to the specified target.
 + (BOOL) supportsTarget: (id)target;
 
 //Return an input binding of the appropriate type initialized with default values.
 + (id) binding;
 
-//Translate the specified event and perform the appropriate action on the destination joystick.
-- (void) processEvent: (BXHIDEvent *)event
-			forTarget: (id)target;
+//The target joystick or keyboard upon which this binding acts when it is triggered.
+@property (retain, nonatomic) id target;
+
+//Translate the specified event and perform the appropriate action for this binding on the binding's target.
+- (void) processEvent: (BXHIDEvent *)event;
 
 @end
 
@@ -58,10 +61,20 @@
 //The base implementation of the BXHIDInputBinding protocol for talking to emulated joysticks.
 //Contains common logic used by all joystick-related bindings. Should not be used directly.
 @interface BXBaseEmulatedJoystickInputBinding: NSObject <BXHIDInputBinding>
+{
+    id <BXEmulatedJoystick> _target;
+}
+@property (retain, nonatomic) id <BXEmulatedJoystick> target;
+
 @end
 
 
 @interface BXBaseEmulatedKeyboardInputBinding: NSObject <BXHIDInputBinding>
+{
+    BXEmulatedKeyboard *_target;
+}
+@property (retain, nonatomic) BXEmulatedKeyboard *target;
+
 @end
 
 
@@ -205,8 +218,8 @@
 {
 	NSUInteger _POVNumber;
     BXEmulatedPOVDirection _direction;
-    
 }
+
 //The POV number to apply to on the emulated joystick. Defaults to 0.
 @property (assign, nonatomic) NSUInteger POVNumber;
 

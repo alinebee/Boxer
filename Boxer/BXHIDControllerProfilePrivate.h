@@ -72,6 +72,10 @@ extern NSString * const BXControllerProfileDPadDown;
 - (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element;
 - (id <BXHIDInputBinding>) generatedBindingForPOVElement: (DDHidElement *)element;
 
+//Sets the specified binding's target to our own emulated joystick or keyboard, whichever the binding accepts.
+//Called when the binding is first loaded and whenever the joystick or keyboard changes.
+- (void) syncTargetForBinding: (id <BXHIDInputBinding>)binding;
+
 
 #pragma mark -
 #pragma mark Profile registration and matching

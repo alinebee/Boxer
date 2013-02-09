@@ -157,12 +157,42 @@ static NSMutableArray *_profileClasses = nil;
 	}
 }
 
+- (void) setEmulatedKeyboard: (BXEmulatedKeyboard *)keyboard
+{
+    if (keyboard != self.emulatedKeyboard)
+    {
+        [_emulatedKeyboard release];
+        _emulatedKeyboard = [keyboard retain];
+        
+        if (self.bindings.count)
+        {
+            for (id <BXHIDInputBinding> binding in self.bindings.objectEnumerator)
+                [self syncTargetForBinding: binding];
+        }
+        else
+        {
+            [self generateBindings];
+        }
+    }
+}
+
 - (void) setBinding: (id <BXHIDInputBinding>)binding
 		 forElement: (DDHidElement *)element
 {
 	DDHidUsage *key = element.usage;
 	if (binding == nil) [self.bindings removeObjectForKey: key];
 	else [self.bindings setObject: binding forKey: key];
+    
+    //When adopting a binding, set its target to our emulated joystick or keyboard as appropriate.
+    [self syncTargetForBinding: binding];
+}
+
+- (void) syncTargetForBinding: (id <BXHIDInputBinding>)binding
+{
+    if ([binding.class supportsTarget: self.emulatedJoystick])
+        binding.target = self.emulatedJoystick;
+    else if ([binding.class supportsTarget: self.emulatedKeyboard])
+        binding.target = self.emulatedKeyboard;
 }
 
 - (id <BXHIDInputBinding>) bindingForElement: (DDHidElement *)element
@@ -519,8 +549,7 @@ static NSMutableArray *_profileClasses = nil;
     {
         id <BXHIDInputBinding> binding = [self bindingForElement: event.element];
         
-        [binding processEvent: event
-                    forTarget: self.emulatedJoystick];
+        [binding processEvent: event];
     }
 }
 

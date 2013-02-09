@@ -33,6 +33,7 @@
 
 
 @implementation BXBaseEmulatedJoystickInputBinding
+@synthesize target = _target;
 
 + (BOOL) supportsTarget: (id)target
 {
@@ -56,7 +57,6 @@
 }
 
 - (void) processEvent: (BXHIDEvent *)event
-			forTarget: (id <BXEmulatedJoystick>)target
 {
 	//Unimplemented at this level, must be overridden in subclasses
 	[self doesNotRecognizeSelector: _cmd];
@@ -166,12 +166,11 @@
 }
 
 - (void) processEvent: (BXHIDEvent *)event
-			forTarget: (id <BXEmulatedJoystick>)target
 {
 	float axisValue = [self _normalizedAxisValue: event.axisPosition];
 	if (axisValue != _previousValue)
 	{
-        [(id)target setValue: [NSNumber numberWithFloat: axisValue] forKey: self.axis];
+        [(id)self.target setValue: @(axisValue) forKey: self.axis];
 		_previousValue = axisValue;
 	}
 }
@@ -246,22 +245,32 @@
 {
     if (_previousValue != 0.0f)
     {
-        id target = timer.userInfo;
- 
         //Work out how much to increment the axis value by for the current timestep.
         float increment = (self.ratePerSecond * _previousValue) / (float)BXDefaultAdditiveAxisInputRate;
     
-        float currentValue = [[target valueForKey: self.axis] floatValue];
+        float currentValue = [[(id)self.target valueForKey: self.axis] floatValue];
         float newValue = currentValue + increment;
         
         //Apply a deadzone to the incremented value to snap very low values to 0.
         //This makes it easier to center the input.
         if ((ABS(newValue) - self.emulatedDeadzone) < 0) newValue = 0;
         
-        [target setValue: [NSNumber numberWithFloat: newValue] forKey: self.axis];
+        [(id)self.target setValue: @(newValue) forKey: self.axis];
         
         //Let the delegate know that we updated the binding's value outside of the event stream.
-        [self.delegate binding: self didSendInputToTarget: target];
+        [self.delegate binding: self didSendInputToTarget: self.target];
+    }
+}
+
+- (void) _startUpdating
+{
+    if (!self.inputTimer)
+    {
+        self.inputTimer = [NSTimer scheduledTimerWithTimeInterval: (1.0f / BXDefaultAdditiveAxisInputRate)
+                                                           target: self
+                                                         selector: @selector(_updateWithTimer:)
+                                                         userInfo: nil
+                                                          repeats: YES];
     }
 }
 
@@ -271,23 +280,7 @@
     self.inputTimer = nil;
 }
 
-- (void) _startUpdatingTarget: (id <BXEmulatedJoystick>)target
-{
-    if (self.inputTimer.userInfo != target)
-    {
-        [self _stopUpdating];
-        
-        self.inputTimer = [NSTimer scheduledTimerWithTimeInterval: (1.0f / BXDefaultAdditiveAxisInputRate)
-                                                           target: self
-                                                         selector: @selector(_updateWithTimer:)
-                                                         userInfo: target
-                                                          repeats: YES];
-        
-    }
-}
-
 - (void) processEvent: (BXHIDEvent *)event
-			forTarget: (id <BXEmulatedJoystick>)target
 {
 	_previousValue = [self _normalizedAxisValue: event.axisPosition];
     
@@ -302,7 +295,7 @@
     //leaves the emulated axis at whatever value it had reached.
     
     if (_previousValue != 0.0f)
-        [self _startUpdatingTarget: target];
+        [self _startUpdating];
     else
         [self _stopUpdating];
 }
@@ -337,13 +330,12 @@
 }
 
 - (void) processEvent: (BXHIDEvent *)event
-			forTarget: (id <BXEmulatedJoystick>)target
 {
 	BOOL buttonDown = (event.type == BXHIDJoystickButtonDown);
 	if (buttonDown)
-		[target buttonDown: self.button];
+		[self.target buttonDown: self.button];
 	else
-		[target buttonUp: self.button];
+		[self.target buttonUp: self.button];
 }
 
 - (NSString *) description
@@ -413,7 +405,6 @@
 }
 
 - (void) processEvent: (BXHIDEvent *)event
-			forTarget: (id <BXEmulatedJoystick>)target
 {
 	float axisValue;
 	if (event.type == BXHIDJoystickButtonDown)
@@ -421,7 +412,7 @@
 	else
 		axisValue = self.releasedValue;
 	
-    [(id)target setValue: [NSNumber numberWithFloat: axisValue] forKey: self.axis];
+    [(id)self.target setValue: @(axisValue) forKey: self.axis];
 }
 
 - (NSString *) description
@@ -506,16 +497,15 @@
 }
 
 - (void) processEvent: (BXHIDEvent *)event
-			forTarget: (id <BXEmulatedJoystick>)target
 {
 	BOOL buttonDown = [self _buttonDown: event.axisPosition];
 	
 	if (buttonDown != _previousValue)
 	{
 		if (buttonDown)
-			[target buttonDown: self.button];
+			[self.target buttonDown: self.button];
 		else
-			[target buttonUp: self.button];
+			[self.target buttonUp: self.button];
 		
 		_previousValue = buttonDown;
 	}
@@ -530,6 +520,11 @@
 
 @implementation BXPOVToPOV
 @synthesize POVNumber = _POVNumber;
+
++ (BOOL) supportsTarget: (id)target
+{
+    return [target conformsToProtocol: @protocol(BXEmulatedFlightstick)];
+}
 
 - (id) init
 {
@@ -594,11 +589,10 @@
 }
 
 - (void) processEvent: (BXHIDEvent *)event
-			forTarget: (id <BXEmulatedJoystick>)target
 {
 	BXEmulatedPOVDirection direction = [self.class emulatedDirectionForHIDDirection: event.POVDirection];
 	
-    [(id <BXEmulatedFlightstick>)target POV: self.POVNumber changedTo: direction];
+    [(id <BXEmulatedFlightstick>)self.target POV: self.POVNumber changedTo: direction];
 }
 
 - (NSString *) description
@@ -611,6 +605,11 @@
 @implementation BXButtonToPOV
 @synthesize POVNumber = _POVNumber;
 @synthesize direction = _direction;
+
++ (BOOL) supportsTarget: (id)target
+{
+    return [target conformsToProtocol: @protocol(BXEmulatedFlightstick)];
+}
 
 + (id) bindingWithDirection: (BXEmulatedPOVDirection) direction
 {
@@ -648,12 +647,11 @@
 }
 
 - (void) processEvent: (BXHIDEvent *)event
-			forTarget: (id <BXEmulatedJoystick>)target
 {
 	if (event.type == BXHIDJoystickButtonDown)
-        [(id <BXEmulatedFlightstick>)target POV: self.POVNumber directionDown: self.direction];
+        [(id <BXEmulatedFlightstick>)self.target POV: self.POVNumber directionDown: self.direction];
 	else
-        [(id <BXEmulatedFlightstick>)target POV: self.POVNumber directionUp: self.direction];
+        [(id <BXEmulatedFlightstick>)self.target POV: self.POVNumber directionUp: self.direction];
 }
 
 - (NSString *) description
@@ -702,7 +700,6 @@
 }
 
 - (void) processEvent: (BXHIDEvent *)event
-			forTarget: (id <BXEmulatedJoystick>)target
 {
 	BXHIDPOVSwitchDirection direction = event.POVDirection;
 	
@@ -740,11 +737,11 @@
 
     if (self.xAxis)
     {
-        [(id)target setValue: [NSNumber numberWithFloat: x] forKey: self.xAxis];
+        [(id)self.target setValue: @(x) forKey: self.xAxis];
     }
     if (self.yAxis)
     {
-        [(id)target setValue: [NSNumber numberWithFloat: y] forKey: self.yAxis];
+        [(id)self.target setValue: @(y) forKey: self.yAxis];
     }
 }
 
@@ -817,7 +814,6 @@
 }
 
 - (void) processEvent: (BXHIDEvent *)event
-			forTarget: (id <BXEmulatedJoystick>)target
 {
     NSInteger rawValue = event.axisPosition;
 	NSInteger positiveValue = (rawValue > self.deadzone) ? rawValue : 0;
@@ -827,10 +823,10 @@
     //and negative bindings.
     //TODO: copy the event instead.
     event.axisPosition = positiveValue;
-    [self.positiveBinding processEvent: event forTarget: target];
+    [self.positiveBinding processEvent: event];
     
     event.axisPosition = negativeValue;
-    [self.negativeBinding processEvent: event forTarget: target];
+    [self.negativeBinding processEvent: event];
     
     event.axisPosition = rawValue;
 }

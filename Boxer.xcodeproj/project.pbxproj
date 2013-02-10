@@ -475,6 +475,7 @@
 		9F5B6B7213C3529500E9CA18 /* BXInputController+BXJoypadInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6380C13C0A10E004478A3 /* BXInputController+BXJoypadInput.m */; };
 		9F5DD13715E544710096D0E8 /* BXRippleShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DD13615E544710096D0E8 /* BXRippleShader.m */; };
 		9F5DD13815E544710096D0E8 /* BXRippleShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DD13615E544710096D0E8 /* BXRippleShader.m */; };
+		9F5E389716C85140009774A9 /* Game.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F5E389616C85140009774A9 /* Game.png */; };
 		9F5F12C615ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5F12C515ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.m */; };
 		9F60B0DC13AA418300F06BB1 /* BXCollectionItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F60B0DB13AA418300F06BB1 /* BXCollectionItemView.m */; };
 		9F61931B1233D8F000F35AB4 /* BXTabbedWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */; };
@@ -1183,6 +1184,7 @@
 		9F59DEDE10B01743008DBBC1 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/ProgramPanel.xib; sourceTree = "<group>"; };
 		9F5DD13515E544710096D0E8 /* BXRippleShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRippleShader.h; sourceTree = "<group>"; };
 		9F5DD13615E544710096D0E8 /* BXRippleShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRippleShader.m; sourceTree = "<group>"; };
+		9F5E389616C85140009774A9 /* Game.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Game.png; sourceTree = "<group>"; };
 		9F5F12C415ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSKeyedArchiver+BXArchivingAdditions.h"; sourceTree = "<group>"; };
 		9F5F12C515ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSKeyedArchiver+BXArchivingAdditions.m"; sourceTree = "<group>"; };
 		9F60B0DA13AA418300F06BB1 /* BXCollectionItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCollectionItemView.h; sourceTree = "<group>"; };
@@ -3106,6 +3108,7 @@
 		9F9606E914F65A3A0072E90C /* Inspector */ = {
 			isa = PBXGroup;
 			children = (
+				9F5E389616C85140009774A9 /* Game.png */,
 				9FB6AE8716C8274000EB1D40 /* Joystick.png */,
 				9FB6AE8C16C8366D00EB1D40 /* Joystick@2x.png */,
 				9FB6AE7F16C80ED700EB1D40 /* Drives.png */,
@@ -3849,6 +3852,7 @@
 				9FB6AE8B16C82F5300EB1D40 /* CPU@2x.png in Resources */,
 				9FB6AE8E16C8366D00EB1D40 /* Joystick@2x.png in Resources */,
 				9FB6AE8F16C8366D00EB1D40 /* Mouse@2x.png in Resources */,
+				9F5E389716C85140009774A9 /* Game.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

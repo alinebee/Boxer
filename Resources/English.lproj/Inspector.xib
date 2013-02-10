@@ -134,7 +134,7 @@
 							<nil key="NSToolbarItemView"/>
 							<object class="NSCustomResource" key="NSToolbarItemImage">
 								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">package</string>
+								<string key="NSResourceName">Game</string>
 							</object>
 							<nil key="NSToolbarItemTarget"/>
 							<nil key="NSToolbarItemAction"/>
@@ -5846,6 +5846,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
 			<string key="CPU">{32, 32}</string>
 			<string key="Drives">{32, 32}</string>
+			<string key="Game">{32, 32}</string>
 			<string key="GamepadTemplate">{128, 128}</string>
 			<string key="Joystick">{32, 32}</string>
 			<string key="Mouse">{32, 32}</string>
@@ -5855,7 +5856,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 			<string key="NSMenuMixedState">{10, 3}</string>
 			<string key="NSRemoveTemplate">{8, 8}</string>
 			<string key="NSSwitch">{15, 15}</string>
-			<string key="package">{512, 512}</string>
 		</dictionary>
 	</data>
 </archive>

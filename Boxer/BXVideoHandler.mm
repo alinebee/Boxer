@@ -69,7 +69,7 @@
 - (NSSize) resolution
 {
 	NSSize size = NSZeroSize;
-	if (self.emulator.isInitialized)
+	if (self.emulator.isExecuting)
 	{
 		size.width	= (CGFloat)render.src.width;
 		size.height	= (CGFloat)render.src.height;
@@ -81,7 +81,7 @@
 - (BOOL) isInTextMode
 {
 	BOOL textMode = NO;
-	if (self.emulator.isInitialized)
+	if (self.emulator.isExecuting)
 	{
 		switch (_currentVideoMode)
 		{

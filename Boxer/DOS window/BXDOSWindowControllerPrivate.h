@@ -14,7 +14,7 @@
 #pragma mark -
 #pragma mark Constants
 
-#define BXWindowSnapThreshold 64
+#define BXWindowSnapThreshold 96
 
 
 #pragma mark Private method declarations

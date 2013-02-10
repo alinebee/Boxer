@@ -1303,14 +1303,19 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 - (NSSize) windowWillResize: (NSWindow *)theWindow toSize: (NSSize) proposedFrameSize
 {
 	NSInteger snapThreshold	= BXWindowSnapThreshold;
-	
+    
 	NSSize snapIncrement	= self.renderingView.currentFrame.scaledResolution;
 	CGFloat aspectRatio		= aspectRatioOfSize(theWindow.contentAspectRatio);
-	
+    
 	NSRect proposedFrame	= NSMakeRect(0, 0, proposedFrameSize.width, proposedFrameSize.height);
 	NSRect renderFrame		= [theWindow contentRectForFrameRect: proposedFrame];
 	
-	CGFloat snappedWidth	= roundf(renderFrame.size.width / snapIncrement.width) * snapIncrement.width;
+    //TWEAK: we used to use roundf instead of ceilf, so that the window would snap up or down to the nearest width.
+    //However, this led some users to think that the window was not resizable because nothing initially
+    //happened when they tried to drag it larger. By using ceilf, we snap upwards to the nearest width
+    //but not downwards, meaning that the window can be smoothly resized larger from its initial state
+    //but will still snap at appropriate intervals.
+    CGFloat snappedWidth	= ceilf(renderFrame.size.width / snapIncrement.width) * snapIncrement.width;
 	CGFloat widthDiff		= ABS(snappedWidth - renderFrame.size.width);
 	if (widthDiff > 0 && widthDiff <= snapThreshold)
 	{

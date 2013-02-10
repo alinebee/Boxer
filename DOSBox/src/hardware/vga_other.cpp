@@ -636,3 +636,42 @@ void VGA_SetupOther(void) {
 	}
 
 }
+
+
+//--Added 2013-02-10 by Alun Bestor to give Boxer control over Hercules graphics options
+Bit8u boxer_herculesTintMode()
+{
+    return herc_pal;
+}
+
+void boxer_setHerculesTintMode(Bit8u mode)
+{
+    if (herc_pal != mode)
+    {
+        herc_pal = mode % 3;
+        if (machine == MCH_HERC)
+        {
+            Herc_Palette();
+            VGA_DAC_CombineColor(1,7);
+        }
+    }
+}
+
+double boxer_CGACompositeHueOffset()
+{
+    return hue_offset;
+}
+
+void boxer_setCGACompositeHueOffset(double offset)
+{
+    if (offset != hue_offset)
+    {
+        hue_offset = offset;
+        if (machine == MCH_CGA)
+        {
+            update_cga16_color();
+        }
+    }
+}
+//--End of modifications
+

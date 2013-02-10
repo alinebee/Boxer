@@ -26,6 +26,7 @@ typedef enum {
 #import <Cocoa/Cocoa.h>
 #import "BXFullScreenCapableWindow.h"
 #import "BXFrameRenderingView.h"
+#import "BXVideoHandler.h"
 
 @class BXEmulator;
 @class BXSession;
@@ -101,6 +102,9 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 //The rendering style with which to render.
 @property (assign, nonatomic) BXRenderingStyle renderingStyle;
+
+//The tint (white, amber, green) to use when running in Hercules emulation mode 
+@property (assign, nonatomic) BXHerculesTintMode herculesTintMode;
 
 //The view that tracks user input.
 @property (retain, nonatomic) IBOutlet BXInputView *inputView;

@@ -59,6 +59,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 @synthesize loadingSpinner = _loadingSpinner;
 @synthesize documentationButton = _documentationButton;
 @synthesize maxFullscreenViewportSize = _maxFullscreenViewportSize;
+@synthesize renderingStyle = _renderingStyle;
 
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
@@ -133,6 +134,11 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     [self bind: @"renderingStyle"
       toObject: defaults
    withKeyPath: @"renderingStyle"
+       options: nil];
+    
+    [self bind: @"herculesTintMode"
+      toObject: defaults
+   withKeyPath: @"herculesTintMode"
        options: nil];
     
     [self.renderingView bind: @"maxViewportSize"
@@ -458,6 +464,13 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
                                                forKey: @"renderingStyle"];
 }
 
+- (IBAction) toggleHerculesTintMode: (id <NSValidatedUserInterfaceItem>)sender
+{
+	BXHerculesTintMode tint = (BXHerculesTintMode)sender.tag;
+	[[NSUserDefaults standardUserDefaults] setInteger: tint
+                                               forKey: @"herculesTintMode"];
+}
+
 + (NSSize) _nextFullscreenSizeIntervalForSize: (NSSize)currentSize
                            originalResolution: (NSSize)baseResolution
                                     ascending: (BOOL)ascending
@@ -706,9 +719,16 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     }
 }
 
-- (BXRenderingStyle) renderingStyle
+- (void) setHerculesTintMode: (BXHerculesTintMode)tint
 {
-    return _renderingStyle;
+    BXVideoHandler *videoHandler = self.document.emulator.videoHandler;
+    videoHandler.herculesTint = tint;
+}
+
+- (BXHerculesTintMode) herculesTintMode
+{
+    BXVideoHandler *videoHandler = self.document.emulator.videoHandler;
+    return videoHandler.herculesTint;
 }
 
 - (IBAction) toggleStatusBarShown: (id)sender
@@ -880,7 +900,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 	if (theAction == @selector(toggleRenderingStyle:))
 	{
 		BXRenderingStyle renderingStyle = (BXRenderingStyle)theItem.tag;
-		if (renderingStyle == self.renderingView.renderingStyle)
+		if (renderingStyle == self.renderingStyle)
         {
             theItem.state = NSOnState;
         }
@@ -888,8 +908,28 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
         {
             theItem.state = NSOffState;
         }
-        //TODO: disable items that are unavailable at the current resolution.
 		return YES;
+	}
+    
+	if (theAction == @selector(toggleHerculesTintMode:))
+	{
+        if (self.document.emulator.videoHandler.isInHerculesMode)
+        {
+            BXHerculesTintMode tint = (BXHerculesTintMode)theItem.tag;
+            if (tint == self.herculesTintMode)
+            {
+                theItem.state = NSOnState;
+            }
+            else
+            {
+                theItem.state = NSOffState;
+            }
+            return YES;
+        }
+        else
+        {
+            return NO;
+        }
 	}
 	
     else if (theAction == @selector(toggleLaunchPanel:))

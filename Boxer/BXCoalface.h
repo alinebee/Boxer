@@ -124,6 +124,13 @@ extern "C" {
 	void boxer_setMouseActive(bool mouseActive);
 	void boxer_mouseMovedToPoint(float x, float y);
     
+    //Defined in vga_other.cpp to give Boxer access to Hercules and CGA graphics mode options.
+    Bit8u boxer_herculesTintMode();
+    void boxer_setHerculesTintMode(Bit8u tint);
+    
+    double boxer_CGACompositeHueOffset();
+    void boxer_setCGACompositeHueOffset(double hue);
+    
     //Defined in keyboard.cpp to let Boxer see if there's any room left in the keyboard buffer.
     Bitu boxer_keyboardBufferRemaining();
     

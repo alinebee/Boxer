@@ -35,6 +35,9 @@
 
 - (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution;
 
+- (void) _syncHerculesTint;
+- (void) _syncCGAHueAdjustment;
+
 @end
 
 
@@ -42,13 +45,17 @@
 @synthesize currentFrame = _currentFrame;
 @synthesize emulator = _emulator;
 @synthesize filterType = _filterType;
-
+@synthesize herculesTint = _herculesTint;
+@synthesize CGAHueAdjustment = _CGAHueAdjustment;
 
 - (id) init
 {
-	if ((self = [super init]))
+    self = [super init];
+	if (self)
 	{
 		_currentVideoMode = M_TEXT;
+        _herculesTint = BXHerculesWhiteTint;
+        _CGAHueAdjustment = 0.0;
 	}
 	return self;
 }
@@ -87,6 +94,30 @@
 	return textMode;
 }
 
++ (NSSet *) keyPathsForValuesAffectingInHerculesMode
+{
+    return [NSSet setWithObject: @"emulator.executing"];
+}
+
+- (BOOL) isInHerculesMode
+{
+    if (self.emulator.isExecuting)
+        return (machine == MCH_HERC);
+    else return NO;
+}
+
++ (NSSet *) keyPathsForValuesAffectingInCGAMode
+{
+    return [NSSet setWithObject: @"emulator.executing"];
+}
+
+- (BOOL) isInCGAMode
+{
+    if (self.emulator.isExecuting)
+        return (machine == MCH_CGA);
+    else return NO;
+}
+
 - (NSUInteger) frameskip
 {
 	return (NSUInteger)render.frameskip.max;
@@ -119,6 +150,38 @@
 	}
 	return isActive;
 }
+
+- (void) setHerculesTint: (BXHerculesTintMode)tint
+{
+    if (tint != _herculesTint)
+    {
+        _herculesTint = tint;
+        [self _syncHerculesTint];
+    }
+}
+
+- (void) _syncHerculesTint
+{
+    if (self.emulator.isExecuting)
+    {
+        boxer_setHerculesTintMode((Bit8u)self.herculesTint);
+    }
+}
+
+- (void) setCGAHueAdjustment: (double)hue
+{
+    _CGAHueAdjustment = hue;
+    [self _syncCGAHueAdjustment];
+}
+
+- (void) _syncCGAHueAdjustment
+{
+    if (self.emulator.isExecuting)
+    {
+        boxer_setCGACompositeHueOffset(self.CGAHueAdjustment);
+    }
+}
+
 
 //Reinitialises DOSBox's graphical subsystem and redraws the render region.
 //This is called after resizing the session window or toggling rendering options.
@@ -161,9 +224,9 @@
 	BOOL wasTextMode = self.isInTextMode;
 	if (_currentVideoMode != vga.mode)
 	{
-		[self willChangeValueForKey: @"isInTextMode"];
+		[self willChangeValueForKey: @"inTextMode"];
 		_currentVideoMode = vga.mode;
-		[self didChangeValueForKey: @"isInTextMode"];
+		[self didChangeValueForKey: @"inTextMode"];
 	}
 	BOOL nowTextMode = self.isInTextMode;
 	
@@ -296,6 +359,11 @@
 	render.scale.forced	= YES;
 	render.scale.size	= (Bitu)filterScale;
 	render.scale.op		= (scalerOperation_t)activeType;
+    
+    
+    //While we're here, sync up the CGA and hercules color modes if appropriate
+    [self _syncHerculesTint];
+    [self _syncCGAHueAdjustment];
 }
 
 - (const BXFilterDefinition *) _paramsForFilterType: (BXFilterType)type

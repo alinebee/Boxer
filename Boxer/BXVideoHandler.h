@@ -64,6 +64,13 @@ typedef struct {
 } BXFilterDefinition;
 
 
+typedef enum {
+    BXHerculesWhiteTint,
+    BXHerculesAmberTint,
+    BXHerculesGreenTint,
+} BXHerculesTintMode;
+
+
 
 @class BXEmulator;
 @class BXVideoFrame;
@@ -76,6 +83,9 @@ typedef struct {
 	NSInteger _currentVideoMode;
 	BXFilterType _filterType;
 	BOOL _frameInProgress;
+    
+    BXHerculesTintMode _herculesTint;
+    double _CGAHueAdjustment;
 	
 #if __cplusplus
 	//This is a C++ function pointer and should never be seen by Obj-C classes
@@ -95,15 +105,22 @@ typedef struct {
 //The current rendering style as a DOSBox filter type constant.
 @property (assign, nonatomic) BXFilterType filterType;
 
+@property (assign, nonatomic) BXHerculesTintMode herculesTint;
+@property (assign, nonatomic) double CGAHueAdjustment;
+
 //The current DOSBox frameskip setting.
 @property (assign, nonatomic) NSUInteger frameskip;
 
-//Returns whether the chosen filter is actually being rendered. This will be NO if the current rendered
+//Whether the chosen filter is actually being rendered. This will be NO if the current rendered
 //size is smaller than the minimum size supported by the chosen filter.
 @property (readonly) BOOL filterIsActive;
 
-//Returns whether the emulator is currently rendering in a text-only graphics mode.
-@property (readonly) BOOL isInTextMode;
+//Whether the emulator is currently rendering in a text-only mode.
+@property (readonly, getter=isInTextMode) BOOL inTextMode;
+
+//Whether the emulator is in Hercules/CGA mode.
+@property (readonly, getter=isInHerculesMode) BOOL inHerculesMode;
+@property (readonly, getter=isInCGAMode) BOOL inCGAMode;
 
 //Returns the base resolution the DOS game is producing.
 @property (readonly) NSSize resolution;

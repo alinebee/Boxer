@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20121114.1</string>
+	<string>20130210.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
 		<dict>
@@ -1493,6 +1493,24 @@
 				<string>strklogo.dat</string>
 			</array>
 		</dict>
+        <dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.cp437-games</string>
+            <key>BXProfileDescription</key>
+            <string>Text-mode games that rely on codepage 437.</string>
+            <key>BXProfileConfigurations</key>
+            <array>
+                <string>CP437</string>
+            </array>
+            <key>BXProfileMatches</key>
+            <array>
+                <string>ZZT</string>
+            </array>
+            <key>BXProfileTelltales</key>
+            <array>
+                <string>zzt.exe</string>
+            </array>
+        </dict>
 		<dict>
 			<key>BXProfileIdentifier</key>
 			<string>net.washboardabs.at-cga-games</string>

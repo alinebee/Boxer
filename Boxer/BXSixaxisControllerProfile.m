@@ -153,10 +153,11 @@ enum {
             
         case BXSixaxisControllerStartButton:
             binding = [self bindingFromButtonElement: element toTarget: nil action: @selector(togglePaused:)];
+            break;
             
         case BXSixaxisControllerSelectButton:
             binding = [self bindingFromButtonElement: element toKeyCode: KBD_esc];
-            
+            break;
         
         default:
             //Leave all other buttons unbound

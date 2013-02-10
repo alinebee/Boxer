@@ -452,6 +452,7 @@ static NSMutableArray *_profileClasses = nil;
 - (id <BXHIDInputBinding>) generatedBindingForPOVElement: (DDHidElement *)element
 {
 	id <BXHIDInputBinding> binding = nil;
+    NSLog(@"Binding POV element: %@", element);
 	
     //Map POV directly to POV on emulated joystick, if available
 	if ([self.emulatedJoystick conformsToProtocol: @protocol(BXEmulatedFlightstick)])
@@ -462,7 +463,6 @@ static NSMutableArray *_profileClasses = nil;
     //This would be inappropriate for an actual hat-switch; the behaviour is only intended for D-pads.
 	else if (self.controllerStyle != BXControllerStyleFlightstick)
 	{
-        
         //Otherwise, map the POV's left and right directions to the wheel axis if available
 		if ([self.emulatedJoystick supportsAxis: BXAxisWheel])
 		{

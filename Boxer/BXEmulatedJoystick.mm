@@ -286,6 +286,7 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 + (BOOL) requiresFullJoystickSupport { return NO; }
 
 + (NSUInteger) numButtons { return 2; }
++ (NSUInteger) numAxes { return 2; }
 
 - (float) xAxis { return [self positionForGameportAxis: BXGameportXAxis]; }
 - (float) yAxis { return [self positionForGameportAxis: BXGameportYAxis]; }
@@ -319,6 +320,7 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 + (BOOL) requiresFullJoystickSupport { return YES; }
 
 + (NSUInteger) numButtons { return 4; }
++ (NSUInteger) numAxes { return 4; }
 
 - (float) x2Axis    { return [self positionForGameportAxis: BXGameportX2Axis]; }
 - (float) y2Axis    { return [self positionForGameportAxis: BXGameportY2Axis]; }
@@ -351,6 +353,7 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 + (BOOL) requiresFullJoystickSupport { return NO; }
 
 + (NSUInteger) numButtons { return 2; }
++ (NSUInteger) numAxes { return 2; }
 
 - (void) clearInput
 {
@@ -407,6 +410,7 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 + (BOOL) requiresFullJoystickSupport { return YES; }
 
 + (NSUInteger) numButtons { return 4; }
++ (NSUInteger) numAxes { return 3; } //Wheel, brake and accelerator
 
 
 //Note: the accelerator and brake still power the combined Y axis,

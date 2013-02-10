@@ -58,9 +58,9 @@ enum {
 
 + (BOOL) requiresFullJoystickSupport { return YES; }
 
-- (NSUInteger) numButtons		{ return 4; }
-- (NSUInteger) numAxes			{ return 4; }
-- (NSUInteger) numPOVSwitches	{ return 1; }
++ (NSUInteger) numButtons		{ return 4; }
++ (NSUInteger) numAxes			{ return 4; }
++ (NSUInteger) numPOVSwitches	{ return 1; }
 
 
 - (void) didConnect
@@ -245,9 +245,9 @@ enum {
 }
 
 
-- (NSUInteger) numButtons		{ return 6; }
-- (NSUInteger) numAxes			{ return 4; }
-- (NSUInteger) numPOVSwitches	{ return 2; }
++ (NSUInteger) numButtons		{ return 6; }
++ (NSUInteger) numAxes			{ return 4; }
++ (NSUInteger) numPOVSwitches	{ return 2; }
 
 - (void) clearInput
 {

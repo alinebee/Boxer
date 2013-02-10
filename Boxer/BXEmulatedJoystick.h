@@ -102,8 +102,9 @@ enum {
 //Used for filtering out unsupported joysticks when running games that are known to have problems with them.
 + (BOOL) requiresFullJoystickSupport;
 
-//The number of buttons that joysticks of this type respond to.
+//The number of buttons and axes that joysticks of this type respond to.
 + (NSUInteger) numButtons;
++ (NSUInteger) numAxes;
 
 //Called by BXEmulator when the device is plugged/unplugged.
 - (void) didConnect;
@@ -156,7 +157,7 @@ enum {
 @protocol BXEmulatedFlightstick <BXEmulatedJoystick>
 
 //The number of POV switches the joystick responds to.
-@property (readonly, nonatomic) NSUInteger numPOVSwitches;
++ (NSUInteger) numPOVSwitches;
 
 - (void) POV: (NSUInteger)POVNumber changedTo: (BXEmulatedPOVDirection)direction;
 

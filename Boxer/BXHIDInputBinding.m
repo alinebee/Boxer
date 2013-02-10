@@ -42,6 +42,11 @@
         [self.outputBinding applyInputValue: kBXOutputBindingMin];
 }
 
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ input binding to %@", self.class, self.outputBinding];
+}
+
 @end
 
 
@@ -125,6 +130,11 @@
         [self.positiveBinding applyInputValue: 0];
         [self.negativeBinding applyInputValue: 0];
     }
+}
+
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ input binding to positive %@, negative %@", self.class, self.positiveBinding, self.negativeBinding];
 }
 
 @end
@@ -229,7 +239,8 @@
 
 - (void) processEvent: (BXHIDEvent *)event
 {
-    BXHIDPOVSwitchDirection direction = [BXHIDEvent closest8WayDirectionForPOV: direction];
+    BXHIDPOVSwitchDirection direction = [BXHIDEvent closest8WayDirectionForPOV: event.POVDirection];
+    
     if (direction != _previousDirection)
     {
         NSSet *inactiveBindings = [self closestBindingsForDirection: _previousDirection];
@@ -255,4 +266,5 @@
 {
     return [NSString stringWithFormat: @"%@ binding with output bindings: %@", self.class, self.outputBindings];
 }
+
 @end

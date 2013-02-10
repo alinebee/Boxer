@@ -119,6 +119,11 @@
     return binding;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat: @"%@ binding to joystick %@ button %lu", self.class, self.joystick.class, (unsigned long)self.button];
+}
+
 @end
 
 
@@ -170,6 +175,11 @@
     [super dealloc];
 }
 
+- (NSString *)description
+{
+    NSString *polarityDesc = (self.polarity == kBXAxisPositive) ? @"+" : @"-";
+    return [NSString stringWithFormat: @"%@ binding to joystick %@ %@ %@", self.class, self.joystick.class, self.axisName, polarityDesc];
+}
 @end
 
 
@@ -186,6 +196,7 @@
 
 - (void) applyNormalizedInputValue: (float)value
 {
+    NSLog(@"%@ applying value %f", self, value);
     if (value > 0)
     {
         [(id <BXEmulatedFlightstick>)self.joystick POV: self.POVNumber directionDown: self.POVDirection];
@@ -209,6 +220,10 @@
     return binding;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat: @"%@ binding to joystick %@ POV %lu direction %lu", self.class, self.joystick.class, (unsigned long)self.POVNumber, (unsigned long)self.POVDirection];
+}
 @end
 
 
@@ -249,6 +264,10 @@
     [super dealloc];
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat: @"%@ binding to key code %lu", self.class, (unsigned long)self.keyCode];
+}
 @end
 
 
@@ -385,6 +404,10 @@
     [super dealloc];
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat: @"%@ binding to joystick %@ %@ rate %0.2f", self.class, self.joystick.class, self.axisName, self.ratePerSecond];
+}
 @end
 
 
@@ -415,6 +438,11 @@
         if (self.releasedAction)
             [NSApp sendAction: self.releasedAction to: self.target from: self];
     }
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat: @"%@ binding to target %@ pressed action %@ released action %@", self.class, self.target, NSStringFromSelector(self.pressedAction), NSStringFromSelector(self.releasedAction)];
 }
 
 @end

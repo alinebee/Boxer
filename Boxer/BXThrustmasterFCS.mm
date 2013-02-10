@@ -60,9 +60,9 @@ enum
 + (BOOL) requiresFullJoystickSupport { return YES; }
 
 
-- (NSUInteger) numButtons		{ return 4; }
-- (NSUInteger) numAxes			{ return 3; } //Y2 axis is reserved for the POV switch
-- (NSUInteger) numPOVSwitches	{ return 1; }
++ (NSUInteger) numButtons		{ return 4; }
++ (NSUInteger) numAxes			{ return 3; } //Y2 axis is reserved for the POV switch
++ (NSUInteger) numPOVSwitches	{ return 1; }
 
 - (void) clearInput
 {

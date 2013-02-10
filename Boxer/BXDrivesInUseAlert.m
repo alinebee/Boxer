@@ -16,40 +16,40 @@
 - (id) initWithDrives: (NSArray *)drivesInUse
            forSession: (BXSession *)session
 {
-	if ((self = [super init]))
+    self = [super init];
+	if (self)
 	{
 		//Since this may cause dataloss, I think we're justified in using caution alerts
-		[self setAlertStyle: NSCriticalAlertStyle];
-		
-        //Use the session's own icon for the alert
-        NSImage *icon = [[session representedIcon] copy];
-        [icon setSize: NSMakeSize(128, 128)];
-        [self setIcon: icon];
-        [icon release];
+        self.alertStyle = NSCriticalAlertStyle;
         
-		NSString *processName = [session processDisplayName];
-        if (!processName) processName = [session displayName];
+        //Use the session's own icon for the alert
+        NSImage *icon = [session.representedIcon copy];
+        icon.size = NSMakeSize(128, 128);
+        self.icon = [icon autorelease];
+        
+		NSString *processName = session.processDisplayName;
+        if (!processName)
+            processName = session.displayName;
 		
-		if ([drivesInUse count] > 1)
+		if (drivesInUse.count > 1)
 		{
 			NSString *messageFormat = NSLocalizedString(
-				@"The selected drives are in use by %@. Are you sure you want to remove them?",
+				@"The selected drives are in use by %@. Are you sure you want to eject them?",
 				@"Title for confirmation sheet when unmounting multiple drives that are in use. %@ is the display-ready name of the current DOS process.");
 			
-			[self setMessageText: [NSString stringWithFormat: messageFormat, processName]];
+            self.messageText = [NSString stringWithFormat: messageFormat, processName];
 		}
 		else
 		{
 			BXDrive *drive = [drivesInUse lastObject];
 			NSString *messageFormat = NSLocalizedString(
-				@"Drive %1$@: is in use by %2$@. Are you sure you want to remove it?",
+				@"Drive %1$@: is in use by %2$@. Are you sure you want to eject it?",
 				@"Title for confirmation sheet when unmounting a single drive that is in use. %1$@ is the uppercase letter of the drive, %@ is the display-ready name of the current DOS process.");
-			[self setMessageText: [NSString stringWithFormat: messageFormat, drive.letter, processName]];
+            self.messageText = [NSString stringWithFormat: messageFormat, drive.letter, processName];
 		}
 
-		[self setInformativeText: NSLocalizedString(
-			@"Removing a drive while it is in use may cause programs that depend on the drive to crash.",
-			@"Explanatory text for confirmation sheet when unmounting one or more drives that are in use.")];
+        self.informativeText = NSLocalizedString(@"Ejecting a drive while it is in use may cause programs that depend on the drive to crash.",
+                                                 @"Explanatory text for confirmation sheet when unmounting one or more drives that are in use.");
 		
 		
 		NSString *unmountLabel	= NSLocalizedString(@"Remove",	@"Used in confirmation sheets to confirm unmounting one or more drives");
@@ -58,7 +58,7 @@
 		[self addButtonWithTitle: unmountLabel];
 		
 		NSButton *cancelButton = [self addButtonWithTitle: cancelLabel];
-		[cancelButton setKeyEquivalent: @"\e"];
+        cancelButton.keyEquivalent = @"\e";
 	}
 	return self;
 }

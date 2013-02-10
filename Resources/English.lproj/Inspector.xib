@@ -128,13 +128,13 @@
 							<object class="NSMutableString" key="NSToolbarItemIdentifier">
 								<characters key="NS.bytes">5D453552-BF6F-4FD4-B050-35C499163530</characters>
 							</object>
-							<string key="NSToolbarItemLabel">Game </string>
-							<string key="NSToolbarItemPaletteLabel">Game </string>
+							<string key="NSToolbarItemLabel">Gamebox</string>
+							<string key="NSToolbarItemPaletteLabel">Gamebox</string>
 							<string key="NSToolbarItemToolTip"/>
 							<nil key="NSToolbarItemView"/>
 							<object class="NSCustomResource" key="NSToolbarItemImage">
 								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">HardDiskTemplate</string>
+								<string key="NSResourceName">package</string>
 							</object>
 							<nil key="NSToolbarItemTarget"/>
 							<nil key="NSToolbarItemAction"/>
@@ -938,7 +938,7 @@ bnN0ZWFkLg</string>
 														<string key="NSFrame">{{254, 16}, {25, 25}}</string>
 														<reference key="NSSuperview" ref="563656760"/>
 														<reference key="NSWindow"/>
-														<reference key="NSNextKeyView" ref="681208964"/>
+														<reference key="NSNextKeyView"/>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSButtonCell" key="NSCell" id="806671650">
 															<int key="NSCellFlags">67108864</int>
@@ -5847,7 +5847,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 			<string key="CPU">{32, 32}</string>
 			<string key="Drives">{32, 32}</string>
 			<string key="GamepadTemplate">{128, 128}</string>
-			<string key="HardDiskTemplate">{128, 128}</string>
 			<string key="Joystick">{32, 32}</string>
 			<string key="Mouse">{32, 32}</string>
 			<string key="NSActionTemplate">{15, 15}</string>
@@ -5856,6 +5855,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 			<string key="NSMenuMixedState">{10, 3}</string>
 			<string key="NSRemoveTemplate">{8, 8}</string>
 			<string key="NSSwitch">{15, 15}</string>
+			<string key="package">{512, 512}</string>
 		</dictionary>
 	</data>
 </archive>

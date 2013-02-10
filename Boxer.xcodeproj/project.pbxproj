@@ -713,6 +713,13 @@
 		9FB60E9415C573C100CD0D63 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
 		9FB642A313FEB71D00385DD3 /* BXISOImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F81CFB813EEA3F4008F0265 /* BXISOImage.m */; };
 		9FB642A413FEB71D00385DD3 /* BXBinCueImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98589613EF71F600E66877 /* BXBinCueImage.m */; };
+		9FB6AE7B16C800BD00EB1D40 /* CPU.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FB6AE7A16C800BD00EB1D40 /* CPU.png */; };
+		9FB6AE7E16C808A800EB1D40 /* Mouse.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FB6AE7D16C808A800EB1D40 /* Mouse.png */; };
+		9FB6AE8016C80ED700EB1D40 /* Drives.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FB6AE7F16C80ED700EB1D40 /* Drives.png */; };
+		9FB6AE8816C8274000EB1D40 /* Joystick.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FB6AE8716C8274000EB1D40 /* Joystick.png */; };
+		9FB6AE8B16C82F5300EB1D40 /* CPU@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FB6AE8A16C82F5300EB1D40 /* CPU@2x.png */; };
+		9FB6AE8E16C8366D00EB1D40 /* Joystick@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FB6AE8C16C8366D00EB1D40 /* Joystick@2x.png */; };
+		9FB6AE8F16C8366D00EB1D40 /* Mouse@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FB6AE8D16C8366D00EB1D40 /* Mouse@2x.png */; };
 		9FB769E3164861D8000644C2 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB769E2164861D8000644C2 /* Quartz.framework */; };
 		9FB769E5164861E1000644C2 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB769E2164861D8000644C2 /* Quartz.framework */; };
 		9FBA48C01450B73900F9BBDE /* Keyboard.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBA48BF1450B73900F9BBDE /* Keyboard.png */; };
@@ -1596,6 +1603,13 @@
 		9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+BXFilePaths.m"; sourceTree = "<group>"; };
 		9FB60E9015C5643200CD0D63 /* NSError+BXErrorHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+BXErrorHelpers.h"; sourceTree = "<group>"; };
 		9FB60E9115C5643200CD0D63 /* NSError+BXErrorHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+BXErrorHelpers.m"; sourceTree = "<group>"; };
+		9FB6AE7A16C800BD00EB1D40 /* CPU.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CPU.png; sourceTree = "<group>"; };
+		9FB6AE7D16C808A800EB1D40 /* Mouse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mouse.png; sourceTree = "<group>"; };
+		9FB6AE7F16C80ED700EB1D40 /* Drives.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Drives.png; sourceTree = "<group>"; };
+		9FB6AE8716C8274000EB1D40 /* Joystick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Joystick.png; sourceTree = "<group>"; };
+		9FB6AE8A16C82F5300EB1D40 /* CPU@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "CPU@2x.png"; sourceTree = "<group>"; };
+		9FB6AE8C16C8366D00EB1D40 /* Joystick@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Joystick@2x.png"; sourceTree = "<group>"; };
+		9FB6AE8D16C8366D00EB1D40 /* Mouse@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Mouse@2x.png"; sourceTree = "<group>"; };
 		9FB769E2164861D8000644C2 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		9FBA48BF1450B73900F9BBDE /* Keyboard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Keyboard.png; sourceTree = "<group>"; };
 		9FBAA6BB134A1A430092BF95 /* BXCDImageImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCDImageImport.h; sourceTree = "<group>"; };
@@ -3092,6 +3106,13 @@
 		9F9606E914F65A3A0072E90C /* Inspector */ = {
 			isa = PBXGroup;
 			children = (
+				9FB6AE8716C8274000EB1D40 /* Joystick.png */,
+				9FB6AE8C16C8366D00EB1D40 /* Joystick@2x.png */,
+				9FB6AE7F16C80ED700EB1D40 /* Drives.png */,
+				9FB6AE7D16C808A800EB1D40 /* Mouse.png */,
+				9FB6AE8D16C8366D00EB1D40 /* Mouse@2x.png */,
+				9FB6AE7A16C800BD00EB1D40 /* CPU.png */,
+				9FB6AE8A16C82F5300EB1D40 /* CPU@2x.png */,
 				9F7FC94B139EB38300D60320 /* RacingWheel.png */,
 				9FA54098139E85D800999940 /* 4ButtonJoystick.png */,
 				9F0E610E139E1A05004A7A56 /* CHFlightstickPro.png */,
@@ -3821,6 +3842,13 @@
 				9F125C44169842F4003B5B2B /* DocumentationPanel.xib in Resources */,
 				9F125C4916984378003B5B2B /* InspectorDriveItem.xib in Resources */,
 				9F125C4A16984378003B5B2B /* InspectorJoystickItem.xib in Resources */,
+				9FB6AE7B16C800BD00EB1D40 /* CPU.png in Resources */,
+				9FB6AE7E16C808A800EB1D40 /* Mouse.png in Resources */,
+				9FB6AE8016C80ED700EB1D40 /* Drives.png in Resources */,
+				9FB6AE8816C8274000EB1D40 /* Joystick.png in Resources */,
+				9FB6AE8B16C82F5300EB1D40 /* CPU@2x.png in Resources */,
+				9FB6AE8E16C8366D00EB1D40 /* Joystick@2x.png in Resources */,
+				9FB6AE8F16C8366D00EB1D40 /* Mouse@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

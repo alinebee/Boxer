@@ -273,10 +273,31 @@ public:
 		Section_prop *section = static_cast <Section_prop*>(configuration);
 		
 		char pname[]="parallelx";
+        
 		// iterate through all 3 lpt ports
 		for (Bitu i = 0; i < 3; i++) {
+            //--Modified 2012-02-10 by Alun Bestor: if a parallel port is already occupied
+            //by another device (e.g. disney sound source on LPT1), skip it
+            Bitu biosAddress;
+            switch(i)
+            {
+                case 1:
+                    biosAddress = BIOS_ADDRESS_LPT2; break;
+                case 2:
+                    biosAddress = BIOS_ADDRESS_LPT3; break;
+                case 0:
+                default:
+                    biosAddress = BIOS_ADDRESS_LPT1; break;
+            }
+            if (mem_readw(biosAddress) != 0)
+            {
+                LOG_MSG("LPT%d already taken, skipping", i+1);
+                continue;
+            }
+            //--End of modifications
+                
 			pname[8] = '1' + i;
-			CommandLine cmd(0,section->Get_string(pname));
+            CommandLine cmd(0,section->Get_string(pname));
 
 			std::string str;
 			cmd.FindCommand(1,str);

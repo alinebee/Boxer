@@ -372,8 +372,12 @@ public:
 	DISNEY(Section* configuration):Module_base(configuration) {
 		Section_prop * section=static_cast<Section_prop *>(configuration);
 		if(!section->Get_bool("disney")) return;
-		if(mem_readw(BIOS_ADDRESS_LPT1) != 0) return;
-		BIOS_SetLPTPort(0,0x378);
+		if(mem_readw(BIOS_ADDRESS_LPT1) != 0)
+        {
+            printf("Disney conflicts with existing LPT1 hardware");
+            return;
+        }
+		BIOS_SetLPTPort(0,DISNEY_BASE);
 	
 		WriteHandler.Install(DISNEY_BASE,disney_write,IO_MB,3);
 		ReadHandler.Install(DISNEY_BASE,disney_read,IO_MB,3);

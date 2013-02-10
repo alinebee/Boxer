@@ -196,7 +196,6 @@
 
 - (void) applyNormalizedInputValue: (float)value
 {
-    NSLog(@"%@ applying value %f", self, value);
     if (value > 0)
     {
         [(id <BXEmulatedFlightstick>)self.joystick POV: self.POVNumber directionDown: self.POVDirection];

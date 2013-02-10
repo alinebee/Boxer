@@ -69,7 +69,7 @@
 - (NSSize) resolution
 {
 	NSSize size = NSZeroSize;
-	if (self.emulator.isExecuting)
+	if (self.emulator.isInitialized)
 	{
 		size.width	= (CGFloat)render.src.width;
 		size.height	= (CGFloat)render.src.height;
@@ -81,7 +81,7 @@
 - (BOOL) isInTextMode
 {
 	BOOL textMode = NO;
-	if (self.emulator.isExecuting)
+	if (self.emulator.isInitialized)
 	{
 		switch (_currentVideoMode)
 		{
@@ -96,24 +96,29 @@
 
 + (NSSet *) keyPathsForValuesAffectingInHerculesMode
 {
-    return [NSSet setWithObject: @"emulator.executing"];
+    return [NSSet setWithObject: @"emulator.initialized"];
 }
 
 - (BOOL) isInHerculesMode
 {
-    if (self.emulator.isExecuting)
+    if (self.emulator.isInitialized)
+    {
         return (machine == MCH_HERC);
-    else return NO;
+    }
+    else
+    {
+        return NO;
+    }
 }
 
 + (NSSet *) keyPathsForValuesAffectingInCGAMode
 {
-    return [NSSet setWithObject: @"emulator.executing"];
+    return [NSSet setWithObject: @"emulator.initialized"];
 }
 
 - (BOOL) isInCGAMode
 {
-    if (self.emulator.isExecuting)
+    if (self.emulator.isInitialized)
         return (machine == MCH_CGA);
     else return NO;
 }
@@ -144,7 +149,7 @@
 - (BOOL) filterIsActive
 {
 	BOOL isActive = NO;
-	if (self.emulator.isExecuting)
+	if (self.emulator.isInitialized)
 	{
 		isActive = (self.filterType == (NSUInteger)render.scale.op);
 	}
@@ -162,7 +167,7 @@
 
 - (void) _syncHerculesTint
 {
-    if (self.emulator.isExecuting)
+    if (self.emulator.isInitialized)
     {
         boxer_setHerculesTintMode((Bit8u)self.herculesTint);
     }
@@ -176,7 +181,7 @@
 
 - (void) _syncCGAHueAdjustment
 {
-    if (self.emulator.isExecuting)
+    if (self.emulator.isInitialized)
     {
         boxer_setCGACompositeHueOffset(self.CGAHueAdjustment);
     }
@@ -187,7 +192,7 @@
 //This is called after resizing the session window or toggling rendering options.
 - (void) reset
 {
-	if (self.emulator.isExecuting)
+	if (self.emulator.isInitialized)
 	{
         if (self.emulator.emulationThread != [NSThread currentThread])
         {

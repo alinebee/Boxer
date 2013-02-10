@@ -131,10 +131,31 @@
 {
 	if (self.delegate.isSelected)
 	{
-		NSColor *selectionColor	= [NSColor alternateSelectedControlColor];
+        [NSBezierPath clipRect: dirtyRect];
         
-        [selectionColor set];
-        NSRectFill(dirtyRect);
+		NSColor *selectionColor	= [NSColor alternateSelectedControlColor];
+		NSColor *fadeColor      = [selectionColor shadowWithLevel: 0.20f];
+		NSColor *shadowColor	= [selectionColor shadowWithLevel: 0.33f];
+		NSColor *bevelColor     = [selectionColor highlightWithLevel: 0.1f];
+		NSGradient *background	= [[NSGradient alloc] initWithStartingColor: selectionColor
+                                                                endingColor: fadeColor];
+        
+        [background drawInRect: self.bounds angle: 270.0f];
+        
+        NSRect topGroove = NSMakeRect(0, self.bounds.size.height - 1, self.bounds.size.width, 1);
+        NSRect bottomGroove = NSMakeRect(0, 0, self.bounds.size.width, 1);
+        NSRect topBevel = NSOffsetRect(topGroove, 0, -1);
+        
+        [bevelColor set];
+        NSRectFill(topBevel);
+        
+        [fadeColor set];
+        NSRectFill(topGroove);
+        
+        [shadowColor set];
+        NSRectFill(bottomGroove);
+        
+        [background release];
 	}
 }
 @end

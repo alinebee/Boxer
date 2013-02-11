@@ -5,9 +5,10 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "NSURL+BXFilePaths.h"
+#import "NSURL+BXFilesystemHelpers.h"
+#import <AppKit/AppKit.h>
 
-@implementation NSURL (BXPaths)
+@implementation NSURL (BXFilePaths)
 
 - (NSString *) pathRelativeToURL: (NSURL *)baseURL
 {
@@ -109,6 +110,96 @@
 	}
 	
     return components;
+}
+
+- (NSArray *) URLsByAppendingPaths: (NSArray *)paths
+{
+    NSMutableArray *URLs = [NSMutableArray arrayWithCapacity: paths.count];
+    
+    for (NSString *pathComponent in paths)
+    {
+        NSURL *URL = [self URLByAppendingPathComponent: pathComponent];
+        [URLs addObject: URL];
+    }
+    
+    return URLs;
+}
+
+@end
+
+@implementation NSURL (BXFileTypes)
+
+- (NSString *) typeIdentifier
+{
+    NSString *UTI = nil;
+    BOOL retrievedUTI = [self getResourceValue: &UTI forKey: NSURLTypeIdentifierKey error: NULL];
+    if (retrievedUTI)
+        return UTI;
+    else
+        return nil;
+}
+- (BOOL) conformsToFileType: (NSString *)comparisonUTI
+{
+    NSWorkspace *ws = [NSWorkspace sharedWorkspace];
+    
+    NSString *UTI = self.typeIdentifier;
+    if (UTI.length)
+    {
+        if ([ws type: UTI conformsToType: comparisonUTI])
+            return YES;
+    }
+    
+    //If no UTI match was found, check whether the file extension alone matches the specified type.
+    //(This allows us to judge filetypes based on filename alone, e.g. for nonexistent/inaccessible files.
+    if ([ws filenameExtension: self.pathExtension isValidForType: comparisonUTI])
+        return YES;
+    
+    return NO;
+}
+
+- (NSString *) matchingFileType: (NSSet *)UTIs
+{
+    NSWorkspace *ws = [NSWorkspace sharedWorkspace];
+    
+    NSString *UTI = self.typeIdentifier;
+    if (UTI.length)
+    {
+        for (NSString *comparisonUTI in UTIs)
+        {
+            if ([ws type: UTI conformsToType: comparisonUTI])
+                return comparisonUTI;
+        }
+    }
+    
+    //If no UTI match was found, check whether the file extension alone matches any of the specified types.
+    //(This allows us to judge filetypes based on filename alone, e.g. for nonexistent/inaccessible files.
+    for (NSString *comparisonUTI in UTIs)
+    {
+        if ([ws filenameExtension: self.pathExtension isValidForType: comparisonUTI])
+            return comparisonUTI;
+    }
+    
+    return nil;
+}
+@end
+
+
+
+@implementation NSArray (BXURLArrayExtensions)
+
+- (NSArray *) URLsMatchingExtensions: (NSArray *)extensions
+{
+    NSArray *lowercaseExtensions = [extensions valueForKey: @"lowercaseString"];
+    
+    NSMutableArray *matches = [NSMutableArray arrayWithCapacity: self.count];
+    for (NSURL *URL in self)
+    {
+        NSString *extension = URL.pathExtension.lowercaseString;
+        if ([lowercaseExtensions containsObject: extension])
+            [matches addObject: URL];
+    }
+    
+    return matches;
 }
 
 @end

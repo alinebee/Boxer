@@ -9,6 +9,7 @@
 #import "BXSession.h"
 #import "BXBaseAppController.h"
 #import "BXGamebox.h"
+#import "BXFileTypes.h"
 
 @interface BXHelpMenuController ()
 
@@ -117,7 +118,7 @@
 {
     NSURL *documentURL = sender.representedObject;
 	if (documentURL)
-        [[NSWorkspace sharedWorkspace] openURL: documentURL];
+        [BXFileTypes openURLsInPreferredApplications: @[documentURL]];
 }
 
 

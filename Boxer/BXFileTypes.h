@@ -32,6 +32,7 @@ extern NSString * const BXCOMProgramType;       //.com
 extern NSString * const BXBatchProgramType;     //.bat
 
 
+
 @interface BXFileTypes : NSObject
 
 + (NSSet *) executableTypes;		//DOS executable UTIs
@@ -43,5 +44,17 @@ extern NSString * const BXBatchProgramType;     //.bat
 + (NSSet *) mountableImageTypes;	//All mountable disk-image UTIs supported by Boxer
 + (NSSet *) OSXMountableImageTypes; //All disk-image UTIs that OSX's hdiutil can mount
 + (NSSet *) mountableTypes;			//All mountable UTIs supported by Boxer
+
+//Returns the bundle identifier of the application that should be used for opening
+//the specified URL. This is usually the default application reported by OS X, but
+//may be selectively overridden for files we know may be misinterpreted based on legacy
+//file extension: in this case a custom and defaultAppIdentifier will be populated with
+//the bundle identifier of the system default application.
++ (NSString *) bundleIdentifierForApplicationToOpenURL: (NSURL *)URL
+                                         systemDefault: (out NSString **)defaultAppIdentifier;
+
+//Opens the specified URLs in our preferred application(s) for each URL (which usually,
+//but not always, corresponds to the OS X default application for that URL.)
++ (void) openURLsInPreferredApplications: (NSArray *)URLs;
 
 @end

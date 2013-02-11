@@ -14,7 +14,7 @@
 #import "BXDigest.h"
 #import "NSData+HexStrings.h"
 #import "BXPathEnumerator.h"
-#import "NSURL+BXFilePaths.h"
+#import "NSURL+BXFilesystemHelpers.h"
 #import "NSError+BXErrorHelpers.h"
 
 #pragma mark -

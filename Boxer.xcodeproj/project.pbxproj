@@ -703,12 +703,12 @@
 		9FB453B316442D3F00BCF63B /* app.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FB453A716442D2900BCF63B /* app.icns */; };
 		9FB453B416442D4200BCF63B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FB453A816442D2900BCF63B /* InfoPlist.strings */; };
 		9FB453B716442DAC00BCF63B /* Boxer Standalone.app in Resources */ = {isa = PBXBuildFile; fileRef = 9F2D317215B8233800FAE848 /* Boxer Standalone.app */; };
-		9FB453B816442ECE00BCF63B /* NSURL+BXFilePaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		9FB453B816442ECE00BCF63B /* NSURL+BXFilesystemHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilesystemHelpers.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9FB4F9E411957B55006C8AC9 /* BXVideoFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4F9E311957B55006C8AC9 /* BXVideoFrame.m */; };
 		9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
 		9FB554220F6EAC5F00A33017 /* NSAlert+BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */; };
-		9FB60E8E15C5552F00CD0D63 /* NSURL+BXFilePaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */; };
-		9FB60E8F15C5552F00CD0D63 /* NSURL+BXFilePaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */; };
+		9FB60E8E15C5552F00CD0D63 /* NSURL+BXFilesystemHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilesystemHelpers.m */; };
+		9FB60E8F15C5552F00CD0D63 /* NSURL+BXFilesystemHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilesystemHelpers.m */; };
 		9FB60E9215C5643200CD0D63 /* NSError+BXErrorHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E9115C5643200CD0D63 /* NSError+BXErrorHelpers.m */; };
 		9FB60E9315C5643200CD0D63 /* NSError+BXErrorHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E9115C5643200CD0D63 /* NSError+BXErrorHelpers.m */; };
 		9FB60E9415C573C100CD0D63 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
@@ -1601,8 +1601,8 @@
 		9FB553E00F6EA30900A33017 /* BXCloseAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCloseAlert.m; sourceTree = "<group>"; };
 		9FB554200F6EAC5F00A33017 /* NSAlert+BXAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAlert+BXAlert.h"; sourceTree = "<group>"; };
 		9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAlert+BXAlert.m"; sourceTree = "<group>"; };
-		9FB60E8C15C5552F00CD0D63 /* NSURL+BXFilePaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+BXFilePaths.h"; sourceTree = "<group>"; };
-		9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+BXFilePaths.m"; sourceTree = "<group>"; };
+		9FB60E8C15C5552F00CD0D63 /* NSURL+BXFilesystemHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+BXFilesystemHelpers.h"; sourceTree = "<group>"; };
+		9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilesystemHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+BXFilesystemHelpers.m"; sourceTree = "<group>"; };
 		9FB60E9015C5643200CD0D63 /* NSError+BXErrorHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+BXErrorHelpers.h"; sourceTree = "<group>"; };
 		9FB60E9115C5643200CD0D63 /* NSError+BXErrorHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+BXErrorHelpers.m"; sourceTree = "<group>"; };
 		9FB6AE7A16C800BD00EB1D40 /* CPU.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CPU.png; sourceTree = "<group>"; };
@@ -2992,8 +2992,8 @@
 				9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */,
 				9FC8F50A10934F3400AD6307 /* NSString+BXPaths.h */,
 				9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */,
-				9FB60E8C15C5552F00CD0D63 /* NSURL+BXFilePaths.h */,
-				9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilePaths.m */,
+				9FB60E8C15C5552F00CD0D63 /* NSURL+BXFilesystemHelpers.h */,
+				9FB60E8D15C5552F00CD0D63 /* NSURL+BXFilesystemHelpers.m */,
 				9FAA44A511EB24A90042B986 /* NSString+BXStringFormatting.h */,
 				9FAA44A611EB24A90042B986 /* NSString+BXStringFormatting.m */,
 				9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */,
@@ -4156,7 +4156,7 @@
 				9F5F12C615ADCE74007A070F /* NSKeyedArchiver+BXArchivingAdditions.m in Sources */,
 				9FCB7B1015B844AB00CC7CC7 /* BXBaseAppController.m in Sources */,
 				9F98410215BEE64400B50CDA /* BXShadowedFilesystem.m in Sources */,
-				9FB60E8E15C5552F00CD0D63 /* NSURL+BXFilePaths.m in Sources */,
+				9FB60E8E15C5552F00CD0D63 /* NSURL+BXFilesystemHelpers.m in Sources */,
 				9FB60E9215C5643200CD0D63 /* NSError+BXErrorHelpers.m in Sources */,
 				9FA2C09215C8409000380261 /* BXDOSWindowBackgroundView.m in Sources */,
 				9FCA6D9615C85D8500E1650C /* BXLaunchPanelController.m in Sources */,
@@ -4579,7 +4579,7 @@
 				9FCB7B1815B8570E00CC7CC7 /* BXDriveBundleImport.m in Sources */,
 				9FCB7B1A15B8589B00CC7CC7 /* BXDOSWindowController.m in Sources */,
 				9F98410315BEE64400B50CDA /* BXShadowedFilesystem.m in Sources */,
-				9FB60E8F15C5552F00CD0D63 /* NSURL+BXFilePaths.m in Sources */,
+				9FB60E8F15C5552F00CD0D63 /* NSURL+BXFilesystemHelpers.m in Sources */,
 				9FB60E9315C5643200CD0D63 /* NSError+BXErrorHelpers.m in Sources */,
 				9F458D9C15D83B8800DF9102 /* BXLaunchPanelButtonCell.m in Sources */,
 				9F458D9D15D83B8C00DF9102 /* BXLaunchPanelController.m in Sources */,
@@ -4613,7 +4613,7 @@
 			files = (
 				9FB4539716442CDD00BCF63B /* main.m in Sources */,
 				9FB4539E16442CDD00BCF63B /* BBAppDelegate.m in Sources */,
-				9FB453B816442ECE00BCF63B /* NSURL+BXFilePaths.m in Sources */,
+				9FB453B816442ECE00BCF63B /* NSURL+BXFilesystemHelpers.m in Sources */,
 				9F5537F81644321500B9447D /* BBAppDelegate+AppExporting.m in Sources */,
 				9F5537F91644321500B9447D /* BBIconDropzone.m in Sources */,
 				9F5537FA1644321500B9447D /* BBURLTransformer.m in Sources */,

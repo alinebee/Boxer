@@ -9,6 +9,7 @@
 #import "BXSession.h"
 #import "BXGamebox.h"
 #import "NSURL+BXQuickLookHelpers.h"
+#import "BXFileTypes.h"
 #import "NSView+BXDrawing.h"
 #import "BXBaseAppController.h"
 #import "NSError+BXErrorHelpers.h"
@@ -320,11 +321,7 @@ enum {
 {
     if (self.documentationSelectionIndexes.count)
     {
-        [[NSWorkspace sharedWorkspace] openURLs: self.selectedDocumentationURLs
-                        withAppBundleIdentifier: nil
-                                        options: NSWorkspaceLaunchDefault
-                 additionalEventParamDescriptor: nil
-                              launchIdentifiers: NULL];
+        [BXFileTypes openURLsInPreferredApplications: self.selectedDocumentationURLs];
         
         if ([self.delegate respondsToSelector: @selector(documentationBrowser:didOpenURLs:)])
             [self.delegate documentationBrowser: self didOpenURLs: self.selectedDocumentationURLs];
@@ -937,6 +934,9 @@ enum {
 - (void) mouseDown: (NSEvent *)theEvent
 {
     //Open the corresponding documentation item when the view is double-clicked.
+    //Note that unfortunately owing to the way NSCollectionView handles mouse events, the first click on an item
+    //will deselect all other items before the double-click happens: so we can only ever open one documentation
+    //item by doubleclicking even when multiple items are selected.
     if (theEvent.clickCount > 1)
     {
         //Ensure that the item is selected.

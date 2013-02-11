@@ -28,7 +28,7 @@
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSWorkspace+BXExecutableTypes.h"
 #import "NSString+BXPaths.h"
-#import "NSURL+BXFilePaths.h"
+#import "NSURL+BXFilesystemHelpers.h"
 #import "NSFileManager+BXTemporaryFiles.h"
 #import "BXPathEnumerator.h"
 #import "RegexKitLite.h"

@@ -6,7 +6,7 @@
  */
 
 #import "BXShadowedFilesystem.h"
-#import "NSURL+BXFilePaths.h"
+#import "NSURL+BXFilesystemHelpers.h"
 #import "NSError+BXErrorHelpers.h"
 #import "BXPostLeopardAPIs.h"
 

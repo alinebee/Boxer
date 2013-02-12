@@ -45,16 +45,18 @@ extern NSString * const BXBatchProgramType;     //.bat
 + (NSSet *) OSXMountableImageTypes; //All disk-image UTIs that OSX's hdiutil can mount
 + (NSSet *) mountableTypes;			//All mountable UTIs supported by Boxer
 
-//Returns the bundle identifier of the application that should be used for opening
-//the specified URL. This is usually the default application reported by OS X, but
-//may be selectively overridden for files we know may be misinterpreted based on legacy
-//file extension: in this case a custom and defaultAppIdentifier will be populated with
-//the bundle identifier of the system default application.
-+ (NSString *) bundleIdentifierForApplicationToOpenURL: (NSURL *)URL
-                                         systemDefault: (out NSString **)defaultAppIdentifier;
++ (NSSet *) documentationTypes;     //Document filetypes that Boxer will treat as game documentation.
 
-//Opens the specified URLs in our preferred application(s) for each URL (which usually,
-//but not always, corresponds to the OS X default application for that URL.)
-+ (void) openURLsInPreferredApplications: (NSArray *)URLs;
+//A dictionary of file extension->app identifier pairs for overriding OS X's default
+//choice of application for opening a particular file extension.
+//These are looked up by file extension rather than UTI because it's common for particular
+//legacy file extensions (like .DOC) to be construed by OSX as the wrong UTI, and we don't
+//want to override the handler for files with different extensions that conform to that UTI.
++ (NSDictionary *) fileHandlerOverrides;
+
+//Returns a specific bundle identifier that we want to use to open the specified URL,
+//or nil if OS X's default handler should be used. This uses fileHandlerOverrides to
+//selectively override the default for files with particular extensions.
++ (NSString *) bundleIdentifierForApplicationToOpenURL: (NSURL *)URL;
 
 @end

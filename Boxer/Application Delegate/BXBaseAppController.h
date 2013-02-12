@@ -140,6 +140,10 @@
 //Open the sender's represented object with its default app.
 - (IBAction) openInDefaultApplication: (id)sender;
 
+//Open the specified URLs in Boxer's preferred application(s) for each.
+- (BOOL) openURLsInPreferredApplications: (NSArray *)URLs
+                                 options: (NSWorkspaceLaunchOptions)launchOptions;
+
 //Reveal the specified path (or its parent folder, in the case of files) in a new Finder window.
 //Returns NO if the file at the path did not exist or could not be opened, YES otherwise.
 - (BOOL) revealPath: (NSString *)filePath;

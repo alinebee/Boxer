@@ -249,7 +249,6 @@ typedef enum {
 
 #pragma mark - Class helper methods
 
-+ (NSSet *) documentationTypes;			//UTIs recognised as documentation files.
 + (NSSet *) documentationExclusions;	//Filename patterns for documentation to exclude from searches.
 
 //Returns all the documentation files in the specified filesystem location.

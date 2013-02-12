@@ -11,6 +11,7 @@
 #import "BXAppKitVersionHelpers.h"
 
 #import "BXBaseAppController+BXHotKeys.h"
+#import "BXFileTypes.h"
 
 #import "BXMIDIDeviceMonitor.h"
 #import "BXKeyboardEventTap.h"
@@ -440,7 +441,9 @@
 
 - (IBAction) openInDefaultApplication: (id)sender
 {
-	if ([sender respondsToSelector: @selector(representedObject)]) sender = [sender representedObject];
+	if ([sender respondsToSelector: @selector(representedObject)])
+        sender = [sender representedObject];
+    
 	NSString *path = nil;
 	
 	//NSString paths
@@ -450,7 +453,63 @@
 	//NSDictionaries with paths
 	else if ([sender isKindOfClass: [NSDictionary class]])	path = [sender objectForKey: @"path"];	
 	
-	if (path) [[NSWorkspace sharedWorkspace] openFile: path withApplication: nil andDeactivate: YES];
+	if (path)
+    {
+        NSURL *URL = [NSURL fileURLWithPath: path];
+        [self openURLsInPreferredApplications: @[URL] options: NSWorkspaceLaunchDefault];
+    }
+}
+
+- (BOOL) openURLsInPreferredApplications: (NSArray *)URLs
+                                 options: (NSWorkspaceLaunchOptions)launchOptions
+{
+    BOOL openedAnyFiles = NO;
+    
+    //Go through each URL working out if we want to override the application for any of them.
+    //We then group URLs by app so that we can open them all at once with that application
+    //(which is tidier and allows e.g. Preview to group the opened documents intelligently).
+    NSMutableDictionary *appIdentifiersAndURLs = [[NSMutableDictionary alloc] initWithCapacity: 1];
+    
+    for (NSURL *URL in URLs)
+    {
+        id preferredIdentifier = [BXFileTypes bundleIdentifierForApplicationToOpenURL: URL];
+        
+        //If we'll be opening this URL with the system's default app, group it with other such URLs
+        //under a null identifier so we know to use the default handler later.
+        if (preferredIdentifier == nil)
+            preferredIdentifier = [NSNull null];
+        
+        NSMutableArray *URLsForApp = [appIdentifiersAndURLs objectForKey: preferredIdentifier];
+        if (!URLsForApp)
+        {
+            URLsForApp = [NSMutableArray arrayWithObject: URL];
+            [appIdentifiersAndURLs setObject: URLsForApp forKey: preferredIdentifier];
+        }
+        else
+        {
+            [URLsForApp addObject: URL];
+        }
+    }
+    
+    //Now that we've grouped all the URLs by the app we want to open them in, go ahead and do the opening
+    for (NSString *appIdentifier in appIdentifiersAndURLs)
+    {
+        NSArray *URLsForApp = [appIdentifiersAndURLs objectForKey: appIdentifier];
+        
+        //The null identifier is special
+        if ([appIdentifier isEqual: [NSNull null]])
+            appIdentifier = nil;
+        
+        BOOL succeeded = [[NSWorkspace sharedWorkspace] openURLs: URLsForApp
+                                         withAppBundleIdentifier: appIdentifier
+                                                         options: launchOptions
+                                  additionalEventParamDescriptor: nil
+                                               launchIdentifiers: NULL];
+        
+        if (succeeded)
+            openedAnyFiles = YES;
+    }
+    return openedAnyFiles;
 }
 
 - (BOOL) revealPath: (NSString *)filePath

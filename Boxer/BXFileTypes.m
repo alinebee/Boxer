@@ -6,7 +6,6 @@
  */
 
 #import "BXFileTypes.h"
-#import <AppKit/AppKit.h> //for NSWorkspace
 
 NSString * const BXGameboxType      = @"net.washboardabs.boxer-game-package";
 NSString * const BXGameStateType    = @"net.washboardabs.boxer-game-state";
@@ -162,104 +161,52 @@ NSString * const BXDOCFileType      = @"com.microsoft.word.doc";
 	return types;
 }
 
-+ (NSSet *) _plainTextFileExtensions
++ (NSSet *) documentationTypes
 {
-	static NSSet *types;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        types = [[NSSet alloc] initWithObjects:
-                 @"doc",
-                 nil];
-    });
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
+                         @"public.jpeg",
+                         @"public.plain-text",
+                         @"public.png",
+                         @"com.compuserve.gif",
+                         @"com.adobe.pdf",
+                         @"public.rtf",
+                         @"com.microsoft.bmp",
+                         @"com.microsoft.word.doc",
+                         @"public.html",
+                         nil];
 	return types;
 }
 
-+ (NSSet *) _plaintextMishandlingAppIdentifiers
++ (NSDictionary *) fileHandlerOverrides
 {
-	static NSSet *appIdentifiers;
+	static NSDictionary *handlers;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        appIdentifiers = [[NSSet alloc] initWithObjects:
-                          @"com.apple.iwork.pages",  //Pages
-                          nil];
+        handlers = @{
+            //Open .docs in TextEdit, because most DOS-era .docs are plaintext files
+            //and Pages (maybe other rich-text editors too?) will choke on them
+            @"doc": @"com.apple.TextEdit",
+        };
+        [handlers retain];
     });
-	return appIdentifiers;
+	return handlers;
 }
 
 + (NSString *) bundleIdentifierForApplicationToOpenURL: (NSURL *)URL
-                                         systemDefault: (out NSString **)defaultAppIdentifier
 {
-    //IMPLEMENTATION NOTE: this check used to use LSCopyDefaultRoleHandlerForContentType but this was returning
-    //results inconsistent with NSWorkspace's behaviour. Instead we rely on the slower approach of asking
-    //NSWorkspace for the URL of the application and then checking the application's bundle identifier from there.
-
     NSURL *resolvedURL = URL.URLByResolvingSymlinksInPath;
-    NSURL *appURL = [[NSWorkspace sharedWorkspace] URLForApplicationToOpenURL: resolvedURL];
-    NSString *preferredAppIdentifier = [NSBundle bundleWithURL: appURL].bundleIdentifier;
     
-    /*
-     NSString *UTI = resolvedURL.typeIdentifier;
-     NSString *targetBundleIdentifier = [(NSString *)LSCopyDefaultRoleHandlerForContentType((CFStringRef)UTI, kLSRolesEditor) autorelease];
-     */
+    NSDictionary *directoryFlags = [resolvedURL resourceValuesForKeys: @[NSURLIsDirectoryKey, NSURLIsPackageKey] error: NULL];
+    BOOL isDirectory    = [[directoryFlags objectForKey: NSURLIsDirectoryKey] boolValue];
+    BOOL isPackage      = [[directoryFlags objectForKey: NSURLIsPackageKey] boolValue];
     
-    if (defaultAppIdentifier)
-        *defaultAppIdentifier = preferredAppIdentifier;
-    
-    //If this is a known plaintext file and would otherwise be opened by an app that would mishandle it,
-    //force it to open in TextEdit instead.
-    if ([[self _plaintextMishandlingAppIdentifiers] containsObject: preferredAppIdentifier.lowercaseString] &&
-        [[self _plainTextFileExtensions] containsObject: resolvedURL.pathExtension.lowercaseString])
+    if (!isDirectory || isPackage)
     {
-        preferredAppIdentifier = @"com.apple.TextEdit";
+        NSString *fileExtension = URL.pathExtension.lowercaseString;
+        return [[self fileHandlerOverrides] objectForKey: fileExtension];
     }
-    
-    return preferredAppIdentifier;
+    else return nil;
 }
 
-+ (void) openURLsInPreferredApplications: (NSArray *)URLs
-{
-    //Go through each URL working out if we want to override the application for any of them.
-    //We then group URLs by app so that we can open them all at once with that application
-    //(which is tidier and allows e.g. Preview to group the opened documents intelligently).
-    NSMutableDictionary *appIdentifiersAndURLs = [[NSMutableDictionary alloc] initWithCapacity: 1];
-    
-    for (NSURL *URL in URLs)
-    {
-        id preferredIdentifier, defaultIdentifier;
-        
-        preferredIdentifier = [self bundleIdentifierForApplicationToOpenURL: URL systemDefault: &defaultIdentifier];
-        
-        //If we'll be opening this URL with the system's default app, group it with other such URLs
-        //under a null identifier so we know to use the default handler later.
-        if (preferredIdentifier == nil || [preferredIdentifier isEqualToString: defaultIdentifier])
-            preferredIdentifier = [NSNull null];
-        
-        NSMutableArray *URLsForApp = [appIdentifiersAndURLs objectForKey: preferredIdentifier];
-        if (!URLsForApp)
-        {
-            URLsForApp = [NSMutableArray arrayWithObject: URL];
-            [appIdentifiersAndURLs setObject: URLsForApp forKey: preferredIdentifier];
-        }
-        else
-        {
-            [URLsForApp addObject: URL];
-        }
-    }
-    
-    //Now that we've grouped all the URLs by the app we want to open them in, go ahead and do the opening
-    for (NSString *appIdentifier in appIdentifiersAndURLs)
-    {
-        NSArray *URLsForApp = [appIdentifiersAndURLs objectForKey: appIdentifier];
-        
-        //The null identifier is special
-        if ([appIdentifier isEqual: [NSNull null]])
-            appIdentifier = nil;
-        
-        [[NSWorkspace sharedWorkspace] openURLs: URLsForApp
-                        withAppBundleIdentifier: appIdentifier
-                                        options: NSWorkspaceLaunchDefault
-                 additionalEventParamDescriptor: nil
-                              launchIdentifiers: NULL];
-    }
-}
 @end

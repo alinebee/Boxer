@@ -670,23 +670,6 @@ typedef enum {
 
 @implementation BXGamebox (BXGameDocumentation)
 
-+ (NSSet *) documentationTypes
-{
-	static NSSet *types = nil;
-	if (!types) types = [[NSSet alloc] initWithObjects:
-                         @"public.jpeg",
-                         @"public.plain-text",
-                         @"public.png",
-                         @"com.compuserve.gif",
-                         @"com.adobe.pdf",
-                         @"public.rtf",
-                         @"com.microsoft.bmp",
-                         @"com.microsoft.word.doc",
-                         @"public.html",
-                         nil];
-	return types;
-}
-
 //We ignore files whose names match this pattern when considering which documentation files are likely to be worth showing.
 //TODO: read this from a configuration plist instead.
 + (NSSet *) documentationExclusions
@@ -1206,9 +1189,11 @@ typedef enum {
     [URL getResourceValue: &fileType forKey: NSURLTypeIdentifierKey error: NULL];
     
     //Check if the specified file is of a type we recognise as documentation.
-    //Note that we don't use our own smarter file:matchesTypes: NSWorkspace method for this,
-    //because there are some inherited filetypes that we want to avoid treating as documentation.
-    if (!fileType || ![[self documentationTypes] containsObject: fileType])
+    //Note that we don't use our own smarter conformsToFileType: methods for this,
+    //because there are some inherited filetypes that we want to avoid treating as documentation
+    //(e.g. sourcecode files inherit from public.plain-text, and we don't want them to show
+    //up in the documentation list.)
+    if (!fileType || ![[BXFileTypes documentationTypes] containsObject: fileType])
         return NO;
     
     //Check if the specified file isn't on our blacklist of ignored documentation filenames.

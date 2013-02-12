@@ -9,7 +9,7 @@
 #import "BXSession.h"
 #import "BXGamebox.h"
 #import "NSURL+BXQuickLookHelpers.h"
-#import "BXFileTypes.h"
+#import "BXBaseAppController.h"
 #import "NSView+BXDrawing.h"
 #import "BXBaseAppController.h"
 #import "NSError+BXErrorHelpers.h"
@@ -321,7 +321,8 @@ enum {
 {
     if (self.documentationSelectionIndexes.count)
     {
-        [BXFileTypes openURLsInPreferredApplications: self.selectedDocumentationURLs];
+        [[NSApp delegate] openURLsInPreferredApplications: self.selectedDocumentationURLs
+                                                  options: NSWorkspaceLaunchDefault];
         
         if ([self.delegate respondsToSelector: @selector(documentationBrowser:didOpenURLs:)])
             [self.delegate documentationBrowser: self didOpenURLs: self.selectedDocumentationURLs];

@@ -118,7 +118,8 @@
 {
     NSURL *documentURL = sender.representedObject;
 	if (documentURL)
-        [BXFileTypes openURLsInPreferredApplications: @[documentURL]];
+        [[NSApp delegate] openURLsInPreferredApplications: @[documentURL]
+                                                  options: NSWorkspaceLaunchDefault];
 }
 
 

@@ -88,6 +88,10 @@ enum {
         self.documentationScrollView.horizontalScrollElasticity = NSScrollElasticityNone;
     
 	[self.view registerForDraggedTypes: @[NSFilenamesPboardType]];
+    //Allow documentation files to be dragged out of the documentation list to other applications,
+    //but not be dragged anywhere within Boxer.
+    [self.documentationList setDraggingSourceOperationMask: NSDragOperationCopy | NSDragOperationLink forLocal: NO];
+    [self.documentationList setDraggingSourceOperationMask: NSDragOperationNone forLocal: YES];
     
     //Insert ourselves into the responder chain ahead of our view.
     self.nextResponder = self.view.nextResponder;
@@ -575,8 +579,9 @@ enum {
 {
 	NSPasteboard *pboard = sender.draggingPasteboard;
     
-	if (self.canModifyDocumentation && [pboard canReadObjectForClasses: @[[NSURL class]]
-                                                               options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }])
+	if ((sender.draggingSourceOperationMask & NSDragOperationCopy) &&
+        self.canModifyDocumentation &&
+        [pboard canReadObjectForClasses: @[[NSURL class]] options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }])
 	{
         return NSDragOperationCopy;
 	}
@@ -598,6 +603,22 @@ enum {
 	return imported;
 }
 
+- (BOOL) collectionView: (NSCollectionView *)collectionView
+    writeItemsAtIndexes: (NSIndexSet *)indexes
+           toPasteboard: (NSPasteboard *)pasteboard
+{
+    NSArray *draggedURLs = [self.documentationURLs objectsAtIndexes: indexes];
+    
+    //Fully resolve all URLs before adding them to the pasteboard
+    NSArray *resolvedURLs = [draggedURLs valueForKey: @"URLByResolvingSymlinksInPath"];
+    
+    if (resolvedURLs.count)
+    {
+        [pasteboard clearContents];
+        return [pasteboard writeObjects: resolvedURLs];
+    }
+    else return NO;
+}
 
 @end
 

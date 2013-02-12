@@ -275,6 +275,10 @@ enum {
 
 - (NSSize) idealContentSizeForNumberOfItems: (NSUInteger)numItems
 {
+    //IMPLEMENTATION NOTE: these calculations assume that all subviews are pinned to the
+    //edges of the container, so that their distance (margin) from each edge of the
+    //container will stay constant as the container is resized.
+    
     NSRect containerBounds = self.view.bounds;
     
     //Base our ideal content size on the documentation list, taking into account
@@ -290,17 +294,22 @@ enum {
     
     //Ensure the content size also accommodates the title and help-text
     //(and their own margins), in case they're wider than the documentation list.
-    NSSize idealTitleSize       = [self.titleLabel.cell cellSize];
-    NSSize idealHelpTextSize    = [self.helpTextLabel.cell cellSize];
+    NSSize titleSize        = [self.titleLabel.cell cellSize];
+    NSSize helpTextSize     = [self.helpTextLabel.cell cellSize];
     CGFloat titleMargin     = containerBounds.size.width - self.titleLabel.frame.size.width;
     CGFloat helpTextMargin  = containerBounds.size.width - self.helpTextLabel.frame.size.width;
     
-    idealSize.width = MAX(idealSize.width, idealTitleSize.width + titleMargin);
-    idealSize.width = MAX(idealSize.width, idealHelpTextSize.width + helpTextMargin);
+    CGFloat accessoryWidth = MAX(titleSize.width + titleMargin, helpTextSize.width + helpTextMargin);
     
-    //IMPLEMENTATION NOTE: these calculations assume that all views are pinned to the
-    //edges of the container, so that their distance (margin) from each edge of the
-    //container will stay constant as the container is resized.
+    //If the title or help-text are wider than the documentation list, then snap the content size
+    //to a width that will accommodate them *and that cleanly fits our documentation columns.*
+    //This way we can comfortably fit in another column of documentation without resizing.
+    if (accessoryWidth > idealSize.width)
+    {
+        CGFloat snappedWidth = [self.documentationList snappedWidthForTargetWidth: accessoryWidth - listMargin.width] + listMargin.width;
+        idealSize.width = snappedWidth;
+    }
+    
     return idealSize;
 }
 
@@ -1011,6 +1020,24 @@ enum {
     
     return NSMakeSize(numColumns * minItemSize.width,
                       numRows * minItemSize.height);
+}
+
+- (CGFloat) snappedWidthForTargetWidth: (CGFloat)targetWidth
+{
+    //See note above
+    NSSize minItemSize = self.itemPrototype.view.frame.size;
+    CGFloat itemWidth = minItemSize.width;
+    
+    //Don't bother snapping the target width if it's already larger than we're ever going to get.
+    if (self.maxNumberOfColumns > 0)
+    {
+        CGFloat maxWidth = itemWidth * self.maxNumberOfColumns;
+        if (targetWidth >= maxWidth) return targetWidth;
+    }
+    
+    CGFloat roundedWidth = ceilf(targetWidth / itemWidth) * itemWidth;
+    
+    return roundedWidth;
 }
 
 @end

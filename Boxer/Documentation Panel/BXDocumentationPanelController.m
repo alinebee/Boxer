@@ -97,11 +97,13 @@
 
 #pragma mark - Layout management
 
-- (NSRect) windowRectForIdealBrowserSize: (NSSize)targetSize
+- (NSRect) windowRectForIdealBrowserSize: (NSSize)idealSize
 {
     //Cap the desired size to our maximum and minimum window size
     NSSize minSize = self.window.contentMinSize;
     NSSize maxSize = self.window.contentMaxSize;
+    
+    NSSize targetSize = idealSize;
     targetSize.width = MIN(maxSize.width, targetSize.width);
     targetSize.width = MAX(minSize.width, targetSize.width);
     targetSize.height = MIN(maxSize.height, targetSize.height);

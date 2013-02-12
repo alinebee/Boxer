@@ -186,6 +186,11 @@
 //the specified number of items without scrolling.
 - (NSSize) minContentSizeForNumberOfItems: (NSUInteger)numItems;
 
+//Returns the specified width rounded up to match cleanly to one of our own possible widths.
+//Used by BXDocumentationBrowser idealContentSizeForNumberOfItems: to ensure that it shinkwraps
+//the browser to a size that can cleanly accommodate each column of documentation.
+- (CGFloat) snappedWidthForTargetWidth: (CGFloat)targetWidth;
+
 @end
 
 

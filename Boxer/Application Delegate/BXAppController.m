@@ -143,7 +143,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
         
         //These are disabled as they do not run correctly on Lion
         BOOL useFlipTransitions = !isRunningOnLionOrAbove();
-            else
         
 		switch ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"])
 		{

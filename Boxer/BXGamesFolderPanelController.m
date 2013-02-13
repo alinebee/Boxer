@@ -40,16 +40,17 @@
 {
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 	
-	NSString *currentFolderPath = [[NSApp delegate] gamesFolderPath];
-	NSString *parentFolderPath;
-	if (currentFolderPath)
+	NSURL *currentFolderURL = [[NSApp delegate] gamesFolderURL];
+	NSURL *initialURL;
+	if (currentFolderURL)
 	{
-		parentFolderPath = [currentFolderPath stringByDeletingLastPathComponent];
+        //Preselect the current games folder in the open panel.
+		initialURL = currentFolderURL;
 	}
 	else
 	{
-		//If no folder yet exists, default to the home directory
-		parentFolderPath = NSHomeDirectory();
+		//If no games folder yet exists, default to the home directory
+		initialURL = [NSURL fileURLWithPath: NSHomeDirectory()];
 	}
 	
     openPanel.delegate = self;
@@ -60,9 +61,7 @@
     openPanel.allowsMultipleSelection = NO;
     
     openPanel.accessoryView = self.view;
-    openPanel.directoryURL = [NSURL fileURLWithPath: parentFolderPath];
-    //NOTE: NSOpenPanel has deprecated the ability to specify an initial selection,
-    //otherwise we'd select the current folder initially.
+    openPanel.directoryURL = initialURL;
     
     openPanel.prompt = NSLocalizedString(@"Select", @"Button label for Open panels when selecting a folder.");
     openPanel.message = NSLocalizedString(@"Select a folder in which to keep your DOS games:",
@@ -128,8 +127,7 @@
 //Delegate validation method for 10.6 and above.
 - (BOOL) panel: (id)openPanel validateURL: (NSURL *)url error: (NSError **)outError
 {
-	NSString *path = [url path];
-	return [[NSApp delegate] validateGamesFolderPath: &path error: outError];
+	return [[NSApp delegate] validateGamesFolderURL: &url error: outError];
 }
 
 - (BOOL) chooseGamesFolderURL: (NSURL *)URL error: (NSError **)outError
@@ -138,11 +136,11 @@
     BOOL addSampleGames		= self.sampleGamesToggle.state;
     BOOL useShelfAppearance	= self.useShelfAppearanceToggle.state;
     
-    return [controller assignGamesFolderPath: URL.path
-                             withSampleGames: addSampleGames
-                             shelfAppearance: useShelfAppearance
-                             createIfMissing: NO
-                                       error: outError];
+    return [controller assignGamesFolderURL: URL
+                            withSampleGames: addSampleGames
+                            shelfAppearance: useShelfAppearance
+                            createIfMissing: NO
+                                      error: outError];
     
 }
 

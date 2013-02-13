@@ -20,7 +20,7 @@ enum {
 @class BXInspectorController;
 @interface BXAppController : BXBaseAppController
 {
-	NSString *_gamesFolderPath;
+	NSURL *_gamesFolderURL;
 }
 
 //Returns YES if there are other Boxer processes currently running, no otherwise.
@@ -50,8 +50,6 @@ enum {
 
 - (IBAction) orderFrontWelcomePanel: (id)sender;		//Display the welcome panel.
 - (IBAction) orderFrontWelcomePanelWithTransition: (id)sender;
-- (IBAction) orderFrontFirstRunPanel: (id)sender;		//Display the first-run panel.
-- (IBAction) orderFrontFirstRunPanelWithTransition: (id)sender;
 
 - (IBAction) hideWelcomePanel: (id)sender;				//Close the welcome panel.
 - (IBAction) orderFrontImportGamePanel: (id)sender;		//Display the game import panel.

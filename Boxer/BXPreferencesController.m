@@ -50,15 +50,11 @@
 											   context: nil];
 	
 	
-	//Bind the attributed title so that it will prettify the current games folder path
-	NSDictionary *bindingOptions = [NSDictionary dictionaryWithObjectsAndKeys:
-									@"BXIconifiedGamesFolderPath", NSValueTransformerNameBindingOption,
-									nil];
-	
+	//Bind the attributed title such that it will prettify the current games folder path
 	[self.currentGamesFolderItem bind: @"attributedTitle"
                              toObject: [NSApp delegate]
-                          withKeyPath: @"gamesFolderPath"
-                              options: bindingOptions];
+                          withKeyPath: @"gamesFolderURL.path"
+                              options: @{NSValueTransformerNameBindingOption : @"BXIconifiedGamesFolderPath"}];
 	
     
     //Listen for changes to the ROMs so that we can set the correct device in the ROM dropzone.
@@ -390,20 +386,20 @@
 	//but it doesn't hurt to do it explicitly here
 	[[NSApp delegate] setAppliesShelfAppearanceToGamesFolder: flag];
 	
-	NSString *path = [[NSApp delegate] gamesFolderPath];
-	if (path && [[NSFileManager defaultManager] fileExistsAtPath: path])
+	NSURL *URL = [[NSApp delegate] gamesFolderURL];
+	if ([URL checkResourceIsReachableAndReturnError: NULL])
 	{
 		if (flag)
 		{
-			[[NSApp delegate] applyShelfAppearanceToPath: path
-                                           andSubFolders: YES
-                                       switchToShelfMode: YES];
+			[[NSApp delegate] applyShelfAppearanceToURL: URL
+                                          andSubFolders: YES
+                                      switchToShelfMode: YES];
 		}
 		else
 		{
 			//Restore the folder to its unshelfed state
-			[[NSApp delegate] removeShelfAppearanceFromPath: path
-                                              andSubFolders: YES];
+			[[NSApp delegate] removeShelfAppearanceFromURL: URL
+                                             andSubFolders: YES];
 		}		
 	}
 }

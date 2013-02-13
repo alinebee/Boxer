@@ -18,13 +18,12 @@
 
 @interface BXShelfAppearanceOperation : NSOperation
 {
-	NSString *targetPath;
-	BOOL appliesToSubFolders;
+	NSURL *_targetURL;
+	BOOL _appliesToSubFolders;
 	
-	FinderApplication *finder;
-	NSWorkspace *workspace;
+	FinderApplication *_finder;
 }
-@property (copy) NSString *targetPath;
+@property (copy) NSURL *targetURL;
 @property (assign) BOOL appliesToSubFolders;
 
 @end
@@ -32,34 +31,33 @@
 
 @interface BXShelfAppearanceApplicator : BXShelfAppearanceOperation
 {
-	NSImage *icon;
-	NSString *backgroundImagePath;
-	BOOL switchToIconView;
+	NSImage *_icon;
+	NSURL *_backgroundImageURL;
+	BOOL _switchToIconView;
 	
 	FinderFile *_backgroundPicture;
 }
 
-@property (copy) NSString *backgroundImagePath;
+@property (copy) NSURL *backgroundImageURL;
 @property (copy) NSImage *icon;
 @property (assign) BOOL switchToIconView;
 
-- (id) initWithTargetPath: (NSString *)_targetPath
-	  backgroundImagePath: (NSString *)_backgroundImagePath
-					 icon: (NSImage *)_icon;
+- (id) initWithTargetURL: (NSURL *)_targetURL
+	  backgroundImageURL: (NSURL *)_backgroundImageURL
+                    icon: (NSImage *)_icon;
 @end
 
 
 @interface BXShelfAppearanceRemover: BXShelfAppearanceOperation
 {
-	NSString *sourcePath;
+	NSURL *_sourceURL;
 	
 	FinderIconViewOptions *_sourceOptions;
-	FinderFile *_blankBackground;
 }
 
-@property (copy) NSString *sourcePath;
+@property (copy) NSURL *sourceURL;
 
-- (id) initWithTargetPath: (NSString *)_targetPath
-	   appearanceFromPath: (NSString *)_sourcePath;
+- (id) initWithTargetURL: (NSURL *)_targetURL
+	   appearanceFromURL: (NSURL *)_sourceURL;
 
 @end

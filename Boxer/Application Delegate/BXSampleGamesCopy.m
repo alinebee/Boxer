@@ -10,76 +10,67 @@
 #import "BXCoverArt.h"
 
 @implementation BXSampleGamesCopy
-@synthesize sourcePath, targetPath;
+@synthesize sourceURL = _sourceURL;
+@synthesize targetURL = _targetURL;
 
-- (id) init
+- (id) initFromSourceURL: (NSURL *)sourceURL toTargetURL: (NSURL *)targetURL
 {
-	if ((self = [super init]))
+    self = [self init];
+	if (self)
 	{
-		manager = [[NSFileManager alloc] init];
-		workspace = [[NSWorkspace alloc] init];
-	}
-	return self;
-}
-
-- (id) initFromPath: (NSString *)source toPath: (NSString *)target
-{
-	if ((self = [self init]))
-	{
-		[self setSourcePath: source];
-		[self setTargetPath: target];
+        self.sourceURL = sourceURL;
+        self.targetURL = targetURL;
 	}
 	return self;
 }
 
 - (void) dealloc
 {
-	[self setSourcePath: nil], [sourcePath release];
-	[self setTargetPath: nil], [targetPath release];
-	[manager release], manager = nil;
-	[workspace release], workspace = nil;
+    self.sourceURL = nil;
+    self.targetURL = nil;
+    
 	[super dealloc];
 }
 
 - (void) main
 {
-	if ([self isCancelled]) return;
+	if (self.isCancelled) return;
+    
+    NSFileManager *manager = [NSFileManager defaultManager];
+    NSDirectoryEnumerationOptions options = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants;
 	
-	NSDictionary *attrs	= [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
-													  forKey: NSFileExtensionHidden];
-	
-	for (NSString *gamePath in [manager contentsOfDirectoryAtPath: sourcePath error: NULL])
+    NSArray *gameURLs = [manager contentsOfDirectoryAtURL: self.sourceURL includingPropertiesForKeys: nil options: options error: NULL];
+    for (NSURL *gameURL in gameURLs)
 	{
-		if ([self isCancelled]) return;
+		if (self.isCancelled) return;
 		
-		NSString *gameSource		= [sourcePath stringByAppendingPathComponent: gamePath];
-		NSString *gameDestination	= [targetPath stringByAppendingPathComponent: gamePath];
-		
-		//If the folder already has a game of that name, don't copy the game
-		//(we don’t want to overwrite someone's savegames)
-		if (![manager fileExistsAtPath: gameDestination])
-		{
-			[manager copyItemAtPath: gameSource toPath: gameDestination error: NULL];
-			[manager setAttributes: attrs ofItemAtPath: gameDestination error: NULL];
-			
-			NSString *gameName = [[gamePath lastPathComponent] stringByDeletingPathExtension];
-			NSString *iconPath = [[NSBundle mainBundle] pathForResource: gameName
-																 ofType: @"jpg"
-															inDirectory: @"Sample Game Icons"];
-			
-			//Generate a cover art image from this icon (cheaper than storing a full icns file)
-			if (iconPath)
-			{
-				NSImage *image = [[NSImage alloc] initWithContentsOfFile: iconPath];
-				if (image)
-				{
-					NSImage *iconForGame = [BXCoverArt coverArtWithImage: image];
-					[workspace setIcon: iconForGame forFile: gameDestination options: 0];
-				}
-				[image release];
-			}
-		}
-	}	
+        NSString *gameName = gameURL.lastPathComponent;
+        NSURL *destinationURL = [self.targetURL URLByAppendingPathComponent: gameName];
+        
+        BOOL copied = [manager copyItemAtURL: gameURL toURL: destinationURL error: NULL];
+        if (copied)
+        {
+            [destinationURL setResourceValue: @(YES) forKey: NSURLHasHiddenExtensionKey error: NULL];
+        
+            NSString *baseName = gameName.stringByDeletingPathExtension;
+            NSURL *iconURL = [[NSBundle mainBundle] URLForResource: baseName
+                                                     withExtension: @"jpg"
+                                                      subdirectory: @"Sample Game Icons"];
+        
+            //Generate a cover art image from this icon (cheaper than storing a full icns file)
+            if (iconURL)
+            {
+                NSImage *image = [[NSImage alloc] initWithContentsOfURL: iconURL];
+                if (image)
+                {
+                    NSImage *iconForGame = [BXCoverArt coverArtWithImage: image];
+                    
+                    [[NSWorkspace sharedWorkspace] setIcon: iconForGame forFile: destinationURL.path options: 0];
+                }
+                [image release];
+            }
+        }
+	}
 }
 
 @end

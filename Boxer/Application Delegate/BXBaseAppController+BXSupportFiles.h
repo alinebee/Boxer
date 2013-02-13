@@ -21,8 +21,9 @@
 //If createIfMissing is YES, the folder will be created if it does not exist.
 - (NSString *) recordingsPathCreatingIfMissing: (BOOL)createIfMissing;
 
-//Returns Boxer's application support path.
+//Returns Boxer's application support URL.
 //If createIfMissing is YES, the folder will be created if it does not exist.
+- (NSURL *) supportURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
 - (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing;
 
 //Returns the path to the application support folder where Boxer should

@@ -11,6 +11,7 @@
 
 #import "NDAlias+AliasFile.h"
 #import "NSWorkspace+BXFileTypes.h"
+#import "NSWorkspace+BXIcons.h"
 #import "BXGamesFolderPanelController.h"
 
 #import "BXShelfArt.h"
@@ -20,6 +21,7 @@
 #import "BXShelfAppearanceOperation.h"
 #import "NSString+BXPaths.h"
 #import "BXAppKitVersionHelpers.h"
+#import "NSURL+BXFilesystemHelpers.h"
 
 //For determining maximum Finder folder-background sizes
 #import <OpenGL/OpenGL.h>
@@ -53,8 +55,8 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 						   window: (NSWindow *)window;
 
 //Returns whether the specified path is a reserved system directory.
-//Used by validateGamesFolderPath:error:
-+ (BOOL) _isReservedPath: (NSString *)path;
+//Used by validateGamesFolderURL:error:
++ (BOOL) _isReservedURL: (NSURL *)URL;
 
 @end
 
@@ -63,54 +65,67 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 @implementation BXAppController (BXGamesFolder)
 
-
-+ (NSArray *) defaultGamesFolderPaths
++ (NSArray *) defaultGamesFolderURLs
 {
-	static NSArray *paths = nil;
-	if (!paths)
-	{
-		NSString *defaultName = NSLocalizedString(@"DOS Games", @"The default name for the games folder.");
+	static NSArray *URLs = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         
-		NSString *docsPath      = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-		NSString *homePath		= NSHomeDirectory();
-		NSString *appPath		= [NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSLocalDomainMask, YES) objectAtIndex: 0];
-		NSString *userAppPath	= [NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-		
-		paths = [[NSArray alloc] initWithObjects:
-				 [homePath stringByAppendingPathComponent: defaultName],
-				 [docsPath stringByAppendingPathComponent: defaultName],
-				 [userAppPath stringByAppendingPathComponent: defaultName],
-				 [appPath stringByAppendingPathComponent: defaultName],
-				 nil];
-	}
+        NSString *defaultName = NSLocalizedString(@"DOS Games",
+                                                  @"The default name for the games folder.");
+        
+        NSFileManager *manager = [NSFileManager defaultManager];
+        
+        NSURL *homeURL      = [NSURL fileURLWithPath: NSHomeDirectory()];
+        NSURL *docsURL      = [[manager URLsForDirectory: NSDocumentDirectory inDomains: NSUserDomainMask] objectAtIndex: 0];
+        NSURL *userAppURL   = [[manager URLsForDirectory: NSApplicationDirectory inDomains: NSUserDomainMask] objectAtIndex: 0];
+        NSURL *appURL       = [[manager URLsForDirectory: NSApplicationDirectory inDomains: NSLocalDomainMask] objectAtIndex: 0];
+        
+        URLs = @[
+            [homeURL URLByAppendingPathComponent: defaultName],
+            [docsURL URLByAppendingPathComponent: defaultName],
+            [userAppURL URLByAppendingPathComponent: defaultName],
+            [appURL URLByAppendingPathComponent: defaultName],
+        ];
+        [URLs retain];
+    });
     
-	return paths;
+	return URLs;
 }
 
-+ (NSString *) preferredGamesFolderPath
++ (NSString *) preferredGamesFolderURL
 {
-    return [[self defaultGamesFolderPaths] objectAtIndex: 0];
+    return [[self defaultGamesFolderURLs] objectAtIndex: 0];
 }
 
-+ (NSSet *) reservedPaths
++ (NSSet *) reservedURLs
 {
-	static NSMutableSet *reservedPaths = nil;
-	if (!reservedPaths)
-	{
-		reservedPaths = [[NSMutableSet alloc] initWithObjects: NSHomeDirectory(), nil];
+	static NSMutableSet *reservedURLs = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+		NSFileManager *manager = [NSFileManager defaultManager];
         
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSAllDomainsMask, YES)];
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSAllApplicationsDirectory, NSAllDomainsMask, YES)];
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSAllLibrariesDirectory, NSAllDomainsMask, YES)];
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSAllDomainsMask, YES)];
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSAllDomainsMask, YES)];
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSUserDirectory, NSAllDomainsMask, YES)];
-#ifdef NSSharedPublicDirectory
-		//10.6-only
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSSharedPublicDirectory, NSAllDomainsMask, YES)];
-#endif
-	}
-	return reservedPaths;
+        reservedURLs = [[NSMutableSet alloc] initWithObjects: [NSURL fileURLWithPath: NSHomeDirectory()], nil];
+        
+#define NUM_DIRs 7
+        NSSearchPathDirectory reservedDirs[NUM_DIRs] = {
+            NSDocumentDirectory,
+            NSAllApplicationsDirectory,
+            NSAllLibrariesDirectory,
+            NSDesktopDirectory,
+            NSDownloadsDirectory,
+            NSUserDirectory,
+            NSSharedPublicDirectory,
+        };
+        
+        for (NSUInteger i=0; i<NUM_DIRs; i++)
+        {
+            NSArray *searchURLs = [manager URLsForDirectory: reservedDirs[i] inDomains: NSAllDomainsMask];
+            [reservedURLs addObjectsFromArray: searchURLs];
+        }
+	});
+    
+	return reservedURLs;
 }
 
 
@@ -131,73 +146,63 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 {
 	NSSize maxArtworkSize = self._maxArtworkSize;
 	
-	//10.5 is happy with the largest image we can make.
-	if (isRunningOnLeopard())
-	{
-		return maxArtworkSize;
-	}
-	else
-	{
-		//Snow Leopard's and Lion's Finder use OpenGL textures for 
-		//rendering the window background, so we are limited by the
-		//current renderer's maximum texture size.
-		GLint maxTextureSize = 0;
-		
-		CGOpenGLDisplayMask displayMask = CGDisplayIDToOpenGLDisplayMask (CGMainDisplayID());
-		CGLPixelFormatAttribute attrs[] = {kCGLPFADisplayMask, displayMask, 0};
-		
-		CGLPixelFormatObj pixelFormat = NULL;
-		GLint numFormats = 0;
-		CGLChoosePixelFormat(attrs, &pixelFormat, &numFormats);
-		
-		if (pixelFormat)
-		{
-			CGLContextObj testContext = NULL;
-			
-			CGLCreateContext(pixelFormat, NULL, &testContext);
-			CGLDestroyPixelFormat(pixelFormat);
-			
-			if (testContext)
-			{
-				CGLContextObj cgl_ctx = testContext;
-				
-				//Just to be safe, check if rectangle textures are supported,
-				//falling back on the square texture size otherwise
-				const GLubyte *extensions = glGetString(GL_EXTENSIONS);
-				BOOL supportsRectangleTextures = gluCheckExtension((const GLubyte *)"GL_ARB_texture_rectangle", extensions);
-				
-				GLenum textureSizeField = supportsRectangleTextures ? GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB : GL_MAX_TEXTURE_SIZE;
-				glGetIntegerv(textureSizeField, &maxTextureSize);
-				
-				CGLDestroyContext (testContext);
-			}
-		}
-		
-		//Crop the GL size to the maximum Finder background size
-		//(see the note under +_maxArtworkSize for details)
-		return NSMakeSize(MIN((CGFloat)maxTextureSize, maxArtworkSize.width),
-						  MIN((CGFloat)maxTextureSize, maxArtworkSize.height));
-	}
+    //Snow Leopard's and Lion's Finder use OpenGL textures for 
+    //rendering the window background, so we are limited by the
+    //current renderer's maximum texture size.
+    GLint maxTextureSize = 0;
+    
+    CGOpenGLDisplayMask displayMask = CGDisplayIDToOpenGLDisplayMask (CGMainDisplayID());
+    CGLPixelFormatAttribute attrs[] = {kCGLPFADisplayMask, displayMask, 0};
+    
+    CGLPixelFormatObj pixelFormat = NULL;
+    GLint numFormats = 0;
+    CGLChoosePixelFormat(attrs, &pixelFormat, &numFormats);
+    
+    if (pixelFormat)
+    {
+        CGLContextObj testContext = NULL;
+        
+        CGLCreateContext(pixelFormat, NULL, &testContext);
+        CGLDestroyPixelFormat(pixelFormat);
+        
+        if (testContext)
+        {
+            CGLContextObj cgl_ctx = testContext;
+            
+            //Just to be safe, check if rectangle textures are supported,
+            //falling back on the square texture size otherwise
+            const GLubyte *extensions = glGetString(GL_EXTENSIONS);
+            BOOL supportsRectangleTextures = gluCheckExtension((const GLubyte *)"GL_ARB_texture_rectangle", extensions);
+            
+            GLenum textureSizeField = supportsRectangleTextures ? GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB : GL_MAX_TEXTURE_SIZE;
+            glGetIntegerv(textureSizeField, &maxTextureSize);
+            
+            CGLDestroyContext (testContext);
+        }
+    }
+    
+    //Crop the GL size to the maximum Finder background size
+    //(see the note under +_maxArtworkSize for details)
+    return NSMakeSize(MIN((CGFloat)maxTextureSize, maxArtworkSize.width),
+                      MIN((CGFloat)maxTextureSize, maxArtworkSize.height));
 }
 
 
-- (NSString *) shelfArtworkPath
+- (NSURL *) shelfArtworkURL
 {
-	BOOL isLeopardFinder = isRunningOnLeopard();
-	
-	NSString *artworkFolderPath = [[self supportPathCreatingIfMissing: NO] stringByAppendingPathComponent: @"Shelf artwork"];
-	NSString *artworkName = isLeopardFinder ? @"Leopard.jpg" : @"Snow Leopard.jpg";
-	NSString *artworkPath = [artworkFolderPath stringByAppendingPathComponent: artworkName];
+    NSURL *supportURL = [self supportURLCreatingIfMissing: NO error: NULL];
+	NSURL *artworkFolderURL = [supportURL URLByAppendingPathComponent: @"Shelf artwork"];
+	NSString *artworkName = @"Snow Leopard.jpg";
+	NSURL *artworkURL = [artworkFolderURL URLByAppendingPathComponent: artworkName];
 	
 	//If there's no suitable artwork yet, then generate a new image
-	NSFileManager *manager = [NSFileManager defaultManager];
-	if (![manager fileExistsAtPath: artworkPath])
+	if (![artworkURL checkResourceIsReachableAndReturnError: NULL])
 	{
 		//Ensure the base folder exists
-		BOOL folderCreated = [manager createDirectoryAtPath: artworkFolderPath
-								withIntermediateDirectories: YES
-												 attributes: nil
-													  error: NULL];
+		BOOL folderCreated = [[NSFileManager defaultManager] createDirectoryAtURL: artworkFolderURL
+                                                      withIntermediateDirectories: YES
+                                                                       attributes: nil
+                                                                            error: NULL];
 		
 		//Don't continue if folder creation failed for some reason
 		if (!folderCreated) return nil;
@@ -205,11 +210,10 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		//Now, generate new artwork appropriate for the current Finder version
 		NSSize artworkSize = self._shelfArtworkSize;
 		
-		
 		//If an appropriate size could not be determined, bail out
 		if (NSEqualSizes(artworkSize, NSZeroSize)) return nil;
 		
-		NSString *shelfTemplate = isLeopardFinder ? @"ShelfTemplateLeopard" : @"ShelfTemplateSnowLeopard";
+		NSString *shelfTemplate = @"ShelfTemplateSnowLeopard";
 		
 		BXShelfArt *shelfArt = [[BXShelfArt alloc] initWithSourceImage: [NSImage imageNamed: shelfTemplate]];
 		
@@ -217,13 +221,9 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		
 		[shelfArt release];
 		
-		
-		NSDictionary *properties = [NSDictionary dictionaryWithObject: [NSNumber numberWithFloat: 1.0f] 
-															   forKey: NSImageCompressionFactor];
-		
-		BOOL imageSaved = [tiledShelf saveToPath: artworkPath
+        BOOL imageSaved = [tiledShelf saveToPath: artworkURL.path
 										withType: NSJPEGFileType
-									  properties: properties
+									  properties: @{ NSImageCompressionFactor: @(1.0)}
 										   error: NULL];
 		
 		//Bail out if the image could not be saved properly
@@ -231,12 +231,12 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	}
 	
 	//If we got this far then we have a pre-existing or newly-generated shelf image at the specified path.
-	return artworkPath;
+	return artworkURL;
 }
 
 + (NSSet *) keyPathsForValuesAffectingGamesFolderChosen
 {
-	return [NSSet setWithObject: @"gamesFolderPath"];
+	return [NSSet setWithObject: @"gamesFolderURL"];
 }
 
 - (BOOL) gamesFolderChosen
@@ -245,17 +245,17 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 }
 
 
-- (NSString *) gamesFolderPath
+- (NSURL *) gamesFolderURL
 {
 	//Load the games folder path from our preferences alias the first time we need it
-	if (!_gamesFolderPath)
+	if (!_gamesFolderURL)
 	{
 		NSData *aliasData = [[NSUserDefaults standardUserDefaults] dataForKey: @"gamesFolder"];
 		
 		if (aliasData)
 		{
 			NDAlias *alias = [NDAlias aliasWithData: aliasData];
-			_gamesFolderPath = [alias.path copy];
+			_gamesFolderURL = [alias.URL copy];
 			
 			//If the alias was updated while resolving it because the target had moved,
 			//then re-save the new alias data
@@ -267,79 +267,83 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		else
 		{
 			//If no games folder has been set yet, look for one from Boxer 0.8x.
-			NSString *oldPath = self.oldGamesFolderPath;
-            BOOL foundOldPath = NO;
-			if (oldPath)
+			NSURL *legacyURL = self.legacyGamesFolderURL;
+            BOOL foundLegacyURL = NO;
+			if (legacyURL)
             {
-                foundOldPath = [self importOldGamesFolderFromPath: oldPath error: nil];
+                foundLegacyURL = [self adoptLegacyGamesFolderFromURL: legacyURL error: nil];
             }
             
             //If that fails, try one of the default locations to see if a folder is there.
-            if (!foundOldPath)
+            if (!foundLegacyURL)
             {
-                NSFileManager *manager = [[NSFileManager alloc] init];
-                
-                for (NSString *path in [self.class defaultGamesFolderPaths])
+                for (NSURL *URL in [self.class defaultGamesFolderURLs])
                 {
-                    BOOL isDir;
-                    if ([manager fileExistsAtPath: path isDirectory: &isDir] && isDir)
+                    if ([URL checkResourceIsReachableAndReturnError: NULL])
                     {
-                        self.gamesFolderPath = path;
+                        self.gamesFolderURL = URL;
                         break;
                     }
                 }
-                [manager release];
             }
 		}
 	}
-	return _gamesFolderPath;
+	return [[_gamesFolderURL retain] autorelease];
 }
 
-- (void) setGamesFolderPath: (NSString *)newPath
+- (void) setGamesFolderURL: (NSURL *)newURL
 {
-	if (![_gamesFolderPath isEqualToString: newPath])
+	if (![_gamesFolderURL isEqual: newURL])
 	{
-		[_gamesFolderPath release];
-		_gamesFolderPath = [newPath copy];
+		[_gamesFolderURL release];
+		_gamesFolderURL = [newURL copy];
 		
-		if (newPath)
+		if (newURL != nil)
 		{
 			//Store the new path in the preferences as an alias, so that users can move it around.
-			NDAlias *alias = [NDAlias aliasWithPath: newPath];
+			NDAlias *alias = [NDAlias aliasWithURL: newURL];
 			[[NSUserDefaults standardUserDefaults] setObject: alias.data forKey: @"gamesFolder"];
 		}
 	}
 }
 
-+ (BOOL) _isReservedPath: (NSString *)path
++ (BOOL) _isReservedURL: (NSURL *)URL
 {
 	//Reject reserved paths
-	if ([[self.class reservedPaths] containsObject: path]) return YES;
+	if ([[self.class reservedURLs] containsObject: URL]) return YES;
 	
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
 	//Reject paths located inside system library folders (though we allow them within the user's own Library folder)
-	NSArray *libraryPaths = NSSearchPathForDirectoriesInDomains(NSAllLibrariesDirectory, NSLocalDomainMask | NSSystemDomainMask, YES);
-	for (NSString *libraryPath in libraryPaths) if ([path isRootedInPath: libraryPath]) return YES;
-	
-	//Reject base home folder paths
-	NSArray *userDirectoryPaths = NSSearchPathForDirectoriesInDomains(NSUserDirectory, NSAllDomainsMask, YES);
-	NSString *parentPath = [path stringByDeletingLastPathComponent];
-	for (NSString *userDirectoryPath in userDirectoryPaths) if ([parentPath isEqualToString: userDirectoryPath]) return YES;
+	NSArray *libraryURLs = [manager URLsForDirectory: NSAllLibrariesDirectory inDomains: NSLocalDomainMask | NSSystemDomainMask];
+	for (NSURL *libraryURL in libraryURLs)
+    {
+        if ([URL isBasedInURL: libraryURL]) return YES;
+    }
+    
+	//Reject base home folder paths (though accept any folder within them, of course.)
+	NSArray *userDirectoryURLs = [manager URLsForDirectory: NSUserDirectory inDomains: NSAllDomainsMask];
+    NSURL *parentURL = URL.URLByDeletingLastPathComponent;
+	for (NSURL *userDirectoryURL in userDirectoryURLs)
+    {
+        if ([parentURL isEqual: userDirectoryURL]) return YES;
+    }
 
-	//If we got this far then it's not a recognised reserved path
+	//If we got this far then it's not a recognised reserved URL.
 	return NO;
 }
 
-- (BOOL) validateGamesFolderPath: (id *)ioValue error: (NSError **)outError
+- (BOOL) validateGamesFolderURL: (inout NSURL **)ioValue error: (out NSError **)outError
 {
-	NSString *path = *ioValue;
+	NSURL *URL = *ioValue;
 	
-	//Accept nil paths, since these will clear the preference
-	if (!path) return YES;
+	//Accept nil paths, since these will clear the preference.
+	if (!URL)
+        return YES;
 	
-	path = path.stringByStandardizingPath;
+	URL = URL.URLByStandardizingPath;
 	
-	NSFileManager *manager = [NSFileManager defaultManager];
-	if ([self.class _isReservedPath: path])
+	if ([self.class _isReservedURL: URL])
 	{
 		if (outError)
 		{
@@ -353,77 +357,84 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 				@"Explanatory text for error message shown after failing to mount an image."
 			);
 			
-			NSString *displayName			= [manager displayNameAtPath: path];
-			if (!displayName) displayName	= path.lastPathComponent;
+			NSString *displayName = nil;
+			[URL getResourceValue: &displayName forKey: NSURLLocalizedNameKey error: NULL];
+			if (!displayName)
+                displayName = URL.lastPathComponent;
 			
 			NSString *description = [NSString stringWithFormat: descriptionFormat, displayName];
-					
-			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-									  description,	NSLocalizedDescriptionKey,
-									  explanation,	NSLocalizedRecoverySuggestionErrorKey,
-									  path,			NSFilePathErrorKey,
-									  nil];
+
+			NSDictionary *userInfo = @{
+                NSLocalizedDescriptionKey: description,
+                NSLocalizedRecoverySuggestionErrorKey: explanation,
+                NSURLErrorKey: URL,
+            };
 			
 			*outError = [NSError errorWithDomain: BXGamesFolderErrorDomain
-											code: BXGamesFolderPathInvalid
+											code: BXGamesFolderURLInvalid
 										userInfo: userInfo];
 		}
 		
 		return NO;
 	}
-	//Warn if we do not have write permission to access that path
-	else if (![manager isWritableFileAtPath: path])
-	{
-		if (outError)
-		{
-			NSString *descriptionFormat = NSLocalizedString(@"Boxer cannot write to the “%1$@” folder.",
-															@"Error shown when chosen games folder was read-only. %1$@ is the name of the folder.");
-			
-			NSString *explanation = NSLocalizedString(@"Please check the file permissions, or choose a different folder.",
-													  @"Explanatory text shown when chosen games folder was read-only.");
-			
-			NSString *displayName			= [manager displayNameAtPath: path];
-			if (!displayName) displayName	= path.lastPathComponent;
-			
-			NSString *description = [NSString stringWithFormat: descriptionFormat, displayName];
-			
-			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-									  description, NSLocalizedDescriptionKey,
-									  explanation, NSLocalizedRecoverySuggestionErrorKey,
-									  path, NSFilePathErrorKey,
-									  nil];
-			
-			*outError = [NSError errorWithDomain: NSCocoaErrorDomain
-											code: NSFileWriteNoPermissionError
-										userInfo: userInfo];
-		}
-		return NO;
-	}
 	
-	//If we got this far,the path is OK 
+    //Warn if we do not currently have write permission to access that URL
+    NSNumber *writeableFlag = nil;
+    [URL getResourceValue: &writeableFlag forKey: NSURLIsWritableKey error: NULL];
+    
+    if (!writeableFlag.boolValue)
+    {
+        if (outError)
+        {
+            NSString *descriptionFormat = NSLocalizedString(@"Boxer cannot write to the “%1$@” folder.",
+                                                            @"Error shown when chosen games folder was read-only. %1$@ is the name of the folder.");
+            
+            NSString *explanation = NSLocalizedString(@"Please check the file permissions, or choose a different folder.",
+                                                      @"Explanatory text shown when chosen games folder was read-only.");
+            
+			NSString *displayName = nil;
+			[URL getResourceValue: &displayName forKey: NSURLLocalizedNameKey error: NULL];
+            if (!displayName)
+                displayName	= URL.lastPathComponent;
+            
+            NSString *description = [NSString stringWithFormat: descriptionFormat, displayName];
+            
+			NSDictionary *userInfo = @{
+                NSLocalizedDescriptionKey: description,
+                NSLocalizedRecoverySuggestionErrorKey: explanation,
+                NSURLErrorKey: URL,
+            };
+            
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                            code: NSFileWriteNoPermissionError
+                                        userInfo: userInfo];
+        }
+        return NO;
+    }
+	
+	//If we got this far, the URL is OK.
 	return YES;
 }
 
 
-- (BOOL) assignGamesFolderPath: (NSString *)path
-			   withSampleGames: (BOOL)addSampleGames
-			   shelfAppearance: (BXShelfAppearance)applyShelfAppearance
-               createIfMissing: (BOOL)createIfMissing
-                         error: (NSError **)outError
+- (BOOL) assignGamesFolderURL: (NSURL *)URL
+              withSampleGames: (BOOL)addSampleGames
+              shelfAppearance: (BXShelfAppearance)applyShelfAppearance
+              createIfMissing: (BOOL)createIfMissing
+                        error: (NSError **)outError
 {
-    NSAssert(path != nil, @"nil path provided to assignGamesFolderPath:withSampleGames:shelfAppearance:createIfMissing:error:");
+    NSAssert(URL != nil, @"nil URL provided to assignGamesFolderURL:withSampleGames:shelfAppearance:createIfMissing:error:");
     
-    NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
-    
-    if (![manager fileExistsAtPath: path])
+    NSError *reachabilityError = nil;
+    if (![URL checkResourceIsReachableAndReturnError: &reachabilityError])
     {
         //If we're allowed, create the folder if it's not there already.
         if (createIfMissing)
         {
-            BOOL created = [manager createDirectoryAtPath: path
-                              withIntermediateDirectories: YES
-                                               attributes: nil
-                                                    error: outError];
+            BOOL created = [[NSFileManager defaultManager] createDirectoryAtURL: URL
+                                                    withIntermediateDirectories: YES
+                                                                     attributes: nil
+                                                                          error: outError];
             
             if (!created) return NO;
         }
@@ -432,122 +443,118 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
         {
             if (outError)
             {
-                NSDictionary *userInfo = [NSDictionary dictionaryWithObject: path forKey: NSFilePathErrorKey];
-                *outError = [NSError errorWithDomain: NSCocoaErrorDomain
-                                                code: NSFileNoSuchFileError
-                                            userInfo: userInfo];
+                *outError = reachabilityError;
             }
             return NO;
         }
     }
     
     //Verify that the path is acceptable to us.
-    BOOL isValid = [self validateGamesFolderPath: &path error: outError];
+    //FIXME: we should be validating this BEFORE auto-creating the directory, not after.
+    BOOL isValid = [self validateGamesFolderURL: &URL error: outError];
     if (!isValid) return NO;
     
     //If we got this far, we can go ahead and assign this as our games folder path.
     //Apply the requested options now.
 	if (applyShelfAppearance == BXShelfAuto)
 	{
-		applyShelfAppearance = [self appliesShelfAppearanceToGamesFolder];
+		applyShelfAppearance = self.appliesShelfAppearanceToGamesFolder;
 	}
 	else
 	{
         //Update the option to reflect the shelf appearance requested.
-		[self setAppliesShelfAppearanceToGamesFolder: (BOOL)applyShelfAppearance];
+        self.appliesShelfAppearanceToGamesFolder = (BOOL)applyShelfAppearance;
 	}
 
 	if (applyShelfAppearance)
     {
-		[self applyShelfAppearanceToPath: path
-                           andSubFolders: YES
-                       switchToShelfMode: YES];
+		[self applyShelfAppearanceToURL: URL
+                          andSubFolders: YES
+                      switchToShelfMode: YES];
 	}
     
 	if (addSampleGames)
-        [self addSampleGamesToPath: path];
-	
-    self.gamesFolderPath = path;
+    {
+        [self addSampleGamesToURL: URL];
+	}
+    
+    self.gamesFolderURL = URL;
     return YES;
 }
 
-- (BOOL) importOldGamesFolderFromPath: (NSString *)path error: (NSError **)outError
+- (BOOL) adoptLegacyGamesFolderFromURL: (NSURL *)URL error: (out NSError **)outError
 {
-	NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
-    BOOL isDir;
-	if ([manager fileExistsAtPath: path isDirectory: &isDir] && isDir)
+	if ([URL checkResourceIsReachableAndReturnError: outError])
 	{
 		//Check if the old path has a .background folder: if so,
 		//then automatically apply the games-folder appearance.
-		NSString *backgroundPath = [path stringByAppendingPathComponent: @".background"];
-		if ([manager fileExistsAtPath: backgroundPath])
+		NSURL *backgroundURL = [URL URLByAppendingPathComponent: @".background"];
+		if ([backgroundURL checkResourceIsReachableAndReturnError: NULL])
 		{
             self.appliesShelfAppearanceToGamesFolder = YES;
-			[self applyShelfAppearanceToPath: path andSubFolders: YES switchToShelfMode: NO];
+			[self applyShelfAppearanceToURL: URL andSubFolders: YES switchToShelfMode: NO];
 		}
 		
-		[self setGamesFolderPath: path];
-		
+        self.gamesFolderURL = URL;
+        
 		return YES;
 	}
     else
     {
-        if (outError)
-        {
-			NSDictionary *userInfo = [NSDictionary dictionaryWithObject: path forKey: NSFilePathErrorKey];
-			*outError = [NSError errorWithDomain: NSCocoaErrorDomain
-											code: NSFileNoSuchFileError
-										userInfo: userInfo];
-        }
         return NO;
     }
 }
 
 + (NSSet *) keyPathsForValuesAffectingGamesFolderIcon
 {
-	return [NSSet setWithObjects: @"gamesFolderPath", @"appliesShelfAppearanceToGamesFolder", nil];
+	return [NSSet setWithObjects: @"gamesFolderURL", @"appliesShelfAppearanceToGamesFolder", nil];
 }
 
 - (NSImage *) gamesFolderIcon
 {
-	NSImage *icon = nil;
-	NSString *path = self.gamesFolderPath;
-	if (path) icon = [[NSWorkspace sharedWorkspace] iconForFile: path];
-	//If no games folder has been set, or the path couldn't be found, then fall back on our default icon
-	if (!icon) icon = [NSImage imageNamed: @"gamefolder"];
-	
-	return icon;
+    BOOL hasCustomIcon = [[NSWorkspace sharedWorkspace] fileHasCustomIcon: self.gamesFolderURL.path];
+    if (hasCustomIcon)
+    {
+        return [[NSWorkspace sharedWorkspace] iconForFile: self.gamesFolderURL.path];
+    }
+    else
+    {
+        return [NSImage imageNamed: @"gamefolder"];
+    }
 }
 
-- (NSString *) oldGamesFolderPath
+- (NSURL *) legacyGamesFolderURL
 {
 	//Check for an alias reference from 0.8x versions of Boxer
-	NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-	NSString *oldAliasPath = [libraryPath stringByAppendingPathComponent: @"Preferences/Boxer/Default Folder"];
+	NSURL *libraryURL = [[[NSFileManager defaultManager] URLsForDirectory: NSLibraryDirectory inDomains: NSUserDomainMask] objectAtIndex: 0];
+    
+    [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+	NSURL *legacyAliasURL = [libraryURL URLByAppendingPathComponent: @"Preferences/Boxer/Default Folder"];
 	
 	//Resolve the previous games folder location from that alias
-	NDAlias *alias = [NDAlias aliasWithContentsOfFile: oldAliasPath];
-	return alias.path;
+	NDAlias *alias = [NDAlias aliasWithContentsOfURL: legacyAliasURL];
+	return alias.URL;
 }
 
-- (NSString *) fallbackGamesFolderPath
+- (NSURL *) fallbackGamesFolderURL
 {
-	return [NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    return [[[NSFileManager defaultManager] URLsForDirectory: NSDesktopDirectory inDomains: NSUserDomainMask] objectAtIndex: 0];
 }
 
-- (void) applyShelfAppearanceToPath: (NSString *)path
-					  andSubFolders: (BOOL)applyToSubFolders
-				  switchToShelfMode: (BOOL)switchMode
+- (void) applyShelfAppearanceToURL: (NSURL *)URL
+                     andSubFolders: (BOOL)applyToSubFolders
+                 switchToShelfMode: (BOOL)switchMode
 {	
 	//NOTE: if no shelf artwork could be found or generated, then bail out early
-	NSString *backgroundImagePath = self.shelfArtworkPath;
-	if (backgroundImagePath == nil) return;
+	NSURL *backgroundImageURL = self.shelfArtworkURL;
+    if (!backgroundImageURL)
+        return;
 	
 	NSImage *folderIcon = [NSImage imageNamed: @"gamefolder"];
 	
-	BXShelfAppearanceApplicator *applicator = [[BXShelfAppearanceApplicator alloc] initWithTargetPath: path
-																				  backgroundImagePath: backgroundImagePath
-																								 icon: folderIcon];
+	BXShelfAppearanceApplicator *applicator = [[BXShelfAppearanceApplicator alloc] initWithTargetURL: URL
+																				  backgroundImageURL: backgroundImageURL
+                                                                                                icon: folderIcon];
 	
     applicator.appliesToSubFolders = applyToSubFolders;
     applicator.switchToIconView = switchMode;
@@ -555,7 +562,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	for (id operation in self.generalQueue.operations)
 	{
 		//Check for other operations that are currently being performed on this path
-		if ([operation respondsToSelector: @selector(targetPath)] && [[operation targetPath] isEqualToString: path])
+		if ([operation respondsToSelector: @selector(targetURL)] && [[operation targetURL] isEqual: URL])
 		{
 			//Cancel any currently-active shelf-appearance application or removal being applied to this path
 			if ([operation isKindOfClass: [BXShelfAppearanceOperation class]])
@@ -563,8 +570,8 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 			
 			//For other types of operations, mark them as a dependency to avoid performing
 			//many simultaneous file operations on the same location.
-			//(Among other things this avoids concurrency problems with NSWorkspace,
-			//which has thread-unsafe methods like -setIcon:forFile:options:)
+			//(Among other things this avoids potential concurrency problems with
+            //our icon-setting methods.)
 			else [applicator addDependency: operation];
 		}
 	}
@@ -573,21 +580,21 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	[applicator release];
 }
 
-- (void) removeShelfAppearanceFromPath: (NSString *)path
-						 andSubFolders: (BOOL)applyToSubFolders
+- (void) removeShelfAppearanceFromURL: (NSURL *)URL
+                        andSubFolders: (BOOL)applyToSubFolders
 {
 	//Revert the folder's appearance to that of its parent folder
-	NSString *parentPath = [path stringByDeletingLastPathComponent];
+	NSURL *parentURL = URL.URLByDeletingLastPathComponent;
 	
-	BXShelfAppearanceRemover *remover = [[BXShelfAppearanceRemover alloc] initWithTargetPath: path
-																		  appearanceFromPath: parentPath];
+	BXShelfAppearanceRemover *remover = [[BXShelfAppearanceRemover alloc] initWithTargetURL: URL
+																		  appearanceFromURL: parentURL];
 	
 	[remover setAppliesToSubFolders: applyToSubFolders];
 	
 	for (id operation in self.generalQueue.operations)
 	{
 		//Check for other operations that are currently being performed on this path
-		if ([operation respondsToSelector: @selector(targetPath)] && [[operation targetPath] isEqualToString: path])
+		if ([operation respondsToSelector: @selector(targetURL)] && [[operation targetURL] isEqual: URL])
 		{
 			//Cancel any currently-active shelf-appearance application or removal being applied to this path
 			if ([operation isKindOfClass: [BXShelfAppearanceOperation class]])
@@ -595,8 +602,6 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 			
 			//For other types of operations, mark them as a dependency to avoid performing
 			//many simultaneous file operations on the same location.
-			//(Among other things this avoids concurrency problems with NSWorkspace,
-			//which has thread-unsafe methods like -setIcon:forFile:options:)
 			else [remover addDependency: operation];
 		}
 	}
@@ -615,22 +620,22 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	[[NSUserDefaults standardUserDefaults] setBool: flag forKey: @"applyShelfAppearance"];
 }
 
-- (void) addSampleGamesToPath: (NSString *)path
+- (void) addSampleGamesToURL: (NSURL *)URL
 {
-	NSString *sourcePath = [[NSBundle mainBundle] pathForResource: @"Sample Games" ofType: nil];
+	NSURL *sourceURL = [[NSBundle mainBundle] URLForResource: @"Sample Games" withExtension: nil];
 	
-	BXSampleGamesCopy *copyOperation = [[BXSampleGamesCopy alloc] initFromPath: sourcePath
-																		toPath: path];
+	BXSampleGamesCopy *copyOperation = [[BXSampleGamesCopy alloc] initFromSourceURL: sourceURL
+																		toTargetURL: URL];
 	
 	for (id operation in self.generalQueue.operations)
 	{
 		//Check for other operations that are currently being performed on this path
-		if ([operation respondsToSelector: @selector(targetPath)] && [[operation targetPath] isEqualToString: path])
+		if ([operation respondsToSelector: @selector(targetURL)] && [[operation targetURL] isEqual: URL])
 		{
 			//If we're already copying these sample games to the specified location,
 			//don't bother repeating ourselves
 			if ([operation isKindOfClass: [BXSampleGamesCopy class]] &&
-				[[operation sourcePath] isEqualToString: sourcePath])
+				[[operation sourceURL] isEqual: sourceURL])
 			{
 				[copyOperation release];
 				return;
@@ -638,8 +643,6 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 			
 			//For other types of operations, mark them as a dependency to avoid performing
 			//many simultaneous file operations on the same location.
-			//(Among other things this avoids concurrency problems with NSWorkspace,
-			//which has thread-unsafe methods like -setIcon:forFile:options:)
 			else [copyOperation addDependency: operation];
 		}
 	}
@@ -652,17 +655,19 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 - (void) promptForMissingGamesFolderInWindow: (NSWindow *)window
 {
 	NSAlert *alert = [[NSAlert alloc] init];
-	[alert setMessageText: NSLocalizedString(@"Boxer can no longer find your games folder.",
-											 @"Bold message shown in alert when Boxer cannot find the user’s games folder at startup.")];
+    alert.messageText = NSLocalizedString(@"Boxer can no longer find your games folder.",
+                                          @"Bold message shown in alert when Boxer cannot find the user’s games folder.");
 	
-	[alert setInformativeText: NSLocalizedString(@"Make sure the disk containing your games folder is connected.",
-												 @"Explanatory text shown in alert when Boxer cannot find the user’s games folder at startup.")];
+    alert.informativeText = NSLocalizedString(@"Make sure the disk containing your games folder is connected.",
+                                              @"Explanatory text shown in alert when Boxer cannot find the user’s games folder at startup.");
 	
 	[alert addButtonWithTitle: NSLocalizedString(@"Locate folder…",
 												 @"Button to display a file open panel to choose a new location for the games folder.")];
     
-	[[alert addButtonWithTitle: NSLocalizedString(@"Cancel",
-												  @"Button to cancel without making a new games folder.")] setKeyEquivalent: @"\e"];
+    NSButton *cancelButton = [alert addButtonWithTitle: NSLocalizedString(@"Cancel",
+                                                                          @"Button to cancel without making a new games folder.")];
+    
+    cancelButton.keyEquivalent = @"\e";
 	
 	if (window)
 	{
@@ -676,6 +681,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		NSInteger returnCode = [alert runModal];
 		[self _gamesFolderPromptDidEnd: alert returnCode: returnCode window: nil];
 	}
+    
     [alert release];
 }
 
@@ -694,28 +700,20 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 - (IBAction) revealGamesFolder: (id)sender
 {
-	NSString *path = self.gamesFolderPath;
+	NSURL *URL = self.gamesFolderURL;
 	BOOL revealed = NO;
 	
-	if (path) revealed = [self revealPath: path];
+	if (URL)
+        revealed = [self revealPath: URL.path];
 	
 	if (revealed)
 	{
 		//Each time after we open the game folder, reapply the shelf appearance.
 		//We do this because Finder can sometimes 'lose' the appearance.
-		if ([self appliesShelfAppearanceToGamesFolder])
+		if (self.appliesShelfAppearanceToGamesFolder)
 		{
-			[self applyShelfAppearanceToPath: path andSubFolders: YES switchToShelfMode: NO];
+			[self applyShelfAppearanceToURL: URL andSubFolders: YES switchToShelfMode: NO];
 		}
-	}
-
-	else if (!self.gamesFolderChosen && [[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])
-	{
-		//If the user hasn't chosen a games folder location yet, then show them
-		//the first-run panel to choose one, then reveal the new folder afterwards (if one was created).
-		[self orderFrontFirstRunPanel: self];
-		if (self.gamesFolderPath)
-            [self revealGamesFolder: self];
 	}
 	else
 	{

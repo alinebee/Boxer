@@ -52,19 +52,25 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
     return desktopPath;
 }
 
+- (NSURL *)supportURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError
+{
+    NSFileManager *manager = [NSFileManager defaultManager];
+    NSURL *baseURL = [[manager URLsForDirectory: NSApplicationSupportDirectory inDomains: NSUserDomainMask] objectAtIndex: 0];
+    NSURL *supportURL = [baseURL URLByAppendingPathComponent: @"Boxer"];
+    
+    if (createIfMissing)
+	{
+		[[NSFileManager defaultManager] createDirectoryAtURL: supportURL
+                                 withIntermediateDirectories: YES
+                                                  attributes: nil
+                                                       error: outError];
+	}
+    return supportURL;
+}
+
 - (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing
 {
-	NSString *basePath = [NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-	NSString *supportPath = [basePath stringByAppendingPathComponent: @"Boxer"];
-	
-	if (createIfMissing)
-	{
-		[[NSFileManager defaultManager] createDirectoryAtPath: supportPath
-								  withIntermediateDirectories: YES
-												   attributes: nil
-														error: NULL];
-	}
-	return supportPath;
+    return [self supportURLCreatingIfMissing: createIfMissing error: NULL].path;
 }
 
 - (NSString *) MT32ROMPathCreatingIfMissing: (BOOL)createIfMissing

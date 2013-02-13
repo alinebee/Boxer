@@ -13,7 +13,6 @@
 #import "BXInspectorController.h"
 #import "BXPreferencesController.h"
 #import "BXWelcomeWindowController.h"
-#import "BXFirstRunWindowController.h"
 #import "BXMountPanelController.h"
 #import "BXBezelController.h"
 
@@ -73,7 +72,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) dealloc
 {
-    self.gamesFolderPath = nil;
+    [_gamesFolderURL release], _gamesFolderURL = nil;
 	
 	[super dealloc];
 }
@@ -97,16 +96,15 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
     [super applicationWillFinishLaunching: notification];
     
-    //Check if we have any games folder, and if not (and we're allowed to create one automatically)
-    //then create one now
-    if (!self.gamesFolderPath && !self.gamesFolderChosen && ![[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])
+    //Check if we have any games folder, and if not then create one automatically now
+    if (!self.gamesFolderURL && !self.gamesFolderChosen)
     {
-        NSString *defaultPath = [self.class preferredGamesFolderPath];
-        [self assignGamesFolderPath: defaultPath
-                    withSampleGames: YES
-                    shelfAppearance: BXShelfAuto
-                    createIfMissing: YES
-                              error: nil];
+        NSURL *defaultURL = [self.class preferredGamesFolderURL];
+        [self assignGamesFolderURL: defaultURL
+                   withSampleGames: YES
+                   shelfAppearance: BXShelfAuto
+                   createIfMissing: YES
+                             error: NULL];
     }
 }
 
@@ -145,24 +143,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
         
         //These are disabled as they do not run correctly on Lion
         BOOL useFlipTransitions = !isRunningOnLionOrAbove();
-		
-        //If the user has not chosen a games folder yet, then show them the first-run panel
-        //(This is modal, so execution will not continue until the panel is dismissed.)
-		if (!self.gamesFolderPath && !self.gamesFolderChosen && [[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])
-		{
-            if (useFlipTransitions)
-            {
-                //Perform with a delay to give the Dock icon bouncing time to finish,
-                //since the Core Graphics flip animation interrupts this otherwise.
-                [NSThread sleepForTimeInterval: 0.4];
-                hasDelayed = YES;
-                [self orderFrontFirstRunPanelWithTransition: self];
-            }
             else
-            {
-                [self orderFrontFirstRunPanel: self];
-            }
-		}
         
 		switch ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"])
 		{
@@ -474,22 +455,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[[BXWelcomeWindowController controller] showWindowWithTransition: sender];
 }
 
-- (IBAction) orderFrontFirstRunPanel: (id)sender
-{
-	//The welcome panel and first-run panel are mutually exclusive.
-	[self hideWelcomePanel: self];
-	
-	[[BXFirstRunWindowController controller] showWindow: sender];
-}
-
-- (IBAction) orderFrontFirstRunPanelWithTransition: (id)sender
-{
-	//The welcome panel and first-run panel are mutually exclusive.
-	[self hideWelcomePanel: self];
-	
-	[[BXFirstRunWindowController controller] showWindowWithTransition: sender];
-}
-
 - (IBAction) hideWelcomePanel: (id)sender
 {
 	[[[BXWelcomeWindowController controller] window] orderOut: self];
@@ -594,8 +559,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	//Don't allow game imports or the games folder to be opened if no games folder has been set yet.
 	if (theAction == @selector(revealGamesFolder:) ||
-		theAction == @selector(orderFrontImportGamePanel:))	return self.gamesFolderPath != nil;
-		
+		theAction == @selector(orderFrontImportGamePanel:))
+    {
+        return self.gamesFolderURL != nil;
+    }
+    
 	return [super validateUserInterfaceItem: theItem];
 }
 

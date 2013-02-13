@@ -14,15 +14,14 @@
 
 @interface BXSampleGamesCopy : NSOperation
 {
-	NSString *targetPath;
-	NSString *sourcePath;
-	NSFileManager *manager;
-	NSWorkspace *workspace;
+	NSURL *_targetURL;
+	NSURL *_sourceURL;
 }
-@property (copy) NSString *targetPath;
-@property (copy) NSString *sourcePath;
+@property (copy) NSURL *targetURL;
+@property (copy) NSURL *sourceURL;
 
 //Create a new copy operation from the specified source path to the specified path.
-- (id) initFromPath: (NSString *)source toPath: (NSString *)target;
+- (id) initFromSourceURL: (NSURL *)sourceURL
+             toTargetURL: (NSURL *)targetURL;
 
 @end

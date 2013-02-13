@@ -20,14 +20,12 @@
 
 - (NSURL *)gamesFolderURL
 {
-	NSString *path = [[NSApp delegate] gamesFolderPath];
-	if (path) return [NSURL fileURLWithPath: path];
-	else return nil;
+    return [[NSApp delegate] gamesFolderURL];
 }
 
 - (void) setGamesFolderURL: (NSURL *)url
 {
-	[[NSApp delegate] setGamesFolderPath: [url path]];
+	[[NSApp delegate] setGamesFolderURL: url];
 }
 
 + (BXScriptablePreferences *) sharedPreferences

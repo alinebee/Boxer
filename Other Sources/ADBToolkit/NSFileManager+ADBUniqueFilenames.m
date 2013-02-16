@@ -148,7 +148,7 @@ typedef BOOL(^ADBUniqueFilenameOperation)(NSURL *uniqueURL, NSError **outError);
         }
         else if ([uniqueURL checkResourceIsReachableAndReturnError: NULL])
         {
-            NSString *incrementedName = [NSString stringWithFormat: filenameFormat, baseName, nextIncrement, extension];
+            NSString *incrementedName = [NSString stringWithFormat: filenameFormat, baseName, extension, nextIncrement];
             uniqueURL = [baseURL URLByAppendingPathComponent: incrementedName];
             nextIncrement++;
         }

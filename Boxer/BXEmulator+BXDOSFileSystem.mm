@@ -12,7 +12,6 @@
 #import "BXGameProfile.h"
 #import "RegexKitLite.h"
 #import "ADBFilesystem.h"
-#import "NSWorkspace+ADBMountedVolumes.h" //FIXME: eliminate dependencies on AppKit
 
 #import "dos_inc.h"
 #import "dos_system.h"
@@ -1016,18 +1015,10 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	//Check that any audio CDs are actually present before enabling CD audio:
 	//this fixes Warcraft II's copy protection, which will fail if audio tracks
 	//are reported to be present but cannot be found.
-	//IMPLEMENTATION NOTE: we can't just rely on SDL_CDNumDrives(), because that
-	//reports a generic CD device on OS X even when none is present.
-    //TODO: move this check upstream into BXFileManagement, we shouldn't be inspecting
-    //the state of the workspace at this level.
 	if (useCDAudio && SDL_CDNumDrives() > 0)
 	{
-		NSArray *audioVolumes = [[NSWorkspace sharedWorkspace] mountedVolumesOfType: ADBAudioCDVolumeType includingHidden: YES];
-		if ([audioVolumes count] > 0)
-		{
-			//NOTE: SDL's CD audio API for OS X only ever exposes one CD, which will be #0.
-			SDLCDNum = 0;
-		}
+        //NOTE: SDL's CD audio API for OS X only ever exposes one CD, which will be #0.
+        SDLCDNum = 0;
 	}
 	
 	//NOTE: ioctl is currently unimplemented for OS X in DOSBox 0.74, so this will always fall back to SDL.

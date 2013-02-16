@@ -1186,6 +1186,17 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
         }
     }
     
+    //Check if this is a CD-ROM drive and enabled for CD audio.
+    //If it is, check that any CD audio volume is actually available.
+    //TODO: cache this information so we're not polling the filesystem.
+    if (drive.isCDROM && drive.usesCDAudio)
+    {
+		NSArray *audioVolumes = [[NSWorkspace sharedWorkspace] mountedVolumesOfType: ADBAudioCDVolumeType
+                                                                    includingHidden: YES];
+        if (!audioVolumes.count)
+            drive.usesCDAudio = NO;
+    }
+    
     BXDrive *mountedDrive = nil;
     BXDrive *replacedDrive = nil;
     BOOL replacedDriveWasCurrent = NO;
@@ -1271,12 +1282,12 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
                     NSString *suggestion = NSLocalizedString(@"You can use the drive once the import has completed or been cancelled.", @"Recovery suggestion shown when a drive cannot be mounted because it is busy being imported.");
                     
                     
-                    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                              description,  NSLocalizedDescriptionKey,
-                                              suggestion,   NSLocalizedRecoverySuggestionErrorKey,
-                                              mountError,   NSUnderlyingErrorKey,
-                                              driveToMount, BXDOSFilesystemErrorDriveKey,
-                                              nil];
+                    NSDictionary *userInfo = @{
+                        NSLocalizedDescriptionKey: description,
+                        NSLocalizedRecoverySuggestionErrorKey: suggestion,
+                        NSUnderlyingErrorKey: mountError,
+                        BXDOSFilesystemErrorDriveKey: driveToMount,
+                    };
                     
                     mountError = [NSError errorWithDomain: mountError.domain
                                                      code: mountError.code

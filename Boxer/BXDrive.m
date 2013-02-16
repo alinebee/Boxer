@@ -86,9 +86,11 @@
 }
 
 + (NSString *) preferredVolumeLabelForPath: (NSString *)filePath
-{						   
-	//Extensions to strip from filenames
-    //TODO: derive these from somewhere else
+{
+    NSString *baseName = filePath.lastPathComponent;
+    
+    //Dots in volume labels are acceptable but may be confused with file extensions
+    //which we do want to remove. So we strip off a set of common extensions we use.
 	NSArray *strippedExtensions = [NSArray arrayWithObjects:
 								   @"boxer",
 								   @"cdrom",
@@ -96,18 +98,24 @@
 								   @"harddisk",
 								   nil];
 
-    NSString *baseName		= filePath.lastPathComponent;
-	NSString *extension		= baseName.pathExtension.lowercaseString;
+	NSString *extension = baseName.pathExtension.lowercaseString;
 	if ([strippedExtensions containsObject: extension])
         baseName = baseName.stringByDeletingPathExtension;
 	
-	//Mountable folders can include a drive label as well as a letter prefix,
-    //so have a crack at parsing that out
-    NSString *detectedLabel	= [baseName stringByMatching: @"^([a-xA-X] )?(.+)$" capture: 2];
-    if (detectedLabel.length) return detectedLabel;
-	
-	//For all other cases, just use the base filename as the drive label
-	else return baseName;
+    //Imported drives may have an increment on the end to avoid filename collisions, so parse that off too.
+    NSString *incrementSuffix = [baseName stringByMatching: @"(\\(\\d+\\))$"];
+    if (incrementSuffix)
+        baseName = [baseName substringToIndex: baseName.length - incrementSuffix.length];
+    
+	//Bundled drives can include a letter prefix preceding the label with a space,
+    //so if there's both then parse out the letter prefix.
+    //(If the name is only a single letter without anything following it, then we treat that
+    //letter as the label, to avoid false negatives for single-letter game titles like "Z".)
+    NSString *letterPrefix = [baseName stringByMatching: @"^([a-xA-X] )?(.+)$" capture: 1];
+    if (letterPrefix)
+        baseName = [baseName substringFromIndex: letterPrefix.length];
+    
+	return baseName;
 }
 
 + (NSString *) preferredDriveLetterForPath: (NSString *)filePath

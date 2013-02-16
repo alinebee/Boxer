@@ -58,11 +58,13 @@
     CGFloat radius  = self.shadowBlurRadius;
     NSSize offset   = self.shadowOffset;
     
-    NSRect insetRect = NSInsetRect(origRect, radius, radius);
-    insetRect.origin.x -= offset.width;
+    if (flipped)
+        offset.height = -offset.height;
     
-    if (flipped) insetRect.origin.y += offset.height;
-    else insetRect.origin.y -= offset.height;
+    NSRect insetRect = NSInsetRect(origRect, radius, radius);
+    //FIXME: this is not totally correct, after offsetting we need to clip to the original rectangle.
+    //But that raises questions about how we should deal with aspect ratios.
+    insetRect = NSOffsetRect(insetRect, -offset.width, -offset.height);
     
     return insetRect;
 }
@@ -72,13 +74,13 @@
     CGFloat radius  = self.shadowBlurRadius;
     NSSize offset   = self.shadowOffset;
     
-    NSRect expandedRect = NSInsetRect(origRect, -radius, -radius);
-    expandedRect.origin.x += offset.width;
+    if (flipped)
+        offset.height = -offset.height;
     
-    if (flipped) expandedRect.origin.y -= offset.height;
-    else expandedRect.origin.y += offset.height;
+    NSRect shadowRect = NSInsetRect(origRect, -radius, -radius);
+    shadowRect = NSOffsetRect(shadowRect, offset.width, offset.height);
     
-    return expandedRect;
+    return NSUnionRect(origRect, shadowRect);
 }
 
 @end

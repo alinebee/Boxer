@@ -140,6 +140,7 @@
         innerShadow: (NSShadow *)innerShadow
      respectFlipped: (BOOL)respectContextIsFlipped
 {
+    NSAssert(self.isTemplate, @"drawInRect:withGradient:dropShadow:innerShadow: can only be used with template images.");
     
     //Check if we're rendering into a backing intended for retina displays.
     NSSize pointSize = NSMakeSize(1, 1);
@@ -147,8 +148,6 @@
          pointSize = [[NSView focusView] convertSizeToBacking: pointSize];
     
     NSSize contextSize = [NSView focusView].bounds.size;
-    
-    NSAssert(self.isTemplate, @"drawInRect:withGradient:dropShadow:innerShadow: can only be used with template images.");
     
     NSGraphicsContext *context = [NSGraphicsContext currentContext];
     CGContextRef cgContext = (CGContextRef)context.graphicsPort;
@@ -159,13 +158,16 @@
     //including our drop shadow.
     NSRect totalDirtyRect = drawRect;
     if (dropShadow)
-        totalDirtyRect = [dropShadow expandedRectForShadow: drawRect flipped: drawFlipped];
+    {
+        totalDirtyRect = [dropShadow expandedRectForShadow: drawRect flipped: NO];
+    }
     
-    //First create a mask image from the alpha channel of this image. We will use this to mask our fill and drop-shadow drawing.
+    //First create a mask by rendering the original (black-and-alpha) image.
+    //We will use this to mask our fill and inner-shadow drawing.
     CGRect maskRect = NSRectToCGRect(drawRect);
     CGImageRef imageMask = [self CGImageForProposedRect: &drawRect context: context hints: nil];
     
-    //Next, create an inverted version of the mask. We will use this to mask our drawing of the drop and inner shadows.
+    //Next, create an inverted version of the mask. We will use this to mask our drawing of the drop shadow.
     //Note that the inverted mask is larger than the original mask because it needs to cover the total dirty region:
     //otherwise it would inadvertently mask out parts of the drop shadow.
     CGRect invertedMaskRect = CGRectIntegral(NSRectToCGRect(totalDirtyRect));
@@ -189,14 +191,17 @@
                                          maskRect.size.width * pointSize.width,
                                          maskRect.size.height * pointSize.height);
     
-    CGContextSetBlendMode(maskContext, kCGBlendModeXOR);
     CGContextDrawImage(maskContext, relativeMaskRect, imageMask);
+    CGContextSetBlendMode(maskContext, kCGBlendModeXOR);
     CGContextSetRGBFillColor(maskContext, 1.0, 1.0, 1.0, 1.0);
     CGContextFillRect(maskContext, CGRectMake(0, 0, invertedMaskPixelSize.width, invertedMaskPixelSize.height));
     CGImageRef invertedImageMask = CGBitmapContextCreateImage(maskContext);
     
-    //To draw the drop shadow, render the original mask but clipped by the inverted mask:
-    //so that only the shadow around the edges is drawn and not the content of the mask image.
+    //To render the drop shadow, draw the original mask but clipped by the inverted mask:
+    //so that the shadow is only drawn around the edges and not within the to-be-filled content area.
+    //(IMPLEMENTATION NOTE: we draw the drop shadow in a separate pass instead of just setting the
+    //drop shadow when we draw the fill, because otherwise a semi-transparent fill would render a drop
+    //shadow underneath the translucent parts: making the result appear 'muddy'.)
     if (dropShadow)
     {
         CGContextSaveGState(cgContext);
@@ -231,8 +236,9 @@
         CGContextRestoreGState(cgContext);
     }
     
-    //Finally, render the inner shadow by rendering the inverted mask by clipped by the original mask:
-    //again so that only the shadow around the edges is drawn, and not the mask's contents.
+    //Finally, render the inner shadow by drawing the inverted mask but clipped by the original mask:
+    //so that only the shadow that falls within the edges of the original image is drawn, and not the drop
+    //shadow around the rectangular border of the image region.
     if (innerShadow)
     {
         CGContextSaveGState(cgContext);

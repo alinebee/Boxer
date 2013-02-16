@@ -39,7 +39,7 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSCustomView" id="538100461">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">266</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="NSTextField" id="1058072283">
@@ -47,6 +47,7 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{72, 24}, {140, 17}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="333940824"/>
 						<int key="NSTag">2</int>
 						<bool key="NSEnabled">YES</bool>
@@ -86,6 +87,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{48, 20}, {25, 21}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="1058072283"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="238921778">
@@ -122,7 +124,8 @@
 						</set>
 						<string key="NSFrame">{{10, 6}, {38, 38}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSNextKeyView" ref="857624103"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="714609405">
@@ -144,9 +147,10 @@
 						<reference key="NSNextResponder" ref="538100461"/>
 						<int key="NSvFlags">-2147483383</int>
 						<array class="NSMutableArray" key="NSSubviews"/>
-						<string key="NSFrame">{{217, 22}, {18, 18}}</string>
+						<string key="NSFrame">{{217, 23}, {18, 18}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSNextKeyView" ref="999769036"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSTag">9</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="302127434">
@@ -172,9 +176,10 @@
 						<reference key="NSNextResponder" ref="538100461"/>
 						<int key="NSvFlags">-2147483383</int>
 						<array class="NSMutableArray" key="NSSubviews"/>
-						<string key="NSFrame">{{236, 22}, {18, 18}}</string>
+						<string key="NSFrame">{{236, 23}, {18, 18}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSNextKeyView" ref="101752426"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSTag">8</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="288943020">
@@ -200,9 +205,10 @@
 						<reference key="NSNextResponder" ref="538100461"/>
 						<int key="NSvFlags">-2147483383</int>
 						<array class="NSMutableArray" key="NSSubviews"/>
-						<string key="NSFrame">{{255, 22}, {18, 18}}</string>
+						<string key="NSFrame">{{255, 23}, {18, 18}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSNextKeyView" ref="1020297771"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSTag">7</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="1057637640">
@@ -228,8 +234,10 @@
 						<reference key="NSNextResponder" ref="538100461"/>
 						<int key="NSvFlags">-2147483383</int>
 						<array class="NSMutableArray" key="NSSubviews"/>
-						<string key="NSFrame">{{258, 9}, {12, 12}}</string>
+						<string key="NSFrame">{{256, 7}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSTag">6</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="9482485">
@@ -256,6 +264,7 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{51, 8}, {216, 14}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="710545240"/>
 						<int key="NSTag">3</int>
 						<bool key="NSEnabled">YES</bool>
@@ -279,6 +288,7 @@
 						<int key="NSvFlags">-2147483382</int>
 						<string key="NSFrame">{{141, 9}, {114, 12}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="228187998"/>
 						<int key="NSpiFlags">16650</int>
 						<double key="NSMaxValue">1</double>
@@ -288,6 +298,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{51, 8}, {93, 14}}</string>
 						<reference key="NSSuperview" ref="538100461"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="34396795"/>
 						<int key="NSTag">5</int>
 						<bool key="NSEnabled">YES</bool>
@@ -304,6 +315,8 @@
 					</object>
 				</array>
 				<string key="NSFrameSize">{284, 48}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="786569398"/>
 				<bool key="NSViewIsLayerTreeHost">YES</bool>
 				<string key="NSClassName">BXDriveItemView</string>
@@ -728,15 +741,6 @@
 						<string key="objectName">Import Progress</string>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">9</int>
-						<reference key="object" ref="228187998"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="9482485"/>
-						</array>
-						<reference key="parent" ref="538100461"/>
-						<string key="objectName">Cancel Import</string>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">10</int>
 						<reference key="object" ref="999769036"/>
 						<array class="NSMutableArray" key="children">
@@ -779,11 +783,6 @@
 						<reference key="parent" ref="999769036"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">16</int>
-						<reference key="object" ref="9482485"/>
-						<reference key="parent" ref="228187998"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">17</int>
 						<reference key="object" ref="714609405"/>
 						<reference key="parent" ref="786569398"/>
@@ -807,6 +806,20 @@
 						<int key="objectID">21</int>
 						<reference key="object" ref="373190442"/>
 						<reference key="parent" ref="1020297771"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">9</int>
+						<reference key="object" ref="228187998"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="9482485"/>
+						</array>
+						<reference key="parent" ref="538100461"/>
+						<string key="objectName">Cancel Import</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">16</int>
+						<reference key="object" ref="9482485"/>
+						<reference key="parent" ref="228187998"/>
 					</object>
 				</array>
 			</object>
@@ -945,7 +958,203 @@
 			<nil key="sourceID"/>
 			<int key="maxID">132</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes"/>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<object class="IBPartialClassDescription">
+					<string key="className">BGHUDButtonCell</string>
+					<string key="superclassName">NSButtonCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BGHUDButtonCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BGHUDLabel</string>
+					<string key="superclassName">NSTextField</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BGHUDLabel.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXCollectionItem</string>
+					<string key="superclassName">NSCollectionViewItem</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXCollectionItem.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXCollectionItemView</string>
+					<string key="superclassName">NSView</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">delegate</string>
+						<string key="NS.object.0">NSCollectionViewItem</string>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<string key="NS.key.0">delegate</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
+							<string key="name">delegate</string>
+							<string key="candidateClassName">NSCollectionViewItem</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXCollectionItemView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXDriveItem</string>
+					<string key="superclassName">BXCollectionItem</string>
+					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="cancelImport:">id</string>
+						<string key="import:">id</string>
+						<string key="revealInFinder:">id</string>
+						<string key="toggle:">id</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="cancelImport:">
+							<string key="name">cancelImport:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="import:">
+							<string key="name">import:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="revealInFinder:">
+							<string key="name">revealInFinder:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="toggle:">
+							<string key="name">toggle:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="cancelButton">NSButton</string>
+						<string key="icon">NSImageView</string>
+						<string key="importButton">NSButton</string>
+						<string key="letterLabel">NSTextField</string>
+						<string key="progressMeter">NSProgressIndicator</string>
+						<string key="progressMeterLabel">NSTextField</string>
+						<string key="revealButton">NSButton</string>
+						<string key="titleLabel">NSTextField</string>
+						<string key="toggleButton">NSButton</string>
+						<string key="typeLabel">NSTextField</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="cancelButton">
+							<string key="name">cancelButton</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="icon">
+							<string key="name">icon</string>
+							<string key="candidateClassName">NSImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="importButton">
+							<string key="name">importButton</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="letterLabel">
+							<string key="name">letterLabel</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="progressMeter">
+							<string key="name">progressMeter</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="progressMeterLabel">
+							<string key="name">progressMeterLabel</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="revealButton">
+							<string key="name">revealButton</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="titleLabel">
+							<string key="name">titleLabel</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="toggleButton">
+							<string key="name">toggleButton</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="typeLabel">
+							<string key="name">typeLabel</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXDriveItem.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXDriveItemButtonCell</string>
+					<string key="superclassName">BXThemedButtonCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXDriveItemButtonCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXDriveItemView</string>
+					<string key="superclassName">BXInspectorListCollectionItemView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXDriveItemView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXDriveLetterCell</string>
+					<string key="superclassName">NSTextFieldCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXDriveLetterCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXInspectorListCollectionItemView</string>
+					<string key="superclassName">BXCollectionItemView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXInspectorListCollectionItemView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXThemedButtonCell</string>
+					<string key="superclassName">BGHUDButtonCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXThemedButtonCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXThemedImageCell</string>
+					<string key="superclassName">NSImageCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXThemedImageCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXThemedLabel</string>
+					<string key="superclassName">BGHUDLabel</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXThemedLabel.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXThemedProgressIndicator</string>
+					<string key="superclassName">NSProgressIndicator</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXThemedProgressIndicator.h</string>
+					</object>
+				</object>
+			</array>
+		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>

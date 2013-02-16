@@ -554,6 +554,54 @@
 @end
 
 
+@implementation BXInspectorListControlTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+@end
+
+@implementation BXInspectorListControlSelectionTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+- (NSGradient *) imageFill
+{
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.75]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.50]] autorelease];
+}
+
+- (NSShadow *) imageDropShadow
+{
+    return nil;
+}
+
+- (NSGradient *) highlightedImageFill
+{
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.90]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.80]] autorelease];
+}
+
+- (NSShadow *) highlightedImageDropShadow
+{
+    return [NSShadow shadowWithBlurRadius: 1.0
+                                   offset: NSMakeSize(0, -1)
+                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]];
+}
+
+- (NSGradient *) pushedImageFill
+{
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 1.00]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.90]] autorelease];
+}
+
+@end
+
 @implementation BXInspectorListTheme
 
 + (void) load

@@ -16,7 +16,6 @@
 @class BXDrive;
 @class BXDriveItem;
 @class BXDriveItemView;
-@class BXDrivePanelController;
 
 @interface BXDriveList : NSCollectionView
 
@@ -35,7 +34,7 @@
 
 
 //A custom appearance for control buttons within drive item views.
-@interface BXDriveItemButtonCell : NSButtonCell
+@interface BXDriveItemButtonCell : BXThemedButtonCell
 {
 	BOOL _hovered;
 }

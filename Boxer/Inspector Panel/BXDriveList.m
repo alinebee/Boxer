@@ -57,38 +57,82 @@
 	return YES;
 }
 
+- (NSGradient *) _fillForCurrentState
+{
+    if (self.isHighlighted)
+        return self.themeForKey.pushedImageFill;
+    
+    if (self.isHovered)
+        return self.themeForKey.highlightedImageFill;
+    
+    if (!self.isEnabled)
+        return self.themeForKey.disabledImageFill;
+    
+    return self.themeForKey.imageFill;
+}
+
+- (NSShadow *) _innerShadowForCurrentState
+{
+    if (self.isHighlighted)
+        return self.themeForKey.pushedImageInnerShadow;
+    
+    if (self.isHovered)
+        return self.themeForKey.highlightedImageInnerShadow;
+    
+    if (!self.isEnabled)
+        return self.themeForKey.disabledImageInnerShadow;
+    
+    return self.themeForKey.imageInnerShadow;
+}
+
+- (NSShadow *) _dropShadowForCurrentState
+{
+    if (self.isHighlighted)
+        return self.themeForKey.pushedImageDropShadow;
+    
+    if (self.isHovered)
+        return self.themeForKey.highlightedImageDropShadow;
+    
+    if (!self.isEnabled)
+        return self.themeForKey.disabledImageDropShadow;
+    
+    return self.themeForKey.imageDropShadow;
+}
+
+- (NSRect) imageRectForBounds: (NSRect)theRect
+{
+    return NSInsetRect(theRect, 2, 2); //To safely accommodate our myriad possible drop shadow states
+}
+
+- (void) drawWithFrame: (NSRect)cellFrame inView: (NSView *)controlView
+{
+    [self drawImage: self.image withFrame: cellFrame inView: controlView];
+}
+
 - (void) drawImage: (NSImage *)image
-         withFrame: (NSRect)frame
+         withFrame: (NSRect)cellFrame
             inView: (NSView *)controlView
 {
-	CGFloat opacity;
-	NSColor *tint;
-
-	if (self.isEnabled)
+	//Apply our foreground colour and shadow when drawing any template image
+	if (image.isTemplate)
 	{
-        tint = [NSColor whiteColor];
-		if (self.isHighlighted)     opacity = 1.0f;
-		else if (self.isHovered)    opacity = 0.75f;
-        else                        opacity = 0.5f;
+        NSRect imageRect = [self imageRectForImage: image forBounds: cellFrame];
+        imageRect = NSIntegralRect(imageRect);
+        
+        [NSGraphicsContext saveGraphicsState];
+            [image drawInRect: imageRect
+                 withGradient: self._fillForCurrentState
+                   dropShadow: self._dropShadowForCurrentState
+                  innerShadow: self._innerShadowForCurrentState
+               respectFlipped: YES];
+        [NSGraphicsContext restoreGraphicsState];
 	}
 	else
 	{
-		tint = [NSColor blackColor];
-		opacity = 0.25f;
+		[super drawImage: image
+               withFrame: cellFrame
+                  inView: controlView];
 	}
-	
-	if (image.isTemplate)
-	{
-		image = [image imageFilledWithColor: tint
-                                     atSize: frame.size];
-	}
-	
-	[image drawInRect: frame
-			 fromRect: NSZeroRect
-			operation: NSCompositeSourceOver
-			 fraction: opacity
-       respectFlipped: YES
-                hints: nil];
 }
 @end
 

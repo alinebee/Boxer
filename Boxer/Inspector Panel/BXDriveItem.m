@@ -49,10 +49,10 @@
     BOOL showImportControl = showControls && [[[NSApp delegate] currentSession] canImportDrive: self.representedObject];
     
     [NSAnimationContext beginGrouping];
-    [NSAnimationContext currentContext].duration = animate ? 0.25 : 0.0;
-    [self.toggleButton.animator setHidden: !showControls];
-    [self.revealButton.animator setHidden: !showControls];
-    [self.importButton.animator setHidden: !showImportControl];
+        [NSAnimationContext currentContext].duration = animate ? 0.25 : 0.0;
+        [self.toggleButton.animator setHidden: !showControls];
+        [self.revealButton.animator setHidden: !showControls];
+        [self.importButton.animator setHidden: !showImportControl];
     [NSAnimationContext endGrouping];
 }
 
@@ -61,39 +61,56 @@
     BOOL showProgress = self.isImporting;
     
     [NSAnimationContext beginGrouping];
-    [NSAnimationContext currentContext].duration = animate ? 0.25 : 0.0;
-    [self.typeLabel.animator setHidden: showProgress];
-    [self.progressMeter.animator setHidden: !showProgress];
-    [self.progressMeterLabel.animator setHidden: !showProgress];
-    [self.cancelButton.animator setHidden: !showProgress];
+        [NSAnimationContext currentContext].duration = animate ? 0.25 : 0.0;
+        [self.typeLabel.animator setHidden: showProgress];
+        [self.progressMeter.animator setHidden: !showProgress];
+        [self.progressMeterLabel.animator setHidden: !showProgress];
+        [self.cancelButton.animator setHidden: !showProgress];
     [NSAnimationContext endGrouping];
 }
 
 - (void) _syncSelection
 {
-    if (self.isSelected)
+    if (!self.icon)
+        return;
+    
+    NSArray *themedLabels = @[
+        self.icon,
+        self.titleLabel,
+        self.letterLabel,
+        self.typeLabel,
+        self.progressMeterLabel,
+    ];
+    
+    NSArray *themedControls = @[
+        self.toggleButton.cell,
+        self.revealButton.cell,
+        self.importButton.cell,
+        self.cancelButton.cell,
+    ];
+    
+    NSString *labelThemeKey = self.isSelected ? @"BXInspectorListSelectionTheme" : @"BXInspectorListTheme";
+    NSString *controlThemeKey = self.isSelected ? @"BXInspectorListControlSelectionTheme" : @"BXInspectorListControlTheme";
+    
+    for (id <BXThemable> label in themedLabels)
     {
-        self.icon.themeKey = @"BXInspectorListSelectionTheme";
-        self.titleLabel.themeKey = @"BXInspectorListSelectionTheme";
-        self.letterLabel.themeKey = @"BXInspectorListSelectionTheme";
-        self.typeLabel.themeKey = @"BXInspectorListSelectionTheme";
-        self.progressMeterLabel.themeKey = @"BXInspectorListSelectionTheme";
+        label.themeKey = labelThemeKey;
     }
-    else
+    
+    for (id <BXThemable> control in themedControls)
     {
-        self.icon.themeKey = @"BXInspectorListTheme";
-        self.titleLabel.themeKey = @"BXInspectorListTheme";
-        self.letterLabel.themeKey = @"BXInspectorListTheme";
-        self.typeLabel.themeKey = @"BXInspectorListHelpTextTheme";
-        self.progressMeterLabel.themeKey = @"BXInspectorListHelpTextTheme";
+        control.themeKey = controlThemeKey;
     }
 }
 
 - (void) setSelected: (BOOL)flag
 {
-    [super setSelected: flag];
-    [self _syncControlsShownWithAnimation: NO];
-    [self _syncSelection];
+    if (flag != self.isSelected)
+    {
+        [super setSelected: flag];
+        [self _syncControlsShownWithAnimation: NO];
+        [self _syncSelection];
+    }
 }
 
 - (void) setImporting: (BOOL)flag
@@ -213,10 +230,10 @@
 //connections correctly to the first responder; otherwise,
 //we'd do it that way instead.
 
-- (IBAction) revealInFinder: (id)sender     { [NSApp sendAction: @selector(revealSelectedDrivesInFinder:) to: self.collectionView.delegate from: sender]; }
-- (IBAction) toggle: (id)sender             { [NSApp sendAction: @selector(toggleSelectedDrives:) to: self.collectionView.delegate from: sender]; }
-- (IBAction) import: (id)sender             { [NSApp sendAction: @selector(importSelectedDrives:) to: self.collectionView.delegate from: sender]; }
-- (IBAction) cancelImport: (id)sender       { [NSApp sendAction: @selector(cancelImportsForSelectedDrives:) to: self.collectionView.delegate from: sender]; }
+- (IBAction) revealInFinder: (id)sender     { self.selected = YES; [NSApp sendAction: @selector(revealSelectedDrivesInFinder:) to: self.collectionView.delegate from: sender]; }
+- (IBAction) toggle: (id)sender             { self.selected = YES; [NSApp sendAction: @selector(toggleSelectedDrives:) to: self.collectionView.delegate from: sender]; }
+- (IBAction) import: (id)sender             { self.selected = YES; [NSApp sendAction: @selector(importSelectedDrives:) to: self.collectionView.delegate from: sender]; }
+- (IBAction) cancelImport: (id)sender       { self.selected = YES; [NSApp sendAction: @selector(cancelImportsForSelectedDrives:) to: self.collectionView.delegate from: sender]; }
 
 
 #pragma mark - Drive import notifications

@@ -18,6 +18,12 @@
     return nil;
 }
 
+- (void) setThemeKey: (NSString *)key
+{
+    [super setThemeKey: key];
+    [self.controlView setNeedsDisplay: YES];
+}
+
 - (id) initWithCoder: (NSCoder *)coder
 {
     self = [super initWithCoder: coder];
@@ -28,8 +34,6 @@
     }
     return self;
 }
-
-
 
 - (NSRect) checkboxRectForBounds: (NSRect)frame
 {
@@ -116,7 +120,7 @@
     NSRect insetFrame = [self imageRectForBounds: frame];
     
     NSRect imageFrame = [image imageRectAlignedInRect: insetFrame
-                                            alignment: self.imagePosition
+                                            alignment: NSImageAlignCenter
                                               scaling: self.imageScaling];
     
     return imageFrame;
@@ -385,4 +389,5 @@
                     hints: nil];
     }
 }
+
 @end

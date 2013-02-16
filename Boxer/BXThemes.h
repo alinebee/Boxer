@@ -112,6 +112,13 @@
 @interface BXInspectorListHelpTextTheme : BXIndentedHelpTextTheme
 @end
 
+@interface BXInspectorListControlTheme : BXIndentedTheme
+@end
+
+@interface BXInspectorListControlSelectionTheme : BXInspectorListSelectionTheme
+@end
+
+
 //Lightly indented medium text for About panel.
 @interface BXAboutTheme : BXBaseTheme
 @end

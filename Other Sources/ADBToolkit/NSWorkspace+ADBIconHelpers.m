@@ -31,7 +31,7 @@
 
 - (BOOL) fileHasCustomIcon: (NSString *)path
 {
-    return [self fileHasCustomIcon: [NSURL fileURLWithPath: path]];
+    return [self URLHasCustomIcon: [NSURL fileURLWithPath: path]];
 }
 
 - (BOOL) URLHasCustomIcon: (NSURL *)URL

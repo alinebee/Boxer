@@ -11,16 +11,19 @@
 #import "BXDriveBundleImport.h"
 #import "BXSimpleDriveImport.h"
 
+
+NSString * const BXUniqueDriveNameFormat = @"%1$@ (%3$lu).%2$@";
+
 @implementation BXDriveImport: ADBOperation
 
 + (Class) importClassForDrive: (BXDrive *)drive
 {
-	NSArray *importClasses = [NSArray arrayWithObjects:
-							  [BXBinCueImageImport class],
-							  [BXCDImageImport class],
-							  [BXDriveBundleImport class],
-							  [BXSimpleDriveImport class],
-							  nil];
+	NSArray *importClasses = @[
+        [BXBinCueImageImport class],
+        [BXCDImageImport class],
+        [BXDriveBundleImport class],
+        [BXSimpleDriveImport class],
+    ];
 	
 	for (Class importClass in importClasses)
 		if ([importClass isSuitableForDrive: drive]) return importClass;
@@ -30,15 +33,17 @@
 }
 
 + (id <BXDriveImport>) importOperationForDrive: (BXDrive *)drive
-                                 toDestination: (NSString *)destinationFolder
+                          destinationFolderURL: (NSURL *)destinationFolderURL
                                      copyFiles: (BOOL)copyFiles
 {
 	Class importClass = [self importClassForDrive: drive];
 	if (importClass)
 	{
-		return [[[importClass alloc] initForDrive: drive
-									toDestination: destinationFolder
-										copyFiles: copyFiles] autorelease];
+        NSAssert1([importClass conformsToProtocol: @protocol(BXDriveImport)], @"Non-conforming drive import class provided: %@", importClass);
+        
+		return [[(id <BXDriveImport>)[importClass alloc] initForDrive: drive
+                                                 destinationFolderURL: destinationFolderURL
+                                                            copyFiles: copyFiles] autorelease];
 	}
 	else return nil;
 }
@@ -56,9 +61,9 @@
 	if (fallbackClass)
 	{
 		//Create a new import operation with the same parameters as the old one
-		return [[[fallbackClass alloc] initForDrive: [failedImport drive]
-									  toDestination: [failedImport destinationFolder]
-										  copyFiles: [failedImport copyFiles]] autorelease];
+		return [[[fallbackClass alloc] initForDrive: failedImport.drive
+                               destinationFolderURL: failedImport.destinationFolderURL
+										  copyFiles: failedImport.copyFiles] autorelease];
 	}
 	//No fallback could be found
 	return nil;

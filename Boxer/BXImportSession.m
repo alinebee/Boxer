@@ -844,7 +844,7 @@
                     if ([driveToImport.letter isEqualToString: @"C"])
                     {
                         [manager removeItemAtPath: self.rootDrivePath error: nil];
-                        self.rootDrivePath = [driveImport importedDrivePath];
+                        self.rootDrivePath = driveImport.destinationURL.path;
                     }
                 }
                 //If we couldn't determine how to import this drive, flag it up as a failure.
@@ -896,7 +896,8 @@
                         //Change the source path for the nested drive to point to where the drive will
                         //have ended up after the containing drive has been copied.
                         NSString *relativeSourcePath = [path1 pathRelativeToPath: path2];
-                        NSString *intermediateSourcePath = [[otherDriveImport importedDrivePath] stringByAppendingPathComponent: relativeSourcePath];
+                        NSString *driveDestination = otherDriveImport.preferredDestinationURL.path;
+                        NSString *intermediateSourcePath = [driveDestination stringByAppendingPathComponent: relativeSourcePath];
                         
                         driveImport.drive.path = intermediateSourcePath.stringByStandardizingPath;
                         
@@ -1136,7 +1137,7 @@
             //will clean up the right place.
             if (isImport && [((id <BXDriveImport>)operation).drive.letter isEqualToString: @"C"])
             {
-                self.rootDrivePath = ((id <BXDriveImport>)operation).importedDrivePath;
+                self.rootDrivePath = ((id <BXDriveImport>)operation).destinationURL.path;
             }
         }
 		
@@ -1185,8 +1186,6 @@
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	
 	NSString *pathToClean	= self.rootDrivePath;
-	NSString *pathForDrives	= self.gamebox.resourcePath;
-    
     
     //Import any bundled DOSBox configuration: converting any launch commands into a launcher batch file.
     if (self.configurationToImport)
@@ -1270,8 +1269,8 @@
 			BXDrive *drive = [BXDrive driveFromPath: path atLetter: nil];
 			
 			ADBOperation <BXDriveImport> *importOperation = [BXDriveImport importOperationForDrive: drive
-																					toDestination: pathForDrives
-																						copyFiles: NO];
+                                                                              destinationFolderURL: self.gamebox.resourceURL
+                                                                                         copyFiles: NO];
 			
 			//Note: we don't set ourselves as a delegate for this import operation
 			//because we don't care about success or failure notifications.

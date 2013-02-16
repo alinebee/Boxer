@@ -77,7 +77,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 
 
 @implementation BXBinCueImageImport
-@synthesize usesErrorCorrection;
+@synthesize usesErrorCorrection = _usesErrorCorrection;
 
 + (BOOL) driveUnavailableDuringImport
 {
@@ -128,15 +128,15 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 {
 	if ((self = [super init]))
 	{
-		manager = [[NSFileManager alloc] init];
-		[self setUsesErrorCorrection: [[NSUserDefaults standardUserDefaults] boolForKey: @"useBinCueErrorCorrection"]];
+		_manager = [[NSFileManager alloc] init];
+        self.usesErrorCorrection = [[NSUserDefaults standardUserDefaults] boolForKey: @"useBinCueErrorCorrection"];
  	}
 	return self;
 }
 
 - (void) dealloc
 {
-	[manager release], manager = nil;
+	[_manager release], _manager = nil;
 	[super dealloc];
 }
 
@@ -145,11 +145,14 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 #pragma mark Task execution
 
 - (void) performOperation
-{	
+{
+    if (!self.destinationURL)
+        self.destinationURL = self.preferredDestinationURL;
+    
     _hasWrittenFiles = NO;
     
 	NSString *sourcePath		= self.drive.path;
-	NSString *destinationPath	= self.importedDrivePath;
+	NSString *destinationPath	= self.destinationURL.path;
 	
 	NSString *tocName	= @"tracks.toc";
 	NSString *cueName	= @"tracks.cue";
@@ -216,10 +219,10 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
     
 	//Create the .cdimage wrapper for the imported image, since it shouldn't exist yet.
 	NSError *destinationCreationError = nil;
-	BOOL createdDestination = [manager createDirectoryAtPath: destinationPath
-								 withIntermediateDirectories: YES
-												  attributes: nil
-													   error: &destinationCreationError];
+	BOOL createdDestination = [_manager createDirectoryAtPath: destinationPath
+                                  withIntermediateDirectories: YES
+                                                   attributes: nil
+                                                        error: &destinationCreationError];
 	//If it does exist, or we can't create it for some reason, then stop importing and fail with an error.
 	if (!createdDestination)
 	{
@@ -286,7 +289,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	{
 		NSString *tocPath = [destinationPath stringByAppendingPathComponent: tocName];
 		NSString *cuePath = [destinationPath stringByAppendingPathComponent: cueName];
-		if ([manager fileExistsAtPath: tocPath])
+		if ([_manager fileExistsAtPath: tocPath])
 		{
 			//Now, convert the TOC file to a CUE
 			NSTask *toc2cue = [[NSTask alloc] init];
@@ -301,9 +304,9 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 			[toc2cue release];
 			
 			//Once the CUE file is ready, delete the original TOC.
-			if ([manager fileExistsAtPath: cuePath])
+			if ([_manager fileExistsAtPath: cuePath])
 			{
-				[manager removeItemAtPath: tocPath error: nil];
+				[_manager removeItemAtPath: tocPath error: nil];
 			}
 			//Treat it as a fatal error if the CUE file was not generated successfully.
 			else
@@ -338,8 +341,8 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 		//Rather than bothering to parse the output of cdrdao, we just compare how large
 		//the image is so far to the total size of the original disk.
 		
-		NSString *imagePath = [self.importedDrivePath stringByAppendingPathComponent: @"data.bin"]; 
-		unsigned long long imageSize = [manager attributesOfItemAtPath: imagePath error: nil].fileSize;
+		NSString *imagePath = [self.destinationURL URLByAppendingPathComponent: @"data.bin"].path;
+		unsigned long long imageSize = [_manager attributesOfItemAtPath: imagePath error: nil].fileSize;
 		
 		if (imageSize > 0)
 		{

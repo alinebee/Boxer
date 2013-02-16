@@ -16,6 +16,7 @@
 @interface BXSimpleDriveImport : ADBSingleFileTransfer <BXDriveImport>
 {
 	BXDrive *_drive;
-	NSString *_destinationFolder;
+	NSURL *_destinationFolderURL;
+	NSURL *_destinationURL;
 }
 @end

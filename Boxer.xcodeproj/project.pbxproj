@@ -401,6 +401,8 @@
 		9F34BE5C142B76F500A69FAF /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
 		9F34BE5F142B851800A69FAF /* BXEmulator+BXAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */; };
 		9F34BE62142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */; };
+		9F35F3E916CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F35F3E816CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m */; };
+		9F35F3EA16CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F35F3E816CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m */; };
 		9F39A43B1452CE9100942D0F /* BXBezelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F39A43A1452CE9100942D0F /* BXBezelView.m */; };
 		9F3DD6CC15EE8047003C9A25 /* BXCHFlightstickProUSB.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3DD6CB15EE8047003C9A25 /* BXCHFlightstickProUSB.m */; };
 		9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */; };
@@ -1074,6 +1076,8 @@
 		9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXAudio.mm"; sourceTree = "<group>"; };
 		9F34BE60142B917100A69FAF /* BXBaseAppController+BXSupportFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXBaseAppController+BXSupportFiles.h"; sourceTree = "<group>"; };
 		9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXBaseAppController+BXSupportFiles.m"; sourceTree = "<group>"; };
+		9F35F3E716CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+ADBUniqueFilenames.h"; sourceTree = "<group>"; };
+		9F35F3E816CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+ADBUniqueFilenames.m"; sourceTree = "<group>"; };
 		9F39A4391452CE9100942D0F /* BXBezelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBezelView.h; sourceTree = "<group>"; };
 		9F39A43A1452CE9100942D0F /* BXBezelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBezelView.m; sourceTree = "<group>"; };
 		9F3DD6CB15EE8047003C9A25 /* BXCHFlightstickProUSB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCHFlightstickProUSB.m; sourceTree = "<group>"; };
@@ -3223,6 +3227,8 @@
 				9FF91EB516CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m */,
 				9F13F9CE11F85E6F0069A02E /* NSFileManager+ADBTemporaryFiles.h */,
 				9F13F9CF11F85E6F0069A02E /* NSFileManager+ADBTemporaryFiles.m */,
+				9F35F3E716CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.h */,
+				9F35F3E816CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m */,
 			);
 			name = Filesystem;
 			sourceTree = "<group>";
@@ -4303,6 +4309,7 @@
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
 				9F6463F716C67415008B65BF /* BXOutputBinding.m in Sources */,
 				9FF91EB616CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */,
+				9F35F3E916CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4608,6 +4615,7 @@
 				9F61B94E16625DF700B41546 /* BXInspectorController.m in Sources */,
 				9F6463F816C67415008B65BF /* BXOutputBinding.m in Sources */,
 				9FF91EB716CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */,
+				9F35F3EA16CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

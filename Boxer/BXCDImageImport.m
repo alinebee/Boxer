@@ -10,6 +10,7 @@
 #import "NSWorkspace+ADBMountedVolumes.h"
 #import "BXDrive.h"
 #import "RegexKitLite.h"
+#import "NSFileManager+ADBUniqueFilenames.h"
 
 
 NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
@@ -20,7 +21,9 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 
 @implementation BXCDImageImport
 @synthesize drive = _drive;
-@synthesize destinationFolder	= _destinationFolder;
+@synthesize destinationFolderURL	= _destinationFolderURL;
+@synthesize destinationURL          = _destinationURL;
+
 @synthesize numBytes			= _numBytes;
 @synthesize bytesTransferred	= _bytesTransferred;
 @synthesize currentProgress		= _currentProgress;
@@ -78,13 +81,13 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 }
 
 - (id <BXDriveImport>) initForDrive: (BXDrive *)drive
-					  toDestination: (NSString *)destinationFolder
+               destinationFolderURL: (NSURL *)destinationFolderURL
 						  copyFiles: (BOOL)copy;
 {
 	if ((self = [self init]))
 	{
         self.drive = drive;
-        self.destinationFolder = destinationFolder;
+        self.destinationFolderURL = destinationFolderURL;
 	}
 	return self;
 }
@@ -92,7 +95,8 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 - (void) dealloc
 {
     self.drive = nil;
-    self.destinationFolder = nil;
+    self.destinationFolderURL = nil;
+    self.destinationURL = nil;
     
 	[super dealloc];
 }
@@ -126,25 +130,33 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	//An ISO rip operation is always a copy, so this is a no-op
 }
 
-- (NSString *) importedDrivePath
+- (NSURL *) preferredDestinationURL
 {
-    if (!self.drive || !self.destinationFolder) return nil;
+    if (!self.drive || !self.destinationFolderURL) return nil;
     
 	NSString *driveName			= [self.class nameForDrive: self.drive];
-	NSString *destinationPath	= [self.destinationFolder stringByAppendingPathComponent: driveName];
+    NSURL *destinationURL       = [self.destinationFolderURL URLByAppendingPathComponent: driveName];
     
-    return destinationPath;
+    //Check that there isn't already a file with the same name at the location.
+    //If there is, auto-increment the name until we land on one that's unique.
+    NSURL *uniqueDestinationURL = [[NSFileManager defaultManager] uniqueURLForURL: destinationURL
+                                                                   filenameFormat: BXUniqueDriveNameFormat];
+    
+    return uniqueDestinationURL;
 }
 
 - (BOOL) shouldPerformOperation
 {
-    return [super shouldPerformOperation] && self.drive && self.destinationFolder;
+    return [super shouldPerformOperation] && self.drive && self.destinationFolderURL;
 }
 
 - (void) performOperation
 {
+    if (!self.destinationURL)
+        self.destinationURL = self.preferredDestinationURL;
+    
 	NSString *sourcePath		= self.drive.path;
-	NSString *destinationPath	= self.importedDrivePath;
+	NSString *destinationPath	= self.destinationURL.path;
 	
 	//Measure the size of the volume to determine how much data we'll be importing
 	NSFileManager *manager = [[NSFileManager alloc] init];
@@ -275,12 +287,9 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 - (BOOL) undoTransfer
 {
 	BOOL undid = NO;
-    NSString *destinationPath = self.importedDrivePath;
-	if (destinationPath && _hasWrittenFiles)
+	if (self.destinationURL && _hasWrittenFiles)
 	{
-		NSFileManager *manager = [[NSFileManager alloc] init];
-		undid = [manager removeItemAtPath: destinationPath error: nil];
-        [manager release];
+        undid = [[NSFileManager defaultManager] removeItemAtURL: self.destinationURL error: NULL];
 	}
 	return undid;
 }

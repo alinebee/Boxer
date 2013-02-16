@@ -22,7 +22,8 @@ enum {
 @interface BXDriveBundleImport : ADBFileTransferSet <BXDriveImport>
 {
 	BXDrive *_drive;
-	NSString *_destinationFolder;
+	NSURL *_destinationFolderURL;
+    NSURL *_destinationURL;
     BOOL _hasWrittenFiles;
 }
 

@@ -1927,23 +1927,20 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	
 	//...the drive is currently being imported or is already bundled in the current gamebox
 	if ([self activeImportOperationForDrive: drive] ||
-		[self driveIsBundled: drive] ||
-		[self equivalentDriveIsBundled: drive]) return NO;
+		[self driveIsBundled: drive]) return NO;
 	
 	//Otherwise, go for it!
 	return YES;
 }
 
 - (ADBOperation <BXDriveImport> *) importOperationForDrive: (BXDrive *)drive
-										 startImmediately: (BOOL)start
+                                          startImmediately: (BOOL)start
 {
 	if ([self canImportDrive: drive])
 	{
-		NSString *destinationFolder = self.gamebox.resourcePath;
-		
 		ADBOperation <BXDriveImport> *driveImport = [BXDriveImport importOperationForDrive: drive
-                                                                            toDestination: destinationFolder
-                                                                                copyFiles: YES];
+                                                                      destinationFolderURL: self.gamebox.resourceURL
+                                                                                 copyFiles: YES];
 		
 		driveImport.delegate = self;
 		driveImport.didFinishSelector = @selector(driveImportDidFinish:);
@@ -2012,7 +2009,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 		//with the newly-imported version (as long as the old one is not currently in use)
 		if (![self.emulator driveInUse: originalDrive])
 		{
-            NSString *destinationPath	= [import importedDrivePath];
+            NSString *destinationPath	= import.destinationURL.path;
 			BXDrive *importedDrive		= [BXDrive driveFromPath: destinationPath
                                                         atLetter: originalDrive.letter];
 			

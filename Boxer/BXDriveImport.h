@@ -9,6 +9,11 @@
 #import "ADBOperation.h"
 #import "ADBFileTransfer.h"
 
+//The incremented filename format we should use for uniquely naming imported drives.
+//Equivalent to nameForDrive (increment).driveExtension, e.g. "C DriveLabel (2).cdrom".
+//The incremented number is guaranteed to be ignored by BXDrive's label parsing.
+extern NSString * const BXUniqueDriveNameFormat;
+
 @class BXDrive;
 
 @protocol BXDriveImport <NSObject, ADBFileTransfer>
@@ -16,13 +21,17 @@
 //The drive to import.
 @property (retain) BXDrive *drive;
 
-//The base folder into which to import the drive.
-//This does not include the destination drive name, which will be determined automatically
-//from the drive being imported.
-@property (copy) NSString *destinationFolder;
+//The base folder into which to import the drive, not including the drive name.
+@property (copy) NSURL *destinationFolderURL;
 
-//The path of the new drive once it is finally imported.
-- (NSString *) importedDrivePath;
+//The full destination path of the drive import, including the drive name.
+//If left blank, it should be set at import time to preferredDestinationPath.
+@property (copy) NSURL *destinationURL;
+
+//This should return the preferred location to which this drive should be imported,
+//taking into account destinationFolder and nameForDrive: and auto-incrementing as
+//necessary to ensure uniqueness.
+- (NSURL *) preferredDestinationURL;
 
 //Returns whether this import class is appropriate for importing the specified drive.
 + (BOOL) isSuitableForDrive: (BXDrive *)drive;
@@ -38,7 +47,7 @@
 
 //Return a suitably initialized BXOperation subclass for transferring the drive.
 - (id <BXDriveImport>) initForDrive: (BXDrive *)drive
-					  toDestination: (NSString *)destinationFolder
+               destinationFolderURL: (NSURL *)destinationFolderURL
 						  copyFiles: (BOOL)copyFiles;
 
 @end
@@ -47,7 +56,7 @@
 @interface BXDriveImport: ADBOperation
 
 + (id <BXDriveImport>) importOperationForDrive: (BXDrive *)drive
-                                 toDestination: (NSString *)destinationFolder
+                          destinationFolderURL: (NSURL *)destinationFolder
                                      copyFiles: (BOOL)copyFiles;
 
 //Returns the most suitable operation class to import the specified drive

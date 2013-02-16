@@ -27,7 +27,8 @@ enum {
 	unsigned long long _bytesTransferred;
 	ADBOperationProgress _currentProgress;
 	BOOL _indeterminate;
-	NSString *_destinationFolder;
+	NSURL *_destinationFolderURL;
+	NSURL *_destinationURL;
     BOOL _hasWrittenFiles;
 }
 

@@ -38,83 +38,61 @@
 	NSString *drivePath = drive.path;
 	
 	NSFileManager *manager = [NSFileManager defaultManager];
-	BOOL isDir, exists = [manager fileExistsAtPath: drivePath isDirectory: &isDir];
+    BOOL isDir, exists = [manager fileExistsAtPath: drivePath isDirectory: &isDir];
 	
 	if (exists)
 	{
-		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-		
-		NSSet *readyTypes = [[BXFileTypes mountableFolderTypes] setByAddingObjectsFromSet: [BXFileTypes mountableImageTypes]];
-
-		//If the drive has a letter, then place that at the start of the name.
-		if (drive.letter)
+        NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	
+        if (drive.volumeLabel.length)
         {
-            importedName = drive.letter;
+            importedName = drive.volumeLabel;
+        }
+        else
+        {
+            importedName = [BXDrive preferredVolumeLabelForPath: drive.path];
         }
         
-		//Files and folders of the above types don't need additional renaming before import:
-        //we can just use their filename directly.
-		if ([workspace file: drivePath matchesTypes: readyTypes])
-		{
-            //TODO: strip out any leading drive letter, since the file being imported may already
-            //have been named by us before.
-            if (importedName.length)
-                importedName = [NSString stringWithFormat: @"%@ %@", importedName, drivePath.lastPathComponent];
-            else
-                importedName = drivePath.lastPathComponent;
-		}
+        //If the drive has a letter, then prepend it in our standard format
+        if (drive.letter)
+        {
+            importedName = [NSString stringWithFormat: @"%@ %@", drive.letter, importedName];
+        }
+        
+        //Decide on what kind of extension to use for the file:
+        //If this is one of our known image/mountable folder types then use its extension as-is
+		NSSet *readyTypes = [[BXFileTypes mountableFolderTypes] setByAddingObjectsFromSet: [BXFileTypes mountableImageTypes]];
+        if ([workspace file: drivePath matchesTypes: readyTypes])
+        {
+            importedName = [importedName stringByAppendingPathExtension: drivePath.pathExtension];
+        }
 		//Otherwise: if it's a directory, it will need to be renamed as a mountable folder.
 		else if (isDir)
-		{
-            //Append the volume label to the name, if one was defined.
-            if (importedName.length)
-            {
-                if (drive.volumeLabel.length)
-                    importedName = [NSString stringWithFormat: @"%@ %@", importedName, drive.volumeLabel];
-            }
-            else
-            {
-                //Implementation note: if there's no drive letter, and no volume label,
-                //we make up a volume label to avoid having an empty filename.
-                if (drive.volumeLabel.length)
-                    importedName = drive.volumeLabel;
-                else
-                    importedName = [BXDrive preferredVolumeLabelForPath: drive.path];
-            }
-            
-			NSString *extension	= nil;
-			
-			//Give the mountable folder the proper file extension for its drive type
+        {
+            NSString *extension;
 			switch (drive.type)
 			{
 				case BXDriveCDROM:
-					extension = @"cdrom";
+					extension = [workspace preferredFilenameExtensionForType: BXCDROMFolderType];
 					break;
 				case BXDriveFloppyDisk:
-					extension = @"floppy";
+					extension = [workspace preferredFilenameExtensionForType: BXFloppyFolderType];
 					break;
 				case BXDriveHardDisk:
 				default:
-					extension = @"harddisk";
+					extension = [workspace preferredFilenameExtensionForType: BXHardDiskFolderType];
 					break;
 			}
 			importedName = [importedName stringByAppendingPathExtension: extension];
-		}
-        //Otherwise: if it's a file, then it's *presumably* an ISO disc image
-        //that's been given a dumb file extension (hello GOG!) and should be
-        //renamed to something sensible.
-        //TODO: validate that it is in fact an ISO image, once we have ISO parsing ready.
+        }
+        //Otherwise: if it's a file, then it's *presumably* an ISO disc image that's been given
+        //a file extension we don't recognise (hello GOG!) and should be renamed to something sensible.
+        //TODO: validate it to determine what kind of image it really is.
         else
         {
-            NSString *baseName = drivePath.lastPathComponent.stringByDeletingPathExtension;
-            NSString *fileName = [baseName stringByAppendingPathExtension: @"iso"];
-            
-            if (importedName.length)
-                importedName = [NSString stringWithFormat: @"%@ %@", importedName, fileName];
-            else
-                importedName = fileName;
+            importedName = [importedName stringByAppendingPathExtension: @"iso"];
         }
-	}
+    }
 	return importedName;
 }
 

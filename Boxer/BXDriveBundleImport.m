@@ -38,6 +38,15 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	
 	importedName = drive.path.lastPathComponent.stringByDeletingPathExtension;
 	
+    if (drive.volumeLabel.length)
+    {
+        importedName = drive.volumeLabel;
+    }
+    else
+    {
+        importedName = [BXDrive preferredVolumeLabelForPath: drive.path];
+    }
+    
 	//If the drive has a letter, then prepend it in our standard format
 	if (drive.letter) importedName = [NSString stringWithFormat: @"%@ %@", drive.letter, importedName];
 	

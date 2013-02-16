@@ -163,12 +163,12 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 - (BXDrive *) mountDrive: (BXDrive *)drive error: (NSError **)outError
 {
     //This is not permitted and indicates a programming error
-    NSAssert([self isExecuting], @"mountDrive:error: called while emulator is not running.");
+    NSAssert(self.isExecuting, @"mountDrive:error: called while emulator is not running.");
     
     if (outError) *outError = nil;
     
 	NSFileManager *manager	= [NSFileManager defaultManager];
-	NSString *mountPath = [drive mountPoint];
+	NSString *mountPath = drive.mountPoint;
 	BOOL isFolder;
 	
 	//File does not exist or cannot be read, don't continue mounting
@@ -181,13 +181,13 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	
 	BOOL isImage = !isFolder;
 
-	NSString *driveLetter = [drive letter];
-	NSString *driveLabel = [drive volumeLabel];
-	
+	NSString *driveLetter = drive.letter;
+	NSString *driveLabel = drive.volumeLabel;
 	
 	//Choose an appropriate drive letter to mount the drive at,
 	//if one hasn't been specified.
-	if (!driveLetter) driveLetter = [self preferredLetterForDrive: drive];
+	if (!driveLetter)
+        driveLetter = [self preferredLetterForDrive: drive];
 	
 	//If no drive letters were available, do not continue.
 	if (driveLetter == nil)
@@ -218,7 +218,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     NSError *mountError = nil;
     if (isImage)
     {
-        switch ([drive type])
+        switch (drive.type)
         {
             case BXDriveCDROM:
                 DOSBoxDrive = [self _CDROMDriveFromImageAtPath: mountPath
@@ -237,24 +237,24 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     }
     else
     {
-        switch ([drive type])
+        switch (drive.type)
         {
             case BXDriveCDROM:
                 DOSBoxDrive = [self _CDROMDriveFromPath: mountPath
                                                forIndex: index
-                                              withAudio: [drive usesCDAudio]
+                                              withAudio: drive.usesCDAudio
                                                   error: &mountError];
                 break;
                 
             case BXDriveHardDisk:
                 DOSBoxDrive = [self _hardDriveFromPath: mountPath
-                                             freeSpace: [drive freeSpace]
+                                             freeSpace: drive.freeSpace
                                                  error: &mountError];
                 break;
                 
             case BXDriveFloppyDisk:
                 DOSBoxDrive = [self _floppyDriveFromPath: mountPath
-                                               freeSpace: [drive freeSpace]
+                                               freeSpace: drive.freeSpace
                                                    error: &mountError];
                 break;
         }
@@ -271,13 +271,14 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 			{
 				const char *cLabel = [driveLabel cStringUsingEncoding: BXDirectStringEncoding];
 				if (cLabel)
-					DOSBoxDrive->SetLabel(cLabel, [drive isCDROM], false);
+					DOSBoxDrive->SetLabel(cLabel, drive.isCDROM, false);
 			}
 			
 			//Populate the drive with the settings we ended up using, and add the drive to our own drives cache
-			[drive setLetter: driveLetter];
-			[drive setVolumeLabel: [NSString stringWithCString: DOSBoxDrive->GetLabel()
-                                                      encoding: BXDirectStringEncoding]];
+            drive.letter = driveLetter;
+            drive.DOSVolumeLabel = [NSString stringWithCString: DOSBoxDrive->GetLabel()
+                                                      encoding: BXDirectStringEncoding];
+            
 			[self _addDriveToCache: drive];
 			
 			//Post a notification to whoever's listening
@@ -309,9 +310,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
         //Figure out what went wrong, and transform it into a more presentable error type.
         if (outError)
         {
-            if ([[mountError domain] isEqualToString: BXDOSBoxMountErrorDomain])
+            if ([mountError.domain isEqualToString: BXDOSBoxMountErrorDomain])
             {
-                switch ([mountError code])
+                switch (mountError.code)
                 {
                     case BXDOSBoxMountNonContiguousCDROMDrives:
                         *outError = [BXEmulatorNonContiguousDrivesError errorWithDrive: drive];
@@ -342,14 +343,14 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                 error: (NSError **)outError
 {
     //This is not permitted and indicates a programming error
-    NSAssert([self isExecuting], @"unmountDrive:error: called while emulator is not running.");
+    NSAssert(self.isExecuting, @"unmountDrive:error: called while emulator is not running.");
     
     //If the drive isn't mounted to start with, bail out already.
     //TODO: make this an error?
     if (![self driveIsMounted: drive])
         return YES;
     
-	if ([drive isInternal] || [drive isLocked])
+	if (drive.isInternal || drive.isLocked)
     {
         if (outError) *outError = [BXEmulatorDriveLockedError errorWithDrive: drive];
         return NO;
@@ -362,7 +363,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
         return NO;
     }
 	
-	NSUInteger index	= [self _indexOfDriveLetter: [drive letter]];
+	NSUInteger index	= [self _indexOfDriveLetter: drive.letter];
 	BOOL isCurrentDrive = (index == DOS_GetDefaultDrive());
 
     NSError *unmountError = nil;
@@ -372,7 +373,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	if (unmounted)
 	{
 		//If this was the drive we were on, recover by switching to Z drive
-		if (isCurrentDrive && [self isAtPrompt]) [self changeToDriveLetter: @"Z"];
+		if (isCurrentDrive && self.isAtPrompt) [self changeToDriveLetter: @"Z"];
 		
 		//Remove the drive from our drive cache
 		[self _removeDriveFromCache: drive];
@@ -386,9 +387,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     else if (outError)
     {   
         //Transform DOSBox's error codes into our own
-        if ([[unmountError domain] isEqualToString: BXDOSBoxUnmountErrorDomain])
+        if ([unmountError.domain isEqualToString: BXDOSBoxUnmountErrorDomain])
         {
-            switch ([unmountError code])
+            switch (unmountError.code)
             {
                 case BXDOSBoxUnmountLockedDrive:
                     *outError = [BXEmulatorDriveLockedError errorWithDrive: drive];
@@ -419,7 +420,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (void) refreshMountedDrives
 {
-	if ([self isExecuting])
+	if (self.isExecuting)
 	{
 		for (NSUInteger i=0; i < DOS_DRIVES; i++)
 		{
@@ -430,17 +431,20 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (NSString *) preferredLetterForDrive: (BXDrive *)drive
 {
-	NSArray *usedLetters = [_driveCache allKeys];
+	NSSet *usedLetters = [NSSet setWithArray: _driveCache.allKeys];
 	
 	//TODO: try to ensure CD-ROM mounts are contiguous
 	NSArray *letters;
-	if ([drive isFloppy])		letters = [[self class] floppyDriveLetters];
-	else if ([drive isCDROM])	letters = [[self class] CDROMDriveLetters];
-	else						letters = [[self class] hardDriveLetters];
+	if (drive.isFloppy)         letters = [self.class floppyDriveLetters];
+	else if (drive.isCDROM)     letters = [self.class CDROMDriveLetters];
+	else						letters = [self.class hardDriveLetters];
 
 	//Scan for the first available drive letter that isn't already mounted
-	for (NSString *letter in letters) if (![usedLetters containsObject: letter]) return letter;
-	
+	for (NSString *letter in letters)
+    {
+        if (![usedLetters containsObject: letter]) return letter;
+    }
+    
 	//Looks like all possible drive letters are mounted! bummer
 	return nil;
 }
@@ -451,7 +455,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (NSArray *) mountedDrives
 {
-	return [_driveCache allValues];
+	return _driveCache.allValues;
 }
 
 - (BOOL) driveIsMounted: (BXDrive *)drive
@@ -474,9 +478,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (BOOL) driveInUseAtLetter: (NSString *)driveLetter
 {
-	if ([self processPath])
+	if (self.processPath)
 	{
-		NSString *processDriveLetter = [[self processPath] substringToIndex: 1];
+		NSString *processDriveLetter = [self.processPath substringToIndex: 1];
 		if ([driveLetter isEqualToString: processDriveLetter]) return YES;
 	}
 	return [self _DOSBoxDriveInUseAtIndex: [self _indexOfDriveLetter: driveLetter]];
@@ -484,7 +488,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (BOOL) pathIsMountedAsDrive: (NSString *)path
 {
-	for (BXDrive *drive in [_driveCache objectEnumerator])
+	for (BXDrive *drive in _driveCache.objectEnumerator)
 	{
 		if ([drive representsPath: path]) return YES;
 	}
@@ -493,7 +497,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (BOOL) pathIsDOSAccessible: (NSString *)path
 {
-	for (BXDrive *drive in [_driveCache objectEnumerator])
+	for (BXDrive *drive in _driveCache.objectEnumerator)
 	{
 		if ([drive exposesPath: path]) return YES;
 	}
@@ -557,13 +561,15 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
 	BXDrive *drive = [self driveForPath: path];
     
-	if (drive) return [self DOSPathForPath: path onDrive: drive];
-	else return nil;
+	if (drive)
+        return [self DOSPathForPath: path onDrive: drive];
+	else
+        return nil;
 }
 
 - (NSString *) DOSPathForPath: (NSString *)path onDrive: (BXDrive *)drive
 {
-	if (![self isExecuting]) return nil;
+	if (!self.isExecuting) return nil;
 	
 	NSString *subPath = [drive relativeLocationOfPath: path];
 	
@@ -573,12 +579,13 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	NSString *dosDrive = [NSString stringWithFormat: @"%@:", [drive letter]];
 	
 	//If the path is at the root of the drive, bail out now.
-	if (![subPath length]) return dosDrive;
+	if (!subPath.length)
+        return dosDrive;
 
-	NSString *basePath			= [drive mountPoint];
-	NSArray *components			= [subPath pathComponents];
+	NSString *basePath  = drive.mountPoint;
+	NSArray *components = subPath.pathComponents;
 	
-	NSUInteger driveIndex	= [self _indexOfDriveLetter: [drive letter]];
+	NSUInteger driveIndex	= [self _indexOfDriveLetter: drive.letter];
 	DOS_Drive *DOSBoxDrive	= Drives[driveIndex];
 	if (!DOSBoxDrive) return nil;
 	
@@ -591,6 +598,15 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	{
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		
+        //We use DOSBox's own file lookup API to convert a real file path into its
+        //corresponding DOS 8.3 name: starting with the base path of the drive,
+        //and converting each component into its DOS 8.3 equivalent as we go.
+        
+        //One peculiarity of this API is that to look up successive paths we need
+        //to weld the DOS 8.3 relative path onto the drive's real filesystem path
+        //to create "frankenPath", and provide this as a reference point when we
+        //look up the DOS name of the next component in the path.
+        
 		NSString *frankenPath = [basePath stringByAppendingString: dosPath];
 		NSString *dosName = nil;
 		
@@ -615,7 +631,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 		else
 		{
 			//TODO: if filename is longer than 8.3, crop and append ~1 as a last-ditch guess.
-			dosName = [fileName uppercaseString];
+			dosName = fileName.uppercaseString;
 		}
 		
 		[dosPath appendFormat: @"\\%@", dosName, nil];
@@ -697,7 +713,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (BXDrive *) driveForDOSPath: (NSString *)path
 {
-    if ([self isExecuting])
+    if (self.isExecuting)
 	{
 		const char *dosPath = [path cStringUsingEncoding: BXDirectStringEncoding];
 		//If the path couldn't be encoded successfully, don't do further lookups
@@ -719,7 +735,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (NSString *) resolvedDOSPath: (NSString *)path
 {
-    if ([self isExecuting])
+    if (self.isExecuting)
 	{
 		const char *dosPath = [path cStringUsingEncoding: BXDirectStringEncoding];
 		//If the path couldn't be encoded successfully, don't do further lookups
@@ -790,7 +806,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (DOS_Drive *)_DOSBoxDriveMatchingDrive: (BXDrive *)drive
 {
-	NSUInteger index = [self _indexOfDriveLetter: [drive letter]];
+	NSUInteger index = [self _indexOfDriveLetter: drive.letter];
 	if (Drives[index]) return Drives[index];
 	else return NULL;
 }
@@ -899,27 +915,29 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	NSAssert1(index < DOS_DRIVES, @"index %lu passed to _driveFromDOSBoxDriveAtIndex was beyond the range of DOSBox's drive array.", (unsigned long)index);
 	if (Drives[index])
 	{
-		NSString *driveLetter	= [[[self class] driveLetters] objectAtIndex: index];
-		NSString *path			= [NSString stringWithCString: Drives[index]->getSystemPath() encoding: BXDirectStringEncoding];
-		NSString *label			= [NSString stringWithCString: Drives[index]->GetLabel() encoding: BXDirectStringEncoding];
+		NSString *driveLetter	= [[self.class driveLetters] objectAtIndex: index];
+		NSString *path			= [NSString stringWithCString: Drives[index]->getSystemPath()
+                                                     encoding: BXDirectStringEncoding];
+		NSString *label			= [NSString stringWithCString: Drives[index]->GetLabel()
+                                                     encoding: BXDirectStringEncoding];
 		
 		BXDrive *drive;
 		//TODO: detect the specific type of drive here!
 		//Requires drive-size heuristics, or keeping track of drive type in MOUNT/IMGMOUNT
-		if (![path length])
+		if (!path.length)
 		{
 			drive = [BXDrive internalDriveAtLetter: driveLetter];
 		}
 		else
 		{
 			//Have a decent crack at resolving relative file paths
-			if (![path isAbsolutePath])
+			if (!path.isAbsolutePath)
 			{
-				path = [[self basePath] stringByAppendingPathComponent: path];
+				path = [self.basePath stringByAppendingPathComponent: path];
 			}
-			drive = [BXDrive driveFromPath: [path stringByStandardizingPath] atLetter: driveLetter];
+			drive = [BXDrive driveFromPath: path.stringByStandardizingPath atLetter: driveLetter];
 		}
-		[drive setVolumeLabel: label];
+        drive.DOSVolumeLabel = label;
 		return drive;
 	}
 	else return nil;

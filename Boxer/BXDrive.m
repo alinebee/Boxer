@@ -30,6 +30,7 @@
 @synthesize letter = _letter;
 @synthesize title = _title;
 @synthesize volumeLabel = _volumeLabel;
+@synthesize DOSVolumeLabel = _DOSVolumeLabel;
 @synthesize type = _type;
 @synthesize freeSpace = _freeSpace;
 @synthesize usesCDAudio = _usesCDAudio;
@@ -85,25 +86,30 @@
 	else return [[NSFileManager defaultManager] displayNameAtPath: filePath];
 }
 
++ (NSSet *) mountableTypesWithExtensions
+{
+	static NSMutableSet *types;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        types = [[BXFileTypes mountableImageTypes] mutableCopy];
+        [types unionSet: [BXFileTypes mountableFolderTypes]];
+        [types addObject: BXGameboxType];
+    });
+	return types;
+}
+
 + (NSString *) preferredVolumeLabelForPath: (NSString *)filePath
 {
-    NSString *baseName = filePath.lastPathComponent;
+    //Dots in DOS volume labels are acceptable, but may be confused with file extensions which
+    //we do want to remove. So, we strip off the extensions for our known image/folder types.
+    BOOL stripExtension = [[NSWorkspace sharedWorkspace] file: filePath matchesTypes: [self mountableTypesWithExtensions]];
     
-    //Dots in volume labels are acceptable but may be confused with file extensions
-    //which we do want to remove. So we strip off a set of common extensions we use.
-	NSArray *strippedExtensions = [NSArray arrayWithObjects:
-								   @"boxer",
-								   @"cdrom",
-								   @"floppy",
-								   @"harddisk",
-								   nil];
-
-	NSString *extension = baseName.pathExtension.lowercaseString;
-	if ([strippedExtensions containsObject: extension])
+    NSString *baseName = filePath.lastPathComponent;
+    if (stripExtension)
         baseName = baseName.stringByDeletingPathExtension;
 	
     //Imported drives may have an increment on the end to avoid filename collisions, so parse that off too.
-    NSString *incrementSuffix = [baseName stringByMatching: @"(\\(\\d+\\))$"];
+    NSString *incrementSuffix = [baseName stringByMatching: @" (\\(\\d+\\))$"];
     if (incrementSuffix)
         baseName = [baseName substringToIndex: baseName.length - incrementSuffix.length];
     
@@ -114,6 +120,8 @@
     NSString *letterPrefix = [baseName stringByMatching: @"^([a-xA-X] )?(.+)$" capture: 1];
     if (letterPrefix)
         baseName = [baseName substringFromIndex: letterPrefix.length];
+    
+    //TODO: should we trim leading and trailing whitespace? Are spaces meaningful DOS volume labels?
     
 	return baseName;
 }
@@ -343,6 +351,7 @@
     self.letter = nil;
     self.title = nil;
     self.volumeLabel = nil;
+    self.DOSVolumeLabel = nil;
     self.pathAliases = nil;
     self.filesystem = nil;
     

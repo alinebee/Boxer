@@ -41,6 +41,7 @@ typedef enum {
 	NSString *_letter;
 	NSString *_title;
 	NSString *_volumeLabel;
+    NSString *_DOSVolumeLabel;
 	BXDriveType _type;
 	NSInteger _freeSpace;
 	BOOL _usesCDAudio;
@@ -95,11 +96,13 @@ typedef enum {
 //the source path of the drive, but can be modified.
 @property (copy, nonatomic) NSString *title;
 
-//The volume label to use for this drive in DOS. For CD-ROM and floppy drives this is derived
-//from the folder/volume name. For image-based drives this value is ignored, since the volume
-//label is stored inside the image itself.
-//This will be updated with the drive's actual DOSBox label once a volume has been mounted.
+//The volume label to use for this drive in DOS. Automatically derived from the source path
+//of the drive, but can be modified. For image-based drives this value is ignored, since the
+//volume label is stored inside the image itself.
 @property (copy, nonatomic) NSString *volumeLabel;
+
+//The volume label that the drive ended up being given when mounted in DOS.
+@property (copy, nonatomic) NSString *DOSVolumeLabel;
 
 //The type of DOS drive to mount, as a BXDriveType constant (see above.) This will
 //be auto-detected based on the source folder or image, if not explicitly provided.
@@ -161,9 +164,8 @@ typedef enum {
 + (BXDriveType) preferredTypeForPath: (NSString *)filePath;
 
 //Autogenerates a suitable DOS volume label for the specified path.
-//For disk images, this will be nil (their volume labels are stored internally);
 //For regular folders and CD-ROM volumes, this will be their filename;
-//For .floppy, .cdrom and .harddisk folders, this will be their filename
+//For .floppy, .cdrom, .cdmedia and .harddisk folders, this will be their filename
 //minus extension and parsed drive letter (see preferredDriveLetterForPath: below.)
 + (NSString *) preferredVolumeLabelForPath: (NSString *)filePath;
 

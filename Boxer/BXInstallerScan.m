@@ -8,10 +8,10 @@
 #import "BXInstallerScan.h"
 #import "BXImportSession+BXImportPolicies.h"
 
-#import "NSWorkspace+BXFileTypes.h"
+#import "NSWorkspace+ADBFileTypes.h"
 #import "NSWorkspace+BXExecutableTypes.h"
-#import "NSWorkspace+BXMountedVolumes.h"
-#import "NSString+BXPaths.h"
+#import "NSWorkspace+ADBMountedVolumes.h"
+#import "NSString+ADBPaths.h"
 #import "BXFileTypes.h"
 #import "BXSessionError.h"
 
@@ -101,7 +101,7 @@
                     [self addMatchingPath: relativePath];
                     
                     NSDictionary *userInfo = [NSDictionary dictionaryWithObject: self.lastMatch
-                                                                         forKey: BXFileScanLastMatchKey];
+                                                                         forKey: ADBFileScanLastMatchKey];
                     
                     [self _sendInProgressNotificationWithInfo: userInfo];
                 }

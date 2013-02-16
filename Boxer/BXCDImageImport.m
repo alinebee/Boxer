@@ -6,8 +6,8 @@
  */
 
 #import "BXCDImageImport.h"
-#import "BXFileTransfer.h"
-#import "NSWorkspace+BXMountedVolumes.h"
+#import "ADBFileTransfer.h"
+#import "NSWorkspace+ADBMountedVolumes.h"
 #import "BXDrive.h"
 #import "RegexKitLite.h"
 
@@ -43,7 +43,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	
 	//If the drive is a data CD, then let 'er rip
 	if ([volumePath isEqualToString: drive.path] &&
-		[[workspace volumeTypeForPath: drive.path] isEqualToString: dataCDVolumeType])
+		[[workspace volumeTypeForPath: drive.path] isEqualToString: ADBDataCDVolumeType])
 	{
 		return YES;
 	}
@@ -247,7 +247,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	NSArray *progressValues = [currentOutput componentsMatchedByRegex: @"PERCENT:(-?[0-9\\.]+)" capture: 1];
 	[currentOutput release];
 	
-	BXOperationProgress latestProgress = [progressValues.lastObject floatValue];
+	ADBOperationProgress latestProgress = [progressValues.lastObject floatValue];
 	
 	if (latestProgress > 0)
 	{
@@ -257,8 +257,8 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 		self.bytesTransferred = (self.numBytes * (double)self.currentProgress);
 		
 		NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-							  [NSNumber numberWithUnsignedLongLong:	self.bytesTransferred],	BXFileTransferBytesTransferredKey,
-							  [NSNumber numberWithUnsignedLongLong:	self.numBytes],			BXFileTransferBytesTotalKey,
+							  [NSNumber numberWithUnsignedLongLong:	self.bytesTransferred],	ADBFileTransferBytesTransferredKey,
+							  [NSNumber numberWithUnsignedLongLong:	self.numBytes],			ADBFileTransferBytesTotalKey,
 							  nil];
 		[self _sendInProgressNotificationWithInfo: info];
 	}

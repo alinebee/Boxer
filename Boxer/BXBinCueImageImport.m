@@ -6,11 +6,11 @@
  */
 
 #import "BXBinCueImageImport.h"
-#import "NSWorkspace+BXMountedVolumes.h"
+#import "NSWorkspace+ADBMountedVolumes.h"
 #import "BXDrive.h"
 #import <DiskArbitration/DiskArbitration.h>
 #import "RegexKitLite.h"
-#import "BXFileTransfer.h"
+#import "ADBFileTransfer.h"
 
 
 #pragma mark -
@@ -97,11 +97,11 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 		NSString *volumeType = [workspace volumeTypeForPath: drivePath];
 		
 		//If it's an audio CD, we can import it just fine.
-		if ([volumeType isEqualToString: audioCDVolumeType]) return YES;
+		if ([volumeType isEqualToString: ADBAudioCDVolumeType]) return YES;
 		
 		//If it's a data CD, check if it has a matching audio volume: if so, then a BIN/CUE image is needed.
 		//(Otherwise, we'll let BXCDImageImport handle it.)
-		else if ([volumeType isEqualToString: dataCDVolumeType] &&
+		else if ([volumeType isEqualToString: ADBDataCDVolumeType] &&
 				 [workspace audioVolumeOfDataCD: volumePath] != nil) return YES;
 		
 		//Pass on all other volume types.
@@ -349,15 +349,15 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 			self.indeterminate = NO;
 			self.bytesTransferred = imageSize;
 			
-			BXOperationProgress progress = (float)self.bytesTransferred / (float)self.numBytes;
+			ADBOperationProgress progress = (float)self.bytesTransferred / (float)self.numBytes;
 			//Add a margin at either side of the progress to account for lead-in, cleanup and TOC conversion
 			//TODO: move this upstream into setCurrentProgress or somewhere
 			progress = 0.03f + (progress * 0.97f);
 			self.currentProgress = progress;
 			
 			NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-				[NSNumber numberWithUnsignedLongLong: self.bytesTransferred],	BXFileTransferBytesTransferredKey,
-				[NSNumber numberWithUnsignedLongLong: self.numBytes],			BXFileTransferBytesTotalKey,
+				[NSNumber numberWithUnsignedLongLong: self.bytesTransferred],	ADBFileTransferBytesTransferredKey,
+				[NSNumber numberWithUnsignedLongLong: self.numBytes],			ADBFileTransferBytesTotalKey,
 			nil];
 			
 			[self _sendInProgressNotificationWithInfo: info];

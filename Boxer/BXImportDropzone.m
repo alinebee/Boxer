@@ -7,7 +7,7 @@
 
 
 #import "BXImportDropzone.h"
-#import "BXGeometry.h"
+#import "ADBGeometry.h"
 #import <QuartzCore/QuartzCore.h>
 
 

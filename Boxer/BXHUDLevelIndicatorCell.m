@@ -7,7 +7,7 @@
 
 
 #import "BXHUDLevelIndicatorCell.h"
-#import "NSShadow+BXShadowExtensions.h"
+#import "NSShadow+ADBShadowExtensions.h"
 
 
 @implementation BXHUDLevelIndicatorCell

@@ -7,9 +7,9 @@
 
 #import "BXCoverArt.h"
 #import "NSBezierPath+MCAdditions.h"
-#import "BXGeometry.h"
-#import "NSShadow+BXShadowExtensions.h"
-#import "BXAppKitVersionHelpers.h"
+#import "ADBGeometry.h"
+#import "NSShadow+ADBShadowExtensions.h"
+#import "ADBAppKitVersionHelpers.h"
 
 @implementation BXCoverArt
 @synthesize sourceImage;

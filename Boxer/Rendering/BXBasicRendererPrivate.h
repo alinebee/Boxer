@@ -14,7 +14,7 @@
 
 #import "BXVideoFrame.h"
 #import "BXTexture2D+BXVideoFrameExtensions.h"
-#import "BXGeometry.h"
+#import "ADBGeometry.h"
 
 #import <OpenGL/gl.h>
 #import <OpenGL/glu.h>
@@ -35,7 +35,7 @@ extern GLfloat viewportVerticesFlipped[8];
 @property (readwrite, retain) BXVideoFrame *currentFrame;
 
 //The texture into which we draw video frames.
-@property (retain) BXTexture2D *frameTexture;
+@property (retain) ADBTexture2D *frameTexture;
 
 //The texture type we use for frame textures. Either GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE.
 @property (readonly, nonatomic) GLenum frameTextureType;
@@ -77,7 +77,7 @@ extern GLfloat viewportVerticesFlipped[8];
 @interface BXSupersamplingRenderer ()
 
 //The texture into which we render for supersampling.
-@property (retain) BXTexture2D *supersamplingBufferTexture;
+@property (retain) ADBTexture2D *supersamplingBufferTexture;
 
 //The texture type we use for buffer textures. Either GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE.
 @property (readonly, nonatomic) GLenum bufferTextureType;
@@ -105,7 +105,7 @@ extern GLfloat viewportVerticesFlipped[8];
 - (CGSize) _idealSupersamplingBufferSizeForFrame: (BXVideoFrame *)frame
                                       toViewport: (CGRect)viewportRegion;
 
-- (void) _bindTextureToSupersamplingBuffer: (BXTexture2D *)texture;
+- (void) _bindTextureToSupersamplingBuffer: (ADBTexture2D *)texture;
 
 @end
 
@@ -118,7 +118,7 @@ extern GLfloat viewportVerticesFlipped[8];
 //The secondary buffer texture we shall use when rendering with shaders.
 //(When rendering with a series of shaders, we bounce back and forth between
 //our two buffer textures.)
-@property (retain, nonatomic) BXTexture2D *auxiliaryBufferTexture;
+@property (retain, nonatomic) ADBTexture2D *auxiliaryBufferTexture;
 
 //Called during _renderFrame: to check whether to render with shaders
 //or fall back on supersampled/direct rendering.

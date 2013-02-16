@@ -10,14 +10,14 @@
 //active DOS session's input controller.
 
 #import <Foundation/Foundation.h>
-#import "BXHIDMonitor.h"
+#import "ADBHIDMonitor.h"
 
-@interface BXJoystickController: NSObject <BXHIDMonitorDelegate>
+@interface BXJoystickController: NSObject <ADBHIDMonitorDelegate>
 {
-	BXHIDMonitor *_HIDMonitor;
+	ADBHIDMonitor *_HIDMonitor;
     NSArray *_recentHIDRemappers;
 }
-@property (readonly, retain, nonatomic) BXHIDMonitor *HIDMonitor;
+@property (readonly, retain, nonatomic) ADBHIDMonitor *HIDMonitor;
 
 //An array of DDHIDJoystick instances for each joystick currently connected.
 //Corresponds to hidMonitor matchedDevices.

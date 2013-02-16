@@ -7,7 +7,7 @@
 
 #import "BXHIDControllerProfilePrivate.h"
 #import "BXBezelController.h"
-#import "DDHIDUsage+BXUsageExtensions.h"
+#import "DDHIDUsage+ADBUsageExtensions.h"
 
 
 @implementation BXHIDControllerProfile
@@ -575,15 +575,15 @@ static NSMutableArray *_profileClasses = nil;
 {
     BXHIDPOVSwitchBinding *binding = [BXHIDPOVSwitchBinding binding];
     
-    BXHIDPOVSwitchDirection from[8] = {
-        BXHIDPOVNorth,
-        BXHIDPOVNorthEast,
-        BXHIDPOVEast,
-        BXHIDPOVSouthEast,
-        BXHIDPOVSouth,
-        BXHIDPOVSouthWest,
-        BXHIDPOVWest,
-        BXHIDPOVNorthWest,
+    ADBHIDPOVSwitchDirection from[8] = {
+        ADBHIDPOVNorth,
+        ADBHIDPOVNorthEast,
+        ADBHIDPOVEast,
+        ADBHIDPOVSouthEast,
+        ADBHIDPOVSouth,
+        ADBHIDPOVSouthWest,
+        ADBHIDPOVWest,
+        ADBHIDPOVNorthWest,
     };
     
     BXEmulatedPOVDirection to[8] = {
@@ -620,19 +620,19 @@ static NSMutableArray *_profileClasses = nil;
     if (horizAxis)
     {
         [binding setBinding: [BXEmulatedJoystickAxisBinding bindingWithJoystick: self.emulatedJoystick axis: horizAxis polarity: kBXAxisNegative]
-               forDirection: BXHIDPOVWest];
+               forDirection: ADBHIDPOVWest];
         
         [binding setBinding: [BXEmulatedJoystickAxisBinding bindingWithJoystick: self.emulatedJoystick axis: horizAxis polarity: kBXAxisPositive]
-               forDirection: BXHIDPOVEast];
+               forDirection: ADBHIDPOVEast];
     }
     
     if (vertAxis)
     {
         [binding setBinding: [BXEmulatedJoystickAxisBinding bindingWithJoystick: self.emulatedJoystick axis: vertAxis polarity: kBXAxisNegative]
-               forDirection: BXHIDPOVNorth];
+               forDirection: ADBHIDPOVNorth];
         
         [binding setBinding: [BXEmulatedJoystickAxisBinding bindingWithJoystick: self.emulatedJoystick axis: vertAxis polarity: kBXAxisPositive]
-               forDirection: BXHIDPOVSouth];
+               forDirection: ADBHIDPOVSouth];
     }
     
     return binding;
@@ -678,13 +678,13 @@ static NSMutableArray *_profileClasses = nil;
 #pragma mark - Event handling
 
 //Overridden in subclasses where necessary
-- (BOOL) shouldDispatchHIDEvent: (BXHIDEvent *)event
+- (BOOL) shouldDispatchHIDEvent: (ADBHIDEvent *)event
 {
     return YES;
 }
 
 //Send the event on to the appropriate binding for that element
-- (void) dispatchHIDEvent: (BXHIDEvent *)event
+- (void) dispatchHIDEvent: (ADBHIDEvent *)event
 {
     if ([self shouldDispatchHIDEvent: event])
     {

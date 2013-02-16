@@ -16,7 +16,7 @@
 
 @class BXBasicRenderer;
 @class BXRippleShader;
-@class BXTexture2D;
+@class ADBTexture2D;
 @interface BXGLRenderingView : NSOpenGLView <BXFrameRenderingView, BXRendererDelegate, NSAnimationDelegate>
 {
 	BXBasicRenderer *_renderer;

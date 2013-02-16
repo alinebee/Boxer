@@ -8,11 +8,11 @@
 #import "BXEmulatorPrivate.h"
 
 #import "BXDrive.h"
-#import "NSString+BXPaths.h"
+#import "NSString+ADBPaths.h"
 #import "BXGameProfile.h"
 #import "RegexKitLite.h"
-#import "BXFilesystem.h"
-#import "NSWorkspace+BXMountedVolumes.h"
+#import "ADBFilesystem.h"
+#import "NSWorkspace+ADBMountedVolumes.h" //FIXME: eliminate dependencies on AppKit
 
 #import "dos_inc.h"
 #import "dos_system.h"
@@ -1022,7 +1022,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     //the state of the workspace at this level.
 	if (useCDAudio && SDL_CDNumDrives() > 0)
 	{
-		NSArray *audioVolumes = [[NSWorkspace sharedWorkspace] mountedVolumesOfType: audioCDVolumeType includingHidden: YES];
+		NSArray *audioVolumes = [[NSWorkspace sharedWorkspace] mountedVolumesOfType: ADBAudioCDVolumeType includingHidden: YES];
 		if ([audioVolumes count] > 0)
 		{
 			//NOTE: SDL's CD audio API for OS X only ever exposes one CD, which will be #0.
@@ -1333,7 +1333,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     return [drive.filesystem fileExistsAtURL: [NSURL fileURLWithPath: path] isDirectory: &isDirectory] && !isDirectory;
 }
 
-- (id <BXFilesystemEnumerator>) _directoryEnumeratorForLocalPath: (NSString *)path
+- (id <ADBFilesystemEnumerator>) _directoryEnumeratorForLocalPath: (NSString *)path
                                                    onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];

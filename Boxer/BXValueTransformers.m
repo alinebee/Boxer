@@ -7,7 +7,7 @@
 
 
 #import "BXValueTransformers.h"
-#import "NSString+BXPaths.h"
+#import "NSString+ADBPaths.h"
 
 
 #pragma mark -

@@ -7,7 +7,7 @@
 
 
 #import "BXBootlegCoverArt.h"
-#import "BXAppKitVersionHelpers.h"
+#import "ADBAppKitVersionHelpers.h"
 
 @implementation BXJewelCase
 @synthesize title;

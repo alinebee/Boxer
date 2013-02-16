@@ -7,7 +7,7 @@
 
 #import "BXPrintStatusPanelController.h"
 #import "BXPrintSession.h"
-#import "BXGeometry.h"
+#import "ADBGeometry.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation BXPrintStatusPanelController

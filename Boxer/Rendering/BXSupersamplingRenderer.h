@@ -16,7 +16,7 @@
 
 @interface BXSupersamplingRenderer : BXBasicRenderer
 {
-    BXTexture2D *_supersamplingBufferTexture;
+    ADBTexture2D *_supersamplingBufferTexture;
 	GLuint _supersamplingBuffer;
     GLuint _currentBufferTexture;
     

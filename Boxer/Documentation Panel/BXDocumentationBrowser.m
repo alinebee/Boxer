@@ -8,11 +8,11 @@
 #import "BXDocumentationBrowser.h"
 #import "BXSession.h"
 #import "BXGamebox.h"
-#import "NSURL+BXQuickLookHelpers.h"
+#import "NSURL+ADBQuickLookHelpers.h"
 #import "BXBaseAppController.h"
-#import "NSView+BXDrawing.h"
+#import "NSView+ADBDrawingHelpers.h"
 #import "BXBaseAppController.h"
-#import "NSError+BXErrorHelpers.h"
+#import "NSError+ADBErrorHelpers.h"
 #import "NSBezierPath+MCAdditions.h"
 
 enum {
@@ -93,7 +93,9 @@ enum {
     [self.documentationList setDraggingSourceOperationMask: NSDragOperationCopy | NSDragOperationLink forLocal: NO];
     [self.documentationList setDraggingSourceOperationMask: NSDragOperationNone forLocal: YES];
     
-    //Insert ourselves into the responder chain ahead of our view.
+    //Insert ourselves into the responder chain ahead of our view. This is necessary to let us receive actions
+    //which are bound to the first responder rather than directly to us (this is the case for menu items and other
+    //UI elements that are stored in a nested XIB for our collection view items.)
     self.nextResponder = self.view.nextResponder;
     self.view.nextResponder = self;
 }
@@ -113,7 +115,6 @@ enum {
 
 - (NSError *) willPresentError: (NSError *)error
 {
-    //Give our delegate a crack at the error before we present it
     if ([self.delegate respondsToSelector: @selector(documentationBrowser:willPresentError:)])
         error = [self.delegate documentationBrowser: self willPresentError: error];
     
@@ -476,10 +477,9 @@ enum {
             numTrashed++;
             originalURL = URL;
         }
-        //If the file didn't exist anymore then disregard the error.
+        //If the file didn't exist anymore then disregard the error; otherwise, flag it up to the user to deal with.
         else if (![trashingError matchesDomain: NSCocoaErrorDomain code: NSFileNoSuchFileError])
         {
-            //Show the error to the user immediately.
             if (trashingError != nil)
             {
                 NSWindow *presentingWindow = nil;
@@ -512,8 +512,6 @@ enum {
     {
         NSString *actionName;
         
-        //Vary the title for the undo action, based on if it'll be recorded
-        //as a redo operation and based on how many URLs were imported.
         if (numTrashed > 1)
         {
             NSString *actionNameFormat = NSLocalizedString(@"Removal of %u manuals",
@@ -556,14 +554,12 @@ enum {
         if (!hasSelectedItems)
             return NO;
         
-        //Check that all selected items are trashable.
         for (NSURL *URL in self.selectedDocumentationURLs)
         {
             if (![[self.representedObject gamebox] canTrashDocumentationURL: URL])
                 return NO;
         }
         
-        //If we got this far it means all selected items are trashable.
         return YES;
     }
     else
@@ -609,7 +605,8 @@ enum {
 {
     NSArray *draggedURLs = [self.documentationURLs objectsAtIndexes: indexes];
     
-    //Fully resolve all URLs before adding them to the pasteboard
+    //Fully resolve all URLs before adding them to the pasteboard. This ensures we copy/link
+    //the real thing and not one of our documentation folder symlinks.
     NSArray *resolvedURLs = [draggedURLs valueForKey: @"URLByResolvingSymlinksInPath"];
     
     if (resolvedURLs.count)
@@ -629,8 +626,9 @@ enum {
     NSURL *_originalURL;
 }
 
-//The  in the documentation browser, used for matching up
-//between the preview and the browser.
+//The URL being displayed in the documentation browser, which differs from the preview URL
+//in that it may be a symlink. This is used only for matching up preview items to documentation
+//browser items.
 @property (copy, nonatomic) NSURL *originalURL;
 
 + (id) previewItemWithURL: (NSURL *)URL;
@@ -708,7 +706,8 @@ enum {
         
         NSRect frameInList = [self.documentationList convertRect: itemIcon.bounds fromView: itemIcon];
         
-        //Ensure that the frame is currently visible within the scroll view.
+        //Ensure that the frame is currently visible within the scroll view: if it's scrolled
+        //out of view then a zoom animation from its hidden location would look dumb.
         if (NSIntersectsRect(frameInList, self.documentationScrollView.documentVisibleRect))
         {
             NSRect frameInWindow = [self.documentationList convertRect: frameInList toView: nil];
@@ -756,8 +755,9 @@ enum {
     
     QLPreviewPanel *panel = [QLPreviewPanel sharedPreviewPanel];
     
-    //Only change the panel preview if a) we're in charge of the panel
-    //and b) there's anything selected and c) the selection doesn't contain the current preview item.
+    //Only change the panel preview if a) we're in charge of the panel and
+    //b) there's anything selected in the browser and c) the user has selected
+    //documentation items that aren't already being displayed in the panel.
     if (panel.currentController == self && self.documentationSelectionIndexes.count &&
         ![self.documentationSelectionIndexes containsIndex: panel.currentPreviewItemIndex])
     {
@@ -970,7 +970,6 @@ enum {
     //item by doubleclicking even when multiple items are selected.
     if (theEvent.clickCount > 1)
     {
-        //Ensure that the item is selected.
         self.delegate.selected = YES;
         [NSApp sendAction: @selector(openSelectedDocumentationItems:)
                        to: nil

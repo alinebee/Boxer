@@ -11,7 +11,7 @@
 //for opening files and folders from the OS X filesystem and creating new drives for them.
 
 #import "BXSession.h"
-#import "BXOperationDelegate.h"
+#import "ADBOperationDelegate.h"
 
 #pragma mark -
 #pragma mark Constants
@@ -119,11 +119,11 @@ typedef NSUInteger BXDriveMountOptions;
 
 @class BXDrive;
 @class BXDrivesInUseAlert;
-@class BXOperation;
+@class ADBOperation;
 @class BXExecutableScan;
 @protocol BXDriveImport;
 
-@interface BXSession (BXFileManagement) <BXEmulatorFileSystemDelegate, BXOperationDelegate>
+@interface BXSession (BXFileManagement) <BXEmulatorFileSystemDelegate, ADBOperationDelegate>
 
 //The 'principal' drive of the session, whose executables we will display in the programs panel
 //This is normally drive C, but otherwise is the first available drive letter with programs on it.
@@ -413,7 +413,7 @@ typedef NSUInteger BXDriveMountOptions;
 
 //Returns any ongoing import operation for the specified drive,
 //or nil if no import is in progress.
-- (BXOperation <BXDriveImport> *) activeImportOperationForDrive: (BXDrive *)drive;
+- (ADBOperation <BXDriveImport> *) activeImportOperationForDrive: (BXDrive *)drive;
 
 //Returns whether the specified drive can be imported.
 //Will be NO if:
@@ -427,7 +427,7 @@ typedef NSUInteger BXDriveMountOptions;
 //the queue immediately and begin importing asynchronously.
 //Will return nil if the drive cannot be imported (e.g. because a drive at
 //the destination already exists.)
-- (BXOperation <BXDriveImport> *) importOperationForDrive: (BXDrive *)drive
+- (ADBOperation <BXDriveImport> *) importOperationForDrive: (BXDrive *)drive
 										 startImmediately: (BOOL)start;
 
 //Cancel the in-progress import of the specified drive. Returns YES if the import was cancelled,

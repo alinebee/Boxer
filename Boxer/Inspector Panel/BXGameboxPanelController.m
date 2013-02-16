@@ -13,7 +13,7 @@
 #import "BXFileTypes.h"
 #import "BXBaseAppController.h"
 #import "BXGamebox.h"
-#import "NSString+BXPaths.h"
+#import "NSString+ADBPaths.h"
 
 
 //Used by syncMenuItems to determine where to fill the program menu with program items

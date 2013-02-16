@@ -7,7 +7,7 @@
 
 
 #import "BXWelcomeView.h"
-#import "BXGeometry.h"
+#import "ADBGeometry.h"
 #import "BXWelcomeButtonDraggingDelegate.h"
 
 @implementation BXWelcomeView

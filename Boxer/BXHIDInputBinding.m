@@ -6,9 +6,9 @@
  */
 
 #import "BXHIDInputBinding.h"
-#import "BXHIDEvent.h"
+#import "ADBHIDEvent.h"
 #import "BXEmulatedJoystick.h"
-#import "DDHidUsage+BXUsageExtensions.h"
+#import "DDHidUsage+ADBUsageExtensions.h"
 
 
 #define BXDefaultAxisDeadzone 0.20f
@@ -34,9 +34,9 @@
     [super dealloc];
 }
 
-- (void) processEvent: (BXHIDEvent *)event
+- (void) processEvent: (ADBHIDEvent *)event
 {
-    if (event.type == BXHIDJoystickButtonDown)
+    if (event.type == ADBHIDJoystickButtonDown)
         [self.outputBinding applyInputValue: kBXOutputBindingMax];
     else
         [self.outputBinding applyInputValue: kBXOutputBindingMin];
@@ -107,7 +107,7 @@
 	return normalizedValue;
 }
 
-- (void) processEvent: (BXHIDEvent *)event
+- (void) processEvent: (ADBHIDEvent *)event
 {
     float normalizedValue = [self _normalizedAxisValue: event.axisPosition];
     
@@ -167,7 +167,7 @@
         {
             if (nextIsDirection)
             {
-                BXHIDPOVSwitchDirection direction = va_arg(args, BXHIDPOVSwitchDirection);
+                ADBHIDPOVSwitchDirection direction = va_arg(args, ADBHIDPOVSwitchDirection);
                 [binding setBinding: subBinding forDirection: direction];
             }
             else
@@ -187,7 +187,7 @@
     if (self)
     {
         self.outputBindings = [NSMutableDictionary dictionaryWithCapacity: 8];
-		_previousDirection = BXHIDPOVCentered;
+		_previousDirection = ADBHIDPOVCentered;
     }
     return self;
 }
@@ -198,31 +198,31 @@
     [super dealloc];
 }
 
-- (id <BXHIDInputBinding>) bindingForDirection: (BXHIDPOVSwitchDirection)direction
+- (id <BXHIDInputBinding>) bindingForDirection: (ADBHIDPOVSwitchDirection)direction
 {
     return [self.outputBindings objectForKey: @(direction)];
 }
 
-- (void) setBinding: (id<BXHIDInputBinding>)binding forDirection: (BXHIDPOVSwitchDirection)direction
+- (void) setBinding: (id<BXHIDInputBinding>)binding forDirection: (ADBHIDPOVSwitchDirection)direction
 {
     [self.outputBindings setObject: binding forKey: @(direction)];
 }
 
-- (NSSet *) closestBindingsForDirection: (BXHIDPOVSwitchDirection)direction
+- (NSSet *) closestBindingsForDirection: (ADBHIDPOVSwitchDirection)direction
 {
-    direction = [BXHIDEvent closest8WayDirectionForPOV: direction];
+    direction = [ADBHIDEvent closest8WayDirectionForPOV: direction];
     
     id <BXOutputBinding> matchingBinding = [self bindingForDirection: direction];
     if (matchingBinding)
     {
         return [NSSet setWithObject: matchingBinding];
     }
-    else if (direction != BXHIDPOVCentered)
+    else if (direction != ADBHIDPOVCentered)
     {
         NSMutableSet *bindings = [NSMutableSet setWithCapacity: 2];
         //Try with directions either side of the binding.
-        BXHIDPOVSwitchDirection cw  = (direction + 4500) % 36000;
-        BXHIDPOVSwitchDirection ccw = (direction - 4500) % 36000;
+        ADBHIDPOVSwitchDirection cw  = (direction + 4500) % 36000;
+        ADBHIDPOVSwitchDirection ccw = (direction - 4500) % 36000;
         
         id <BXOutputBinding> cwBinding = [self bindingForDirection: cw];
         id <BXOutputBinding> ccwBinding = [self bindingForDirection: ccw];
@@ -237,9 +237,9 @@
     }
 }
 
-- (void) processEvent: (BXHIDEvent *)event
+- (void) processEvent: (ADBHIDEvent *)event
 {
-    BXHIDPOVSwitchDirection direction = [BXHIDEvent closest8WayDirectionForPOV: event.POVDirection];
+    ADBHIDPOVSwitchDirection direction = [ADBHIDEvent closest8WayDirectionForPOV: event.POVDirection];
     
     if (direction != _previousDirection)
     {

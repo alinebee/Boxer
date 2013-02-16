@@ -6,8 +6,8 @@
  */
 
 #import "BXThemedButtonCell.h"
-#import "BXGeometry.h"
-#import "NSImage+BXImageEffects.h"
+#import "ADBGeometry.h"
+#import "NSImage+ADBImageEffects.h"
 
 @implementation BXThemedButtonCell
 

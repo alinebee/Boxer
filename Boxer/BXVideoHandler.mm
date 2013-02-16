@@ -9,7 +9,7 @@
 #import "BXVideoHandler.h"
 #import "BXEmulatorPrivate.h"
 #import "BXVideoFrame.h"
-#import "BXGeometry.h"
+#import "ADBGeometry.h"
 #import "BXFilterDefinitions.h"
 
 #import "render.h"

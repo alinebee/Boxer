@@ -11,7 +11,7 @@
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulatorErrors.h"
 #import "BXEmulator+BXShell.h"
-#import "NSWorkspace+BXFileTypes.h"
+#import "NSWorkspace+ADBFileTypes.h"
 #import "BXDrive.h"
 #import "BXGamebox.h"
 

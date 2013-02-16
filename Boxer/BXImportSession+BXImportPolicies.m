@@ -8,14 +8,14 @@
 
 #import "BXImportSession+BXImportPolicies.h"
 #import "BXSession+BXFileManagement.h"
-#import "NSWorkspace+BXMountedVolumes.h"
-#import "NSWorkspace+BXFileTypes.h"
+#import "NSWorkspace+ADBMountedVolumes.h"
+#import "NSWorkspace+ADBFileTypes.h"
 #import "RegexKitLite.h"
-#import "NSString+BXPaths.h"
+#import "NSString+ADBPaths.h"
 
 #import "BXGamebox.h"
 #import "BXFileTypes.h"
-#import "BXPathEnumerator.h"
+#import "ADBPathEnumerator.h"
 #import "BXEmulatorConfiguration.h"
 
 
@@ -215,7 +215,7 @@
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
 	//If the chosen path was an audio CD, check if it has a corresponding data path and use that instead
-	if ([[workspace volumeTypeForPath: path] isEqualToString: audioCDVolumeType])
+	if ([[workspace volumeTypeForPath: path] isEqualToString: ADBAudioCDVolumeType])
 	{
 		NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: path];
 		if (dataVolumePath) return dataVolumePath;
@@ -256,7 +256,7 @@
 	if ([workspace file: path matchesTypes: [BXFileTypes mountableImageTypes]]) return YES;
 	
 	//If the source path is on a CD, it should be imported
-	if ([[workspace volumeTypeForPath: path] isEqualToString: dataCDVolumeType]) return YES;
+	if ([[workspace volumeTypeForPath: path] isEqualToString: ADBDataCDVolumeType]) return YES;
 	
 	//If the source path looks CD-sized, it should be imported
 	if ([self isCDROMSizedGameAtPath: path]) return YES;
@@ -266,7 +266,7 @@
 
 + (BOOL) shouldUseSubfolderForSourceFilesAtPath: (NSString *)basePath
 {
-	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: basePath];
+	ADBPathEnumerator *enumerator = [ADBPathEnumerator enumeratorAtPath: basePath];
 	enumerator.skipSubdirectories = YES;
 	
 	BOOL hasExecutables = NO;
@@ -291,7 +291,7 @@
 	//At the moment this is a very simple check for the existence of a Games For Windows
 	//icon, included with GOG games.
     NSString *pattern = @"^gfw_high\\.ico$";
-    BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: path];
+    ADBPathEnumerator *enumerator = [ADBPathEnumerator enumeratorAtPath: path];
     for (NSString *subPath in enumerator)
     {
         NSString *fileName = subPath.lastPathComponent;
@@ -478,7 +478,7 @@ NSInteger filenameLengthSort(NSString *path1, NSString *path2, void *context)
 {
     //Compare configuration filenames by length to determine the shortest
     //(which we deem most likely to be the 'default')
-    BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: path];
+    ADBPathEnumerator *enumerator = [ADBPathEnumerator enumeratorAtPath: path];
     enumerator.fileTypes = [NSSet setWithObject: @"gnu.org.configuration-file"];
     
     return [self preferredConfigurationFileFromPaths: enumerator.allObjects];

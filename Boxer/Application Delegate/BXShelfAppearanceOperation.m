@@ -8,8 +8,8 @@
 #import "BXShelfAppearanceOperation.h"
 #import "Finder.h"
 #import "BXFileTypes.h"
-#import "NSURL+BXFilesystemHelpers.h"
-#import "NSWorkspace+BXIcons.h"
+#import "NSURL+ADBFilesystemHelpers.h"
+#import "NSWorkspace+ADBIconHelpers.h"
 
 
 @interface BXShelfAppearanceOperation ()

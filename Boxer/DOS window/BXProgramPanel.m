@@ -7,12 +7,12 @@
 
 
 #import "BXProgramPanel.h"
-#import "NSView+BXDrawing.h"
+#import "NSView+ADBDrawingHelpers.h"
 #import "BXBaseAppController.h"
-#import "NSShadow+BXShadowExtensions.h"
+#import "NSShadow+ADBShadowExtensions.h"
 #import "NSBezierPath+MCAdditions.h"
 
-#import "BXAppKitVersionHelpers.h"
+#import "ADBAppKitVersionHelpers.h"
 
 
 @implementation BXProgramPanel

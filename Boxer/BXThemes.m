@@ -7,7 +7,7 @@
 
 
 #import "BXThemes.h"
-#import "NSShadow+BXShadowExtensions.h"
+#import "NSShadow+ADBShadowExtensions.h"
 
 
 #pragma mark - Control and cell extensions

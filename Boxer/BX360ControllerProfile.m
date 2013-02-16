@@ -11,7 +11,7 @@
 
 
 #import "BXHIDControllerProfilePrivate.h"
-#import "DDHidUsage+BXUsageExtensions.h"
+#import "DDHidUsage+ADBUsageExtensions.h"
 #import "BXSession+BXUIControls.h"
 
 

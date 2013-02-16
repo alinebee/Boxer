@@ -23,11 +23,11 @@
 #import "BXMIDIDeviceMonitor.h"
 #import "BXKeyboardEventTap.h"
 
-#import "NSString+BXPaths.h"
+#import "NSString+ADBPaths.h"
 
 #import "BXFileTypes.h"
-#import "BXPostLeopardAPIs.h"
-#import "BXAppKitVersionHelpers.h"
+#import "ADBForwardCompatibility.h"
+#import "ADBAppKitVersionHelpers.h"
 
 
 NSString * const BXNewSessionParam = @"--openNewSession";

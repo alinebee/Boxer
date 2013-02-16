@@ -9,7 +9,7 @@
 #import "BXEmulatedKeyboard.h"
 #import "BXEmulator.h"
 #import "BXCoalface.h"
-#import "NSObject+BXPerformExtensions.h"
+#import "NSObject+ADBPerformExtensions.h"
 
 //For unicode constants
 #import <Cocoa/Cocoa.h>

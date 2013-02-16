@@ -30,7 +30,7 @@ extern NSString * const BXRendererErrorDomain;
 #pragma mark Interface declaration
 
 @class BXVideoFrame;
-@class BXTexture2D;
+@class ADBTexture2D;
 @protocol BXRendererDelegate;
 @interface BXBasicRenderer : NSObject
 {
@@ -40,7 +40,7 @@ extern NSString * const BXRendererErrorDomain;
 	BXVideoFrame *_currentFrame;
 	CGRect _viewport;
 	
-    BXTexture2D *_frameTexture;
+    ADBTexture2D *_frameTexture;
 	CGSize _maxFrameTextureSize;
     
 	BOOL _needsNewFrameTexture;
@@ -144,7 +144,7 @@ extern NSString * const BXRendererErrorDomain;
 //and is ready to render to the final output surface (usually the screen.)
 //The delegate can use this step to activate additional shaders or render
 //to a framebuffer.
-- (void) renderer: (BXBasicRenderer *)renderer willRenderTextureToDestinationContext: (BXTexture2D *)texture;
-- (void) renderer: (BXBasicRenderer *)renderer didRenderTextureToDestinationContext: (BXTexture2D *)texture;
+- (void) renderer: (BXBasicRenderer *)renderer willRenderTextureToDestinationContext: (ADBTexture2D *)texture;
+- (void) renderer: (BXBasicRenderer *)renderer didRenderTextureToDestinationContext: (ADBTexture2D *)texture;
 
 @end

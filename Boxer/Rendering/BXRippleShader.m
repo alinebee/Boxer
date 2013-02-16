@@ -21,7 +21,7 @@
         _textureLocation = glGetUniformLocationARB(_shaderProgram, "rubyTexture");
     }
     
-    if (_textureLocation != BXShaderUnsupportedUniformLocation)
+    if (_textureLocation != ADBShaderUnsupportedUniformLocation)
         glUniform1iARB(_textureLocation, texture);
 }
 
@@ -33,7 +33,7 @@
         _textureSizeLocation = glGetUniformLocationARB(_shaderProgram, "rubyTextureSize");
     }
     
-    if (_textureSizeLocation != BXShaderUnsupportedUniformLocation)
+    if (_textureSizeLocation != ADBShaderUnsupportedUniformLocation)
         glUniform2fARB(_textureSizeLocation, textureSize.width, textureSize.height);
 }
 
@@ -45,7 +45,7 @@
         _inputSizeLocation = glGetUniformLocationARB(_shaderProgram, "rubyInputSize");
     }
     
-    if (_inputSizeLocation != BXShaderUnsupportedUniformLocation)
+    if (_inputSizeLocation != ADBShaderUnsupportedUniformLocation)
         glUniform2fARB(_inputSizeLocation, inputSize.width, inputSize.height);
 }
 
@@ -57,7 +57,7 @@
         _rippleOriginLocation = glGetUniformLocationARB(_shaderProgram, "rippleOrigin");
     }
     
-    if (_rippleOriginLocation != BXShaderUnsupportedUniformLocation)
+    if (_rippleOriginLocation != ADBShaderUnsupportedUniformLocation)
         glUniform2fARB(_rippleOriginLocation, origin.x, origin.y);
 }
 
@@ -69,7 +69,7 @@
         _rippleHeightLocation = glGetUniformLocationARB(_shaderProgram, "rippleHeight");
     }
     
-    if (_rippleHeightLocation != BXShaderUnsupportedUniformLocation)
+    if (_rippleHeightLocation != ADBShaderUnsupportedUniformLocation)
         glUniform1fARB(_rippleHeightLocation, height);
 }
 
@@ -81,7 +81,7 @@
         _frameTimeLocation = glGetUniformLocationARB(_shaderProgram, "time");
     }
     
-    if (_frameTimeLocation != BXShaderUnsupportedUniformLocation)
+    if (_frameTimeLocation != ADBShaderUnsupportedUniformLocation)
     {
         GLfloat clampedTime = (GLfloat)fmod(frameTime, M_PI * 2);
         glUniform1fARB(_frameTimeLocation, clampedTime);

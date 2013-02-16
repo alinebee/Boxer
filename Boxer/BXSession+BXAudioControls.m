@@ -10,7 +10,7 @@
 #import "BXBaseAppController+BXSupportFiles.h"
 #import "BXEmulator+BXAudio.h"
 #import "BXMIDIDeviceMonitor.h"
-#import "NSError+BXErrorHelpers.h"
+#import "NSError+ADBErrorHelpers.h"
 
 #import "BXEmulatedMT32.h"
 #import "BXMIDISynth.h"

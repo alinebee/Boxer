@@ -7,18 +7,17 @@
 
 #import "BXBezelController.h"
 #import "BXBaseAppController.h"
-#import "NSWindow+BXWindowEffects.h"
+#import "NSWindow+ADBWindowEffects.h"
 #import "BXSession+BXUIControls.h"
 #import "BXDOSWindow.h"
 #import "BXDOSWindowController.h"
-#import "BXGeometry.h"
+#import "ADBGeometry.h"
 #import "BXDrive.h"
 #import "BXGamebox.h"
 #import "BXValueTransformers.h"
 #import "BXInspectorController.h"
-#import "NSString+BXStringFormatting.h"
-#import "BXHIDMonitor.h"
-#import "BXPostLeopardAPIs.h"
+#import "NSString+ADBStringFormatting.h"
+#import "ADBHIDMonitor.h"
 
 
 #define BXBezelFadeDuration 0.25

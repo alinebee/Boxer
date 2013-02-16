@@ -11,9 +11,9 @@
 #import "BXBaseAppController.h"
 #import "BXDrive.h"
 #import "BXDrivePanelController.h"
-#import "BXGeometry.h"
-#import "NSShadow+BXShadowExtensions.h"
-#import "NSImage+BXImageEffects.h"
+#import "ADBGeometry.h"
+#import "NSShadow+ADBShadowExtensions.h"
+#import "NSImage+ADBImageEffects.h"
 #import "BXThemes.h"
 
 

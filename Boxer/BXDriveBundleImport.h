@@ -8,7 +8,7 @@
 //BXDriveBundleImport wraps BIN/CUE images and any associated audio tracks into a .cdmedia bundle,
 //rewriting cue paths as necessary.
 
-#import "BXFileTransferSet.h"
+#import "ADBFileTransferSet.h"
 #import "BXDriveImport.h"
 
 //Domain and constants for errors encountered during disc-image ripping
@@ -19,7 +19,7 @@ enum {
 };
 
 
-@interface BXDriveBundleImport : BXFileTransferSet <BXDriveImport>
+@interface BXDriveBundleImport : ADBFileTransferSet <BXDriveImport>
 {
 	BXDrive *_drive;
 	NSString *_destinationFolder;

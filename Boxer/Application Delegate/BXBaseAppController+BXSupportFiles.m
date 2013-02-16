@@ -6,10 +6,10 @@
  */
 
 #import "BXBaseAppController+BXSupportFiles.h"
-#import "BXPathEnumerator.h"
+#import "ADBPathEnumerator.h"
 #import "RegexKitLite.h"
 #import "BXEmulatedMT32.h"
-#import "BXPathEnumerator.h"
+#import "ADBPathEnumerator.h"
 #import "BXGamebox.h"
 
 //Files matching these patterns will be assumed to be of the respective ROM type.
@@ -46,13 +46,16 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
     return gameboxStatesPath;
 }
 
-- (NSString *) recordingsPathCreatingIfMissing: (BOOL)createIfMissing
+- (NSURL *) recordingsURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError
 {
-    NSString *desktopPath = [NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-    return desktopPath;
+    return [[NSFileManager defaultManager] URLForDirectory: NSDesktopDirectory
+                                                  inDomain: NSUserDomainMask
+                                         appropriateForURL: nil
+                                                    create: createIfMissing
+                                                     error: outError];
 }
 
-- (NSURL *)supportURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError
+- (NSURL *) supportURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError
 {
     NSFileManager *manager = [NSFileManager defaultManager];
     NSURL *baseURL = [[manager URLsForDirectory: NSApplicationSupportDirectory inDomains: NSUserDomainMask] objectAtIndex: 0];
@@ -66,6 +69,11 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
                                                        error: outError];
 	}
     return supportURL;
+}
+
+- (NSString *) recordingsPathCreatingIfMissing: (BOOL)createIfMissing
+{
+    return [self recordingsURLCreatingIfMissing: createIfMissing error: NULL].path;
 }
 
 - (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing
@@ -96,7 +104,7 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
 {
     NSString *ROMPath = [self MT32ROMPathCreatingIfMissing: NO];
     
-    BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: ROMPath];
+    ADBPathEnumerator *enumerator = [ADBPathEnumerator enumeratorAtPath: ROMPath];
     [enumerator setSkipSubdirectories: YES];
     [enumerator setSkipHiddenFiles: YES];
     [enumerator setSkipPackageContents: YES];
@@ -243,7 +251,7 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
         else if (isDir)
         {
             //Enumerate any directories to check all the files within those paths.
-            BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: path];
+            ADBPathEnumerator *enumerator = [ADBPathEnumerator enumeratorAtPath: path];
             [enumerator setSkipHiddenFiles: YES];
             [enumerator setSkipPackageContents: YES];
         

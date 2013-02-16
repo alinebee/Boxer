@@ -8,10 +8,10 @@
 
 #import "BXDriveBundleImport.h"
 #import "BXSimpleDriveImport.h"
-#import "BXBinCueImage.h"
+#import "ADBBinCueImage.h"
 #import "BXDrive.h"
 #import "RegexKitLite.h"
-#import "NSWorkspace+BXFileTypes.h"
+#import "NSWorkspace+ADBFileTypes.h"
 
 
 NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
@@ -55,7 +55,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	if ([workspace file: drive.path matchesTypes: cueTypes]) return YES;
     
     //If the file can be parsed as a CUE, treat it as a match too (catches renamed GOG images.)
-    if ([BXBinCueImage isCueAtPath: drive.path error: nil]) return YES;
+    if ([ADBBinCueImage isCueAtPath: drive.path error: nil]) return YES;
 
 	return NO;
 }
@@ -119,7 +119,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 		return;
 	}
 	
-	NSArray *relatedPaths		= [BXBinCueImage rawPathsInCueContents: cueContents];
+	NSArray *relatedPaths		= [ADBBinCueImage rawPathsInCueContents: cueContents];
 	NSUInteger numRelatedPaths	= relatedPaths.count;
 	
     

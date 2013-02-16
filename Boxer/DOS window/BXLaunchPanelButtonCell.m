@@ -6,10 +6,10 @@
  */
 
 #import "BXLaunchPanelButtonCell.h"
-#import "NSShadow+BXShadowExtensions.h"
+#import "NSShadow+ADBShadowExtensions.h"
 #import "NSBezierPath+MCAdditions.h"
-#import "NSImage+BXImageEffects.h"
-#import "BXGeometry.h"
+#import "NSImage+ADBImageEffects.h"
+#import "ADBGeometry.h"
 
 @implementation BXLaunchPanelButton
 

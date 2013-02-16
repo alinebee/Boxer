@@ -15,7 +15,7 @@
 //and we should instead be using an NSFileWrapper directory wrapper.
 
 #import <Cocoa/Cocoa.h>
-#import "BXUndoExtensions.h"
+#import "ADBUndoExtensions.h"
 
 
 #pragma mark Gamebox-related error constants
@@ -100,11 +100,11 @@ typedef NSUInteger BXGameIdentifierType;
 #pragma mark -
 #pragma mark Interface
 
-@interface BXGamebox : NSBundle <BXUndoable>
+@interface BXGamebox : NSBundle <ADBUndoable>
 {
 	NSMutableDictionary *_gameInfo;
     NSMutableArray *_launchers;
-    __unsafe_unretained id <BXUndoDelegate> _undoDelegate;
+    __unsafe_unretained id <ADBUndoDelegate> _undoDelegate;
     BOOL _lastWritableStatus;
     CFAbsoluteTime _nextWriteableCheckTime;
 }
@@ -161,7 +161,7 @@ typedef NSUInteger BXGameIdentifierType;
 @property (assign, nonatomic) NSInteger defaultLauncherIndex;
 
 //The delegate from whom we will request an undo manager for undoable operations.
-@property (assign, nonatomic) id <BXUndoDelegate> undoDelegate;
+@property (assign, nonatomic) id <ADBUndoDelegate> undoDelegate;
 
 
 #pragma mark -

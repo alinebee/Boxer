@@ -23,15 +23,15 @@
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
-#import "NSWorkspace+BXFileTypes.h"
-#import "NSString+BXPaths.h"
+#import "NSWorkspace+ADBFileTypes.h"
+#import "NSString+ADBPaths.h"
 #import "NSWorkspace+BXExecutableTypes.h"
 #import "BXInputController.h"
-#import "NSObject+BXPerformExtensions.h"
-#import "NSKeyedArchiver+BXArchivingAdditions.h"
-#import "BXUserNotificationDispatcher.h"
+#import "NSObject+ADBPerformExtensions.h"
+#import "NSKeyedArchiver+ADBArchivingAdditions.h"
+#import "ADBUserNotificationDispatcher.h"
 
-#import "BXAppKitVersionHelpers.h"
+#import "ADBAppKitVersionHelpers.h"
 
 
 #pragma mark -
@@ -1778,7 +1778,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	[self.scanQueue waitUntilAllOperationsAreFinished];
     
     //Remove any notifications that were posted by this session
-    [[BXUserNotificationDispatcher dispatcher] removeAllNotificationsOfType: nil fromSender: self];
+    [[ADBUserNotificationDispatcher dispatcher] removeAllNotificationsOfType: nil fromSender: self];
     
     //Clean up our relationship with the documentation panel (which is otherwise a circular relationship.)
     if (self.documentationPanelController.session == self)
@@ -2051,12 +2051,12 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 #pragma mark - Undo management
 
-- (NSUndoManager *) undoManagerForClient: (id <BXUndoable>)undoClient operation: (SEL)operation
+- (NSUndoManager *) undoManagerForClient: (id <ADBUndoable>)undoClient operation: (SEL)operation
 {
     return self.undoManager;
 }
 
-- (void) removeAllUndoActionsForClient: (id <BXUndoable>)undoClient
+- (void) removeAllUndoActionsForClient: (id <ADBUndoable>)undoClient
 {
     [self.undoManager removeAllActionsWithTarget: undoClient];
 }

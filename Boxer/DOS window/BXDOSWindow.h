@@ -10,11 +10,11 @@
 //BXDOSWindowController and exists mainly just to override NSWindow's default window sizing
 //and constraining methods.
 
-#import "BXFullScreenCapableWindow.h"
+#import "ADBFullscreenCapableWindow.h"
 
 @class BXDOSWindowController;
 
-@interface BXDOSWindow : BXFullScreenCapableWindow
+@interface BXDOSWindow : ADBFullscreenCapableWindow
 {
     NSView *actualContentView;
 }

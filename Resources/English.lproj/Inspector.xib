@@ -282,7 +282,6 @@
 							<string key="NSFrameSize">{296, 432}</string>
 							<reference key="NSSuperview" ref="55730634"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="708850558"/>
 							<array class="NSMutableArray" key="NSTabViewItems">
 								<object class="NSTabViewItem" id="45197897">
 									<string key="NSIdentifier">0</string>
@@ -938,7 +937,6 @@ bnN0ZWFkLg</string>
 														<string key="NSFrame">{{254, 16}, {25, 25}}</string>
 														<reference key="NSSuperview" ref="563656760"/>
 														<reference key="NSWindow"/>
-														<reference key="NSNextKeyView"/>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSButtonCell" key="NSCell" id="806671650">
 															<int key="NSCellFlags">67108864</int>
@@ -1705,7 +1703,7 @@ IGRyaXZlcy4</string>
 												<string key="NSFrameSize">{296, 432}</string>
 												<reference key="NSSuperview" ref="732220087"/>
 												<reference key="NSNextKeyView" ref="840535618"/>
-												<string key="NSClassName">BXDelegatedView</string>
+												<string key="NSClassName">ADBDelegatedView</string>
 											</object>
 										</array>
 										<string key="NSFrameSize">{296, 432}</string>
@@ -2359,14 +2357,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					<int key="connectionID">68</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mainTabView</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="681208964"/>
-					</object>
-					<int key="connectionID">1432</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">showCPUPanelHelp:</string>
 						<reference key="source" ref="1001"/>
@@ -2461,6 +2451,14 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 						<reference key="destination" ref="424373765"/>
 					</object>
 					<int key="connectionID">2261</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">tabView</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="681208964"/>
+					</object>
+					<int key="connectionID">2284</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -4984,10 +4982,65 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">2283</int>
+			<int key="maxID">2284</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<object class="IBPartialClassDescription">
+					<string key="className">ADBDelegatedView</string>
+					<string key="superclassName">NSView</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">delegate</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<string key="NS.key.0">delegate</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
+							<string key="name">delegate</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/ADBDelegatedView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">ADBTabbedWindowController</string>
+					<string key="superclassName">NSWindowController</string>
+					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="takeSelectedTabViewItemFromSegment:">NSSegmentedControl</string>
+						<string key="takeSelectedTabViewItemFromTag:">id</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="takeSelectedTabViewItemFromSegment:">
+							<string key="name">takeSelectedTabViewItemFromSegment:</string>
+							<string key="candidateClassName">NSSegmentedControl</string>
+						</object>
+						<object class="IBActionInfo" key="takeSelectedTabViewItemFromTag:">
+							<string key="name">takeSelectedTabViewItemFromTag:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="tabView">NSTabView</string>
+						<string key="toolbarForTabs">NSToolbar</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="tabView">
+							<string key="name">tabView</string>
+							<string key="candidateClassName">NSTabView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="toolbarForTabs">
+							<string key="name">toolbarForTabs</string>
+							<string key="candidateClassName">NSToolbar</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/ADBTabbedWindowController.h</string>
+					</object>
+				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BGHUDLabel</string>
 					<string key="superclassName">NSTextField</string>
@@ -5002,8 +5055,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					<dictionary class="NSMutableDictionary" key="actions">
 						<string key="hideWelcomePanel:">id</string>
 						<string key="orderFrontAboutPanel:">id</string>
-						<string key="orderFrontFirstRunPanel:">id</string>
-						<string key="orderFrontFirstRunPanelWithTransition:">id</string>
 						<string key="orderFrontImportGamePanel:">id</string>
 						<string key="orderFrontInspectorPanel:">id</string>
 						<string key="orderFrontPreferencesPanel:">id</string>
@@ -5032,14 +5083,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 						</object>
 						<object class="IBActionInfo" key="orderFrontAboutPanel:">
 							<string key="name">orderFrontAboutPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontFirstRunPanel:">
-							<string key="name">orderFrontFirstRunPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontFirstRunPanelWithTransition:">
-							<string key="name">orderFrontFirstRunPanelWithTransition:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="orderFrontImportGamePanel:">
@@ -5203,25 +5246,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXCoverArtWell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXDelegatedView</string>
-					<string key="superclassName">NSView</string>
-					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">delegate</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<string key="NS.key.0">delegate</string>
-						<object class="IBToOneOutletInfo" key="NS.object.0">
-							<string key="name">delegate</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXDelegatedView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -5484,7 +5508,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXInspectorController</string>
-					<string key="superclassName">BXTabbedWindowController</string>
+					<string key="superclassName">ADBTabbedWindowController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
 						<string key="showCPUPanel:">id</string>
 						<string key="showCPUPanelHelp:">id</string>
@@ -5758,42 +5782,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXSession.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXTabbedWindowController</string>
-					<string key="superclassName">NSWindowController</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="takeSelectedTabViewItemFromSegment:">NSSegmentedControl</string>
-						<string key="takeSelectedTabViewItemFromTag:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="takeSelectedTabViewItemFromSegment:">
-							<string key="name">takeSelectedTabViewItemFromSegment:</string>
-							<string key="candidateClassName">NSSegmentedControl</string>
-						</object>
-						<object class="IBActionInfo" key="takeSelectedTabViewItemFromTag:">
-							<string key="name">takeSelectedTabViewItemFromTag:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="mainTabView">NSTabView</string>
-						<string key="toolbarForTabs">NSToolbar</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="mainTabView">
-							<string key="name">mainTabView</string>
-							<string key="candidateClassName">NSTabView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="toolbarForTabs">
-							<string key="name">toolbarForTabs</string>
-							<string key="candidateClassName">NSToolbar</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXTabbedWindowController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

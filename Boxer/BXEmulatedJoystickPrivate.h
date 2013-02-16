@@ -8,7 +8,7 @@
 //Private API for use by BXEmulatedJoystick subclasses
 
 #import "BXEmulatedJoystick.h"
-#import "BXHIDEvent.h"
+#import "ADBHIDEvent.h"
 #import "config.h"
 #import "joystick.h"
 

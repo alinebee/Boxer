@@ -12,7 +12,7 @@
 #import "BXImportSession.h"
 #import "BXCoverArt.h"
 #import "BXGamebox.h"
-#import "NSWorkspace+BXFileTypes.h"
+#import "NSWorkspace+ADBFileTypes.h"
 
 @implementation BXImportFinishedPanelController
 @synthesize controller = _controller;

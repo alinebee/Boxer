@@ -8,9 +8,9 @@
 
 #import "BXImportWindowController.h"
 #import "BXImportSession.h"
-#import "BXGeometry.h"
-#import "NSWindow+BXWindowDimensions.h"
-#import "BXAppKitVersionHelpers.h"
+#import "ADBGeometry.h"
+#import "NSWindow+ADBWindowDimensions.h"
+#import "ADBAppKitVersionHelpers.h"
 
 @implementation BXImportWindowController
 @synthesize dropzonePanel, loadingPanel, installerPanel, finalizingPanel, finishedPanel;
@@ -22,7 +22,7 @@
 
 - (void) windowDidLoad
 {
-		//Default to the dropzone panel when we initially load (this will be overridden later anyway)
+    //Default to the dropzone panel when we initially load (this will be overridden later anyway)
 	self.currentPanel = self.dropzonePanel;
     
     //Disable window restoration.

@@ -12,7 +12,7 @@
 #import "BXFileTypes.h"
 #import "BXAppController.h"
 #import "BXValueTransformers.h"
-#import "NSString+BXPaths.h"
+#import "NSString+ADBPaths.h"
 
 #pragma mark -
 #pragma mark Private method declarations

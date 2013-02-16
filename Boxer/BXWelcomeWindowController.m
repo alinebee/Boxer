@@ -11,7 +11,7 @@
 #import "BXValueTransformers.h"
 #import "BXWelcomeView.h"
 #import "BXImportSession.h"
-#import "NSWindow+BXWindowEffects.h"
+#import "NSWindow+ADBWindowEffects.h"
 
 
 #define BXDocumentStartTag 1

@@ -8,7 +8,7 @@
 //BXCDImageImport rips physical CDs to (CDR-format) ISO disc images using OS X's hdiutil.
 
 #import "BXDriveImport.h"
-#import "BXTaskOperation.h"
+#import "ADBTaskOperation.h"
 
 //Domain and constants for errors encountered during disc-image ripping
 extern NSString * const BXCDImageImportErrorDomain;
@@ -20,12 +20,12 @@ enum {
 };
 
 
-@interface BXCDImageImport : BXTaskOperation <BXDriveImport>
+@interface BXCDImageImport : ADBTaskOperation <BXDriveImport>
 {
 	BXDrive *_drive;
 	unsigned long long _numBytes;
 	unsigned long long _bytesTransferred;
-	BXOperationProgress _currentProgress;
+	ADBOperationProgress _currentProgress;
 	BOOL _indeterminate;
 	NSString *_destinationFolder;
     BOOL _hasWrittenFiles;
@@ -33,7 +33,7 @@ enum {
 
 @property (assign, readwrite) unsigned long long numBytes;
 @property (assign, readwrite) unsigned long long bytesTransferred;
-@property (assign, readwrite) BXOperationProgress currentProgress;
+@property (assign, readwrite) ADBOperationProgress currentProgress;
 @property (assign, readwrite, getter=isIndeterminate) BOOL indeterminate;
 
 

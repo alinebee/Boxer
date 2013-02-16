@@ -127,7 +127,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 - (void) _syncControllerProfiles;
 
 //Returns whether the event represents a deliberate user action rather than 'noise' from the device.
-+ (BOOL) HIDEventIsDeliberate: (BXHIDEvent *)event;
++ (BOOL) HIDEventIsDeliberate: (ADBHIDEvent *)event;
 
 //Whether the active emulated program seems to be ignoring gameport input.
 - (BOOL) _activeProgramIsIgnoringJoystick;

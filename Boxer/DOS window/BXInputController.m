@@ -11,14 +11,14 @@
 #import "BXSession.h"
 #import "BXJoystickController.h"
 #import "BXJoypadController.h"
-#import "BXGeometry.h"
+#import "ADBGeometry.h"
 #import "BXCursorFadeAnimation.h"
 #import "BXDOSWindowController.h"
 #import "BXGLRenderingView.h"
 #import "BXDOSWindow.h"
-#import "BXPostLeopardAPIs.h"
-#import "BXAppKitVersionHelpers.h"
-#import "NSWindow+BXWindowDimensions.h"
+#import "ADBForwardCompatibility.h"
+#import "ADBAppKitVersionHelpers.h"
+#import "NSWindow+ADBWindowDimensions.h"
 
 #import "BXEventConstants.h"
 

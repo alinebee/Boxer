@@ -7,7 +7,7 @@
 
 
 //BXDrive represents a single DOS drive and encapsulates all the data needed to mount the drive
-//and locate it on the OS X filesystem. BXDrives are mounted via BXFileSystem's mountDrive: method.
+//and locate it on the OS X filesystem. BXDrives are mounted via ADBFilesystem's mountDrive: method.
 
 #import <Foundation/Foundation.h>
 
@@ -30,7 +30,7 @@ typedef enum {
 #pragma mark -
 #pragma mark Interface
 
-@protocol BXFilesystem;
+@protocol ADBFilesystem;
 @interface BXDrive : NSObject <NSCoding>
 {
 	NSString *_path;
@@ -55,7 +55,7 @@ typedef enum {
     BOOL _hasAutodetectedVolumeLabel;
     BOOL _hasAutodetectedType;
     
-    id <BXFilesystem> _filesystem;
+    id <ADBFilesystem> _filesystem;
 }
 
 
@@ -134,7 +134,7 @@ typedef enum {
 #pragma mark Immutable properties
 
 //A filesystem instance appropriate for the backing medium of this drive.
-@property (readonly, retain, nonatomic) id <BXFilesystem> filesystem;
+@property (readonly, retain, nonatomic) id <ADBFilesystem> filesystem;
 
 //A friendly OS X title for the drive's type.
 @property (readonly, nonatomic) NSString *typeDescription;

@@ -10,13 +10,13 @@
 #import "BXFileTypes.h"
 #import "BXBaseAppController+BXSupportFiles.h"
 #import "NSAlert+BXAlert.h"
-#import "NSError+BXErrorHelpers.h"
+#import "NSError+ADBErrorHelpers.h"
 #import "BXCloseAlert.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulatorErrors.h"
 #import "BXEmulator+BXShell.h"
-#import "BXShadowedFilesystem.h"
+#import "ADBShadowedFilesystem.h"
 #import "BXGamebox.h"
 #import "BXDrive.h"
 #import "BXDrivesInUseAlert.h"
@@ -24,16 +24,16 @@
 #import "BXDriveImport.h"
 #import "BXExecutableScan.h"
 
-#import "NSWorkspace+BXMountedVolumes.h"
-#import "NSWorkspace+BXFileTypes.h"
+#import "NSWorkspace+ADBMountedVolumes.h"
+#import "NSWorkspace+ADBFileTypes.h"
 #import "NSWorkspace+BXExecutableTypes.h"
-#import "NSString+BXPaths.h"
-#import "NSURL+BXFilesystemHelpers.h"
-#import "NSFileManager+BXTemporaryFiles.h"
-#import "BXPathEnumerator.h"
+#import "NSString+ADBPaths.h"
+#import "NSURL+ADBFilesystemHelpers.h"
+#import "NSFileManager+ADBTemporaryFiles.h"
+#import "ADBPathEnumerator.h"
 #import "RegexKitLite.h"
 #import "BXBezelController.h"
-#import "BXUserNotificationDispatcher.h"
+#import "ADBUserNotificationDispatcher.h"
 #import "BXInspectorController.h"
 
 
@@ -95,12 +95,12 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	NSString *volumeType = [workspace volumeTypeForPath: filePath];
     
 	//If it's on a data CD volume or floppy volume, use the base folder of the volume as the mount point
-	if ([volumeType isEqualToString: dataCDVolumeType] || [workspace isFloppyVolumeAtPath: volumePath])
+	if ([volumeType isEqualToString: ADBDataCDVolumeType] || [workspace isFloppyVolumeAtPath: volumePath])
 	{
 		return volumePath;
 	}
 	//If it's on an audio CD, hunt around for a corresponding data CD volume and use that as the mount point if found
-	else if ([volumeType isEqualToString: audioCDVolumeType])
+	else if ([volumeType isEqualToString: ADBAudioCDVolumeType])
 	{
 		NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: volumePath];
 		if (dataVolumePath) return dataVolumePath;
@@ -139,12 +139,12 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	NSString *volumeType = [workspace volumeTypeForPath: path];
 	
 	//If it's on a data CD volume or floppy volume, scan from the base folder of the volume
-	if ([volumeType isEqualToString: dataCDVolumeType] || [workspace isFloppyVolumeAtPath: volumePath])
+	if ([volumeType isEqualToString: ADBDataCDVolumeType] || [workspace isFloppyVolumeAtPath: volumePath])
 	{
 		return volumePath;
 	}
 	//If it's on an audio CD, hunt around for a corresponding data CD volume and use that if found
-	else if ([volumeType isEqualToString: audioCDVolumeType])
+	else if ([volumeType isEqualToString: ADBAudioCDVolumeType])
 	{
 		NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: volumePath];
 		if (dataVolumePath) return dataVolumePath;
@@ -290,7 +290,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (BOOL) revertChangesForDrive: (BXDrive *)drive error: (NSError **)outError
 {
-    BXShadowedFilesystem *filesystem = (BXShadowedFilesystem *)drive.filesystem;
+    ADBShadowedFilesystem *filesystem = (ADBShadowedFilesystem *)drive.filesystem;
     if ([filesystem respondsToSelector: @selector(clearShadowContentsForURL:error:)])
     {
         //Release the file resources of any drive that we're about to revert.
@@ -320,7 +320,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (BOOL) mergeChangesForDrive: (BXDrive *)drive error: (NSError **)outError
 {
-    BXShadowedFilesystem *filesystem = (BXShadowedFilesystem *)drive.filesystem;
+    ADBShadowedFilesystem *filesystem = (ADBShadowedFilesystem *)drive.filesystem;
     if ([filesystem respondsToSelector: @selector(mergeShadowContentsForURL:error:)])
     {
         //Release the file resources of any drive that we're about to merge.
@@ -886,13 +886,13 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 {
 	BXEmulator *theEmulator = self.emulator;
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSArray *volumes = [workspace mountedVolumesOfType: dataCDVolumeType includingHidden: NO];
+	NSArray *volumes = [workspace mountedVolumesOfType: ADBDataCDVolumeType includingHidden: NO];
 	
 	//If there were no data CD volumes, then check for audio CD volumes and mount them instead
 	//(We avoid doing this if there were data CD volumes, since the audio CDs will then be used
 	//as 'shadow' audio volumes for those data CDs.)
 	if (![volumes count])
-		volumes = [workspace mountedVolumesOfType: audioCDVolumeType includingHidden: NO];
+		volumes = [workspace mountedVolumesOfType: ADBAudioCDVolumeType includingHidden: NO];
     
     NSMutableArray *mountedDrives = [NSMutableArray arrayWithCapacity: 10];
 	for (NSString *volume in volumes)
@@ -924,7 +924,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 - (NSArray *) mountFloppyVolumesWithError: (NSError **)outError
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSArray *volumePaths = [workspace mountedVolumesOfType: FATVolumeType includingHidden: NO];
+	NSArray *volumePaths = [workspace mountedVolumesOfType: ADBFATVolumeType includingHidden: NO];
 	BXEmulator *theEmulator = self.emulator;
     
     NSMutableArray *mountedDrives = [NSMutableArray arrayWithCapacity: 10];
@@ -1526,9 +1526,9 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	if ([attachedSheet isMemberOfClass: [NSOpenPanel class]]) return;
 	
 	NSArray *automountedTypes = [NSArray arrayWithObjects:
-								 dataCDVolumeType,
-								 audioCDVolumeType,
-								 FATVolumeType,
+								 ADBDataCDVolumeType,
+								 ADBAudioCDVolumeType,
+								 ADBFATVolumeType,
 								 nil];
 	
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
@@ -1551,10 +1551,10 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	
 	//Only mount CD audio volumes if they have no corresponding data volume
 	//(Otherwise, we mount the data volume instead and shadow it with the audio CD's tracks)
-	if ([volumeType isEqualToString: audioCDVolumeType] && [workspace dataVolumeOfAudioCD: volumePath]) return;
+	if ([volumeType isEqualToString: ADBAudioCDVolumeType] && [workspace dataVolumeOfAudioCD: volumePath]) return;
 	
 	//Only mount FAT volumes that are floppy-sized
-	if ([volumeType isEqualToString: FATVolumeType] && ![workspace isFloppySizedVolumeAtPath: volumePath]) return;
+	if ([volumeType isEqualToString: ADBFATVolumeType] && ![workspace isFloppySizedVolumeAtPath: volumePath]) return;
 	
 	NSString *mountPoint = [self.class preferredMountPointForPath: volumePath];
     
@@ -1907,9 +1907,9 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	return NO;
 }
 
-- (BXOperation <BXDriveImport> *) activeImportOperationForDrive: (BXDrive *)drive
+- (ADBOperation <BXDriveImport> *) activeImportOperationForDrive: (BXDrive *)drive
 {
-	for (BXOperation <BXDriveImport> *import in self.importQueue.operations)
+	for (ADBOperation <BXDriveImport> *import in self.importQueue.operations)
 	{
 		if (import.isExecuting && [import.drive isEqual: drive]) return import; 
 	}
@@ -1934,14 +1934,14 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	return YES;
 }
 
-- (BXOperation <BXDriveImport> *) importOperationForDrive: (BXDrive *)drive
+- (ADBOperation <BXDriveImport> *) importOperationForDrive: (BXDrive *)drive
 										 startImmediately: (BOOL)start
 {
 	if ([self canImportDrive: drive])
 	{
 		NSString *destinationFolder = self.gamebox.resourcePath;
 		
-		BXOperation <BXDriveImport> *driveImport = [BXDriveImport importOperationForDrive: drive
+		ADBOperation <BXDriveImport> *driveImport = [BXDriveImport importOperationForDrive: drive
                                                                             toDestination: destinationFolder
                                                                                 copyFiles: YES];
 		
@@ -1979,7 +1979,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (BOOL) cancelImportForDrive: (BXDrive *)drive
 {
-	for (BXOperation <BXDriveImport> *import in self.importQueue.operations)
+	for (ADBOperation <BXDriveImport> *import in self.importQueue.operations)
 	{
 		if (!import.isFinished && [import.drive isEqual: drive])
 		{
@@ -2001,7 +2001,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (void) driveImportDidFinish: (NSNotification *)theNotification
 {
-	BXOperation <BXDriveImport> *import = theNotification.object;
+	ADBOperation <BXDriveImport> *import = theNotification.object;
 	BXDrive *originalDrive = import.drive;
     
     BOOL remountDrive = [[import.contextInfo objectForKey: @"remountAfterImport"] boolValue];
@@ -2055,7 +2055,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
                                                                  toGamebox: self.gamebox];
         }
         //Otherwise, display a user notification to that effect.
-        else if ([BXUserNotificationDispatcher userNotificationsAvailable])
+        else if ([ADBUserNotificationDispatcher userNotificationsAvailable])
         {
             NSUserNotification *notification = [[NSUserNotification alloc] init];
             
@@ -2065,13 +2065,13 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
             notification.title = self.displayName;
             notification.subtitle = [NSString stringWithFormat: driveImportFormat, originalDrive.letter];
             
-            [[BXUserNotificationDispatcher dispatcher] scheduleNotification: notification
-                                                                     ofType: BXDriveImportedNotificationType
-                                                                 fromSender: self
-                                                               onActivation: ^(NSUserNotification *deliveredNotification) {
-                                                                   [[BXUserNotificationDispatcher dispatcher] removeNotification: deliveredNotification];
-                                                                   [[BXInspectorController controller] showDrivesPanel: self];
-                                                               }];
+            [[ADBUserNotificationDispatcher dispatcher] scheduleNotification: notification
+                                                                      ofType: BXDriveImportedNotificationType
+                                                                  fromSender: self
+                                                                onActivation: ^(NSUserNotification *deliveredNotification) {
+                                                                    [[ADBUserNotificationDispatcher dispatcher] removeNotification: deliveredNotification];
+                                                                    [[BXInspectorController controller] showDrivesPanel: self];
+                                                                }];
             
             [notification release];
         }

@@ -223,7 +223,7 @@
 
 - (void) driveImportWillStart: (NSNotification *)notification
 {
-    BXOperation <BXDriveImport> *transfer = notification.object;
+    ADBOperation <BXDriveImport> *transfer = notification.object;
     
     //Start off with an indeterminate progress meter before we know the size of the operation
     self.progressMeter.indeterminate = YES;
@@ -244,7 +244,7 @@
 
 - (void) driveImportInProgress: (NSNotification *)notification
 {
-    BXOperation <BXDriveImport> *transfer = notification.object;
+    ADBOperation <BXDriveImport> *transfer = notification.object;
     
     if (transfer.isIndeterminate)
     {
@@ -252,10 +252,10 @@
     }
     else
     {
-        BXOperationProgress progress = transfer.currentProgress;
+        ADBOperationProgress progress = transfer.currentProgress;
         
         //Massage the progress with a gentle ease-out curve to make it appear quicker at the start of the transfer
-        BXOperationProgress easedProgress = -progress * (progress - 2);
+        ADBOperationProgress easedProgress = -progress * (progress - 2);
         
         self.progressMeter.indeterminate = NO;
         self.progressMeter.doubleValue = easedProgress;

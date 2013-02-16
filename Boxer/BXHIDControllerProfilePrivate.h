@@ -12,7 +12,7 @@
 #import "BXEmulatedJoystick.h"
 #import "BXHIDInputBinding.h"
 #import "BXOutputBinding.h"
-#import "DDHidDevice+BXDeviceExtensions.h"
+#import "DDHidDevice+ADBDeviceExtensions.h"
 
 
 #pragma mark - Constants
@@ -162,7 +162,7 @@ extern NSString * const BXControllerProfileDPadDown;
 
 //Returns YES if the specified event should be dispatched to an available binding,
 //or NO if the event should be ignored. The default implementation always returns YES.
-- (BOOL) shouldDispatchHIDEvent: (BXHIDEvent *)event;
+- (BOOL) shouldDispatchHIDEvent: (ADBHIDEvent *)event;
 
 @end
 

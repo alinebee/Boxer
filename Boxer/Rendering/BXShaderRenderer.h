@@ -11,7 +11,7 @@
 {
 	NSArray *_shaders;
     CGSize _shaderOutputSizes[10];
-    BXTexture2D *_auxiliaryBufferTexture;
+    ADBTexture2D *_auxiliaryBufferTexture;
     
     BOOL _shouldUseShaders;
     BOOL _usesShaderSupersampling;

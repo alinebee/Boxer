@@ -10,7 +10,7 @@
 #import "MT32Emu/Synth.h"
 #import "MT32Emu/FileStream.h"
 #import "BXEmulatedMT32Delegate.h"
-#import "NSError+BXErrorHelpers.h"
+#import "NSError+ADBErrorHelpers.h"
 
 
 #pragma mark -

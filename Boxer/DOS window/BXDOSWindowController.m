@@ -21,7 +21,7 @@
 #import "BXInputView.h"
 #import "BXGLRenderingView.h"
 #import "YRKSpinningProgressIndicator.h"
-#import "NSView+BXDrawing.h"
+#import "NSView+ADBDrawingHelpers.h"
 
 #import "BXEmulator.h"
 
@@ -29,8 +29,8 @@
 #import "BXSession+BXDragDrop.h"
 #import "BXImportSession.h"
 
-#import "NSWindow+BXWindowDimensions.h"
-#import "BXGeometry.h"
+#import "NSWindow+ADBWindowDimensions.h"
+#import "ADBGeometry.h"
 
 
 #pragma mark - Constants

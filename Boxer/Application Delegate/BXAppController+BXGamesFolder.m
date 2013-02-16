@@ -10,18 +10,18 @@
 #import "BXBaseAppController+BXSupportFiles.h"
 
 #import "NDAlias+AliasFile.h"
-#import "NSWorkspace+BXFileTypes.h"
-#import "NSWorkspace+BXIcons.h"
+#import "NSWorkspace+ADBFileTypes.h"
+#import "NSWorkspace+ADBIconHelpers.h"
 #import "BXGamesFolderPanelController.h"
 
 #import "BXShelfArt.h"
-#import "NSImage+BXSaveImages.h"
+#import "NSImage+ADBSaveImages.h"
 
 #import "BXSampleGamesCopy.h"
 #import "BXShelfAppearanceOperation.h"
-#import "NSString+BXPaths.h"
-#import "BXAppKitVersionHelpers.h"
-#import "NSURL+BXFilesystemHelpers.h"
+#import "NSString+ADBPaths.h"
+#import "NSURL+ADBFilesystemHelpers.h"
+#import "ADBAppKitVersionHelpers.h"
 
 //For determining maximum Finder folder-background sizes
 #import <OpenGL/OpenGL.h>
@@ -221,10 +221,10 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		
 		[shelfArt release];
 		
-        BOOL imageSaved = [tiledShelf saveToPath: artworkURL.path
-										withType: NSJPEGFileType
-									  properties: @{ NSImageCompressionFactor: @(1.0)}
-										   error: NULL];
+        BOOL imageSaved = [tiledShelf saveToURL: artworkURL
+                                       withType: NSJPEGFileType
+                                     properties: @{ NSImageCompressionFactor: @(1.0)}
+                                          error: NULL];
 		
 		//Bail out if the image could not be saved properly
 		if (!imageSaved) return NO;

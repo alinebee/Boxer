@@ -8,9 +8,9 @@
 
 #import "BXThemedPopUpButtonCell.h"
 #import "NSBezierPath+MCAdditions.h"
-#import "NSImage+BXImageEffects.h"
-#import "NSShadow+BXShadowExtensions.h"
-#import "BXGeometry.h"
+#import "NSImage+ADBImageEffects.h"
+#import "NSShadow+ADBShadowExtensions.h"
+#import "ADBGeometry.h"
 
 @implementation BXThemedPopUpButtonCell
 

@@ -13,10 +13,10 @@
 //It also collects overall file data about the source while scanning, such as the game profile
 //and whether the game appears to be already installed (or not a DOS game at all).
 
-#import "BXImageAwareFileScan.h"
+#import "ADBImageAwareFileScan.h"
 
 @class BXGameProfile;
-@interface BXInstallerScan : BXImageAwareFileScan
+@interface BXInstallerScan : ADBImageAwareFileScan
 {
     NSMutableArray *_windowsExecutables;
     NSMutableArray *_DOSExecutables;

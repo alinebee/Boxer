@@ -8,12 +8,12 @@
 
 //BXSimpleDriveImport handles the importing of a drive to a specified destination.
 
-#import "BXSingleFileTransfer.h"
+#import "ADBSingleFileTransfer.h"
 #import "BXDriveImport.h"
 
 @class BXDrive;
 
-@interface BXSimpleDriveImport : BXSingleFileTransfer <BXDriveImport>
+@interface BXSimpleDriveImport : ADBSingleFileTransfer <BXDriveImport>
 {
 	BXDrive *_drive;
 	NSString *_destinationFolder;

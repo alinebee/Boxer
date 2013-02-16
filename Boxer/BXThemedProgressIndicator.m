@@ -7,7 +7,7 @@
 
 
 #import "BXThemedProgressIndicator.h"
-#import "NSShadow+BXShadowExtensions.h"
+#import "NSShadow+ADBShadowExtensions.h"
 #import "NSBezierPath+MCAdditions.h"
 
 @interface BXThemedProgressIndicator ()

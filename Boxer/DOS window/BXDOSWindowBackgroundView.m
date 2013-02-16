@@ -6,10 +6,9 @@
  */
 
 #import "BXDOSWindowBackgroundView.h"
-#import "BXGeometry.h"
-#import "NSShadow+BXShadowExtensions.h"
-#import "NSView+BXDrawing.h"
-#import "NSImage+BXSaveImages.h"
+#import "ADBGeometry.h"
+#import "NSShadow+ADBShadowExtensions.h"
+#import "NSView+ADBDrawingHelpers.h"
 
 @implementation BXDOSWindowBackgroundView
 @synthesize snapshot = _snapshot;

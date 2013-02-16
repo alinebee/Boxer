@@ -7,8 +7,8 @@
 
 
 #import "BXFilterGallery.h"
-#import "NSView+BXDrawing.h"
-#import "NSShadow+BXShadowExtensions.h"
+#import "NSView+ADBDrawingHelpers.h"
+#import "NSShadow+ADBShadowExtensions.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation BXFilterGallery

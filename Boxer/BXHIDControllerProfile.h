@@ -17,7 +17,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import "BXHIDEvent.h"
+#import "ADBHIDEvent.h"
 
 @class DDHidJoystick;
 @class DDHidElement;

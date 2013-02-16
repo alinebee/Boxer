@@ -19,6 +19,7 @@
 
 //Returns Boxer's default location for screenshots and other recordings.
 //If createIfMissing is YES, the folder will be created if it does not exist.
+- (NSURL *) recordingsURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
 - (NSString *) recordingsPathCreatingIfMissing: (BOOL)createIfMissing;
 
 //Returns Boxer's application support URL.

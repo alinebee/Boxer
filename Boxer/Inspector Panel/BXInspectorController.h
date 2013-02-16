@@ -9,7 +9,7 @@
 //BXInspectorController manages the Boxer inspector panel. It is responsible for displaying and
 //toggling the tabs of the panel.
 
-#import "BXTabbedWindowController.h"
+#import "ADBTabbedWindowController.h"
 
 enum {
 	BXGameInspectorPanelTag		= 0,
@@ -22,7 +22,7 @@ enum {
 
 @class BXDriveList;
 
-@interface BXInspectorController : BXTabbedWindowController
+@interface BXInspectorController : ADBTabbedWindowController
 {
 	IBOutlet NSSegmentedControl *panelSelector;
 	BOOL isTemporarilyHidden;

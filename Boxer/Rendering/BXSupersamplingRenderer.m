@@ -133,7 +133,7 @@
 {
     if ([self _shouldRenderWithSupersampling])
     {
-        BXTexture2D *destinationTexture = self.supersamplingBufferTexture;
+        ADBTexture2D *destinationTexture = self.supersamplingBufferTexture;
         
         CGLContextObj cgl_ctx = _context;
         
@@ -177,7 +177,7 @@
     }
 }
 
-- (void) _bindTextureToSupersamplingBuffer: (BXTexture2D *)bufferTexture
+- (void) _bindTextureToSupersamplingBuffer: (ADBTexture2D *)bufferTexture
 {
     //Keep track of what texture is currently bound so we don't bind redundantly.
     if (_currentBufferTexture != bufferTexture.texture)
@@ -224,7 +224,7 @@
                 
                 //(Re)create the buffer texture in the new dimensions
                 NSError *bufferError = nil;
-                self.supersamplingBufferTexture = [BXTexture2D textureWithType: self.bufferTextureType
+                self.supersamplingBufferTexture = [ADBTexture2D textureWithType: self.bufferTextureType
                                                                    contentSize: supersamplingSize
                                                                          bytes: NULL
                                                                    inGLContext: _context
@@ -269,7 +269,7 @@
     
 	//If the ideal buffer size is larger than our texture size, work our way down
     //from that to find the largest even multiple that we can support.
-	while (!BXCGSizeFitsWithinSize(idealBufferSize, _maxBufferTextureSize))
+	while (!CGSizeFitsWithinSize(idealBufferSize, _maxBufferTextureSize))
 	{
 		idealBufferSize.width -= frameSize.width;
         idealBufferSize.height -= frameSize.height;

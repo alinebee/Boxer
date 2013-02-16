@@ -6,7 +6,7 @@
  */
 
 #import "BXBasicRendererPrivate.h"
-#import "BXBSNESShader.h"
+#import "ADBBSNESShader.h"
 
 @implementation BXShaderRenderer
 @synthesize auxiliaryBufferTexture = _auxiliaryBufferTexture;
@@ -32,7 +32,7 @@
                    inContext: (CGLContextObj)glContext
                        error: (NSError **)outError
 {
-    NSArray *shaders = [BXBSNESShader shadersWithContentsOfURL: shaderURL
+    NSArray *shaders = [ADBBSNESShader shadersWithContentsOfURL: shaderURL
                                                      inContext: glContext
                                                          error: outError];
     if (shaders)
@@ -108,13 +108,13 @@
         GLint originalBuffer = 0;
         glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &originalBuffer);
         
-        BXTexture2D *inTexture = self.frameTexture;
-        BXTexture2D *outTexture = nil;
+        ADBTexture2D *inTexture = self.frameTexture;
+        ADBTexture2D *outTexture = nil;
         
         NSUInteger i, numShaders = self.shaders.count;
         for (i=0; i < numShaders; i++)
         {
-            BXBSNESShader *shader = [self.shaders objectAtIndex: i];
+            ADBBSNESShader *shader = [self.shaders objectAtIndex: i];
             
             BOOL isLastShader = (i == numShaders - 1);
             
@@ -165,13 +165,13 @@
             //otherwise stretch clamped edge pixels into the view in an ugly way.
             switch (shader.filterType)
             {
-                case BXBSNESShaderFilterNearest:
+                case ADBBSNESShaderFilterNearest:
                     [inTexture setMinFilter: GL_NEAREST
                                   magFilter: GL_NEAREST
                                    wrapping: GL_REPEAT];
                     break;
-                case BXBSNESShaderFilterLinear:
-                case BXBSNESShaderFilterAuto:
+                case ADBBSNESShaderFilterLinear:
+                case ADBBSNESShaderFilterAuto:
                 default:
                     [inTexture setMinFilter: GL_NEAREST
                                   magFilter: GL_LINEAR
@@ -251,7 +251,7 @@
                                                     frameSize.height * nearestScale);
             nearestScale--;
         }
-        while (nearestScale > 0 && !BXCGSizeFitsWithinSize(preferredSupersamplingSize, _maxBufferTextureSize));
+        while (nearestScale > 0 && !CGSizeFitsWithinSize(preferredSupersamplingSize, _maxBufferTextureSize));
         
         return preferredSupersamplingSize;
     }
@@ -291,7 +291,7 @@
             _shouldUseShaders = YES;
             for (i=0; i<numShaders; i++)
             {
-                BXBSNESShader *shader = [self.shaders objectAtIndex: i];
+                ADBBSNESShader *shader = [self.shaders objectAtIndex: i];
                 
                 BOOL isFirstShader  = (i == 0);
                 BOOL isLastShader   = (i == numShaders - 1);
@@ -377,7 +377,7 @@
                     
                     //(Re)create the buffer texture in the new dimensions
                     NSError *bufferError = nil;
-                    self.supersamplingBufferTexture = [BXTexture2D textureWithType: self.bufferTextureType
+                    self.supersamplingBufferTexture = [ADBTexture2D textureWithType: self.bufferTextureType
                                                                        contentSize: largestOutputSize
                                                                              bytes: NULL
                                                                        inGLContext: _context
@@ -401,7 +401,7 @@
                     
                     //(Re)create the buffer texture in the new dimensions
                     NSError *bufferError = nil;
-                    self.auxiliaryBufferTexture = [BXTexture2D textureWithType: self.bufferTextureType
+                    self.auxiliaryBufferTexture = [ADBTexture2D textureWithType: self.bufferTextureType
                                                                    contentSize: largestOutputSize
                                                                          bytes: NULL
                                                                    inGLContext: _context

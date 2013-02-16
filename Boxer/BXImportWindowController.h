@@ -10,11 +10,11 @@
 //animation and transitions between the window's various views.
 //It takes its marching orders from the BXImportSession document class.
 
-#import "BXMultiPanelWindowController.h"
+#import "ADBMultiPanelWindowController.h"
 
 @class BXImportSession;
 
-@interface BXImportWindowController : BXMultiPanelWindowController
+@interface BXImportWindowController : ADBMultiPanelWindowController
 {
 	IBOutlet NSView *dropzonePanel;
 	IBOutlet NSView *loadingPanel;

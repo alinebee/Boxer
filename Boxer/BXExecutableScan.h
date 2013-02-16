@@ -9,8 +9,8 @@
 //BXExecutableScan is a BXFileScan subclass designed for finding compatible
 //executables in a path.
 
-#import "BXImageAwareFileScan.h"
+#import "ADBImageAwareFileScan.h"
 
-@interface BXExecutableScan : BXImageAwareFileScan
+@interface BXExecutableScan : ADBImageAwareFileScan
 
 @end

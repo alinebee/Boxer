@@ -33,29 +33,29 @@
 #import "BXDrive.h"
 #import "BXCloseAlert.h"
 
-#import "BXFileTransferSet.h"
-#import "BXSingleFileTransfer.h"
+#import "ADBFileTransferSet.h"
+#import "ADBSingleFileTransfer.h"
 #import "BXDriveImport.h"
 #import "BXBinCueImageImport.h"
 
 #import "BXImportSession+BXImportPolicies.h"
 #import "BXSession+BXFileManagement.h"
 
-#import "NSWorkspace+BXFileTypes.h"
-#import "NSWorkspace+BXMountedVolumes.h"
+#import "NSWorkspace+ADBFileTypes.h"
+#import "NSWorkspace+ADBMountedVolumes.h"
 #import "NSWorkspace+BXExecutableTypes.h"
-#import "NSString+BXPaths.h"
-#import "NSError+BXErrorHelpers.h"
+#import "NSString+ADBPaths.h"
+#import "NSError+ADBErrorHelpers.h"
 
 #import "BXInstallerScan.h"
 #import "BXEmulatorConfiguration.h"
 
-#import "BXPathEnumerator.h"
+#import "ADBPathEnumerator.h"
 
-#import "BXAppKitVersionHelpers.h"
-#import "NSObject+BXPerformExtensions.h"
+#import "ADBAppKitVersionHelpers.h"
+#import "NSObject+ADBPerformExtensions.h"
 
-#import "BXUserNotificationDispatcher.h"
+#import "ADBUserNotificationDispatcher.h"
 
 
 #pragma mark -
@@ -64,9 +64,9 @@
 @interface BXImportSession ()
 
 @property (readwrite, assign, nonatomic) BXImportStage importStage;
-@property (readwrite, assign, nonatomic) BXOperationProgress stageProgress;
+@property (readwrite, assign, nonatomic) ADBOperationProgress stageProgress;
 @property (readwrite, assign, nonatomic) BOOL stageProgressIndeterminate;
-@property (readwrite, retain, nonatomic) BXOperation *sourceFileImportOperation;
+@property (readwrite, retain, nonatomic) ADBOperation *sourceFileImportOperation;
 @property (readwrite, assign, nonatomic) BXSourceFileImportType sourceFileImportType;
 
 //Only defined for internal use
@@ -155,7 +155,7 @@
     //Don't automatically eject any image that the scan had to mount: instead
     //we'll use the mounted volume ourselves for later operations, and eject
     //it at the end of importing.
-    scan.ejectAfterScanning = BXFileScanNeverEject;
+    scan.ejectAfterScanning = ADBFileScanNeverEject;
     
     [self.scanQueue addOperation: scan];
 		
@@ -801,7 +801,7 @@
     //and we know we'll need to import something.
 	//Now we need to decide exactly what we're importing,
     //and how we should import it.
-    BXOperation *importOperation = nil;
+    ADBOperation *importOperation = nil;
 	BXSourceFileImportType importType = BXImportTypeUnknown;
     BOOL didInstallFiles = self.gameDidInstall;
     
@@ -818,7 +818,7 @@
         {
             NSString *configurationBasePath = self.bundledConfigurationPath.stringByDeletingLastPathComponent;
             
-            BXFileTransferSet *driveImportSet = [[[BXFileTransferSet alloc] init] autorelease];
+            ADBFileTransferSet *driveImportSet = [[[ADBFileTransferSet alloc] init] autorelease];
             driveImportSet.copyFiles = YES;
             
             for (NSString *mountCommand in mountCommands)
@@ -827,7 +827,7 @@
                                                                   basePath: configurationBasePath
                                                                      error: NULL];
                 
-                BXOperation <BXDriveImport> *driveImport = [self importOperationForDrive: driveToImport
+                ADBOperation <BXDriveImport> *driveImport = [self importOperationForDrive: driveToImport
                                                                         startImmediately: NO];
                 
                 if (driveImport)
@@ -879,9 +879,9 @@
             
             //Once all operations have been defined, run through them looking for nested drives:
             //i.e. drives that are located within the file structure of another drive import operation.
-            for (BXOperation <BXDriveImport> *driveImport in driveImportSet.operations)
+            for (ADBOperation <BXDriveImport> *driveImport in driveImportSet.operations)
             {
-                for (BXOperation <BXDriveImport> *otherDriveImport in driveImportSet.operations)
+                for (ADBOperation <BXDriveImport> *otherDriveImport in driveImportSet.operations)
                 {
                     if (driveImport == otherDriveImport) continue;
                     
@@ -970,8 +970,8 @@
             NSString *volumePath = [workspace volumeForPath: self.sourcePath];
             NSString *volumeType = [workspace volumeTypeForPath: volumePath];
             
-            BOOL isRealCDROM = [volumeType isEqualToString: dataCDVolumeType];
-            BOOL isRealFloppy = !isRealCDROM && [volumeType isEqualToString: FATVolumeType] && [workspace isFloppySizedVolumeAtPath: volumePath];
+            BOOL isRealCDROM = [volumeType isEqualToString: ADBDataCDVolumeType];
+            BOOL isRealFloppy = !isRealCDROM && [volumeType isEqualToString: ADBFATVolumeType] && [workspace isFloppySizedVolumeAtPath: volumePath];
             
             //If the installer copied files to our C drive, or the source files are on
             //a CDROM/floppy volume, then the source files presumably represent the original
@@ -1039,7 +1039,7 @@
                     
                     //If we need to copy the source path into a subfolder of drive C,
                     //then do this as a regular file copy rather than a drive import.
-                    importOperation = [BXSingleFileTransfer transferFromPath: self.sourcePath
+                    importOperation = [ADBSingleFileTransfer transferFromPath: self.sourcePath
                                                                       toPath: destination
                                                                    copyFiles: YES];
                 }
@@ -1092,7 +1092,7 @@
 
 #pragma mark BXOperation delegate methods
 
-- (void) setSourceFileImportOperation: (BXOperation *)operation
+- (void) setSourceFileImportOperation: (ADBOperation *)operation
 {
 	if (operation != self.sourceFileImportOperation)
 	{
@@ -1111,7 +1111,7 @@
 
 - (void) sourceFileImportInProgress: (NSNotification *)notification
 {
-	BXOperation *operation = notification.object;
+	ADBOperation *operation = notification.object;
     
 	//Update our own progress to match the operation's progress
 	self.stageProgressIndeterminate = operation.isIndeterminate;
@@ -1120,7 +1120,7 @@
 
 - (void) sourceFileImportDidFinish: (NSNotification *)notification
 {
-	BXOperation *operation = notification.object;
+	ADBOperation *operation = notification.object;
 	
 	//Some source-file copies can be simple file transfers
 	BOOL isImport = [operation conformsToProtocol: @protocol(BXDriveImport)];
@@ -1148,7 +1148,7 @@
 	//with a safer import method, or skip to the next stage if not.
 	else
 	{
-		BXOperation <BXDriveImport> *fallbackImport = nil;
+		ADBOperation <BXDriveImport> *fallbackImport = nil;
 		
 		//Check if we can retry the operation...
 		if (isImport && (fallbackImport = [BXDriveImport fallbackForFailedImport: (id <BXDriveImport>)operation]) != nil)
@@ -1240,7 +1240,7 @@
     //After picking up any bundled configuration, scan the imported contents
     //to strip out unnecessary files and migrate any remaining disc images.
     
-	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: pathToClean];
+	ADBPathEnumerator *enumerator = [ADBPathEnumerator enumeratorAtPath: pathToClean];
 	enumerator.skipHiddenFiles = NO;
 	
 	for (NSString *path in enumerator)
@@ -1269,7 +1269,7 @@
 		{
 			BXDrive *drive = [BXDrive driveFromPath: path atLetter: nil];
 			
-			BXOperation <BXDriveImport> *importOperation = [BXDriveImport importOperationForDrive: drive
+			ADBOperation <BXDriveImport> *importOperation = [BXDriveImport importOperationForDrive: drive
 																					toDestination: pathForDrives
 																						copyFiles: NO];
 			
@@ -1290,20 +1290,20 @@
 	[[NSDocumentController sharedDocumentController] noteNewRecentDocument: self];
 	
 	//If we're not focused, let the user know via a notification that we're done
-    if (![NSApp isActive] && [BXUserNotificationDispatcher userNotificationsAvailable])
+    if (![NSApp isActive] && [ADBUserNotificationDispatcher userNotificationsAvailable])
 	{
         NSUserNotification *notification = [[NSUserNotification alloc] init];
         
         notification.title = self.displayName;
         notification.subtitle = NSLocalizedString(@"Game imported successfully", @"Subtitle of user notification shown when a game finishes importing.");
         
-        [[BXUserNotificationDispatcher dispatcher] scheduleNotification: notification
-                                                                 ofType: BXGameImportedNotificationType
-                                                             fromSender: self
-                                                           onActivation: ^(NSUserNotification *deliveredNotification) {
-                                                               [self showWindows];
-                                                               [[BXUserNotificationDispatcher dispatcher] removeNotification: deliveredNotification];
-                                                           }];
+        [[ADBUserNotificationDispatcher dispatcher] scheduleNotification: notification
+                                                                  ofType: BXGameImportedNotificationType
+                                                              fromSender: self
+                                                            onActivation: ^(NSUserNotification *deliveredNotification) {
+                                                                [self showWindows];
+                                                                [[ADBUserNotificationDispatcher dispatcher] removeNotification: deliveredNotification];
+                                                            }];
         
         [notification release];
     }
@@ -1565,7 +1565,7 @@
 	if (!self.rootDrivePath) return NO;
 	
 	//Check if any files were copied to the root drive
-	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: self.rootDrivePath];
+	ADBPathEnumerator *enumerator = [ADBPathEnumerator enumeratorAtPath: self.rootDrivePath];
 	while (enumerator.nextObject)
 	{
 		NSDictionary *attrs = enumerator.fileAttributes;

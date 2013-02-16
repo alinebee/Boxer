@@ -8,7 +8,7 @@
 
 #import "BXEmulatorConfiguration.h"
 #import "BXEmulator.h" //For encodings
-#import "NSString+BXStringFormatting.h"
+#import "NSString+ADBStringFormatting.h"
 #import "RegexKitLite.h"
 
 

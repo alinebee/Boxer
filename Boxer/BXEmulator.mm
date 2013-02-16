@@ -6,7 +6,7 @@
  */
 
 #import "BXEmulatorPrivate.h"
-#import "NSObject+BXPerformExtensions.h"
+#import "NSObject+ADBPerformExtensions.h"
 
 #import <SDL/SDL.h>
 #import "cpu.h"

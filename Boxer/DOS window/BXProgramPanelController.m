@@ -12,9 +12,9 @@
 #import "BXProgramPanel.h"
 #import "BXGamebox.h"
 #import "BXEmulator+BXDOSFileSystem.h"
-#import "NSString+BXPaths.h"
+#import "NSString+ADBPaths.h"
 #import "BXDOSWindowController.h"
-#import "BXPostLeopardAPIs.h"
+#import "ADBForwardCompatibility.h"
 
 
 @interface BXProgramPanelController ()

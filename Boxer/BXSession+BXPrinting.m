@@ -10,7 +10,7 @@
 #import "BXPrintStatusPanelController.h"
 #import "BXEmulator.h"
 #import "BXEmulatedPrinter.h"
-#import "BXUserNotificationDispatcher.h"
+#import "ADBUserNotificationDispatcher.h"
 
 #import <Quartz/Quartz.h> //For PDFDocument
 
@@ -128,9 +128,9 @@
     [self orderFrontPrintStatusPanel: self];
     
     //If we're in the background, post a notification to indicate that printing is ready.
-    if (![NSApp isActive] && [BXUserNotificationDispatcher userNotificationsAvailable])
+    if (![NSApp isActive] && [ADBUserNotificationDispatcher userNotificationsAvailable])
     {
-        BXUserNotificationDispatcher *dispatcher = [BXUserNotificationDispatcher dispatcher];
+        ADBUserNotificationDispatcher *dispatcher = [ADBUserNotificationDispatcher dispatcher];
         
         NSUserNotification *notification = [[NSUserNotification alloc] init];
         
@@ -200,7 +200,7 @@
         [PDF release];
     }
     
-    BXUserNotificationDispatcher *dispatcher = [BXUserNotificationDispatcher dispatcher];
+    ADBUserNotificationDispatcher *dispatcher = [ADBUserNotificationDispatcher dispatcher];
     [dispatcher removeAllNotificationsOfType: BXPagesReadyNotificationType fromSender: self];
 }
 
@@ -212,7 +212,7 @@
     self.printStatusController.numPages = 0;
     self.printStatusController.inProgress = NO;
     
-    BXUserNotificationDispatcher *dispatcher = [BXUserNotificationDispatcher dispatcher];
+    ADBUserNotificationDispatcher *dispatcher = [ADBUserNotificationDispatcher dispatcher];
     [dispatcher removeAllNotificationsOfType: BXPagesReadyNotificationType fromSender: self];
 }
 

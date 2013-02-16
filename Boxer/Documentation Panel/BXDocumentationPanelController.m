@@ -6,7 +6,7 @@
  */
 
 #import "BXDocumentationPanelController.h"
-#import "NSWindow+BXWindowDimensions.h"
+#import "NSWindow+ADBWindowDimensions.h"
 #import "BXSession.h"
 
 @interface BXDocumentationPanelController ()

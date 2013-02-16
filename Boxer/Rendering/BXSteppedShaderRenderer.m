@@ -7,7 +7,7 @@
 
 #import "BXSteppedShaderRenderer.h"
 #import "BXBasicRendererPrivate.h"
-#import "BXBSNESShader.h"
+#import "ADBBSNESShader.h"
 
 @interface BXSteppedShaderRenderer ()
 
@@ -51,7 +51,7 @@
     BOOL loadingSucceeded = YES;
     for (NSURL *URL in shaderURLs)
     {
-        NSArray *shaders = [BXBSNESShader shadersWithContentsOfURL: URL inContext: glContext error: outError];
+        NSArray *shaders = [ADBBSNESShader shadersWithContentsOfURL: URL inContext: glContext error: outError];
         if (shaders)
         {
             [shaderSets addObject: shaders];

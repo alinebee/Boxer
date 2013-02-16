@@ -7,10 +7,10 @@
 
 
 #import "BXBlueprintPanel.h"
-#import "NSView+BXDrawing.h"
+#import "NSView+ADBDrawingHelpers.h"
 #import "NSBezierPath+MCAdditions.h"
-#import "BXGeometry.h"
-#import "NSShadow+BXShadowExtensions.h"
+#import "ADBGeometry.h"
+#import "NSShadow+ADBShadowExtensions.h"
 
 @implementation BXBlueprintPanel
 

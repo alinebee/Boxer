@@ -24,7 +24,7 @@ typedef enum {
 
 
 #import <Cocoa/Cocoa.h>
-#import "BXFullScreenCapableWindow.h"
+#import "ADBFullscreenCapableWindow.h"
 #import "BXFrameRenderingView.h"
 #import "BXVideoHandler.h"
 
@@ -46,7 +46,7 @@ typedef enum {
 extern NSString * const BXViewWillLiveResizeNotification;
 extern NSString * const BXViewDidLiveResizeNotification;
 
-@interface BXDOSWindowController : NSWindowController <BXFullScreenCapableWindowDelegate>
+@interface BXDOSWindowController : NSWindowController <ADBFullScreenCapableWindowDelegate>
 {
     NSView <BXFrameRenderingView> *_renderingView;
 	BXInputView *_inputView;

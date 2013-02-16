@@ -8,8 +8,8 @@
 
 #import "BXCoverArtWell.h"
 #import "BXCoverArt.h"
-#import "BXGeometry.h"
-#import "NSShadow+BXShadowExtensions.h"
+#import "ADBGeometry.h"
+#import "NSShadow+ADBShadowExtensions.h"
 
 @implementation BXCoverArtWell
 

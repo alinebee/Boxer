@@ -5,9 +5,9 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXShader.h"
+#import "ADBShader.h"
 
-@interface BXRippleShader : BXShader
+@interface BXRippleShader : ADBShader
 {
     GLint _textureLocation;
     GLint _textureSizeLocation;

@@ -14,7 +14,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreMIDI/CoreMIDI.h>
-#import "BXContinuousThread.h"
+#import "ADBContinuousThread.h"
 
 
 @class BXMIDIInputListener;
@@ -33,7 +33,7 @@
 
 @end
 
-@interface BXMIDIDeviceMonitor : BXContinuousThread <BXMIDIInputListenerDelegate>
+@interface BXMIDIDeviceMonitor : ADBContinuousThread <BXMIDIInputListenerDelegate>
 {
     MIDIClientRef _client;
     MIDIPortRef _outputPort;

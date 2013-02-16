@@ -8,11 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-@class BXContinuousThread;
+@class ADBContinuousThread;
 @protocol BXKeyboardEventTapDelegate;
 @interface BXKeyboardEventTap : NSObject
 {
-    BXContinuousThread *_tapThread;
+    ADBContinuousThread *_tapThread;
     CFMachPortRef _tap;
     CFRunLoopSourceRef _source;
     BOOL _enabled;

@@ -8,7 +8,7 @@
 #import "BXThemedSliderCell.h"
 #import "NSBezierPath+MCAdditions.h"
 #import "BXThemes.h"
-#import "NSView+BXDrawing.h"
+#import "NSView+ADBDrawingHelpers.h"
 
 @implementation BXThemedSliderCell
 

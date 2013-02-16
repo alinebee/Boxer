@@ -7,7 +7,7 @@
 
 
 #import "BXJoystickController.h"
-#import "BXHIDEvent.h"
+#import "ADBHIDEvent.h"
 
 #import "BXBaseAppController.h"
 #import "BXSession.h"
@@ -16,7 +16,7 @@
 
 @interface BXJoystickController ()
 
-@property (retain, nonatomic) BXHIDMonitor *HIDMonitor;
+@property (retain, nonatomic) ADBHIDMonitor *HIDMonitor;
 @property (retain, nonatomic) NSArray *recentHIDRemappers;
 
 @end
@@ -30,10 +30,10 @@
     self = [super init];
     if (self)
     {
-        self.HIDMonitor = [[[BXHIDMonitor alloc] init] autorelease];
+        self.HIDMonitor = [[[ADBHIDMonitor alloc] init] autorelease];
         
         self.HIDMonitor.delegate = self;
-        NSArray *deviceProfiles = @[[BXHIDMonitor joystickDescriptor], [BXHIDMonitor gamepadDescriptor]];
+        NSArray *deviceProfiles = @[[ADBHIDMonitor joystickDescriptor], [ADBHIDMonitor gamepadDescriptor]];
         [self.HIDMonitor observeDevicesMatching: deviceProfiles];
         
         //Clear our cache of running HID remappers whenever Boxer regains the application focus
@@ -120,22 +120,22 @@
 #pragma mark -
 #pragma mark BXHIDMonitor delegate methods
 
-- (void) monitor: (BXHIDMonitor *)monitor didAddHIDDevice: (DDHidJoystick *)device
+- (void) monitor: (ADBHIDMonitor *)monitor didAddHIDDevice: (DDHidJoystick *)device
 {
     device.delegate = self;
 	[device startListening];
 }
 
-- (void) monitor: (BXHIDMonitor *)monitor didRemoveHIDDevice: (DDHidJoystick *)device
+- (void) monitor: (ADBHIDMonitor *)monitor didRemoveHIDDevice: (DDHidJoystick *)device
 {
     device.delegate = nil;
 }
 
 
 #pragma mark -
-#pragma mark BXHIDDeviceDelegate methods
+#pragma mark ADBHIDDeviceDelegate methods
 
-- (void) dispatchHIDEvent: (BXHIDEvent *)event
+- (void) dispatchHIDEvent: (ADBHIDEvent *)event
 {
 	//Forward all HID events to the current window's input controller
     //FIXME: this is gross, instead we should do some kind of subscribe system.

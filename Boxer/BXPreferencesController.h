@@ -8,7 +8,7 @@
 
 //BXPreferencesController manages Boxer's application preferences panel.
 
-#import "BXTabbedWindowController.h"
+#import "ADBTabbedWindowController.h"
 
 
 //Constants for preferences panel tab indexes
@@ -21,7 +21,7 @@ enum {
 @class BXFilterGallery;
 @class BXMT32ROMDropzone;
 
-@interface BXPreferencesController : BXTabbedWindowController <NSOpenSavePanelDelegate>
+@interface BXPreferencesController : ADBTabbedWindowController <NSOpenSavePanelDelegate>
 {
     BXFilterGallery *_filterGallery;
     NSPopUpButton *_gamesFolderSelector;

@@ -165,7 +165,7 @@
 	
 	if (stage == BXImportSessionImportingSourceFiles)
 	{
-		BXOperation *transfer				= session.sourceFileImportOperation;
+		ADBOperation *transfer				= session.sourceFileImportOperation;
 		BXSourceFileImportType importType	= session.sourceFileImportType;
 		NSString *stageDescription			= [self.class stageDescriptionForImportType: importType];
 		

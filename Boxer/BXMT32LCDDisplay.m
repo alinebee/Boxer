@@ -6,10 +6,10 @@
  */
 
 #import "BXMT32LCDDisplay.h"
-#import "NSShadow+BXShadowExtensions.h"
-#import "NSImage+BXImageEffects.h"
+#import "NSShadow+ADBShadowExtensions.h"
+#import "NSImage+ADBImageEffects.h"
 #import "NSBezierPath+MCAdditions.h"
-#import "BXGeometry.h"
+#import "ADBGeometry.h"
 
 
 @implementation BXMT32LCDDisplay

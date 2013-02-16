@@ -12,7 +12,7 @@
 #import "mapper.h"
 #import "cross.h"
 #import "shell.h"
-#import "BXFilesystem.h"
+#import "ADBFilesystem.h"
 
 #pragma mark -
 #pragma mark Application state functions
@@ -362,7 +362,7 @@ void *boxer_openLocalDirectory(const char *path, DOS_Drive *drive)
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
     NSString *localPath = boxer_pathFromCPath(path);
-    id <BXFilesystemEnumerator> enumerator = [emulator _directoryEnumeratorForLocalPath: localPath onDOSBoxDrive: drive];
+    id <ADBFilesystemEnumerator> enumerator = [emulator _directoryEnumeratorForLocalPath: localPath onDOSBoxDrive: drive];
     
     //Our fancy Cocoa enumerator doesn't include directory entries for . and ..,
     //which are expected by DOSBox. So, we insert them ourselves during iteration.
@@ -399,7 +399,7 @@ bool boxer_getNextDirectoryEntry(void *handle, char *outName, bool &isDirectory)
     }
     else
     {
-        id <BXFilesystemEnumerator> enumerator = [enumeratorInfo objectForKey: @"enumerator"];
+        id <ADBFilesystemEnumerator> enumerator = [enumeratorInfo objectForKey: @"enumerator"];
         NSURL *nextURL = enumerator.nextObject;
         if (nextURL != nil)
         {

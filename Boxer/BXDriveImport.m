@@ -11,7 +11,7 @@
 #import "BXDriveBundleImport.h"
 #import "BXSimpleDriveImport.h"
 
-@implementation BXDriveImport: BXOperation
+@implementation BXDriveImport: ADBOperation
 
 + (Class) importClassForDrive: (BXDrive *)drive
 {

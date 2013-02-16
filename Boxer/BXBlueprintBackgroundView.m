@@ -6,8 +6,8 @@
  */
 
 #import "BXBlueprintBackgroundView.h"
-#import "BXGeometry.h"
-#import "NSView+BXDrawing.h"
+#import "ADBGeometry.h"
+#import "NSView+ADBDrawingHelpers.h"
 
 
 @implementation BXBlueprintBackgroundView

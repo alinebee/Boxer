@@ -5,12 +5,12 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//The BXInputBinding classes convert various types of BXHIDEvent input data into actions
+//The BXInputBinding classes convert various types of ADBHIDEvent input data into actions
 //to perform on a BXEmulatedJoystick.
 
 
 #import <Cocoa/Cocoa.h>
-#import "BXHIDEvent.h"
+#import "ADBHIDEvent.h"
 #import "BXOutputBinding.h"
 
 #pragma mark - Protocols
@@ -21,7 +21,7 @@
 + (id) binding;
 
 //Handles the specified HID event and passes it on to any output bindings.
-- (void) processEvent: (BXHIDEvent *)event;
+- (void) processEvent: (ADBHIDEvent *)event;
 
 @end
 
@@ -77,7 +77,7 @@
 @interface BXHIDPOVSwitchBinding : NSObject <BXHIDInputBinding>
 {
     NSMutableDictionary *_outputBindings;
-    BXHIDPOVSwitchDirection _previousDirection;
+    ADBHIDPOVSwitchDirection _previousDirection;
 }
 
 //Creates a new binding from interleaved pairs of bindings and directions, followed by a nil sentinel.
@@ -88,8 +88,8 @@
 //and 0.0 when the POV is released or switches to another direction.
 //If a direction is not explicitly bound, then the bindings for the
 //two directions on either side will be triggered simultaneously instead.
-- (id <BXOutputBinding>) bindingForDirection: (BXHIDPOVSwitchDirection)direction;
-- (void) setBinding: (id <BXOutputBinding>)binding forDirection: (BXHIDPOVSwitchDirection) direction;
+- (id <BXOutputBinding>) bindingForDirection: (ADBHIDPOVSwitchDirection)direction;
+- (void) setBinding: (id <BXOutputBinding>)binding forDirection: (ADBHIDPOVSwitchDirection) direction;
 
 @end
 
@@ -108,7 +108,7 @@
 @property (retain, nonatomic) id target;
 
 //Translate the specified event and perform the appropriate action for this binding on the binding's target.
-- (void) processEvent: (BXHIDEvent *)event;
+- (void) processEvent: (ADBHIDEvent *)event;
 
 @end
 

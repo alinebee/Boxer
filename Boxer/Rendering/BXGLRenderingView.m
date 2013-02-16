@@ -9,10 +9,10 @@
 #import "BXGLRenderingView.h"
 #import "BXBuiltinShaderRenderers.h"
 #import "BXRippleShader.h"
-#import "BXTexture2D.h"
+#import "ADBTexture2D.h"
 #import "BXVideoFrame.h"
-#import "BXGeometry.h"
-#import "BXGLHelpers.h"
+#import "ADBGeometry.h"
+#import "ADBGLHelpers.h"
 
 #import <OpenGL/CGLMacro.h>
 
@@ -590,7 +590,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         self.needsDisplay = YES;
 }
 
-- (void) renderer: (BXBasicRenderer *)renderer willRenderTextureToDestinationContext: (BXTexture2D *)texture
+- (void) renderer: (BXBasicRenderer *)renderer willRenderTextureToDestinationContext: (ADBTexture2D *)texture
 {
     if (_rippleProgress > 0.0f && _rippleProgress < 1.0f)
     {
@@ -620,7 +620,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     }
 }
 
-- (void) renderer: (BXBasicRenderer *)renderer didRenderTextureToDestinationContext: (BXTexture2D *)texture
+- (void) renderer: (BXBasicRenderer *)renderer didRenderTextureToDestinationContext: (ADBTexture2D *)texture
 {
     CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
     

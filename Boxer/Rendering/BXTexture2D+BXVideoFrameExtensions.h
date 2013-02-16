@@ -5,13 +5,13 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXTexture2D.h"
+#import "ADBTexture2D.h"
 
 //Helper methods for creating and filling BXGLTextures straight from frame buffers. 
 
 @class BXVideoFrame;
 
-@interface BXTexture2D (BXVideoFrameExtensions)
+@interface ADBTexture2D (BXVideoFrameExtensions)
 
 //Create a new texture with the contents of the specified frame buffer.
 + (id) textureWithType: (GLenum)type

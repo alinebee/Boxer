@@ -19,7 +19,7 @@
 
 #import "BXEmulatorDelegate.h"
 #import "BXGameProfile.h"
-#import "BXUndoExtensions.h"
+#import "ADBUndoExtensions.h"
 
 
 #pragma mark -
@@ -72,7 +72,7 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 @class BXPrintStatusPanelController;
 @class BXDocumentationPanelController;
 
-@interface BXSession : NSDocument <BXEmulatorDelegate, BXUndoDelegate>
+@interface BXSession : NSDocument <BXEmulatorDelegate, ADBUndoDelegate>
 {	
 	BXEmulator *_emulator;
 	BXGamebox *_gamebox;

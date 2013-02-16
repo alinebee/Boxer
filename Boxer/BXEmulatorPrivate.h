@@ -154,7 +154,7 @@ enum {
 @end
 
 
-@protocol BXFilesystemEnumerator;
+@protocol ADBFilesystemEnumerator;
 @interface BXEmulator (BXDOSFileSystemInternals)
 
 #pragma mark -
@@ -292,7 +292,7 @@ enum {
 - (BOOL) _localFileExists: (NSString *)path
             onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-- (id <BXFilesystemEnumerator>) _directoryEnumeratorForLocalPath: (NSString *)path
+- (id <ADBFilesystemEnumerator>) _directoryEnumeratorForLocalPath: (NSString *)path
                                                    onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
 @end

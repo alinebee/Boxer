@@ -6,12 +6,12 @@
  */
 
 
-#import "BXOperation.h"
-#import "BXFileTransfer.h"
+#import "ADBOperation.h"
+#import "ADBFileTransfer.h"
 
 @class BXDrive;
 
-@protocol BXDriveImport <NSObject, BXFileTransfer>
+@protocol BXDriveImport <NSObject, ADBFileTransfer>
 
 //The drive to import.
 @property (retain) BXDrive *drive;
@@ -44,7 +44,7 @@
 @end
 
 
-@interface BXDriveImport: BXOperation
+@interface BXDriveImport: ADBOperation
 
 + (id <BXDriveImport>) importOperationForDrive: (BXDrive *)drive
                                  toDestination: (NSString *)destinationFolder

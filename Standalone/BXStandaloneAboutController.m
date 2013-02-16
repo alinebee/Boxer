@@ -8,7 +8,7 @@
 
 #import "BXStandaloneAboutController.h"
 #import "BXThemes.h"
-#import "NSShadow+BXShadowExtensions.h"
+#import "NSShadow+ADBShadowExtensions.h"
 #import "BXBaseAppController.h"
 
 

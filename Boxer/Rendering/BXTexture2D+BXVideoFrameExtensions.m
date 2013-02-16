@@ -7,11 +7,11 @@
 
 #import "BXTexture2D+BXVideoFrameExtensions.h"
 #import "BXVideoFrame.h"
-#import "BXGeometry.h"
+#import "ADBGeometry.h"
 #import <OpenGL/gl.h>
 #import <OpenGL/CGLMacro.h>
 
-@implementation BXTexture2D (BXVideoFrameExtensions)
+@implementation ADBTexture2D (BXVideoFrameExtensions)
 
 + (id) textureWithType: (GLenum)type
             videoFrame: (BXVideoFrame *)frame

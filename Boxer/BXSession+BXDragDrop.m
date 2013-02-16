@@ -12,8 +12,8 @@
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXPaste.h"
 #import "BXEmulatorErrors.h"
-#import "NSWorkspace+BXFileTypes.h"
-#import "NSWorkspace+BXMountedVolumes.h"
+#import "NSWorkspace+ADBFileTypes.h"
+#import "NSWorkspace+ADBMountedVolumes.h"
 
 
 //Private methods

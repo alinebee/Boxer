@@ -7,7 +7,7 @@
 
 #import "BXBaseAppController.h"
 #import "BXValueTransformers.h"
-#import "BXAppKitVersionHelpers.h"
+#import "ADBAppKitVersionHelpers.h"
 
 #import "BXBaseAppController+BXHotKeys.h"
 #import "BXFileTypes.h"
@@ -22,7 +22,7 @@
 
 #import "BXSession.h"
 
-#import "BXUserNotificationDispatcher.h"
+#import "ADBUserNotificationDispatcher.h"
 
 
 #define BXMasterVolumeNumIncrements 12.0f
@@ -199,7 +199,7 @@
 	[self.generalQueue waitUntilAllOperationsAreFinished];
     
     //Remove any lingering notifications that were created by the app.
-    [[BXUserNotificationDispatcher dispatcher] removeAllNotifications];
+    [[ADBUserNotificationDispatcher dispatcher] removeAllNotifications];
 }
 
 

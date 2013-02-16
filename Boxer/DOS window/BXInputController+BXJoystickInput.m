@@ -260,10 +260,10 @@
 #pragma mark -
 #pragma mark Handling HID events
 
-+ (BOOL) HIDEventIsDeliberate: (BXHIDEvent *)event
++ (BOOL) HIDEventIsDeliberate: (ADBHIDEvent *)event
 {
-    if ([event type] == BXHIDJoystickButtonDown) return YES;
-    if ([event POVDirection] != BXHIDPOVCentered) return YES;
+    if ([event type] == ADBHIDJoystickButtonDown) return YES;
+    if ([event POVDirection] != ADBHIDPOVCentered) return YES;
     if (ABS([event axisPosition]) > BXDeliberateAxisInputThreshold) return YES;
     return NO;
 }
@@ -299,7 +299,7 @@
 
 
 //Send the event on to the controller profile for the specified device
-- (void) dispatchHIDEvent: (BXHIDEvent *)event
+- (void) dispatchHIDEvent: (ADBHIDEvent *)event
 {
     //If the game is not reading joystick input right now, and the user is making
     //'significant' controller input, show a notification that the game is ignoring them.

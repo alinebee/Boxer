@@ -7,18 +7,18 @@
 
 
 #import "BXDrive.h"
-#import "NSWorkspace+BXMountedVolumes.h"
-#import "NSWorkspace+BXFileTypes.h"
-#import "NSString+BXPaths.h"
+#import "NSWorkspace+ADBMountedVolumes.h"
+#import "NSWorkspace+ADBFileTypes.h"
+#import "NSString+ADBPaths.h"
 #import "RegexKitLite.h"
 #import "NDAlias.h"
 #import "BXFileTypes.h"
-#import "BXShadowedFilesystem.h"
+#import "ADBShadowedFilesystem.h"
 
 @interface BXDrive ()
 
 @property (readwrite, retain, nonatomic) NSMutableSet *pathAliases;
-@property (readwrite, retain, nonatomic) id <BXFilesystem> filesystem;
+@property (readwrite, retain, nonatomic) id <ADBFilesystem> filesystem;
 
 @end
 
@@ -67,7 +67,7 @@
 	NSString *volumeType = [workspace volumeTypeForPath: filePath];
 	
 	//Mount data or audio CD volumes as CD-ROM drives 
-	if ([volumeType isEqualToString: dataCDVolumeType] || [volumeType isEqualToString: audioCDVolumeType])
+	if ([volumeType isEqualToString: ADBDataCDVolumeType] || [volumeType isEqualToString: ADBAudioCDVolumeType])
 		return BXDriveCDROM;
 
 	//If the path is a FAT/FAT32 volume, check its volume size:
@@ -448,7 +448,7 @@
 	}
 }
 
-- (id <BXFilesystem>) filesystem
+- (id <ADBFilesystem>) filesystem
 {
     if (self.mountPoint)
     {
@@ -457,7 +457,7 @@
             //TODO: return other manager types for drives without shadows, image-backed drives etc.
             NSURL *sourceURL = [NSURL fileURLWithPath: self.mountPoint];
             NSURL *shadowURL = (self.shadowPath) ? [NSURL fileURLWithPath: self.shadowPath] : nil;
-            self.filesystem = [BXShadowedFilesystem filesystemWithSourceURL: sourceURL
+            self.filesystem = [ADBShadowedFilesystem filesystemWithSourceURL: sourceURL
                                                                   shadowURL: shadowURL];
         }
     }

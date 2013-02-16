@@ -11,7 +11,7 @@
 #import "BXDrive.h"
 #import "BXBaseAppController.h"
 #import "BXValueTransformers.h"
-#import "NSWindow+BXWindowEffects.h"
+#import "NSWindow+ADBWindowEffects.h"
 
 #import "BXDOSWindowController.h"
 #import "BXInputController.h"

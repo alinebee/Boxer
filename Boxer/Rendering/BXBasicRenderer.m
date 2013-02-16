@@ -289,7 +289,7 @@ GLfloat viewportVerticesFlipped[8] = {
         [self.frameTexture deleteTexture];
         
         NSError *textureError = nil;
-        self.frameTexture = [BXTexture2D textureWithType: self.frameTextureType
+        self.frameTexture = [ADBTexture2D textureWithType: self.frameTextureType
                                               videoFrame: frame
                                              inGLContext: _context
                                                    error: &textureError];

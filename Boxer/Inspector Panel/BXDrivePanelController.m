@@ -17,7 +17,7 @@
 #import "BXDriveImport.h"
 #import "BXDriveList.h"
 #import "BXDriveItem.h"
-#import "NSWindow+BXWindowDimensions.h"
+#import "NSWindow+ADBWindowDimensions.h"
 
 
 #pragma mark -
@@ -84,10 +84,10 @@ enum {
 	
 	//Listen for drive import notifications and drive-added notifications.
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-	[center addObserver: self selector: @selector(operationWillStart:) name: BXOperationWillStart object: nil];
-	[center addObserver: self selector: @selector(operationDidFinish:) name: BXOperationDidFinish object: nil];
-	[center addObserver: self selector: @selector(operationInProgress:) name: BXOperationInProgress object: nil];
-	[center addObserver: self selector: @selector(operationWasCancelled:) name: BXOperationWasCancelled object: nil];
+	[center addObserver: self selector: @selector(operationWillStart:) name: ADBOperationWillStart object: nil];
+	[center addObserver: self selector: @selector(operationDidFinish:) name: ADBOperationDidFinish object: nil];
+	[center addObserver: self selector: @selector(operationInProgress:) name: ADBOperationInProgress object: nil];
+	[center addObserver: self selector: @selector(operationWasCancelled:) name: ADBOperationWasCancelled object: nil];
     
 	[center addObserver: self selector: @selector(emulatorDriveDidMount:) name: @"BXDriveDidMountNotification" object: nil];
 }
@@ -485,7 +485,7 @@ enum {
 
 - (void) operationWillStart: (NSNotification *)notification
 {
-	BXOperation <BXDriveImport> *transfer = notification.object;
+	ADBOperation <BXDriveImport> *transfer = notification.object;
 	
 	if ([transfer conformsToProtocol: @protocol(BXDriveImport)])
     {
@@ -499,7 +499,7 @@ enum {
 
 - (void) operationInProgress: (NSNotification *)notification
 {
-	BXOperation <BXDriveImport> *transfer = notification.object;
+	ADBOperation <BXDriveImport> *transfer = notification.object;
 	
 	if ([transfer conformsToProtocol: @protocol(BXDriveImport)])
     {
@@ -513,7 +513,7 @@ enum {
 
 - (void) operationWasCancelled: (NSNotification *)notification
 {
-	BXOperation <BXDriveImport> *transfer = notification.object;
+	ADBOperation <BXDriveImport> *transfer = notification.object;
 	
 	if ([transfer conformsToProtocol: @protocol(BXDriveImport)])
     {
@@ -527,7 +527,7 @@ enum {
 
 - (void) operationDidFinish: (NSNotification *)notification
 {
-	BXOperation <BXDriveImport> *transfer = notification.object;
+	ADBOperation <BXDriveImport> *transfer = notification.object;
 	
 	if ([transfer conformsToProtocol: @protocol(BXDriveImport)])
     {

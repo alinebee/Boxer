@@ -7,7 +7,6 @@
 
 
 //BXInputView tracks keyboard and mouse input and passes them to its BXInputController.
-//It wraps a BXFrameRenderingView implementor and does no rendering itself.
 
 #import <Cocoa/Cocoa.h>
 

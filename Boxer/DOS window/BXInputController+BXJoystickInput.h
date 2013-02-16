@@ -12,9 +12,9 @@
 
 #import "BXInputController.h"
 #import "BXEmulatedJoystick.h"
-#import "BXHIDEvent.h"
+#import "ADBHIDEvent.h"
 
-@interface BXInputController (BXJoystickInput) <BXHIDDeviceDelegate>
+@interface BXInputController (BXJoystickInput) <ADBHIDDeviceDelegate>
 
 //Whether to use the standard (BXGameportPollBasedTiming) or strict (BXGameportClockBasedTiming) gameport timing mode.
 @property (assign, nonatomic) BOOL strictGameportTiming;

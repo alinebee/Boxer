@@ -7,9 +7,9 @@
 
 
 #import "BXThemedSegmentedCell.h"
-#import "NSImage+BXImageEffects.h"
-#import "NSShadow+BXShadowExtensions.h"
-#import "BXGeometry.h"
+#import "NSImage+ADBImageEffects.h"
+#import "NSShadow+ADBShadowExtensions.h"
+#import "ADBGeometry.h"
 
 //Most of this is copypasta from BGHUDSegmentedCell, because of its monolithic draw functions.
 

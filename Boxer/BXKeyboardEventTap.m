@@ -10,13 +10,13 @@
 #import <IOKit/hidsystem/ev_keymap.h> //For media key codes
 
 #import "BXKeyboardEventTap.h"
-#import "BXContinuousThread.h"
+#import "ADBContinuousThread.h"
 
 
 @interface BXKeyboardEventTap ()
 
 //The dedicated thread on which our tap runs.
-@property (retain) BXContinuousThread *tapThread;
+@property (retain) ADBContinuousThread *tapThread;
 
 //Our CGEventTap callback. Receives the BXKeyboardEventTap instance as the userInfo parameter,
 //and passes handling directly on to it. 
@@ -154,7 +154,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 #endif
                 //_runTapInDedicatedThread will handle adding and removing the source
                 //on its own run loop.
-                self.tapThread = [[[BXContinuousThread alloc] initWithTarget: self
+                self.tapThread = [[[ADBContinuousThread alloc] initWithTarget: self
                                                                     selector: @selector(_runTapInDedicatedThread)
                                                                       object: nil] autorelease];
                 
@@ -212,7 +212,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
         
         //Run this thread's run loop until we're told to stop, processing event-tap
         //callbacks and other messages on this thread.
-        [(BXContinuousThread *)[NSThread currentThread] runUntilCancelled];
+        [(ADBContinuousThread *)[NSThread currentThread] runUntilCancelled];
         
         CFRunLoopRemoveSource(CFRunLoopGetCurrent(), _source, kCFRunLoopCommonModes);
         

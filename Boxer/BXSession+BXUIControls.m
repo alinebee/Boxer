@@ -24,7 +24,7 @@
 #import "BXDocumentationPanelController.h"
 #import "BXInspectorController.h"
 
-#import "NSImage+BXSaveImages.h"
+#import "NSImage+ADBSaveImages.h"
 #import "BXFileTypes.h"
 
 
@@ -745,20 +745,17 @@
         fileName = [fileName stringByReplacingOccurrencesOfString: @":" withString: @"-"];
         fileName = [fileName stringByReplacingOccurrencesOfString: @"/" withString: @"-"];
         
-        NSString *basePath = [[NSApp delegate] recordingsPathCreatingIfMissing: YES];
-        NSString *destination = [basePath stringByAppendingPathComponent: fileName];
+        NSURL *baseURL = [[NSApp delegate] recordingsURLCreatingIfMissing: YES error: NULL];
+        NSURL *destinationURL = [baseURL URLByAppendingPathComponent: fileName];
         
-        BOOL saved = [screenshot saveToPath: destination
-                                   withType: NSPNGFileType
-                                 properties: nil
-                                      error: nil];
+        BOOL saved = [screenshot saveToURL: destinationURL
+                                  withType: NSPNGFileType
+                                properties: nil
+                                     error: NULL];
         
         if (saved)
         {
-            NSDictionary *attrs	= [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
-                                                              forKey: NSFileExtensionHidden];
-            
-            [[NSFileManager defaultManager] setAttributes: attrs ofItemAtPath: destination error: nil];
+            [destinationURL setResourceValue: @(YES) forKey: NSURLHasHiddenExtensionKey error: NULL];
             
             [[NSApp delegate] playUISoundWithName: @"Snapshot" atVolume: 1.0f];
             [[BXBezelController controller] showScreenshotBezel];

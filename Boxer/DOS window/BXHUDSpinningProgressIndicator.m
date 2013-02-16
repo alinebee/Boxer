@@ -6,7 +6,7 @@
  */
 
 #import "BXHUDSpinningProgressIndicator.h"
-#import "NSShadow+BXShadowExtensions.h"
+#import "NSShadow+ADBShadowExtensions.h"
 
 @implementation BXHUDSpinningProgressIndicator
 @synthesize dropShadow = _dropShadow;

@@ -6,16 +6,16 @@
  */
 
 #import "BXGamebox.h"
-#import "NSString+BXPaths.h"
-#import "NSWorkspace+BXFileTypes.h"
-#import "NSWorkspace+BXIcons.h"
+#import "NSString+ADBPaths.h"
+#import "NSWorkspace+ADBFileTypes.h"
+#import "NSWorkspace+ADBIconHelpers.h"
 #import "BXFileTypes.h"
 #import "RegexKitLite.h"
-#import "BXDigest.h"
+#import "ADBDigest.h"
 #import "NSData+HexStrings.h"
-#import "BXPathEnumerator.h"
-#import "NSURL+BXFilesystemHelpers.h"
-#import "NSError+BXErrorHelpers.h"
+#import "ADBPathEnumerator.h"
+#import "NSURL+ADBFilesystemHelpers.h"
+#import "NSError+ADBErrorHelpers.h"
 
 #pragma mark -
 #pragma mark Constants
@@ -114,7 +114,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 - (NSArray *) volumesOfTypes: (NSSet *)acceptedTypes
 {
-	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: self.resourcePath];
+	ADBPathEnumerator *enumerator = [ADBPathEnumerator enumeratorAtPath: self.resourcePath];
 	enumerator.skipSubdirectories = YES;
 	enumerator.fileTypes = acceptedTypes;
 	return enumerator.allObjects;
@@ -613,7 +613,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	NSMutableArray *matches	= [NSMutableArray arrayWithCapacity: 10];
 	
-	for (NSString *path in [BXPathEnumerator enumeratorAtPath: basePath])
+	for (NSString *path in [ADBPathEnumerator enumeratorAtPath: basePath])
 	{
 		//Note that we don't use our own smarter file:matchesTypes: function for this,
 		//because there are some inherited filetypes that we want to avoid matching.
@@ -625,21 +625,29 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 - (NSString *) _generatedIdentifierOfType: (BXGameIdentifierType *)type
 {
+    NSString *identifier = nil;
+    
 	//If the gamebox contains executables, generate an identifier based on their hash.
 	//TODO: move the choice of executables off to BXSession
 	NSArray *foundExecutables = self.executables;
 	if (foundExecutables.count)
 	{
-		NSData *digest = [BXDigest SHA1DigestForFiles: foundExecutables
-										   upToLength: BXGameIdentifierEXEDigestStubLength];
-		*type = BXGameIdentifierEXEDigest;
-		
-		return digest.stringWithHexBytes;
+		NSData *digest = [ADBDigest SHA1DigestForURLs: foundExecutables
+										   upToLength: BXGameIdentifierEXEDigestStubLength
+                                                error: NULL];
+        
+        //If one or more of the files couldn't be read for some reason,
+        //then don't bother and fall back on a UUID.
+        if (digest)
+        {
+            *type = BXGameIdentifierEXEDigest;
+            identifier = digest.stringWithHexBytes;
+        }
 	}
 	
 	//Otherwise, generate a UUID.
-	else
-	{	
+	if (!identifier)
+	{
 		CFUUIDRef     UUID;
 		CFStringRef   UUIDString;
 		
@@ -652,9 +660,10 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 		CFRelease(UUIDString);
 		
 		*type = BXGameIdentifierUUID;
-
-		return identifierWithUUID;
+		identifier = identifierWithUUID;
 	}
+    
+    return identifier;
 }
 
 @end

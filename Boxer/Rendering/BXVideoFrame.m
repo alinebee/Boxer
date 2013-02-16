@@ -7,7 +7,7 @@
 
 
 #import "BXVideoFrame.h"
-#import "BXGeometry.h"
+#import "ADBGeometry.h"
 
 const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 

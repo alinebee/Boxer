@@ -9,7 +9,7 @@
 #import "BXSimpleDriveImport.h"
 #import "BXFileTypes.h"
 #import "BXDrive.h"
-#import "NSWorkspace+BXFileTypes.h"
+#import "NSWorkspace+ADBFileTypes.h"
 
 
 @implementation BXSimpleDriveImport

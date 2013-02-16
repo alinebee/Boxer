@@ -161,7 +161,7 @@
     
     return [NSImage imageNamed: iconName];
 }
-+ (NSSet *) keyPathsForValuesAffectingIcon { return [NSSet setWithObject: @"drive.type"]; }
++ (NSSet *) keyPathsForValuesAffectingDriveImage { return [NSSet setWithObject: @"drive.type"]; }
 
 - (NSImage *) iconForToggle
 {

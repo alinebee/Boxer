@@ -26,15 +26,11 @@
 
 #import <Foundation/Foundation.h>
 
-typedef BOOL (^ADBDirectoryEnumeratorErrorHandler)(NSURL *url, NSError *error);
+typedef BOOL (^ADBFilesystemEnumeratorErrorHandler)(NSURL *url, NSError *error);
 
 
 @protocol ADBFilesystemEnumerator;
 @protocol ADBFilesystem <NSObject>
-
-//Resolves a URL to/from a filesystem representation.
-- (const char *) fileSystemRepresentationForURL: (NSURL *)URL;
-- (NSURL *) URLFromFileSystemRepresentation: (const char *)representation;
 
 //Returns an enumerator for the specified URL, that will return NSURL objects.
 //This enumerator should respect the same parameters as NSFileManager's
@@ -42,18 +38,11 @@ typedef BOOL (^ADBDirectoryEnumeratorErrorHandler)(NSURL *url, NSError *error);
 - (id <ADBFilesystemEnumerator>) enumeratorAtURL: (NSURL *)URL
                       includingPropertiesForKeys: (NSArray *)keys
                                          options: (NSDirectoryEnumerationOptions)mask
-                                    errorHandler: (ADBDirectoryEnumeratorErrorHandler)errorHandler;
+                                    errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler;
 
 
 #pragma mark -
 #pragma mark Creating, deleting and accessing files.
-
-//Returns an open file handle for the resource represented by the specified URL,
-//using the specified access mode (in the standard fopen format).
-//Returns nil and populates outError on failure.
-- (FILE *) openFileAtURL: (NSURL *)URL
-                  inMode: (const char *)accessMode
-                   error: (NSError **)outError;
 
 //Deletes the file or directory at the specified URL.
 //Returns YES if the operation was successful, or NO and populates outError on failure.
@@ -78,20 +67,32 @@ typedef BOOL (^ADBDirectoryEnumeratorErrorHandler)(NSURL *url, NSError *error);
 @end
 
 
+//Additional filesystem methods for filesystems that can provide POSIX-level access
+//to their resources.
+@protocol ADBFilesystemPOSIXAccess <NSObject>
+
+- (const char *) fileSystemRepresentationForURL: (NSURL *)URL;
+- (NSURL *) URLFromFileSystemRepresentation: (const char *)representation;
+
+//Returns an open POSIX file handle for the resource represented by the specified URL,
+//using the specified access mode (in the standard fopen format).
+//Returns NULL and populates outError on failure.
+- (FILE *) openFileAtURL: (NSURL *)URL
+                  inMode: (const char *)accessMode
+                   error: (NSError **)outError;
+
+@end
+
+
 //A protocol for NSDirectoryEnumerator-alike objects. See that class for general behaviour.
 @protocol ADBFilesystemEnumerator <NSObject, NSFastEnumeration>
+
+//The parent filesystem represented by this 
+- (id <ADBFilesystem>) filesystem;
 
 - (void) skipDescendants;
 - (NSUInteger) level;
 
 - (NSURL *) nextObject;
-
-@optional
-
-//Returns the filesystem representation of the specified URL, or NULL if this is not applicable.
-- (const char *) fileSystemRepresentationForURL: (NSURL *)URL;
-
-//Reset the enumerator back to the first entry.
-- (void) reset;
 
 @end

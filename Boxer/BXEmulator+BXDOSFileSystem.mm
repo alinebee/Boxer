@@ -1261,9 +1261,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [drive.filesystem openFileAtURL: [NSURL fileURLWithPath: path]
-                                    inMode: mode
-                                     error: NULL];
+    return [(id <ADBFilesystemPOSIXAccess>)drive.filesystem openFileAtURL: [NSURL fileURLWithPath: path]
+                                                                   inMode: mode
+                                                                    error: NULL];
 }
 
 - (BOOL) _removeFileAtLocalPath: (NSString *)path
@@ -1312,7 +1312,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    const char *filesystemPath = [drive.filesystem fileSystemRepresentationForURL: [NSURL fileURLWithPath: path]];
+    const char *filesystemPath = [(id <ADBFilesystemPOSIXAccess>)drive.filesystem fileSystemRepresentationForURL: [NSURL fileURLWithPath: path]];
     
     if (filesystemPath)
     {

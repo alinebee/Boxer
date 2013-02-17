@@ -225,18 +225,18 @@ typedef NSUInteger ADBFileOpenOptions;
 #pragma mark Enumeration
 
 - (ADBShadowedDirectoryEnumerator *) enumeratorAtURL: (NSURL *)URL
-                         includingPropertiesForKeys: (NSArray *)keys
-                                            options: (NSDirectoryEnumerationOptions)mask
-                                       errorHandler: (ADBDirectoryEnumeratorErrorHandler)errorHandler
+                          includingPropertiesForKeys: (NSArray *)keys
+                                             options: (NSDirectoryEnumerationOptions)mask
+                                        errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler
 {
     NSURL *shadowedURL = [self shadowedURLForURL: URL];
     
     return [[[ADBShadowedDirectoryEnumerator alloc] initWithFilesystem: self
-                                                            sourceURL: URL
-                                                            shadowURL: shadowedURL
-                                           includingPropertiesForKeys: keys
-                                                              options: mask
-                                                         errorHandler: errorHandler] autorelease];
+                                                             sourceURL: URL
+                                                             shadowURL: shadowedURL
+                                            includingPropertiesForKeys: keys
+                                                               options: mask
+                                                          errorHandler: errorHandler] autorelease];
 }
 
 
@@ -958,7 +958,7 @@ typedef NSUInteger ADBFileOpenOptions;
 @property (retain, nonatomic) ADBShadowedFilesystem *filesystem;
 @property (retain, nonatomic) NSArray *propertyKeys;
 @property (assign, nonatomic) NSDirectoryEnumerationOptions options;
-@property (copy, nonatomic) ADBDirectoryEnumeratorErrorHandler errorHandler;
+@property (copy, nonatomic) ADBFilesystemEnumeratorErrorHandler errorHandler;
 
 - (NSURL *) _nextURLFromSource;
 - (NSURL *) _nextURLFromShadow;
@@ -984,7 +984,7 @@ typedef NSUInteger ADBFileOpenOptions;
                 shadowURL: (NSURL *)shadowURL
 includingPropertiesForKeys: (NSArray *)keys
                   options: (NSDirectoryEnumerationOptions)mask
-             errorHandler: (ADBDirectoryEnumeratorErrorHandler)errorHandler
+             errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler
 {
     self = [self init];
     if (self)
@@ -1025,22 +1025,9 @@ includingPropertiesForKeys: (NSArray *)keys
     [self.currentEnumerator skipDescendants];
 }
 
-- (NSDictionary *) fileAttributes
-{
-    return self.currentEnumerator.fileAttributes;
-}
-
 - (NSUInteger) level
 {
     return self.currentEnumerator.level;
-}
-
-- (NSDictionary *) directoryAttributes
-{
-    if (self.shadowEnumerator)
-        return self.shadowEnumerator.directoryAttributes;
-    else
-        return self.sourceEnumerator.directoryAttributes;
 }
 
 
@@ -1144,11 +1131,6 @@ includingPropertiesForKeys: (NSArray *)keys
     }
     
     return nil;
-}
-
-- (const char *) fileSystemRepresentationForURL: (NSURL *)URL
-{
-    return [self.filesystem fileSystemRepresentationForURL: URL];
 }
 
 @end

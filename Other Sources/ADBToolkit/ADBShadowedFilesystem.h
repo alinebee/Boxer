@@ -37,7 +37,7 @@ extern NSString * const ADBShadowedDeletionMarkerExtension;
 
          
 @class ADBShadowedDirectoryEnumerator;
-@interface ADBShadowedFilesystem : NSObject <ADBFilesystem>
+@interface ADBShadowedFilesystem : NSObject <ADBFilesystem, ADBFilesystemPOSIXAccess>
 {
     NSURL *_sourceURL;
     NSURL *_shadowURL;
@@ -86,7 +86,7 @@ extern NSString * const ADBShadowedDeletionMarkerExtension;
 - (ADBShadowedDirectoryEnumerator *) enumeratorAtURL: (NSURL *)URL
                          includingPropertiesForKeys: (NSArray *)keys
                                             options: (NSDirectoryEnumerationOptions)mask
-                                       errorHandler: (ADBDirectoryEnumeratorErrorHandler)errorHandler;
+                                       errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler;
 
 
 #pragma mark -
@@ -160,7 +160,7 @@ extern NSString * const ADBShadowedDeletionMarkerExtension;
     
     NSArray *_propertyKeys;
     NSDirectoryEnumerationOptions _options;
-    ADBDirectoryEnumeratorErrorHandler _errorHandler;
+    ADBFilesystemEnumeratorErrorHandler _errorHandler;
     BOOL _includeDotEntries;
     
     NSURL *_sourceURL;
@@ -177,13 +177,12 @@ extern NSString * const ADBShadowedDeletionMarkerExtension;
                 shadowURL: (NSURL *)shadowURL
 includingPropertiesForKeys: (NSArray *)keys
                   options: (NSDirectoryEnumerationOptions)mask
-             errorHandler: (ADBDirectoryEnumeratorErrorHandler)errorHandler;
-
-- (NSDictionary *) directoryAttributes;
-- (NSDictionary *) fileAttributes;
+             errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler;
 
 - (NSUInteger) level;
 - (void) skipDescendants;
+
+//Reset the enumerator back to the first entry.
 - (void) reset;
 
 @end

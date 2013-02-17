@@ -112,24 +112,8 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 
 + (NSString *) nameForDrive: (BXDrive *)drive
 {
-	NSString *importedName = nil;
-	
-    if (drive.volumeLabel.length)
-    {
-        importedName = drive.volumeLabel;
-    }
-    else
-    {
-        importedName = [BXDrive preferredVolumeLabelForPath: drive.path];
-    }
-    
-	//If the drive has a letter, then prepend it in our standard format
-	if (drive.letter)
-    {
-        importedName = [NSString stringWithFormat: @"%@ %@", drive.letter, importedName];
-    }
-    
-	importedName = [importedName stringByAppendingPathExtension: @"cdmedia"];
+	NSString *baseName = [BXDriveImport baseNameForDrive: drive];
+	NSString *importedName = [baseName stringByAppendingPathExtension: @"cdmedia"];
 	
 	return importedName;
 }

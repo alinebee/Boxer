@@ -55,21 +55,8 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 
 + (NSString *) nameForDrive: (BXDrive *)drive
 {
-	NSString *importedName = nil;
-	
-    if (drive.volumeLabel.length)
-    {
-        importedName = drive.volumeLabel;
-    }
-    else
-    {
-        importedName = [BXDrive preferredVolumeLabelForPath: drive.path];
-    }
-    
-	//If the drive has a letter, then prepend it in our standard format
-	if (drive.letter) importedName = [NSString stringWithFormat: @"%@ %@", drive.letter, importedName];
-	
-	importedName = [importedName stringByAppendingPathExtension: @"iso"];
+	NSString *baseName = [BXDriveImport baseNameForDrive: drive];
+	NSString *importedName = [baseName stringByAppendingPathExtension: @"iso"];
 	
 	return importedName;
 }

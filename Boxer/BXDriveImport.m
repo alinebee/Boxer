@@ -10,11 +10,12 @@
 #import "BXBinCueImageImport.h"
 #import "BXDriveBundleImport.h"
 #import "BXSimpleDriveImport.h"
+#import "BXDrive.h"
 
 
 NSString * const BXUniqueDriveNameFormat = @"%1$@ (%3$lu).%2$@";
 
-@implementation BXDriveImport: ADBOperation
+@implementation BXDriveImport
 
 + (Class) importClassForDrive: (BXDrive *)drive
 {
@@ -67,5 +68,45 @@ NSString * const BXUniqueDriveNameFormat = @"%1$@ (%3$lu).%2$@";
 	}
 	//No fallback could be found
 	return nil;
+}
+
++ (NSString *) baseNameForDrive: (BXDrive *)drive
+{
+    NSString *baseName = nil;
+    
+    //If the drive has been given a specific drive letter, put this at the start of the name.
+    if (drive.letter)
+        baseName = drive.letter;
+    
+    //If the drive has an explicit volume label, then include this in the name also.
+    NSString *volumeName = nil;
+    if (drive.volumeLabel.length)
+    {
+        volumeName = drive.volumeLabel;
+    }
+    //Otherwise, derive a default volume label *only if the drive's name would be empty otherwise.*
+    //This lets us clear the volume label to avoid giving an unnecessary label to the imported drive
+    //(in the case of e.g. C.harddisk).
+    else if (baseName == nil)
+    {
+        volumeName = [BXDrive preferredVolumeLabelForPath: drive.path];
+    }
+    
+    if (volumeName.length)
+    {
+        if (baseName.length)
+            baseName = [NSString stringWithFormat: @"%@ %@", baseName, volumeName];
+        else
+            baseName = volumeName;
+    }
+    
+    return baseName;
+}
+
+- (id) init
+{
+    [self doesNotRecognizeSelector: _cmd];
+    [self release];
+    return nil;
 }
 @end

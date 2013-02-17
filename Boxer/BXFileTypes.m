@@ -209,4 +209,12 @@ NSString * const BXDOCFileType      = @"com.microsoft.word.doc";
     else return nil;
 }
 
+//This class is just a hanger for class methods and is not intended to be instantiated.
+- (id) init
+{
+    [self doesNotRecognizeSelector: _cmd];
+    [self release];
+    return nil;
+}
+
 @end

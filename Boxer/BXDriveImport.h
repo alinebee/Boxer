@@ -6,12 +6,16 @@
  */
 
 
+//The BXDriveImport protocol defines the public interface for drive import operations,
+//which are expected to descend from NSOperation. BXDriveImport is also a class that defines a number
+//of helper methods and factory methods for use by concrete import operations.
+
 #import "ADBOperation.h"
 #import "ADBFileTransfer.h"
 
 //The incremented filename format we should use for uniquely naming imported drives.
-//Equivalent to nameForDrive (increment).driveExtension, e.g. "C DriveLabel (2).cdrom".
-//The incremented number is guaranteed to be ignored by BXDrive's label parsing.
+//Equivalent to baseNameForDrive (increment).driveExtension, e.g. "C DriveLabel (2).cdrom".
+//The incremented number is ignored by BXDrive's label parsing.
 extern NSString * const BXUniqueDriveNameFormat;
 
 @class BXDrive;
@@ -53,7 +57,10 @@ extern NSString * const BXUniqueDriveNameFormat;
 @end
 
 
-@interface BXDriveImport: ADBOperation
+//A set of class helper methods useful to all drive import operations
+//(none of which actually inherit from this class).
+//This class is not intended to be instantiated or used as a parent class.
+@interface BXDriveImport: NSObject
 
 + (id <BXDriveImport>) importOperationForDrive: (BXDrive *)drive
                           destinationFolderURL: (NSURL *)destinationFolder
@@ -70,10 +77,15 @@ extern NSString * const BXUniqueDriveNameFormat;
 //this will fall back on a safer method of importing.
 + (id <BXDriveImport>) fallbackForFailedImport: (id <BXDriveImport>)failedImport;
 
+//Returns the standard filename (sans extension) under which to import the specified drive,
+//given Boxer's drive-naming conventions. This can be used as a starting-point by specific
+//drive types.
++ (NSString *) baseNameForDrive: (BXDrive *)drive;
+
 @end
 
 //A protocol for import-related error subclasses.
-@protocol BXDriveImportError
+@protocol BXDriveImportError <NSObject>
 
 + (id) errorWithDrive: (BXDrive *)drive;
 

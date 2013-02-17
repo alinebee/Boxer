@@ -44,32 +44,18 @@
 	{
         NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
-        if (drive.volumeLabel.length)
-        {
-            importedName = drive.volumeLabel;
-        }
-        else
-        {
-            importedName = [BXDrive preferredVolumeLabelForPath: drive.path];
-        }
-        
-        //If the drive has a letter, then prepend it in our standard format
-        if (drive.letter)
-        {
-            importedName = [NSString stringWithFormat: @"%@ %@", drive.letter, importedName];
-        }
-        
+        NSString *baseName = [BXDriveImport baseNameForDrive: drive];
+        NSString *extension;
         //Decide on what kind of extension to use for the file:
         //If this is one of our known image/mountable folder types then use its extension as-is
 		NSSet *readyTypes = [[BXFileTypes mountableFolderTypes] setByAddingObjectsFromSet: [BXFileTypes mountableImageTypes]];
         if ([workspace file: drivePath matchesTypes: readyTypes])
         {
-            importedName = [importedName stringByAppendingPathExtension: drivePath.pathExtension];
+            extension = drivePath.pathExtension;
         }
 		//Otherwise: if it's a directory, it will need to be renamed as a mountable folder.
 		else if (isDir)
         {
-            NSString *extension;
 			switch (drive.type)
 			{
 				case BXDriveCDROM:
@@ -83,15 +69,16 @@
 					extension = [workspace preferredFilenameExtensionForType: BXHardDiskFolderType];
 					break;
 			}
-			importedName = [importedName stringByAppendingPathExtension: extension];
         }
         //Otherwise: if it's a file, then it's *presumably* an ISO disc image that's been given
         //a file extension we don't recognise (hello GOG!) and should be renamed to something sensible.
         //TODO: validate it to determine what kind of image it really is.
         else
         {
-            importedName = [importedName stringByAppendingPathExtension: @"iso"];
+            extension = @"iso";
         }
+        
+        importedName = [baseName stringByAppendingPathExtension: extension];
     }
 	return importedName;
 }

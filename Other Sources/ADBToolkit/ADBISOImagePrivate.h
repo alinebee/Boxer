@@ -38,6 +38,16 @@
 
 @interface ADBISOImage ()
 
+@property (copy, nonatomic) NSURL *sourceURL;
+@property (copy, nonatomic) NSString *volumeName;
+
+//The file handle used for reading data from the image file.
+@property (retain, nonatomic) NSFileHandle *imageHandle;
+
+//A cache of path->byteoffset lookups, populated the first time it is needed.
+@property (retain, nonatomic) NSDictionary *pathCache;
+
+
 #pragma mark -
 #pragma mark Private helper class methods
 
@@ -49,8 +59,8 @@
 
 //Opens the image at the specified path for reading and reads in its header data.
 //Returns NO and populates outError if there was an error loading the image.
-- (BOOL) _loadImageAtPath: (NSString *)path
-                    error: (NSError **)outError;
+- (BOOL) _loadImageAtURL: (NSURL *)URL
+                   error: (NSError **)outError;
 
 
 //Finds the primary volume descriptor and loads it into descriptor. Returns NO
@@ -91,6 +101,7 @@
 
 //Populate a cache of all paths in the image filesystem.
 - (void) _populatePathCache;
+
 @end
 
 
@@ -99,31 +110,38 @@
 //Used internally by ADBISOImage and subclasses, and not exposed by the public API.
 @interface ADBISOFileEntry : NSObject
 {
-    unsigned long long fileSize;
-    NSRange sectorRange;
-    NSString *fileName;
-    ADBISOImage *parentImage;
-    NSDate *creationDate;
+    unsigned long long _fileSize;
+    NSRange _sectorRange;
+    NSString *_fileName;
+    __unsafe_unretained ADBISOImage *_parentImage;
+    NSDate *_creationDate;
 }
 
 #pragma mark -
 #pragma mark Properties
 
 //Returns the filename of the entry. File entries are not path-aware.
-@property (readonly, nonatomic) NSString *fileName;
+@property (copy, nonatomic) NSString *fileName;
 
 //Returns the filesize in bytes of the file at the specified path.
-@property (readonly, nonatomic) unsigned long long fileSize;
+@property (assign, nonatomic) unsigned long long fileSize;
 
 //The byte contents of this file.
 @property (readonly, nonatomic) NSData *contents;
 
+//The Standard file attributes of this file.
+//Equivalent to the output of NSFileManager's attributesOfFileAtPath:.
+@property (readonly, nonatomic) NSDictionary *attributes;
+
 //The image in which this file is located.
-@property (readonly, nonatomic) ADBISOImage *parentImage;
+@property (assign, nonatomic) ADBISOImage *parentImage;
 
 //The date at which the file was written to the image.
-@property (readonly, nonatomic) NSDate *creationDate;
+@property (copy, nonatomic) NSDate *creationDate;
 
+//Whether this file record represents a directory. Returns NO for ADBISOFileEntry
+//instances, YES for ADBISODirectoryEntry instances.
+@property (readonly, nonatomic) BOOL isDirectory;
 
 #pragma mark -
 #pragma mark Methods

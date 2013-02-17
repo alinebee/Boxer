@@ -46,8 +46,10 @@ int extdate_to_int(uint8_t *digits, int length)
 
 
 @implementation ADBISOImage
-@synthesize sourcePath, volumeName;
-
+@synthesize sourceURL = _sourceURL;
+@synthesize volumeName = _volumeName;
+@synthesize imageHandle = _imageHandle;
+@synthesize pathCache = _pathCache;
 
 + (NSDate *) _dateFromDateTime: (ADBISODateTime)dateTime
 {
@@ -84,31 +86,32 @@ int extdate_to_int(uint8_t *digits, int length)
 #pragma mark -
 #pragma mark Initalization and cleanup
 
-+ (id) imageFromContentsOfFile: (NSString *)path
-                         error: (NSError **)outError
++ (id) imageWithContentsOfURL: (NSURL *)URL
+                        error: (NSError **)outError
 {
-    id image = [[self alloc] initWithContentsOfFile: path error: outError];
-    return [image autorelease];
+    return [[(ADBISOImage *)[self alloc] initWithContentsOfURL: URL error: outError] autorelease];
 }
 
 - (id) init
 {
-    if ((self = [super init]))
+    self = [super init];
+    if (self)
     {
-        sectorSize = ADBISODefaultSectorSize;
-        rawSectorSize = ADBISODefaultSectorSize;
-        leadInSize = ADBISOLeadInSize;
+        _sectorSize = ADBISODefaultSectorSize;
+        _rawSectorSize = ADBISODefaultSectorSize;
+        _leadInSize = ADBISOLeadInSize;
     }
     return self;
 }
 
-- (id) initWithContentsOfFile: (NSString *)path
-                        error: (NSError **)outError
+- (id) initWithContentsOfURL: (NSURL *)URL
+                       error: (NSError **)outError
 {
-    if ((self = [self init]))
+    self = [self init];
+    if (self)
     {
-        sourcePath = [path copy];
-        BOOL loaded = [self _loadImageAtPath: path error: outError];
+        self.sourceURL = URL;
+        BOOL loaded = [self _loadImageAtURL: URL error: outError];
         if (!loaded)
         {
             [self release];
@@ -120,10 +123,9 @@ int extdate_to_int(uint8_t *digits, int length)
 
 - (void) dealloc
 {
-    [sourcePath release], sourcePath = nil;
-    [volumeName release], volumeName = nil;
-    [imageHandle release], imageHandle = nil;
-    
+    self.sourceURL = nil;
+    self.volumeName = nil;
+    self.imageHandle = nil;
     [super dealloc];
 }
 
@@ -135,35 +137,28 @@ int extdate_to_int(uint8_t *digits, int length)
                                     error: (NSError **)outError
 {
     ADBISOFileEntry *entry = [self _fileEntryAtPath: path error: outError];
-    
-    if (entry)
-    {
-        NSMutableDictionary *attrs = [NSMutableDictionary dictionaryWithCapacity: 4];
-        
-        BOOL isDirectory = [entry isKindOfClass: [ADBISODirectoryEntry class]];
-        NSString *fileType = isDirectory ? NSFileTypeDirectory : NSFileTypeRegular;
-        
-        [attrs setObject: fileType forKey: NSFileType];
-        [attrs setObject: [entry creationDate] forKey: NSFileCreationDate];
-        [attrs setObject: [entry creationDate] forKey: NSFileModificationDate];
-        [attrs setObject: [NSNumber numberWithUnsignedLongLong: [entry fileSize]] forKey: NSFileSize];
-        
-        
-        return attrs;
-    }
-    else return nil;
+    return entry.attributes;
 }
 
 - (NSData *) contentsOfFileAtPath: (NSString *)path
                             error: (NSError **)outError
 {
     ADBISOFileEntry *entry = [self _fileEntryAtPath: path error: outError];
-    if ([entry isKindOfClass: [ADBISODirectoryEntry class]])
+    
+    if (entry.isDirectory)
     {
-        //TODO: populate error, we cannot read file data from a directory.
+        if (outError)
+        {
+            NSURL *fileURL = [self.sourceURL URLByAppendingPathComponent: path];
+            NSDictionary *info = @{ NSURLErrorKey: fileURL };
+            //TODO: check what error code Cocoa's own file-read methods use when you pass them a directory.
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                            code: NSFileReadCorruptFileError
+                                        userInfo: info];
+        }
         return nil;
     }
-    return [entry contents];
+    return entry.contents;
 }
 
 - (id <ADBFilesystemEnumerator>) enumeratorAtPath: (NSString *)path
@@ -174,18 +169,17 @@ int extdate_to_int(uint8_t *digits, int length)
 }
 
 
-#pragma mark -
-#pragma mark Low-level filesystem API
+#pragma mark - Low-level filesystem API
 
 - (unsigned long long) _fileOffsetForSector: (NSUInteger)sector
 {
-    return (sector * rawSectorSize) + leadInSize;
+    return (sector * _rawSectorSize) + _leadInSize;
 }
 
 - (unsigned long long) _seekToSector: (NSUInteger)sector
 {
     unsigned long long offset = [self _fileOffsetForSector: sector];
-    [imageHandle seekToFileOffset: offset];
+    [self.imageHandle seekToFileOffset: offset];
     return offset;
 }
 
@@ -194,20 +188,20 @@ int extdate_to_int(uint8_t *digits, int length)
     NSUInteger i;
     
     //Read the data in chunks of one sector each, allowing for any between-sector padding.
-    NSMutableData *data = [NSMutableData dataWithCapacity: numSectors * sectorSize];
+    NSMutableData *data = [NSMutableData dataWithCapacity: numSectors * _sectorSize];
     for (i=0; i < numSectors; i++)
     {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         
-        NSData *chunk = [imageHandle readDataOfLength: sectorSize];
+        NSData *chunk = [self.imageHandle readDataOfLength: _sectorSize];
         [data appendData: chunk];
         
         //Skip over any extra padding snuggled between each proper sector
         //(Needed for BIN/CUE images, which have 304 bytes of checksum data for each sector.)
-        if (rawSectorSize > sectorSize)
+        if (_rawSectorSize > _sectorSize)
         {
-            NSUInteger paddingSize = rawSectorSize - sectorSize;
-            [imageHandle seekToFileOffset: [imageHandle offsetInFile] + paddingSize];
+            NSUInteger paddingSize = _rawSectorSize - _sectorSize;
+            [self.imageHandle seekToFileOffset: self.imageHandle.offsetInFile + paddingSize];
         }
         
         [pool drain];
@@ -222,31 +216,31 @@ int extdate_to_int(uint8_t *digits, int length)
 }
 
 
-- (BOOL) _loadImageAtPath: (NSString *)path
-                    error: (NSError **)outError
+- (BOOL) _loadImageAtURL: (NSURL *)URL
+                   error: (NSError **)outError
 {
     //Attempt to open the image at the source path
-    imageHandle = [[NSFileHandle fileHandleForReadingFromURL: [NSURL fileURLWithPath: path]
-                                                       error: outError] retain];
+    self.imageHandle = [[NSFileHandle fileHandleForReadingFromURL: URL
+                                                            error: outError] retain];
     
     //If the image couldn't be loaded, bail out now
-    if (!imageHandle) return NO;
+    if (!self.imageHandle) return NO;
     
     //Determine the overall length of the image file
-    [imageHandle seekToEndOfFile];
-    imageSize = [imageHandle offsetInFile];
+    [self.imageHandle seekToEndOfFile];
+    _imageSize = [self.imageHandle offsetInFile];
     
     //Search the volume descriptors to find the primary descriptor
-    BOOL foundDescriptor = [self _getPrimaryVolumeDescriptor: &primaryVolumeDescriptor
+    BOOL foundDescriptor = [self _getPrimaryVolumeDescriptor: &_primaryVolumeDescriptor
                                                        error: outError];
     
     //If we didn't find a primary descriptor amongst the volume descriptors, fail out 
     if (!foundDescriptor) return NO;
     
     //Parse the volume name from the primary descriptor
-    volumeName = [[NSString alloc] initWithBytes: primaryVolumeDescriptor.volumeID
-                                          length: ADBISOVolumeIdentifierLength
-                                        encoding: NSASCIIStringEncoding];
+    self.volumeName = [[[NSString alloc] initWithBytes: _primaryVolumeDescriptor.volumeID
+                                                length: ADBISOVolumeIdentifierLength
+                                              encoding: NSASCIIStringEncoding] autorelease];
     
     //If we got this far, then we succeeded in loading the image
     return YES;
@@ -261,34 +255,41 @@ int extdate_to_int(uint8_t *digits, int length)
     do
     {
         sectorOffset = [self _seekToSector: sector];
-        [[imageHandle readDataOfLength: sizeof(uint8_t)] getBytes: &type];
+        [[self.imageHandle readDataOfLength: sizeof(uint8_t)] getBytes: &type];
         
         if (type == ADBISOVolumeDescriptorTypePrimary)
         {
-            //If we found the primary descriptor, then reewind back to the start and read in the whole thing.
-            [imageHandle seekToFileOffset: sectorOffset];
-            [[imageHandle readDataOfLength: sizeof(ADBISOPrimaryVolumeDescriptor)] getBytes: &descriptor];
+            //If we found the primary descriptor, then rewind back to the start and read in the whole thing.
+            [self.imageHandle seekToFileOffset: sectorOffset];
+            [[self.imageHandle readDataOfLength: sizeof(ADBISOPrimaryVolumeDescriptor)] getBytes: &descriptor];
             return YES;
         }
         
         sector += 1;
     }
     //Stop once we find the volume descriptor terminator, or if we seek beyond the end of the image
-    while ((type != ADBISOVolumeDescriptorTypeSetTerminator) && (sectorOffset < imageSize));
+    while ((type != ADBISOVolumeDescriptorTypeSetTerminator) && (sectorOffset < _imageSize));
     
-    //TODO: populate an error here, as if we get here then this is an invalid/incomplete ISO image.
+    //If we got this far without finding a primary volume descriptor, then this is an invalid/incomplete ISO image.
+    if (outError)
+    {
+        NSDictionary *info = @{ NSURLErrorKey: self.sourceURL };
+        *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                        code: NSFileReadCorruptFileError
+                                    userInfo: info];
+    }
     return NO;
 }
 
 - (ADBISOFileEntry *) _fileEntryAtPath: (NSString *)path
-                                error: (NSError **)outError
+                                 error: (NSError **)outError
 {
     ADBISODirectoryRecord record;
     BOOL succeeded = [self _getDirectoryRecord: &record atPath: path error: outError];
     if (succeeded)
     {
         return [ADBISOFileEntry entryFromDirectoryRecord: record
-                                                inImage: self];
+                                                 inImage: self];
     }
     else return nil;
 }
@@ -300,24 +301,39 @@ int extdate_to_int(uint8_t *digits, int length)
     NSUInteger sectorOffset = [self _offsetOfDirectoryRecordForPath: path];
     if (sectorOffset == NSNotFound) //Path does not exist
     {
-        //TODO: populate outError
+        if (outError)
+        {
+            NSURL *fileURL = [self.sourceURL URLByAppendingPathComponent: path];
+            NSDictionary *info = @{ NSURLErrorKey: fileURL };
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                            code: NSFileReadNoSuchFileError
+                                        userInfo: info];
+        }
         return NO;
     }
+    
+    [self.imageHandle seekToFileOffset: sectorOffset];
+    [[self.imageHandle readDataOfLength: sizeof(ADBISODirectoryRecord)] getBytes: &record];
     
     return YES;
 }
 
 - (NSUInteger) _offsetOfDirectoryRecordForPath: (NSString *)path
 {
-    //Populate the path lookup table the first time we need it
-    if (!pathCache)
+    NSNumber *offset = [self.pathCache objectForKey: path];
+    if (offset)
+        return offset.unsignedIntegerValue;
+    else
+        return NSNotFound;
+}
+
+- (NSDictionary *) pathCache
+{
+    if (!_pathCache)
     {
         [self _populatePathCache];
     }
-    
-    NSNumber *offset = [pathCache objectForKey: path];
-    if (offset) return [offset unsignedIntegerValue];
-    else return NSNotFound;
+    return [[_pathCache retain] autorelease];
 }
 
 - (void) _populatePathCache
@@ -325,22 +341,26 @@ int extdate_to_int(uint8_t *digits, int length)
     NSRange pathTableRange;
     
 #if defined(__BIG_ENDIAN__)
-    pathTableRange.location    = primaryVolumeDescriptor.pathTableLocationBigEndian;
-    pathTableRange.length      = primaryVolumeDescriptor.pathTableSizeBigEndian;
+    pathTableRange.location    = _primaryVolumeDescriptor.pathTableLocationBigEndian;
+    pathTableRange.length      = _primaryVolumeDescriptor.pathTableSizeBigEndian;
 #else
-    pathTableRange.location    = primaryVolumeDescriptor.pathTableLocationLittleEndian;
-    pathTableRange.length      = primaryVolumeDescriptor.pathTableSizeLittleEndian;
+    pathTableRange.location    = _primaryVolumeDescriptor.pathTableLocationLittleEndian;
+    pathTableRange.length      = _primaryVolumeDescriptor.pathTableSizeLittleEndian;
 #endif
     
     //Now then, let's pull in the path table bit by bit
-    //NSUInteger offset;
+    
+    //IMPLEMENT PATH TABLE PARSING HERE
 }
 @end
 
 
 
 @implementation ADBISOFileEntry
-@synthesize fileName, fileSize, creationDate, parentImage;
+@synthesize fileName = _fileName;
+@synthesize fileSize = _fileSize;
+@synthesize creationDate = _creationDate;
+@synthesize parentImage = _parentImage;
 
 + (id) entryFromDirectoryRecord: (ADBISODirectoryRecord)record
                         inImage: (ADBISOImage *)image
@@ -353,11 +373,12 @@ int extdate_to_int(uint8_t *digits, int length)
 - (id) initWithDirectoryRecord: (ADBISODirectoryRecord)record
                        inImage: (ADBISOImage *)image
 {
-    if ((self = [self init]))
+    self = [self init];
+    if (self)
     {
         //Note: just assignment, not copying, as our parent image may cache
         //file entries and that would result in a retain cycle.
-        parentImage = image;
+        _parentImage = image;
         
         //Parse the record to determine file size, name and other such things
         [self _loadFromDirectoryRecord: record];
@@ -367,8 +388,8 @@ int extdate_to_int(uint8_t *digits, int length)
 
 - (void) dealloc
 {
-    [fileName release], fileName = nil;
-    [creationDate release], creationDate = nil;
+    self.fileName = nil;
+    self.creationDate = nil;
     
     [super dealloc];
 }
@@ -376,11 +397,11 @@ int extdate_to_int(uint8_t *digits, int length)
 - (void) _loadFromDirectoryRecord: (ADBISODirectoryRecord)record
 {
 #if defined(__BIG_ENDIAN__)
-    sectorRange.location    = record.extentLocationBigEndian;
-    sectorRange.length      = record.dataLengthBigEndian;
+    _sectorRange.location    = record.extentLocationBigEndian;
+    _sectorRange.length      = record.dataLengthBigEndian;
 #else
-    sectorRange.location    = record.extentLocationLittleEndian;
-    sectorRange.length      = record.dataLengthLittleEndian;
+    _sectorRange.location    = record.extentLocationLittleEndian;
+    _sectorRange.length      = record.dataLengthLittleEndian;
 #endif
     
     //Parse the filename from the record
@@ -390,15 +411,31 @@ int extdate_to_int(uint8_t *digits, int length)
     
     //ISO9660 filenames are stored in the format "FILENAME.EXE;1", where the last
     //component marks the revision of the file (for multi-session discs I guess.)
-    fileName = [[identifier componentsSeparatedByString: @";"] objectAtIndex: 0];
+    self.fileName = [[identifier componentsSeparatedByString: @";"] objectAtIndex: 0];
     [identifier release];
     
-    creationDate = [[ADBISOImage _dateFromDateTime: record.recordingTime] retain];
+    self.creationDate = [ADBISOImage _dateFromDateTime: record.recordingTime];
+}
+
+- (BOOL) isDirectory
+{
+    return NO;
 }
 
 - (NSData *) contents
 {
-    return [parentImage _readDataFromSectorRange: sectorRange];
+    return [self.parentImage _readDataFromSectorRange: _sectorRange];
+}
+
+- (NSDictionary *) attributes
+{
+    NSDictionary *attrs = @{
+                            NSFileType: (self.isDirectory ? NSFileTypeDirectory : NSFileTypeRegular),
+                            NSFileCreationDate: self.creationDate,
+                            NSFileModificationDate: self.creationDate,
+                            NSFileSize: @(self.fileSize),
+                            };
+    return attrs;
 }
 
 @end
@@ -406,15 +443,21 @@ int extdate_to_int(uint8_t *digits, int length)
 
 @implementation ADBISODirectoryEntry
 
+- (BOOL) isDirectory
+{
+    return YES;
+}
+
 - (NSArray *) subpaths
 {
+    //IMPLEMENT ME
     NSAssert(NO, @"Not yet implemented.");
     return nil;
 }
 
 - (NSData *) contents
 {
-    NSAssert(NO, @"Not yet implemented.");
+    NSAssert(NO, @"Attempted to retrieve contents of directory.");
     return nil;
 }
 @end

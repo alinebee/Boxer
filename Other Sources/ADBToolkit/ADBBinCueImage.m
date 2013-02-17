@@ -153,8 +153,8 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
 {
     if ((self = [super init]))
     {
-        rawSectorSize = ADBBINCUERawSectorSize;
-        leadInSize = ADBBINCUELeadInSize;
+        _rawSectorSize = ADBBINCUERawSectorSize;
+        _leadInSize = ADBBINCUELeadInSize;
     }
     return self;
 }

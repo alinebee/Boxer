@@ -40,54 +40,55 @@
 @protocol ADBFilesystemEnumerator;
 @interface ADBISOImage : NSObject
 {
-    NSFileHandle *imageHandle;
-    NSString *sourcePath;
-    NSString *volumeName;
+    NSFileHandle *_imageHandle;
+    NSURL *_sourceURL;
+    NSString *_volumeName;
     
-    unsigned long long imageSize;
+    unsigned long long _imageSize;
     
-    NSUInteger sectorSize;
-    NSUInteger rawSectorSize;
-    NSUInteger leadInSize;
+    NSUInteger _sectorSize;
+    NSUInteger _rawSectorSize;
+    NSUInteger _leadInSize;
     
-    NSMutableDictionary *pathCache;
+    NSMutableDictionary *_pathCache;
     
-    ADBISOPrimaryVolumeDescriptor primaryVolumeDescriptor;
+    ADBISOPrimaryVolumeDescriptor _primaryVolumeDescriptor;
 }
 
-//The source path of the image file from which this is loaded.
-@property (readonly, nonatomic) NSString *sourcePath;
+//The filesystem location of the image file from which this is loaded.
+@property (readonly, copy, nonatomic) NSURL *sourceURL;
 
 //The name of the image volume.
-@property (readonly, nonatomic) NSString *volumeName;
+@property (readonly, copy, nonatomic) NSString *volumeName;
 
 
-#pragma mark -
-#pragma mark Instance methods
+#pragma mark - Constructors
 
-//Return an image loaded from the image file at the specified source path.
-//Returns nil if the image at the specified path could not be read.
-+ (id) imageFromContentsOfFile: (NSString *)sourcePath error: (NSError **)outError;
-- (id) initWithContentsOfFile: (NSString *)sourcePath error: (NSError **)outError;
+//Return an image loaded from the image file at the specified source URL.
+//Returns nil and populates outError if the specified image could not be read.
++ (id) imageWithContentsOfURL: (NSURL *)sourceURL error: (out NSError **)outError;
+- (id) initWithContentsOfURL: (NSURL *)sourceURL error: (out NSError **)outError;
 
 
-//Returns an NSFileManager-like dictionary of the filesystem attributes
-//of the file at the specified path. Returns nil and populates outError
-//if the file could not be accessed.
+#pragma mark - Filesystem access
+
+//Returns an NSFileManager-like dictionary of the filesystem attributes of the file
+//at the specified path relative to the root of the image.
+//Returns nil and populates outError if the file could not be accessed.
 - (NSDictionary *) attributesOfFileAtPath: (NSString *)path
-                                    error: (NSError **)outError;
+                                    error: (out NSError **)outError;
 
-//Returns the raw byte data of the file at the specified path within the image.
-//The path should be relative to the root of the image.
+//Returns the raw byte data of the file at the specified path relative to the root
+//of the image.
 //Returns nil and populates outError if the file's contents could not be read.
 - (NSData *) contentsOfFileAtPath: (NSString *)path
-                            error: (NSError **)outError;
+                            error: (out NSError **)outError;
 
 //Returns an NSDirectoryEnumerator-alike enumerator for the directory structure
-//of this image, starting at the specified file path. Returns nil and populates outError
-//if the specified path could not be located for some reason.
+//of this image, starting at the specified file path relative to the root of the image.
+//Returns nil and populates outError if the specified path could not be accessed.
 //If path is nil, the root path of the image will be used.
 - (id <ADBFilesystemEnumerator>) enumeratorAtPath: (NSString *)path
-                                            error: (NSError **)outError;
+                                            error: (out NSError **)outError;
 
 @end

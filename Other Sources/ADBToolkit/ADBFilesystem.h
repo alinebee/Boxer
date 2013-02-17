@@ -32,6 +32,8 @@ typedef BOOL (^ADBFilesystemEnumeratorErrorHandler)(NSURL *url, NSError *error);
 @protocol ADBFilesystemEnumerator;
 @protocol ADBFilesystem <NSObject>
 
+#pragma mark - Introspecting the filesystem
+
 //Returns an enumerator for the specified URL, that will return NSURL objects.
 //This enumerator should respect the same parameters as NSFileManager's
 //enumeratorAtURL:includingPropertiesForKeys:options:errorHandler: method.
@@ -40,9 +42,13 @@ typedef BOOL (^ADBFilesystemEnumeratorErrorHandler)(NSURL *url, NSError *error);
                                          options: (NSDirectoryEnumerationOptions)mask
                                     errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler;
 
+//Returns whether the item at the specified URL exists.
+//If isDirectory is provided, this will be populated with YES if the URL represents a directory
+//or NO otherwise.
+- (BOOL) fileExistsAtURL: (NSURL *)URL isDirectory: (BOOL *)isDirectory;
 
-#pragma mark -
-#pragma mark Creating, deleting and accessing files.
+
+#pragma mark - Modifying files and folders
 
 //Deletes the file or directory at the specified URL.
 //Returns YES if the operation was successful, or NO and populates outError on failure.
@@ -52,11 +58,6 @@ typedef BOOL (^ADBFilesystemEnumeratorErrorHandler)(NSURL *url, NSError *error);
 //Returns YES if the operation was successful, or NO and populates outError on failure.
 - (BOOL) copyItemAtURL: (NSURL *)fromURL toURL: (NSURL *)toURL error: (NSError **)outError;
 - (BOOL) moveItemAtURL: (NSURL *)fromURL toURL: (NSURL *)toURL error: (NSError **)outError;
-
-//Returns whether the item at the specified URL exists.
-//If isDirectory is provided, this will be populated with YES if the URL represents a directory
-//or NO otherwise.
-- (BOOL) fileExistsAtURL: (NSURL *)URL isDirectory: (BOOL *)isDirectory;
 
 //Creates a new directory at the specified URL, optionally creating any missing directories in-between.
 //Returns YES if the directory or directories were created, or NO on failure.
@@ -87,7 +88,7 @@ typedef BOOL (^ADBFilesystemEnumeratorErrorHandler)(NSURL *url, NSError *error);
 //A protocol for NSDirectoryEnumerator-alike objects. See that class for general behaviour.
 @protocol ADBFilesystemEnumerator <NSObject, NSFastEnumeration>
 
-//The parent filesystem represented by this 
+//The parent filesystem represented by this enumerator.
 - (id <ADBFilesystem>) filesystem;
 
 - (void) skipDescendants;

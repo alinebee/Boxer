@@ -59,7 +59,7 @@
 - (void) addTransferFromPath: (NSString *)sourcePath
                       toPath: (NSString *)destinationPath;
 
-//Adds SingleFileTransfer operations for each pair of source->destination mappings
+//Adds ADBSingleFileTransfer operations for each pair of source->destination mappings
 //in the specified dictionary.
 - (void) addTransfers: (NSDictionary *)paths;
 

@@ -95,7 +95,7 @@
         }
         
         self.mountedVolumePath = volumePath;
-    }    
+    }
 }
 
 - (void) didPerformOperation

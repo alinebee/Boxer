@@ -85,19 +85,13 @@ NSString * const ADBOperationIndeterminateKey	= @"ADBOperationIndeterminateKey";
 
 - (void) main
 {
-    if ([self shouldPerformOperation])
+    if (!self.isCancelled)
     {
         [self willPerformOperation];
         //In case willPerformOperation has cancelled us already
         if (!self.isCancelled) [self performOperation];
         [self didPerformOperation];
     }
-}
-
-- (BOOL) shouldPerformOperation
-{
-    //Don’t bother starting if we are already cancelled
-    return !self.isCancelled;
 }
 
 - (void) willPerformOperation {}

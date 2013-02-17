@@ -95,8 +95,8 @@
                       toPath: (NSString *)destinationPath
 {
     ADBSingleFileTransfer *transfer = [ADBSingleFileTransfer transferFromPath: sourcePath
-                                                                     toPath: destinationPath
-                                                                  copyFiles: self.copyFiles];
+                                                                       toPath: destinationPath
+                                                                    copyFiles: self.copyFiles];
     
     [self.operations addObject: transfer];
 }
@@ -181,15 +181,16 @@
 
 - (void) _sendInProgressNotificationWithInfo: (NSDictionary *)info
 {	
-	NSMutableDictionary *extendedInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-										 [NSNumber numberWithUnsignedInteger:	self.filesTransferred],	ADBFileTransferFilesTransferredKey,
-										 [NSNumber numberWithUnsignedLongLong:	self.bytesTransferred],	ADBFileTransferBytesTransferredKey,
-										 [NSNumber numberWithUnsignedInteger:	self.numFiles],			ADBFileTransferFilesTotalKey,
-										 [NSNumber numberWithUnsignedLongLong:	self.numBytes],			ADBFileTransferBytesTotalKey,
-										 self.currentPath, ADBFileTransferCurrentPathKey,
-										 nil];
+	NSMutableDictionary *extendedInfo = [NSMutableDictionary dictionaryWithDictionary: @{
+                                                   ADBFileTransferFilesTransferredKey: @(self.filesTransferred),
+                                                   ADBFileTransferBytesTransferredKey: @(self.bytesTransferred),
+                                                         ADBFileTransferFilesTotalKey: @(self.numFiles),
+                                                         ADBFileTransferBytesTotalKey: @(self.numBytes),
+                                                        ADBFileTransferCurrentPathKey: self.currentPath,
+                                          }];
 	
-	if (info) [extendedInfo addEntriesFromDictionary: info];
+	if (info)
+        [extendedInfo addEntriesFromDictionary: info];
 	
 	[super _sendInProgressNotificationWithInfo: info];
 }
@@ -198,9 +199,10 @@
 {
 	BOOL undid = NO;
     //Tell each component file transfer to undo whatever it did
-    for (ADBSingleFileTransfer *transfer in self.operations)
+    for (ADBOperation <ADBFileTransfer> *transfer in self.operations)
     {
-        if ([transfer undoTransfer]) undid = YES;
+        if ([transfer undoTransfer])
+            undid = YES;
     }
 	return undid;
 }

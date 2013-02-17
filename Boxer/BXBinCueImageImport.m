@@ -325,7 +325,8 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
     
     //If the import failed for any reason (including cancellation),
     //then clean up the partial files.
-    if (self.error) [self undoTransfer];
+    if (self.error)
+        [self undoTransfer];
 }
 
 - (void) checkTaskProgress: (NSTimer *)timer

@@ -144,7 +144,16 @@ NSString * const ADBFileTransferCurrentPathKey		= @"ADBFileTransferCurrentPathKe
 }
 
 - (void) performOperation
-{	
+{
+    NSAssert(self.sourcePath != nil, @"No source path provided for file transfer.");
+    NSAssert(self.destinationPath != nil, @"No destination path provided for file transfer.");
+    if (!self.sourcePath || !self.destinationPath)
+        return;
+    
+    //IMPLEMENTATION NOTE: we used to check for the existence of the source path and the nonexistence
+    //of the destination path before beginning, but this was redundant (the file operation would fail
+    //under these circumstances anyway) and would lead to race conditions.
+    
 	//Start up the file transfer, bailing out if it could not be started
 	if ([self _beginTransfer])
     {
@@ -169,40 +178,6 @@ NSString * const ADBFileTransferCurrentPathKey		= @"ADBFileTransferCurrentPathKe
         
         [timer invalidate];
 	}
-}
-
-- (BOOL) shouldPerformOperation
-{	
-    if (!super.shouldPerformOperation) return NO;
-    
-	//Sanity checks: if we have no source or destination path, bail out now.
-	if (!self.sourcePath || !self.destinationPath) return NO;
-	
-	//Don't start if the source path doesn't exist.
-	if (![_manager fileExistsAtPath: self.sourcePath])
-	{
-		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: self.sourcePath forKey: NSFilePathErrorKey];
-		NSError *noSourceError = [NSError errorWithDomain: NSCocoaErrorDomain
-													 code: NSFileNoSuchFileError
-												 userInfo: userInfo];
-		self.error = noSourceError;
-		return NO;
-	}
-	
-	//...or if the destination path *does* exist.
-	if ([_manager fileExistsAtPath: self.destinationPath])
-	{
-		//TODO: check if there's a better error code to use here
-		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: self.destinationPath forKey: NSFilePathErrorKey];
-		NSError *destinationExistsError = [NSError errorWithDomain: NSCocoaErrorDomain
-															  code: NSFileWriteNoPermissionError
-														  userInfo: userInfo];
-		self.error = destinationExistsError;
-		return NO;
-	}
-	
-	//Otherwise, we're good to go
-	return YES;
 }
 
 - (BOOL) _beginTransfer
@@ -239,7 +214,7 @@ NSString * const ADBFileTransferCurrentPathKey		= @"ADBFileTransferCurrentPathKe
 	
 	_stage = kFSOperationStageUndefined;
 	
-	if ([self copyFiles])
+	if (self.copyFiles)
 	{
 		status = FSPathCopyObjectAsync(_fileOp,		//Our file operation object
 									   srcPath,		//The full path to the source file
@@ -302,22 +277,23 @@ NSString * const ADBFileTransferCurrentPathKey		= @"ADBFileTransferCurrentPathKe
 													NULL);
 	
 	//NSAssert1(!status, @"Could not get file operation status, FSPathFileOperationCopyStatus returned error code: %i", status);
-	
-	if (status && status != userCanceledErr)
-	{
-		self.error = [NSError errorWithDomain: NSOSStatusErrorDomain code: status userInfo: nil];
-	}
-	
-	if (errorCode && errorCode != userCanceledErr)
-	{
-		self.error = [NSError errorWithDomain: NSOSStatusErrorDomain code: errorCode userInfo: nil];
-	}
-	
 	if (currentItem)
 	{
 		self.currentPath = [_manager stringWithFileSystemRepresentation: currentItem length: strlen(currentItem)];
 	}
+    
+	if (status && status != userCanceledErr)
+	{
+        NSDictionary *info = (self.currentPath) ? @{ NSFilePathErrorKey: self.currentPath } : nil;
+		self.error = [NSError errorWithDomain: NSOSStatusErrorDomain code: status userInfo: info];
+	}
 	
+	if (errorCode && errorCode != userCanceledErr)
+	{
+        NSDictionary *info = (self.currentPath) ? @{ NSFilePathErrorKey: self.currentPath } : nil;
+		self.error = [NSError errorWithDomain: NSOSStatusErrorDomain code: errorCode userInfo: info];
+	}
+		
 	if (statusInfo)
 	{
 		NSNumber *bytes				= (NSNumber *)CFDictionaryGetValue(statusInfo, kFSOperationTotalBytesKey);
@@ -335,13 +311,14 @@ NSString * const ADBFileTransferCurrentPathKey		= @"ADBFileTransferCurrentPathKe
 	
 	if (_stage == kFSOperationStageRunning)
 	{
-		NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-							  [NSNumber numberWithUnsignedInteger:	self.filesTransferred],	ADBFileTransferFilesTransferredKey,
-							  [NSNumber numberWithUnsignedLongLong:	self.bytesTransferred],	ADBFileTransferBytesTransferredKey,
-							  [NSNumber numberWithUnsignedInteger:	self.numFiles],			ADBFileTransferFilesTotalKey,
-							  [NSNumber numberWithUnsignedLongLong:	self.numBytes],			ADBFileTransferBytesTotalKey,
-							  self.currentPath, ADBFileTransferCurrentPathKey,
-							  nil];
+		NSDictionary *info = @{
+            ADBFileTransferFilesTransferredKey: @(self.filesTransferred),
+            ADBFileTransferBytesTransferredKey: @(self.bytesTransferred),
+            ADBFileTransferFilesTotalKey:       @(self.numFiles),
+            ADBFileTransferBytesTotalKey:       @(self.numBytes),
+            ADBFileTransferCurrentPathKey:      self.currentPath,
+        };
+        
 		[self _sendInProgressNotificationWithInfo: info];
 	}
 	

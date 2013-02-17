@@ -139,13 +139,13 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
     return uniqueDestinationURL;
 }
 
-- (BOOL) shouldPerformOperation
-{
-    return [super shouldPerformOperation] && self.drive && self.destinationFolderURL;
-}
-
 - (void) performOperation
 {
+    NSAssert(self.drive != nil, @"No drive provided for drive import operation.");
+    NSAssert(self.destinationFolderURL != nil, @"No destination folder provided for drive import operation.");
+    if (!self.drive || !self.destinationFolderURL)
+        return;
+    
     if (!self.destinationURL)
         self.destinationURL = self.preferredDestinationURL;
     
@@ -240,7 +240,8 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
     
     //If the import failed for any reason (including cancellation),
     //then clean up the partial files.
-    if (self.error) [self undoTransfer];
+    if (self.error)
+        [self undoTransfer];
 }
 
 - (void) checkTaskProgress: (NSTimer *)timer

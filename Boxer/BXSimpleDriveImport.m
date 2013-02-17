@@ -112,13 +112,14 @@
 #pragma mark -
 #pragma mark The actual operation, finally
 
-- (BOOL) shouldPerformOperation
-{
-    return self.drive && self.destinationFolderURL;
-}
 
 - (void) performOperation
 {
+    NSAssert(self.drive != nil, @"No drive provided for drive import operation.");
+    NSAssert(self.destinationFolderURL != nil, @"No destination folder provided for drive import operation.");
+    if (!self.drive || !self.destinationFolderURL)
+        return;
+    
     if (!self.destinationURL)
         self.destinationURL = self.preferredDestinationURL;
     
@@ -126,6 +127,11 @@
     self.destinationPath = self.destinationURL.path;
     
     [super performOperation];
+    
+    //If the import failed for any reason (including cancellation),
+    //then clean up the partial files.
+    if (self.error)
+        [self undoTransfer];
 }
 
 - (NSURL *) preferredDestinationURL
@@ -141,16 +147,6 @@
                                                                    filenameFormat: BXUniqueDriveNameFormat];
     
     return uniqueDestinationURL;
-}
-
-- (void) didPerformOperation
-{
-    //If the import failed for any reason (including cancellation),
-    //then clean up the partial files.
-    if (self.error)
-    {
-        [self undoTransfer];
-    }
 }
 
 @end

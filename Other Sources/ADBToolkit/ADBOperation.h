@@ -152,30 +152,18 @@ extern NSString * const ADBOperationIndeterminateKey;
 //These methods are for the use of ADBOperation subclasses only.
 @interface ADBOperation ()
 
-//Returns whether the operation has enough information to begin.
-//If this returns NO then willPerformOperation, performOperation and
-//didPerformOperation will not be called.
-//The base implementation returns NO if the operation has been cancelled
-//already, YES otherwise; can be overridden by subclasses to further
-//restrict starting conditions.
-//If this returns NO, then main will exit immediately.
-- (BOOL) shouldPerformOperation;
-
 //Called at the start of main, just before performOperation and after
-//ADBOperationWillStartNotifications have been sent. Will not be called
-//if shouldPerformOperation returned NO. 
+//ADBOperationWillStartNotifications have been sent. 
 //Base implementation does nothing; intended to be overridden by subclasses.
 - (void) willPerformOperation;
 
 //Called at the end of main, after performOperation has exited and before
-//ADBOperationDidFinishNotifications have been sent. Will not be called if
-//shouldPerformOperation returned NO. 
+//ADBOperationDidFinishNotifications have been sent.
 //Base implementation does nothing; intended to be overridden by subclasses.
 - (void) didPerformOperation;
 
-//Performs the main work of the operation. This is called from ADBOperation's main,
-//if shouldPerformOperation returns YES and if the operation has not already been
-//cancelled (e.g. in willPerformOperation.)
+//Performs the main work of the operation. This is called from ADBOperation's main
+//if the operation has not already been cancelled.
 //Base implementation does nothing; intended to be overridden by subclasses.
 - (void) performOperation;
 

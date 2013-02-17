@@ -156,12 +156,6 @@ NSString * const ADBFileScanLastMatchKey = @"ADBFileScanLastMatch";
 	[[self mutableArrayValueForKey: @"matchingPaths"] addObject: relativePath];
 }
 
-- (BOOL) shouldPerformOperation
-{
-    //If no base path has been set, we cannot begin
-    return [super shouldPerformOperation] && (self.basePath != nil);
-}
-
 - (NSDirectoryEnumerator *) enumerator
 {
     return [_manager enumeratorAtPath: self.basePath];
@@ -169,8 +163,10 @@ NSString * const ADBFileScanLastMatchKey = @"ADBFileScanLastMatch";
 
 - (void) performOperation
 {
-    //In case we were cancelled upstairs in willStart
-    //Empty the matches before we begin
+    NSAssert(self.basePath != nil, @"No base path provided for file scan operation.");
+    if (self.basePath == nil)
+        return;
+    
     [_matchingPaths removeAllObjects];
     
     NSDirectoryEnumerator *enumerator = self.enumerator;

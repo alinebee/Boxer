@@ -68,13 +68,10 @@
 #pragma mark -
 #pragma mark Task execution
 
-- (void) performOperation
+- (void) main
 {
-    [self runTask];
-}
-
-- (void) runTask
-{
+    NSAssert(self.task != nil, @"No task provided for operation.");
+    
 	[self.task launch];
 	
 	[self monitorTask: self.task

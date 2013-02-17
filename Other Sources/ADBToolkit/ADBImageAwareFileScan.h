@@ -60,13 +60,13 @@ typedef enum {
 //mounting the path.
 @property (assign) ADBFileScanEjectionBehaviour ejectAfterScanning;
 
-//The scan's performOperation implementation is split up into 3 stages for easy
+//The scan's main implementation is split up into 3 stages for easy
 //customisation in subclasses:
 
 //Called before scanning to mount the base path if it is an image.
 - (void) mountVolumesForScan;
 
-//Performs the actual scan, which calls BXFileScan's original performOperation.
+//Performs the actual scan, which calls BXFileScan's original main implementation.
 - (void) performScan;
 
 //Called after scanning to unmount if desired.

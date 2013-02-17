@@ -152,10 +152,6 @@ extern NSString * const ADBOperationIndeterminateKey;
 //These methods are for the use of ADBOperation subclasses only.
 @interface ADBOperation ()
 
-//Performs the main work of the operation. This is called from ADBOperation's main
-//if the operation has not been cancelled.
-- (void) performOperation;
-
 //Post one of the corresponding notifications.
 - (void) _sendWillStartNotificationWithInfo: (NSDictionary *)info;
 - (void) _sendInProgressNotificationWithInfo: (NSDictionary *)info;

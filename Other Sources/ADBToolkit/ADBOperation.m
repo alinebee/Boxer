@@ -83,16 +83,6 @@ NSString * const ADBOperationIndeterminateKey	= @"ADBOperationIndeterminateKey";
     [self _sendDidFinishNotificationWithInfo: nil];
 }
 
-- (void) main
-{
-    if (!self.isCancelled)
-    {
-        [self performOperation];
-    }
-}
-
-- (void) performOperation {}
-
 - (void) cancel
 {	
 	//Only send a notification the first time we're cancelled,

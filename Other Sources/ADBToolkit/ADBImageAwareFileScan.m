@@ -66,12 +66,17 @@
 }
 
 //Split the work up into separate stages for easier overriding in subclasses.
-- (void) performOperation
+- (void) main
 {
     [self mountVolumesForScan];
     if (!self.isCancelled)
         [self performScan];
     [self unmountVolumesForScan];
+}
+
+- (void) performScan
+{
+    [super main];
 }
 
 - (void) mountVolumesForScan
@@ -109,11 +114,6 @@
         
         self.mountedVolumePath = volumePath;
     }
-}
-
-- (void) performScan
-{
-    [super performOperation];
 }
 
 - (void) unmountVolumesForScan

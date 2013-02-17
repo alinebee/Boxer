@@ -139,7 +139,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
     return uniqueDestinationURL;
 }
 
-- (void) performOperation
+- (void) main
 {
     NSAssert(self.drive != nil, @"No drive provided for drive import operation.");
     NSAssert(self.destinationFolderURL != nil, @"No destination folder provided for drive import operation.");
@@ -208,7 +208,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	
 	//Run the task to completion and monitor its progress
     _hasWrittenFiles = NO;
-	[self runTask];
+	[super main];
     _hasWrittenFiles = YES;
 	
 	if (!self.error)

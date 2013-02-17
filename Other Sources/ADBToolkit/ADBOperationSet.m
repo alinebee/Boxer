@@ -136,7 +136,7 @@
 }
 
 
-- (void) performOperation
+- (void) main
 {	
 	NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = self.maxConcurrentOperations;

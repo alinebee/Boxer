@@ -138,7 +138,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 #pragma mark -
 #pragma mark Task execution
 
-- (void) performOperation
+- (void) main
 {
     if (!self.destinationURL)
         self.destinationURL = self.preferredDestinationURL;
@@ -276,7 +276,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	[cdrdao release];
 	
 	//Run the task to completion and monitor its progress
-	[self runTask];
+	[super main];
 	
 	//If the image creation went smoothly, do final cleanup
 	if (!self.error)

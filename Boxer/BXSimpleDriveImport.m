@@ -112,8 +112,7 @@
 #pragma mark -
 #pragma mark The actual operation, finally
 
-
-- (void) performOperation
+- (void) main
 {
     NSAssert(self.drive != nil, @"No drive provided for drive import operation.");
     NSAssert(self.destinationFolderURL != nil, @"No destination folder provided for drive import operation.");
@@ -126,7 +125,7 @@
     self.sourcePath = self.drive.path;
     self.destinationPath = self.destinationURL.path;
     
-    [super performOperation];
+    [super main];
     
     //If the import failed for any reason (including cancellation),
     //then clean up the partial files.

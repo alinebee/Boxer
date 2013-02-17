@@ -143,7 +143,7 @@ NSString * const ADBFileTransferCurrentPathKey		= @"ADBFileTransferCurrentPathKe
 	return self.numBytes == 0;
 }
 
-- (void) performOperation
+- (void) main
 {
     NSAssert(self.sourcePath != nil, @"No source path provided for file transfer.");
     NSAssert(self.destinationPath != nil, @"No destination path provided for file transfer.");

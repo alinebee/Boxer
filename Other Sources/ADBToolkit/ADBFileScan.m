@@ -161,7 +161,7 @@ NSString * const ADBFileScanLastMatchKey = @"ADBFileScanLastMatch";
     return [_manager enumeratorAtPath: self.basePath];
 }
 
-- (void) performOperation
+- (void) main
 {
     NSAssert(self.basePath != nil, @"No base path provided for file scan operation.");
     if (self.basePath == nil)

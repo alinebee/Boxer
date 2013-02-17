@@ -98,7 +98,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 #pragma mark -
 #pragma mark The actual operation, finally
 
-- (void) performOperation
+- (void) main
 {
     NSAssert(self.drive != nil, @"No drive provided for drive import operation.");
     NSAssert(self.destinationFolderURL != nil, @"No destination folder provided for drive import operation.");
@@ -159,9 +159,9 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
     
     if (self.isCancelled) return;
     
-    //Perform the standard file import
+    //Perform the standard file import from here on in.
     _hasWrittenFiles = NO;
-    [super performOperation];
+    [super main];
     _hasWrittenFiles = YES;
     
     if (!self.error)

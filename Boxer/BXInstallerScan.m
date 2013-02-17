@@ -157,14 +157,9 @@
     return [NSSet setWithObjects: @"basePath", @"mountedVolumePath", nil];
 }
 
-//Overridden to scan the folder structure to determine a game profile before
-//we start scanning for actual installers.
-//Implementation note: 
-- (void) willPerformOperation
+- (void) performScan
 {
-    //Allow the superclass to mount any volume we need for scanning
-    [super willPerformOperation];
-    
+    //Detect the game profile before we start.
     if (!self.detectedProfile)
     {
         //If we are scanning a mounted image, scan the mounted volume path for the game profile
@@ -183,10 +178,9 @@
     
         self.detectedProfile = profile;
     }
-}
-
-- (void) didPerformOperation
-{
+    
+    [super performScan];
+    
     if (!self.error)
     {
         //If we discovered windows executables (or Mac apps) as well as DOS programs,
@@ -292,10 +286,6 @@
             }
         }
     }
-    
-    //Let our superclass unmount any volumes that were mounted in the course of the scan,
-    //now that we no longer need access to the filesystem.
-    [super didPerformOperation];
 }
 
 @end

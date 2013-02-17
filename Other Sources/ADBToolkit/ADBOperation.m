@@ -87,15 +87,10 @@ NSString * const ADBOperationIndeterminateKey	= @"ADBOperationIndeterminateKey";
 {
     if (!self.isCancelled)
     {
-        [self willPerformOperation];
-        //In case willPerformOperation has cancelled us already
-        if (!self.isCancelled) [self performOperation];
-        [self didPerformOperation];
+        [self performOperation];
     }
 }
 
-- (void) willPerformOperation {}
-- (void) didPerformOperation {}
 - (void) performOperation {}
 
 - (void) cancel
@@ -167,7 +162,7 @@ NSString * const ADBOperationIndeterminateKey	= @"ADBOperationIndeterminateKey";
 - (void) _sendDidFinishNotificationWithInfo: (NSDictionary *)info
 {
 	NSMutableDictionary *finishInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-									   [NSNumber numberWithBool: self.succeeded], ADBOperationSuccessKey,
+									   @(self.succeeded), ADBOperationSuccessKey,
 									   self.error, ADBOperationErrorKey,
 									   nil];
 
@@ -185,8 +180,8 @@ NSString * const ADBOperationIndeterminateKey	= @"ADBOperationIndeterminateKey";
 	if (self.isCancelled) return;
 	
 	NSMutableDictionary *progressInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-										 [NSNumber numberWithFloat: self.currentProgress],	ADBOperationProgressKey,
-										 [NSNumber numberWithBool: self.isIndeterminate],	ADBOperationIndeterminateKey,
+										 @(self.currentProgress), ADBOperationProgressKey,
+										 @(self.isIndeterminate), ADBOperationIndeterminateKey,
 										 nil];
 	if (info)
         [progressInfo addEntriesFromDictionary: info];

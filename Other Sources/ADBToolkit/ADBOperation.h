@@ -152,21 +152,9 @@ extern NSString * const ADBOperationIndeterminateKey;
 //These methods are for the use of ADBOperation subclasses only.
 @interface ADBOperation ()
 
-//Called at the start of main, just before performOperation and after
-//ADBOperationWillStartNotifications have been sent. 
-//Base implementation does nothing; intended to be overridden by subclasses.
-- (void) willPerformOperation;
-
-//Called at the end of main, after performOperation has exited and before
-//ADBOperationDidFinishNotifications have been sent.
-//Base implementation does nothing; intended to be overridden by subclasses.
-- (void) didPerformOperation;
-
 //Performs the main work of the operation. This is called from ADBOperation's main
-//if the operation has not already been cancelled.
-//Base implementation does nothing; intended to be overridden by subclasses.
+//if the operation has not been cancelled.
 - (void) performOperation;
-
 
 //Post one of the corresponding notifications.
 - (void) _sendWillStartNotificationWithInfo: (NSDictionary *)info;

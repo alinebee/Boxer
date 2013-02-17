@@ -65,7 +65,16 @@
     else return [super enumerator];
 }
 
-- (void) willPerformOperation
+//Split the work up into separate stages for easier overriding in subclasses.
+- (void) performOperation
+{
+    [self mountVolumesForScan];
+    if (!self.isCancelled)
+        [self performScan];
+    [self unmountVolumesForScan];
+}
+
+- (void) mountVolumesForScan
 {
     NSString *volumePath = nil;
     _didMountVolume = NO;
@@ -85,20 +94,29 @@
                                             invisibly: YES
                                                 error: &mountError];
             
+            if (volumePath)
+            {
+                _didMountVolume = YES;
+            }
             //If we couldn't mount the image, give up in failure
-            if (!volumePath)
+            else
             {
                 self.error = mountError;
+                [self cancel];
                 return;
             }
-            else _didMountVolume = YES;
         }
         
         self.mountedVolumePath = volumePath;
     }
 }
 
-- (void) didPerformOperation
+- (void) performScan
+{
+    [super performOperation];
+}
+
+- (void) unmountVolumesForScan
 {
     //If we mounted a volume ourselves in order to scan it,
     //or we've been told to always eject, then unmount the volume

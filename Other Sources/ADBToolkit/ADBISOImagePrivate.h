@@ -45,8 +45,11 @@
 @property (retain, nonatomic) NSFileHandle *imageHandle;
 
 //A cache of path->byteoffset lookups, populated the first time it is needed.
-@property (retain, nonatomic) NSDictionary *pathCache;
+@property (retain, nonatomic) NSMutableDictionary *pathCache;
 
+@property (readonly, nonatomic) NSUInteger sectorSize;
+@property (readonly, nonatomic) NSUInteger rawSectorSize;
+@property (readonly, nonatomic) NSUInteger leadInSize;
 
 #pragma mark -
 #pragma mark Private helper class methods
@@ -59,48 +62,48 @@
 
 //Opens the image at the specified path for reading and reads in its header data.
 //Returns NO and populates outError if there was an error loading the image.
+//Called by initWithContentsOfURL:error:.
 - (BOOL) _loadImageAtURL: (NSURL *)URL
-                   error: (NSError **)outError;
-
+                   error: (out NSError **)outError;
 
 //Finds the primary volume descriptor and loads it into descriptor. Returns NO
 //and populates outError if no primary volume descriptor can be found.
+//Called by _loadImageAtURL:error:.
 - (BOOL) _getPrimaryVolumeDescriptor: (ADBISOPrimaryVolumeDescriptor *)descriptor
-                               error: (NSError **)outError;
+                               error: (out NSError **)outError;
 
-
+//Returns a file entry which can be used for reading file data
+//(or, in the case of directory entries, reading subpaths.)
 - (ADBISOFileEntry *) _fileEntryAtPath: (NSString *)path
-                                 error: (NSError **)outError;
+                                 error: (out NSError **)outError;
 
-//Populates entry with the directory entry record for the file at the specified path.
-//Returns NO and populates outError if the path could not be located.
-- (BOOL) _getDirectoryRecord: (ADBISODirectoryRecord *)record
-                      atPath: (NSString *)path
-                       error: (NSError **)outError;
+//Returns a file entry parsed from the directory record at the specified byte offset.
+- (ADBISOFileEntry *) _fileEntryAtOffset: (uint32_t)byteOffset
+                                   error: (out NSError **)outError;
 
-//Returns the sector offset at which the directory record for the specified path can be found.
-- (NSUInteger) _offsetOfDirectoryRecordForPath: (NSString *)path;
+//Returns an array of file entries parsed from the specified range of the image.
+//This takes into account the ISO9660 format's conventions for storing directory records:
+//They are packed together tightly in sectors but a single record will not span multiple sectors.
+- (NSArray *) _fileEntriesInRange: (NSRange)range error: (out NSError **)outError;
 
+//Returns the raw byte offset for the specified sector. This takes into account sector padding and lead-in.
+- (uint32_t) _byteOffsetForSector: (uint32_t)sector;
+//Returns the sector in which the specified byte offset is located.
+- (uint32_t) _sectorForByteOffset: (uint32_t)byteOffset;
 
+//Returns the position of the specified offset within its sector.
+- (uint32_t) _sectorOffsetForByteOffset: (uint32_t)byteOffset;
 
-//Returns the byte offset for the specified sector.
-- (unsigned long long) _fileOffsetForSector: (NSUInteger)sector;
+//Populates buffer with the data at the specified range. Ranges that span sector boundaries will
+//take into account sector padding.
+//Note that the length of the requested range is expected to be in logical bytes without sector padding,
+//but the location is expected to be a 'raw' byte offset that includes sector padding and lead-in.
+//(e.g. a location returned by _fileOffsetForSector.)
+- (BOOL) _getBytes: (void *)buffer range: (NSRange)range error: (out NSError **)outError;
 
-//Move the file pointer to the start of the specified sector.
-//Returns the byte offset of that sector.
-- (unsigned long long) _seekToSector: (NSUInteger)sector;
-
-//Reads data from the current byte offset for the specified number of sectors.
-//USAGE NOTE: this should be used in combination with _seekToSector, not with
-//NSFileHandle seekToFileOffset. Sector data should always be read from and
-//up to even sector boundaries.
-- (NSData *) _readDataFromSectors: (NSUInteger)numSectors;
-
-//Returns the raw data at the specified sector range.
-- (NSData *) _readDataFromSectorRange: (NSRange)range;
-
-//Populate a cache of all paths in the image filesystem.
-- (void) _populatePathCache;
+//Returns an NSData object populated with the data at the specified range.
+//Returns nil and populates outError on error (including requesting a range beyond the end of the file.)
+- (NSData *) _dataInRange: (NSRange)range error: (out NSError **)outError;
 
 @end
 
@@ -110,9 +113,9 @@
 //Used internally by ADBISOImage and subclasses, and not exposed by the public API.
 @interface ADBISOFileEntry : NSObject
 {
-    unsigned long long _fileSize;
-    NSRange _sectorRange;
+    NSRange _dataRange;
     NSString *_fileName;
+    NSUInteger _version;
     __unsafe_unretained ADBISOImage *_parentImage;
     NSDate *_creationDate;
 }
@@ -123,13 +126,12 @@
 //Returns the filename of the entry. File entries are not path-aware.
 @property (copy, nonatomic) NSString *fileName;
 
+@property (assign, nonatomic) NSUInteger version;
+
 //Returns the filesize in bytes of the file at the specified path.
-@property (assign, nonatomic) unsigned long long fileSize;
+@property (readonly, nonatomic) uint32_t fileSize;
 
-//The byte contents of this file.
-@property (readonly, nonatomic) NSData *contents;
-
-//The Standard file attributes of this file.
+//The standard file attributes of this file.
 //Equivalent to the output of NSFileManager's attributesOfFileAtPath:.
 @property (readonly, nonatomic) NSDictionary *attributes;
 
@@ -154,18 +156,25 @@
 - (id) initWithDirectoryRecord: (ADBISODirectoryRecord)record
                        inImage: (ADBISOImage *)image;
 
-- (void) _loadFromDirectoryRecord: (ADBISODirectoryRecord)record;
+//Returns the contents of this file. Returns nil and populates outError
+//if the contents could not be read.
+- (NSData *) contentsWithError: (out NSError **)outError;
 
 @end
 
 
 @interface ADBISODirectoryEntry : ADBISOFileEntry
+{
+    NSArray *_cachedSubentries;
+}
+//Populated by subrecordsWithError: the first time it is needed.
+@property (retain, nonatomic) NSArray *cachedSubentries;
 
-//Overridden to raise an NSNotImplemented exception.
-@property (readonly, nonatomic) NSData *contents;
-
-//An array of ADBISOFileEntry and ADBISODirectoryEntry objects
-//for all files within this directory.
-@property (readonly, nonatomic) NSArray *subpaths;
+//Returns an array of ADBISOFileEntry and ADBISODirectoryEntry objects
+//for all files within this directory. If includeOlderVersions is YES,
+//the list of subentries will also include those superseded by later versions.
+//Returns nil and populates outError if the records could not be read.
+- (NSArray *) subentriesWithError: (out NSError **)outError
+           includingOlderVersions: (BOOL)includeOlderVersions;
 
 @end

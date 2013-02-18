@@ -27,7 +27,6 @@
 //ADBISOImage represents the filesystem of an ISO 9660-format (.ISO, .CDR, .BIN/CUE) image.
 //It provides information about the structure of the image and allows its contents to be
 //iterated and extracted.
-//Or it would, but this class is about 30% finished and is currently mothballed.
 
 #import <Foundation/Foundation.h>
 #import "ADBISOImageConstants.h"
@@ -41,12 +40,12 @@
 @interface ADBISOImage : NSObject
 {
     NSFileHandle *_imageHandle;
+    FILE *_handle;
     NSURL *_sourceURL;
     NSString *_volumeName;
     
-    unsigned long long _imageSize;
-    
     NSUInteger _sectorSize;
+    NSUInteger _logicalBlockSize;
     NSUInteger _rawSectorSize;
     NSUInteger _leadInSize;
     
@@ -72,6 +71,8 @@
 
 #pragma mark - Filesystem access
 
+- (BOOL) fileExistsAtPath: (NSString *)path isDirectory: (BOOL *)isDir;
+
 //Returns an NSFileManager-like dictionary of the filesystem attributes of the file
 //at the specified path relative to the root of the image.
 //Returns nil and populates outError if the file could not be accessed.
@@ -87,8 +88,13 @@
 //Returns an NSDirectoryEnumerator-alike enumerator for the directory structure
 //of this image, starting at the specified file path relative to the root of the image.
 //Returns nil and populates outError if the specified path could not be accessed.
-//If path is nil, the root path of the image will be used.
 - (id <ADBFilesystemEnumerator>) enumeratorAtPath: (NSString *)path
                                             error: (out NSError **)outError;
+
+- (NSArray *)subpathsOfDirectoryAtPath: (NSString *)path
+                                 error: (out NSError **)outError;
+
+- (NSArray *) contentsOfDirectoryAtPath: (NSString *)path
+                                  error: (out NSError **)outError;
 
 @end

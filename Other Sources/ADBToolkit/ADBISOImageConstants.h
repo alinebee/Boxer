@@ -30,16 +30,18 @@
 
 
 #define ADBISODefaultSectorSize 2048
-#define ADBBINCUERawSectorSize 2532
+#define ADBBINCUERawSectorSize 2352
 
 #define ADBISOLeadInSize 0
 #define ADBBINCUELeadInSize 16
 
 #define ADBISOVolumeDescriptorSectorOffset 0x10
-#define ADBISOVolumeDescriptorSize ADBISODefaultSectorSize
+#define ADBISOVolumeDescriptorSize 2048
 
 #define ADBISOVolumeIdentifierLength 32
 
+#define ADBISODirectoryRecordMinLength 34
+#define ADBISORootDirectoryRecordLength 34
 
 enum {
     ADBISOFileIsHidden               = 1 << 0,
@@ -51,7 +53,7 @@ enum {
     ADBISOFileFlagReserved2          = 1 << 6,
     ADBISOFileSpansMultipleExtents   = 1 << 7
 };
-typedef uint8_t ADBISODirectoryEntryOptions;
+typedef uint8_t ADBISODirectoryRecordOptions;
 
 
 enum {
@@ -123,12 +125,12 @@ typedef struct {
 	uint32_t pathTableSizeLittleEndian;
 	uint32_t pathTableSizeBigEndian;
     
-	uint32_t pathTableLocationLittleEndian;
-	uint32_t optionalPathTableLocationLittleEndian;
-	uint32_t pathTableLocationBigEndian;
-	uint32_t optionalPathTableLocationBigendian;
+	uint32_t pathTableLBALocationLittleEndian;
+	uint32_t optionalPathTableLBALocationLittleEndian;
+	uint32_t pathTableLBALocationBigEndian;
+	uint32_t optionalPathTableLBALocationBigendian;
     
-	uint8_t rootDirectoryEntry[34];
+	uint8_t rootDirectoryRecord[ADBISORootDirectoryRecordLength];
     
     uint8_t volumeSetIdentifier[128];
     uint8_t publisherIdentifier[128];
@@ -154,14 +156,14 @@ typedef struct {
 typedef struct {
 	uint8_t recordLength;
 	uint8_t extendedAttributeLength;
-	uint32_t extentLocationLittleEndian;
-	uint32_t extentLocationBigEndian;
-	uint32_t dataLengthLittleEndian;
-	uint32_t dataLengthBigEndian;
+	uint32_t extentLBALocationLittleEndian;
+	uint32_t extentLBALocationBigEndian;
+	uint32_t extentDataLengthLittleEndian;
+	uint32_t extentDataLengthBigEndian;
     
     ADBISODateTime recordingTime;
 	
-    ADBISODirectoryEntryOptions fileFlags;
+    ADBISODirectoryRecordOptions fileFlags;
     
 	uint8_t fileUnitSize;
 	uint8_t interleaveGapSize;

@@ -26,6 +26,7 @@
 
 #import "ADBBinCueImage.h"
 #import "ADBISOImagePrivate.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 #import "RegexKitLite.h"
 
 
@@ -148,7 +149,6 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
     return isCue;
 }
 
-
 - (id) init
 {
     if ((self = [super init]))
@@ -158,4 +158,25 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
     }
     return self;
 }
+
+- (BOOL) _loadImageAtURL: (NSURL *)URL
+                   error: (NSError **)outError
+{
+    //Load the BIN part of the cuesheet
+    if ([self.class isCueAtPath: URL.path error: outError])
+    {
+        NSString *binPath = [self.class binPathInCueAtPath: URL.path error: outError];
+        if (binPath)
+        {
+            URL = [NSURL fileURLWithPath: binPath];
+        }
+        else
+        {
+            return nil;
+        }
+    }
+    
+    return [super _loadImageAtURL: URL error: outError];
+}
+
 @end

@@ -168,8 +168,8 @@
     CGImageRef imageMask = [self CGImageForProposedRect: &drawRect context: context hints: nil];
     
     //Next, create an inverted version of the mask. We will use this to mask our drawing of the drop shadow.
-    //Note that the inverted mask is larger than the original mask because it needs to cover the total dirty region:
-    //otherwise it would inadvertently mask out parts of the drop shadow.
+    //Note that the inverted mask is larger than the original mask because it needs to cover the total draw region:
+    //otherwise it could inadvertently mask out parts of the drop shadow.
     CGRect invertedMaskRect = CGRectIntegral(NSRectToCGRect(totalDirtyRect));
     //Because CGBitmapContexts are not retina-aware and use device pixels,
     //we have to compensate accordingly when we're rendering for a retina backing.
@@ -197,82 +197,76 @@
     CGContextFillRect(maskContext, CGRectMake(0, 0, invertedMaskPixelSize.width, invertedMaskPixelSize.height));
     CGImageRef invertedImageMask = CGBitmapContextCreateImage(maskContext);
     
+
     //To render the drop shadow, draw the original mask but clipped by the inverted mask:
-    //so that the shadow is only drawn around the edges and not within the to-be-filled content area.
+    //so that the shadow is only drawn around the edges, and not within the inside of the image.
     //(IMPLEMENTATION NOTE: we draw the drop shadow in a separate pass instead of just setting the
-    //drop shadow when we draw the fill, because otherwise a semi-transparent fill would render a drop
-    //shadow underneath the translucent parts: making the result appear 'muddy'.)
+    //drop shadow when we draw the fill gradient, because otherwise a semi-transparent gradient would
+    //render a drop shadow underneath the translucent parts: making the result appear muddy.)
     if (dropShadow)
     {
-        //IMPLEMENTATION NOTE: we want to draw the drop shadow but not the image that's 'causing' the shadow.
-        //So, we draw that image wayyy off the top of the canvas, and offset the shadow far enough that
-        //it lands in the expected position.
-        NSShadow *offsetShadow = [dropShadow copy];
-        offsetShadow.shadowOffset = NSMakeSize(dropShadow.shadowOffset.width,
-                                               dropShadow.shadowOffset.height - invertedMaskRect.size.height);
-        CGRect offsetRect = CGRectOffset(maskRect, 0, invertedMaskRect.size.height);
-                
         CGContextSaveGState(cgContext);
-        [NSGraphicsContext saveGraphicsState];
             if (drawFlipped)
             {
                 CGContextTranslateCTM(cgContext, 0.0f, contextSize.height);
                 CGContextScaleCTM(cgContext, 1.0f, -1.0f);
             }
         
-            [offsetShadow set];
+            //IMPLEMENTATION NOTE: we want to draw the drop shadow but not the image that's 'causing' the shadow.
+            //So, we draw that image wayyy off the top of the canvas, and offset the shadow far enough that
+            //it lands in the expected position.
+            
+            CGRect imageOffset = CGRectOffset(maskRect, 0, invertedMaskRect.size.height);
+            CGSize shadowOffset = CGSizeMake(dropShadow.shadowOffset.width,
+                                             dropShadow.shadowOffset.height - invertedMaskRect.size.height);
+            
+            CGFloat components[dropShadow.shadowColor.numberOfComponents];
+            [dropShadow.shadowColor getComponents: components];
+            CGColorRef shadowColor = CGColorCreate(dropShadow.shadowColor.colorSpace.CGColorSpace, components);
+            
             CGContextClipToMask(cgContext, invertedMaskRect, invertedImageMask);
-            CGContextDrawImage(cgContext, offsetRect, imageMask);
-        [NSGraphicsContext restoreGraphicsState];
-        CGContextRestoreGState(cgContext);
+            CGContextSetShadowWithColor(cgContext, shadowOffset, dropShadow.shadowBlurRadius, shadowColor);
+            CGContextDrawImage(cgContext, imageOffset, imageMask);
+            
+            CGColorRelease(shadowColor);
         
-        [offsetShadow release];
+        CGContextRestoreGState(cgContext);
     }
     
-    //Next, render the gradient fill by clipping the drawing area to the mask.
-    if (gradient)
+    //Finally, render the inner region with the gradient and inner shadow (if any)
+    //by clipping the drawing area to the regular mask.
+    if (gradient || innerShadow)
     {
         CGContextSaveGState(cgContext);
-        [NSGraphicsContext saveGraphicsState];
             if (drawFlipped)
             {
                 CGContextTranslateCTM(cgContext, 0.0f, contextSize.height);
                 CGContextScaleCTM(cgContext, 1.0f, -1.0f);
             }
-        
             CGContextClipToMask(cgContext, maskRect, imageMask);
-            [gradient drawInRect: drawRect angle: 270.0];
-        [NSGraphicsContext restoreGraphicsState];
-        CGContextRestoreGState(cgContext);
-    }
-    
-    //Finally, render the inner shadow by drawing the inverted mask but clipped by the original mask:
-    //so that only the shadow that falls within the edges of the original image is drawn, and not the drop
-    //shadow around the rectangular border of the image region.
-    if (innerShadow)
-    {
-        //See note above for dropShadow.
-        NSShadow *offsetShadow = [innerShadow copy];
-        offsetShadow.shadowOffset = NSMakeSize(innerShadow.shadowOffset.width,
-                                               innerShadow.shadowOffset.height - invertedMaskRect.size.height);
-        CGRect offsetRect = CGRectOffset(invertedMaskRect, 0, invertedMaskRect.size.height);
         
-       
-        CGContextSaveGState(cgContext);
-        [NSGraphicsContext saveGraphicsState];
-            if (drawFlipped)
+            if (gradient)
             {
-                CGContextTranslateCTM(cgContext, 0.0f, contextSize.height);
-                CGContextScaleCTM(cgContext, 1.0f, -1.0f);
+                [gradient drawInRect: drawRect angle: 270.0];
             }
-        
-            [offsetShadow set];
-            CGContextClipToMask(cgContext, maskRect, imageMask);
-            CGContextDrawImage(cgContext, offsetRect, invertedImageMask);
-        [NSGraphicsContext restoreGraphicsState];
+            
+            if (innerShadow)
+            {
+                //See dropShadow note above about offsets.
+                CGRect imageOffset = CGRectOffset(invertedMaskRect, 0, invertedMaskRect.size.height);
+                CGSize shadowOffset = CGSizeMake(innerShadow.shadowOffset.width,
+                                                 innerShadow.shadowOffset.height - invertedMaskRect.size.height);
+                
+                CGFloat components[innerShadow.shadowColor.numberOfComponents];
+                [innerShadow.shadowColor getComponents: components];
+                CGColorRef shadowColor = CGColorCreate(innerShadow.shadowColor.colorSpace.CGColorSpace, components);
+                
+                CGContextSetShadowWithColor(cgContext, shadowOffset, innerShadow.shadowBlurRadius, shadowColor);
+                CGContextDrawImage(cgContext, imageOffset, invertedImageMask);
+                
+                CGColorRelease(shadowColor);
+            }
         CGContextRestoreGState(cgContext);
-        
-        [offsetShadow release];
     }
     
     CGContextRelease(maskContext);

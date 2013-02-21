@@ -41,10 +41,6 @@
 @property (copy, nonatomic) NSURL *sourceURL;
 @property (copy, nonatomic) NSString *volumeName;
 
-//The file handle used for reading data from the image file.
-@property (retain, nonatomic) NSFileHandle *imageHandle;
-
-//A cache of path->byteoffset lookups, populated the first time it is needed.
 @property (retain, nonatomic) NSMutableDictionary *pathCache;
 
 @property (readonly, nonatomic) NSUInteger sectorSize;
@@ -86,20 +82,26 @@
 //They are packed together tightly in sectors but a single record will not span multiple sectors.
 - (NSArray *) _fileEntriesInRange: (NSRange)range error: (out NSError **)outError;
 
-//Returns the raw byte offset for the specified sector. This takes into account sector padding and lead-in.
-- (uint32_t) _byteOffsetForSector: (uint32_t)sector;
-//Returns the sector in which the specified byte offset is located.
-- (uint32_t) _sectorForByteOffset: (uint32_t)byteOffset;
-
-//Returns the position of the specified offset within its sector.
-- (uint32_t) _sectorOffsetForByteOffset: (uint32_t)byteOffset;
-
 //Populates buffer with the data at the specified range. Ranges that span sector boundaries will
 //take into account sector padding.
-//Note that the length of the requested range is expected to be in logical bytes without sector padding,
-//but the location is expected to be a 'raw' byte offset that includes sector padding and lead-in.
-//(e.g. a location returned by _fileOffsetForSector.)
-- (BOOL) _getBytes: (void *)buffer range: (NSRange)range error: (out NSError **)outError;
+//Note that the requested range is expected to be in logical bytes, without sector padding or lead-in.
+//These will be handled automatically by the function itself.
+- (BOOL) _getBytes: (void *)buffer atLogicalRange: (NSRange)range error: (out NSError **)outError;
+
+//Methods to convert back and forth from byte offsets to sectors, and from logical byte offsets
+//to raw byte offsets (which are byte offsets that include sector padding and leadin.)
+- (uint32_t) _rawOffsetForLogicalOffset: (uint32_t)offset;
+- (uint32_t) _logicalOffsetForRawOffset: (uint32_t)rawOffset;
+
+- (uint32_t) _logicalOffsetForSector: (uint32_t)sector;
+- (uint32_t) _rawOffsetForSector: (uint32_t)sector;
+
+- (uint32_t) _sectorForLogicalOffset: (uint32_t)offset;
+- (uint32_t) _sectorForRawOffset: (uint32_t)rawOffset;
+
+- (uint32_t) _logicalOffsetWithinSector: (uint32_t)offset;
+- (uint32_t) _rawOffsetWithinSector: (uint32_t)rawOffset;
+
 
 //Returns an NSData object populated with the data at the specified range.
 //Returns nil and populates outError on error (including requesting a range beyond the end of the file.)
@@ -171,10 +173,8 @@
 @property (retain, nonatomic) NSArray *cachedSubentries;
 
 //Returns an array of ADBISOFileEntry and ADBISODirectoryEntry objects
-//for all files within this directory. If includeOlderVersions is YES,
-//the list of subentries will also include those superseded by later versions.
+//for all files within this directory (except the spurious . and .. entries.)
 //Returns nil and populates outError if the records could not be read.
-- (NSArray *) subentriesWithError: (out NSError **)outError
-           includingOlderVersions: (BOOL)includeOlderVersions;
+- (NSArray *) subentriesWithError: (out NSError **)outError;
 
 @end

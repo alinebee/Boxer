@@ -39,7 +39,6 @@
 @protocol ADBFilesystemEnumerator;
 @interface ADBISOImage : NSObject
 {
-    NSFileHandle *_imageHandle;
     FILE *_handle;
     NSURL *_sourceURL;
     NSString *_volumeName;
@@ -50,8 +49,6 @@
     NSUInteger _leadInSize;
     
     NSMutableDictionary *_pathCache;
-    
-    ADBISOPrimaryVolumeDescriptor _primaryVolumeDescriptor;
 }
 
 //The filesystem location of the image file from which this is loaded.

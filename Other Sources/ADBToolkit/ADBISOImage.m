@@ -48,7 +48,6 @@ int extdate_to_int(uint8_t *digits, int length)
 @implementation ADBISOImage
 @synthesize sourceURL = _sourceURL;
 @synthesize volumeName = _volumeName;
-@synthesize imageHandle = _imageHandle;
 @synthesize pathCache = _pathCache;
 @synthesize sectorSize = _sectorSize;
 @synthesize rawSectorSize = _rawSectorSize;
@@ -133,7 +132,6 @@ int extdate_to_int(uint8_t *digits, int length)
     
     self.sourceURL = nil;
     self.volumeName = nil;
-    self.imageHandle = nil;
     self.pathCache = nil;
     [super dealloc];
 }
@@ -201,23 +199,19 @@ int extdate_to_int(uint8_t *digits, int length)
     ADBISODirectoryEntry *entry = (ADBISODirectoryEntry *)[self _fileEntryAtPath: path error: outError];
     if (entry && entry.isDirectory)
     {
-        NSArray *subentries = [entry subentriesWithError: outError includingOlderVersions: NO];
+        NSArray *subentries = [entry subentriesWithError: outError];
         if (!subentries)
             return nil;
         
-        NSMutableArray *subpaths = [NSMutableArray arrayWithCapacity: subentries.count - 2];
+        NSMutableArray *subpaths = [NSMutableArray arrayWithCapacity: subentries.count];
         
         for (ADBISOFileEntry *subentry in subentries)
         {
-            //The first two entries correspond to . and .. and should be skipped.
-            if ([subentry.fileName isEqualToString: @"\0"] || [subentry.fileName isEqualToString: @"\1"])
-                continue;
-            
             NSString *subpath = [path stringByAppendingPathComponent: subentry.fileName];
             [subpaths addObject: subpath];
+            [self.pathCache setObject: subentry forKey: subpath];
         }
         
-        [subpaths sortUsingSelector: @selector(caseInsensitiveCompare:)];
         return subpaths;
     }
     else
@@ -233,41 +227,32 @@ int extdate_to_int(uint8_t *digits, int length)
     
     if (entry && entry.isDirectory)
     {
-        NSArray *subentries = [entry subentriesWithError: outError includingOlderVersions: NO];
+        NSArray *subentries = [entry subentriesWithError: outError];
         if (!subentries)
             return nil;
         
         NSMutableArray *subpaths = [NSMutableArray arrayWithCapacity: subentries.count];
-        [subpaths sortUsingSelector: @selector(caseInsensitiveCompare:)];
         
         for (ADBISOFileEntry *subentry in subentries)
         {
-            //The first two entries correspond to . and .. and should be skipped.
-            if ([subentry.fileName isEqualToString: @"\0"] || [subentry.fileName isEqualToString: @"\1"])
-                continue;
-            
             NSString *subpath = [path stringByAppendingPathComponent: subentry.fileName];
-            if (![subpaths containsObject: subpath])
-            {
-                [subpaths addObject: subpath];
+            [subpaths addObject: subpath];
                 
-                //FIXME: EDGE CASE: a directory replaced by a later version with different contents
-                if (subentry.isDirectory)
+            if (subentry.isDirectory)
+            {
+                NSArray *subsubpaths = [self subpathsOfDirectoryAtPath: subpath error: outError];
+                if (subpaths != nil)
                 {
-                    NSArray *subsubpaths = [self subpathsOfDirectoryAtPath: subpath error: outError];
-                    if (subpaths != nil)
-                    {
-                        [subpaths addObjectsFromArray: subsubpaths];
-                    }
-                    else
-                    {
-                        return nil;
-                    }
+                    [subpaths addObjectsFromArray: subsubpaths];
+                }
+                else
+                {
+                    return nil;
                 }
             }
+            [self.pathCache setObject: subentry forKey: subpath];
         }
         
-        [subpaths sortUsingSelector: @selector(caseInsensitiveCompare:)];
         return subpaths;
     }
     else
@@ -279,36 +264,58 @@ int extdate_to_int(uint8_t *digits, int length)
 
 #pragma mark - Low-level filesystem API
 
-- (uint32_t) _byteOffsetForSector: (uint32_t)sector
+- (uint32_t) _rawOffsetForLogicalOffset: (uint32_t)offset
+{
+    uint32_t sector = [self _sectorForLogicalOffset: offset];
+    uint32_t relativeOffset = [self _logicalOffsetWithinSector: offset];
+    
+    return [self _rawOffsetForSector: sector] + relativeOffset;
+}
+
+- (uint32_t) _logicalOffsetForRawOffset: (uint32_t)rawOffset
+{
+    uint32_t sector = [self _sectorForRawOffset: rawOffset];
+    uint32_t relativeOffset = [self _rawOffsetWithinSector: rawOffset];
+    
+    return [self _logicalOffsetForSector: sector] + relativeOffset;
+}
+
+- (uint32_t) _logicalOffsetForSector: (uint32_t)sector
+{
+    return sector * _sectorSize;
+}
+
+- (uint32_t) _sectorForLogicalOffset: (uint32_t)offset
+{
+    return offset / _sectorSize;
+}
+
+- (uint32_t) _rawOffsetForSector: (uint32_t)sector
 {
     return (sector * _rawSectorSize) + _leadInSize;
 }
 
-- (uint32_t) _sectorForByteOffset: (uint32_t)byteOffset
+- (uint32_t) _sectorForRawOffset: (uint32_t)rawOffset
 {
-    return (byteOffset - _leadInSize) / _rawSectorSize;
+    return (rawOffset - _leadInSize) / _rawSectorSize;
 }
 
-- (uint32_t) _sectorOffsetForByteOffset: (uint32_t)byteOffset
+- (uint32_t) _logicalOffsetWithinSector: (uint32_t)offset
 {
-    return (byteOffset - _leadInSize) % _rawSectorSize;
+    return offset % _sectorSize;
 }
 
-- (unsigned long long) _seekToSector: (NSUInteger)sector
+- (uint32_t) _rawOffsetWithinSector: (uint32_t)rawOffset
 {
-    unsigned long long offset = [self _byteOffsetForSector: sector];
-    [self.imageHandle seekToFileOffset: offset];
-    return offset;
+    return (rawOffset - _leadInSize) % _rawSectorSize;
 }
 
-//IMPLEMENTATION NOTE: the length of the requested range is expected to be in logical
-//bytes without sector padding; but the location is expected to be a 'raw' byte offset
-//that takes into account sector padding and lead-in.
-- (BOOL) _getBytes: (void *)buffer range: (NSRange)range error: (out NSError **)outError
+- (BOOL) _getBytes: (void *)buffer atLogicalRange: (NSRange)range error: (out NSError **)outError
 {
-    NSUInteger offset = range.location;
-    NSUInteger bytesToRead = range.length;
+    NSUInteger offset = [self _rawOffsetForLogicalOffset: range.location];
     NSUInteger sectorPadding = _rawSectorSize - _sectorSize;
+    
+    NSUInteger bytesToRead = range.length;
     NSUInteger bytesRead = 0;
     
     while (bytesRead < bytesToRead)
@@ -319,14 +326,13 @@ int extdate_to_int(uint8_t *digits, int length)
         //Otherwise we'll have to read up to the edge of the sector and then skip over the padding to the next sector.
         if (sectorPadding > 0)
         {
-            NSUInteger offsetWithinSector = [self _sectorOffsetForByteOffset: offset];
+            NSUInteger offsetWithinSector = [self _rawOffsetWithinSector: offset];
             NSAssert1(offsetWithinSector < _sectorSize, @"Requested byte offset falls within sector padding: %lu", (unsigned long)offset);
             
             chunkSize = MIN(chunkSize, _sectorSize - offsetWithinSector);
         }
         
         BOOL seeked = (fseek(_handle, offset, SEEK_SET) == 0);
-        NSAssert1(seeked, @"Could not seek to offset %u", offset);
         if (!seeked)
         {
             if (outError)
@@ -344,7 +350,6 @@ int extdate_to_int(uint8_t *digits, int length)
         size_t bytesReadInChunk = fread(bufferOffset, 1, chunkSize, _handle);
         if (bytesReadInChunk < chunkSize)
         {
-            NSAssert2(NO, @"Could not read %u bytes from offset %u", chunkSize, offset);
             if (outError)
             {
                 NSDictionary *info = @{ NSURLErrorKey: self.sourceURL };
@@ -383,7 +388,7 @@ int extdate_to_int(uint8_t *digits, int length)
 - (NSData *) _dataInRange: (NSRange)range error: (out NSError **)outError;
 {
     NSMutableData *data = [[NSMutableData alloc] initWithLength: range.length];
-    BOOL populated = [self _getBytes: data.mutableBytes range: range error: outError];
+    BOOL populated = [self _getBytes: data.mutableBytes atLogicalRange: range error: outError];
     
     if (populated)
     {
@@ -396,40 +401,60 @@ int extdate_to_int(uint8_t *digits, int length)
     }
 }
 
-
 - (BOOL) _loadImageAtURL: (NSURL *)URL
                    error: (NSError **)outError
 {
     self.sourceURL = URL;
     
-    //Attempt to open the image at the source path
-    self.imageHandle = [NSFileHandle fileHandleForReadingFromURL: URL error: outError];
-    
     _handle = fopen(URL.path.fileSystemRepresentation, "r");
     
-    //If the image couldn't be loaded, bail out now
-    if (!self.imageHandle) return NO;
+    //If the image couldn't be opened for reading, bail out now
+    if (!_handle)
+    {
+        if (outError)
+        {
+            NSInteger posixError = errno;
+            NSDictionary *info = @{ NSURLErrorKey: URL };
+            *outError = [NSError errorWithDomain: NSPOSIXErrorDomain code: posixError userInfo: info];
+        }
+        return NO;
+    }
     
     //Search the volume descriptors to find the primary descriptor
-    BOOL foundDescriptor = [self _getPrimaryVolumeDescriptor: &_primaryVolumeDescriptor
-                                                       error: outError];
+    ADBISOPrimaryVolumeDescriptor descriptor;
     
-    //If we didn't find a primary descriptor amongst the volume descriptors, fail out
+    BOOL foundDescriptor = [self _getPrimaryVolumeDescriptor: &descriptor
+                                                       error: outError];
     if (!foundDescriptor) return NO;
     
-    //Parse the volume name from the primary descriptor
-    self.volumeName = [[[NSString alloc] initWithBytes: _primaryVolumeDescriptor.volumeID
+    //Sanity check: if the string "CD001" is present in the identifier of the primary volume descriptor,
+    //we can be pretty sure we have a real ISO on our hands and didn't just get this far by chance thanks
+    //to a junk file.
+    BOOL identifierFound = bcmp(descriptor.identifier, "CD001", 5) == 0;
+    if (!identifierFound)
+    {
+        if (outError)
+        {
+            NSDictionary *info = @{ NSURLErrorKey: URL };
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSFileReadCorruptFileError userInfo: info];
+        }
+        return NO;
+    }
+    
+    //If we got this far, then we succeeded in loading the image. Hurrah!
+    //Get on with parsing out whatever other info interests us from the primary volume descriptor.
+    
+    self.volumeName = [[[NSString alloc] initWithBytes: descriptor.volumeID
                                                 length: ADBISOVolumeIdentifierLength
                                               encoding: NSASCIIStringEncoding] autorelease];
     
-    //Prepare the path cache starting with the root directory file entry
+    //Prepare the path cache starting with the root directory file entry.
     ADBISODirectoryRecord rootDirectoryRecord;
-    memcpy(&rootDirectoryRecord, &_primaryVolumeDescriptor.rootDirectoryRecord, ADBISORootDirectoryRecordLength);
+    memcpy(&rootDirectoryRecord, &descriptor.rootDirectoryRecord, ADBISORootDirectoryRecordLength);
     ADBISOFileEntry *rootDirectory = [ADBISOFileEntry entryFromDirectoryRecord: rootDirectoryRecord inImage: self];
     
     self.pathCache = [NSMutableDictionary dictionaryWithObject: rootDirectory forKey: @"/"];
     
-    //If we got this far, then we succeeded in loading the image.
     return YES;
 }
 
@@ -445,10 +470,10 @@ int extdate_to_int(uint8_t *digits, int length)
     while (YES)
     {
         uint8_t type;
-        NSUInteger offset = (NSUInteger)[self _byteOffsetForSector: sectorIndex];
+        NSUInteger offset = [self _logicalOffsetForSector: sectorIndex];
         
         NSRange descriptorTypeRange = NSMakeRange(offset, sizeof(uint8_t));
-        BOOL readType = [self _getBytes: &type range: descriptorTypeRange error: outError];
+        BOOL readType = [self _getBytes: &type atLogicalRange: descriptorTypeRange error: outError];
         //Bail out if there was a read error or we hit the end of the file
         //(_getBytes:range:error: will have populated outError with the reason.)
         if (!readType)
@@ -458,7 +483,7 @@ int extdate_to_int(uint8_t *digits, int length)
         if (type == ADBISOVolumeDescriptorTypePrimary)
         {
             NSRange descriptorRange = NSMakeRange(offset, sizeof(ADBISOPrimaryVolumeDescriptor));
-            return [self _getBytes: descriptor range: descriptorRange error: outError];
+            return [self _getBytes: descriptor atLogicalRange: descriptorRange error: outError];
         }
         //If we hit the end of the descriptors without finding a primary volume descriptor,
         //this indicates an invalid/incomplete ISO image.
@@ -482,7 +507,9 @@ int extdate_to_int(uint8_t *digits, int length)
                                  error: (out NSError **)outError
 {
     //IMPLEMENTATION NOTE: should we uppercase files for saner comparison?
-    //The ISO-9660 format mandates that filenames should
+    //The ISO-9660 format mandates that filenames can only contain uppercase characters,
+    //but some nonstandard ISOs contain lowercase filenames which can cause problems for
+    //file lookups.
     
     NSAssert1(path != nil, @"No path provided to %@.", NSStringFromSelector(_cmd));
     
@@ -490,50 +517,57 @@ int extdate_to_int(uint8_t *digits, int length)
     if (![path hasPrefix: @"/"])
         path = [NSString stringWithFormat: @"/%@", path];
     
+    //If the path ends in a slash, strip it off - our paths are cached without trailing slashes.
+    if (path.length > 1 && [path hasSuffix: @"/"])
+        path = [path substringToIndex: path.length - 1];
+    
     //If we have a matching entry for this path, return it immediately.
     ADBISOFileEntry *matchingEntry = [self.pathCache objectForKey: path];
     
+    //Otherwise, walk backwards through the parent directories looking for one that is in the cache.
+    //Once we find one, add its children to the cache under their respective paths: and so on back up
+    //to the originally requsted path.
     if (!matchingEntry)
     {
-        //Otherwise, scan the parent entry (note recursion.)
         NSString *parentPath = path.stringByDeletingLastPathComponent;
         if (![parentPath isEqualToString: path])
         {
+            //Note recursion.
             ADBISODirectoryEntry *parentEntry = (ADBISODirectoryEntry *)[self _fileEntryAtPath: parentPath error: outError];
             
-            if (parentEntry)
-            {
-                if (parentEntry.isDirectory)
+            //If our parent is a file, not a directory, then we'll fail out without a matching entry.
+            if (parentEntry != (id)[NSNull null] && parentEntry.isDirectory)
+            {   
+                NSArray *siblingEntries = [parentEntry subentriesWithError: outError];
+                if (!siblingEntries)
+                    return nil;
+                
+                //Add the siblings into the cache and pluck out the one that matches us, if any
+                for (ADBISOFileEntry *sibling in siblingEntries)
                 {
-                    NSArray *siblingEntries = [parentEntry subentriesWithError: outError includingOlderVersions: NO];
-                    if (!siblingEntries)
-                        return nil;
+                    NSString *siblingPath = [parentPath stringByAppendingPathComponent: sibling.fileName];
+                    [self.pathCache setObject: sibling forKey: siblingPath];
                     
-                    //Add the siblings into the cache and pluck out the one that matches us, if any
-                    for (ADBISOFileEntry *sibling in siblingEntries)
-                    {
-                        //The first two entries correspond to . and .. and should be skipped.
-                        if ([sibling.fileName isEqualToString: @"\0"] || [sibling.fileName isEqualToString: @"\1"])
-                            continue;
-                            
-                        NSString *siblingPath = [parentPath stringByAppendingPathComponent: sibling.fileName];
-                        [self.pathCache setObject: sibling forKey: siblingPath];
-                        
-                        if ([siblingPath isEqualToString: path])
-                            matchingEntry = sibling;
-                    }
+                    if ([siblingPath isEqualToString: path])
+                        matchingEntry = sibling;
                 }
             }
         }
     }
     
-    if (matchingEntry)
+    if (matchingEntry && matchingEntry != (id)[NSNull null])
     {
         return matchingEntry;
     }
     else
     {
-        NSAssert1(NO, @"Path not found: %@", path);
+        //If no matching entry was found, record a null in the table so that we don't have to do an expensive
+        //lookup again for something we know isn't there.
+        if (!matchingEntry)
+        {
+            [self.pathCache setObject: [NSNull null] forKey: path];
+        }
+        
         if (outError)
         {
             NSDictionary *info = @{ NSURLErrorKey: [self.sourceURL URLByAppendingPathComponent: path] };
@@ -547,7 +581,7 @@ int extdate_to_int(uint8_t *digits, int length)
 {
     //The record size is the first byte of the file entry, which tells us how many bytes in total to parse in for the entry.
     uint8_t recordSize;
-    BOOL gotRecordSize = [self _getBytes: &recordSize range: NSMakeRange(byteOffset, sizeof(uint8_t)) error: outError];
+    BOOL gotRecordSize = [self _getBytes: &recordSize atLogicalRange: NSMakeRange(byteOffset, sizeof(uint8_t)) error: outError];
     if (gotRecordSize)
     {
         //Reported record size was too small, this may indicate a corrupt file record.
@@ -564,7 +598,7 @@ int extdate_to_int(uint8_t *digits, int length)
         NSRange recordRange = NSMakeRange(byteOffset, recordSize);
         ADBISODirectoryRecord record;
         
-        BOOL succeeded = [self _getBytes: &record range: recordRange error: outError];
+        BOOL succeeded = [self _getBytes: &record atLogicalRange: recordRange error: outError];
         if (succeeded)
         {
             return [ADBISOFileEntry entryFromDirectoryRecord: record
@@ -580,19 +614,17 @@ int extdate_to_int(uint8_t *digits, int length)
     NSUInteger offset = range.location;
     NSUInteger bytesToRead = range.length;
     NSUInteger readBytes = 0;
-    NSUInteger sectorPadding = _rawSectorSize - _sectorSize;
     
     NSMutableArray *entries = [NSMutableArray array];
     while (readBytes < bytesToRead)
     {
-        NSUInteger offsetWithinSector = [self _sectorOffsetForByteOffset: offset];
-        NSAssert1(offsetWithinSector <= _sectorSize, @"Requested byte offset falls within sector padding: %lu", (unsigned long)offset);
-        
+        NSUInteger offsetWithinSector = [self _logicalOffsetWithinSector: offset];
         NSUInteger bytesRemainingInSector = _sectorSize - offsetWithinSector;
         
         BOOL skipToNextSector = NO;
         
         //If there's not enough space remaining in the sector to fit another entry in, automatically skip to the next sector.
+        //CHECKME: are there any non-standard ISOs that span directory records across sector boundaries?
         if (bytesRemainingInSector < ADBISODirectoryRecordMinLength)
         {
             skipToNextSector = YES;
@@ -601,7 +633,7 @@ int extdate_to_int(uint8_t *digits, int length)
         else
         {
             uint8_t recordSize = 0;
-            BOOL gotRecordSize = [self _getBytes: &recordSize range: NSMakeRange(offset, sizeof(uint8_t)) error: outError];
+            BOOL gotRecordSize = [self _getBytes: &recordSize atLogicalRange: NSMakeRange(offset, sizeof(uint8_t)) error: outError];
             if (!gotRecordSize)
             {
                 return nil;
@@ -617,8 +649,6 @@ int extdate_to_int(uint8_t *digits, int length)
             //If the record indicates it would go over the end of the sector, treat this as a malformed record.
             else if (recordSize > bytesRemainingInSector)
             {
-                NSAssert1(NO, @"Reported length of record would go over sector boundary: %lu", (unsigned long)recordSize);
-
                 if (outError)
                 {
                     NSDictionary *info = @{ NSURLErrorKey: self.sourceURL };
@@ -632,7 +662,7 @@ int extdate_to_int(uint8_t *digits, int length)
             {
                 ADBISODirectoryRecord record;
                 NSRange recordRange = NSMakeRange(offset, recordSize);
-                BOOL retrievedRecord = [self _getBytes: &record range: recordRange error: outError];
+                BOOL retrievedRecord = [self _getBytes: &record atLogicalRange: recordRange error: outError];
                 if (retrievedRecord)
                 {
                     ADBISOFileEntry *entry = [ADBISOFileEntry entryFromDirectoryRecord: record inImage: self];
@@ -651,7 +681,7 @@ int extdate_to_int(uint8_t *digits, int length)
         if (skipToNextSector)
         {
             readBytes += bytesRemainingInSector;
-            offset += bytesRemainingInSector + sectorPadding;
+            offset += bytesRemainingInSector;
         }
     }
     
@@ -684,58 +714,66 @@ int extdate_to_int(uint8_t *digits, int length)
     {
         //Note: just assignment, not copying, as our parent image may cache
         //file entries and that would result in a retain cycle.
-        _parentImage = image;
+        self.parentImage = image;
         
         //If this record has extended attributes, they will be recorded at the start of the file extent
         //and the actual file data will be shoved into the next sector beyond this.
-        NSUInteger extendedAttributeSectors = 0;
+        NSUInteger numExtendedAttributeSectors = 0;
         if (record.extendedAttributeLength > 0)
-            extendedAttributeSectors = ceilf(record.extendedAttributeLength / (float)image.sectorSize);
+            numExtendedAttributeSectors = ceilf(record.extendedAttributeLength / (float)image.sectorSize);
             
 #if defined(__BIG_ENDIAN__)
-        _dataRange.location    = (NSUInteger)[image _byteOffsetForSector: record.extentLBALocationBigEndian + extendedAttributeSectors];
+        _dataRange.location    = (NSUInteger)[image _logicalOffsetForSector: record.extentLBALocationBigEndian + numExtendedAttributeSectors];
         _dataRange.length      = record.extentDataLengthBigEndian;
 #else
-        _dataRange.location    = (NSUInteger)[image _byteOffsetForSector: record.extentLBALocationLittleEndian + extendedAttributeSectors];
+        _dataRange.location    = (NSUInteger)[image _logicalOffsetForSector: record.extentLBALocationLittleEndian + numExtendedAttributeSectors];
         _dataRange.length      = record.extentDataLengthLittleEndian;
 #endif
         
-        //Parse the filename from the record
-        NSString *identifier = [[NSString alloc] initWithBytes: record.identifier
-                                                        length: record.identifierLength
-                                                      encoding: NSASCIIStringEncoding];
-        
-        if (self.isDirectory)
-        {
-            self.fileName = identifier;
-        }
+        if (record.identifierLength == 0)
+            self.fileName = @""; //Should never occur
+        else if (record.identifierLength == 1 && record.identifier[0] == '\0')
+            self.fileName = @".";
+        else if (record.identifierLength == 1 && record.identifier[0] == '\1')
+            self.fileName = @"..";
         else
         {
-            //ISO9660 filenames are stored in the format "FILENAME.EXE;1",
-            //where the last component marks the version number of the file.
-            NSArray *identifierComponents = [identifier componentsSeparatedByString: @";"];
+            NSString *identifier = [[NSString alloc] initWithBytes: record.identifier
+                                                            length: record.identifierLength
+                                                          encoding: NSASCIIStringEncoding];
             
-            self.fileName   = [identifierComponents objectAtIndex: 0];
-            
-            //Some ISOs dispense with the version number altogether,
-            //even though it's required by the spec.
-            if (identifierComponents.count > 1)
+            if (self.isDirectory)
             {
-                self.version = [(NSString *)[identifierComponents objectAtIndex: 1] integerValue];
+                self.fileName = identifier;
             }
             else
             {
-                self.version = 1;
+                //ISO9660 filenames are stored in the format "FILENAME.EXE;1",
+                //where the last component marks the version number of the file.
+                NSArray *identifierComponents = [identifier componentsSeparatedByString: @";"];
+                
+                self.fileName   = [identifierComponents objectAtIndex: 0];
+                
+                //Some ISOs dispense with the version number altogether,
+                //even though it's required by the spec.
+                if (identifierComponents.count > 1)
+                {
+                    self.version = [(NSString *)[identifierComponents objectAtIndex: 1] integerValue];
+                }
+                else
+                {
+                    self.version = 1;
+                }
+                
+                //Under ISO9660 spec, filenames will always have a file-extension dot even
+                //if they have no extension. Strip off the trailing dot now.
+                //CONFIRM: is this consistent with what ISO9660 consumers expect?
+                if ([self.fileName hasSuffix: @"."])
+                    self.fileName = self.fileName.stringByDeletingPathExtension;
             }
-            //Under ISO9660 spec, filenames will always have a file-extension dot even
-            //if they have no extension. Strip off the trailing dot now.
-            //CONFIRM: is this consistent with what ISO9660 consumers expect?
-            if ([self.fileName hasSuffix: @"."])
-                self.fileName = self.fileName.stringByDeletingPathExtension;
+            
+            [identifier release];
         }
-        
-        [identifier release];
-        
         
         self.creationDate = [ADBISOImage _dateFromDateTime: record.recordingTime];
     }
@@ -776,6 +814,11 @@ int extdate_to_int(uint8_t *digits, int length)
     return attrs;
 }
 
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ (%@)", self.class, self.fileName];
+}
+
 @end
 
 
@@ -794,32 +837,39 @@ int extdate_to_int(uint8_t *digits, int length)
 }
 
 - (NSArray *) subentriesWithError: (out NSError **)outError
-           includingOlderVersions: (BOOL)includeOlderVersions
 {
     //Populate the records the first time they are needed.
     if (!self.cachedSubentries)
     {
-        self.cachedSubentries = [[_parentImage _fileEntriesInRange: _dataRange error: outError] retain];
+        NSArray *subEntries = [self.parentImage _fileEntriesInRange: _dataRange error: outError];
+        if (subEntries)
+        {
+            //Filter the entries to eliminate older versions of the same filename,
+            //and to strip out . and .. entries.
+            NSMutableDictionary *subentriesByFilename = [[NSMutableDictionary alloc] initWithCapacity: subEntries.count];
+            for (ADBISOFileEntry *entry in subEntries)
+            {
+                if ([entry.fileName isEqualToString: @"."] || [entry.fileName isEqualToString: @".."])
+                {
+                    continue;
+                }
+                
+                //Strip out older versions of files, preserving only the latest recorded versions.
+                ADBISOFileEntry *existingEntry = [subentriesByFilename objectForKey: entry.fileName];
+                if (!existingEntry || existingEntry.version < entry.version)
+                    [subentriesByFilename setObject: entry forKey: entry.fileName];
+            }
+            
+            //The ISO will have (should have) ordered the entries by filename, but our NSDictionary
+            //will have mixed them up again. Sort them again as a courtesy.
+            NSComparator sortByFilename = ^NSComparisonResult(ADBISOFileEntry *file1, ADBISOFileEntry *file2) {
+                return [file1.fileName caseInsensitiveCompare: file2.fileName];
+            };
+            self.cachedSubentries = [subentriesByFilename.allValues sortedArrayUsingComparator: sortByFilename];
+        }
     }
     
-    if (includeOlderVersions)
-    {
-        return self.cachedSubentries;
-    }
-    else
-    {
-        //Filter the entries to eliminate older versions of the same filename.
-        //TODO: should we cache this?
-        NSMutableDictionary *subentriesByFilename = [[NSMutableDictionary alloc] initWithCapacity: self.cachedSubentries.count];
-        for (ADBISOFileEntry *entry in self.cachedSubentries)
-        {
-            ADBISOFileEntry *existingEntry = [subentriesByFilename objectForKey: entry.fileName];
-            if (!existingEntry || existingEntry.version < entry.version)
-                [subentriesByFilename setObject: entry forKey: entry.fileName];
-        }
-        
-        return subentriesByFilename.allValues;
-    }
+    return self.cachedSubentries;
 }
 
 - (NSData *) contentsWithError: (NSError **)outError
@@ -827,5 +877,6 @@ int extdate_to_int(uint8_t *digits, int length)
     NSAssert(NO, @"Attempted to retrieve contents of directory.");
     return nil;
 }
+
 @end
 

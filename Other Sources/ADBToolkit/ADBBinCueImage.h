@@ -37,21 +37,21 @@
     
 //Returns an array of dependent file paths in the specified CUE,
 //as absolute OS X filesystem paths resolved relative to the CUE.
-+ (NSArray *) resourcePathsInCueAtPath: (NSString *)cuePath error: (NSError **)outError;
++ (NSArray *) resourcePathsInCueAtPath: (NSString *)cuePath error: (out NSError **)outError;
 
 //Returns the path of the binary image for the specified CUE file,
 //or nil if such could not be determined.
-+ (NSString *) binPathInCueAtPath: (NSString *)cuePath error: (NSError **)outError;
++ (NSString *) binPathInCueAtPath: (NSString *)cuePath error: (out NSError **)outError;
 
 //Returns an array of dependent file paths in the specified CUE,
 //in the exact form they are written.
-+ (NSArray *) rawPathsInCueAtPath: (NSString *)cuePath error: (NSError **)outError;
++ (NSArray *) rawPathsInCueAtPath: (NSString *)cuePath error: (out NSError **)outError;
 
 //Given a string representing, returns the raw paths in the exact form they are written.
 + (NSArray *) rawPathsInCueContents: (NSString *)cueContents;
 
 //Returns YES if the specified path contains a parseable cue file, NO otherwise.
 //Populates outError if there is a problem accessing the file.
-+ (BOOL) isCueAtPath: (NSString *)cuePath error: (NSError **)outError;
++ (BOOL) isCueAtPath: (NSString *)cuePath error: (out NSError **)outError;
 
 @end

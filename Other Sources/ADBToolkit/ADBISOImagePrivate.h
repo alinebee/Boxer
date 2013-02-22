@@ -28,7 +28,7 @@
 
 
 #import "ADBISOImage.h"
-
+#import "ADBFilesystem.h"
 
 #pragma mark -
 #pragma mark Private method declarations
@@ -38,7 +38,7 @@
 
 @interface ADBISOImage ()
 
-@property (copy, nonatomic) NSURL *sourceURL;
+@property (copy, nonatomic) NSURL *baseURL;
 @property (copy, nonatomic) NSString *volumeName;
 
 @property (retain, nonatomic) NSMutableDictionary *pathCache;
@@ -120,6 +120,7 @@
     NSUInteger _version;
     __unsafe_unretained ADBISOImage *_parentImage;
     NSDate *_creationDate;
+    BOOL _hidden;
 }
 
 #pragma mark -
@@ -128,10 +129,14 @@
 //Returns the filename of the entry. File entries are not path-aware.
 @property (copy, nonatomic) NSString *fileName;
 
+//The ISO9660 version of this file.
 @property (assign, nonatomic) NSUInteger version;
 
 //Returns the filesize in bytes of the file at the specified path.
 @property (readonly, nonatomic) uint32_t fileSize;
+
+//Whether this file is marked as hidden in its metadata.
+@property (assign, nonatomic, getter=isHidden) BOOL hidden;
 
 //The standard file attributes of this file.
 //Equivalent to the output of NSFileManager's attributesOfFileAtPath:.
@@ -177,4 +182,47 @@
 //Returns nil and populates outError if the records could not be read.
 - (NSArray *) subentriesWithError: (out NSError **)outError;
 
+@end
+
+
+
+@interface ADBISOEnumerator : NSEnumerator
+{
+    ADBISOImage *_parentImage;
+    NSMutableArray *_tree;
+    NSIndexPath *_treePositions;
+    NSString *_currentPath;
+    BOOL _skipDescendants;
+    BOOL _exhausted;
+    BOOL _hasReturnedDirectory;
+    NSDirectoryEnumerationOptions _enumerationOptions;
+    ADBFilesystemEnumeratorErrorHandler _errorHandler;
+}
+
+//The image which this enumerator is iterating.
+@property (assign, nonatomic) ADBISOImage *parentImage;
+
+//The directory tree we are iterating. Each 'level' of the tree is stored as a separate NSArray.
+//Levels are pushed into and popped from the tree as we descend into subdirectories, exhaust them
+//and move back to the parent directory.
+@property (retain, nonatomic) NSMutableArray *tree;
+
+//Our current offset within each nested array of the tree. Incremented as we enumerate.
+@property (retain, nonatomic) NSIndexPath *treePositions;
+
+//The filesystem path of the directory we are currently iterating.
+@property (copy, nonatomic) NSString *currentPath;
+
+//The error handler to call when we encounter errors traversing the directory structure.
+@property (copy, nonatomic) ADBFilesystemEnumeratorErrorHandler errorHandler;
+
+@property (readonly, nonatomic) NSDirectoryEnumerationOptions enumerationOptions;
+
+- (void) skipDescendants;
+- (NSUInteger) level;
+
+- (id) initWithPath: (NSString *)path
+        parentImage: (ADBISOImage *)image
+            options: (NSDirectoryEnumerationOptions)enumerationOptions
+       errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler;
 @end

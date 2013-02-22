@@ -46,7 +46,8 @@ int extdate_to_int(uint8_t *digits, int length)
 
 
 @implementation ADBISOImage
-@synthesize sourceURL = _sourceURL;
+
+@synthesize baseURL = _baseURL;
 @synthesize volumeName = _volumeName;
 @synthesize pathCache = _pathCache;
 @synthesize sectorSize = _sectorSize;
@@ -130,15 +131,14 @@ int extdate_to_int(uint8_t *digits, int length)
         _handle = NULL;
     }
     
-    self.sourceURL = nil;
+    self.baseURL = nil;
     self.volumeName = nil;
     self.pathCache = nil;
     [super dealloc];
 }
 
 
-#pragma mark -
-#pragma mark Public API
+#pragma mark - Path-based API
 
 - (BOOL) fileExistsAtPath: (NSString *)path isDirectory: (BOOL *)isDir
 {
@@ -173,8 +173,7 @@ int extdate_to_int(uint8_t *digits, int length)
     {
         if (outError)
         {
-            NSURL *fileURL = [self.sourceURL URLByAppendingPathComponent: path];
-            NSDictionary *info = @{ NSURLErrorKey: fileURL };
+            NSDictionary *info = @{ NSFilePathErrorKey: path };
             
             //TODO: check what error Cocoa's own file-read methods produce when you pass them a directory.
             *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
@@ -186,11 +185,14 @@ int extdate_to_int(uint8_t *digits, int length)
     return [entry contentsWithError: outError];
 }
 
-- (id <ADBFilesystemEnumerator>) enumeratorAtPath: (NSString *)path
-                                            error: (NSError **)outError
+- (ADBISOEnumerator *) enumeratorAtPath: (NSString *)path
+                                options: (NSDirectoryEnumerationOptions)mask
+                           errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler
 {
-    NSAssert(NO, @"Not yet implemented.");
-    return nil;
+    return [[[ADBISOEnumerator alloc] initWithPath: path
+                                       parentImage: self
+                                           options: mask
+                                      errorHandler: errorHandler] autorelease];
 }
 
 - (NSArray *) contentsOfDirectoryAtPath: (NSString *)path
@@ -260,7 +262,6 @@ int extdate_to_int(uint8_t *digits, int length)
         return nil;
     }
 }
-
 
 #pragma mark - Low-level filesystem API
 
@@ -338,7 +339,7 @@ int extdate_to_int(uint8_t *digits, int length)
             if (outError)
             {
                 NSInteger errorCode = errno;
-                NSDictionary *info = @{ NSURLErrorKey: self.sourceURL };
+                NSDictionary *info = @{ NSURLErrorKey: self.baseURL };
                 *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
                                                 code: errorCode
                                             userInfo: info];
@@ -352,8 +353,9 @@ int extdate_to_int(uint8_t *digits, int length)
         {
             if (outError)
             {
-                NSDictionary *info = @{ NSURLErrorKey: self.sourceURL };
+                NSDictionary *info = @{ NSURLErrorKey: self.baseURL };
                 NSInteger errorCode = ferror(_handle);
+                
                 //We encountered an honest-to-god POSIX error occurred while reading
                 if (errorCode != 0)
                 {
@@ -404,7 +406,7 @@ int extdate_to_int(uint8_t *digits, int length)
 - (BOOL) _loadImageAtURL: (NSURL *)URL
                    error: (NSError **)outError
 {
-    self.sourceURL = URL;
+    self.baseURL = URL;
     
     _handle = fopen(URL.path.fileSystemRepresentation, "r");
     
@@ -491,7 +493,7 @@ int extdate_to_int(uint8_t *digits, int length)
         {
             if (outError)
             {
-                NSDictionary *info = @{ NSURLErrorKey: self.sourceURL };
+                NSDictionary *info = @{ NSURLErrorKey: self.baseURL };
                 *outError = [NSError errorWithDomain: NSCocoaErrorDomain
                                                 code: NSFileReadCorruptFileError
                                             userInfo: info];
@@ -570,7 +572,7 @@ int extdate_to_int(uint8_t *digits, int length)
         
         if (outError)
         {
-            NSDictionary *info = @{ NSURLErrorKey: [self.sourceURL URLByAppendingPathComponent: path] };
+            NSDictionary *info = @{ NSFilePathErrorKey: path };
             *outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSFileNoSuchFileError userInfo: info];
         }
         return nil;
@@ -589,7 +591,7 @@ int extdate_to_int(uint8_t *digits, int length)
         {
             if (outError)
             {
-                NSDictionary *info = @{ NSURLErrorKey: self.sourceURL };
+                NSDictionary *info = @{ NSURLErrorKey: self.baseURL };
                 *outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSFileReadCorruptFileError userInfo: info];
             }
             return nil;
@@ -651,7 +653,7 @@ int extdate_to_int(uint8_t *digits, int length)
             {
                 if (outError)
                 {
-                    NSDictionary *info = @{ NSURLErrorKey: self.sourceURL };
+                    NSDictionary *info = @{ NSURLErrorKey: self.baseURL };
                     *outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSFileReadCorruptFileError userInfo: info];
                 }
                 return nil;
@@ -697,6 +699,7 @@ int extdate_to_int(uint8_t *digits, int length)
 @synthesize version = _version;
 @synthesize creationDate = _creationDate;
 @synthesize parentImage = _parentImage;
+@synthesize hidden = _hidden;
 
 + (id) entryFromDirectoryRecord: (ADBISODirectoryRecord)record
                         inImage: (ADBISOImage *)image
@@ -776,6 +779,7 @@ int extdate_to_int(uint8_t *digits, int length)
         }
         
         self.creationDate = [ADBISOImage _dateFromDateTime: record.recordingTime];
+        self.hidden = (record.fileFlags & ADBISOFileIsHidden) == ADBISOFileIsHidden;
     }
     return self;
 }
@@ -880,3 +884,212 @@ int extdate_to_int(uint8_t *digits, int length)
 
 @end
 
+
+@implementation ADBISOEnumerator
+@synthesize parentImage = _parentImage;
+@synthesize treePositions = _treePositions;
+@synthesize tree = _tree;
+@synthesize currentPath = _currentPath;
+@synthesize errorHandler = _errorHandler;
+@synthesize enumerationOptions = _enumerationOptions;
+
+- (id) initWithPath: (NSString *)path
+        parentImage: (ADBISOImage *)image
+            options: (NSDirectoryEnumerationOptions)enumerationOptions
+       errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler
+{
+    self = [self init];
+    if (self)
+    {
+        NSError *error;
+        ADBISODirectoryEntry *entryAtPath = (ADBISODirectoryEntry *)[image _fileEntryAtPath: path error: &error];
+        if (entryAtPath)
+        {
+            if (entryAtPath.isDirectory)
+            {
+                NSArray *subpaths = [entryAtPath subentriesWithError: &error];
+                if (subpaths)
+                {
+                    //Start the enumerator off at the first file entry within this directory.
+                    self.tree = [NSMutableArray arrayWithObject: subpaths];
+                    self.treePositions = [NSIndexPath indexPathWithIndex: 0];
+                    
+                    self.currentPath = path;
+                    self.parentImage = image;
+                    _enumerationOptions = enumerationOptions;
+                }
+                else
+                {
+                    if (errorHandler)
+                    {
+                        NSURL *URL = [self.parentImage.baseURL URLByAppendingPathComponent: path];
+                        errorHandler(URL, error);
+                    }
+                    
+                    [self release];
+                    self = nil;
+                }
+            }
+            //User tried to enumerate a file: return an empty enumerator
+            //(this behaviour is consistent with NSFileManager enumeratorAtPath:.) 
+            else
+            {
+                _exhausted = YES;
+            }
+        }
+        else
+        {
+            if (errorHandler)
+            {
+                NSURL *URL = [self.parentImage.baseURL URLByAppendingPathComponent: path];
+                errorHandler(URL, error);
+            }
+            
+            [self release];
+            self = nil;
+        }
+    }
+    return self;
+}
+
+- (void) dealloc
+{
+    self.parentImage = nil;
+    self.treePositions = nil;
+    self.tree = nil;
+    self.currentPath = nil;
+    self.errorHandler = nil;
+    
+    [super dealloc];
+}
+
+- (id) nextObject
+{
+    if (_exhausted)
+        return nil;
+    
+    while (YES)
+    {
+        NSUInteger currentLevel = self.treePositions.length - 1;
+        NSArray *currentDirectory = [self.tree objectAtIndex: currentLevel];
+        NSUInteger currentIndex = [self.treePositions indexAtPosition: currentLevel];
+        NSAssert2(currentIndex != NSNotFound, @"Tree positions %@ out of sync with tree %@.", self.treePositions, self.tree);
+        
+        //If we're within the bounds of this directory, return the next file entry.
+        if (currentIndex < currentDirectory.count)
+        {
+            ADBISOFileEntry *currentEntry = [currentDirectory objectAtIndex: currentIndex];
+            
+            if ((_enumerationOptions & NSDirectoryEnumerationSkipsHiddenFiles) && currentEntry.isHidden)
+            {
+                self.treePositions = [[self.treePositions indexPathByRemovingLastIndex] indexPathByAddingIndex: currentIndex + 1];
+                continue;
+            }
+            else
+            {
+                NSString *currentEntryPath = [self.currentPath stringByAppendingPathComponent: currentEntry.fileName];
+                
+                BOOL isDir = currentEntry.isDirectory;
+                
+                //If this file entry is a subdirectory and we've already returned its base path,
+                //then descend into the subdirectory and return the first result within.
+                if (isDir && _hasReturnedDirectory)
+                {
+                    _hasReturnedDirectory = NO;
+                    
+                    //Bump the index for this level of the tree before descending, so that when
+                    //we return from this subdirectory we'll move on to the next element.
+                    self.treePositions = [[self.treePositions indexPathByRemovingLastIndex] indexPathByAddingIndex: currentIndex + 1];
+                    
+                    if (!_skipDescendants && !(_enumerationOptions & NSDirectoryEnumerationSkipsSubdirectoryDescendants))
+                    {
+                        NSError *error;
+                        NSArray *subpaths = [(ADBISODirectoryEntry *)currentEntry subentriesWithError: &error];
+                        if (subpaths.count)
+                        {
+                            [self.tree addObject: subpaths];
+                            self.treePositions = [self.treePositions indexPathByAddingIndex: 0];
+                            self.currentPath = currentEntryPath;
+                            
+                            //Loop around and begin enumerating the new subdirectory.
+                            continue;
+                        }
+                        else if (!subpaths)
+                        {
+                            BOOL shouldContinue = NO;
+                            if (self.errorHandler)
+                            {
+                                NSURL *URL = [self.parentImage.baseURL URLByAppendingPathComponent: currentEntryPath];
+                                shouldContinue = self.errorHandler(URL, error);
+                            }
+                            
+                            //If the error handler says it's ok to continue after this error,
+                            //then go ahead and enumerate the next path. Otherwise, fail out.
+                            if (shouldContinue)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                return nil;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _skipDescendants = NO;
+                    }
+                }
+                else
+                {
+                    NSAssert(_hasReturnedDirectory == NO, @"Somehow got here with _hasReturnedDirectory flag still active.");
+                    _skipDescendants = NO;
+                    
+                    //If this is a directory, flag that we've returned its path but keep the index pointed at it
+                    //so that on the next iteration we'll descend into it.
+                    if (isDir)
+                    {
+                        _hasReturnedDirectory = YES;
+                    }
+                    //Otherwise, move on to the next entry next time.
+                    else
+                    {
+                        self.treePositions = [[self.treePositions indexPathByRemovingLastIndex] indexPathByAddingIndex: currentIndex + 1];
+                    }
+                    
+                    return currentEntryPath;
+                }
+            }
+        }
+        
+        //If we've run out of entries in this subdirectory, drop one level back and continue the enumeration.
+        else if (currentLevel > 0)
+        {
+            [self.tree removeLastObject];
+            self.treePositions = self.treePositions.indexPathByRemovingLastIndex;
+            self.currentPath = self.currentPath.stringByDeletingLastPathComponent;
+            
+            continue;
+        }
+        
+        //If we're already back at the root directory and have no more entries, then stop enumerating altogether.
+        else
+        {
+            _exhausted = YES;
+            return nil;
+        }
+    }
+}
+
+- (NSUInteger) level
+{
+    //TODO: confirm that NSDirectoryEnumerator returns 1 for items in the base directory
+    return self.treePositions.length;
+}
+
+- (void) skipDescendants
+{
+    _skipDescendants = YES;
+}
+
+@end

@@ -52,18 +52,18 @@ typedef BOOL (^ADBFilesystemEnumeratorErrorHandler)(NSURL *url, NSError *error);
 
 //Deletes the file or directory at the specified URL.
 //Returns YES if the operation was successful, or NO and populates outError on failure.
-- (BOOL) removeItemAtURL: (NSURL *)URL error: (NSError **)outError;
+- (BOOL) removeItemAtURL: (NSURL *)URL error: (out NSError **)outError;
 
 //Copy/move an item from the specified source URL to the specified destination.
 //Returns YES if the operation was successful, or NO and populates outError on failure.
-- (BOOL) copyItemAtURL: (NSURL *)fromURL toURL: (NSURL *)toURL error: (NSError **)outError;
-- (BOOL) moveItemAtURL: (NSURL *)fromURL toURL: (NSURL *)toURL error: (NSError **)outError;
+- (BOOL) copyItemAtURL: (NSURL *)fromURL toURL: (NSURL *)toURL error: (out NSError **)outError;
+- (BOOL) moveItemAtURL: (NSURL *)fromURL toURL: (NSURL *)toURL error: (out NSError **)outError;
 
 //Creates a new directory at the specified URL, optionally creating any missing directories in-between.
 //Returns YES if the directory or directories were created, or NO on failure.
 - (BOOL) createDirectoryAtURL: (NSURL *)URL
   withIntermediateDirectories: (BOOL)createIntermediates
-                        error: (NSError **)outError;
+                        error: (out NSError **)outError;
 
 @end
 
@@ -80,7 +80,7 @@ typedef BOOL (^ADBFilesystemEnumeratorErrorHandler)(NSURL *url, NSError *error);
 //Returns NULL and populates outError on failure.
 - (FILE *) openFileAtURL: (NSURL *)URL
                   inMode: (const char *)accessMode
-                   error: (NSError **)outError;
+                   error: (out NSError **)outError;
 
 @end
 

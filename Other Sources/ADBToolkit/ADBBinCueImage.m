@@ -74,7 +74,7 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
 	return paths;
 }
 
-+ (NSArray *) rawPathsInCueAtPath: (NSString *)cuePath error: (NSError **)outError
++ (NSArray *) rawPathsInCueAtPath: (NSString *)cuePath error: (out NSError **)outError
 {
     NSString *cueContents = [[NSString alloc] initWithContentsOfFile: cuePath
                                                         usedEncoding: NULL
@@ -88,7 +88,7 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
     return paths;
 }
 
-+ (NSArray *) resourcePathsInCueAtPath: (NSString *)cuePath error: (NSError **)outError
++ (NSArray *) resourcePathsInCueAtPath: (NSString *)cuePath error: (out NSError **)outError
 {
     NSArray *rawPaths = [self rawPathsInCueAtPath: cuePath error: outError];
     if (!rawPaths) return nil;
@@ -114,7 +114,7 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
     return resolvedPaths;
 }
 
-+ (NSString *) binPathInCueAtPath: (NSString *)cuePath error: (NSError **)outError
++ (NSString *) binPathInCueAtPath: (NSString *)cuePath error: (out NSError **)outError
 {
     NSArray *resolvedPaths = [self resourcePathsInCueAtPath: cuePath error: outError];
     if (![resolvedPaths count]) return nil;
@@ -124,7 +124,7 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
     return [resolvedPaths objectAtIndex: 0];
 }
 
-+ (BOOL) isCueAtPath: (NSString *)cuePath error: (NSError **)outError
++ (BOOL) isCueAtPath: (NSString *)cuePath error: (out NSError **)outError
 {
     NSFileManager *manager = [NSFileManager defaultManager];
     
@@ -160,7 +160,7 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
 }
 
 - (BOOL) _loadImageAtURL: (NSURL *)URL
-                   error: (NSError **)outError
+                   error: (out NSError **)outError
 {
     //Load the BIN part of the cuesheet
     if ([self.class isCueAtPath: URL.path error: outError])

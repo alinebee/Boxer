@@ -30,17 +30,16 @@
 
 #import <Foundation/Foundation.h>
 #import "ADBISOImageConstants.h"
+#import "ADBFilesystem.h"
 
 
 #pragma mark -
 #pragma mark Public interface
 
-
-@protocol ADBFilesystemEnumerator;
 @interface ADBISOImage : NSObject
 {
     FILE *_handle;
-    NSURL *_sourceURL;
+    NSURL *_baseURL;
     NSString *_volumeName;
     
     NSUInteger _sectorSize;
@@ -52,7 +51,8 @@
 }
 
 //The filesystem location of the image file from which this is loaded.
-@property (readonly, copy, nonatomic) NSURL *sourceURL;
+//This is also used as the base URL for image-relative URLs.
+@property (readonly, copy, nonatomic) NSURL *baseURL;
 
 //The name of the image volume.
 @property (readonly, copy, nonatomic) NSString *volumeName;
@@ -62,11 +62,11 @@
 
 //Return an image loaded from the image file at the specified source URL.
 //Returns nil and populates outError if the specified image could not be read.
-+ (id) imageWithContentsOfURL: (NSURL *)sourceURL error: (out NSError **)outError;
-- (id) initWithContentsOfURL: (NSURL *)sourceURL error: (out NSError **)outError;
++ (id) imageWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
+- (id) initWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
 
 
-#pragma mark - Filesystem access
+#pragma mark - Filesystem access: path-based API
 
 - (BOOL) fileExistsAtPath: (NSString *)path isDirectory: (BOOL *)isDir;
 
@@ -86,10 +86,11 @@
 //of this image, starting at the specified file path relative to the root of the image.
 //Returns nil and populates outError if the specified path could not be accessed.
 - (id <ADBFilesystemEnumerator>) enumeratorAtPath: (NSString *)path
-                                            error: (out NSError **)outError;
+                                          options: (NSDirectoryEnumerationOptions)mask
+                                     errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler;
 
-- (NSArray *)subpathsOfDirectoryAtPath: (NSString *)path
-                                 error: (out NSError **)outError;
+- (NSArray *) subpathsOfDirectoryAtPath: (NSString *)path
+                                  error: (out NSError **)outError;
 
 - (NSArray *) contentsOfDirectoryAtPath: (NSString *)path
                                   error: (out NSError **)outError;

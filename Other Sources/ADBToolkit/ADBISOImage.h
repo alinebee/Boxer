@@ -28,6 +28,14 @@
 //It provides information about the structure of the image and allows its contents to be
 //iterated and extracted.
 
+//TODOS:
+// - Support multi-session images
+// - POSIX streams for individual files on the image
+// - More disc metadata (abstract name, etc.)
+// - Better handling of nonstandard image layouts (MODE2, raw)
+// - Handling of Logical Block Address sizes other than 2048
+
+
 #import <Foundation/Foundation.h>
 #import "ADBISOImageConstants.h"
 #import "ADBFilesystem.h"

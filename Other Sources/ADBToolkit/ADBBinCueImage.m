@@ -165,6 +165,7 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
     //Load the BIN part of the cuesheet
     if ([self.class isCueAtPath: URL.path error: outError])
     {
+        //TODO: check the mode from the cue-sheet and populate the sector size and lead-in appropriately
         NSString *binPath = [self.class binPathInCueAtPath: URL.path error: outError];
         if (binPath)
         {

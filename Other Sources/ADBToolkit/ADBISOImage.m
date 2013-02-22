@@ -850,7 +850,7 @@ int extdate_to_int(uint8_t *digits, int length)
         {
             //Filter the entries to eliminate older versions of the same filename,
             //and to strip out . and .. entries.
-            NSMutableDictionary *subentriesByFilename = [[NSMutableDictionary alloc] initWithCapacity: subEntries.count];
+            NSMutableDictionary *subentriesByFilename = [NSMutableDictionary dictionaryWithCapacity: subEntries.count];
             for (ADBISOFileEntry *entry in subEntries)
             {
                 if ([entry.fileName isEqualToString: @"."] || [entry.fileName isEqualToString: @".."])

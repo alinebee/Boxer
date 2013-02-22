@@ -508,6 +508,9 @@
         if (succeeded)
             openedAnyFiles = YES;
     }
+    
+    [appIdentifiersAndURLs release];
+    
     return openedAnyFiles;
 }
 

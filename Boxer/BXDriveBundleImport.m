@@ -50,7 +50,8 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	if ([workspace file: drive.path matchesTypes: cueTypes]) return YES;
     
     //If the file can be parsed as a CUE, treat it as a match too (catches renamed GOG images.)
-    if ([ADBBinCueImage isCueAtPath: drive.path error: nil]) return YES;
+    NSURL *sourceURL = [NSURL fileURLWithPath: drive.path];
+    if ([ADBBinCueImage isCueAtURL: sourceURL error: NULL]) return YES;
 
 	return NO;
 }

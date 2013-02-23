@@ -44,9 +44,7 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
 
 @implementation ADBBinCueImage
 
-
-#pragma mark -
-#pragma mark Helper class methods
+#pragma mark - Helper class methods
 
 + (NSArray *) rawPathsInCueContents: (NSString *)cueContents
 {
@@ -74,29 +72,22 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
 	return paths;
 }
 
-+ (NSArray *) rawPathsInCueAtPath: (NSString *)cuePath error: (out NSError **)outError
++ (NSArray *) resourceURLsInCueAtURL: (NSURL *)cueURL error: (out NSError **)outError
 {
-    NSString *cueContents = [[NSString alloc] initWithContentsOfFile: cuePath
-                                                        usedEncoding: NULL
-                                                               error: outError];
+    NSString *cueContents = [[NSString alloc] initWithContentsOfURL: cueURL
+                                                       usedEncoding: NULL
+                                                              error: outError];
 	
-    if (!cueContents) return nil;
+    if (!cueContents)
+        return nil;
     
-    NSArray *paths = [self rawPathsInCueContents: cueContents];
+    NSArray *rawPaths = [self rawPathsInCueContents: cueContents];
     [cueContents release];
     
-    return paths;
-}
-
-+ (NSArray *) resourcePathsInCueAtPath: (NSString *)cuePath error: (out NSError **)outError
-{
-    NSArray *rawPaths = [self rawPathsInCueAtPath: cuePath error: outError];
-    if (!rawPaths) return nil;
+    //The URL relative to which we will resolve the paths in the CUE
+    NSURL *baseURL = cueURL.URLByDeletingLastPathComponent;
     
-    //The path relative to which we will resolve the paths in the CUE
-    NSString *basePath = [cuePath stringByDeletingLastPathComponent];
-    
-    NSMutableArray *resolvedPaths = [NSMutableArray arrayWithCapacity: [rawPaths count]];
+    NSMutableArray *resolvedURLs = [NSMutableArray arrayWithCapacity: rawPaths.count];
     for (NSString *rawPath in rawPaths)
     {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -104,48 +95,60 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
         //Rewrite Windows-style paths
         NSString *normalizedPath = [rawPath stringByReplacingOccurrencesOfString: @"\\" withString: @"/"];
         
-        //Form an absolute path with all symlinks and ../ components fully resolved.
-        NSString *resolvedPath	= [[basePath stringByAppendingPathComponent: normalizedPath] stringByStandardizingPath];
+        //Form an absolute path with all ../ components resolved.
+        NSURL *resourceURL = [baseURL URLByAppendingPathComponent: normalizedPath].URLByStandardizingPath;
         
-        [resolvedPaths addObject: resolvedPath];
+        [resolvedURLs addObject: resourceURL];
         
         [pool drain];
     }
-    return resolvedPaths;
+    return resolvedURLs;
 }
 
-+ (NSString *) binPathInCueAtPath: (NSString *)cuePath error: (out NSError **)outError
++ (NSURL *) dataImageURLInCueAtURL: (NSURL *)cueURL error: (out NSError **)outError
 {
-    NSArray *resolvedPaths = [self resourcePathsInCueAtPath: cuePath error: outError];
-    if (![resolvedPaths count]) return nil;
+    NSArray *resolvedURLs = [self resourceURLsInCueAtURL: cueURL error: outError];
+    if (!resolvedURLs.count) return nil;
     
     //Assume the first entry in the CUE file is always the binary image.
     //(This is not always true, and we should do more in-depth scanning.)
-    return [resolvedPaths objectAtIndex: 0];
+    return [resolvedURLs objectAtIndex: 0];
 }
 
-+ (BOOL) isCueAtPath: (NSString *)cuePath error: (out NSError **)outError
++ (BOOL) isCueAtURL: (NSURL *)cueURL error: (out NSError **)outError
 {
-    NSFileManager *manager = [NSFileManager defaultManager];
+    if (![cueURL checkResourceIsReachableAndReturnError: outError])
+        return NO;
     
-    BOOL isDir, exists = [manager fileExistsAtPath: cuePath isDirectory: &isDir];
-    //TODO: populate outError
-    if (!exists || isDir) return NO;
+    NSNumber *fileSizeValue;
+    BOOL checkedSize = [cueURL getResourceValue: &fileSizeValue forKey: NSURLFileSizeKey error: outError];
+    if (!checkedSize)
+        return NO;
     
-    unsigned long long fileSize = [[manager attributesOfItemAtPath: cuePath error: outError] fileSize];
+    //If the specified file appears to be too large, assume it can't be a CUE file and bail out
+    unsigned long long fileSize = fileSizeValue.unsignedLongLongValue;
+    if (fileSize == 0 || fileSize > ADBCueMaxFileSize)
+    {
+        if (outError)
+        {
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                            code: NSFileReadTooLargeError
+                                        userInfo: @{ NSURLErrorKey: cueURL }];
+        }
+        return NO;
+    }
     
-    //If the file is too large, assume it can't be a file and bail out
-    if (!fileSize ||  fileSize > ADBCueMaxFileSize) return NO;
+    //Otherwise, load it in and see if it contains any track definitions.
+    NSString *cueContents = [[NSString alloc] initWithContentsOfURL: cueURL
+                                                       usedEncoding: NULL
+                                                              error: outError];
     
-    //Otherwise, load it in and see if it appears to contain any usable paths
-    NSString *cueContents = [[NSString alloc] initWithContentsOfFile: cuePath
-                                                        usedEncoding: NULL
-                                                               error: outError];
-    
-    if (!cueContents) return NO;
+    if (!cueContents)
+        return NO;
     
     BOOL isCue = [cueContents isMatchedByRegex: ADBCueFileDescriptorSyntax];
     [cueContents release];
+    
     return isCue;
 }
 
@@ -163,13 +166,13 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
                    error: (out NSError **)outError
 {
     //Load the BIN part of the cuesheet
-    if ([self.class isCueAtPath: URL.path error: outError])
+    if ([self.class isCueAtURL: URL error: outError])
     {
         //TODO: check the mode from the cue-sheet and populate the sector size and lead-in appropriately
-        NSString *binPath = [self.class binPathInCueAtPath: URL.path error: outError];
-        if (binPath)
+        NSURL *dataURL = [self.class dataImageURLInCueAtURL: URL error: outError];
+        if (dataURL)
         {
-            URL = [NSURL fileURLWithPath: binPath];
+            URL = dataURL;
         }
         else
         {

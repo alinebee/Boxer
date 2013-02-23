@@ -83,26 +83,3 @@ extern NSString * const ADBShadowedDeletionMarkerExtension;
 - (BOOL) mergeShadowContentsForPath: (NSString *)path error: (out NSError **)outError;
 
 @end
-
-
-//A directory enumerator returned by ADBShadowedFilesystem's enumeratorAtURL: and enumeratorAtPath: methods.
-//Analoguous to NSDirectoryEnumerator, except that it folds together the original and shadowed
-//filesystems into a single filesystem. Any files and directories marked as deleted will be skipped.
-//Note that this will return shadowed files first followed by untouched original files, rather
-//than the straight depth-first traversal performed by NSDirectoryEnumerator.
-@interface ADBShadowedDirectoryEnumerator : NSEnumerator <ADBFilesystemPathEnumeration, ADBFilesystemLocalFileURLEnumeration>
-{
-    BOOL _returnsFileURLs;
-    NSDirectoryEnumerator *_localEnumerator;
-    NSDirectoryEnumerator *_shadowEnumerator;
-    __unsafe_unretained NSDirectoryEnumerator *_currentEnumerator;
-    
-    NSURL *_currentURL;
-    
-    NSMutableSet *_shadowedPaths;
-    NSMutableSet *_deletedPaths;
-    
-    ADBShadowedFilesystem *_filesystem;
-}
-
-@end

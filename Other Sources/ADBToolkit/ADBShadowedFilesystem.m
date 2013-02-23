@@ -45,6 +45,7 @@ enum {
 
 typedef NSUInteger ADBFileOpenOptions;
 
+
 #pragma mark -
 #pragma mark Private method declarations
 
@@ -54,15 +55,15 @@ typedef NSUInteger ADBFileOpenOptions;
 @property (retain, nonatomic) NSFileManager *manager;
 
 //Parses an fopen()-format mode string into a set of bitflags.
-+ (ADBFileOpenOptions) optionsFromAccessMode: (const char *)accessMode;
++ (ADBFileOpenOptions) _optionsFromAccessMode: (const char *)accessMode;
 
 //Internal implementation for moveItemAtURL:toURL:error: and copyItemAtURL:toURL:error:.
-- (BOOL) _transferItemAtURL: (NSURL *)fromURL
-                      toURL: (NSURL *)toURL
-                    copying: (BOOL)copy
-                      error: (NSError **)outError;
+- (BOOL) _transferItemAtPath: (NSString *)fromPath
+                      toPath: (NSString *)toPath
+                     copying: (BOOL)copy
+                       error: (NSError **)outError;
 
-//Create a 0-byte deletion marker at the specified URL.
+//Create a 0-byte deletion marker at the specified shadow URL.
 - (void) _createDeletionMarkerAtURL: (NSURL *)markerURL;
 
 //Returns a file pointer for the specified absolute filesystem URL.
@@ -77,20 +78,32 @@ typedef NSUInteger ADBFileOpenOptions;
                          error: (NSError **)outError;
 @end
 
+@interface ADBShadowedDirectoryEnumerator ()
+
+- (id) initWithLocalURL: (NSURL *)localURL
+            shadowedURL: (NSURL *)shadowedURL
+            inFilesytem: (ADBShadowedFilesystem *)filesystem
+includingPropertiesForKeys: (NSArray *)keys
+                options: (NSDirectoryEnumerationOptions)mask
+             returnURLs: (BOOL)returnURLs
+           errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler;
+
+@end
+
 
 #pragma mark -
 #pragma mark Implementation
 
 @implementation ADBShadowedFilesystem
+
 @synthesize sourceURL = _sourceURL;
 @synthesize shadowURL = _shadowURL;
 @synthesize manager = _manager;
 
 
-#pragma mark -
-#pragma mark Initialization and deallocation
+#pragma mark - Initialization and deallocation
 
-+ (id) filesystemWithSourceURL:(NSURL *)sourceURL shadowURL:(NSURL *)shadowURL
++ (id) filesystemWithSourceURL: (NSURL *)sourceURL shadowURL: (NSURL *)shadowURL
 {
     return [[[self alloc] initWithSourceURL: sourceURL shadowURL: shadowURL] autorelease];
 }
@@ -150,10 +163,62 @@ typedef NSUInteger ADBFileOpenOptions;
     }
 }
 
-#pragma mark -
-#pragma mark Path translation
+#pragma mark - Path translation
 
-- (NSURL *) shadowedURLForURL: (NSURL *)URL
+- (NSString *) logicalPathForLocalFileURL: (NSURL *)URL
+{
+    if ([URL isBasedInURL: self.sourceURL])
+        return [URL pathRelativeToURL: self.sourceURL];
+    else if ([URL isBasedInURL: self.shadowURL])
+        return [URL pathRelativeToURL: self.shadowURL];
+    
+    return nil;
+}
+
+- (NSURL *) localFileURLForLogicalPath: (NSString *)path
+{    
+    NSURL *shadowURL = [self.shadowURL URLByAppendingPathComponent: path];
+    NSURL *deletionMarkerURL = [shadowURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
+    
+    //File has been marked as deleted and thus cannot be accessed.
+    if ([deletionMarkerURL checkResourceIsReachableAndReturnError: NULL])
+        return nil;
+    
+    //File has been shadowed, return the shadow URL.
+    if ([shadowURL checkResourceIsReachableAndReturnError: NULL])
+        return shadowURL;
+    
+    //Otherwise, return the original source URL, unless it doesn't exist
+    NSURL *sourceURL = [self.sourceURL URLByAppendingPathComponent: path];
+    if ([sourceURL checkResourceIsReachableAndReturnError: NULL])
+        return sourceURL;
+    else
+        return nil;
+}
+
+- (const char *) localFilesystemRepresentationForLogicalPath: (NSString *)path
+{
+    NSURL *canonicalURL = [self localFileURLForLogicalPath: path];
+    return canonicalURL.fileSystemRepresentation;
+}
+
+- (NSString *) logicalPathForLocalFilesystemRepresentation: (const char *)representation
+{
+    NSURL *URL = [NSURL URLFromFileSystemRepresentation: representation];
+    return [self logicalPathForLocalFileURL: URL];
+}
+
+- (NSURL *) _shadowedURLForLogicalPath: (NSString *)path
+{
+    return [self.shadowURL URLByAppendingPathComponent: path];
+}
+
+- (NSURL *) _sourceURLForLogicalPath: (NSString *)path
+{
+    return [self.sourceURL URLByAppendingPathComponent: path];
+}
+
+- (NSURL *) _shadowedURLForSourceURL: (NSURL *)URL
 {
     //If we don't have a shadow, or the specified URL isn't located within
     //our source URL, there is no shadow URL that would be applicable.
@@ -165,7 +230,7 @@ typedef NSUInteger ADBFileOpenOptions;
     return [self.shadowURL URLByAppendingPathComponent: relativePath];
 }
 
-- (NSURL *) sourceURLForURL: (NSURL *)URL
+- (NSURL *) _sourceURLForShadowedURL: (NSURL *)URL
 {
     //If we don't have a shadow, or the specified URL isn't located within
     //our shadow URL, there is no source URL that would be applicable.
@@ -181,107 +246,204 @@ typedef NSUInteger ADBFileOpenOptions;
     return [self.sourceURL URLByAppendingPathComponent: relativePath];
 }
 
-- (NSURL *) canonicalFilesystemURL: (NSURL *)URL
+
+#pragma mark - ADBFilesystemPathAccess methods
+
+- (NSDictionary *) attributesOfFileAtPath: (NSString *)path error: (out NSError **)outError
 {
-    NSURL *shadowURL = [self shadowedURLForURL: URL];
-    NSURL *deletionMarkerURL = [shadowURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
-    
-    //File has been marked as deleted and thus cannot be accessed.
-    if ([deletionMarkerURL checkResourceIsReachableAndReturnError: NULL])
-        return nil;
-    
-    //File has been shadowed, return the shadow URL.
-    if ([shadowURL checkResourceIsReachableAndReturnError: NULL])
-        return shadowURL;
-    
-    //Otherwise, return the original source URL...
-    if ([URL checkResourceIsReachableAndReturnError: NULL])
-        return URL;
-    
-    //...Unless the file didn't exist.
-    else return nil;
-}
-
-- (const char *) fileSystemRepresentationForURL: (NSURL *)URL
-{
-    NSURL *canonicalURL = [self canonicalFilesystemURL: URL];
-    return canonicalURL.fileSystemRepresentation;
-}
-
-- (NSURL *) URLFromFileSystemRepresentation: (const char *)representation
-{
-    NSURL *originalURL = [NSURL URLFromFileSystemRepresentation: representation];
-    
-    NSURL *sourceURL = [self sourceURLForURL: originalURL];
-    //If the URL was located within the shadow, return the equivalent URL within the source.
-    if (sourceURL)
-        return sourceURL;
-    //Otherwise, return the URL as-is.
-    else
-        return originalURL;
-}
-
-#pragma mark -
-#pragma mark Enumeration
-
-- (ADBShadowedDirectoryEnumerator *) enumeratorAtURL: (NSURL *)URL
-                          includingPropertiesForKeys: (NSArray *)keys
-                                             options: (NSDirectoryEnumerationOptions)mask
-                                        errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler
-{
-    NSURL *shadowedURL = [self shadowedURLForURL: URL];
-    
-    return [[[ADBShadowedDirectoryEnumerator alloc] initWithFilesystem: self
-                                                             sourceURL: URL
-                                                             shadowURL: shadowedURL
-                                            includingPropertiesForKeys: keys
-                                                               options: mask
-                                                          errorHandler: errorHandler] autorelease];
-}
-
-
-#pragma mark -
-#pragma mark File operations
-
-+ (ADBFileOpenOptions) optionsFromAccessMode: (const char *)accessMode
-{
-    ADBFileOpenOptions options = 0;
-    
-    NSUInteger modeLength = strlen(accessMode);
-    BOOL hasPlus = (modeLength >= 2 && accessMode[1] == '+') || (modeLength >= 3 && accessMode[2] == '+');
-    
-    switch (accessMode[0])
+    NSURL *canonicalURL = [self localFileURLForLogicalPath: path];
+    if (canonicalURL)
     {
-        case 'r':
-            options = ADBFileOpenForReading;
-            if (hasPlus)
-                options |= ADBFileOpenForWriting;
-            break;
-        case 'w':
-            options = ADBFileOpenForWriting | ADBFileCreateIfMissing | ADBFileTruncate;
-            if (hasPlus)
-                options |= ADBFileOpenForReading;
-            break;
-        case 'a':
-            options = ADBFileOpenForWriting | ADBFileCreateIfMissing | ADBFileAppend;
-            if (hasPlus)
-                options |= ADBFileOpenForReading;
-            break;
+        return [[NSFileManager defaultManager] attributesOfItemAtPath: canonicalURL.path error: outError];
     }
-    
-    return options;
+    else
+    {
+        if (outError)
+        {
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                            code: NSFileReadNoSuchFileError
+                                        userInfo: @{ NSFilePathErrorKey: path }];
+        }
+        return nil;
+    }
 }
 
-- (FILE *) openFileAtURL: (NSURL *)URL
-                  inMode: (const char *)accessMode
-                   error: (NSError **)outError
+- (NSData *) contentsOfFileAtPath: (NSString *)path error: (out NSError **)outError
 {
-    NSURL *shadowedURL = [self shadowedURLForURL: URL];
+    NSURL *canonicalURL = [self localFileURLForLogicalPath: path];
+    if (canonicalURL)
+    {
+        return [NSData dataWithContentsOfURL: canonicalURL options: 0 error: outError];
+    }
+    else
+    {
+        if (outError)
+        {
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                            code: NSFileReadNoSuchFileError
+                                        userInfo: @{ NSFilePathErrorKey: path }];
+        }
+        return nil;
+    }
+}
+
+- (id <ADBFilesystemPathEnumeration>) enumeratorAtPath: (NSString *)path
+                                               options: (NSDirectoryEnumerationOptions)mask
+                                          errorHandler: (ADBFilesystemPathErrorHandler)errorHandler
+{
+    NSURL *sourceURL = [self _sourceURLForLogicalPath: path];
+    NSURL *shadowedURL = [self _shadowedURLForLogicalPath: path];
+    
+    
+    ADBFilesystemLocalFileURLErrorHandler wrappedHandler;
+    if (errorHandler)
+        wrappedHandler = ^BOOL(NSURL *url, NSError *error) { return errorHandler(url.path, error); };
+    else
+        wrappedHandler = nil;
+    
+    return [[[ADBShadowedDirectoryEnumerator alloc] initWithLocalURL: sourceURL
+                                                         shadowedURL: shadowedURL
+                                                         inFilesytem: self
+                                          includingPropertiesForKeys: nil
+                                                             options: mask
+                                                          returnURLs: NO
+                                                        errorHandler: wrappedHandler] autorelease];
+}
+
+- (BOOL) moveItemAtPath: (NSString *)fromPath toPath: (NSString *)toPath error: (out NSError **)outError
+{
+    return [self _transferItemAtPath: fromPath toPath: toPath copying: NO error: outError];
+}
+
+- (BOOL) copyItemAtPath: (NSString *)fromPath toPath: (NSString *)toPath error: (out NSError **)outError
+{
+    return [self _transferItemAtPath: fromPath toPath: toPath copying: YES error: outError];
+}
+
+- (BOOL) fileExistsAtPath: (NSString *)path isDirectory: (BOOL *)isDirectory
+{
+    NSURL *originalURL = [self _sourceURLForLogicalPath: path];
+    NSURL *shadowedURL = [self _shadowedURLForLogicalPath: path];
+    
     if (shadowedURL)
     {
         NSURL *deletionMarkerURL = [shadowedURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
         
-        ADBFileOpenOptions accessOptions = [self.class optionsFromAccessMode: accessMode];
+        //If the file is flagged as deleted, pretend it doesn't exist.
+        if ([deletionMarkerURL checkResourceIsReachableAndReturnError: NULL])
+        {
+            if (isDirectory)
+                *isDirectory = NO;
+            return NO;
+        }
+        
+        //Otherwise, if either the source or a shadow exist, treat the file as existing.
+        if ([self.manager fileExistsAtPath: shadowedURL.path isDirectory: isDirectory])
+        {
+            return YES;
+        }
+        
+        else
+        {
+            return [self.manager fileExistsAtPath: originalURL.path isDirectory: isDirectory];
+        }
+    }
+    else
+    {
+        return [self.manager fileExistsAtPath: originalURL.path isDirectory: isDirectory];
+    }
+}
+
+- (BOOL) createDirectoryAtPath: (NSString *)path
+   withIntermediateDirectories: (BOOL)createIntermediates
+                         error: (out NSError **)outError
+{
+    NSURL *originalURL = [self _sourceURLForLogicalPath: path];
+    NSURL *shadowedURL = [self _shadowedURLForLogicalPath: path];
+    
+    if (shadowedURL)
+    {
+        NSURL *deletionMarkerURL = [shadowedURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
+        
+        //If the original already exists...
+        if ([originalURL checkResourceIsReachableAndReturnError: NULL])
+        {
+            //If the original has been marked as deleted, then remove the marker
+            //*but mark all the files inside that directory as deleted*,
+            //since the 'new' directory should appear empty.
+            if ([deletionMarkerURL checkResourceIsReachableAndReturnError: NULL])
+            {
+                [self.manager removeItemAtURL: deletionMarkerURL error: NULL];
+                
+                NSDirectoryEnumerator *enumerator = [self.manager enumeratorAtURL: originalURL
+                                                       includingPropertiesForKeys: nil
+                                                                          options: NSDirectoryEnumerationSkipsSubdirectoryDescendants
+                                                                     errorHandler: nil];
+                
+                for (NSURL *subURL in enumerator)
+                {
+                    NSURL *shadowedSubURL = [self _shadowedURLForSourceURL: subURL];
+                    NSURL *deletionMarkerSubURL = [shadowedSubURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
+                    
+                    [self _createDeletionMarkerAtURL: deletionMarkerSubURL];
+                }
+                return YES;
+            }
+            else
+            {
+                //To be consistent with the behaviour of NSFileManager, the attempt to create a new directory
+                //at an existing location should fail if createIntermediates is NO.
+                if (!createIntermediates)
+                {
+                    if (outError)
+                    {
+                        *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                                        code: NSFileWriteFileExistsError
+                                                    userInfo: @{ NSURLErrorKey: originalURL }];
+                    }
+                    return NO;
+                }
+                return YES;
+            }
+        }
+        //If the original doesn't exist, create a new shadow directory.
+        //NOTE: 
+        else
+        {
+            BOOL createdDirectory = [self.manager createDirectoryAtURL: shadowedURL
+                                           withIntermediateDirectories: YES
+                                                            attributes: nil
+                                                                 error: NULL];
+            
+            if (createdDirectory)
+            {
+                //Remove any old deletion marker for this directory
+                [self.manager removeItemAtURL: deletionMarkerURL error: NULL];
+            }
+            return createdDirectory;
+        }
+    }
+    else
+    {
+        return [self.manager createDirectoryAtURL: originalURL
+                      withIntermediateDirectories: createIntermediates
+                                       attributes: nil
+                                            error: NULL];
+    }
+}
+
+- (FILE *) openFileAtPath: (NSString *)path
+                   inMode: (const char *)accessMode
+                    error: (out NSError **)outError
+{
+    NSURL *originalURL = [self _sourceURLForLogicalPath: path];
+    NSURL *shadowedURL = [self _shadowedURLForLogicalPath: path];
+    
+    if (shadowedURL)
+    {
+        NSURL *deletionMarkerURL = [shadowedURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
+        
+        ADBFileOpenOptions accessOptions = [self.class _optionsFromAccessMode: accessMode];
         BOOL createIfMissing = (accessOptions & ADBFileCreateIfMissing) == ADBFileCreateIfMissing;
         
         BOOL deletionMarkerExists = [deletionMarkerURL checkResourceIsReachableAndReturnError: NULL];
@@ -307,20 +469,15 @@ typedef NSUInteger ADBFileOpenOptions;
             {
                 if (outError)
                 {
-                    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                              URL, NSURLErrorKey,
-                                              nil];
-                    
                     *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
                                                     code: ENOENT //No such file or directory
-                                                userInfo: userInfo];
+                                                userInfo: @{ NSURLErrorKey: originalURL }];
                 }
                 return NULL;
             }
         }
         
-        //If the shadow file already exists, open the shadow with whatever
-        //access mode was requested.
+        //If the shadow file already exists, open the shadow with whatever access mode was requested.
         //IMPLEMENTATION NOTE: conventional wisdom dictates we should just try to open it
         //and see if that worked without checking for file existence first, then use fallbacks
         //if it does fail; however this is undesirable in the case where we want to modify
@@ -352,7 +509,7 @@ typedef NSUInteger ADBFileOpenOptions;
             {
                 NSError *copyError = nil;
                 //Ensure we're copying the actual file and not a symlink.
-                NSURL *resolvedURL = [URL URLByResolvingSymlinksInPath];
+                NSURL *resolvedURL = originalURL.URLByResolvingSymlinksInPath;
                 BOOL copied = [self.manager copyItemAtURL: resolvedURL toURL: shadowedURL error: &copyError];
                 
                 //IMPLEMENTATION NOTE: if we couldn't copy the original (e.g. because
@@ -377,56 +534,29 @@ typedef NSUInteger ADBFileOpenOptions;
         //This will fail if the original location doesn't exist.
         else
         {
-            return [self _openFileAtCanonicalFilesystemURL: URL
+            return [self _openFileAtCanonicalFilesystemURL: originalURL
                                                     inMode: accessMode
                                                      error: outError];
         }
     }
     else
     {
-        return [self _openFileAtCanonicalFilesystemURL: URL
+        return [self _openFileAtCanonicalFilesystemURL: originalURL
                                                 inMode: accessMode
                                                  error: outError];
     }
 }
 
-- (FILE *) _openFileAtCanonicalFilesystemURL: (NSURL *)URL
-                                      inMode: (const char *)accessMode
-                                       error: (NSError **)outError
+- (BOOL) removeItemAtPath: (NSString *)path error: (out NSError **)outError
 {
-    const char *rep = URL.fileSystemRepresentation;
-    FILE *handle = fopen(rep, accessMode);
-    
-    if (handle)
-    {
-        return handle;
-    }
-    else
-    {
-        if (outError)
-        {
-            NSInteger posixError = errno;
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      URL, NSURLErrorKey,
-                                      nil];
-            
-            *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
-                                            code: posixError
-                                        userInfo: userInfo];
-        }
-        return NULL;
-    }
-}
-
-- (BOOL) removeItemAtURL: (NSURL *)URL error: (NSError **)outError
-{
-    NSURL *shadowedURL = [self shadowedURLForURL: URL];
+    NSURL *shadowedURL = [self _shadowedURLForLogicalPath: path];
+    NSURL *sourceURL = [self _sourceURLForLogicalPath: path];
     
     if (shadowedURL)
     {
         NSURL *deletionMarkerURL = [shadowedURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
         
-        BOOL originalExists = [URL checkResourceIsReachableAndReturnError: NULL];
+        BOOL originalExists = [sourceURL checkResourceIsReachableAndReturnError: NULL];
         
         //If a file exists at the original location, create a marker in the shadow location
         //indicating that the file has been deleted. We also clean up any shadowed
@@ -451,140 +581,101 @@ typedef NSUInteger ADBFileOpenOptions;
     }
     else
     {
-        return [self.manager removeItemAtURL: URL error: outError];
+        return [self.manager removeItemAtURL: sourceURL error: outError];
     }
 }
 
-- (BOOL) _transferItemAtURL: (NSURL *)fromURL
-                      toURL: (NSURL *)toURL
-                    copying: (BOOL)copy
-                      error: (NSError **)outError
+
+
+#pragma mark - ADBFilesystemLocalFileURLAccess methods
+
+- (ADBShadowedDirectoryEnumerator *) enumeratorAtLocalFileURL: (NSURL *)URL
+                                   includingPropertiesForKeys: (NSArray *)keys
+                                                      options: (NSDirectoryEnumerationOptions)mask
+                                                 errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler
 {
-    NSURL *shadowedToURL = [self shadowedURLForURL: toURL];
-    
-    if (shadowedToURL)
+    NSString *path = [self logicalPathForLocalFileURL: URL];
+    if (path)
     {
-        NSURL *shadowedFromURL = [self shadowedURLForURL: fromURL];
-        NSURL *fromDeletionMarkerURL = [shadowedFromURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
-        NSURL *toDeletionMarkerURL = [shadowedToURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
+        NSURL *sourceURL = [self _sourceURLForLogicalPath: path];
+        NSURL *shadowedURL = [self _shadowedURLForLogicalPath: path];
         
-        //If the source path has been marked as deleted, then the operation should fail.
-        if ([fromDeletionMarkerURL checkResourceIsReachableAndReturnError: NULL])
-        {
-            //TODO: populate outError
-            return NO;
-        }
-        
-        //Ensure the destination folder exists.
-        BOOL destinationIsDir;
-        if (!([self fileExistsAtURL: toURL.URLByDeletingLastPathComponent
-                        isDirectory: &destinationIsDir] && destinationIsDir))
-        {
-            //TODO: populate outError
-            return NO;
-        }
-        
-        //Ensure that a suitable folder structure exists in the shadow volume
-        //to accommodate the destination.
-        [self.manager createDirectoryAtURL: shadowedToURL.URLByDeletingLastPathComponent
-               withIntermediateDirectories: YES
-                                attributes: nil
-                                     error: NULL];
-        
-        //Remove any shadow of the destination before we begin, since we want to overwrite it.
-        [self.manager removeItemAtURL: shadowedToURL error: NULL];
-        
-        
-        //If the source file has a shadow, try using that as the source initially,
-        //falling back on the original source if that fails.
-        BOOL succeeded = [self.manager copyItemAtURL: shadowedFromURL
-                                               toURL: shadowedToURL
-                                               error: NULL];
-        
-        if (!succeeded)
-        {
-            succeeded = [self.manager copyItemAtURL: fromURL
-                                              toURL: shadowedToURL
-                                              error: outError];
-        }
-        
-        if (succeeded)
-        {
-            //If the initial copy succeeded, then remove any shadowed source and flag
-            //the original source as deleted (since it has ostensibly been moved.)
-            if (!copy)
-            {
-                [self.manager removeItemAtURL: shadowedFromURL error: NULL];
-                
-                BOOL originalExists = [fromURL checkResourceIsReachableAndReturnError: NULL];
-                if (originalExists)
-                {
-                    [self _createDeletionMarkerAtURL: fromDeletionMarkerURL];
-                }
-            }
-            
-            //Remove any leftover deletion marker for the destination.
-            [self.manager removeItemAtURL: toDeletionMarkerURL error: NULL];
-            
-            return YES;
-        }
-        
-        //If the copy failed, delete any partially-copied files.
-        //FIXME: should we really do this? Wouldn't it be more 'authentic'
-        //to leave a partially-copied file?
-        else
-        {
-            [self.manager removeItemAtURL: shadowedToURL error: NULL];
-            
-            return NO;
-        }
+        return [[[ADBShadowedDirectoryEnumerator alloc] initWithLocalURL: sourceURL
+                                                             shadowedURL: shadowedURL
+                                                             inFilesytem: self
+                                              includingPropertiesForKeys: keys
+                                                                 options: mask
+                                                              returnURLs: YES
+                                                            errorHandler: errorHandler] autorelease];
     }
     else
     {
-        return [self.manager moveItemAtURL: fromURL toURL: toURL error: NULL];
+        if (errorHandler)
+        {
+            NSError *error = [NSError errorWithDomain: NSCocoaErrorDomain
+                                                 code: NSFileReadNoSuchFileError
+                                             userInfo: @{ NSURLErrorKey: URL }];
+            
+            errorHandler(URL, error);
+        }
+        return nil;
     }
 }
 
-- (BOOL) moveItemAtURL: (NSURL *)fromURL toURL: (NSURL *)toURL error: (NSError **)outError
-{
-    return [self _transferItemAtURL: fromURL toURL: toURL copying: NO error: outError];
-}
 
-- (BOOL) copyItemAtURL: (NSURL *)fromURL toURL: (NSURL *)toURL error: (NSError **)outError
-{
-    return [self _transferItemAtURL: fromURL toURL: toURL copying: YES error: outError];
-}
 
-- (BOOL) fileExistsAtURL: (NSURL *)URL isDirectory: (BOOL *)isDirectory
+#pragma mark - Internal file access methods
+
++ (ADBFileOpenOptions) _optionsFromAccessMode: (const char *)accessMode
 {
-    NSURL *shadowedURL = [self shadowedURLForURL: URL];
+    ADBFileOpenOptions options = 0;
     
-    if (shadowedURL)
+    NSUInteger modeLength = strlen(accessMode);
+    BOOL hasPlus = (modeLength >= 2 && accessMode[1] == '+') || (modeLength >= 3 && accessMode[2] == '+');
+    
+    switch (accessMode[0])
     {
-        NSURL *deletionMarkerURL = [shadowedURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
-        
-        //If the file is flagged as deleted, pretend it doesn't exist.
-        if ([deletionMarkerURL checkResourceIsReachableAndReturnError: NULL])
-        {
-            if (isDirectory)
-                *isDirectory = NO;
-            return NO;
-        }
-        
-        //Otherwise, if either the source or a shadow exist, treat the file as existing.
-        if ([self.manager fileExistsAtPath: shadowedURL.path isDirectory: isDirectory])
-        {
-             return YES;
-        }
-        
-        else
-        {
-            return [self.manager fileExistsAtPath: URL.path isDirectory: isDirectory];
-        }
+        case 'r':
+            options = ADBFileOpenForReading;
+            if (hasPlus)
+                options |= ADBFileOpenForWriting;
+            break;
+        case 'w':
+            options = ADBFileOpenForWriting | ADBFileCreateIfMissing | ADBFileTruncate;
+            if (hasPlus)
+                options |= ADBFileOpenForReading;
+            break;
+        case 'a':
+            options = ADBFileOpenForWriting | ADBFileCreateIfMissing | ADBFileAppend;
+            if (hasPlus)
+                options |= ADBFileOpenForReading;
+            break;
+    }
+    
+    return options;
+}
+
+- (FILE *) _openFileAtCanonicalFilesystemURL: (NSURL *)URL
+                                      inMode: (const char *)accessMode
+                                       error: (NSError **)outError
+{
+    const char *rep = URL.fileSystemRepresentation;
+    FILE *handle = fopen(rep, accessMode);
+    
+    if (handle)
+    {
+        return handle;
     }
     else
     {
-        return [self.manager fileExistsAtPath: URL.path isDirectory: isDirectory];
+        if (outError)
+        {
+            NSInteger posixError = errno;
+            *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
+                                            code: posixError
+                                        userInfo: @{ NSURLErrorKey: URL }];
+        }
+        return NULL;
     }
 }
 
@@ -601,82 +692,120 @@ typedef NSUInteger ADBFileOpenOptions;
                         attributes: nil];
 }
 
-- (BOOL) createDirectoryAtURL: (NSURL *)URL
-  withIntermediateDirectories: (BOOL)createIntermediates
-                        error: (NSError **)outError
+- (BOOL) _transferItemAtPath: (NSString *)fromPath
+                      toPath: (NSString *)toPath
+                     copying: (BOOL)copy
+                       error: (NSError **)outError
 {
-    NSURL *shadowedURL = [self shadowedURLForURL: URL];
+    NSURL *shadowedToURL = [self _shadowedURLForLogicalPath: toPath];
     
-    if (shadowedURL)
+    if (shadowedToURL)
     {
-        NSURL *deletionMarkerURL = [shadowedURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
+        NSURL *originalFromURL = [self _sourceURLForLogicalPath: fromPath];
+        NSURL *shadowedFromURL = [self _shadowedURLForLogicalPath: fromPath];
+        NSURL *fromDeletionMarkerURL = [shadowedFromURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
+        NSURL *toDeletionMarkerURL = [shadowedToURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
         
-        BOOL originalExists = [URL checkResourceIsReachableAndReturnError: NULL];
-        
-        //If the original already exists...
-        if (originalExists)
+        //If the source path has been marked as deleted, then the operation should fail.
+        if ([fromDeletionMarkerURL checkResourceIsReachableAndReturnError: NULL])
         {
-            //If the original has been marked as deleted, then remove the marker
-            //*but mark all the files inside that directory as deleted*,
-            //since the 'new' directory should appear empty.
-            if ([deletionMarkerURL checkResourceIsReachableAndReturnError: NULL])
+            if (outError)
             {
-                [self.manager removeItemAtURL: deletionMarkerURL error: NULL];
-                
-                NSDirectoryEnumerator *enumerator = [self.manager enumeratorAtURL: URL
-                                                       includingPropertiesForKeys: [NSArray array]
-                                                                          options: NSDirectoryEnumerationSkipsSubdirectoryDescendants
-                                                                     errorHandler: nil];
-                
-                for (NSURL *subURL in enumerator)
-                {
-                    NSURL *shadowedSubURL = [self shadowedURLForURL: subURL];
-                    NSURL *deletionMarkerSubURL = [shadowedSubURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
-                    
-                    [self _createDeletionMarkerAtURL: deletionMarkerSubURL];
-                }
-                return YES;
+                NSURL *URL = [self.sourceURL URLByAppendingPathComponent: fromPath];
+                *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                                code: NSFileReadNoSuchFileError
+                                            userInfo: @{ NSURLErrorKey: URL }];
             }
-            //Otherwise, the original still exists in the DOS filesystem and the attempt
-            //to create a new directory at the same location should fail.
-            else
-            {
-                //TODO: populate outError.
-                return NO;
-            }
+            return NO;
         }
-        //Otherwise, create a new shadow directory.
+        
+        //Ensure the destination folder is a directory or doesn't yet exist.
+        NSString *destinationParent = toPath.stringByDeletingLastPathComponent;
+        BOOL destinationParentIsDir, destinationParentExists = [self fileExistsAtPath: destinationParent
+                                                                          isDirectory: &destinationParentIsDir];
+
+        if (destinationParentExists && !destinationParentIsDir)
+        {
+            if (outError)
+            {
+                NSURL *URL = [self.sourceURL URLByAppendingPathComponent: toPath];
+                *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                                code: NSFileWriteInvalidFileNameError
+                                            userInfo: @{ NSURLErrorKey: URL }];
+            }
+            return NO;
+        }
+        
+        //Ensure that a suitable folder structure exists in the shadow volume
+        //to accommodate the destination.
+        [self.manager createDirectoryAtURL: shadowedToURL.URLByDeletingLastPathComponent
+               withIntermediateDirectories: YES
+                                attributes: nil
+                                     error: NULL];
+        
+        //TODO: rewrite this to use NSFileManager's file replacement API.
+        
+        //Remove any shadow of the destination before we begin, since we want to overwrite it.
+        [self.manager removeItemAtURL: shadowedToURL error: NULL];
+        
+        //If the source file has a shadow, try using that as the source initially,
+        //falling back on the original source if that fails.
+        BOOL succeeded = [self.manager copyItemAtURL: shadowedFromURL
+                                               toURL: shadowedToURL
+                                               error: NULL];
+        
+        
+        if (!succeeded)
+        {
+            succeeded = [self.manager copyItemAtURL: originalFromURL
+                                              toURL: shadowedToURL
+                                              error: outError];
+        }
+        
+        if (succeeded)
+        {
+            //If the initial copy succeeded, then remove any shadowed source and flag
+            //the original source as deleted (since it has ostensibly been moved.)
+            if (!copy)
+            {
+                [self.manager removeItemAtURL: shadowedFromURL error: NULL];
+                
+                BOOL originalExists = [originalFromURL checkResourceIsReachableAndReturnError: NULL];
+                if (originalExists)
+                {
+                    [self _createDeletionMarkerAtURL: fromDeletionMarkerURL];
+                }
+            }
+            
+            //Remove any leftover deletion marker for the destination.
+            [self.manager removeItemAtURL: toDeletionMarkerURL error: NULL];
+            
+            return YES;
+        }
+        
+        //If the copy failed, delete any partially-copied files.
         else
         {
-            BOOL createdDirectory = [self.manager createDirectoryAtURL: shadowedURL
-                                           withIntermediateDirectories: YES
-                                                            attributes: nil
-                                                                 error: NULL];
+            [self.manager removeItemAtURL: shadowedToURL error: NULL];
             
-            if (createdDirectory)
-            {
-                //Remove any old deletion marker for this directory
-                [self.manager removeItemAtURL: deletionMarkerURL error: NULL];
-            }
-            return createdDirectory;
+            return NO;
         }
     }
     else
     {
-        return [self.manager createDirectoryAtURL: URL
-                      withIntermediateDirectories: NO
-                                       attributes: nil
-                                            error: NULL];
+        NSURL *fromURL = [self.sourceURL URLByAppendingPathComponent: fromPath];
+        NSURL *toURL = [self.sourceURL URLByAppendingPathComponent: toPath];
+        return [self.manager moveItemAtURL: fromURL toURL: toURL error: outError];
     }
 }
 
 
-#pragma mark -
-#pragma mark Housekeeping
+#pragma mark - Housekeeping
 
-- (BOOL) tidyShadowContentsForURL: (NSURL *)baseURL error: (NSError **)outError
+- (BOOL) tidyShadowContentsForPath: (NSString *)path
+                             error: (out NSError **)outError
 {
-    NSURL *baseShadowURL = [self shadowedURLForURL: baseURL];
+    NSURL *baseShadowURL = [self _shadowedURLForLogicalPath: path];
     if (baseShadowURL)
     {
         NSMutableSet *emptyDirectories = [NSMutableSet setWithCapacity: 10];
@@ -696,7 +825,7 @@ typedef NSUInteger ADBFileOpenOptions;
             //Clean up deletion markers that don't have a corresponding source URL.
             if ([shadowedURL.pathExtension isEqualToString: ADBShadowedDeletionMarkerExtension])
             {
-                NSURL *sourceURL = [self sourceURLForURL: shadowedURL];
+                NSURL *sourceURL = [self _sourceURLForShadowedURL: shadowedURL];
                 if (![sourceURL checkResourceIsReachableAndReturnError: NULL])
                 {
                     BOOL cleanedUpDeletionMarker = [self.manager removeItemAtURL: shadowedURL error: outError];
@@ -731,7 +860,7 @@ typedef NSUInteger ADBFileOpenOptions;
         //in the original location: if it does, the shadow is redundant and we remove it.
         for (NSURL *shadowDirectoryURL in emptyDirectories)
         {
-            NSURL *sourceDirectoryURL = [self sourceURLForURL: shadowDirectoryURL];
+            NSURL *sourceDirectoryURL = [self _sourceURLForShadowedURL: shadowDirectoryURL];
             
             BOOL sourceIsDirectory;
             BOOL sourceExists = [self.manager fileExistsAtPath: sourceDirectoryURL.path
@@ -753,9 +882,9 @@ typedef NSUInteger ADBFileOpenOptions;
     return YES;
 }
 
-- (BOOL) clearShadowContentsForURL: (NSURL *)baseURL error: (NSError **)outError
+- (BOOL) clearShadowContentsForPath: (NSString *)basePath error: (NSError **)outError
 {
-    NSURL *baseShadowURL = [self shadowedURLForURL: baseURL];
+    NSURL *baseShadowURL = [self _shadowedURLForLogicalPath: basePath];
     if (baseShadowURL)
     {
         //Simply delete the shadow URL altogether. That was easy!
@@ -882,9 +1011,10 @@ typedef NSUInteger ADBFileOpenOptions;
     }
 }
 
-- (BOOL) mergeShadowContentsForURL: (NSURL *)baseURL error: (NSError **)outError
+- (BOOL) mergeShadowContentsForPath: (NSString *)basePath error: (NSError **)outError
 {
-    NSURL *baseShadowedURL = [self shadowedURLForURL: baseURL];
+    NSURL *baseSourceURL = [self _sourceURLForLogicalPath: basePath];
+    NSURL *baseShadowedURL = [self _shadowedURLForLogicalPath: basePath];
     if (baseShadowedURL)
     {
         //If the shadow doesn't actually exist, treat the merge as successful
@@ -912,7 +1042,7 @@ typedef NSUInteger ADBFileOpenOptions;
             
             for (NSURL *shadowedURL in shadowEnumerator)
             {
-                NSURL *sourceURL = [self sourceURLForURL: shadowedURL];
+                NSURL *sourceURL = [self _sourceURLForShadowedURL: shadowedURL];
                 BOOL merged = [self _mergeItemAtShadowURL: shadowedURL toSourceURL: sourceURL error: outError];
                 
                 if (!merged)
@@ -922,7 +1052,7 @@ typedef NSUInteger ADBFileOpenOptions;
         //Otherwise, merge the base URL as a single file.
         else
         {
-            BOOL merged = [self _mergeItemAtShadowURL: baseShadowedURL toSourceURL: baseURL error: outError];
+            BOOL merged = [self _mergeItemAtShadowURL: baseShadowedURL toSourceURL: baseSourceURL error: outError];
             if (!merged)
                 return NO;
         }
@@ -946,76 +1076,82 @@ typedef NSUInteger ADBFileOpenOptions;
 
 @interface ADBShadowedDirectoryEnumerator ()
 
-@property (copy, nonatomic) NSURL *sourceURL;
-@property (copy, nonatomic) NSURL *shadowURL;
-@property (retain, nonatomic) NSDirectoryEnumerator *sourceEnumerator;
+@property (copy, nonatomic) NSURL *currentURL;
+
+@property (retain, nonatomic) NSDirectoryEnumerator *localEnumerator;
 @property (retain, nonatomic) NSDirectoryEnumerator *shadowEnumerator;
 @property (assign, nonatomic) NSDirectoryEnumerator *currentEnumerator;
+
 @property (retain, nonatomic) NSMutableSet *shadowedPaths;
 @property (retain, nonatomic) NSMutableSet *deletedPaths;
 
-
 @property (retain, nonatomic) ADBShadowedFilesystem *filesystem;
-@property (retain, nonatomic) NSArray *propertyKeys;
-@property (assign, nonatomic) NSDirectoryEnumerationOptions options;
-@property (copy, nonatomic) ADBFilesystemEnumeratorErrorHandler errorHandler;
 
-- (NSURL *) _nextURLFromSource;
+- (NSURL *) _nextURLFromLocal;
 - (NSURL *) _nextURLFromShadow;
 
 @end
 
 @implementation ADBShadowedDirectoryEnumerator
-@synthesize sourceURL = _sourceURL;
-@synthesize shadowURL = _shadowURL;
-@synthesize sourceEnumerator = _sourceEnumerator;
+
+@synthesize localEnumerator = _localEnumerator;
 @synthesize shadowEnumerator = _shadowEnumerator;
 @synthesize currentEnumerator = _currentEnumerator;
 @synthesize shadowedPaths = _shadowedPaths;
 @synthesize deletedPaths = _deletedPaths;
 @synthesize filesystem = _filesystem;
 
-@synthesize propertyKeys = _propertyKeys;
-@synthesize options = _options;
-@synthesize errorHandler = _errorHandler;
+@synthesize currentURL = _currentURL;
 
-- (id) initWithFilesystem: (ADBShadowedFilesystem *)filesystem
-                sourceURL: (NSURL *)sourceURL
-                shadowURL: (NSURL *)shadowURL
+
+- (id) initWithLocalURL: (NSURL *)localURL
+            shadowedURL: (NSURL *)shadowedURL
+            inFilesytem: (ADBShadowedFilesystem *)filesystem
 includingPropertiesForKeys: (NSArray *)keys
-                  options: (NSDirectoryEnumerationOptions)mask
-             errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler
+                options: (NSDirectoryEnumerationOptions)mask
+             returnURLs: (BOOL)returnURLs
+           errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler
 {
     self = [self init];
     if (self)
     {
-        NSAssert(sourceURL != nil, @"Source URL cannot be nil.");
+        _returnsFileURLs = returnURLs;
         
-        self.filesystem = filesystem;
-        self.sourceURL = sourceURL;
-        self.shadowURL = shadowURL;
-        self.propertyKeys = keys;
-        self.options = mask;
-        self.errorHandler = errorHandler;
+        NSFileManager *manager = [NSFileManager defaultManager];
         
-        [self reset];
+        self.localEnumerator = [manager enumeratorAtURL: localURL
+                             includingPropertiesForKeys: keys
+                                                options: mask
+                                           errorHandler: errorHandler];
+        
+        if (shadowedURL)
+        {
+            self.shadowEnumerator = [manager enumeratorAtURL: shadowedURL
+                                  includingPropertiesForKeys: keys
+                                                     options: mask
+                                                errorHandler: errorHandler];
+            
+            self.currentEnumerator = self.shadowEnumerator;
+            self.shadowedPaths = [NSMutableSet set];
+            self.deletedPaths = [NSMutableSet set];
+        }
+        else
+        {
+            self.currentEnumerator = self.localEnumerator;
+        }
     }
     return self;
 }
 
 - (void) dealloc
 {
-    self.sourceURL = nil;
-    self.shadowURL = nil;
-    self.sourceEnumerator = nil;
+    self.localEnumerator = nil;
     self.shadowEnumerator = nil;
     self.currentEnumerator = nil;
     self.shadowedPaths = nil;
     self.deletedPaths = nil;
-    
-    self.propertyKeys = nil;
-    self.errorHandler = nil;
     self.filesystem = nil;
+    self.currentURL = nil;
     
     [super dealloc];
 }
@@ -1030,78 +1166,56 @@ includingPropertiesForKeys: (NSArray *)keys
     return self.currentEnumerator.level;
 }
 
-
-- (void) reset
-{
-    NSFileManager *manager = [NSFileManager defaultManager];
-    self.sourceEnumerator = [manager enumeratorAtURL: self.sourceURL
-                          includingPropertiesForKeys: self.propertyKeys
-                                             options: self.options
-                                        errorHandler: self.errorHandler];
-    
-    if (self.shadowURL)
-    {
-        self.shadowEnumerator = [manager enumeratorAtURL: self.shadowURL
-                              includingPropertiesForKeys: self.propertyKeys
-                                                 options: self.options
-                                            errorHandler: self.errorHandler];
-        
-        self.currentEnumerator = self.shadowEnumerator;
-        self.shadowedPaths = [NSMutableSet set];
-        self.deletedPaths = [NSMutableSet set];
-    }
-    else
-    {
-        self.shadowEnumerator = nil;
-        self.currentEnumerator = self.sourceEnumerator;
-        self.shadowedPaths = nil;
-        self.deletedPaths = nil;
-    }
-}
-
-- (NSURL *) nextObject
+- (id) nextObject
 {
     BOOL isEnumeratingShadow = (self.currentEnumerator == self.shadowEnumerator);
+    
+    NSURL *nextURL;
     
     //We start off enumerating the shadow folder if one is available, as its state will
     //override the state of the source folder. Along the way we mark which files have been
     //shadowed or deleted, so that we can skip those when enumerating the source folder.
     if (isEnumeratingShadow)
     {
-        NSURL *nextURL = [self _nextURLFromShadow];
+        nextURL = [self _nextURLFromShadow];
         if (!nextURL)
         {
-            self.currentEnumerator = self.sourceEnumerator;
-            return [self _nextURLFromSource];
-        }
-        else
-        {
-            return nextURL;
+            self.currentEnumerator = self.localEnumerator;
+            nextURL = [self _nextURLFromLocal];
         }
     }
     else
     {
-        return [self _nextURLFromSource];
+        nextURL = [self _nextURLFromLocal];
     }
+    
+    self.currentURL = nextURL;
+    
+    if (nextURL == nil)
+        return nil;
+    else if (_returnsFileURLs)
+        return nextURL;
+    else
+        return [self.filesystem logicalPathForLocalFileURL: nextURL];
 }
 
-- (NSURL *) _nextURLFromSource
+- (NSURL *) _nextURLFromLocal
 {
     NSURL *nextURL;
-    while ((nextURL = [self.sourceEnumerator nextObject]) != nil)
+    while ((nextURL = [self.localEnumerator nextObject]) != nil)
     {
-        NSString *relativePath = [nextURL pathRelativeToURL: self.sourceURL];
+        NSString *filesystemPath = [self.filesystem logicalPathForLocalFileURL: nextURL];
         
         //If this path was marked as deleted in the shadow, ignore it
         //and skip any descendants if it was a directory.
-        if ([self.deletedPaths containsObject: relativePath])
+        if ([self.deletedPaths containsObject: filesystemPath])
         {
             [self skipDescendants];
             continue;
         }
         
         //If this path was already enumerated by the shadow, ignore it.
-        if ([self.shadowedPaths containsObject: relativePath]) continue;
+        if ([self.shadowedPaths containsObject: filesystemPath]) continue;
         
         return nextURL;
     }
@@ -1114,23 +1228,30 @@ includingPropertiesForKeys: (NSArray *)keys
     NSURL *nextURL;
     while ((nextURL = [self.shadowEnumerator nextObject]) != nil)
     {
-        NSString *relativePath = [nextURL pathRelativeToURL: self.shadowURL];
+        NSString *filesystemPath = [self.filesystem logicalPathForLocalFileURL: nextURL];
         
         //Skip over shadow deletion markers, but mark the filename so that we'll also skip
         //the 'deleted' version when enumerating the original source location.
-        if ([relativePath.pathExtension isEqualToString: ADBShadowedDeletionMarkerExtension])
+        if ([filesystemPath.pathExtension isEqualToString: ADBShadowedDeletionMarkerExtension])
         {
-            [self.deletedPaths addObject: relativePath.stringByDeletingPathExtension];
+            [self.deletedPaths addObject: filesystemPath.stringByDeletingPathExtension];
             continue;
         }
         
-        //Mark shadowed files so that we'll skip them when enumerating the soruce folder.
-        [self.shadowedPaths addObject: relativePath];
+        //Mark shadowed files so that we'll skip them when enumerating the source folder.
+        [self.shadowedPaths addObject: filesystemPath];
         
         return nextURL;
     }
     
     return nil;
+}
+
+- (NSDictionary *) fileAttributes
+{
+    //IMPLEMENTATION NOTE: our own NSDirectoryEnumerators are URL-based, so we can't use
+    //their own fileAttributes method (which always returns nil for URL-based enumerators).
+    return [[NSFileManager defaultManager] attributesOfItemAtPath: self.currentURL.path error: NULL];
 }
 
 @end

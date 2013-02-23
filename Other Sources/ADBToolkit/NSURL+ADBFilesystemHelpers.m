@@ -97,16 +97,20 @@
 
 - (BOOL) isBasedInURL: (NSURL *)baseURL
 {
+    if (baseURL == nil)
+        return NO;
+    
     NSString *basePath = baseURL.path;
     NSString *originalPath = self.path;
     
-    //If the two paths are identical, then great! We have a winner.
     if ([originalPath isEqualToString: basePath])
         return YES;
     
-    //Otherwise, ensure the base URL has a slash and then check for a common prefix.
     if (![basePath hasSuffix: @"/"])
         basePath = [basePath stringByAppendingString: @"/"];
+    
+    if (![originalPath hasSuffix: @"/"])
+        originalPath = [originalPath stringByAppendingString: @"/"];
     
     return [originalPath hasPrefix: basePath];
 }

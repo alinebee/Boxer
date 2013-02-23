@@ -291,7 +291,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 - (BOOL) revertChangesForDrive: (BXDrive *)drive error: (NSError **)outError
 {
     ADBShadowedFilesystem *filesystem = (ADBShadowedFilesystem *)drive.filesystem;
-    if ([filesystem respondsToSelector: @selector(clearShadowContentsForURL:error:)])
+    if ([filesystem respondsToSelector: @selector(clearShadowContentsForPath:error:)])
     {
         //Release the file resources of any drive that we're about to revert.
         //If we can't let go of them, bail out.
@@ -299,7 +299,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
         if (!releasedResources)
             return NO;
         
-        return [filesystem clearShadowContentsForURL: filesystem.sourceURL error: outError];
+        return [filesystem clearShadowContentsForPath: @"/" error: outError];
     }
     //If the drive does not support reversion, pretend the operation was successful.
     else
@@ -321,7 +321,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 - (BOOL) mergeChangesForDrive: (BXDrive *)drive error: (NSError **)outError
 {
     ADBShadowedFilesystem *filesystem = (ADBShadowedFilesystem *)drive.filesystem;
-    if ([filesystem respondsToSelector: @selector(mergeShadowContentsForURL:error:)])
+    if ([filesystem respondsToSelector: @selector(mergeShadowContentsForPath:error:)])
     {
         //Release the file resources of any drive that we're about to merge.
         //If we can't let go of them, bail out.
@@ -329,7 +329,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
         if (!releasedResources)
             return NO;
         
-        return [filesystem mergeShadowContentsForURL: filesystem.sourceURL error: outError];
+        return [filesystem mergeShadowContentsForPath: @"/" error: outError];
     }
     //If the drive does not support merging, pretend the operation was successful.
     else

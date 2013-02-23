@@ -37,7 +37,7 @@ extern NSString * const ADBShadowedDeletionMarkerExtension;
 
          
 @class ADBShadowedDirectoryEnumerator;
-@interface ADBShadowedFilesystem : NSObject <ADBFilesystem, ADBFilesystemPOSIXAccess>
+@interface ADBShadowedFilesystem : NSObject <ADBFilesystemPathAccess, ADBFilesystemLocalFileURLAccess>
 {
     NSURL *_sourceURL;
     NSURL *_shadowURL;
@@ -63,126 +63,46 @@ extern NSString * const ADBShadowedDeletionMarkerExtension;
 
 
 #pragma mark -
-#pragma mark Resolving URLs
-
-//If the item at the specified URL is shadowed, returns the location of the shadow;
-//if not, and the item at the specified URL exists, returns the original URL.
-//Returns nil if the URL does not exist or has been marked as deleted.
-- (NSURL *) canonicalFilesystemURL: (NSURL *)URL;
-
-//The shadow URL corresponding to the specified URL, which may not exist yet.
-//This will return nil if URL is not located within the source URL.
-- (NSURL *) shadowedURLForURL: (NSURL *)URL;
-
-//The inverse of the above: converts a shadowed URL to the equivalent source URL
-//(which also may not exist yet.)
-- (NSURL *) sourceURLForURL: (NSURL *)URL;
-
-
-#pragma mark -
-#pragma mark Enumerating the filesystem
-
-//Returns an enumerator for the specified URL.
-- (ADBShadowedDirectoryEnumerator *) enumeratorAtURL: (NSURL *)URL
-                         includingPropertiesForKeys: (NSArray *)keys
-                                            options: (NSDirectoryEnumerationOptions)mask
-                                       errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler;
-
-
-#pragma mark -
-#pragma mark Creating, deleting and accessing files.
-
-//Returns an open file handle for the resource represented by the specified URL,
-//using the specified access mode (in the standard fopen format).
-//Returns nil and populates outError if the URL did not exist or has been marked
-//as deleted and the accessMode is not one that can create a file if it is missing.
-- (FILE *) openFileAtURL: (NSURL *)URL
-                  inMode: (const char *)accessMode
-                   error: (NSError **)outError;
-
-//Deletes a shadowed version of the specified URL if present, and marks the original
-//file as having been deleted.
-//Returns YES if the operation was successful, or NO and populates outError if the
-//file did not exist or is marked as deleted.
-- (BOOL) removeItemAtURL: (NSURL *)URL error: (NSError **)outError;
-
-//Copy/move an item from the specified source URL to the specified destination.
-//Returns YES if the operation was successful, or NO and populates outError otherwise.
-- (BOOL) copyItemAtURL: (NSURL *)fromURL toURL: (NSURL *)toURL error: (NSError **)outError;
-- (BOOL) moveItemAtURL: (NSURL *)fromURL toURL: (NSURL *)toURL error: (NSError **)outError;
-
-//Returns whether the item at the specified URL exists and is not marked as deleted.
-//If isDirectory is provided, this will be populated with YES if the URL represents a directory or NO otherwise.
-- (BOOL) fileExistsAtURL: (NSURL *)URL isDirectory: (BOOL *)isDirectory;
-
-//Creates a new directory at the specified URL, optionally creating any missing directories in-between.
-//Returns YES if the directory or directories were created, or NO if a directory or file already exists
-//at that URL; or if one of the intermediate directories was absent and createIntermediates was NO.
-- (BOOL) createDirectoryAtURL: (NSURL *)URL
-  withIntermediateDirectories: (BOOL)createIntermediates
-                        error: (NSError **)outError;
-
-
-#pragma mark -
 #pragma mark Housekeeping
 
-//Cleans up the shadow contents for the specified URL: this removes any redundant
-//deletion markers for files that don't exist in the source location, and any empty
-//folders that already exist in the source location.
+//Cleans up the shadow contents for the specified filesystem-relative path: this removes
+//any redundant deletion markers for files that don't exist in the source location,
+//and any empty folders that already exist in the source location.
 //FIXME: currently this assumes the source is a folder.
-- (BOOL) tidyShadowContentsForURL: (NSURL *)baseURL error: (NSError **)outError;
+- (BOOL) tidyShadowContentsForPath: (NSString *)path error: (out NSError **)outError;
 
-//Removes the shadowed version for the specified URL, and its contents
-//if it is a directory.
-- (BOOL) clearShadowContentsForURL: (NSURL *)baseURL error: (NSError **)outError;
+//Removes the shadowed version for the specified path, and its subpaths if it is a directory.
+- (BOOL) clearShadowContentsForPath: (NSString *)path error: (out NSError **)outError;
 
-//Merge any shadowed changes for the specified URL and its subdirectories
+//Merge any shadowed changes for the specified path and its subdirectories
 //back into the original source location, and deletes the merged shadow files.
 //Returns YES if the merge was successful, or NO and populates outError
-//if one or more files or folders could not be merged. (The merge operation
-//will be halted as soon as an error is encountered, leaving behind any
-//unmerged files in the shadow location.)
-- (BOOL) mergeShadowContentsForURL: (NSURL *)baseURL error: (NSError **)outError;
+//if one or more files or folders could not be merged.
+//The merge operation will be halted as soon as an error is encountered,
+//leaving behind any unmerged files in the shadow location.
+- (BOOL) mergeShadowContentsForPath: (NSString *)path error: (out NSError **)outError;
 
 @end
 
 
-//A directory enumerator returned by ADBShadowedFilesystem's enumeratorAtURL: method.
+//A directory enumerator returned by ADBShadowedFilesystem's enumeratorAtURL: and enumeratorAtPath: methods.
 //Analoguous to NSDirectoryEnumerator, except that it folds together the original and shadowed
 //filesystems into a single filesystem. Any files and directories marked as deleted will be skipped.
 //Note that this will return shadowed files first followed by untouched original files, rather
 //than the straight depth-first traversal performed by NSDirectoryEnumerator.
-@interface ADBShadowedDirectoryEnumerator : NSEnumerator <ADBFilesystemEnumerator>
+@interface ADBShadowedDirectoryEnumerator : NSEnumerator <ADBFilesystemPathEnumeration, ADBFilesystemLocalFileURLEnumeration>
 {
-    NSDirectoryEnumerator *_sourceEnumerator;
+    BOOL _returnsFileURLs;
+    NSDirectoryEnumerator *_localEnumerator;
     NSDirectoryEnumerator *_shadowEnumerator;
     __unsafe_unretained NSDirectoryEnumerator *_currentEnumerator;
     
-    NSArray *_propertyKeys;
-    NSDirectoryEnumerationOptions _options;
-    ADBFilesystemEnumeratorErrorHandler _errorHandler;
-    BOOL _includeDotEntries;
-    
-    NSURL *_sourceURL;
-    NSURL *_shadowURL;
+    NSURL *_currentURL;
     
     NSMutableSet *_shadowedPaths;
     NSMutableSet *_deletedPaths;
     
     ADBShadowedFilesystem *_filesystem;
 }
-
-- (id) initWithFilesystem: (ADBShadowedFilesystem *)filesystem
-                sourceURL: (NSURL *)sourceURL
-                shadowURL: (NSURL *)shadowURL
-includingPropertiesForKeys: (NSArray *)keys
-                  options: (NSDirectoryEnumerationOptions)mask
-             errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler;
-
-- (NSUInteger) level;
-- (void) skipDescendants;
-
-//Reset the enumerator back to the first entry.
-- (void) reset;
 
 @end

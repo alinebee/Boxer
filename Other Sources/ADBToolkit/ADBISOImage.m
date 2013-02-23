@@ -86,8 +86,8 @@ int extdate_to_int(uint8_t *digits, int length)
     return [NSDate dateWithTimeIntervalSince1970: epochtime];
 }
 
-#pragma mark -
-#pragma mark Initalization and cleanup
+
+#pragma mark - Initalization and cleanup
 
 + (id) imageWithContentsOfURL: (NSURL *)URL
                         error: (NSError **)outError
@@ -158,14 +158,14 @@ int extdate_to_int(uint8_t *digits, int length)
 }
 
 - (NSDictionary *) attributesOfFileAtPath: (NSString *)path
-                                    error: (NSError **)outError
+                                    error: (out NSError **)outError
 {
     ADBISOFileEntry *entry = [self _fileEntryAtPath: path error: outError];
     return entry.attributes;
 }
 
 - (NSData *) contentsOfFileAtPath: (NSString *)path
-                            error: (NSError **)outError
+                            error: (out NSError **)outError
 {
     ADBISOFileEntry *entry = [self _fileEntryAtPath: path error: outError];
     
@@ -185,9 +185,46 @@ int extdate_to_int(uint8_t *digits, int length)
     return [entry contentsWithError: outError];
 }
 
+- (NSError *) _readOnlyVolumeErrorForPath: (NSString *)path
+{
+    return [NSError errorWithDomain: NSCocoaErrorDomain
+                               code: NSFileWriteVolumeReadOnlyError
+                           userInfo: @{ NSFilePathErrorKey: path }];
+}
+
+- (BOOL) removeItemAtPath: (NSString *)path error: (out NSError **)outError
+{
+    if (outError)
+        *outError = [self _readOnlyVolumeErrorForPath: path];
+    return NO;
+}
+
+- (BOOL) copyItemAtPath: (NSString *)fromPath toPath: (NSString *)toPath error: (out NSError **)outError
+{
+    if (outError)
+        *outError = [self _readOnlyVolumeErrorForPath: toPath];
+    return NO;
+}
+
+- (BOOL) moveItemAtPath: (NSString *)fromPath toPath: (NSString *)toPath error: (out NSError **)outError
+{
+    if (outError)
+        *outError = [self _readOnlyVolumeErrorForPath: fromPath];
+    return NO;
+}
+
+- (BOOL) createDirectoryAtPath: (NSString *)path
+   withIntermediateDirectories: (BOOL)createIntermediates
+                         error: (out NSError **)outError
+{
+    if (outError)
+        *outError = [self _readOnlyVolumeErrorForPath: path];
+    return NO;
+}
+
 - (ADBISOEnumerator *) enumeratorAtPath: (NSString *)path
                                 options: (NSDirectoryEnumerationOptions)mask
-                           errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler
+                           errorHandler: (ADBFilesystemPathErrorHandler)errorHandler
 {
     return [[[ADBISOEnumerator alloc] initWithPath: path
                                        parentImage: self
@@ -195,73 +232,6 @@ int extdate_to_int(uint8_t *digits, int length)
                                       errorHandler: errorHandler] autorelease];
 }
 
-- (NSArray *) contentsOfDirectoryAtPath: (NSString *)path
-                                  error: (NSError **)outError
-{
-    ADBISODirectoryEntry *entry = (ADBISODirectoryEntry *)[self _fileEntryAtPath: path error: outError];
-    if (entry && entry.isDirectory)
-    {
-        NSArray *subentries = [entry subentriesWithError: outError];
-        if (!subentries)
-            return nil;
-        
-        NSMutableArray *subpaths = [NSMutableArray arrayWithCapacity: subentries.count];
-        
-        for (ADBISOFileEntry *subentry in subentries)
-        {
-            NSString *subpath = [path stringByAppendingPathComponent: subentry.fileName];
-            [subpaths addObject: subpath];
-            [self.pathCache setObject: subentry forKey: subpath];
-        }
-        
-        return subpaths;
-    }
-    else
-    {
-        return nil;
-    }
-}
-
-- (NSArray *)subpathsOfDirectoryAtPath: (NSString *)path
-                                 error: (NSError **)outError
-{
-    ADBISODirectoryEntry *entry = (ADBISODirectoryEntry *)[self _fileEntryAtPath: path error: outError];
-    
-    if (entry && entry.isDirectory)
-    {
-        NSArray *subentries = [entry subentriesWithError: outError];
-        if (!subentries)
-            return nil;
-        
-        NSMutableArray *subpaths = [NSMutableArray arrayWithCapacity: subentries.count];
-        
-        for (ADBISOFileEntry *subentry in subentries)
-        {
-            NSString *subpath = [path stringByAppendingPathComponent: subentry.fileName];
-            [subpaths addObject: subpath];
-                
-            if (subentry.isDirectory)
-            {
-                NSArray *subsubpaths = [self subpathsOfDirectoryAtPath: subpath error: outError];
-                if (subpaths != nil)
-                {
-                    [subpaths addObjectsFromArray: subsubpaths];
-                }
-                else
-                {
-                    return nil;
-                }
-            }
-            [self.pathCache setObject: subentry forKey: subpath];
-        }
-        
-        return subpaths;
-    }
-    else
-    {
-        return nil;
-    }
-}
 
 #pragma mark - Low-level filesystem API
 
@@ -889,14 +859,15 @@ int extdate_to_int(uint8_t *digits, int length)
 @synthesize parentImage = _parentImage;
 @synthesize treePositions = _treePositions;
 @synthesize tree = _tree;
-@synthesize currentPath = _currentPath;
+@synthesize currentDirectoryPath = _currentDirectoryPath;
+@synthesize currentEntry = _currentEntry;
 @synthesize errorHandler = _errorHandler;
 @synthesize enumerationOptions = _enumerationOptions;
 
 - (id) initWithPath: (NSString *)path
         parentImage: (ADBISOImage *)image
             options: (NSDirectoryEnumerationOptions)enumerationOptions
-       errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler
+       errorHandler: (ADBFilesystemPathErrorHandler)errorHandler
 {
     self = [self init];
     if (self)
@@ -914,7 +885,7 @@ int extdate_to_int(uint8_t *digits, int length)
                     self.tree = [NSMutableArray arrayWithObject: subpaths];
                     self.treePositions = [NSIndexPath indexPathWithIndex: 0];
                     
-                    self.currentPath = path;
+                    self.currentDirectoryPath = path;
                     self.parentImage = image;
                     _enumerationOptions = enumerationOptions;
                 }
@@ -922,8 +893,9 @@ int extdate_to_int(uint8_t *digits, int length)
                 {
                     if (errorHandler)
                     {
-                        NSURL *URL = [self.parentImage.baseURL URLByAppendingPathComponent: path];
-                        errorHandler(URL, error);
+                        //TODO: should we check the return value, and 'continue' with an exhausted enumerator
+                        //if the error handler returns YES? What does NSDirectoryEnumerator do in this case?
+                        errorHandler(path, error);
                     }
                     
                     [self release];
@@ -941,8 +913,9 @@ int extdate_to_int(uint8_t *digits, int length)
         {
             if (errorHandler)
             {
-                NSURL *URL = [self.parentImage.baseURL URLByAppendingPathComponent: path];
-                errorHandler(URL, error);
+                //TODO: should we check the return value, and 'continue' with an exhausted enumerator
+                //if the error handler returns YES? What does NSDirectoryEnumerator do in this case?
+                errorHandler(path, error);
             }
             
             [self release];
@@ -957,10 +930,21 @@ int extdate_to_int(uint8_t *digits, int length)
     self.parentImage = nil;
     self.treePositions = nil;
     self.tree = nil;
-    self.currentPath = nil;
+    self.currentDirectoryPath = nil;
+    self.currentEntry = nil;
     self.errorHandler = nil;
     
     [super dealloc];
+}
+
+- (id <ADBFilesystemPathAccess>) filesystem
+{
+    return self.parentImage;
+}
+
+- (NSDictionary *) fileAttributes
+{
+    return self.currentEntry.attributes;
 }
 
 - (id) nextObject
@@ -978,18 +962,18 @@ int extdate_to_int(uint8_t *digits, int length)
         //If we're within the bounds of this directory, return the next file entry.
         if (currentIndex < currentDirectory.count)
         {
-            ADBISOFileEntry *currentEntry = [currentDirectory objectAtIndex: currentIndex];
+            self.currentEntry = [currentDirectory objectAtIndex: currentIndex];
             
-            if ((_enumerationOptions & NSDirectoryEnumerationSkipsHiddenFiles) && currentEntry.isHidden)
+            if ((_enumerationOptions & NSDirectoryEnumerationSkipsHiddenFiles) && self.currentEntry.isHidden)
             {
                 self.treePositions = [[self.treePositions indexPathByRemovingLastIndex] indexPathByAddingIndex: currentIndex + 1];
                 continue;
             }
             else
             {
-                NSString *currentEntryPath = [self.currentPath stringByAppendingPathComponent: currentEntry.fileName];
+                NSString *currentEntryPath = [self.currentDirectoryPath stringByAppendingPathComponent: self.currentEntry.fileName];
                 
-                BOOL isDir = currentEntry.isDirectory;
+                BOOL isDir = self.currentEntry.isDirectory;
                 
                 //If this file entry is a subdirectory and we've already returned its base path,
                 //then descend into the subdirectory and return the first result within.
@@ -1004,12 +988,12 @@ int extdate_to_int(uint8_t *digits, int length)
                     if (!_skipDescendants && !(_enumerationOptions & NSDirectoryEnumerationSkipsSubdirectoryDescendants))
                     {
                         NSError *error;
-                        NSArray *subpaths = [(ADBISODirectoryEntry *)currentEntry subentriesWithError: &error];
+                        NSArray *subpaths = [(ADBISODirectoryEntry *)self.currentEntry subentriesWithError: &error];
                         if (subpaths.count)
                         {
                             [self.tree addObject: subpaths];
                             self.treePositions = [self.treePositions indexPathByAddingIndex: 0];
-                            self.currentPath = currentEntryPath;
+                            self.currentDirectoryPath = currentEntryPath;
                             
                             //Loop around and begin enumerating the new subdirectory.
                             continue;
@@ -1019,8 +1003,7 @@ int extdate_to_int(uint8_t *digits, int length)
                             BOOL shouldContinue = NO;
                             if (self.errorHandler)
                             {
-                                NSURL *URL = [self.parentImage.baseURL URLByAppendingPathComponent: currentEntryPath];
-                                shouldContinue = self.errorHandler(URL, error);
+                                shouldContinue = self.errorHandler(currentEntryPath, error);
                             }
                             
                             //If the error handler says it's ok to continue after this error,
@@ -1031,6 +1014,7 @@ int extdate_to_int(uint8_t *digits, int length)
                             }
                             else
                             {
+                                self.currentEntry = nil;
                                 return nil;
                             }
                         }
@@ -1067,7 +1051,7 @@ int extdate_to_int(uint8_t *digits, int length)
         {
             [self.tree removeLastObject];
             self.treePositions = self.treePositions.indexPathByRemovingLastIndex;
-            self.currentPath = self.currentPath.stringByDeletingLastPathComponent;
+            self.currentDirectoryPath = self.currentDirectoryPath.stringByDeletingLastPathComponent;
             
             continue;
         }
@@ -1076,6 +1060,7 @@ int extdate_to_int(uint8_t *digits, int length)
         else
         {
             _exhausted = YES;
+            self.currentEntry = nil;
             return nil;
         }
     }

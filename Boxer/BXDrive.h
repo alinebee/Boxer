@@ -30,7 +30,7 @@ typedef enum {
 #pragma mark -
 #pragma mark Interface
 
-@protocol ADBFilesystem;
+@protocol ADBFilesystemLocalFileURLAccess;
 @interface BXDrive : NSObject <NSCoding>
 {
 	NSString *_path;
@@ -56,7 +56,7 @@ typedef enum {
     BOOL _hasAutodetectedVolumeLabel;
     BOOL _hasAutodetectedType;
     
-    id <ADBFilesystem> _filesystem;
+    id <ADBFilesystemLocalFileURLAccess> _filesystem;
 }
 
 
@@ -137,7 +137,7 @@ typedef enum {
 #pragma mark Immutable properties
 
 //A filesystem instance appropriate for the backing medium of this drive.
-@property (readonly, retain, nonatomic) id <ADBFilesystem> filesystem;
+@property (readonly, retain, nonatomic) id <ADBFilesystemLocalFileURLAccess> filesystem;
 
 //A friendly OS X title for the drive's type.
 @property (readonly, nonatomic) NSString *typeDescription;

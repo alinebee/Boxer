@@ -26,74 +26,128 @@
 
 #import <Foundation/Foundation.h>
 
-typedef BOOL (^ADBFilesystemEnumeratorErrorHandler)(NSURL *url, NSError *error);
+typedef BOOL (^ADBFilesystemPathErrorHandler)(NSString *path, NSError *error);
+typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error);
 
+#pragma mark Relative path-based filesystem access
 
-@protocol ADBFilesystemEnumerator;
-@protocol ADBFilesystem <NSObject>
+//These methods are expected take filesystem-relative paths: that is, paths relative
+//to the root of the represented logical filesystem, instead of referring to anywhere
+//in the actual OS X filesystem.
+@protocol ADBFilesystemPathEnumeration;
+@protocol ADBFilesystemPathAccess <NSObject>
 
-#pragma mark - Introspecting the filesystem
-
-//Returns an enumerator for the specified URL, that will return NSURL objects.
-//This enumerator should respect the same parameters as NSFileManager's
-//enumeratorAtURL:includingPropertiesForKeys:options:errorHandler: method.
-- (id <ADBFilesystemEnumerator>) enumeratorAtURL: (NSURL *)URL
-                      includingPropertiesForKeys: (NSArray *)keys
-                                         options: (NSDirectoryEnumerationOptions)mask
-                                    errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler;
+- (id <ADBFilesystemPathEnumeration>) enumeratorAtPath: (NSString *)path
+                                               options: (NSDirectoryEnumerationOptions)mask
+                                          errorHandler: (ADBFilesystemPathErrorHandler)errorHandler;
 
 //Returns whether the item at the specified URL exists.
 //If isDirectory is provided, this will be populated with YES if the URL represents a directory
 //or NO otherwise.
-- (BOOL) fileExistsAtURL: (NSURL *)URL isDirectory: (BOOL *)isDirectory;
+- (BOOL) fileExistsAtPath: (NSString *)path isDirectory: (BOOL *)isDirectory;
+
+//Returns an NSFileManager-like dictionary of the filesystem attributes of the file
+//at the specified path. Returns nil and populates outError if the file cannot be accessed.
+- (NSDictionary *) attributesOfFileAtPath: (NSString *)path
+                                    error: (out NSError **)outError;
+
+//Returns the raw byte data of the file at the specified path.
+//Returns nil and populates outError if the file's contents could not be read.
+- (NSData *) contentsOfFileAtPath: (NSString *)path
+                            error: (out NSError **)outError;
 
 
 #pragma mark - Modifying files and folders
 
-//Deletes the file or directory at the specified URL.
+//Deletes the file or directory at the specified path.
 //Returns YES if the operation was successful, or NO and populates outError on failure.
-- (BOOL) removeItemAtURL: (NSURL *)URL error: (out NSError **)outError;
+- (BOOL) removeItemAtPath: (NSString *)path error: (out NSError **)outError;
 
-//Copy/move an item from the specified source URL to the specified destination.
+//Copy/move an item from the specified source path to the specified destination.
 //Returns YES if the operation was successful, or NO and populates outError on failure.
-- (BOOL) copyItemAtURL: (NSURL *)fromURL toURL: (NSURL *)toURL error: (out NSError **)outError;
-- (BOOL) moveItemAtURL: (NSURL *)fromURL toURL: (NSURL *)toURL error: (out NSError **)outError;
+- (BOOL) copyItemAtPath: (NSString *)fromPath toPath: (NSString *)toPath error: (out NSError **)outError;
+- (BOOL) moveItemAtPath: (NSString *)fromPath toPath: (NSString *)toPath error: (out NSError **)outError;
 
 //Creates a new directory at the specified URL, optionally creating any missing directories in-between.
 //Returns YES if the directory or directories were created, or NO on failure.
-- (BOOL) createDirectoryAtURL: (NSURL *)URL
+- (BOOL) createDirectoryAtPath: (NSString *)path
   withIntermediateDirectories: (BOOL)createIntermediates
                         error: (out NSError **)outError;
 
+//Returns an open stdlib FILE handle for the resource represented by the specified path,
+//using the specified access mode (in the standard fopen format).
+//Returns NULL and populates outError on failure.
+- (FILE *) openFileAtPath: (NSString *)path
+                   inMode: (const char *)accessMode
+                    error: (out NSError **)outError;
 @end
 
 
-//Additional filesystem methods for filesystems that can provide POSIX-level access
-//to their resources.
-@protocol ADBFilesystemPOSIXAccess <NSObject>
 
-- (const char *) fileSystemRepresentationForURL: (NSURL *)URL;
-- (NSURL *) URLFromFileSystemRepresentation: (const char *)representation;
+#pragma mark Local URL filesystem access
 
-//Returns an open POSIX file handle for the resource represented by the specified URL,
-//using the specified access mode (in the standard fopen format).
-//Returns NULL and populates outError on failure.
-- (FILE *) openFileAtURL: (NSURL *)URL
-                  inMode: (const char *)accessMode
-                   error: (out NSError **)outError;
+//These methods are expected to take absolute OS X filesystem URLs,
+//for filesystems that have some correspondence to real filesystem locations.
+//All URLs returned by these methods must be accessible under the standard
+//OS X file access APIs (NSFileManager, NSURL getPropertyValue:forKey:error: et. al.)
+
+@protocol ADBFilesystemLocalFileURLEnumeration;
+@protocol ADBFilesystemLocalFileURLAccess <ADBFilesystemPathAccess>
+
+//Return the canonical OS X filesystem URL/path that corresponds to the specified logical filesystem path.
+//Return nil if there is no corresponding URL (including if the specified path does not exist.)
+- (NSURL *) localFileURLForLogicalPath: (NSString *)path;
+- (const char *) localFilesystemRepresentationForLogicalPath: (NSString *)path;
+
+//Return the logical filesystem path corresponding to the specified OS X filesystem URL/path.
+//Unlike the above methods, this should return a logical path even one does not exist in the filesystem
+//(since this method may be used for creating new file resources.) It is also not guaranteed that URLs
+//will be identical when 'round-tripped' through these methods.
+- (NSString *) logicalPathForLocalFileURL: (NSURL *)URL;
+- (NSString *) logicalPathForLocalFilesystemRepresentation: (const char *)representation;
+
+
+//Returns an enumerator for the specified local filesystem URL, which will return NSURL objects
+//pointing to resources on the local filesystem.
+//This enumerator should respect the same parameters as NSFileManager's
+//enumeratorAtURL:includingPropertiesForKeys:options:errorHandler: method.
+- (id <ADBFilesystemLocalFileURLEnumeration>) enumeratorAtLocalFileURL: (NSURL *)URL
+                                            includingPropertiesForKeys: (NSArray *)keys
+                                                               options: (NSDirectoryEnumerationOptions)mask
+                                                          errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler;
 
 @end
 
 
 //A protocol for NSDirectoryEnumerator-alike objects. See that class for general behaviour.
-@protocol ADBFilesystemEnumerator <NSObject, NSFastEnumeration>
+@protocol ADBFilesystemPathEnumeration <NSObject, NSFastEnumeration>
 
-//The parent filesystem represented by this enumerator.
-- (id <ADBFilesystem>) filesystem;
+//The filesystem represented by this enumerator.
+- (id <ADBFilesystemPathAccess>) filesystem;
+
+- (NSDictionary *) fileAttributes;
 
 - (void) skipDescendants;
 - (NSUInteger) level;
 
+//Returns a filesystem-relative logical path.
+//Note that unlike NSDirectoryEnumerator, which returns paths relative to the path being enumerated,
+//this should return paths relative *to the root of the logical filesystem*: i.e. paths that can be
+//fed straight back into ADBFilesystemPathAccess methods.
+- (NSString *) nextObject;
+
+@end
+
+@protocol ADBFilesystemLocalFileURLEnumeration <NSObject, NSFastEnumeration>
+
+//The parent filesystem represented by this enumerator.
+- (id <ADBFilesystemLocalFileURLAccess>) filesystem;
+
+- (void) skipDescendants;
+- (NSUInteger) level;
+
+//Returns an absolute OS X filesystem URL.
 - (NSURL *) nextObject;
+
 
 @end

@@ -12,6 +12,7 @@
 #import "BXGameProfile.h"
 #import "RegexKitLite.h"
 #import "ADBFilesystem.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 
 #import "dos_inc.h"
 #import "dos_system.h"
@@ -1255,64 +1256,66 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 #pragma mark -
 #pragma mark Mapping local filesystem access
 
-- (FILE *) _openFileAtLocalPath: (NSString *)path
+- (FILE *) _openFileAtLocalPath: (const char *)path
                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive
                          inMode: (const char *)mode
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [(id <ADBFilesystemPOSIXAccess>)drive.filesystem openFileAtURL: [NSURL fileURLWithPath: path]
-                                                                   inMode: mode
-                                                                    error: NULL];
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
+    return [drive.filesystem openFileAtPath: logicalPath inMode: mode error: NULL];
 }
 
-- (BOOL) _removeFileAtLocalPath: (NSString *)path
+- (BOOL) _removeFileAtLocalPath: (const char *)path
                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [drive.filesystem removeItemAtURL: [NSURL fileURLWithPath: path]
-                                       error: NULL];
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
+    return [drive.filesystem removeItemAtPath: logicalPath error: NULL];
 }
 
-- (BOOL) _moveLocalPath: (NSString *)sourcePath
-            toLocalPath: (NSString *)destinationPath
+- (BOOL) _moveLocalPath: (const char *)sourcePath
+            toLocalPath: (const char *)destinationPath
           onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [drive.filesystem moveItemAtURL: [NSURL fileURLWithPath: sourcePath]
-                                     toURL: [NSURL fileURLWithPath: destinationPath]
-                                     error: NULL];
+    NSString *logicalSourcePath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: sourcePath];
+    NSString *logicalDestinationPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: destinationPath];
+    
+    return [drive.filesystem moveItemAtPath: logicalSourcePath toPath: logicalDestinationPath error: NULL];
 }
 
-- (BOOL) _createDirectoryAtLocalPath: (NSString *)path
+- (BOOL) _createDirectoryAtLocalPath: (const char *)path
                        onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [drive.filesystem createDirectoryAtURL: [NSURL fileURLWithPath: path]
-                      withIntermediateDirectories: NO
-                                            error: NULL];
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
+    return [drive.filesystem createDirectoryAtPath: logicalPath
+                       withIntermediateDirectories: NO
+                                             error: NULL];
 }
 
-- (BOOL) _removeDirectoryAtLocalPath: (NSString *)path
+- (BOOL) _removeDirectoryAtLocalPath: (const char *)path
                        onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [drive.filesystem removeItemAtURL: [NSURL fileURLWithPath: path]
-                                       error: NULL];
-    
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
+    return [drive.filesystem removeItemAtPath: logicalPath error: NULL];
 }
 
 - (BOOL) _getStats: (struct stat *)outStatus
-      forLocalPath: (NSString *)path
+      forLocalPath: (const char *)path
      onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    const char *filesystemPath = [(id <ADBFilesystemPOSIXAccess>)drive.filesystem fileSystemRepresentationForURL: [NSURL fileURLWithPath: path]];
+    //round-trip the path in case the filesystem remaps it to a different file location
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
+    const char *filesystemPath = [drive.filesystem localFilesystemRepresentationForLogicalPath: logicalPath];
     
     if (filesystemPath)
     {
@@ -1324,33 +1327,36 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     }
 }
 
-- (BOOL) _localDirectoryExists: (NSString *)path
+- (BOOL) _localDirectoryExists: (const char *)path
                  onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
     BOOL isDirectory;
-    return [drive.filesystem fileExistsAtURL: [NSURL fileURLWithPath: path] isDirectory: &isDirectory] && isDirectory;
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
+    return [drive.filesystem fileExistsAtPath: logicalPath isDirectory: &isDirectory] && isDirectory;
 }
 
-- (BOOL) _localFileExists: (NSString *)path
+- (BOOL) _localFileExists: (const char *)path
             onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
     BOOL isDirectory;
-    return [drive.filesystem fileExistsAtURL: [NSURL fileURLWithPath: path] isDirectory: &isDirectory] && !isDirectory;
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
+    return [drive.filesystem fileExistsAtPath: logicalPath isDirectory: &isDirectory] && !isDirectory;
 }
 
-- (id <ADBFilesystemEnumerator>) _directoryEnumeratorForLocalPath: (NSString *)path
-                                                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+- (id <ADBFilesystemLocalFileURLEnumeration>) _directoryEnumeratorForLocalPath: (const char *)path
+                                                                 onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [drive.filesystem enumeratorAtURL: [NSURL fileURLWithPath: path]
-                  includingPropertiesForKeys: [NSArray arrayWithObjects: NSURLIsDirectoryKey, NSURLNameKey, nil]
-                                     options: NSDirectoryEnumerationSkipsSubdirectoryDescendants
-                                errorHandler: NULL];
+    NSURL *localFileURL = [NSURL URLFromFileSystemRepresentation: path];
+    return [drive.filesystem enumeratorAtLocalFileURL: localFileURL
+                           includingPropertiesForKeys: [NSArray arrayWithObjects: NSURLIsDirectoryKey, NSURLNameKey, nil]
+                                              options: NSDirectoryEnumerationSkipsSubdirectoryDescendants
+                                         errorHandler: NULL];
 }
 
 @end

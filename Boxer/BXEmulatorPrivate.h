@@ -154,7 +154,7 @@ enum {
 @end
 
 
-@protocol ADBFilesystemEnumerator;
+@protocol ADBFilesystemLocalFileURLEnumeration;
 @interface BXEmulator (BXDOSFileSystemInternals)
 
 #pragma mark -
@@ -265,35 +265,35 @@ enum {
 #pragma mark -
 #pragma mark Local filesystem access
 
-- (FILE *) _openFileAtLocalPath: (NSString *)path
+- (FILE *) _openFileAtLocalPath: (const char *)path
                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive
                          inMode: (const char *)mode;
 
-- (BOOL) _removeFileAtLocalPath: (NSString *)path
+- (BOOL) _removeFileAtLocalPath: (const char *)path
                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-- (BOOL) _moveLocalPath: (NSString *)oldPath
-            toLocalPath: (NSString *)newPath
+- (BOOL) _moveLocalPath: (const char *)fromPath
+            toLocalPath: (const char *)toPath
           onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-- (BOOL) _createDirectoryAtLocalPath: (NSString *)path
+- (BOOL) _createDirectoryAtLocalPath: (const char *)path
                        onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-- (BOOL) _removeDirectoryAtLocalPath: (NSString *)path
+- (BOOL) _removeDirectoryAtLocalPath: (const char *)path
                        onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
 - (BOOL) _getStats: (struct stat *)outStatus
-      forLocalPath: (NSString *)path
+      forLocalPath: (const char *)path
      onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-- (BOOL) _localDirectoryExists: (NSString *)path
+- (BOOL) _localDirectoryExists: (const char *)path
                  onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-- (BOOL) _localFileExists: (NSString *)path
+- (BOOL) _localFileExists: (const char *)path
             onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-- (id <ADBFilesystemEnumerator>) _directoryEnumeratorForLocalPath: (NSString *)path
-                                                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+- (id <ADBFilesystemLocalFileURLEnumeration>) _directoryEnumeratorForLocalPath: (const char *)path
+                                                                 onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
 @end
 

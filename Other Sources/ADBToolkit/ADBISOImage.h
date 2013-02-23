@@ -44,7 +44,7 @@
 #pragma mark -
 #pragma mark Public interface
 
-@interface ADBISOImage : NSObject
+@interface ADBISOImage : NSObject <ADBFilesystemPathAccess>
 {
     FILE *_handle;
     NSURL *_baseURL;
@@ -72,35 +72,5 @@
 //Returns nil and populates outError if the specified image could not be read.
 + (id) imageWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
 - (id) initWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
-
-
-#pragma mark - Filesystem access: path-based API
-
-- (BOOL) fileExistsAtPath: (NSString *)path isDirectory: (BOOL *)isDir;
-
-//Returns an NSFileManager-like dictionary of the filesystem attributes of the file
-//at the specified path relative to the root of the image.
-//Returns nil and populates outError if the file could not be accessed.
-- (NSDictionary *) attributesOfFileAtPath: (NSString *)path
-                                    error: (out NSError **)outError;
-
-//Returns the raw byte data of the file at the specified path relative to the root
-//of the image.
-//Returns nil and populates outError if the file's contents could not be read.
-- (NSData *) contentsOfFileAtPath: (NSString *)path
-                            error: (out NSError **)outError;
-
-//Returns an NSDirectoryEnumerator-alike enumerator for the directory structure
-//of this image, starting at the specified file path relative to the root of the image.
-//Returns nil and populates outError if the specified path could not be accessed.
-- (id <ADBFilesystemEnumerator>) enumeratorAtPath: (NSString *)path
-                                          options: (NSDirectoryEnumerationOptions)mask
-                                     errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler;
-
-- (NSArray *) subpathsOfDirectoryAtPath: (NSString *)path
-                                  error: (out NSError **)outError;
-
-- (NSArray *) contentsOfDirectoryAtPath: (NSString *)path
-                                  error: (out NSError **)outError;
 
 @end

@@ -186,17 +186,18 @@
 
 
 
-@interface ADBISOEnumerator : NSEnumerator
+@interface ADBISOEnumerator : NSEnumerator <ADBFilesystemPathEnumeration>
 {
     ADBISOImage *_parentImage;
     NSMutableArray *_tree;
     NSIndexPath *_treePositions;
-    NSString *_currentPath;
+    NSString *_currentDirectoryPath;
+    ADBISOFileEntry *_currentEntry;
     BOOL _skipDescendants;
     BOOL _exhausted;
     BOOL _hasReturnedDirectory;
     NSDirectoryEnumerationOptions _enumerationOptions;
-    ADBFilesystemEnumeratorErrorHandler _errorHandler;
+    ADBFilesystemPathErrorHandler _errorHandler;
 }
 
 //The image which this enumerator is iterating.
@@ -210,19 +211,20 @@
 //Our current offset within each nested array of the tree. Incremented as we enumerate.
 @property (retain, nonatomic) NSIndexPath *treePositions;
 
-//The filesystem path of the directory we are currently iterating.
-@property (copy, nonatomic) NSString *currentPath;
+//The filesystem path of the directory we are currently iterating, relative to the root of the image.
+@property (copy, nonatomic) NSString *currentDirectoryPath;
+
+//The file entry of the latest file we have iterated.
+@property (copy, nonatomic) ADBISOFileEntry *currentEntry;
 
 //The error handler to call when we encounter errors traversing the directory structure.
-@property (copy, nonatomic) ADBFilesystemEnumeratorErrorHandler errorHandler;
+@property (copy, nonatomic) ADBFilesystemPathErrorHandler errorHandler;
 
+//The enumeration options provided when the enumerator was created.
 @property (readonly, nonatomic) NSDirectoryEnumerationOptions enumerationOptions;
-
-- (void) skipDescendants;
-- (NSUInteger) level;
 
 - (id) initWithPath: (NSString *)path
         parentImage: (ADBISOImage *)image
             options: (NSDirectoryEnumerationOptions)enumerationOptions
-       errorHandler: (ADBFilesystemEnumeratorErrorHandler)errorHandler;
+       errorHandler: (ADBFilesystemPathErrorHandler)errorHandler;
 @end

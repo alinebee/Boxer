@@ -18,7 +18,7 @@
 @interface BXDrive ()
 
 @property (readwrite, retain, nonatomic) NSMutableSet *pathAliases;
-@property (readwrite, retain, nonatomic) id <ADBFilesystem> filesystem;
+@property (readwrite, retain, nonatomic) id <ADBFilesystemLocalFileURLAccess> filesystem;
 
 @end
 
@@ -465,7 +465,7 @@
 	}
 }
 
-- (id <ADBFilesystem>) filesystem
+- (id <ADBFilesystemLocalFileURLAccess>) filesystem
 {
     if (self.mountPoint)
     {
@@ -475,7 +475,7 @@
             NSURL *sourceURL = [NSURL fileURLWithPath: self.mountPoint];
             NSURL *shadowURL = (self.shadowPath) ? [NSURL fileURLWithPath: self.shadowPath] : nil;
             self.filesystem = [ADBShadowedFilesystem filesystemWithSourceURL: sourceURL
-                                                                  shadowURL: shadowURL];
+                                                                   shadowURL: shadowURL];
         }
     }
     return [[_filesystem retain] autorelease];

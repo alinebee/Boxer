@@ -626,6 +626,8 @@
 		9F794DAF15EA966E00A4CB05 /* DummyCD.iso in Resources */ = {isa = PBXBuildFile; fileRef = 9F12F97B144875F400FC9645 /* DummyCD.iso */; };
 		9F7D9EFF1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */; };
 		9F7FC94C139EB38300D60320 /* RacingWheel.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7FC94B139EB38300D60320 /* RacingWheel.png */; };
+		9F80E7FF16DA3170001C3162 /* ADBFileHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F80E7FE16DA316F001C3162 /* ADBFileHandle.m */; };
+		9F80E80016DA3170001C3162 /* ADBFileHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F80E7FE16DA316F001C3162 /* ADBFileHandle.m */; };
 		9F839FB5150B81EF00337DD6 /* ScreenshotTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F839FB4150B81EF00337DD6 /* ScreenshotTemplate.pdf */; };
 		9F843FE11226EB1100FD37F1 /* import.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F843FE01226EB1100FD37F1 /* import.png */; };
 		9F86C45B165060E7003D9C3B /* PrinterBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F86C45A165060E7003D9C3B /* PrinterBackground.jpg */; };
@@ -1481,6 +1483,8 @@
 		9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXExternalMT32+BXMT32Sysexes.m"; sourceTree = "<group>"; };
 		9F7FC94B139EB38300D60320 /* RacingWheel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RacingWheel.png; sourceTree = "<group>"; };
 		9F80BC81123556AD00EBAB23 /* Finder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Finder.h; sourceTree = "<group>"; };
+		9F80E7FD16DA316F001C3162 /* ADBFileHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBFileHandle.h; sourceTree = "<group>"; };
+		9F80E7FE16DA316F001C3162 /* ADBFileHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBFileHandle.m; sourceTree = "<group>"; };
 		9F81CFB713EEA3F4008F0265 /* ADBISOImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBISOImage.h; sourceTree = "<group>"; };
 		9F81CFB813EEA3F4008F0265 /* ADBISOImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBISOImage.m; sourceTree = "<group>"; };
 		9F81CFBA13EEAD6D008F0265 /* ADBISOImagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBISOImagePrivate.h; sourceTree = "<group>"; };
@@ -3208,6 +3212,8 @@
 		9F9840FE15BEE5F700B50CDA /* Filesystem */ = {
 			isa = PBXGroup;
 			children = (
+				9F80E7FD16DA316F001C3162 /* ADBFileHandle.h */,
+				9F80E7FE16DA316F001C3162 /* ADBFileHandle.m */,
 				9F98410415BF10B700B50CDA /* ADBFilesystem.h */,
 				9F98410015BEE64400B50CDA /* ADBShadowedFilesystem.h */,
 				9F98410115BEE64400B50CDA /* ADBShadowedFilesystem.m */,
@@ -4310,6 +4316,7 @@
 				9F6463F716C67415008B65BF /* BXOutputBinding.m in Sources */,
 				9FF91EB616CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */,
 				9F35F3E916CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */,
+				9F80E7FF16DA3170001C3162 /* ADBFileHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4616,6 +4623,7 @@
 				9F6463F816C67415008B65BF /* BXOutputBinding.m in Sources */,
 				9FF91EB716CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */,
 				9F35F3EA16CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */,
+				9F80E80016DA3170001C3162 /* ADBFileHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

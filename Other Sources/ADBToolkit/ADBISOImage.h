@@ -44,9 +44,11 @@
 #pragma mark -
 #pragma mark Public interface
 
+@protocol ADBFileHandle;
 @interface ADBISOImage : NSObject <ADBFilesystemPathAccess>
 {
-    FILE *_handle;
+    id <ADBFileHandle> _handle;
+    
     NSURL *_baseURL;
     NSString *_volumeName;
     

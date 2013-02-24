@@ -49,26 +49,26 @@ extern NSString * const ADBDefaultIncrementedFilenameFormat; //Filename (increme
 
 #pragma mark File operation methods
 
-//Returns a uniquified version of the specified URL that is guaranteed not exist at the time
-//the method is called. If the original URL does not exist, then it will be returned unchanged;
+//Returns a uniquified version of the specified URL that does not exist at the time the method
+//is called. If the original URL does not exist, then it will be returned unchanged;
 //otherwise an incremented version of the URL will be returned, using the specified format and
 //incremented starting from 2.
 //Note that this can introduce race conditions since a file with that URL may be created between
 //requesting the URL and actually using the URL.
 - (NSURL *) uniqueURLForURL: (NSURL *)URL filenameFormat: (NSString *)filenameFormat;
 
-//Creates a directory with the specified attributes at the specified URL (if it does not exist)
-//or a version of that URL incremented with the specified format (if a resource already exists
-//at that URL). Returns the URL that was actually created, or nil and populates outError if
-//directory creation failed.
+//Creates a directory with the specified attributes at the specified URL (if no resource already
+//exists at that URL) or at a version of that URL incremented with the specified format (if a
+//resource already exists at that URL). Returns the URL that was actually created, or nil and
+//populates outError if directory creation failed.
 - (NSURL *) createDirectoryAtURL: (NSURL *)URL
                   filenameFormat: (NSString *)filenameFormat
                       attributes: (NSDictionary *)attributes
                            error: (out NSError **)outError;
 
-//Copy/move the specified item from the specified source to the specified destination
-//(if it does not exist) or to a version of the destination URL incremented with the specified
-//format (if a resource already exists at that URL). Returns the final destination URL to which
+//Copy/move the file at the specified source URL to the specified destination URL (if no resource
+//already exists at that URL) or to a version of the destination URL incremented with the specified
+//format (if a resource does already exist at that URL). Returns the final destination URL to which
 //the source was copied/moved, or nil and populates outError if the copy failed.
 - (NSURL *) copyItemAtURL: (NSURL *)sourceURL
                     toURL: (NSURL *)destinationURL

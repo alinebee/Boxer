@@ -71,8 +71,8 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 //Creates a new directory at the specified URL, optionally creating any missing directories in-between.
 //Returns YES if the directory or directories were created, or NO on failure.
 - (BOOL) createDirectoryAtPath: (NSString *)path
-  withIntermediateDirectories: (BOOL)createIntermediates
-                        error: (out NSError **)outError;
+   withIntermediateDirectories: (BOOL)createIntermediates
+                         error: (out NSError **)outError;
 
 //Returns an open stdlib FILE handle for the resource represented by the specified path,
 //using the specified access mode (in the standard fopen format).

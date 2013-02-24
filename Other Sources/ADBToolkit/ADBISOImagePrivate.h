@@ -41,6 +41,8 @@
 @property (copy, nonatomic) NSURL *baseURL;
 @property (copy, nonatomic) NSString *volumeName;
 
+@property (retain, nonatomic) id <ADBFileHandle> handle;
+
 @property (retain, nonatomic) NSMutableDictionary *pathCache;
 
 @property (readonly, nonatomic) NSUInteger sectorSize;
@@ -152,6 +154,9 @@
 //instances, YES for ADBISODirectoryEntry instances.
 @property (readonly, nonatomic) BOOL isDirectory;
 
+//The area of the parent image where this file's data is located.
+@property (readonly, nonatomic) NSRange dataRange;
+
 #pragma mark -
 #pragma mark Methods
 
@@ -215,7 +220,7 @@
 @property (copy, nonatomic) NSString *currentDirectoryPath;
 
 //The file entry of the latest file we have iterated.
-@property (copy, nonatomic) ADBISOFileEntry *currentEntry;
+@property (retain, nonatomic) ADBISOFileEntry *currentEntry;
 
 //The error handler to call when we encounter errors traversing the directory structure.
 @property (copy, nonatomic) ADBFilesystemPathErrorHandler errorHandler;
@@ -227,4 +232,5 @@
         parentImage: (ADBISOImage *)image
             options: (NSDirectoryEnumerationOptions)enumerationOptions
        errorHandler: (ADBFilesystemPathErrorHandler)errorHandler;
+
 @end

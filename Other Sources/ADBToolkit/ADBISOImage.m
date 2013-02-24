@@ -26,6 +26,7 @@
 
 #import "ADBISOImagePrivate.h"
 #import "NSString+ADBPaths.h"
+#import "ADBFileHandle.h"
 
 #pragma mark -
 #pragma mark Date helper macros
@@ -53,6 +54,7 @@ int extdate_to_int(uint8_t *digits, int length)
 @synthesize sectorSize = _sectorSize;
 @synthesize rawSectorSize = _rawSectorSize;
 @synthesize leadInSize = _leadInSize;
+@synthesize handle = _handle;
 
 + (NSDate *) _dateFromDateTime: (ADBISODateTime)dateTime
 {
@@ -125,10 +127,10 @@ int extdate_to_int(uint8_t *digits, int length)
 
 - (void) dealloc
 {
-    if (_handle)
+    if (self.handle)
     {
-        fclose(_handle);
-        _handle = NULL;
+        [self.handle close];
+        self.handle = nil;
     }
     
     self.baseURL = nil;
@@ -184,6 +186,26 @@ int extdate_to_int(uint8_t *digits, int length)
     }
     return [entry contentsWithError: outError];
 }
+
+- (FILE *) openFileAtPath: (NSString *)path
+                   inMode: (const char *)accessMode
+                    error: (out NSError **)outError
+{
+    //TODO: return an error if the requested mode is writeable.
+    ADBISOFileEntry *entry = [self _fileEntryAtPath: path error: outError];
+    if (entry)
+    {
+        ADBFileRangeHandle *entryHandle = [[ADBFileRangeHandle alloc] initWithSourceHandle: self.handle
+                                                                                     range: entry.dataRange];
+        
+        return [entryHandle fileHandleAdoptingOwnership: YES];
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
 
 - (NSError *) _readOnlyVolumeErrorForPath: (NSString *)path
 {
@@ -283,78 +305,15 @@ int extdate_to_int(uint8_t *digits, int length)
 
 - (BOOL) _getBytes: (void *)buffer atLogicalRange: (NSRange)range error: (out NSError **)outError
 {
-    NSUInteger offset = [self _rawOffsetForLogicalOffset: range.location];
-    NSUInteger sectorPadding = _rawSectorSize - _sectorSize;
-    
-    NSUInteger bytesToRead = range.length;
-    NSUInteger bytesRead = 0;
-    
-    while (bytesRead < bytesToRead)
+    @synchronized(self.handle)
     {
-        //If there is no sector padding then we can read the bytes in one go straight across sector boundaries.
-        NSUInteger chunkSize = bytesToRead - bytesRead;
-        
-        //Otherwise we'll have to read up to the edge of the sector and then skip over the padding to the next sector.
-        if (sectorPadding > 0)
-        {
-            NSUInteger offsetWithinSector = [self _rawOffsetWithinSector: offset];
-            NSAssert1(offsetWithinSector < _sectorSize, @"Requested byte offset falls within sector padding: %lu", (unsigned long)offset);
-            
-            chunkSize = MIN(chunkSize, _sectorSize - offsetWithinSector);
-        }
-        
-        BOOL seeked = (fseek(_handle, offset, SEEK_SET) == 0);
-        if (!seeked)
-        {
-            if (outError)
-            {
-                NSInteger errorCode = errno;
-                NSDictionary *info = @{ NSURLErrorKey: self.baseURL };
-                *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
-                                                code: errorCode
-                                            userInfo: info];
-            }
+        BOOL sought = [self.handle seekToOffset: range.location relativeTo: ADBSeekFromStart error: outError];
+        if (!sought)
             return NO;
-        }
         
-        void *bufferOffset = &buffer[bytesRead];
-        size_t bytesReadInChunk = fread(bufferOffset, 1, chunkSize, _handle);
-        if (bytesReadInChunk < chunkSize)
-        {
-            if (outError)
-            {
-                NSDictionary *info = @{ NSURLErrorKey: self.baseURL };
-                NSInteger errorCode = ferror(_handle);
-                
-                //We encountered an honest-to-god POSIX error occurred while reading
-                if (errorCode != 0)
-                {
-                    *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
-                                                    code: errorCode
-                                                userInfo: info];
-                }
-                //We didn't receive as many bytes as we were expecting, indicating a truncated file
-                if (feof(_handle))
-                {
-                    *outError = [NSError errorWithDomain: NSCocoaErrorDomain
-                                                    code: NSFileReadCorruptFileError
-                                                userInfo: info];
-                }
-                
-            }
-            return NO;
-        }
-        
-        bytesRead += bytesReadInChunk;
-        
-        //If we still have bytes remaining after this chunk, then we must be at the edge of a sector:
-        //Jump across into the next sector and continue.
-        if (bytesRead < bytesToRead)
-        {
-            offset += chunkSize + sectorPadding;
-        }
+        NSUInteger bytesRead = range.length;
+        return [self.handle getBytes: buffer length: &bytesRead error: outError];
     }
-    return YES;
 }
 
 - (NSData *) _dataInRange: (NSRange)range error: (out NSError **)outError;
@@ -378,19 +337,15 @@ int extdate_to_int(uint8_t *digits, int length)
 {
     self.baseURL = URL;
     
-    _handle = fopen(URL.path.fileSystemRepresentation, "r");
-    
-    //If the image couldn't be opened for reading, bail out now
-    if (!_handle)
-    {
-        if (outError)
-        {
-            NSInteger posixError = errno;
-            NSDictionary *info = @{ NSURLErrorKey: URL };
-            *outError = [NSError errorWithDomain: NSPOSIXErrorDomain code: posixError userInfo: info];
-        }
+    ADBSimpleFileHandle *rawHandle = [[ADBSimpleFileHandle alloc] initWithURL: URL mode: "r" error: outError];
+    if (!rawHandle)
         return NO;
-    }
+    
+    self.handle = [[[ADBPaddedFileHandle alloc] initWithSourceHandle: [rawHandle autorelease]
+                                                    logicalBlockSize: _sectorSize
+                                                              leadIn: _leadInSize
+                                                             leadOut: (_rawSectorSize - _sectorSize - _leadInSize)] autorelease];
+    
     
     //Search the volume descriptors to find the primary descriptor
     ADBISOPrimaryVolumeDescriptor descriptor;
@@ -670,6 +625,7 @@ int extdate_to_int(uint8_t *digits, int length)
 @synthesize creationDate = _creationDate;
 @synthesize parentImage = _parentImage;
 @synthesize hidden = _hidden;
+@synthesize dataRange = _dataRange;
 
 + (id) entryFromDirectoryRecord: (ADBISODirectoryRecord)record
                         inImage: (ADBISOImage *)image

@@ -1721,6 +1721,7 @@
 		9FCA6D9515C85D8500E1650C /* BXLaunchPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXLaunchPanelController.m; sourceTree = "<group>"; };
 		9FCA702013DAE6B1006C5DF8 /* BXCoalfaceDrives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalfaceDrives.h; sourceTree = "<group>"; };
 		9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalfaceDrives.mm; sourceTree = "<group>"; };
+		9FCB6EB616DBED960089E14E /* BXExecutableConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BXExecutableConstants.h; sourceTree = "<group>"; };
 		9FCB7B0915B8422000CC7CC7 /* DOS Toolkit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "DOS Toolkit"; sourceTree = "<group>"; };
 		9FCB7B0B15B842E000CC7CC7 /* BXStandaloneAppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXStandaloneAppController.h; sourceTree = "<group>"; };
 		9FCB7B0C15B842E000CC7CC7 /* BXStandaloneAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXStandaloneAppController.m; sourceTree = "<group>"; };
@@ -1980,6 +1981,7 @@
 				9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */,
 				9F53411612059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.h */,
 				9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */,
+				9FCB6EB616DBED960089E14E /* BXExecutableConstants.h */,
 				9F887103156F85F8006CDB5F /* BXFileTypes.h */,
 				9F887104156F85F8006CDB5F /* BXFileTypes.m */,
 				9F902C1D142E169800843B01 /* MIDI */,

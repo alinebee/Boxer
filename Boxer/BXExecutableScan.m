@@ -7,6 +7,7 @@
 
 #import "BXExecutableScan.h"
 #import "NSWorkspace+BXExecutableTypes.h"
+#import "NSWorkspace+ADBFileTypes.h"
 #import "BXFileTypes.h"
 
 

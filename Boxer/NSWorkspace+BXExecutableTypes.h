@@ -26,38 +26,20 @@
 
 
 //The BXExecutableTypes category extends NSWorkspace to add methods for verifying MS-DOS executables.
+//The actual implementations behind these methods have been moved to BXFileTypes; this is a deprecated
+//interface.
 
-#import "NSWorkspace+ADBFileTypes.h"
-
-//Executable types.
-enum {
-	BXExecutableTypeUnknown	= 0,
-	BXExecutableTypeDOS,
-	BXExecutableTypeWindows,
-	BXExecutableTypeOS2
-};
-
-typedef NSUInteger BXExecutableType;
-
-
-//Error domains and error codes
-extern NSString * const BXExecutableTypesErrorDomain;
-enum
-{
-	BXNotAnExecutable			= 1,	//Specified file was simply not a recognised executable type
-	BXCouldNotReadExecutable	= 2,	//Specified file could not be opened for reading
-	BXExecutableTruncated		= 3		//Specified file was truncated or corrupted
-};
-
+#import <Cocoa/Cocoa.h>
+#import "BXFileTypes.h"
 
 @interface NSWorkspace (BXExecutableTypes)
 
 //Returns whether the file at the specified path is an executable that can be run by DOSBox.
 //Returns NO and populates outError if the executable type could not be determined.
-- (BOOL) isCompatibleExecutableAtPath: (NSString *)filePath error: (NSError **)outError;
+- (BOOL) isCompatibleExecutableAtPath: (NSString *)filePath error: (out NSError **)outError;
 
 //Returns the executable type of the file at the specified path.
 //If the executable type cannot be determined, outError will be populated with the reason.
-- (BXExecutableType) executableTypeAtPath: (NSString *)path error: (NSError **)outError;
+- (BXExecutableType) executableTypeAtPath: (NSString *)path error: (out NSError **)outError;
 
 @end

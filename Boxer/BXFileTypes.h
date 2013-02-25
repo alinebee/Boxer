@@ -60,3 +60,41 @@ extern NSString * const BXBatchProgramType;     //.bat
 + (NSString *) bundleIdentifierForApplicationToOpenURL: (NSURL *)URL;
 
 @end
+
+
+#pragma mark - Executable type checking
+
+extern NSString * const BXExecutableTypesErrorDomain;
+enum
+{
+	BXNotAnExecutable			= 1,	//Specified file was simply not a recognised executable type
+	BXCouldNotReadExecutable	= 2,	//Specified file could not be opened for reading
+	BXExecutableTruncated		= 3		//Specified file was truncated or corrupted
+};
+
+//Executable types.
+typedef enum {
+	BXExecutableTypeUnknown	= 0,
+	BXExecutableTypeDOS,
+	BXExecutableTypeWindows,
+	BXExecutableTypeOS2
+} BXExecutableType;
+
+@protocol ADBReadable, ADBSeekable;
+@interface BXFileTypes (BXExecutableTypes)
+
+//Returns the executable type of the file at the specified URL or in the specified stream.
+//If the executable type cannot be determined, these will return BXExecutableTypeUnknown
+//and populate outError with the failure reason.
++ (BXExecutableType) typeOfExecutableAtURL: (NSURL *)URL
+                                     error: (out NSError **)outError;
+
++ (BXExecutableType) typeOfExecutableInStream: (id <ADBReadable, ADBSeekable>)handle
+                                        error: (out NSError **)outError;
+
+//Returns whether the file at the specified URL is a DOSBox-compatible executable.
+//If the file appears to be a .COM or .BAT file, this method will assume it is compatible;
+//If the file is an .EXE file, typeOfExecutableAtURL:error: will be used to determine the type.
++ (BOOL) isCompatibleExecutableAtURL: (NSURL *)URL error: (out NSError **)outError;
+
+@end

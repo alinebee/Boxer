@@ -56,10 +56,12 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 @interface BXGamebox ()
 @property (readwrite, retain, nonatomic) NSDictionary *gameInfo;
 
-- (NSArray *) _foundExecutables;
-- (NSArray *) _foundResourcesOfTypes: (NSSet *)fileTypes startingIn: (NSString *)basePath;
++ (NSSet *) executableExclusions;
++ (NSArray *) URLsForMeaningfulExecutablesInLocation: (NSURL *)baseURL
+                                searchSubdirectories: (BOOL)searchSubdirs;
 
-//Returns a new auto-generated identifier based on this gamebox's name.
+//Returns a new auto-generated identifier based on the meaningful
+//executbales found inside the gamebox (if any are present), or a random UUID.
 //On return, type will be the type of identifier generated.
 - (NSString *) _generatedIdentifierOfType: (BXGameIdentifierType *)type;
 
@@ -95,6 +97,11 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 + (BXGamebox *) bundleWithPath: (NSString *)path
 {
 	return [[[self alloc] initWithPath: path] autorelease];
+}
+
++ (BXGamebox *) bundleWithURL: (NSURL *)URL
+{
+	return [[[self alloc] initWithURL: URL] autorelease];
 }
 
 - (void) dealloc
@@ -466,11 +473,6 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	[[NSWorkspace sharedWorkspace] setIcon: image forFile: self.bundlePath options: 0];
 }
 
-- (NSArray *) executables
-{
-	return [self _foundExecutables];
-}
-
 - (NSDictionary *) gameInfo
 {
 	//Load the game info from the gamebox's plist file the first time we need it.
@@ -596,31 +598,32 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	}
 }
 
-
-//Trawl the package looking for DOS executables
-//TODO: move filtering upstairs to BXSession, as we should not be determining application behaviour here.
-- (NSArray *) _foundExecutables
++ (NSArray *) URLsForMeaningfulExecutablesInLocation: (NSURL *)location searchSubdirectories: (BOOL)searchSubdirs
 {
-	NSArray *foundExecutables	= [self _foundResourcesOfTypes: [BXFileTypes executableTypes]
-                                                    startingIn: self.gamePath];
-	NSPredicate *notExcluded	= [NSPredicate predicateWithFormat: @"NOT lastPathComponent.lowercaseString IN %@", [self.class executableExclusions]];
-	
-	return [foundExecutables filteredArrayUsingPredicate: notExcluded];
-}
-
-- (NSArray *) _foundResourcesOfTypes: (NSSet *)fileTypes startingIn: (NSString *)basePath
-{
-	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSMutableArray *matches	= [NSMutableArray arrayWithCapacity: 10];
-	
-	for (NSString *path in [ADBPathEnumerator enumeratorAtPath: basePath])
-	{
-		//Note that we don't use our own smarter file:matchesTypes: function for this,
-		//because there are some inherited filetypes that we want to avoid matching.
-		if ([fileTypes containsObject: [workspace typeOfFile: path error: nil]])
-            [matches addObject: path];
-	}
-	return matches;	
+    NSArray *properties = @[NSURLTypeIdentifierKey];
+    NSDirectoryEnumerationOptions options = NSDirectoryEnumerationSkipsHiddenFiles;
+    if (!searchSubdirs)
+        options |= NSDirectoryEnumerationSkipsSubdirectoryDescendants;
+    
+    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL: location
+                                                             includingPropertiesForKeys: properties
+                                                                                options: options
+                                                                           errorHandler: NULL];
+    
+    NSMutableArray *executableURLs = [NSMutableArray array];
+    NSSet *exclusions = [self executableExclusions];
+    for (NSURL *URL in enumerator)
+    {
+        if (![URL matchingFileType: [BXFileTypes executableTypes]])
+            continue;
+        
+        if ([exclusions containsObject: URL.lastPathComponent.lowercaseString])
+             continue;
+        
+        [executableURLs addObject: URL];
+    }
+    
+    return executableURLs;
 }
 
 - (NSString *) _generatedIdentifierOfType: (BXGameIdentifierType *)type
@@ -629,7 +632,8 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     
 	//If the gamebox contains executables, generate an identifier based on their hash.
 	//TODO: move the choice of executables off to BXSession
-	NSArray *foundExecutables = self.executables;
+	NSArray *foundExecutables = [self.class URLsForMeaningfulExecutablesInLocation: self.resourceURL
+                                                              searchSubdirectories: YES];
 	if (foundExecutables.count)
 	{
 		NSData *digest = [ADBDigest SHA1DigestForURLs: foundExecutables
@@ -1194,8 +1198,7 @@ typedef enum {
 
 + (BOOL) isDocumentationFileAtURL: (NSURL *)URL
 {
-    NSString *fileType = nil;
-    [URL getResourceValue: &fileType forKey: NSURLTypeIdentifierKey error: NULL];
+    NSString *fileType = URL.typeIdentifier;
     
     //Check if the specified file is of a type we recognise as documentation.
     //Note that we don't use our own smarter conformsToFileType: methods for this,

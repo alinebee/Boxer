@@ -126,9 +126,6 @@ typedef NSUInteger BXGameIdentifierType;
 //The unique identifier of this game.
 @property (copy, nonatomic) NSString *gameIdentifier;
 
-//An array of absolute file paths to DOS executables found inside the gamebox.
-@property (readonly, nonatomic) NSArray *executables;
-
 //Arrays of paths to additional DOS drives discovered within the package.
 @property (readonly, nonatomic) NSArray *hddVolumes;
 @property (readonly, nonatomic) NSArray *cdVolumes;
@@ -163,15 +160,13 @@ typedef NSUInteger BXGameIdentifierType;
 //The delegate from whom we will request an undo manager for undoable operations.
 @property (assign, nonatomic) id <ADBUndoDelegate> undoDelegate;
 
-
 #pragma mark -
 #pragma mark Class methods
 
 //Re-casts the return value as a BXGamebox instead of an NSBundle
 + (BXGamebox *)bundleWithPath: (NSString *)path;
++ (BXGamebox *)bundleWithURL: (NSURL *)URL;
 
-//Filename patterns for executables to exclude from searches.
-+ (NSSet *) executableExclusions;
 
 #pragma mark -
 #pragma mark Instance methods

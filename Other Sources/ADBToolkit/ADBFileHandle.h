@@ -30,47 +30,20 @@
 //random access). It differs from NSFileHandle in that it can provide a FILE * handle
 //for use with stdlib IO functions.
 
+//This library also defines general protocols for describing handles that implement
+//one or more aspects of the same API.
+
 
 #import <Foundation/Foundation.h>
 
-typedef enum {
-    ADBSeekFromStart    = SEEK_SET,
-    ADBSeekFromEnd      = SEEK_END,
-    ADBSeekFromCurrent  = SEEK_CUR,
-} ADBFileHandleSeekLocation;
-
-
-//Returned by -offset when the offset cannot be determined or is not applicable.
-#define ADBOffsetUnknown -1
-
-
 #pragma mark - Protocol definitions
 
-@protocol ADBFileHandle <NSObject>
+@protocol ADBReadable <NSObject>
 
 #pragma mark - Data access methods
 
-//Return the handle's current byte offset, or ADBOffsetUnknown if this
-//could not be determined.
-- (long long) offset;
-
-//Return the maximum addressable offset, i.e. the length of the file.
-//Return ADBOffsetUnknown if this could not be determined.
-- (long long) maxOffset;
-
-//Returns whether the handle's offset is at or beyond the end of the file.
-- (BOOL) isAtEnd;
-
-//Sets the handle's byte offset to the relative to the specified location.
-//Returns YES if the offset was changed, or NO and populates outError if
-//an illegal offset was specified.
-//(Note that it is legal to seek beyond the end of the file.)
-- (BOOL) seekToOffset: (long long)offset
-           relativeTo: (ADBFileHandleSeekLocation)location
-                error: (out NSError **)outError;
-
 //Given a buffer and a pointer to a number of bytes, fills the buffer with
-//*at most* that many bytes, starting from the current offset of the handle.
+//*at most* that many bytes, starting from the current position of the handle.
 //On success, returns YES and populates numBytes with the number of bytes
 //that were actually read into the buffer (which may be less than the number
 //requested, or zero, if the offset is at the end of the file.)
@@ -79,6 +52,10 @@ typedef enum {
            length: (inout NSUInteger *)numBytes
             error: (out NSError **)outError;
 
+@end
+
+
+@protocol ADBFileHandleAccess <NSObject>
 
 #pragma mark - FILE handle access
 
@@ -102,7 +79,8 @@ typedef enum {
 
 @end
 
-@protocol ADBWritableFileHandle <ADBFileHandle>
+
+@protocol ADBWritable <NSObject>
 
 //Writes numBytes bytes from the specified buffer at the current offset.
 //Returns YES if the bytes were successfully written, or NO and populates
@@ -114,11 +92,45 @@ typedef enum {
 @end
 
 
+@protocol ADBSeekable <NSObject>
+
+typedef enum {
+    ADBSeekFromStart    = SEEK_SET,
+    ADBSeekFromEnd      = SEEK_END,
+    ADBSeekFromCurrent  = SEEK_CUR,
+} ADBFileHandleSeekLocation;
+
+//Returned by -offset when the offset cannot be determined or is not applicable.
+#define ADBOffsetUnknown -1
+
+
+//Return the handle's current byte offset, or ADBOffsetUnknown if this
+//could not be determined.
+- (long long) offset;
+
+//Return the maximum addressable offset, i.e. the length of the file.
+//Return ADBOffsetUnknown if this could not be determined.
+- (long long) maxOffset;
+
+//Returns whether the handle's offset is at or beyond the end of the file.
+- (BOOL) isAtEnd;
+
+//Sets the handle's byte offset to the relative to the specified location.
+//Returns YES if the offset was changed, or NO and populates outError if
+//an illegal offset was specified.
+//(Note that it is legal to seek beyond the end of the file.)
+- (BOOL) seekToOffset: (long long)offset
+           relativeTo: (ADBFileHandleSeekLocation)location
+                error: (out NSError **)outError;
+
+@end
+
+
 #pragma mark - Abstract interface definitions
 
 //A base implementation that presents a funopen() wrapper around its own access methods.
 //This must be subclassed with concrete implementations of all data access methods.
-@interface ADBAbstractFileHandle : NSObject
+@interface ADBAbstractHandle : NSObject <ADBFileHandleAccess>
 {
     //A funopen() handle constructed the first time a FILE * handle is requested
     //from this instance. The funopen() handle wraps the instance's own getBytes:,
@@ -133,13 +145,11 @@ typedef enum {
     id _handleCookie;
 }
 
-- (FILE *) fileHandleAdoptingOwnership: (BOOL)adopt;
-
 @end
 
 //A base implementation of seekToOffset:relativeTo:error for the convenience of
 //file handles that maintain their own offset and can seek without special behaviour.
-@interface ADBIndependentlySeekableFileHandle : ADBAbstractFileHandle
+@interface ADBSeekableAbstractHandle : ADBAbstractHandle <ADBSeekable>
 {
     long long _offset;
 }
@@ -160,38 +170,44 @@ typedef enum {
 
 //A concrete implementation of ADBFileHandle that wraps a standard FILE * handle.
 //Has helper constructor methods for opening a handle for a local filesystem URL.
-@interface ADBSimpleFileHandle : NSObject <ADBWritableFileHandle>
+@interface ADBFileHandle : NSObject <ADBReadable, ADBWritable, ADBSeekable, ADBFileHandleAccess>
 {
     FILE * _handle;
     BOOL _closeOnDealloc;
 }
 
 //Creates a file handle opened from the specified URL in the specified mode.
++ (id) handleForURL: (NSURL *)URL
+               mode: (const char *)mode
+              error: (out NSError **)outError;
+
 - (id) initWithURL: (NSURL *)URL
               mode: (const char *)mode
              error: (out NSError **)outError;
 
+//Wraps an existing stdlib file handle. If closeOnDealloc is YES, the instance will
+//take control of the file handle and close it when the instance itself is deallocated.
 - (id) initWithOpenFileHandle: (FILE *)handle
                closeOnDealloc: (BOOL)closeOnDealloc;
 
 @end
 
-
-//A concrete implementation of ADBFileHandle that allows the contents of an NSData
-//instance to be read from and written to using the FILE * API.
-//If opened with a mutable NSData instance, this can be read-writeable; otherwise
-//it is read-only and attempts to write will fail with an NSError.
-@interface ADBDataHandle : ADBIndependentlySeekableFileHandle <ADBFileHandle>
+//A concrete handle implementation that allows the contents of an NSData
+//instance to be read from and seeked within using the FILE * API.
+@interface ADBDataHandle : ADBSeekableAbstractHandle <ADBReadable>
 {
     id _data;
 }
 
++ (id) handleForData: (NSData *)data;
 - (id) initWithData: (NSData *)data;
 
 @end
 
-@interface ADBWritableDataHandle : ADBDataHandle <ADBWritableFileHandle>
+//A mutable implementation of the above, allowing writing to NSMutableData instances.
+@interface ADBWritableDataHandle : ADBDataHandle <ADBWritable>
 
++ (id) handleForData: (NSMutableData *)data;
 - (id) initWithData: (NSMutableData *)data;
 
 @end
@@ -199,27 +215,32 @@ typedef enum {
 
 #pragma mark - File handle wrappers
 
-//A wrapper for a source file handle, which treats the source as if it's
+//A wrapper for a source handle, which treats the source as if it's
 //divided into evenly-sized logical blocks with 0 or more bytes of padding
-//at the start and end of each block.
+//at the start and end of each block. ADBBlockHandle thus allows uninterrupted
+//sequential reads across blocks that may be separated by large gaps in the
+//original handle.
 //Note that the base class supports reading only. It must be subclassed to
 //implement writing of block lead-in and lead-out areas.
-@interface ADBPaddedFileHandle : ADBIndependentlySeekableFileHandle <ADBFileHandle>
+@interface ADBBlockHandle : ADBSeekableAbstractHandle <ADBReadable>
 {
-    id <ADBFileHandle> _sourceHandle;
+    id <ADBReadable, ADBSeekable> _sourceHandle;
     NSUInteger _blockSize;
     NSUInteger _blockLeadIn;
     NSUInteger _blockLeadOut;
 }
 
-
 //Returns a new padded file handle with the specified logical block size, lead-in
-//and lead-out. If lead-in and lead-out are both zero, the original handle will be
-//returned (since no extra work is then necessary to take padding into account.)
-- (id) initWithSourceHandle: (id <ADBFileHandle>)sourceHandle
-           logicalBlockSize: (NSUInteger)blockSize
-                     leadIn: (NSUInteger)blockLeadIn
-                    leadOut: (NSUInteger)blockLeadOut;
+//and lead-out.
++ (id) handleForHandle: (id <ADBReadable, ADBSeekable>)sourceHandle
+      logicalBlockSize: (NSUInteger)blockSize
+                leadIn: (NSUInteger)blockLeadIn
+               leadOut: (NSUInteger)blockLeadOut;
+
+- (id) initWithHandle: (id <ADBReadable, ADBSeekable>)sourceHandle
+     logicalBlockSize: (NSUInteger)blockSize
+               leadIn: (NSUInteger)blockLeadIn
+              leadOut: (NSUInteger)blockLeadOut;
 
 //Converts to and from and logical byte offsets, taking block padding into account.
 - (long long) sourceOffsetForLogicalOffset: (long long)offset;
@@ -228,18 +249,18 @@ typedef enum {
 @end
 
 
-//A wrapper for a source file handle, which restricts access to a subregion of the
+//A wrapper for a source handle, which restricts access to a subregion of the
 //original handle's data. All offsets and data access are relative to that subregion.
 //Note that the base class supports reading only, since truncation and expansion of
 //the subregion are not solvable in a generic way.
-@interface ADBFileRangeHandle : ADBIndependentlySeekableFileHandle <ADBFileHandle>
+@interface ADBSubrangeHandle : ADBSeekableAbstractHandle <ADBReadable>
 {
-    id <ADBFileHandle> _sourceHandle;
+    id <ADBReadable, ADBSeekable> _sourceHandle;
     NSRange _range;
 }
 
-- (id) initWithSourceHandle: (id <ADBFileHandle>)sourceHandle
-                      range: (NSRange)range;
++ (id) handleForHandle: (id <ADBReadable, ADBSeekable>)sourceHandle range: (NSRange)range;
+- (id) initWithHandle: (id <ADBReadable, ADBSeekable>)sourceHandle range: (NSRange)range;
 
 //Convert to/from. These will return ADBOffsetUnknown if the specified offset is not
 //representable in the corresponding space.

@@ -41,7 +41,7 @@
 @property (copy, nonatomic) NSURL *baseURL;
 @property (copy, nonatomic) NSString *volumeName;
 
-@property (retain, nonatomic) id <ADBFileHandle> handle;
+@property (retain, nonatomic) id <ADBReadable, ADBSeekable> handle;
 
 @property (retain, nonatomic) NSMutableDictionary *pathCache;
 

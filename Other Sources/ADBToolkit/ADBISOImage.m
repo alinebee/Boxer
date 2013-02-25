@@ -127,11 +127,11 @@ int extdate_to_int(uint8_t *digits, int length)
 
 - (void) dealloc
 {
-    if (self.handle)
+    if ([self.handle respondsToSelector: @selector(close)])
     {
-        [self.handle close];
-        self.handle = nil;
+        [(id)self.handle close];
     }
+    self.handle = nil;
     
     self.baseURL = nil;
     self.volumeName = nil;
@@ -195,8 +195,8 @@ int extdate_to_int(uint8_t *digits, int length)
     ADBISOFileEntry *entry = [self _fileEntryAtPath: path error: outError];
     if (entry)
     {
-        ADBFileRangeHandle *entryHandle = [[ADBFileRangeHandle alloc] initWithSourceHandle: self.handle
-                                                                                     range: entry.dataRange];
+        ADBSubrangeHandle *entryHandle = [ADBSubrangeHandle handleForHandle: self.handle
+                                                                        range: entry.dataRange];
         
         return [entryHandle fileHandleAdoptingOwnership: YES];
     }
@@ -337,14 +337,14 @@ int extdate_to_int(uint8_t *digits, int length)
 {
     self.baseURL = URL;
     
-    ADBSimpleFileHandle *rawHandle = [[ADBSimpleFileHandle alloc] initWithURL: URL mode: "r" error: outError];
+    ADBFileHandle *rawHandle = [ADBFileHandle handleForURL: URL mode: "r" error: outError];
     if (!rawHandle)
         return NO;
     
-    self.handle = [[[ADBPaddedFileHandle alloc] initWithSourceHandle: [rawHandle autorelease]
-                                                    logicalBlockSize: _sectorSize
-                                                              leadIn: _leadInSize
-                                                             leadOut: (_rawSectorSize - _sectorSize - _leadInSize)] autorelease];
+    self.handle = [ADBBlockHandle handleForHandle: rawHandle
+                                      logicalBlockSize: _sectorSize
+                                                leadIn: _leadInSize
+                                               leadOut: (_rawSectorSize - _sectorSize - _leadInSize)];
     
     
     //Search the volume descriptors to find the primary descriptor

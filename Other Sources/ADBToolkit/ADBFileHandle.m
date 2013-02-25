@@ -29,34 +29,45 @@
 
 #pragma mark - ADBAbstractFileHandle
 
-@interface ADBAbstractFileHandle ()
+@interface ADBAbstractHandle ()
 
 @property (retain, nonatomic) id handleCookie;
 
 @end
 
 
-@implementation ADBAbstractFileHandle
+@implementation ADBAbstractHandle
 @synthesize handleCookie = _handleCookie;
 
 //Wrapper functions for funopen()
-int _ADBFileHandleClose(void *cookie);
-int _ADBFileHandleRead(void *cookie, char *buffer, int length);
-int _ADBFileHandleWrite(void *cookie, const char *buffer, int length);
-fpos_t _ADBFileHandleSeek(void *cookie, fpos_t offset, int whence);
+int _ADBHandleClose(void *cookie);
+int _ADBHandleRead(void *cookie, char *buffer, int length);
+int _ADBHandleWrite(void *cookie, const char *buffer, int length);
+fpos_t _ADBHandleSeek(void *cookie, fpos_t offset, int whence);
 
 - (FILE *) fileHandleAdoptingOwnership: (BOOL)adopt
 {
     if (!_handle)
     {
-        if ([self conformsToProtocol: @protocol(ADBWritableFileHandle)])
-        {
-            _handle = funopen(self, _ADBFileHandleRead, _ADBFileHandleWrite, _ADBFileHandleSeek, _ADBFileHandleClose);
-        }
-        else
-        {
-            _handle = funopen(self, _ADBFileHandleRead, NULL, _ADBFileHandleSeek, _ADBFileHandleClose);
-        }
+        int (*readFunc)(void *, char *, int) = NULL;
+        int (*writeFunc)(void *, const char *, int) = NULL;
+        fpos_t (*seekFunc)(void *, fpos_t, int) = NULL;
+        int (*closeFunc)(void *) = NULL;
+        
+        if ([self conformsToProtocol: @protocol(ADBReadable)])
+            readFunc = _ADBHandleRead;
+        
+        if ([self conformsToProtocol: @protocol(ADBWritable)])
+            writeFunc = _ADBHandleWrite;
+        
+        if ([self conformsToProtocol: @protocol(ADBSeekable)])
+            seekFunc = _ADBHandleSeek;
+        
+        if ([self conformsToProtocol: @protocol(ADBFileHandleAccess)])
+            closeFunc = _ADBHandleClose;
+        
+        
+        _handle = funopen(self, readFunc, writeFunc, seekFunc, closeFunc);
     }
     
     if (adopt)
@@ -99,9 +110,9 @@ fpos_t _ADBFileHandleSeek(void *cookie, fpos_t offset, int whence);
 
 #pragma mark - funopen() wrapper functions
 
-int _ADBFileHandleRead(void *cookie, char *buffer, int length)
+int _ADBHandleRead(void *cookie, char *buffer, int length)
 {
-    id <ADBFileHandle> handle = (id <ADBFileHandle>)cookie;
+    id <ADBReadable> handle = (id <ADBReadable>)cookie;
     NSUInteger bytesRead = length;
     NSError *readError;
     BOOL succeeded = [handle getBytes: &buffer length: &bytesRead error: &readError];
@@ -123,9 +134,9 @@ int _ADBFileHandleRead(void *cookie, char *buffer, int length)
     }
 }
 
-int _ADBFileHandleWrite(void *cookie, const char *buffer, int length)
+int _ADBHandleWrite(void *cookie, const char *buffer, int length)
 {
-    id <ADBWritableFileHandle> handle = (id <ADBWritableFileHandle>)cookie;
+    id <ADBWritable> handle = (id <ADBWritable>)cookie;
     NSError *writeError;
     BOOL succeeded = [handle writeBytes: buffer length: length error: &writeError];
     
@@ -146,9 +157,9 @@ int _ADBFileHandleWrite(void *cookie, const char *buffer, int length)
     }
 }
 
-fpos_t _ADBFileHandleSeek(void *cookie, fpos_t offset, int whence)
+fpos_t _ADBHandleSeek(void *cookie, fpos_t offset, int whence)
 {
-    id <ADBFileHandle> handle = (id <ADBFileHandle>)cookie;
+    id <ADBSeekable> handle = (id <ADBSeekable>)cookie;
     NSError *seekError;
     BOOL succeeded = [handle seekToOffset: offset relativeTo: whence error: &seekError];
     if (succeeded)
@@ -168,9 +179,9 @@ fpos_t _ADBFileHandleSeek(void *cookie, fpos_t offset, int whence)
     }
 }
 
-int _ADBFileHandleClose(void *cookie)
+int _ADBHandleClose(void *cookie)
 {
-    id <ADBFileHandle> handle = (id <ADBFileHandle>)cookie;
+    id <ADBFileHandleAccess> handle = (id <ADBFileHandleAccess>)cookie;
     [handle close];
     return 0;
 }
@@ -180,7 +191,7 @@ int _ADBFileHandleClose(void *cookie)
 
 #pragma mark - ADBIndependentlySeekableFileHandle
 
-@implementation ADBIndependentlySeekableFileHandle
+@implementation ADBSeekableAbstractHandle
 
 @synthesize offset = _offset;
 
@@ -240,7 +251,12 @@ int _ADBFileHandleClose(void *cookie)
 #pragma mark - ADBSimpleFileHandle
 
 
-@implementation ADBSimpleFileHandle
+@implementation ADBFileHandle
+
++ (id) handleForURL: (NSURL *)URL mode: (const char *)mode error: (out NSError **)outError
+{
+    return [[[self alloc] initWithURL: URL mode: mode error: outError] autorelease];
+}
 
 - (id) initWithURL: (NSURL *)URL mode: (const char *)mode error: (NSError **)outError
 {
@@ -278,7 +294,7 @@ int _ADBFileHandleClose(void *cookie)
     return self;
 }
 
-- (BOOL) getBytes: (void *)buffer length: (inout unsigned long long *)numBytes error: (out NSError **)outError
+- (BOOL) getBytes: (void *)buffer length: (inout NSUInteger *)numBytes error: (out NSError **)outError
 {
     NSAssert(_handle != NULL, @"Attempted to read after handle was closed.");
     
@@ -287,6 +303,7 @@ int _ADBFileHandleClose(void *cookie)
     
     unsigned long bytesToRead = (unsigned long)*numBytes;
     size_t bytesRead = fread(buffer, 1, bytesToRead, _handle);
+    *numBytes = bytesRead;
     if (bytesRead < bytesToRead)
     {
         //A partial read may just indicate that we reached the end of the file:
@@ -304,7 +321,6 @@ int _ADBFileHandleClose(void *cookie)
         }
     }
     
-    *numBytes = bytesRead;
     return YES;
 }
 
@@ -423,6 +439,11 @@ int _ADBFileHandleClose(void *cookie)
 @synthesize data = _data;
 @synthesize offset = _offset;
 
++ (id) handleForData: (NSData *)data
+{
+    return [[[self alloc] initWithData: data] autorelease];
+}
+
 - (id) initWithData: (NSData *)data
 {
     NSAssert(data != nil, @"No data provided.");
@@ -484,6 +505,11 @@ int _ADBFileHandleClose(void *cookie)
 @implementation ADBWritableDataHandle
 
 //Reimplemented just to recast the data parameter to be mutable.
++ (id) handleForData: (NSMutableData *)data
+{
+    return [[[self alloc] initWithData: data] autorelease];
+}
+
 - (id) initWithData: (NSMutableData *)data
 {
     return [super initWithData: data];
@@ -513,9 +539,9 @@ int _ADBFileHandleClose(void *cookie)
 
 #pragma mark - ADBPaddedFileHandle
 
-@interface ADBPaddedFileHandle ()
+@interface ADBBlockHandle ()
 
-@property (retain, nonatomic) id <ADBFileHandle> sourceHandle;
+@property (retain, nonatomic) id <ADBReadable, ADBSeekable> sourceHandle;
 @property (assign, nonatomic) NSUInteger blockSize;
 @property (assign, nonatomic) NSUInteger blockLeadIn;
 @property (assign, nonatomic) NSUInteger blockLeadOut;
@@ -524,36 +550,39 @@ int _ADBFileHandleClose(void *cookie)
 @end
 
 
-@implementation ADBPaddedFileHandle
+@implementation ADBBlockHandle
 @synthesize sourceHandle = _sourceHandle;
 @synthesize blockSize = _blockSize;
 @synthesize blockLeadIn = _blockLeadIn;
 @synthesize blockLeadOut = _blockLeadOut;
 
-- (id) initWithSourceHandle: (id<ADBFileHandle>)sourceHandle
-           logicalBlockSize: (NSUInteger)blockSize
-                     leadIn: (NSUInteger)blockLeadIn
-                    leadOut: (NSUInteger)blockLeadOut
++ (id) handleForHandle: (id <ADBReadable, ADBSeekable>)sourceHandle
+      logicalBlockSize: (NSUInteger)blockSize
+                leadIn: (NSUInteger)blockLeadIn
+               leadOut: (NSUInteger)blockLeadOut
+{
+    return [[[self alloc] initWithHandle: sourceHandle
+                        logicalBlockSize: blockSize
+                                  leadIn: blockLeadIn
+                                 leadOut: blockLeadOut] autorelease];
+}
+
+- (id) initWithHandle: (id <ADBReadable, ADBSeekable>)sourceHandle
+     logicalBlockSize: (NSUInteger)blockSize
+               leadIn: (NSUInteger)blockLeadIn
+              leadOut: (NSUInteger)blockLeadOut
 {
     NSAssert(sourceHandle != nil, @"No source handle provided.");
     
-    if (blockLeadIn == 0 && blockLeadOut == 0)
+    self = [self init];
+    if (self)
     {
-        [self release];
-        return [sourceHandle retain];
+        self.sourceHandle = sourceHandle;
+        self.blockSize = blockSize;
+        self.blockLeadIn = blockLeadIn;
+        self.blockLeadOut = blockLeadOut;
     }
-    else
-    {
-        self = [self init];
-        if (self)
-        {
-            self.sourceHandle = sourceHandle;
-            self.blockSize = blockSize;
-            self.blockLeadIn = blockLeadIn;
-            self.blockLeadOut = blockLeadOut;
-        }
-        return self;
-    }
+    return self;
 }
 
 - (void) close
@@ -606,10 +635,17 @@ int _ADBFileHandleClose(void *cookie)
 {
     NSAssert(self.sourceHandle != nil, @"Attempted to read after handle closed.");
     
+    //If we have no padding, the source handle can deal with the read itself.
+    if (self.blockLeadIn == 0 && self.blockLeadOut == 0)
+    {
+        return [self.sourceHandle getBytes: buffer length: numBytes error: outError];
+    }
+    
     NSAssert(buffer != NULL, @"No buffer provided.");
     NSAssert(numBytes != NULL, @"No length pointer provided.");
     
     NSUInteger bytesRead = 0, bytesToRead = *numBytes;
+    *numBytes = 0;
     
     @synchronized(self.sourceHandle)
     {
@@ -618,7 +654,9 @@ int _ADBFileHandleClose(void *cookie)
             unsigned long long sourceOffset = [self sourceOffsetForLogicalOffset: self.offset];
             BOOL sought = [self.sourceHandle seekToOffset: sourceOffset relativeTo: ADBSeekFromStart error: outError];
             if (!sought)
+            {
                 return NO;
+            }
             
             //Read until the end of the block or until we've got all the bytes we wanted, whichever comes first.
             NSUInteger offsetWithinBlock = self.offset % self.blockSize;
@@ -656,18 +694,23 @@ int _ADBFileHandleClose(void *cookie)
 
 #pragma mark - ADBFileRangeHandle
 
-@interface ADBFileRangeHandle ()
+@interface ADBSubrangeHandle ()
 
-@property (retain, nonatomic) id <ADBFileHandle> sourceHandle;
+@property (retain, nonatomic) id <ADBReadable, ADBSeekable> sourceHandle;
 @property (assign, nonatomic) NSRange range;
 
 @end
 
-@implementation ADBFileRangeHandle
+@implementation ADBSubrangeHandle
 @synthesize sourceHandle = _sourceHandle;
 @synthesize range = _range;
 
-- (id) initWithSourceHandle: (id<ADBFileHandle>)sourceHandle range: (NSRange)range
++ (id) handleForHandle: (id <ADBReadable, ADBSeekable>)sourceHandle range: (NSRange)range
+{
+    return [[[self alloc] initWithHandle: sourceHandle range: range] autorelease];
+}
+
+- (id) initWithHandle: (id <ADBReadable, ADBSeekable>)sourceHandle range: (NSRange)range
 {
     self = [self init];
     if (self)
@@ -729,13 +772,17 @@ int _ADBFileHandleClose(void *cookie)
     }
     
     NSUInteger bytesToRead = *numBytes;
+    *numBytes = 0;
+    
     bytesToRead = MIN(bytesToRead, (NSUInteger)(self.maxOffset - self.offset));
     
     @synchronized(self.sourceHandle)
     {
         BOOL sought = [self.sourceHandle seekToOffset: self.offset relativeTo: ADBSeekFromStart error: outError];
         if (!sought)
+        {
             return NO;
+        }
         
         NSUInteger bytesRead = bytesToRead;
         BOOL read = [self.sourceHandle getBytes: buffer length: &bytesRead error: outError];

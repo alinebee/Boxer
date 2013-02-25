@@ -187,6 +187,20 @@ int extdate_to_int(uint8_t *digits, int length)
     return [entry contentsWithError: outError];
 }
 
+- (id <ADBReadable, ADBSeekable>) fileHandleForReadingFromPath: (NSString *)path
+                                                         error: (out NSError **)outError
+{
+    ADBISOFileEntry *entry = [self _fileEntryAtPath: path error: outError];
+    if (entry)
+    {
+        return [entry handleWithError: outError];
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
 - (FILE *) openFileAtPath: (NSString *)path
                    inMode: (const char *)accessMode
                     error: (out NSError **)outError
@@ -195,9 +209,7 @@ int extdate_to_int(uint8_t *digits, int length)
     ADBISOFileEntry *entry = [self _fileEntryAtPath: path error: outError];
     if (entry)
     {
-        ADBSubrangeHandle *entryHandle = [ADBSubrangeHandle handleForHandle: self.handle
-                                                                        range: entry.dataRange];
-        
+        ADBSubrangeHandle *entryHandle = [entry handleWithError: outError];
         return [entryHandle fileHandleAdoptingOwnership: YES];
     }
     else
@@ -341,11 +353,17 @@ int extdate_to_int(uint8_t *digits, int length)
     if (!rawHandle)
         return NO;
     
-    self.handle = [ADBBlockHandle handleForHandle: rawHandle
-                                      logicalBlockSize: _sectorSize
-                                                leadIn: _leadInSize
-                                               leadOut: (_rawSectorSize - _sectorSize - _leadInSize)];
-    
+    if (_sectorSize == _rawSectorSize)
+    {
+        self.handle = rawHandle;
+    }
+    else
+    {
+        self.handle = [ADBBlockHandle handleForHandle: rawHandle
+                                     logicalBlockSize: _sectorSize
+                                               leadIn: _leadInSize
+                                              leadOut: (_rawSectorSize - _sectorSize - _leadInSize)];
+    }
     
     //Search the volume descriptors to find the primary descriptor
     ADBISOPrimaryVolumeDescriptor descriptor;
@@ -733,6 +751,12 @@ int extdate_to_int(uint8_t *digits, int length)
     return [self.parentImage _dataInRange: _dataRange error: outError];
 }
 
+- (ADBSubrangeHandle *) handleWithError: (out NSError **)outError
+{
+    return [ADBSubrangeHandle handleForHandle: self.parentImage.handle
+                                        range: _dataRange];
+}
+
 - (NSDictionary *) attributes
 {
     NSDictionary *attrs = @{
@@ -804,7 +828,23 @@ int extdate_to_int(uint8_t *digits, int length)
 
 - (NSData *) contentsWithError: (NSError **)outError
 {
-    NSAssert(NO, @"Attempted to retrieve contents of directory.");
+    if (outError)
+    {
+        *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
+                                        code: EISDIR
+                                    userInfo: nil];
+    }
+    return nil;
+}
+
+- (ADBSubrangeHandle *) handleWithError: (out NSError **)outError
+{
+    if (outError)
+    {
+        *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
+                                        code: EISDIR
+                                    userInfo: nil];
+    }
     return nil;
 }
 

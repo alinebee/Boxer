@@ -115,6 +115,7 @@
 
 //A class abstractly representing a file or directory within the image.
 //Used internally by ADBISOImage and subclasses, and not exposed by the public API.
+@class ADBSubrangeHandle;
 @interface ADBISOFileEntry : NSObject
 {
     NSRange _dataRange;
@@ -171,6 +172,8 @@
 //Returns the contents of this file. Returns nil and populates outError
 //if the contents could not be read.
 - (NSData *) contentsWithError: (out NSError **)outError;
+
+- (ADBSubrangeHandle *) handleWithError: (out NSError **)outError;
 
 @end
 

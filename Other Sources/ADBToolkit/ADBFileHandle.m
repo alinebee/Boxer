@@ -27,7 +27,6 @@
 #import "ADBFileHandle.h"
 
 
-#pragma mark - ADBAbstractFileHandle
 
 @interface ADBAbstractHandle ()
 
@@ -189,7 +188,7 @@ int _ADBHandleClose(void *cookie)
 @end
 
 
-#pragma mark - ADBIndependentlySeekableFileHandle
+#pragma mark -
 
 @implementation ADBSeekableAbstractHandle
 
@@ -248,8 +247,7 @@ int _ADBHandleClose(void *cookie)
 
 
 
-#pragma mark - ADBSimpleFileHandle
-
+#pragma mark -
 
 @implementation ADBFileHandle
 
@@ -426,7 +424,7 @@ int _ADBHandleClose(void *cookie)
 @end
 
 
-#pragma mark - ADBDataHandle
+#pragma mark -
 
 @interface ADBDataHandle ()
 
@@ -537,7 +535,7 @@ int _ADBHandleClose(void *cookie)
 @end
 
 
-#pragma mark - ADBPaddedFileHandle
+#pragma mark -
 
 @interface ADBBlockHandle ()
 
@@ -548,7 +546,6 @@ int _ADBHandleClose(void *cookie)
 @property (readonly, nonatomic) NSUInteger rawBlockSize;
 
 @end
-
 
 @implementation ADBBlockHandle
 @synthesize sourceHandle = _sourceHandle;
@@ -611,6 +608,9 @@ int _ADBHandleClose(void *cookie)
         return ADBOffsetUnknown;
     
     unsigned long long rawBlockSize = self.rawBlockSize;
+    if (rawBlockSize == _blockSize)
+        return offset;
+    
     unsigned long long block = (offset - _blockLeadIn) / rawBlockSize;
     unsigned long long offsetInBlock = (offset - _blockLeadIn) % rawBlockSize;
     
@@ -622,10 +622,14 @@ int _ADBHandleClose(void *cookie)
     if (offset == ADBOffsetUnknown)
         return ADBOffsetUnknown;
     
+    unsigned long long rawBlockSize = self.rawBlockSize;
+    if (rawBlockSize == _blockSize)
+        return offset;
+    
     unsigned long long block = offset / _blockSize;
     unsigned long long offsetInBlock = offset % _blockSize;
     
-    return (block * self.rawBlockSize) + offsetInBlock + _blockLeadIn;
+    return (block * rawBlockSize) + offsetInBlock + _blockLeadIn;
 }
 
 
@@ -635,10 +639,14 @@ int _ADBHandleClose(void *cookie)
 {
     NSAssert(self.sourceHandle != nil, @"Attempted to read after handle closed.");
     
-    //If we have no padding, the source handle can deal with the read itself.
+    //If we have no padding, the source handle can deal with the read directly.
     if (self.blockLeadIn == 0 && self.blockLeadOut == 0)
     {
-        return [self.sourceHandle getBytes: buffer length: numBytes error: outError];
+        BOOL sought = [self.sourceHandle seekToOffset: self.offset relativeTo: ADBSeekFromStart error: outError];
+        if (sought)
+            return [self.sourceHandle getBytes: buffer length: numBytes error: outError];
+        else
+            return NO;
     }
     
     NSAssert(buffer != NULL, @"No buffer provided.");
@@ -670,6 +678,7 @@ int _ADBHandleClose(void *cookie)
             {
                 bytesRead += bytesReadInChunk;
                 self.offset += bytesReadInChunk;
+                *numBytes += bytesReadInChunk;
                 
                 //Reading finished without getting all the bytes we expected, meaning we've hit the end of the file.
                 if (bytesReadInChunk < chunkSize)
@@ -686,13 +695,13 @@ int _ADBHandleClose(void *cookie)
 
 - (long long) maxOffset
 {
-    return self.sourceHandle.maxOffset;
+    return [self logicalOffsetForSourceOffset: self.sourceHandle.maxOffset];
 }
 
 @end
 
 
-#pragma mark - ADBFileRangeHandle
+#pragma mark -
 
 @interface ADBSubrangeHandle ()
 
@@ -752,8 +761,7 @@ int _ADBHandleClose(void *cookie)
 
 - (long long) maxOffset
 {
-    //TODO: clamp this to the max offset of the source handle?
-    return self.range.location + self.range.length;
+    return self.range.length;
 }
 
 - (BOOL) getBytes: (void *)buffer
@@ -778,7 +786,9 @@ int _ADBHandleClose(void *cookie)
     
     @synchronized(self.sourceHandle)
     {
-        BOOL sought = [self.sourceHandle seekToOffset: self.offset relativeTo: ADBSeekFromStart error: outError];
+        long long sourceOffset = [self sourceOffsetForLocalOffset: self.offset];
+        
+        BOOL sought = [self.sourceHandle seekToOffset: sourceOffset relativeTo: ADBSeekFromStart error: outError];
         if (!sought)
         {
             return NO;

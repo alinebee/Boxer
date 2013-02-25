@@ -75,4 +75,7 @@
 + (id) imageWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
 - (id) initWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
 
+- (id <ADBReadable, ADBSeekable>) fileHandleForReadingFromPath: (NSString *)path
+                                                         error: (out NSError **)outError;
+
 @end

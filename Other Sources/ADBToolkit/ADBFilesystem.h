@@ -80,6 +80,7 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 - (FILE *) openFileAtPath: (NSString *)path
                    inMode: (const char *)accessMode
                     error: (out NSError **)outError;
+
 @end
 
 

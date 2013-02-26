@@ -951,24 +951,27 @@ int extdate_to_int(uint8_t *digits, int length)
     while (YES)
     {
         NSUInteger currentLevel = self.treePositions.length - 1;
-        NSArray *currentDirectory = [self.tree objectAtIndex: currentLevel];
-        NSUInteger currentIndex = [self.treePositions indexAtPosition: currentLevel];
-        NSAssert2(currentIndex != NSNotFound, @"Tree positions %@ out of sync with tree %@.", self.treePositions, self.tree);
+        NSArray *currentDirectoryContents = [self.tree objectAtIndex: currentLevel];
+        NSUInteger currentIndexInDirectory = [self.treePositions indexAtPosition: currentLevel];
+        NSAssert2(currentIndexInDirectory != NSNotFound, @"Tree positions %@ out of sync with tree %@.", self.treePositions, self.tree);
         
         //If we're within the bounds of this directory, return the next file entry.
-        if (currentIndex < currentDirectory.count)
+        if (currentIndexInDirectory < currentDirectoryContents.count)
         {
-            self.currentEntry = [currentDirectory objectAtIndex: currentIndex];
+            ADBISOFileEntry *entry = [currentDirectoryContents objectAtIndex: currentIndexInDirectory];
+            NSString *currentEntryPath = [self.currentDirectoryPath stringByAppendingPathComponent: entry.fileName];
+            
+            //Add this entry into the parent image's path cache regardless of what else we do with it.
+            [self.parentImage.pathCache setObject: entry forKey: currentEntryPath];
             
             if ((_enumerationOptions & NSDirectoryEnumerationSkipsHiddenFiles) && self.currentEntry.isHidden)
             {
-                self.treePositions = [[self.treePositions indexPathByRemovingLastIndex] indexPathByAddingIndex: currentIndex + 1];
+                self.treePositions = [[self.treePositions indexPathByRemovingLastIndex] indexPathByAddingIndex: currentIndexInDirectory + 1];
                 continue;
             }
             else
             {
-                NSString *currentEntryPath = [self.currentDirectoryPath stringByAppendingPathComponent: self.currentEntry.fileName];
-                
+                self.currentEntry = entry;
                 BOOL isDir = self.currentEntry.isDirectory;
                 
                 //If this file entry is a subdirectory and we've already returned its base path,
@@ -979,22 +982,22 @@ int extdate_to_int(uint8_t *digits, int length)
                     
                     //Bump the index for this level of the tree before descending, so that when
                     //we return from this subdirectory we'll move on to the next element.
-                    self.treePositions = [[self.treePositions indexPathByRemovingLastIndex] indexPathByAddingIndex: currentIndex + 1];
+                    self.treePositions = [[self.treePositions indexPathByRemovingLastIndex] indexPathByAddingIndex: currentIndexInDirectory + 1];
                     
                     if (!_skipDescendants && !(_enumerationOptions & NSDirectoryEnumerationSkipsSubdirectoryDescendants))
                     {
                         NSError *error;
-                        NSArray *subpaths = [(ADBISODirectoryEntry *)self.currentEntry subentriesWithError: &error];
-                        if (subpaths.count)
+                        NSArray *subentries = [(ADBISODirectoryEntry *)self.currentEntry subentriesWithError: &error];
+                        if (subentries.count)
                         {
-                            [self.tree addObject: subpaths];
+                            //Push the entries of this subdirectory onto our directory stack and begin enumerating them.
+                            [self.tree addObject: subentries];
                             self.treePositions = [self.treePositions indexPathByAddingIndex: 0];
                             self.currentDirectoryPath = currentEntryPath;
                             
-                            //Loop around and begin enumerating the new subdirectory.
                             continue;
                         }
-                        else if (!subpaths)
+                        else if (!subentries)
                         {
                             BOOL shouldContinue = NO;
                             if (self.errorHandler)
@@ -1003,7 +1006,7 @@ int extdate_to_int(uint8_t *digits, int length)
                             }
                             
                             //If the error handler says it's ok to continue after this error,
-                            //then go ahead and enumerate the next path. Otherwise, fail out.
+                            //then go ahead and enumerate the next entry in the directory. Otherwise, fail out.
                             if (shouldContinue)
                             {
                                 continue;
@@ -1031,10 +1034,10 @@ int extdate_to_int(uint8_t *digits, int length)
                     {
                         _hasReturnedDirectory = YES;
                     }
-                    //Otherwise, move on to the next entry next time.
+                    //Otherwise, advance the index so that we'll return the next entry next time.
                     else
                     {
-                        self.treePositions = [[self.treePositions indexPathByRemovingLastIndex] indexPathByAddingIndex: currentIndex + 1];
+                        self.treePositions = [[self.treePositions indexPathByRemovingLastIndex] indexPathByAddingIndex: currentIndexInDirectory + 1];
                     }
                     
                     return currentEntryPath;
@@ -1042,7 +1045,7 @@ int extdate_to_int(uint8_t *digits, int length)
             }
         }
         
-        //If we've run out of entries in this subdirectory, drop one level back and continue the enumeration.
+        //If we've run out of entries in this subdirectory, pop the directory off the stack to move one level back and continue the enumeration.
         else if (currentLevel > 0)
         {
             [self.tree removeLastObject];

@@ -855,10 +855,7 @@ int extdate_to_int(uint8_t *digits, int length)
 
 @implementation ADBISOEnumerator
 @synthesize parentImage = _parentImage;
-@synthesize treePositions = _treePositions;
-@synthesize tree = _tree;
 @synthesize currentDirectoryPath = _currentDirectoryPath;
-@synthesize currentEntry = _currentEntry;
 @synthesize errorHandler = _errorHandler;
 @synthesize enumerationOptions = _enumerationOptions;
 
@@ -867,58 +864,24 @@ int extdate_to_int(uint8_t *digits, int length)
             options: (NSDirectoryEnumerationOptions)enumerationOptions
        errorHandler: (ADBFilesystemPathErrorHandler)errorHandler
 {
-    self = [self init];
-    if (self)
+    NSError *error;
+    ADBISODirectoryEntry *entryAtPath = (ADBISODirectoryEntry *)[image _fileEntryAtPath: path error: &error];
+    if (entryAtPath)
     {
-        NSError *error;
-        ADBISODirectoryEntry *entryAtPath = (ADBISODirectoryEntry *)[image _fileEntryAtPath: path error: &error];
-        if (entryAtPath)
+        self = [self initWithRootNode: entryAtPath capacity: 10];
+        if (self)
         {
-            if (entryAtPath.isDirectory)
-            {
-                NSArray *subpaths = [entryAtPath subentriesWithError: &error];
-                if (subpaths)
-                {
-                    //Start the enumerator off at the first file entry within this directory.
-                    self.tree = [NSMutableArray arrayWithObject: subpaths];
-                    self.treePositions = [NSIndexPath indexPathWithIndex: 0];
-                    
-                    self.currentDirectoryPath = path;
-                    self.parentImage = image;
-                    _enumerationOptions = enumerationOptions;
-                }
-                else
-                {
-                    if (errorHandler)
-                    {
-                        //TODO: should we check the return value, and 'continue' with an exhausted enumerator
-                        //if the error handler returns YES? What does NSDirectoryEnumerator do in this case?
-                        errorHandler(path, error);
-                    }
-                    
-                    [self release];
-                    self = nil;
-                }
-            }
-            //User tried to enumerate a file: return an empty enumerator
-            //(this behaviour is consistent with NSFileManager enumeratorAtPath:.) 
-            else
-            {
-                _exhausted = YES;
-            }
+            self.currentDirectoryPath = path;
+            self.parentImage = image;
+            _enumerationOptions = enumerationOptions;
+            self.errorHandler = errorHandler;
         }
-        else
-        {
-            if (errorHandler)
-            {
-                //TODO: should we check the return value, and 'continue' with an exhausted enumerator
-                //if the error handler returns YES? What does NSDirectoryEnumerator do in this case?
-                errorHandler(path, error);
-            }
-            
-            [self release];
-            self = nil;
-        }
+    }
+    else
+    {
+        errorHandler(path, error);
+        [self release];
+        self = nil;
     }
     return self;
 }
@@ -926,10 +889,7 @@ int extdate_to_int(uint8_t *digits, int length)
 - (void) dealloc
 {
     self.parentImage = nil;
-    self.treePositions = nil;
-    self.tree = nil;
     self.currentDirectoryPath = nil;
-    self.currentEntry = nil;
     self.errorHandler = nil;
     
     [super dealloc];
@@ -942,140 +902,111 @@ int extdate_to_int(uint8_t *digits, int length)
 
 - (NSDictionary *) fileAttributes
 {
-    return self.currentEntry.attributes;
+    return [(ADBISOFileEntry *)self.currentNode attributes];
 }
 
-- (id) nextObject
+- (BOOL) shouldEnumerateNode: (ADBISOFileEntry *)node
 {
-    if (_exhausted)
-        return nil;
-    
-    while (YES)
+    if ((self.enumerationOptions & NSDirectoryEnumerationSkipsHiddenFiles) && node.isHidden)
     {
-        NSUInteger currentLevel = self.treePositions.length - 1;
-        NSArray *currentDirectoryContents = [self.tree objectAtIndex: currentLevel];
-        NSUInteger currentIndexInDirectory = [self.treePositions indexAtPosition: currentLevel];
-        NSAssert2(currentIndexInDirectory != NSNotFound, @"Tree positions %@ out of sync with tree %@.", self.treePositions, self.tree);
-        
-        //If we're within the bounds of this directory, return the next file entry.
-        if (currentIndexInDirectory < currentDirectoryContents.count)
-        {
-            ADBISOFileEntry *entry = [currentDirectoryContents objectAtIndex: currentIndexInDirectory];
-            NSString *currentEntryPath = [self.currentDirectoryPath stringByAppendingPathComponent: entry.fileName];
-            
-            //Add this entry into the parent image's path cache regardless of what else we do with it.
-            [self.parentImage.pathCache setObject: entry forKey: currentEntryPath];
-            
-            if ((_enumerationOptions & NSDirectoryEnumerationSkipsHiddenFiles) && self.currentEntry.isHidden)
-            {
-                self.treePositions = [[self.treePositions indexPathByRemovingLastIndex] indexPathByAddingIndex: currentIndexInDirectory + 1];
-                continue;
-            }
-            else
-            {
-                self.currentEntry = entry;
-                BOOL isDir = self.currentEntry.isDirectory;
-                
-                //If this file entry is a subdirectory and we've already returned its base path,
-                //then descend into the subdirectory and return the first result within.
-                if (isDir && _hasReturnedDirectory)
-                {
-                    _hasReturnedDirectory = NO;
-                    
-                    //Bump the index for this level of the tree before descending, so that when
-                    //we return from this subdirectory we'll move on to the next element.
-                    self.treePositions = [[self.treePositions indexPathByRemovingLastIndex] indexPathByAddingIndex: currentIndexInDirectory + 1];
-                    
-                    if (!_skipDescendants && !(_enumerationOptions & NSDirectoryEnumerationSkipsSubdirectoryDescendants))
-                    {
-                        NSError *error;
-                        NSArray *subentries = [(ADBISODirectoryEntry *)self.currentEntry subentriesWithError: &error];
-                        if (subentries.count)
-                        {
-                            //Push the entries of this subdirectory onto our directory stack and begin enumerating them.
-                            [self.tree addObject: subentries];
-                            self.treePositions = [self.treePositions indexPathByAddingIndex: 0];
-                            self.currentDirectoryPath = currentEntryPath;
-                            
-                            continue;
-                        }
-                        else if (!subentries)
-                        {
-                            BOOL shouldContinue = NO;
-                            if (self.errorHandler)
-                            {
-                                shouldContinue = self.errorHandler(currentEntryPath, error);
-                            }
-                            
-                            //If the error handler says it's ok to continue after this error,
-                            //then go ahead and enumerate the next entry in the directory. Otherwise, fail out.
-                            if (shouldContinue)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                self.currentEntry = nil;
-                                return nil;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        _skipDescendants = NO;
-                    }
-                }
-                else
-                {
-                    NSAssert(_hasReturnedDirectory == NO, @"Somehow got here with _hasReturnedDirectory flag still active.");
-                    _skipDescendants = NO;
-                    
-                    //If this is a directory, flag that we've returned its path but keep the index pointed at it
-                    //so that on the next iteration we'll descend into it.
-                    if (isDir)
-                    {
-                        _hasReturnedDirectory = YES;
-                    }
-                    //Otherwise, advance the index so that we'll return the next entry next time.
-                    else
-                    {
-                        self.treePositions = [[self.treePositions indexPathByRemovingLastIndex] indexPathByAddingIndex: currentIndexInDirectory + 1];
-                    }
-                    
-                    return currentEntryPath;
-                }
-            }
-        }
-        
-        //If we've run out of entries in this subdirectory, pop the directory off the stack to move one level back and continue the enumeration.
-        else if (currentLevel > 0)
-        {
-            [self.tree removeLastObject];
-            self.treePositions = self.treePositions.indexPathByRemovingLastIndex;
-            self.currentDirectoryPath = self.currentDirectoryPath.stringByDeletingLastPathComponent;
-            
-            continue;
-        }
-        
-        //If we're already back at the root directory and have no more entries, then stop enumerating altogether.
-        else
-        {
-            _exhausted = YES;
-            self.currentEntry = nil;
-            return nil;
-        }
+        return NO;
+    }
+    else
+    {
+        return YES;
     }
 }
 
-- (NSUInteger) level
+- (BOOL) shouldEnumerateChildrenOfNode: (ADBISOFileEntry *)node
 {
-    //TODO: confirm that NSDirectoryEnumerator returns 1 for items in the base directory
-    return self.treePositions.length;
+    //'Use up' the flag whenever we need to use it to decide about a directory.
+    BOOL skipThisDirectory = _skipDescendants;
+    _skipDescendants = NO;
+    
+    if (!node.isDirectory)
+        return NO;
+    
+    if (skipThisDirectory || self.enumerationOptions & NSDirectoryEnumerationSkipsSubdirectoryDescendants)
+    {
+        _skipDescendants = NO;
+        return NO;
+    }
+    
+    //Don't enumerate the children of hidden file entries either.
+    if (![self shouldEnumerateNode: node])
+        return NO;
+    
+    return YES;
+}
+
+- (id) nextNodeInLevel
+{
+    //Clear the skip flag whenever we advance to a new path, consistent with NSDirectoryEnumerator.
+    _skipDescendants = NO;
+    return [super nextNodeInLevel];
+}
+
+- (NSArray *) childrenForNode: (ADBISODirectoryEntry *)node
+{
+    NSError *retrievalError = nil;
+    NSArray *children = [node subentriesWithError: &retrievalError];
+    if (!children)
+    {
+        //Ask our error handler whether to continue after a failure
+        //to parse a directory.
+        BOOL shouldContinue = NO;
+        if (self.errorHandler)
+        {
+            NSString *path = [self enumerationValueForNode: node];
+            shouldContinue = self.errorHandler(path, retrievalError);
+        }
+        
+        if (!shouldContinue)
+        {
+            self.exhausted = YES;
+        }
+    }
+    
+    return children;
+}
+
+- (NSString *) enumerationValueForNode: (ADBISOFileEntry *)node
+{
+    //FIXME: the assumption that this node is part of the topmost level
+    //relies on implementation details of ADBTreeEnumerator.
+    NSString *path = [self.currentDirectoryPath stringByAppendingPathComponent: node.fileName];
+    
+    //As a service, cache this in the parent image's path cache for faster lookups later.
+    //FIXME: this is a side-effect from a function that looks ought not to have any.
+    [self.parentImage.pathCache setObject: node forKey: path];
+    
+    return path;
 }
 
 - (void) skipDescendants
 {
     _skipDescendants = YES;
+}
+
+
+//Overridden to update our cached version of the current path whenever the tree changes 
+- (void) pushLevel: (NSArray *)nodesInLevel initialIndex: (NSUInteger)startingIndex
+{
+    //This needs to be done before the new level is added, since that will change the current node.
+    if (self.level > 0)
+    {
+        ADBISODirectoryEntry *currentNode = self.currentNode;
+        self.currentDirectoryPath = [self.currentDirectoryPath stringByAppendingPathComponent: currentNode.fileName];
+    }
+    
+    [super pushLevel: nodesInLevel initialIndex: startingIndex];
+}
+
+- (void) popLevel
+{
+    self.currentDirectoryPath = [self.currentDirectoryPath stringByDeletingLastPathComponent];
+    
+    [super popLevel];
 }
 
 @end

@@ -822,6 +822,7 @@ int _ADBHandleClose(void *cookie)
             
         case ADBSeekFromEnd:
             newOffset = self.maxOffset + offset;
+            break;
             
         case ADBSeekFromStart:
         default:

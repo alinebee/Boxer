@@ -57,22 +57,20 @@
     [super dealloc];
 }
 
-- (NSUInteger) currentIndex
+- (NSUInteger) level
 {
-    if (self.level > 0)
-        return _indices[self.level];
+    if (self.levels.count > 0)
+        return self.levels.count - 1;
     else
         return NSNotFound;
 }
 
-- (NSUInteger) level
-{
-    return self.levels.count - 1;
-}
-
 - (id) currentNode
 {
-    NSUInteger currentIndex = self.currentIndex;
+    if (self.exhausted || self.levels.count == 0)
+        return nil;
+    
+    NSUInteger currentIndex = _indices[self.level];
     NSArray *nodesAtCurrentLevel = self.levels.lastObject;
     if (currentIndex < nodesAtCurrentLevel.count)
         return [nodesAtCurrentLevel objectAtIndex: currentIndex];
@@ -144,6 +142,9 @@
 
 - (id) nextNodeInLevel
 {
+    if (self.exhausted)
+        return nil;
+    
     while (YES)
     {
         NSArray *nodesAtCurrentLevel = [self.levels objectAtIndex: self.level];
@@ -177,7 +178,7 @@
     if (_levels.count > _maxLevels)
     {
         _maxLevels *= 2;
-        realloc(_indices, sizeof(NSUInteger) * _maxLevels);
+        _indices = realloc(_indices, sizeof(NSUInteger) * _maxLevels);
     }
     _indices[self.level] = startingIndex;
 }

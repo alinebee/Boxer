@@ -24,8 +24,10 @@
  *	POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ADBTreeEnumerator provides an abstract implementation of an enumerator for iterating
-//nested arrays of nodes stemming from a single root node (which is not included in enumeration.)
+//ADBTreeEnumerator provides an abstract implementation of an enumerator for depth-first
+//iteration of nested arrays of nodes stemming from a single root node (which is not
+//included in the enumeration.)
+
 
 #import <Foundation/Foundation.h>
 
@@ -43,48 +45,45 @@
 //Returns a new enumerator to accommodate the specified number of nested levels,
 //with the specified node at its root. This is the designated initializer.
 //(Capacity is not a hard limit - the enumerator will be expanded if it goes beyond this.)
-
-//Note that the root node itself will not be enumerated. If the root node is a leaf
-//(that is, has no children of its own) then nextObject will return nil immediately.
 - (id) initWithRootNode: (id)rootNode capacity: (NSUInteger)capacity;
 
-//The node at the current index. Returns nil if there are no remaining nodes.
+//The node at the current index, i.e. the node that was most recently enumerated
+//by nextObject. Returns nil once the enumerator is exhausted.
 - (id) currentNode;
 
-//Advances the index of the current level and returns the node at that index.
-- (id) nextNodeInLevel;
-
-//Returns an array of nodes from root to current.
+//Returns the nodes along the current path ordered from root to current.
 - (NSArray *) nodesAlongPath;
 
-//The current index within the current level.
-//Returns NSNotFound if there are no nodes.
-- (NSUInteger) currentIndex;
+//Advances the index of the current level and returns the node at that index.
+//If this reaches the end, it will pop the current level and return the next
+//node in the level before it instead. Returns nil once the enumerator is exhausted.
+- (id) nextNodeInLevel;
 
-//The current level of the enumerator, where 0 is the root node.
-- (NSUInteger) level;
-
-//Adds the specified leaves onto the level stack.
+//Adds the specified nodes onto the level stack, making it the new current level.
 //The index for that level will be set to the specified index.
 - (void) pushLevel: (NSArray *)nodesInLevel initialIndex: (NSUInteger)startingIndex;
 
 //Removes the last level from the stack, returning iteration to the previous level.
+//Raises an exception if an attempt is made to pop the root node.
 - (void) popLevel;
+
+//The current level of the enumerator, where 0 is the root node.
+//Returns NSNotFound if there is no root node.
+- (NSUInteger) level;
 
 
 #pragma mark - Methods to implement in subclasses
 
-//Provides the value that nextObject should return for the given tree node.
-//This allows e.g. a to be mapped to a path or URL value.
+//Provides the value that nextObject should return for the given node.
 - (id) enumerationValueForNode: (id)node;
 
 //Returns whether the specified node should be returned by nextObject or should be skipped.
 //This check applies just to that node and not to its children.
 - (BOOL) shouldEnumerateNode: (id)node;
 
-//Returns whether enumeration should continue into the specified node to iterate its children.
-//This check will be made (and, if desired, children enumerated) even if shouldEnumerateNode:
-//returned NO for the parent.
+//Returns whether enumeration should continue into the specified node's children.
+//This check will be made (and if successful, child nodes enumerated) even if
+//shouldEnumerateNode: previously returned NO for the parent.
 - (BOOL) shouldEnumerateChildrenOfNode: (id)node;
 
 //Returns the children of the specified node. Return nil if the node is a leaf node.

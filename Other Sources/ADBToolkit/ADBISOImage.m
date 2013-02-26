@@ -375,6 +375,8 @@ int extdate_to_int(uint8_t *digits, int length)
     //Sanity check: if the string "CD001" is present in the identifier of the primary volume descriptor,
     //we can be pretty sure we have a real ISO on our hands and didn't just get this far by chance thanks
     //to a junk file.
+    //TODO: if the format of the ISO is unknown we could search for this string to determine the raw block
+    //size (and thus likely padding) for the ISO.
     BOOL identifierFound = bcmp(descriptor.identifier, "CD001", 5) == 0;
     if (!identifierFound)
     {

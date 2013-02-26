@@ -494,6 +494,8 @@
 		9F6891A014B0F6D800641C62 /* BXTFlightControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F68919F14B0F6D800641C62 /* BXTFlightControllerProfile.m */; };
 		9F69128C10A2DF8D00EA78CD /* BXValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */; };
 		9F69133310A2F62A00EA78CD /* BXDrive.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69133210A2F62A00EA78CD /* BXDrive.m */; };
+		9F693D5E16DD40DD00CCEA7C /* ADBTreeEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F693D5D16DD40DD00CCEA7C /* ADBTreeEnumerator.m */; };
+		9F693D5F16DD40DD00CCEA7C /* ADBTreeEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F693D5D16DD40DD00CCEA7C /* ADBTreeEnumerator.m */; };
 		9F6A79041203547800D2097D /* gamefolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A79031203547800D2097D /* gamefolder.icns */; };
 		9F6BF48616592EA600D9D66E /* Inspector.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F6BF48416592EA600D9D66E /* Inspector.xib */; };
 		9F6C1CDA14373AF600601ACB /* BXDummyMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */; };
@@ -1216,6 +1218,8 @@
 		9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXValueTransformers.m; sourceTree = "<group>"; };
 		9F69133110A2F62A00EA78CD /* BXDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrive.h; sourceTree = "<group>"; };
 		9F69133210A2F62A00EA78CD /* BXDrive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrive.m; sourceTree = "<group>"; };
+		9F693D5C16DD40DD00CCEA7C /* ADBTreeEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBTreeEnumerator.h; sourceTree = "<group>"; };
+		9F693D5D16DD40DD00CCEA7C /* ADBTreeEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBTreeEnumerator.m; sourceTree = "<group>"; };
 		9F6A79031203547800D2097D /* gamefolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gamefolder.icns; sourceTree = "<group>"; };
 		9F6BF48516592EA600D9D66E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/Inspector.xib; sourceTree = "<group>"; };
 		9F6C1CD814373AF600601ACB /* BXDummyMIDIDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDummyMIDIDevice.h; sourceTree = "<group>"; };
@@ -3019,6 +3023,8 @@
 				9FF5413C169990A100270658 /* ADBUndoExtensions.h */,
 				9F201E361657DB7F0086F1BB /* ADBUserNotificationDispatcher.h */,
 				9F201E371657DB7F0086F1BB /* ADBUserNotificationDispatcher.m */,
+				9F693D5C16DD40DD00CCEA7C /* ADBTreeEnumerator.h */,
+				9F693D5D16DD40DD00CCEA7C /* ADBTreeEnumerator.m */,
 			);
 			path = ADBToolkit;
 			sourceTree = "<group>";
@@ -4319,6 +4325,7 @@
 				9FF91EB616CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */,
 				9F35F3E916CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */,
 				9F80E7FF16DA3170001C3162 /* ADBFileHandle.m in Sources */,
+				9F693D5E16DD40DD00CCEA7C /* ADBTreeEnumerator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4626,6 +4633,7 @@
 				9FF91EB716CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */,
 				9F35F3EA16CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */,
 				9F80E80016DA3170001C3162 /* ADBFileHandle.m in Sources */,
+				9F693D5F16DD40DD00CCEA7C /* ADBTreeEnumerator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

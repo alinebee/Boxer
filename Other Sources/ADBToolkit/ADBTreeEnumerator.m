@@ -31,25 +31,15 @@
 @synthesize exhausted = _exhausted;
 @synthesize currentNode = _currentNode;
 
-- (id) initWithRootNode: (id)rootNode inclusive: (BOOL)enumerateRootNode
+- (id) initWithRootNodes: (NSArray *)rootNodes
 {
-    NSAssert(rootNode != nil, @"A root node must be provided for this enumerator.");
+    NSAssert(rootNodes != nil, @"No root nodes specified for this enumerator.");
     
     self = [self init];
     if (self)
     {
         _levels = [[NSMutableArray alloc] init];
-        [self pushLevel: @[rootNode]];
-        
-        if (!enumerateRootNode)
-        {
-            //Skip over the root node by pre-exhausting the first level of enumeration.
-            self.currentNode = [self.levels.lastObject nextObject];
-        }
-        else
-        {
-            self.currentNode = nil;
-        }
+        [self pushLevel: rootNodes];
     }
     return self;
 }
@@ -64,10 +54,7 @@
 
 - (NSUInteger) level
 {
-    if (self.levels.count > 0)
-        return self.levels.count - 1;
-    else
-        return NSNotFound;
+    return self.levels.count;
 }
 
 - (id) nextObject
@@ -136,7 +123,7 @@
 
 - (void) popLevel
 {
-    NSAssert(_levels != nil, @"popLevel called before any levels were added.");
+    //This will raise an NSRangeException error if no levels were available.
     [_levels removeLastObject];
 }
 

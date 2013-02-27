@@ -864,11 +864,25 @@ int extdate_to_int(uint8_t *digits, int length)
             options: (NSDirectoryEnumerationOptions)enumerationOptions
        errorHandler: (ADBFilesystemPathErrorHandler)errorHandler
 {
-    NSError *error;
+    NSError *error = nil;
+    NSArray *topLevelEntries = nil;
     ADBISODirectoryEntry *entryAtPath = (ADBISODirectoryEntry *)[image _fileEntryAtPath: path error: &error];
     if (entryAtPath)
     {
-        self = [self initWithRootNode: entryAtPath inclusive: YES];
+        if (entryAtPath.isDirectory)
+        {
+            topLevelEntries = [entryAtPath subentriesWithError: &error];
+        }
+        else
+        {
+            topLevelEntries = @[];
+        }
+    }
+    
+    if (topLevelEntries)
+    {
+        self = [self initWithRootNodes: topLevelEntries];
+        
         if (self)
         {
             self.currentDirectoryPath = path;
@@ -895,6 +909,8 @@ int extdate_to_int(uint8_t *digits, int length)
     [super dealloc];
 }
 
+#pragma mark - ADBFilesystemPathEnumeration protocol implementations
+
 - (id <ADBFilesystemPathAccess>) filesystem
 {
     return self.parentImage;
@@ -904,6 +920,8 @@ int extdate_to_int(uint8_t *digits, int length)
 {
     return [(ADBISOFileEntry *)self.currentNode attributes];
 }
+
+#pragma mark - ADBTreeEnumerator callbacks
 
 - (BOOL) shouldEnumerateNode: (ADBISOFileEntry *)node
 {
@@ -961,28 +979,6 @@ int extdate_to_int(uint8_t *digits, int length)
     return children;
 }
 
-- (void) skipDescendants
-{
-    _skipDescendants = YES;
-}
-
-- (NSString *) pathForCurrentNode
-{
-    ADBISOFileEntry *entry = self.currentNode;
-    if (entry == nil)
-    {
-        return nil;
-    }
-    else if (self.level == 0)
-    {
-        return self.currentDirectoryPath;
-    }
-    else
-    {
-        return [self.currentDirectoryPath stringByAppendingPathComponent: entry.fileName];
-    }
-}
-
 - (id) nextObject
 {
     ADBISOFileEntry *nextEntry = [super nextObject];
@@ -995,7 +991,7 @@ int extdate_to_int(uint8_t *digits, int length)
     {
         NSString *pathForEntry = self.pathForCurrentNode;
         
-        //Cache every entry that we traverse into our parent image's path cache to speed up path-based access later.
+        //Cache every entry that we traverse into our parent image's path cache to speed up path access later.
         [self.parentImage.pathCache setObject: nextEntry forKey: pathForEntry];
         
         return pathForEntry;
@@ -1006,10 +1002,32 @@ int extdate_to_int(uint8_t *digits, int length)
     }
 }
 
+- (void) skipDescendants
+{
+    _skipDescendants = YES;
+}
+
+
+#pragma mark - Entry-to-path conversions
+
+- (NSString *) pathForCurrentNode
+{
+    ADBISOFileEntry *entry = self.currentNode;
+    if (entry == nil)
+    {
+        return nil;
+    }
+    else
+    {
+        return [self.currentDirectoryPath stringByAppendingPathComponent: entry.fileName];
+    }
+}
+
 - (void) pushLevel: (NSArray *)nodesInLevel
 {
-    //Only update the directory path for directories above root: we received
-    //the canonical path for the root directory already in the constructor.
+    //Only update the directory path when adding levels above root: we'll be
+    //receiving the canonical path for the root directory later on in the constructor,
+    //after the root nodes have already been placed.
     if (self.level > 0)
     {
         ADBISODirectoryEntry *currentNode = self.currentNode;

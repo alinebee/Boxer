@@ -25,8 +25,10 @@
  */
 
 //ADBTreeEnumerator provides an abstract implementation of an enumerator for depth-first
-//iteration of nested arrays of nodes stemming from a single root node (which is not
-//included in the enumeration.)
+//iteration of nested arrays of nodes. It is designed to be subclassed with concrete
+//implementations for node retrieval.
+
+//Subclasses must implement childrenForNode: but all other methods are optional.
 
 
 #import <Foundation/Foundation.h>
@@ -45,25 +47,25 @@
 
 @property (assign, nonatomic, getter=isExhausted) BOOL exhausted;
 
-//Returns a new enumerator with the specified node at its root. If enumerateRootNode
-//is YES, the first value returned by the enumerator will be the root node itself;
-//otherwise, enumeration will begin from the children of the root node.
-- (id) initWithRootNode: (id)rootNode inclusive: (BOOL)enumerateRootNode;
+//Returns a new enumerator with the specified node(s) at the root level. Enumeration
+//will proceed depth-first starting from the first of these nodes.
+- (id) initWithRootNodes: (NSArray *)rootNodes;
 
 //Advances enumeration of the current level and returns the next available node.
 //Returns nil once it reaches the end of the current level.
+//Called by nextObject.
 - (id) nextNodeInLevel;
 
-//Adds the specified nodes onto the level stack, making it the new current level.
-//The index for that level will be set to the specified index.
+//Adds the specified nodes onto the level stack.
+//Called by nextObject when traversing a node with children.
 - (void) pushLevel: (NSArray *)nodesInLevel;
 
 //Removes the last level from the stack, returning iteration to the previous level.
-//Raises an exception if an attempt is made to pop the root node.
+//Raises an NSRangeException if the enumerator is at the root level.
+//Called by nextObject once the current level is exhausted.
 - (void) popLevel;
 
-//The current level of the enumerator, where 0 is the root node.
-//Returns NSNotFound if there is no root node.
+//The current level of depth into the tree. The root nodes are at level 1.
 - (NSUInteger) level;
 
 

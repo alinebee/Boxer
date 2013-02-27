@@ -34,34 +34,29 @@
 @interface ADBTreeEnumerator : NSEnumerator
 {
     NSMutableArray *_levels;
-    NSUInteger *_indices;
-    NSUInteger _maxLevels;
+    id _currentNode;
     BOOL _exhausted;
 }
 
 @property (readonly, nonatomic) NSArray *levels;
+
+//The latest object returned by the enumeration.
+@property (retain, nonatomic) id currentNode;
+
 @property (assign, nonatomic, getter=isExhausted) BOOL exhausted;
 
-//Returns a new enumerator to accommodate the specified number of nested levels,
-//with the specified node at its root. This is the designated initializer.
-//(Capacity is not a hard limit - the enumerator will be expanded if it goes beyond this.)
-- (id) initWithRootNode: (id)rootNode capacity: (NSUInteger)capacity;
+//Returns a new enumerator with the specified node at its root. If enumerateRootNode
+//is YES, the first value returned by the enumerator will be the root node itself;
+//otherwise, enumeration will begin from the children of the root node.
+- (id) initWithRootNode: (id)rootNode inclusive: (BOOL)enumerateRootNode;
 
-//The node at the current index, i.e. the node that was most recently enumerated
-//by nextObject. Returns nil once the enumerator is exhausted.
-- (id) currentNode;
-
-//Returns the nodes along the current path ordered from root to current.
-- (NSArray *) nodesAlongPath;
-
-//Advances the index of the current level and returns the node at that index.
-//If this reaches the end, it will pop the current level and return the next
-//node in the level before it instead. Returns nil once the enumerator is exhausted.
+//Advances enumeration of the current level and returns the next available node.
+//Returns nil once it reaches the end of the current level.
 - (id) nextNodeInLevel;
 
 //Adds the specified nodes onto the level stack, making it the new current level.
 //The index for that level will be set to the specified index.
-- (void) pushLevel: (NSArray *)nodesInLevel initialIndex: (NSUInteger)startingIndex;
+- (void) pushLevel: (NSArray *)nodesInLevel;
 
 //Removes the last level from the stack, returning iteration to the previous level.
 //Raises an exception if an attempt is made to pop the root node.
@@ -73,9 +68,6 @@
 
 
 #pragma mark - Methods to implement in subclasses
-
-//Provides the value that nextObject should return for the given node.
-- (id) enumerationValueForNode: (id)node;
 
 //Returns whether the specified node should be returned by nextObject or should be skipped.
 //This check applies just to that node and not to its children.

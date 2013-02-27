@@ -29,20 +29,27 @@
 @implementation ADBTreeEnumerator
 @synthesize levels = _levels;
 @synthesize exhausted = _exhausted;
+@synthesize currentNode = _currentNode;
 
-- (id) initWithRootNode: (id)rootNode capacity: (NSUInteger)capacity
+- (id) initWithRootNode: (id)rootNode inclusive: (BOOL)enumerateRootNode
 {
     NSAssert(rootNode != nil, @"A root node must be provided for this enumerator.");
     
     self = [self init];
     if (self)
     {
-        _maxLevels = capacity;
+        _levels = [[NSMutableArray alloc] init];
+        [self pushLevel: @[rootNode]];
         
-        _levels = [[NSMutableArray alloc] initWithCapacity: _maxLevels];
-        _indices = malloc(sizeof(NSUInteger) * _maxLevels);
-        
-        [self pushLevel: @[rootNode] initialIndex: 0];
+        if (!enumerateRootNode)
+        {
+            //Skip over the root node by pre-exhausting the first level of enumeration.
+            self.currentNode = [self.levels.lastObject nextObject];
+        }
+        else
+        {
+            self.currentNode = nil;
+        }
     }
     return self;
 }
@@ -50,9 +57,7 @@
 - (void) dealloc
 {
     [_levels release]; _levels = nil;
-    
-    free(_indices);
-    _indices = NULL;
+    self.currentNode = nil;
     
     [super dealloc];
 }
@@ -65,33 +70,6 @@
         return NSNotFound;
 }
 
-- (id) currentNode
-{
-    if (self.exhausted || self.levels.count == 0)
-        return nil;
-    
-    NSUInteger currentIndex = _indices[self.level];
-    NSArray *nodesAtCurrentLevel = self.levels.lastObject;
-    if (currentIndex < nodesAtCurrentLevel.count)
-        return [nodesAtCurrentLevel objectAtIndex: currentIndex];
-    else
-        return nil;
-}
-
-- (NSArray *) nodesAlongPath
-{
-    NSUInteger i, numLevels = self.levels.count;
-    NSMutableArray *nodes = [NSMutableArray arrayWithCapacity: numLevels];
-    for (i=0; i < numLevels; i++)
-    {
-        NSArray *nodesAtLevel = [self.levels objectAtIndex: i];
-        NSUInteger indexAtLevel = _indices[i];
-        id nodeAtIndex = [nodesAtLevel objectAtIndex: indexAtLevel];
-        [nodes addObject: nodeAtIndex];
-    }
-    return nodes;
-}
-
 - (id) nextObject
 {
     if (self.exhausted)
@@ -99,88 +77,61 @@
     
     while (YES)
     {
-        id currentNode = self.currentNode;
-        id nextNode = nil;
-        
         NSArray *children = nil;
-        if ([self shouldEnumerateChildrenOfNode: currentNode])
-        {
-            children = [self childrenForNode: currentNode];
-        }
         
-        if (children.count)
+        //If the current node has enumerable children, pop those onto the stack and start traversing them now.
+        //Otherwise we'll continue enumerating the current level.
+        if (self.currentNode && [self shouldEnumerateChildrenOfNode: self.currentNode])
         {
-            [self pushLevel: children initialIndex: 0];
-            nextNode = [children objectAtIndex: 0];
-        }
-        else
-        {
-            //nextNodeInLevel will pop levels when it gets to the end of the current level,
-            //and will return nil once it hits the root level.
-            nextNode = [self nextNodeInLevel];
-        }
-        
-        if (nextNode)
-        {
-            if ([self shouldEnumerateNode: nextNode])
+            children = [self childrenForNode: self.currentNode];
+            if (children.count)
             {
-                return [self enumerationValueForNode: nextNode];
+                [self pushLevel: children];
             }
-            //Continue processing until we reach a node we do want to return
-            else
+        }
+        
+        //Pull out the next node from the current level.
+        while ((self.currentNode = self.nextNodeInLevel) == nil)
+        {
+            //Once we exhaust the current level, drop back to the previous level and advance again.
+            if (self.level > 0)
             {
+                [self popLevel];
                 continue;
             }
+            //When we run out of levels, we've reached the end of the enumeration.
+            else
+            {
+                self.exhausted = YES;
+                return nil;
+            }
         }
+        
+        if ([self shouldEnumerateNode: self.currentNode])
+        {
+            return self.currentNode;
+        }
+        
+        //If we're skipping this node, continue processing until we reach a node we *do* want
+        //to return. (Note that even if we decide not to enumerate a directory, we may still
+        //enumerate its contents.)
         else
         {
-            self.exhausted = YES;
-            return nil;
+            continue;
         }
     }
 }
 
 - (id) nextNodeInLevel
 {
-    if (self.exhausted)
-        return nil;
-    
-    while (YES)
-    {
-        NSArray *nodesAtCurrentLevel = [self.levels objectAtIndex: self.level];
-        _indices[self.level]++;
-        
-        if (_indices[self.level] < nodesAtCurrentLevel.count)
-        {
-            return [nodesAtCurrentLevel objectAtIndex: _indices[self.level]];
-        }
-        //If the new index goes beyond the extent of the current level,
-        //drop back to the previous level and advance again.
-        else
-        {
-            [self popLevel];
-            
-            //When we run out of levels, stop altogether.
-            if (self.level == 0)
-            {
-                return nil;
-            }
-        }
-    }
+    NSEnumerator *levelEnumerator = self.levels.lastObject;
+    return levelEnumerator.nextObject;
 }
 
-- (void) pushLevel: (NSArray *)nodesInLevel initialIndex: (NSUInteger)startingIndex
+- (void) pushLevel: (NSArray *)nodesInLevel
 {
     NSAssert(nodesInLevel != nil, @"No nodes provided for new level.");
-    [_levels addObject: nodesInLevel];
-    
-    //Enlarge the indices array if we run out of room
-    if (_levels.count > _maxLevels)
-    {
-        _maxLevels *= 2;
-        _indices = realloc(_indices, sizeof(NSUInteger) * _maxLevels);
-    }
-    _indices[self.level] = startingIndex;
+    [_levels addObject: nodesInLevel.objectEnumerator];
 }
 
 - (void) popLevel
@@ -191,12 +142,6 @@
 
 
 #pragma mark - Subclass methods
-
-- (id) enumerationValueForNode: (id)node
-{
-    NSAssert(NO, @"Method must be implemented in subclasses.");
-    return nil;
-}
 
 - (NSArray *) childrenForNode: (id)node
 {

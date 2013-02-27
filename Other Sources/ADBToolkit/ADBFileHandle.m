@@ -26,7 +26,87 @@
 
 #import "ADBFileHandle.h"
 
+//Basic implementations of NSData accessors for ADBReadable and ADBWritable instances.
+//TODO: apply these in a less gross way than categories on NSObject.
+@interface NSObject (ADBHandleDataReadImplementations)
 
+- (NSData *) dataWithMaxLength: (NSUInteger)numBytes error: (out NSError **)outError;
+- (NSData *) availableDataWithError: (out NSError **)outError;
+- (BOOL) writeData: (NSData *)data bytesWritten: (out NSUInteger *)bytesWritten error: (out NSError **)outError;
+
+@end
+
+@implementation NSObject (ADBHandleDataReadImplementations)
+
+- (NSData *) dataWithMaxLength: (NSUInteger)numBytes error: (out NSError **)outError
+{
+    NSAssert1([self conformsToProtocol: @protocol(ADBReadable)], @"%@ called on non-readable instance.", NSStringFromSelector(_cmd));
+
+    NSUInteger bytesRead;
+    char *buf = malloc(numBytes * sizeof(char));
+    BOOL read = [(id <ADBReadable>)self readBytes: buf maxLength: numBytes bytesRead: &bytesRead error: outError];
+    if (read)
+    {
+        return [NSData dataWithBytesNoCopy: buf length: bytesRead];
+    }
+    else
+    {
+        free(buf);
+        return nil;
+    }
+}
+
+- (NSData *) availableDataWithError: (out NSError **)outError
+{
+    NSAssert1([self conformsToProtocol: @protocol(ADBReadable)], @"%@ called on non-readable instance.", NSStringFromSelector(_cmd));
+    
+    NSUInteger blockSize = BUFSIZ;
+    NSMutableData *data = [[NSMutableData alloc] initWithCapacity: blockSize];
+    
+    char buf[blockSize];
+    while (YES)
+    {
+        NSUInteger bytesReadInChunk;
+        BOOL read = [(id <ADBReadable>)self readBytes: buf
+                                            maxLength: blockSize
+                                            bytesRead: &bytesReadInChunk
+                                                error: outError];
+        
+        if (read)
+        {
+            if (bytesReadInChunk > 0)
+            {
+                [data appendBytes: buf length: bytesReadInChunk];
+            }
+            
+            if (bytesReadInChunk < blockSize)
+            {
+                break;
+            }
+        }
+        else
+        {
+            [data release];
+            return nil;
+        }
+    }
+    return [data autorelease];
+}
+
+- (BOOL) writeData: (NSData *)data bytesWritten: (out NSUInteger *)bytesWritten error: (out NSError **)outError
+{
+    NSAssert1([self conformsToProtocol: @protocol(ADBWritable)], @"%@ called on non-readable instance.", NSStringFromSelector(_cmd));
+
+    return [(id <ADBWritable>)self writeBytes: data.bytes
+                                       length: data.length
+                                 bytesWritten: bytesWritten
+                                        error: outError];
+}
+
+@end
+
+
+#pragma mark -
 
 @interface ADBAbstractHandle ()
 
@@ -112,13 +192,14 @@ fpos_t _ADBHandleSeek(void *cookie, fpos_t offset, int whence);
 int _ADBHandleRead(void *cookie, char *buffer, int length)
 {
     id <ADBReadable> handle = (id <ADBReadable>)cookie;
-    NSUInteger bytesRead = length;
+    NSUInteger bytesRead;
     NSError *readError;
-    BOOL succeeded = [handle getBytes: &buffer length: &bytesRead error: &readError];
+    BOOL succeeded = [handle readBytes: &buffer maxLength: length bytesRead: &bytesRead error: &readError];
     
     if (succeeded)
     {
-        return (int)bytesRead; //Consistency with required API implies truncation, unfortunately
+        //Consistency with POSIX read() API implies truncation of the result, unfortunately
+        return (int)MAX(bytesRead, (NSUInteger)INT_MAX);
     }
     else
     {
@@ -137,11 +218,13 @@ int _ADBHandleWrite(void *cookie, const char *buffer, int length)
 {
     id <ADBWritable> handle = (id <ADBWritable>)cookie;
     NSError *writeError;
-    BOOL succeeded = [handle writeBytes: buffer length: length error: &writeError];
+    NSUInteger bytesWritten;
+    BOOL succeeded = [handle writeBytes: buffer length: length bytesWritten: &bytesWritten error: &writeError];
     
     if (succeeded)
     {
-        return length;
+        //Consistency with POSIX read() API implies truncation of the result, unfortunately
+        return (int)MAX(bytesWritten, (NSUInteger)INT_MAX);
     }
     else
     {
@@ -292,20 +375,22 @@ int _ADBHandleClose(void *cookie)
     return self;
 }
 
-- (BOOL) getBytes: (void *)buffer length: (inout NSUInteger *)numBytes error: (out NSError **)outError
+- (BOOL) readBytes: (void *)buffer
+         maxLength: (NSUInteger)numBytes
+         bytesRead: (out NSUInteger *)outBytesRead
+             error: (out NSError **)outError
 {
     NSAssert(_handle != NULL, @"Attempted to read after handle was closed.");
     
     NSAssert(buffer != NULL, @"No buffer provided.");
-    NSAssert(numBytes != NULL, @"No length pointer provided.");
+    NSAssert(outBytesRead != NULL, @"No length pointer provided.");
     
-    unsigned long bytesToRead = (unsigned long)*numBytes;
-    size_t bytesRead = fread(buffer, 1, bytesToRead, _handle);
-    *numBytes = bytesRead;
-    if (bytesRead < bytesToRead)
+    NSUInteger bytesRead = fread(buffer, 1, (unsigned long)numBytes, _handle);
+    *outBytesRead = bytesRead;
+    
+    if (bytesRead < numBytes)
     {
-        //A partial read may just indicate that we reached the end of the file:
-        //check for an actual error.
+        //A partial read may indicate an error or just that we reached the end of the file.
         NSInteger errorCode = ferror(_handle);
         if (errorCode != 0)
         {
@@ -317,6 +402,34 @@ int _ADBHandleClose(void *cookie)
             }
             return NO;
         }
+    }
+    
+    return YES;
+}
+
+- (BOOL) writeBytes: (const void *)buffer
+             length: (NSUInteger)numBytes
+       bytesWritten: (out NSUInteger *)outBytesWritten
+              error: (out NSError **)outError
+{
+    NSAssert(_handle != NULL, @"Attempted to write after handle was closed.");
+    
+    NSAssert(buffer != NULL, @"No buffer provided.");
+    
+    size_t bytesWritten = fwrite(buffer, 1, numBytes, _handle);
+    if (outBytesWritten)
+        *outBytesWritten = bytesWritten;
+    
+    if (bytesWritten < numBytes)
+    {
+        if (outError)
+        {
+            NSInteger errorCode = ferror(_handle);
+            *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
+                                            code: errorCode
+                                        userInfo: nil];
+        }
+        return NO;
     }
     
     return YES;
@@ -343,34 +456,10 @@ int _ADBHandleClose(void *cookie)
     return endOffset;
 }
 
-
 - (BOOL) isAtEnd
 {
     NSAssert(_handle != NULL, @"Attempted to check offset after handle was closed.");
     return feof(_handle);
-}
-
-- (BOOL) writeBytes: (const void *)buffer length: (NSUInteger)numBytes error: (out NSError **)outError
-{
-    NSAssert(_handle != NULL, @"Attempted to write after handle was closed.");
-    
-    NSAssert(buffer != NULL, @"No buffer provided.");
-    
-    size_t bytesWritten = fwrite(buffer, 1, numBytes, _handle);
-    if (bytesWritten < numBytes)
-    {
-        NSInteger errorCode = ferror(_handle);
-        
-        if (outError)
-        {
-            *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
-                                            code: errorCode
-                                        userInfo: nil];
-        }
-        return NO;
-    }
-    
-    return YES;
 }
 
 - (BOOL) seekToOffset: (long long)offset
@@ -411,6 +500,7 @@ int _ADBHandleClose(void *cookie)
         _handle = NULL;
     }
 }
+
 - (void) dealloc
 {
     if (_closeOnDealloc)
@@ -465,32 +555,60 @@ int _ADBHandleClose(void *cookie)
     [super dealloc];
 }
 
-- (BOOL) getBytes: (void *)buffer
-           length: (inout NSUInteger *)numBytes
-            error: (out NSError **)outError
+- (BOOL) readBytes: (void *)buffer
+         maxLength: (NSUInteger)numBytes
+         bytesRead: (out NSUInteger *)outBytesRead
+             error: (out NSError **)outError
 {
     NSData *data = self.data;
     NSAssert(data != nil, @"Attempted to read after handle was closed.");
     
     NSAssert(buffer != NULL, @"No buffer provided.");
-    NSAssert(numBytes != NULL, @"No length pointer provided.");
+    NSAssert(outBytesRead != NULL, @"No length pointer provided.");
     
-    NSUInteger bytesToRead = *numBytes;
-    NSUInteger offset = (NSUInteger)self.offset;
-    NSRange range = NSMakeRange(offset, MAX(bytesToRead, data.length - offset));
+    NSUInteger offset = (NSUInteger)self.offset, maxOffset = (NSUInteger)self.maxOffset;
+    NSRange range = NSMakeRange(offset, MIN(numBytes, maxOffset - offset));
     
     if (range.location < data.length)
     {
         [data getBytes: buffer range: range];
         self.offset += range.length;
-        *numBytes = range.length;
+        *outBytesRead = range.length;
     }
     else
     {
-        *numBytes = 0;
+        *outBytesRead = 0;
     }
     
     return YES;
+}
+
+- (NSData *) dataWithMaxLength: (NSUInteger)numBytes error: (out NSError **)outError
+{
+    if (self.isAtEnd)
+    {
+        return [NSData data];
+    }
+    else
+    {
+        NSUInteger offset = (NSUInteger)self.offset, maxOffset = (NSUInteger)self.maxOffset;
+        NSRange range = NSMakeRange(offset, MIN(numBytes, maxOffset - offset));
+        return [self.data subdataWithRange: range];
+    }
+}
+
+- (NSData *) availableDataWithError: (out NSError **)outError
+{
+    if (self.isAtEnd)
+    {
+        return [NSData data];
+    }
+    else
+    {
+        NSUInteger offset = (NSUInteger)self.offset, maxOffset = (NSUInteger)self.maxOffset;
+        NSRange range = NSMakeRange(offset, maxOffset - offset);
+        return [self.data subdataWithRange: range];
+    }
 }
 
 - (long long) maxOffset
@@ -515,6 +633,7 @@ int _ADBHandleClose(void *cookie)
 
 - (BOOL) writeBytes: (const void *)buffer
              length: (NSUInteger)numBytes
+       bytesWritten: (out NSUInteger *)outBytesWritten
               error: (out NSError **)outError
 {
     NSMutableData *data = self.data;
@@ -522,6 +641,9 @@ int _ADBHandleClose(void *cookie)
     NSAssert(data, @"Attempted to read after handle was closed.");
     NSAssert(buffer != NULL, @"No buffer provided.");
 
+    //If the data instance isn't large enough to accommodate the new data, expand it at the end.
+    //(Note that NSData -replaceBytesInRange:withBytes:length: can do this itself, but it expands
+    //from the point of insertion which is inconsistent with our API.)
     NSRange range = NSMakeRange((NSUInteger)self.offset, numBytes);
     NSUInteger bytesNeeded = range.location + range.length;
     if (bytesNeeded > data.length)
@@ -529,7 +651,19 @@ int _ADBHandleClose(void *cookie)
     
     [data replaceBytesInRange: range withBytes: buffer length: numBytes];
     self.offset += numBytes;
+    
+    if (outBytesWritten)
+        *outBytesWritten = numBytes;
+    
     return YES;
+}
+
+- (BOOL) writeData: (NSData *)data bytesWritten: (out NSUInteger *)bytesWritten error: (out NSError **)outError
+{
+    return [self writeBytes: data.bytes
+                     length: data.length
+               bytesWritten: bytesWritten
+                      error: outError];
 }
 
 @end
@@ -635,7 +769,10 @@ int _ADBHandleClose(void *cookie)
 
 #pragma mark - Data access
 
-- (BOOL) getBytes: (void *)buffer length: (inout NSUInteger *)numBytes error: (out NSError **)outError
+- (BOOL) readBytes: (void *)buffer
+         maxLength: (NSUInteger)numBytes
+         bytesRead: (out NSUInteger *)outBytesRead
+             error: (out NSError **)outError
 {
     NSAssert(self.sourceHandle != nil, @"Attempted to read after handle closed.");
     
@@ -644,20 +781,20 @@ int _ADBHandleClose(void *cookie)
     {
         BOOL sought = [self.sourceHandle seekToOffset: self.offset relativeTo: ADBSeekFromStart error: outError];
         if (sought)
-            return [self.sourceHandle getBytes: buffer length: numBytes error: outError];
+            return [self.sourceHandle readBytes: buffer maxLength: numBytes bytesRead: outBytesRead error: outError];
         else
             return NO;
     }
     
     NSAssert(buffer != NULL, @"No buffer provided.");
-    NSAssert(numBytes != NULL, @"No length pointer provided.");
+    NSAssert(outBytesRead != NULL, @"No length pointer provided.");
     
-    NSUInteger bytesRead = 0, bytesToRead = *numBytes;
-    *numBytes = 0;
+    NSUInteger bytesRead = 0;
+    *outBytesRead = 0;
     
     @synchronized(self.sourceHandle)
     {
-        while (bytesRead < bytesToRead)
+        while (bytesRead < numBytes)
         {
             unsigned long long sourceOffset = [self sourceOffsetForLogicalOffset: self.offset];
             BOOL sought = [self.sourceHandle seekToOffset: sourceOffset relativeTo: ADBSeekFromStart error: outError];
@@ -668,17 +805,21 @@ int _ADBHandleClose(void *cookie)
             
             //Read until the end of the block or until we've got all the bytes we wanted, whichever comes first.
             NSUInteger offsetWithinBlock = self.offset % self.blockSize;
-            NSUInteger chunkSize = MIN(bytesToRead - bytesRead, self.blockSize - offsetWithinBlock);
+            NSUInteger chunkSize = MIN(numBytes - bytesRead, self.blockSize - offsetWithinBlock);
             
-            NSUInteger bytesReadInChunk = chunkSize;
             void *bufferOffset = &buffer[bytesRead];
             
-            BOOL readBytes = [self.sourceHandle getBytes: bufferOffset length: &bytesReadInChunk error: outError];
+            NSUInteger bytesReadInChunk;
+            BOOL readBytes = [self.sourceHandle readBytes: bufferOffset
+                                                maxLength: chunkSize
+                                                bytesRead: &bytesReadInChunk
+                                                    error: outError];
+            
             if (readBytes)
             {
-                bytesRead += bytesReadInChunk;
                 self.offset += bytesReadInChunk;
-                *numBytes += bytesReadInChunk;
+                bytesRead += bytesReadInChunk;
+                *outBytesRead = bytesRead;
                 
                 //Reading finished without getting all the bytes we expected, meaning we've hit the end of the file.
                 if (bytesReadInChunk < chunkSize)
@@ -764,25 +905,24 @@ int _ADBHandleClose(void *cookie)
     return self.range.length;
 }
 
-- (BOOL) getBytes: (void *)buffer
-           length: (inout NSUInteger *)numBytes
-            error: (out NSError **)outError
+- (BOOL) readBytes: (void *)buffer
+         maxLength: (NSUInteger)numBytes
+         bytesRead: (out NSUInteger *)outBytesRead
+             error: (out NSError **)outError
 {
     NSAssert(self.sourceHandle != nil, @"Attempted to read after handle was closed.");
     
     NSAssert(buffer != NULL, @"No buffer provided.");
-    NSAssert(numBytes != NULL, @"No length pointer provided.");
+    NSAssert(outBytesRead != NULL, @"No length pointer provided.");
+    
+    *outBytesRead = 0;
     
     if (self.offset >= self.maxOffset)
     {
-        *numBytes = 0;
         return YES;
     }
     
-    NSUInteger bytesToRead = *numBytes;
-    *numBytes = 0;
-    
-    bytesToRead = MIN(bytesToRead, (NSUInteger)(self.maxOffset - self.offset));
+    numBytes = MIN(numBytes, (NSUInteger)(self.maxOffset - self.offset));
     
     @synchronized(self.sourceHandle)
     {
@@ -794,56 +934,18 @@ int _ADBHandleClose(void *cookie)
             return NO;
         }
         
-        NSUInteger bytesRead = bytesToRead;
-        BOOL read = [self.sourceHandle getBytes: buffer length: &bytesRead error: outError];
+        NSUInteger bytesRead;
+        BOOL read = [self.sourceHandle readBytes: buffer maxLength: numBytes bytesRead: &bytesRead error: outError];
         if (read)
         {
             self.offset += bytesRead;
-            *numBytes = bytesRead;
+            *outBytesRead = bytesRead;
             return YES;
         }
         else
         {
             return NO;
         }
-    }
-}
-
-- (BOOL) seekToOffset: (long long)offset relativeTo: (ADBFileHandleSeekLocation)location error: (out NSError **)outError
-{
-    NSAssert(self.sourceHandle != nil, @"Attempted to seek after handle closed.");
-    
-    long long newOffset;
-    switch (location)
-    {
-        case ADBSeekFromCurrent:
-            newOffset = self.offset + offset;
-            break;
-            
-        case ADBSeekFromEnd:
-            newOffset = self.maxOffset + offset;
-            break;
-            
-        case ADBSeekFromStart:
-        default:
-            newOffset = offset;
-            break;
-    }
-    
-    if (newOffset < 0)
-    {
-        if (outError)
-        {
-            *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
-                                            code: EINVAL
-                                        userInfo: nil];
-        }
-        return NO;
-    }
-    else
-    {
-        self.offset = newOffset;
-        return YES;
     }
 }
 

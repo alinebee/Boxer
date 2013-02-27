@@ -323,8 +323,24 @@ int extdate_to_int(uint8_t *digits, int length)
         if (!sought)
             return NO;
         
-        NSUInteger bytesRead = range.length;
-        return [self.handle getBytes: buffer length: &bytesRead error: outError];
+        NSUInteger bytesRead;
+        BOOL read = [self.handle readBytes: buffer
+                                 maxLength: range.length
+                                 bytesRead: &bytesRead
+                                     error: outError];
+        
+        //Treat truncated files as corrupt and an error condition.
+        if (read && (bytesRead < range.length))
+        {
+            if (outError)
+            {
+                *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                                code: NSFileReadCorruptFileError
+                                            userInfo: @{ NSURLErrorKey: self.baseURL }];
+            }
+            return NO;
+        }
+        else return read;
     }
 }
 

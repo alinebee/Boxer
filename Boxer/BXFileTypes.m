@@ -234,16 +234,17 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
 {
 	NSAssert(URL != nil, @"No URL specified!");
     
-    NSError *openError;
+    NSError *openError = nil;
     ADBFileHandle *handle = [ADBFileHandle handleForURL: URL mode: "r" error: &openError];
     if (handle)
     {
-        NSError *readError;
+        NSError *readError = nil;
         BXExecutableType type = [BXFileTypes typeOfExecutableInStream: handle error: &readError];
         if (type == BXExecutableTypeUnknown)
         {
             if (outError)
             {
+                NSAssert(readError != nil, @"No error returned on failure condition!");
                 NSDictionary *info = @{ NSURLErrorKey: URL, NSUnderlyingErrorKey: readError };
                 *outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
                                                 code: readError.code
@@ -257,6 +258,7 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
     {
         if (outError)
         {
+            NSAssert(openError != nil, @"No error returned on failure condition!");
             NSDictionary *info = @{ NSURLErrorKey: URL, NSUnderlyingErrorKey: openError };
             *outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
                                             code: BXCouldNotReadExecutable
@@ -272,17 +274,20 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
 	NSAssert(handle != nil, @"No handle provided!");
     
     
-    NSError *handleError;
+    NSError *handleError = nil;
     BXDOSExecutableHeader header;
 	size_t headerSize = sizeof(BXDOSExecutableHeader);
     
     NSUInteger bytesRead = headerSize;
     
-    BOOL read = [handle getBytes: &header length: &bytesRead error: &handleError];
-    if (!read)
+    //Rewind to the start of the stream before we begin
+    BOOL rewound = [handle seekToOffset: 0 relativeTo: ADBSeekFromStart error: &handleError];
+    BOOL read = rewound && [handle readBytes: &header maxLength: headerSize bytesRead: &bytesRead error: &handleError];
+    if (!rewound || !read)
     {
         if (outError)
         {
+            NSAssert(handleError != nil, @"No error returned on failure condition!");
             *outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
                                             code: BXCouldNotReadExecutable
                                         userInfo: @{ NSUnderlyingErrorKey: handleError }];
@@ -333,25 +338,36 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
 	
 	//Read in the 2-byte executable type marker from the start of the new-style header.
 	uint16_t newTypeMarker = 0;
-    NSUInteger markerBytesToRead = sizeof(uint16_t);
+    NSUInteger markerLength = sizeof(uint16_t);
     
     BOOL soughtToMarker = [handle seekToOffset: newHeaderAddress
                             relativeTo: ADBSeekFromStart
                                  error: &handleError];
     
-    BOOL readMarker = soughtToMarker && [handle getBytes: &newTypeMarker
-                                                  length: &markerBytesToRead
-                                                   error: &handleError];
+    NSUInteger markerBytesRead;
+    BOOL readMarker = soughtToMarker && [handle readBytes: &newTypeMarker
+                                                maxLength: markerLength
+                                                bytesRead: &markerBytesRead
+                                                    error: &handleError];
     
     if (!soughtToMarker || !readMarker)
     {
         if (outError)
         {
+            NSAssert(handleError != nil, @"No error returned on failure condition!");
             *outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
                                             code: BXCouldNotReadExecutable
                                         userInfo: @{ NSUnderlyingErrorKey: handleError }];
         }
         return BXExecutableTypeUnknown;
+    }
+    
+    //The executable type marker is beyond the limits of the executable, so assume that the
+    //address pointing to it was just coincidental random data and that this is therefore
+    //a DOS program.
+    if (markerBytesRead < markerLength)
+    {
+        return BXExecutableTypeDOS;
     }
 	
 	newTypeMarker = NSSwapLittleShortToHost(newTypeMarker);

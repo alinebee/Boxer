@@ -42,55 +42,58 @@
 
 #pragma mark - Data access methods
 
-//Given a buffer and a pointer to a number of bytes, fills the buffer with
+#define ADBReadFailed -1
+
+//Given a buffer and a pointer to a number of bytes, fill the buffer with
 //*at most* that many bytes, starting from the current position of the handle.
-//On success, returns YES and populates numBytes with the number of bytes
-//that were actually read into the buffer (which may be less than the number
-//requested, or zero, if the offset is at the end of the file.)
-//Also advances the offset of the file handle by the number of bytes read.
-- (BOOL) getBytes: (void *)buffer
-           length: (inout NSUInteger *)numBytes
-            error: (out NSError **)outError;
+//On success, return YES and populate bytesRead (a required parameter) with
+//the number of bytes that were read into the buffer: which may be less than
+//the number requested, or zero if the handle's position is at the end of the file.
+//On failure, return NO and populate outError (if provided) with the failure reason.
+//bytesRead should still be populated with the number of bytes that were
+//successfully read before reading failed.
+//This method should advance the offset of the file handle by the number of bytes
+//successfully read, even on failure.
+- (BOOL) readBytes: (void *)buffer
+         maxLength: (NSUInteger)numBytes
+         bytesRead: (out NSUInteger *)bytesRead
+             error: (out NSError **)outError;
+
+//Return an NSData instance populated with at most numBytes bytes (or until the end
+//of the file, whichever comes first) starting from the current position of the handle.
+//Return nil and populate outError if the read failed at any point.
+- (NSData *) dataWithMaxLength: (NSUInteger)numBytes error: (out NSError **)outError;
+
+//Return an NSData instance populated with all the bytes available from the handle,
+//starting from the current position of the handle. Return nil and populate outError
+//if the read failed at any point.
+- (NSData *) availableDataWithError: (out NSError **)outError;
 
 @end
-
-
-@protocol ADBFileHandleAccess <NSObject>
-
-#pragma mark - FILE handle access
-
-//Returns an open FILE * handle representing this ADBFileHandle resource.
-//If adopt is YES, the calling context is expected to take control of the
-//FILE * handle and is responsible for closing the handle when it has finished.
-//If adopt is NO, the FILE * handle will only be viable for the lifetime
-//of the ADBFileHandle instance: i.e. it may be closed when the instance
-//is deallocated.
-//This method should raise an assertion if adopt is YES and ownership has
-//already been taken of the file handle.
-//Calling fclose() on the resulting handle should have the same effect as
-//calling the close method below.
-- (FILE *) fileHandleAdoptingOwnership: (BOOL)adopt;
-
-//Frees all resources associated with the handle. Should be identical
-//in behaviour to calling fclose() on the FILE * handle.
-//The handle should be considered unusable after closing, and attempts
-//to call any of the data access methods above should raise an exception.
-- (void) close;
-
-@end
-
 
 @protocol ADBWritable <NSObject>
 
-//Writes numBytes bytes from the specified buffer at the current offset.
-//Returns YES if the bytes were successfully written, or NO and populates
-//outError if writing failed. Advances the handle's offset by the number
-//of bytes that were written.
+//Writes numBytes bytes from the specified buffer at the current offset, overwriting
+//any existing data at that location and expanding the backing location if necessary.
+//On success, return YES and populate bytesWritten (if provided) with the number of
+//bytes written, which will be equal to the number requested to be written.
+//On failure, return NO and populates outError (if provided) with the failure reason.
+//bytesRead should still be populated with the number of bytes that were successfully
+//written before failure.
+//This method advances the offset of the file handle by the number of bytes successfully
+//written, even on failure.
 - (BOOL) writeBytes: (const void *)buffer
              length: (NSUInteger)numBytes
+       bytesWritten: (out NSUInteger *)bytesWritten
               error: (out NSError **)outError;
-@end
 
+//Identical to the above, but writes the contents of the specified NSData instance
+//instead of a buffer.
+- (BOOL) writeData: (NSData *)data
+      bytesWritten: (out NSUInteger *)bytesWritten
+             error: (out NSError **)outError;
+
+@end
 
 @protocol ADBSeekable <NSObject>
 
@@ -125,6 +128,30 @@ typedef enum {
 
 @end
 
+@protocol ADBFileHandleAccess <NSObject>
+
+#pragma mark - FILE handle access
+
+//Returns an open FILE * handle representing this ADBFileHandle resource.
+//If adopt is YES, the calling context is expected to take control of the
+//FILE * handle and is responsible for closing the handle when it has finished.
+//If adopt is NO, the FILE * handle will only be viable for the lifetime
+//of the ADBFileHandle instance: i.e. it may be closed when the instance
+//is deallocated.
+//This method should raise an assertion if adopt is YES and ownership has
+//already been taken of the file handle.
+//Calling fclose() on the resulting handle should have the same effect as
+//calling the close method below.
+- (FILE *) fileHandleAdoptingOwnership: (BOOL)adopt;
+
+//Frees all resources associated with the handle. Should be identical
+//in behaviour to calling fclose() on the FILE * handle.
+//The handle should be considered unusable after closing, and attempts
+//to call any of the data access methods above should raise an exception.
+- (void) close;
+
+@end
+
 
 #pragma mark - Abstract interface definitions
 
@@ -153,15 +180,7 @@ typedef enum {
 {
     long long _offset;
 }
-
 @property (assign, nonatomic) long long offset;
-
-- (BOOL) seekToOffset: (long long)offset
-           relativeTo: (ADBFileHandleSeekLocation)location
-                error: (out NSError **)outError;
-
-- (BOOL) isAtEnd;
-- (long long) maxOffset;
 
 @end
 

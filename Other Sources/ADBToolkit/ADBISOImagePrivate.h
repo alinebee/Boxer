@@ -76,19 +76,14 @@
 - (ADBISOFileEntry *) _fileEntryAtPath: (NSString *)path
                                  error: (out NSError **)outError;
 
-//Returns a file entry parsed from the directory record at the specified byte offset.
-- (ADBISOFileEntry *) _fileEntryAtOffset: (uint32_t)byteOffset
-                                   error: (out NSError **)outError;
-
 //Returns an array of file entries parsed from the specified range of the image.
 //This takes into account the ISO9660 format's conventions for storing directory records:
 //They are packed together tightly in sectors but a single record will not span multiple sectors.
 - (NSArray *) _fileEntriesInRange: (NSRange)range error: (out NSError **)outError;
 
 //Populates buffer with the data at the specified range. Ranges that span sector boundaries will
-//take into account sector padding.
-//Note that the requested range is expected to be in logical bytes, without sector padding or lead-in.
-//These will be handled automatically by the function itself.
+//take into account sector padding. Note that the requested range is expected to be in logical bytes,
+//without sector padding or lead-in. These will be handled automatically by the function itself.
 - (BOOL) _getBytes: (void *)buffer atLogicalRange: (NSRange)range error: (out NSError **)outError;
 
 //Methods to convert back and forth from byte offsets to sectors, and from logical byte offsets

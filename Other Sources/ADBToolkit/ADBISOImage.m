@@ -540,15 +540,34 @@ int extdate_to_int(uint8_t *digits, int length)
     }
 }
 
-- (ADBISOFileEntry *) _fileEntryAtOffset: (uint32_t)byteOffset error: (out NSError **)outError
+- (NSArray *) _fileEntriesInRange: (NSRange)range error: (out NSError **)outError
 {
-    //The record size is the first byte of the file entry, which tells us how many bytes in total to parse in for the entry.
-    uint8_t recordSize;
-    BOOL gotRecordSize = [self _getBytes: &recordSize atLogicalRange: NSMakeRange(byteOffset, sizeof(uint8_t)) error: outError];
-    if (gotRecordSize)
+    NSData *entryData = [self _dataInRange: range error: outError];
+    if (!entryData)
+        return nil;
+    
+    NSMutableArray *entries = [NSMutableArray array];
+    NSUInteger bytesToParse = entryData.length;
+    NSUInteger index = 0;
+    NSUInteger offsetFromSectorBoundary = range.location % _sectorSize;
+    
+    while (index < bytesToParse)
     {
-        //Reported record size was too small, this may indicate a corrupt file record.
-        if (recordSize < ADBISODirectoryRecordMinLength)
+        NSUInteger bytesRemainingInSector = _sectorSize - ((offsetFromSectorBoundary + index) % _sectorSize);
+        
+        uint8_t recordSize = 0;
+        [entryData getBytes: &recordSize range: NSMakeRange(index, sizeof(uint8_t))];
+        
+        //Check the reported size of the next record. If it's zero, this should mean we've hit the
+        //zeroed-out region at the end of a sector that didn't have enough space to accommodate another record.
+        if (recordSize == 0)
+        {
+            index += bytesRemainingInSector;
+            continue;
+        }
+        
+        //If the size indicates this is too short to be a record, or too long to fit in the sector, treat this as a malformed record.
+        else if (recordSize < ADBISODirectoryRecordMinLength || recordSize > bytesRemainingInSector)
         {
             if (outError)
             {
@@ -557,94 +576,16 @@ int extdate_to_int(uint8_t *digits, int length)
             }
             return nil;
         }
-            
-        NSRange recordRange = NSMakeRange(byteOffset, recordSize);
-        ADBISODirectoryRecord record;
         
-        BOOL succeeded = [self _getBytes: &record atLogicalRange: recordRange error: outError];
-        if (succeeded)
-        {
-            return [ADBISOFileEntry entryFromDirectoryRecord: record
-                                                     inImage: self];
-        }
-        else return nil;
-    }
-    else return nil;
-}
-
-- (NSArray *) _fileEntriesInRange: (NSRange)range error: (out NSError **)outError
-{
-    NSUInteger offset = range.location;
-    NSUInteger bytesToRead = range.length;
-    NSUInteger readBytes = 0;
-    
-    NSMutableArray *entries = [NSMutableArray array];
-    while (readBytes < bytesToRead)
-    {
-        NSUInteger offsetWithinSector = [self _logicalOffsetWithinSector: offset];
-        NSUInteger bytesRemainingInSector = _sectorSize - offsetWithinSector;
-        
-        BOOL skipToNextSector = NO;
-        
-        //If there's not enough space remaining in the sector to fit another entry in, automatically skip to the next sector.
-        //CHECKME: are there any non-standard ISOs that span directory records across sector boundaries?
-        if (bytesRemainingInSector < ADBISODirectoryRecordMinLength)
-        {
-            skipToNextSector = YES;
-        }
-        //Otherwise, check how long the next record is reported to be.
         else
         {
-            uint8_t recordSize = 0;
-            BOOL gotRecordSize = [self _getBytes: &recordSize atLogicalRange: NSMakeRange(offset, sizeof(uint8_t)) error: outError];
-            if (!gotRecordSize)
-            {
-                return nil;
-            }
+            ADBISODirectoryRecord record;
+            [entryData getBytes: &record range: NSMakeRange(index, recordSize)];
             
-            //Check the reported size of the next record. If it's zero, this should mean we've hit the
-            //zeroed-out region at the end of a sector that didn't have enough space to accommodate another record.
-            if (recordSize == 0)
-            {
-                skipToNextSector = YES;
-            }
-            
-            //If the record indicates it would go over the end of the sector, treat this as a malformed record.
-            else if (recordSize > bytesRemainingInSector)
-            {
-                if (outError)
-                {
-                    NSDictionary *info = @{ NSURLErrorKey: self.baseURL };
-                    *outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSFileReadCorruptFileError userInfo: info];
-                }
-                return nil;
-            }
-            
-            //Otherwise, keep reading the rest of the record data from this sector.
-            else
-            {
-                ADBISODirectoryRecord record;
-                NSRange recordRange = NSMakeRange(offset, recordSize);
-                BOOL retrievedRecord = [self _getBytes: &record atLogicalRange: recordRange error: outError];
-                if (retrievedRecord)
-                {
-                    ADBISOFileEntry *entry = [ADBISOFileEntry entryFromDirectoryRecord: record inImage: self];
-                    [entries addObject: entry];
-                    
-                    offset += recordSize;
-                    readBytes += recordSize;
-                }
-                else
-                {
-                    return nil;
-                }
-            }
-        }
-        
-        if (skipToNextSector)
-        {
-            readBytes += bytesRemainingInSector;
-            offset += bytesRemainingInSector;
+            ADBISOFileEntry *entry = [ADBISOFileEntry entryFromDirectoryRecord: record inImage: self];
+            [entries addObject: entry];
+                
+            index += recordSize;
         }
     }
     

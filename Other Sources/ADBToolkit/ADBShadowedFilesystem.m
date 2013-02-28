@@ -28,22 +28,12 @@
 #import "NSURL+ADBFilesystemHelpers.h"
 #import "NSError+ADBErrorHelpers.h"
 #import "ADBForwardCompatibility.h"
+#import "ADBFileHandle.h"
 
 #pragma mark -
 #pragma mark Private constants
 
 NSString * const ADBShadowedDeletionMarkerExtension = @"deleted";
-
-
-enum {
-    ADBFileOpenForReading   = 1 << 0,
-    ADBFileOpenForWriting   = 1 << 1,
-    ADBFileCreateIfMissing  = 1 << 2,
-    ADBFileTruncate         = 1 << 3,
-    ADBFileAppend           = 1 << 4
-};
-
-typedef NSUInteger ADBFileOpenOptions;
 
 
 #pragma mark -
@@ -54,9 +44,6 @@ typedef NSUInteger ADBFileOpenOptions;
 //Our own file manager for internal use.
 @property (retain, nonatomic) NSFileManager *manager;
 
-//Parses an fopen()-format mode string into a set of bitflags.
-+ (ADBFileOpenOptions) _optionsFromAccessMode: (const char *)accessMode;
-
 //Internal implementation for moveItemAtURL:toURL:error: and copyItemAtURL:toURL:error:.
 - (BOOL) _transferItemAtPath: (NSString *)fromPath
                       toPath: (NSString *)toPath
@@ -65,12 +52,6 @@ typedef NSUInteger ADBFileOpenOptions;
 
 //Create a 0-byte deletion marker at the specified shadow URL.
 - (void) _createDeletionMarkerAtURL: (NSURL *)markerURL;
-
-//Returns a file pointer for the specified absolute filesystem URL.
-//No original->shadow mapping is performed on the specified URL.
-- (FILE *) _openFileAtCanonicalFilesystemURL: (NSURL *)URL
-                                      inMode: (const char *)accessMode
-                                       error: (NSError **)outError;
 
 //Used internally by mergeContentsOfURL:error: to merge each item back into the source.
 - (BOOL) _mergeItemAtShadowURL: (NSURL *)shadowedURL
@@ -451,10 +432,12 @@ includingPropertiesForKeys: (NSArray *)keys
     }
 }
 
-- (FILE *) openFileAtPath: (NSString *)path
-                   inMode: (const char *)accessMode
-                    error: (out NSError **)outError
+- (ADBFileHandle *) fileHandleAtPath: (NSString *)path
+                             options: (ADBHandleOptions)options
+                               error: (out NSError **)outError
 {
+    NSAssert((options & ADBCreateAlways) == 0, @"ADBCreateAlways is not currently supported.");
+    
     NSURL *originalURL = [self _sourceURLForLogicalPath: path];
     NSURL *shadowedURL = [self _shadowedURLForLogicalPath: path];
     
@@ -462,8 +445,7 @@ includingPropertiesForKeys: (NSArray *)keys
     {
         NSURL *deletionMarkerURL = [shadowedURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
         
-        ADBFileOpenOptions accessOptions = [self.class _optionsFromAccessMode: accessMode];
-        BOOL createIfMissing = (accessOptions & ADBFileCreateIfMissing) == ADBFileCreateIfMissing;
+        BOOL createIfMissing = (options & ADBCreateIfMissing) == ADBCreateIfMissing;
         
         BOOL deletionMarkerExists = [deletionMarkerURL checkResourceIsReachableAndReturnError: NULL];
         BOOL shadowExists = [shadowedURL checkResourceIsReachableAndReturnError: NULL];
@@ -479,9 +461,7 @@ includingPropertiesForKeys: (NSArray *)keys
                 [self.manager removeItemAtURL: deletionMarkerURL error: NULL];
                 [self.manager removeItemAtURL: shadowedURL error: NULL];
                 
-                return [self _openFileAtCanonicalFilesystemURL: shadowedURL
-                                                        inMode: accessMode
-                                                         error: outError];
+                return [ADBFileHandle handleForURL: shadowedURL options: options error: outError];
             }
             //Otherwise, pretend we can't open the file at all.
             else
@@ -496,22 +476,20 @@ includingPropertiesForKeys: (NSArray *)keys
             }
         }
         
-        //If the shadow file already exists, open the shadow with whatever access mode was requested.
+        //If the shadow file already exists, open the shadow with whatever mode was requested.
         //IMPLEMENTATION NOTE: conventional wisdom dictates we should just try to open it
         //and see if that worked without checking for file existence first, then use fallbacks
         //if it does fail; however this is undesirable in the case where we want to modify
         //the file's existing contents *or* create the file if it doesn't exist.
         else if (shadowExists)
         {
-            return [self _openFileAtCanonicalFilesystemURL: shadowedURL
-                                                    inMode: accessMode
-                                                     error: outError];
+            return [ADBFileHandle handleForURL: shadowedURL options: options error: outError];
         }
         
         //If we're opening the file for writing and we don't have a shadowed version of it,
         //copy any original version to the shadowed location first (creating any necessary
         //directories along the way) and then open the newly-shadowed copy.
-        else if ((accessOptions & ADBFileOpenForWriting))
+        else if ((options & ADBOpenForWriting) != 0)
         {
             //Ensure the necessary path exists for the shadow file to be stored in.
             //IMPLEMENTATION NOTE: this ignores failure because the directories may already
@@ -523,7 +501,7 @@ includingPropertiesForKeys: (NSArray *)keys
                                          error: NULL];
             
             //If we'll be truncating the file anyway, don't bother copying the original.
-            BOOL truncateExistingFile = (accessOptions & ADBFileTruncate) == ADBFileTruncate;
+            BOOL truncateExistingFile = (options & ADBTruncate) == ADBTruncate;
             if (!truncateExistingFile)
             {
                 NSError *copyError = nil;
@@ -543,9 +521,7 @@ includingPropertiesForKeys: (NSArray *)keys
                 }
             }
             
-            return [self _openFileAtCanonicalFilesystemURL: shadowedURL
-                                                    inMode: accessMode
-                                                     error: outError];
+            return [ADBFileHandle handleForURL: shadowedURL options: options error: outError];
         }
         
         //If we don't have a shadow file, but we're opening the file as read-only,
@@ -553,18 +529,23 @@ includingPropertiesForKeys: (NSArray *)keys
         //This will fail if the original location doesn't exist.
         else
         {
-            return [self _openFileAtCanonicalFilesystemURL: originalURL
-                                                    inMode: accessMode
-                                                     error: outError];
+            return [ADBFileHandle handleForURL: originalURL options: options error: outError];
         }
     }
     else
     {
-        return [self _openFileAtCanonicalFilesystemURL: originalURL
-                                                inMode: accessMode
-                                                 error: outError];
+        return [ADBFileHandle handleForURL: originalURL options: options error: outError];
     }
 }
+
+- (FILE *) openFileAtPath: (NSString *)path
+                   inMode: (const char *)accessMode
+                    error: (out NSError **)outError
+{
+    ADBHandleOptions options = [ADBFileHandle optionsForPOSIXAccessMode: accessMode];
+    return [[self fileHandleAtPath: path options: options error: outError] fileHandleAdoptingOwnership: YES];
+}
+
 
 - (BOOL) removeItemAtPath: (NSString *)path error: (out NSError **)outError
 {
@@ -644,59 +625,6 @@ includingPropertiesForKeys: (NSArray *)keys
 
 
 #pragma mark - Internal file access methods
-
-+ (ADBFileOpenOptions) _optionsFromAccessMode: (const char *)accessMode
-{
-    ADBFileOpenOptions options = 0;
-    
-    NSUInteger modeLength = strlen(accessMode);
-    BOOL hasPlus = (modeLength >= 2 && accessMode[1] == '+') || (modeLength >= 3 && accessMode[2] == '+');
-    
-    switch (accessMode[0])
-    {
-        case 'r':
-            options = ADBFileOpenForReading;
-            if (hasPlus)
-                options |= ADBFileOpenForWriting;
-            break;
-        case 'w':
-            options = ADBFileOpenForWriting | ADBFileCreateIfMissing | ADBFileTruncate;
-            if (hasPlus)
-                options |= ADBFileOpenForReading;
-            break;
-        case 'a':
-            options = ADBFileOpenForWriting | ADBFileCreateIfMissing | ADBFileAppend;
-            if (hasPlus)
-                options |= ADBFileOpenForReading;
-            break;
-    }
-    
-    return options;
-}
-
-- (FILE *) _openFileAtCanonicalFilesystemURL: (NSURL *)URL
-                                      inMode: (const char *)accessMode
-                                       error: (NSError **)outError
-{
-    const char *rep = URL.fileSystemRepresentation;
-    FILE *handle = fopen(rep, accessMode);
-    
-    if (handle)
-    {
-        return handle;
-    }
-    else
-    {
-        if (outError)
-        {
-            NSInteger posixError = errno;
-            *outError = [NSError errorWithDomain: NSPOSIXErrorDomain
-                                            code: posixError
-                                        userInfo: @{ NSURLErrorKey: URL }];
-        }
-        return NULL;
-    }
-}
 
 - (void) _createDeletionMarkerAtURL: (NSURL *)markerURL
 {

@@ -278,7 +278,7 @@ int _ADBHandleClose(void *cookie)
 @synthesize offset = _offset;
 
 - (BOOL) seekToOffset: (long long)offset
-           relativeTo: (ADBFileHandleSeekLocation)location
+           relativeTo: (ADBHandleSeekLocation)location
                 error: (out NSError **)outError
 {
     long long newOffset;
@@ -334,9 +334,110 @@ int _ADBHandleClose(void *cookie)
 
 @implementation ADBFileHandle
 
++ (ADBHandleOptions) optionsForPOSIXAccessMode: (const char *)mode
+{
+    ADBHandleOptions options = 0;
+    NSUInteger i, numChars = strlen(mode);
+    
+    for (i=0; i<numChars; i++)
+    {
+        char c = mode[i];
+        switch (c)
+        {
+            case 'r':
+                options = ADBOpenForReading;
+                break;
+            case 'w':
+                options = ADBOpenForWriting | ADBCreateIfMissing | ADBTruncate;
+                break;
+            case 'a':
+                options = ADBOpenForWriting | ADBCreateIfMissing | ADBAppend;
+                break;
+            case '+':
+                options |= (ADBOpenForReading | ADBOpenForWriting);
+                break;
+            case 'x':
+                if (options & (ADBOpenForWriting | ADBCreateIfMissing))
+                {
+                    options &= ~ADBCreateIfMissing;
+                    options |= ADBCreateAlways;
+                }
+                break;
+        }
+    }
+    
+    return options;
+}
+
++ (const char *) POSIXAccessModeForOptions: (ADBHandleOptions)options
+{
+    //Complain about required and mutually exclusive options.
+    NSAssert((options & (ADBOpenForReading | ADBOpenForWriting)) > 0,
+             @"At least one of ADBOpenForReading and ADBOpenForWriting must be specified.");
+    
+    NSAssert((options & ADBTruncate) == 0 || (options & ADBAppend) == 0,
+             @"ADBTruncate and ADBAppend cannot be specified together.");
+    
+    NSAssert((options & ADBCreateIfMissing) == 0 || (options & ADBCreateAlways) == 0,
+             @"ADBCreateIfMissing and ADBCreateAlways cannot be specified together.");
+    
+    
+    //Known POSIX access modes arranged in descending order of specificity.
+    //This lets us do a best fit for options that may not exactly match one of our known modes.
+    ADBHandleOptions optionMasks[10] = {
+        ADBPOSIXModeAPlusX,
+        ADBPOSIXModeAX,
+        ADBPOSIXModeAPlus,
+        ADBPOSIXModeA,
+        ADBPOSIXModeWPlusX,
+        ADBPOSIXModeWX,
+        ADBPOSIXModeWPlus,
+        ADBPOSIXModeRPlus,
+        ADBPOSIXModeW,
+        ADBPOSIXModeR,
+    };
+    const char * modes[10] = {
+        "a+x",
+        "ax",
+        "a+",
+        "a",
+        "w+x",
+        "wx",
+        "w+",
+        "r+",
+        "w",
+        "r",
+    };
+    
+    NSUInteger i, numModes = 10;
+    for (i=0; i<numModes; i++)
+    {
+        ADBHandleOptions mask = optionMasks[i];
+        if ((options & mask) == mask)
+            return modes[i];
+    }
+    
+    //If we got this far, no mode would fit: a programming error if ever we saw one.
+    NSAssert1(NO, @"No POSIX access mode is suitable for the specified options: %llu", (unsigned long long)options);
+    
+    return NULL;
+}
+
+
 + (id) handleForURL: (NSURL *)URL mode: (const char *)mode error: (out NSError **)outError
 {
     return [[[self alloc] initWithURL: URL mode: mode error: outError] autorelease];
+}
+
++ (id) handleForURL: (NSURL *)URL options: (ADBHandleOptions)options error:(out NSError **)outError
+{
+    return [[[self alloc] initWithURL: URL options: options error: outError] autorelease];
+}
+
+- (id) initWithURL: (NSURL *)URL options:(ADBHandleOptions)options error:(out NSError **)outError
+{
+    const char *mode = [self.class POSIXAccessModeForOptions: options];
+    return [self initWithURL: URL mode: mode error: outError];
 }
 
 - (id) initWithURL: (NSURL *)URL mode: (const char *)mode error: (NSError **)outError
@@ -375,6 +476,11 @@ int _ADBHandleClose(void *cookie)
     return self;
 }
 
+
+//IMPLEMENTATION NOTE: ADBFileHandle will blithely mix fread() and fwrite() calls without introducing
+//the intervening fseek() or fflush() mandated by ANSI C. Such a limitation does not exist in the BSD
+//implementations of those functions so we don't need to anymore, but this means the code below is
+//not portable to other platforms (as if Objective C code would be otherwise.)
 - (BOOL) readBytes: (void *)buffer
          maxLength: (NSUInteger)numBytes
          bytesRead: (out NSUInteger *)outBytesRead
@@ -463,7 +569,7 @@ int _ADBHandleClose(void *cookie)
 }
 
 - (BOOL) seekToOffset: (long long)offset
-           relativeTo: (ADBFileHandleSeekLocation)location
+           relativeTo: (ADBHandleSeekLocation)location
                 error: (out NSError **)outError
 {
     NSAssert(_handle != NULL, @"Attempted to seek after handle was closed.");

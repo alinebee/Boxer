@@ -40,15 +40,19 @@
     BOOL _exhausted;
 }
 
+//An array of enumerators for each level of the tree being traversed.
 @property (readonly, nonatomic) NSArray *levels;
 
 //The latest object returned by the enumeration.
 @property (retain, nonatomic) id currentNode;
 
+//Set to YES when the enumeration has run out of objects, or should otherwise stop
+//iterating for any reason (for instance, encountering an error).
 @property (assign, nonatomic, getter=isExhausted) BOOL exhausted;
 
-//Returns a new enumerator with the specified node(s) at the root level. Enumeration
-//will proceed depth-first starting from the first of these nodes.
+//Returns a new enumerator with the specified nodes as the root level. Enumeration
+//will proceed depth-first starting from the first of these nodes. If the array
+//is empty, the enumerator will return nothing.
 - (id) initWithRootNodes: (NSArray *)rootNodes;
 
 //Advances enumeration of the current level and returns the next available node.
@@ -56,7 +60,7 @@
 //Called by nextObject.
 - (id) nextNodeInLevel;
 
-//Adds the specified nodes onto the level stack.
+//Adds the specified nodes as a new level onto the level stack.
 //Called by nextObject when traversing a node with children.
 - (void) pushLevel: (NSArray *)nodesInLevel;
 

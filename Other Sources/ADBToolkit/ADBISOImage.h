@@ -75,7 +75,11 @@
 + (id) imageWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
 - (id) initWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
 
-- (id <ADBReadable, ADBSeekable>) fileHandleForReadingFromPath: (NSString *)path
-                                                         error: (out NSError **)outError;
+#pragma mark - ADBFilesystem API
+
+//Clarify method signature to indicate that only readable, not writeable, file handles will be returned.
+- (id <ADBFileHandleAccess, ADBReadable, ADBSeekable>) fileHandleAtPath: (NSString *)path
+                                                                options: (ADBHandleOptions)options
+                                                                  error: (out NSError **)outError;
 
 @end

@@ -25,6 +25,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "ADBFileHandle.h"
 
 typedef BOOL (^ADBFilesystemPathErrorHandler)(NSString *path, NSError *error);
 typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error);
@@ -74,8 +75,15 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
    withIntermediateDirectories: (BOOL)createIntermediates
                          error: (out NSError **)outError;
 
+//Returns a file handle suitable for reading from the resource represented by the specified path,
+//using the specified access options.
+- (id <ADBFileHandleAccess>) fileHandleAtPath: (NSString *)path
+                                      options: (ADBHandleOptions)options
+                                        error: (out NSError **)outError;
+
 //Returns an open stdlib FILE handle for the resource represented by the specified path,
-//using the specified access mode (in the standard fopen format).
+//using the specified access mode (in the standard fopen format). The calling context is
+//responsible for closing the file handle.
 //Returns NULL and populates outError on failure.
 - (FILE *) openFileAtPath: (NSString *)path
                    inMode: (const char *)accessMode

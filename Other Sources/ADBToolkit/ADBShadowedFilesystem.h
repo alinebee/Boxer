@@ -55,15 +55,21 @@ extern NSString * const ADBShadowedDeletionMarkerExtension;
 @property (copy, nonatomic) NSURL *shadowURL;
 
 
-#pragma mark -
-#pragma mark Initialization and deallocation
+#pragma mark - Initialization and deallocation
+
 //Return a new filesystem manager initialised with the specified source and shadow URLs.
 + (id) filesystemWithSourceURL: (NSURL *)sourceURL shadowURL: (NSURL *)shadowURL;
 - (id) initWithSourceURL: (NSURL *)sourceURL shadowURL: (NSURL *)shadowURL;
 
+#pragma mark - ADBFilesystem API
 
-#pragma mark -
-#pragma mark Housekeeping
+//Clarified message signature to indicate protocols supported by the handle.
+- (id <ADBFileHandleAccess, ADBReadable, ADBWritable, ADBSeekable>) fileHandleAtPath: (NSString *)path
+                                                                             options: (ADBHandleOptions)options
+                                                                               error: (out NSError **)outError;
+
+
+#pragma mark - Housekeeping
 
 //Cleans up the shadow contents for the specified filesystem-relative path: this removes
 //any redundant deletion markers for files that don't exist in the source location,

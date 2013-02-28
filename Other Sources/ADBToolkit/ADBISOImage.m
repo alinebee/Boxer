@@ -187,9 +187,13 @@ int extdate_to_int(uint8_t *digits, int length)
     return [entry contentsWithError: outError];
 }
 
-- (id <ADBReadable, ADBSeekable>) fileHandleForReadingFromPath: (NSString *)path
-                                                         error: (out NSError **)outError
+- (id <ADBFileHandleAccess, ADBReadable, ADBSeekable>) fileHandleAtPath: (NSString *)path
+                                                                options: (ADBHandleOptions)options
+                                                                  error: (out NSError **)outError;
 {
+    //TODO: make this an error instead?
+    NSAssert(options == ADBOpenForReading, @"The only supported file mode for ISO filesystems is ADBOpenForReading.");
+    
     ADBISOFileEntry *entry = [self _fileEntryAtPath: path error: outError];
     if (entry)
     {
@@ -205,17 +209,8 @@ int extdate_to_int(uint8_t *digits, int length)
                    inMode: (const char *)accessMode
                     error: (out NSError **)outError
 {
-    //TODO: return an error if the requested mode is writeable.
-    ADBISOFileEntry *entry = [self _fileEntryAtPath: path error: outError];
-    if (entry)
-    {
-        ADBSubrangeHandle *entryHandle = [entry handleWithError: outError];
-        return [entryHandle fileHandleAdoptingOwnership: YES];
-    }
-    else
-    {
-        return NULL;
-    }
+    ADBHandleOptions options = [ADBFileHandle optionsForPOSIXAccessMode: accessMode];
+    return [[self fileHandleAtPath: path options: options error: outError] fileHandleAdoptingOwnership: YES];
 }
 
 

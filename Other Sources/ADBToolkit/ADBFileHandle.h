@@ -36,6 +36,41 @@
 
 #import <Foundation/Foundation.h>
 
+
+#pragma mark - Constants
+
+enum {
+    ADBOpenForReading   = 1 << 0,
+    ADBOpenForWriting   = 1 << 1,
+    
+    //Mutually exclusive
+    ADBCreateIfMissing  = 1 << 2,
+    ADBCreateAlways     = 1 << 3,
+    
+    //Mutually exclusive
+    ADBTruncate         = 1 << 4,
+    ADBAppend           = 1 << 5,
+    
+    //Equivalents to fopen() access modes
+    ADBPOSIXModeR      = ADBOpenForReading,
+    ADBPOSIXModeRPlus  = ADBPOSIXModeR | ADBOpenForWriting,
+    
+    ADBPOSIXModeW      = ADBOpenForWriting | ADBTruncate | ADBCreateIfMissing,
+    ADBPOSIXModeWPlus  = ADBPOSIXModeW | ADBOpenForReading,
+    
+    ADBPOSIXModeA      = ADBOpenForWriting | ADBAppend | ADBCreateIfMissing,
+    ADBPOSIXModeAPlus  = ADBPOSIXModeA | ADBOpenForReading,
+    
+    ADBPOSIXModeWX     = ADBOpenForWriting | ADBTruncate | ADBCreateAlways,
+    ADBPOSIXModeWPlusX = ADBPOSIXModeWX | ADBOpenForReading,
+    
+    ADBPOSIXModeAX     = ADBOpenForWriting | ADBAppend | ADBCreateAlways,
+    ADBPOSIXModeAPlusX = ADBPOSIXModeAX | ADBOpenForReading,
+};
+
+typedef NSUInteger ADBHandleOptions;
+
+
 #pragma mark - Protocol definitions
 
 @protocol ADBReadable <NSObject>
@@ -101,7 +136,7 @@ typedef enum {
     ADBSeekFromStart    = SEEK_SET,
     ADBSeekFromEnd      = SEEK_END,
     ADBSeekFromCurrent  = SEEK_CUR,
-} ADBFileHandleSeekLocation;
+} ADBHandleSeekLocation;
 
 //Returned by -offset when the offset cannot be determined or is not applicable.
 #define ADBOffsetUnknown -1
@@ -123,7 +158,7 @@ typedef enum {
 //an illegal offset was specified.
 //(Note that it is legal to seek beyond the end of the file.)
 - (BOOL) seekToOffset: (long long)offset
-           relativeTo: (ADBFileHandleSeekLocation)location
+           relativeTo: (ADBHandleSeekLocation)location
                 error: (out NSError **)outError;
 
 @end
@@ -195,10 +230,29 @@ typedef enum {
     BOOL _closeOnDealloc;
 }
 
-//Creates a file handle opened from the specified URL in the specified mode.
+//Convert an fopen()-style mode string (e.g. "r", "w+", "a+x") to our own logical flags.
+//The implementation of this makes no attempt to validate the string and will blithely
+//accept malformed modes (e.g. whose tokens are out of order or include conflicting tokens).
++ (ADBHandleOptions) optionsForPOSIXAccessMode: (const char *)mode;
+
+//Returns a POSIX mode string best representing the given options.
+//Returns NULL if no suitable POSIX access mode could be determined.
++ (const char *) POSIXAccessModeForOptions: (ADBHandleOptions)options;
+
+
+//Creates a file handle opened from the specified URL in the specified mode
+//(or with the specified options bitmask).
++ (id) handleForURL: (NSURL *)URL
+            options: (ADBHandleOptions)options
+              error: (out NSError **)outError;
+
 + (id) handleForURL: (NSURL *)URL
                mode: (const char *)mode
               error: (out NSError **)outError;
+
+- (id) initWithURL: (NSURL *)URL
+           options: (ADBHandleOptions)options
+             error: (out NSError **)outError;
 
 - (id) initWithURL: (NSURL *)URL
               mode: (const char *)mode

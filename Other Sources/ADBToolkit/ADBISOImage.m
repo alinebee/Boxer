@@ -159,6 +159,35 @@ int extdate_to_int(uint8_t *digits, int length)
     }
 }
 
+//Currently, filetype determination relies entirely on the path extension.
+- (NSString *) typeOfFileAtPath: (NSString *)path
+{
+    NSString *extension = path.pathExtension;
+    CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)extension, NULL);
+    return [(NSString *)UTI autorelease];
+}
+
+- (NSString *) typeOfFileAtPath: (NSString *)path matchingTypes: (NSSet *)comparisonUTIs
+{
+    NSString *UTI = [self typeOfFileAtPath: path];
+    if (UTI)
+    {
+        for (NSString *comparisonUTI in comparisonUTIs)
+        {
+            if (UTTypeConformsTo((CFStringRef)UTI, (CFStringRef)comparisonUTI))
+                return comparisonUTI;
+        }
+    }
+    return nil;
+}
+
+- (BOOL) fileAtPath: (NSString *)path conformsToType: (NSString *)comparisonUTI
+{
+    NSString *UTI = [self typeOfFileAtPath: path];
+    return (UTI != nil && UTTypeConformsTo((CFStringRef)UTI, (CFStringRef)comparisonUTI));
+}
+
+
 - (NSDictionary *) attributesOfFileAtPath: (NSString *)path
                                     error: (out NSError **)outError
 {

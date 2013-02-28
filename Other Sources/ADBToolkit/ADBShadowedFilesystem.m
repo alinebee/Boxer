@@ -262,6 +262,58 @@ includingPropertiesForKeys: (NSArray *)keys
 
 #pragma mark - ADBFilesystemPathAccess methods
 
+- (BOOL) fileExistsAtPath: (NSString *)path isDirectory: (BOOL *)isDirectory
+{
+    NSURL *originalURL = [self _sourceURLForLogicalPath: path];
+    NSURL *shadowedURL = [self _shadowedURLForLogicalPath: path];
+    
+    if (shadowedURL)
+    {
+        NSURL *deletionMarkerURL = [shadowedURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
+        
+        //If the file is flagged as deleted, pretend it doesn't exist.
+        if ([deletionMarkerURL checkResourceIsReachableAndReturnError: NULL])
+        {
+            if (isDirectory)
+                *isDirectory = NO;
+            return NO;
+        }
+        
+        //Otherwise, if either the source or a shadow exist, treat the file as existing.
+        if ([self.manager fileExistsAtPath: shadowedURL.path isDirectory: isDirectory])
+        {
+            return YES;
+        }
+        
+        else
+        {
+            return [self.manager fileExistsAtPath: originalURL.path isDirectory: isDirectory];
+        }
+    }
+    else
+    {
+        return [self.manager fileExistsAtPath: originalURL.path isDirectory: isDirectory];
+    }
+}
+
+- (NSString *) typeOfFileAtPath: (NSString *)path
+{
+    NSURL *canonicalURL = [self localFileURLForLogicalPath: path];
+    return canonicalURL.typeIdentifier;
+}
+
+- (BOOL) fileAtPath: (NSString *)path conformsToType: (NSString *)UTI
+{
+    NSURL *canonicalURL = [self localFileURLForLogicalPath: path];
+    return [canonicalURL conformsToFileType: UTI];
+}
+
+- (NSString *) typeOfFileAtPath: (NSString *)path matchingTypes: (NSSet *)UTIs
+{
+    NSURL *canonicalURL = [self localFileURLForLogicalPath: path];
+    return [canonicalURL matchingFileType: UTIs];
+}
+
 - (NSDictionary *) attributesOfFileAtPath: (NSString *)path error: (out NSError **)outError
 {
     NSURL *canonicalURL = [self localFileURLForLogicalPath: path];
@@ -331,40 +383,6 @@ includingPropertiesForKeys: (NSArray *)keys
 - (BOOL) copyItemAtPath: (NSString *)fromPath toPath: (NSString *)toPath error: (out NSError **)outError
 {
     return [self _transferItemAtPath: fromPath toPath: toPath copying: YES error: outError];
-}
-
-- (BOOL) fileExistsAtPath: (NSString *)path isDirectory: (BOOL *)isDirectory
-{
-    NSURL *originalURL = [self _sourceURLForLogicalPath: path];
-    NSURL *shadowedURL = [self _shadowedURLForLogicalPath: path];
-    
-    if (shadowedURL)
-    {
-        NSURL *deletionMarkerURL = [shadowedURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
-        
-        //If the file is flagged as deleted, pretend it doesn't exist.
-        if ([deletionMarkerURL checkResourceIsReachableAndReturnError: NULL])
-        {
-            if (isDirectory)
-                *isDirectory = NO;
-            return NO;
-        }
-        
-        //Otherwise, if either the source or a shadow exist, treat the file as existing.
-        if ([self.manager fileExistsAtPath: shadowedURL.path isDirectory: isDirectory])
-        {
-            return YES;
-        }
-        
-        else
-        {
-            return [self.manager fileExistsAtPath: originalURL.path isDirectory: isDirectory];
-        }
-    }
-    else
-    {
-        return [self.manager fileExistsAtPath: originalURL.path isDirectory: isDirectory];
-    }
 }
 
 - (BOOL) createDirectoryAtPath: (NSString *)path

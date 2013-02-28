@@ -25,7 +25,6 @@
  */
 
 #import "NSURL+ADBFilesystemHelpers.h"
-#import <AppKit/AppKit.h> //For NSWorkspace
 
 @implementation NSURL (ADBFilePaths)
 
@@ -157,49 +156,43 @@
     NSString *UTI = nil;
     BOOL retrievedUTI = [self getResourceValue: &UTI forKey: NSURLTypeIdentifierKey error: NULL];
     if (retrievedUTI)
+    {
         return UTI;
+    }
     else
-        return nil;
+    {
+        NSString *pathExtension = self.pathExtension;
+        if (pathExtension)
+        {
+            //Attempt to return a UTI based solely on our file extension instead.
+            CFStringRef UTIForExtension = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
+                                                                                (CFStringRef)pathExtension,
+                                                                                NULL);
+            
+            return [(NSString *)UTIForExtension autorelease];
+        }
+        else
+        {
+            return nil;
+        }
+    }
 }
 - (BOOL) conformsToFileType: (NSString *)comparisonUTI
 {
-    NSWorkspace *ws = [NSWorkspace sharedWorkspace];
-    
     NSString *UTI = self.typeIdentifier;
-    if (UTI.length)
-    {
-        if ([ws type: UTI conformsToType: comparisonUTI])
-            return YES;
-    }
-    
-    //If no UTI match was found, check whether the file extension alone matches the specified type.
-    //(This allows us to judge filetypes based on filename alone, e.g. for nonexistent/inaccessible files.
-    if ([ws filenameExtension: self.pathExtension isValidForType: comparisonUTI])
-        return YES;
-    
-    return NO;
+    return (UTI != nil && UTTypeConformsTo((CFStringRef)self.typeIdentifier, (CFStringRef)comparisonUTI));
 }
 
 - (NSString *) matchingFileType: (NSSet *)UTIs
 {
-    NSWorkspace *ws = [NSWorkspace sharedWorkspace];
-    
     NSString *UTI = self.typeIdentifier;
-    if (UTI.length)
+    if (UTI != nil)
     {
         for (NSString *comparisonUTI in UTIs)
         {
-            if ([ws type: UTI conformsToType: comparisonUTI])
+            if (UTTypeConformsTo((CFStringRef)self.typeIdentifier, (CFStringRef)comparisonUTI))
                 return comparisonUTI;
         }
-    }
-    
-    //If no UTI match was found, check whether the file extension alone matches any of the specified types.
-    //(This allows us to judge filetypes based on filename alone, e.g. for nonexistent/inaccessible files.
-    for (NSString *comparisonUTI in UTIs)
-    {
-        if ([ws filenameExtension: self.pathExtension isValidForType: comparisonUTI])
-            return comparisonUTI;
     }
     
     return nil;

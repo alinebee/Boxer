@@ -52,6 +52,15 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 //or NO otherwise.
 - (BOOL) fileExistsAtPath: (NSString *)path isDirectory: (BOOL *)isDirectory;
 
+//Return the UTI of the file at the specified path, or nil if this could not be determined.
+- (NSString *) typeOfFileAtPath: (NSString *)path;
+
+//Given a set of UTIs to test, returns the first one of those types to which the file conforms.
+- (NSString *) typeOfFileAtPath: (NSString *)path matchingTypes: (NSSet *)UTIs;
+
+//Return whether the file at the specified path conforms to the specified type.
+- (BOOL) fileAtPath: (NSString *)path conformsToType: (NSString *)UTI;
+
 //Returns an NSFileManager-like dictionary of the filesystem attributes of the file
 //at the specified path. Returns nil and populates outError if the file cannot be accessed.
 - (NSDictionary *) attributesOfFileAtPath: (NSString *)path
@@ -103,7 +112,7 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 //These methods are expected to take absolute OS X filesystem URLs,
 //for filesystems that have some correspondence to real filesystem locations.
 //REQUIREMENTS:
-//- All URLs returned by these methods must be accessible under the standard
+//- URLs returned by these methods must be accessible under the standard
 //  OS X file access APIs (NSFileManager, NSURL getPropertyValue:forKey:error: et. al.)
 //- URLs converted to logical filesystem paths must be absolute, i.e. begin with @"/".
 

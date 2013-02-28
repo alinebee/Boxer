@@ -443,9 +443,9 @@
         _hasAutodetectedMountPoint = NO;
         
         //Update our filesystem object to point to the new mount point
-        if (self.mountPoint && [_filesystem respondsToSelector: @selector(setSourceURL:)])
+        if (self.mountPoint && [_filesystem respondsToSelector: @selector(setBaseURL:)])
         {
-            [(id)_filesystem setSourceURL: [NSURL fileURLWithPath: self.mountPoint]];
+            [(id)_filesystem setBaseURL: [NSURL fileURLWithPath: self.mountPoint]];
         }
 	}
 }
@@ -474,8 +474,9 @@
             //TODO: return other manager types for drives without shadows, image-backed drives etc.
             NSURL *sourceURL = [NSURL fileURLWithPath: self.mountPoint];
             NSURL *shadowURL = (self.shadowPath) ? [NSURL fileURLWithPath: self.shadowPath] : nil;
-            self.filesystem = [ADBShadowedFilesystem filesystemWithSourceURL: sourceURL
-                                                                   shadowURL: shadowURL];
+            
+            self.filesystem = [ADBShadowedFilesystem filesystemWithBaseURL: sourceURL
+                                                                 shadowURL: shadowURL];
         }
     }
     return [[_filesystem retain] autorelease];

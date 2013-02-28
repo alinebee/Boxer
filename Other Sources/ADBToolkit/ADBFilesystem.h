@@ -116,20 +116,17 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 //  OS X file access APIs (NSFileManager, NSURL getPropertyValue:forKey:error: et. al.)
 //- URLs converted to logical filesystem paths must be absolute, i.e. begin with @"/".
 
+//It is not required that URLs will be identical when 'round-tripped' through these methods.
+
 @protocol ADBFilesystemLocalFileURLEnumeration;
 @protocol ADBFilesystemLocalFileURLAccess <ADBFilesystemPathAccess>
 
-//Return the canonical OS X filesystem URL/path that corresponds to the specified logical filesystem path.
-//Return nil if there is no corresponding URL (including if the specified path does not exist.)
+//Return the canonical OS X filesystem URL/path that corresponds
+//to the specified logical filesystem path.
 - (NSURL *) localFileURLForLogicalPath: (NSString *)path;
-- (const char *) localFilesystemRepresentationForLogicalPath: (NSString *)path;
 
 //Return the logical filesystem path corresponding to the specified OS X filesystem URL/path.
-//Unlike the above methods, this should return a logical path even one does not exist in the filesystem
-//(since this method may be used for creating new file resources.) It is also not guaranteed that URLs
-//will be identical when 'round-tripped' through these methods.
 - (NSString *) logicalPathForLocalFileURL: (NSURL *)URL;
-- (NSString *) logicalPathForLocalFilesystemRepresentation: (const char *)representation;
 
 
 //Returns an enumerator for the specified local filesystem URL, which will return NSURL objects

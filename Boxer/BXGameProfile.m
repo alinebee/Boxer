@@ -143,7 +143,7 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSDictionary *matchingProfile;
 	
-	//_lookupTables is divided into separate sets of profiles in order of priority: game-specific
+	//lookupTables is divided into separate sets of profiles in order of priority: game-specific
 	//profiles followed by generic profiles.
 	
 	//We check the entire filesystem for one set of profiles first, before starting on the next:

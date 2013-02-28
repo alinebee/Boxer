@@ -403,6 +403,8 @@
 		9F34BE62142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */; };
 		9F35F3E916CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F35F3E816CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m */; };
 		9F35F3EA16CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F35F3E816CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m */; };
+		9F38B38B16DFB1960050AB15 /* ADBLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F38B38A16DFB1960050AB15 /* ADBLocalFilesystem.m */; };
+		9F38B38C16DFB1960050AB15 /* ADBLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F38B38A16DFB1960050AB15 /* ADBLocalFilesystem.m */; };
 		9F39A43B1452CE9100942D0F /* BXBezelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F39A43A1452CE9100942D0F /* BXBezelView.m */; };
 		9F3DD6CC15EE8047003C9A25 /* BXCHFlightstickProUSB.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3DD6CB15EE8047003C9A25 /* BXCHFlightstickProUSB.m */; };
 		9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */; };
@@ -1082,6 +1084,8 @@
 		9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXBaseAppController+BXSupportFiles.m"; sourceTree = "<group>"; };
 		9F35F3E716CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+ADBUniqueFilenames.h"; sourceTree = "<group>"; };
 		9F35F3E816CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+ADBUniqueFilenames.m"; sourceTree = "<group>"; };
+		9F38B38916DFB1960050AB15 /* ADBLocalFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBLocalFilesystem.h; sourceTree = "<group>"; };
+		9F38B38A16DFB1960050AB15 /* ADBLocalFilesystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBLocalFilesystem.m; sourceTree = "<group>"; };
 		9F39A4391452CE9100942D0F /* BXBezelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBezelView.h; sourceTree = "<group>"; };
 		9F39A43A1452CE9100942D0F /* BXBezelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBezelView.m; sourceTree = "<group>"; };
 		9F3DD6CB15EE8047003C9A25 /* BXCHFlightstickProUSB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCHFlightstickProUSB.m; sourceTree = "<group>"; };
@@ -3220,9 +3224,11 @@
 		9F9840FE15BEE5F700B50CDA /* Filesystem */ = {
 			isa = PBXGroup;
 			children = (
+				9F98410415BF10B700B50CDA /* ADBFilesystem.h */,
 				9F80E7FD16DA316F001C3162 /* ADBFileHandle.h */,
 				9F80E7FE16DA316F001C3162 /* ADBFileHandle.m */,
-				9F98410415BF10B700B50CDA /* ADBFilesystem.h */,
+				9F38B38916DFB1960050AB15 /* ADBLocalFilesystem.h */,
+				9F38B38A16DFB1960050AB15 /* ADBLocalFilesystem.m */,
 				9F98410015BEE64400B50CDA /* ADBShadowedFilesystem.h */,
 				9F98410115BEE64400B50CDA /* ADBShadowedFilesystem.m */,
 				9FC7481F122A7C8B00E86E6A /* ADBPathEnumerator.h */,
@@ -4326,6 +4332,7 @@
 				9F35F3E916CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */,
 				9F80E7FF16DA3170001C3162 /* ADBFileHandle.m in Sources */,
 				9F693D5E16DD40DD00CCEA7C /* ADBTreeEnumerator.m in Sources */,
+				9F38B38B16DFB1960050AB15 /* ADBLocalFilesystem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4634,6 +4641,7 @@
 				9F35F3EA16CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */,
 				9F80E80016DA3170001C3162 /* ADBFileHandle.m in Sources */,
 				9F693D5F16DD40DD00CCEA7C /* ADBTreeEnumerator.m in Sources */,
+				9F38B38C16DFB1960050AB15 /* ADBLocalFilesystem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

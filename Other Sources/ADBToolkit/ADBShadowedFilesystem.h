@@ -25,7 +25,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "ADBFilesystem.h"
+#import "ADBLocalFilesystem.h"
 
 //ADBShadowedFilesystem mediates access to filesystem resources that are
 //write-shadowed to another location. Files are initially read from a source
@@ -37,36 +37,25 @@ extern NSString * const ADBShadowedDeletionMarkerExtension;
 
          
 @class ADBShadowedDirectoryEnumerator;
-@interface ADBShadowedFilesystem : NSObject <ADBFilesystemPathAccess, ADBFilesystemLocalFileURLAccess>
+@interface ADBShadowedFilesystem : ADBLocalFilesystem
 {
-    NSURL *_sourceURL;
     NSURL *_shadowURL;
-    NSFileManager *_manager;
 }
 
 #pragma mark -
 #pragma mark Properties
-
-//The base source location for this filesystem.
-@property (copy, nonatomic) NSURL *sourceURL;
 
 //The location to which shadows will be committed.
 //The contents of this location can be mapped directly onto the source location.
 @property (copy, nonatomic) NSURL *shadowURL;
 
 
-#pragma mark - Initialization and deallocation
+#pragma mark - Constructors
 
-//Return a new filesystem manager initialised with the specified source and shadow URLs.
-+ (id) filesystemWithSourceURL: (NSURL *)sourceURL shadowURL: (NSURL *)shadowURL;
-- (id) initWithSourceURL: (NSURL *)sourceURL shadowURL: (NSURL *)shadowURL;
-
-#pragma mark - ADBFilesystem API
-
-//Clarified message signature to indicate protocols supported by the handle.
-- (id <ADBFileHandleAccess, ADBReadable, ADBWritable, ADBSeekable>) fileHandleAtPath: (NSString *)path
-                                                                             options: (ADBHandleOptions)options
-                                                                               error: (out NSError **)outError;
+//Return a new filesystem manager rooted in the specified base URL but using
+//the specified shadow URL to store shadowed files and deletion markers.
++ (id) filesystemWithBaseURL: (NSURL *)baseURL shadowURL: (NSURL *)shadowURL;
+- (id) initWithBaseURL: (NSURL *)baseURL shadowURL: (NSURL *)shadowURL;
 
 
 #pragma mark - Housekeeping

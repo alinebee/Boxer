@@ -1262,7 +1262,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
+    NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
     return [drive.filesystem openFileAtPath: logicalPath inMode: mode error: NULL];
 }
 
@@ -1271,7 +1272,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
+    NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
     return [drive.filesystem removeItemAtPath: logicalPath error: NULL];
 }
 
@@ -1281,8 +1283,10 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    NSString *logicalSourcePath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: sourcePath];
-    NSString *logicalDestinationPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: destinationPath];
+    NSURL *localSourceURL = [NSURL URLFromFileSystemRepresentation: sourcePath];
+    NSURL *localDestinationURL = [NSURL URLFromFileSystemRepresentation: destinationPath];
+    NSString *logicalSourcePath = [drive.filesystem logicalPathForLocalFileURL: localSourceURL];
+    NSString *logicalDestinationPath = [drive.filesystem logicalPathForLocalFileURL: localDestinationURL];
     
     return [drive.filesystem moveItemAtPath: logicalSourcePath toPath: logicalDestinationPath error: NULL];
 }
@@ -1292,7 +1296,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
+    NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
     return [drive.filesystem createDirectoryAtPath: logicalPath
                        withIntermediateDirectories: NO
                                              error: NULL];
@@ -1303,7 +1308,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
+    NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
     return [drive.filesystem removeItemAtPath: logicalPath error: NULL];
 }
 
@@ -1313,10 +1319,12 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    //round-trip the path in case the filesystem remaps it to a different file location
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
-    const char *filesystemPath = [drive.filesystem localFilesystemRepresentationForLogicalPath: logicalPath];
+    //Round-trip the path in case the filesystem remaps it to a different file location
+    NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
+    NSURL *resolvedURL = [drive.filesystem localFileURLForLogicalPath: logicalPath];
     
+    const char *filesystemPath = resolvedURL.fileSystemRepresentation;
     if (filesystemPath)
     {
         return stat(filesystemPath, outStatus) == 0;
@@ -1333,7 +1341,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
     BOOL isDirectory;
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
+    NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
     return [drive.filesystem fileExistsAtPath: logicalPath isDirectory: &isDirectory] && isDirectory;
 }
 
@@ -1343,7 +1352,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
     BOOL isDirectory;
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFilesystemRepresentation: path];
+    NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
+    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
     return [drive.filesystem fileExistsAtPath: logicalPath isDirectory: &isDirectory] && !isDirectory;
 }
 

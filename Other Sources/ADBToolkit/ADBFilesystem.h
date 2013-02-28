@@ -30,11 +30,16 @@
 typedef BOOL (^ADBFilesystemPathErrorHandler)(NSString *path, NSError *error);
 typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error);
 
+
 #pragma mark Relative path-based filesystem access
 
-//These methods are expected take filesystem-relative paths: that is, paths relative
-//to the root of the represented logical filesystem, instead of referring to anywhere
+//These methods are expected take absolute but filesystem-relative paths: that is, paths
+//relative to the root of the represented logical filesystem, instead of referring to anywhere
 //in the actual OS X filesystem.
+//REQUIREMENTS:
+//- the path @"/" should be treated as the root of the filesystem.
+//- relative paths like @"path/to/file.txt" should be resolved relative to the root of the filesystem.
+
 @protocol ADBFilesystemPathEnumeration;
 @protocol ADBFilesystemPathAccess <NSObject>
 
@@ -97,8 +102,10 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 
 //These methods are expected to take absolute OS X filesystem URLs,
 //for filesystems that have some correspondence to real filesystem locations.
-//All URLs returned by these methods must be accessible under the standard
-//OS X file access APIs (NSFileManager, NSURL getPropertyValue:forKey:error: et. al.)
+//REQUIREMENTS:
+//- All URLs returned by these methods must be accessible under the standard
+//  OS X file access APIs (NSFileManager, NSURL getPropertyValue:forKey:error: et. al.)
+//- URLs converted to logical filesystem paths must be absolute, i.e. begin with @"/".
 
 @protocol ADBFilesystemLocalFileURLEnumeration;
 @protocol ADBFilesystemLocalFileURLAccess <ADBFilesystemPathAccess>

@@ -36,7 +36,7 @@
     NSFileManager *_manager;
 }
 
-//The location in the OS X filesystem at the root of this filesystem.
+//The OS X filesystem location that forms the root of this filesystem.
 //All paths will be resolved relative to this location, and the filesystem
 //will not provide access to locations outside of this root folder.
 @property (copy, nonatomic) NSURL *baseURL;
@@ -47,6 +47,7 @@
 + (id) filesystemWithBaseURL: (NSURL *)baseURL;
 - (id) initWithBaseURL: (NSURL *)baseURL;
 
+//Redeclared to make explicit the ADB*Handle protocols the handle will support.
 - (id <ADBFileHandleAccess, ADBReadable, ADBWritable, ADBSeekable>) fileHandleAtPath: (NSString *)path
                                                                              options: (ADBHandleOptions)options
                                                                                error: (out NSError **)outError;

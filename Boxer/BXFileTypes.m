@@ -9,6 +9,7 @@
 #import "BXExecutableConstants.h"
 #import "NSURL+ADBFilesystemHelpers.h"
 #import "ADBFileHandle.h"
+#import "ADBFilesystem.h"
 
 NSString * const BXGameboxType      = @"net.washboardabs.boxer-game-package";
 NSString * const BXGameStateType    = @"net.washboardabs.boxer-game-state";
@@ -234,24 +235,13 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
 {
 	NSAssert(URL != nil, @"No URL specified!");
     
-    NSError *openError = nil;
-    ADBFileHandle *handle = [ADBFileHandle handleForURL: URL mode: "r" error: &openError];
+    NSError *openError;
+    ADBFileHandle *handle = [ADBFileHandle handleForURL: URL options: ADBOpenForReading error: &openError];
     if (handle)
     {
-        NSError *readError = nil;
-        BXExecutableType type = [BXFileTypes typeOfExecutableInStream: handle error: &readError];
-        if (type == BXExecutableTypeUnknown)
-        {
-            if (outError)
-            {
-                NSAssert(readError != nil, @"No error returned on failure condition!");
-                NSDictionary *info = @{ NSURLErrorKey: URL, NSUnderlyingErrorKey: readError };
-                *outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
-                                                code: readError.code
-                                            userInfo: info];
-            }
-        }
-        
+        BXExecutableType type = [BXFileTypes typeOfExecutableInStream: handle error: outError];
+        if ([handle conformsToProtocol: @protocol(ADBFileHandleAccess)])
+            [(id <ADBFileHandleAccess>)handle close];
         return type;
     }
     else
@@ -259,7 +249,7 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
         if (outError)
         {
             NSAssert(openError != nil, @"No error returned on failure condition!");
-            NSDictionary *info = @{ NSURLErrorKey: URL, NSUnderlyingErrorKey: openError };
+            NSDictionary *info = @{ NSUnderlyingErrorKey: openError };
             *outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
                                             code: BXCouldNotReadExecutable
                                         userInfo: info];
@@ -267,6 +257,37 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
         return BXExecutableTypeUnknown;
     }
 }
+
++ (BXExecutableType) typeOfExecutableAtPath: (NSString *)path
+                                 filesystem: (id <ADBFilesystemPathAccess>)filesystem
+                                      error: (out NSError **)outError
+{
+	NSAssert(path != nil, @"No URL specified!");
+	NSAssert(filesystem != nil, @"No filesystem specified!");
+    
+    NSError *openError = nil;
+    id <ADBReadable, ADBSeekable> handle = [filesystem fileHandleAtPath: path options: ADBOpenForReading error: &openError];
+    if (handle)
+    {
+        BXExecutableType type = [BXFileTypes typeOfExecutableInStream: handle error: outError];
+        if ([handle conformsToProtocol: @protocol(ADBFileHandleAccess)])
+            [(id <ADBFileHandleAccess>)handle close];
+        return type;
+    }
+    else
+    {
+        if (outError)
+        {
+            NSAssert(openError != nil, @"No error returned on failure condition!");
+            NSDictionary *info = @{ NSUnderlyingErrorKey: openError };
+            *outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
+                                            code: BXCouldNotReadExecutable
+                                        userInfo: info];
+        }
+        return BXExecutableTypeUnknown;
+    }
+}
+
 
 + (BXExecutableType) typeOfExecutableInStream: (id<ADBReadable, ADBSeekable>)handle
                                         error: (out NSError **)outError
@@ -418,6 +439,27 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
     if ([URL conformsToFileType: BXEXEProgramType])
     {
         BXExecutableType exeType = [self typeOfExecutableAtURL: URL error: outError];
+        return (exeType == BXExecutableTypeDOS);
+    }
+    
+	//Otherwise, assume the file is incompatible.
+	return NO;
+}
+
++ (BOOL) isCompatibleExecutableAtPath: (NSString *)path
+                           filesystem: (id<ADBFilesystemPathAccess>)filesystem
+                                error: (out NSError **)outError
+{
+    NSString *matchingType = [filesystem typeOfFileAtPath: path matchingTypes: [self executableTypes]];
+    
+	//Automatically assume .COM and .BAT files are DOS-compatible.
+    if ([matchingType isEqualToString: BXCOMProgramType] || [matchingType isEqualToString: BXBatchProgramType])
+        return YES;
+	
+	//If it is an .EXE file, subject it to a more rigorous compatibility check.
+    if ([matchingType isEqualToString: BXEXEProgramType])
+    {
+        BXExecutableType exeType = [self typeOfExecutableAtPath: path filesystem: filesystem error: outError];
         return (exeType == BXExecutableTypeDOS);
     }
     

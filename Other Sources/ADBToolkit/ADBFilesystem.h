@@ -89,11 +89,11 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
    withIntermediateDirectories: (BOOL)createIntermediates
                          error: (out NSError **)outError;
 
-//Returns a file handle suitable for reading from the resource represented by the specified path,
-//using the specified access options.
-- (id <ADBFileHandleAccess>) fileHandleAtPath: (NSString *)path
-                                      options: (ADBHandleOptions)options
-                                        error: (out NSError **)outError;
+//Returns a file handle suitable for reading from (and, if supported, writing to) the resource represented
+//by the specified path using the specified access options.
+- (id) fileHandleAtPath: (NSString *)path
+                options: (ADBHandleOptions)options
+                  error: (out NSError **)outError;
 
 //Returns an open stdlib FILE handle for the resource represented by the specified path,
 //using the specified access mode (in the standard fopen format). The calling context is

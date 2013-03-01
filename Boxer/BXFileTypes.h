@@ -80,7 +80,7 @@ typedef enum {
 	BXExecutableTypeOS2
 } BXExecutableType;
 
-@protocol ADBReadable, ADBSeekable;
+@protocol ADBReadable, ADBSeekable, ADBFilesystemPathAccess;
 @interface BXFileTypes (BXExecutableTypes)
 
 //Returns the executable type of the file at the specified URL or in the specified stream.
@@ -92,9 +92,17 @@ typedef enum {
 + (BXExecutableType) typeOfExecutableInStream: (id <ADBReadable, ADBSeekable>)handle
                                         error: (out NSError **)outError;
 
++ (BXExecutableType) typeOfExecutableAtPath: (NSString *)path
+                                 filesystem: (id <ADBFilesystemPathAccess>)filesystem
+                                      error: (out NSError **)outError;
+
 //Returns whether the file at the specified URL is a DOSBox-compatible executable.
 //If the file appears to be a .COM or .BAT file, this method will assume it is compatible;
 //If the file is an .EXE file, typeOfExecutableAtURL:error: will be used to determine the type.
 + (BOOL) isCompatibleExecutableAtURL: (NSURL *)URL error: (out NSError **)outError;
+
++ (BOOL) isCompatibleExecutableAtPath: (NSString *)path
+                           filesystem: (id <ADBFilesystemPathAccess>)filesystem
+                                error: (out NSError **)outError;
 
 @end

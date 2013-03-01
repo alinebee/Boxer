@@ -27,7 +27,7 @@
 
 //ADBFileTransfer is an ADBOperation subclass class for performing asynchronous file copy/move.
 //ADBFileTransfer transfers only a single file/directory to a single destination: see also
-//ADBMultiFileTransfer for a batch transfer operation.
+//ADBFileTransferSet for a batch transfer operation.
 
 
 #import "ADBOperation.h"

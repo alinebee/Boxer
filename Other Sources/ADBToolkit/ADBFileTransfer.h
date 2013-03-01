@@ -26,7 +26,7 @@
 
 
 //ADBFileTransfer is an interface for ADBOperations implemented by ADBSingleFileTransfer
-//and ADBMultiFileTransfer (which have different parent classes.)
+//and ADBFileTransferSet (which have different parent classes.)
 
 #import "ADBOperation.h"
 

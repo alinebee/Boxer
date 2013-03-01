@@ -66,8 +66,8 @@
 //periodically to update our completion status.
 - (void) main;
 
-//Used by -main to monitor the specified task while running the run
-//loop: returns when cancelled, or when the task finishes of its own accord.
+//Used by -main to monitor the specified task while running the run loop:
+//returns when cancelled, or when the task finishes of its own accord.
 //The selected callback should have the same signature as checkTaskProgress,
 //and will be called periodically at the specified polling interval.
 //It will receive the poll timer with userInfo set to the specified task.

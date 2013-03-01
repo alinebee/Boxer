@@ -189,22 +189,26 @@
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
-				<string>com.apple.folder</string>
+				<string>public.folder</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>Boxer mountable folder</string>
 			<key>UTTypeIdentifier</key>
 			<string>net.washboardabs.boxer-mountable-folder</string>
+			<key>UTTypeTagSpecification</key>
+			<dict/>
 		</dict>
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
-				<string>com.apple.folder</string>
+				<string>public.folder</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>Boxer disk bundle</string>
 			<key>UTTypeIdentifier</key>
 			<string>net.washboardabs.boxer-disk-bundle</string>
+			<key>UTTypeTagSpecification</key>
+			<dict/>
 		</dict>
 		<dict>
 			<key>UTTypeConformsTo</key>

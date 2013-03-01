@@ -86,20 +86,10 @@
 //without sector padding or lead-in. These will be handled automatically by the function itself.
 - (BOOL) _getBytes: (void *)buffer atLogicalRange: (NSRange)range error: (out NSError **)outError;
 
-//Methods to convert back and forth from byte offsets to sectors, and from logical byte offsets
-//to raw byte offsets (which are byte offsets that include sector padding and leadin.)
-- (uint32_t) _rawOffsetForLogicalOffset: (uint32_t)offset;
-- (uint32_t) _logicalOffsetForRawOffset: (uint32_t)rawOffset;
-
+//Methods to convert back and forth from byte offsets to sectors.
 - (uint32_t) _logicalOffsetForSector: (uint32_t)sector;
-- (uint32_t) _rawOffsetForSector: (uint32_t)sector;
-
 - (uint32_t) _sectorForLogicalOffset: (uint32_t)offset;
-- (uint32_t) _sectorForRawOffset: (uint32_t)rawOffset;
-
 - (uint32_t) _logicalOffsetWithinSector: (uint32_t)offset;
-- (uint32_t) _rawOffsetWithinSector: (uint32_t)rawOffset;
-
 
 //Returns an NSData object populated with the data at the specified range.
 //Returns nil and populates outError on error (including requesting a range beyond the end of the file.)

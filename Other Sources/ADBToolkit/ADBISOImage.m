@@ -293,22 +293,6 @@ int extdate_to_int(uint8_t *digits, int length)
 
 #pragma mark - Low-level filesystem API
 
-- (uint32_t) _rawOffsetForLogicalOffset: (uint32_t)offset
-{
-    uint32_t sector = [self _sectorForLogicalOffset: offset];
-    uint32_t relativeOffset = [self _logicalOffsetWithinSector: offset];
-    
-    return [self _rawOffsetForSector: sector] + relativeOffset;
-}
-
-- (uint32_t) _logicalOffsetForRawOffset: (uint32_t)rawOffset
-{
-    uint32_t sector = [self _sectorForRawOffset: rawOffset];
-    uint32_t relativeOffset = [self _rawOffsetWithinSector: rawOffset];
-    
-    return [self _logicalOffsetForSector: sector] + relativeOffset;
-}
-
 - (uint32_t) _logicalOffsetForSector: (uint32_t)sector
 {
     return sector * _sectorSize;
@@ -319,24 +303,9 @@ int extdate_to_int(uint8_t *digits, int length)
     return offset / _sectorSize;
 }
 
-- (uint32_t) _rawOffsetForSector: (uint32_t)sector
-{
-    return (sector * _rawSectorSize) + _leadInSize;
-}
-
-- (uint32_t) _sectorForRawOffset: (uint32_t)rawOffset
-{
-    return (rawOffset - _leadInSize) / _rawSectorSize;
-}
-
 - (uint32_t) _logicalOffsetWithinSector: (uint32_t)offset
 {
     return offset % _sectorSize;
-}
-
-- (uint32_t) _rawOffsetWithinSector: (uint32_t)rawOffset
-{
-    return (rawOffset - _leadInSize) % _rawSectorSize;
 }
 
 - (BOOL) _getBytes: (void *)buffer atLogicalRange: (NSRange)range error: (out NSError **)outError

@@ -271,7 +271,7 @@
                 //Check if it may be a hybrid-mode CD, in which case we'll show
                 //a different set of advice to the user.
                 
-                BOOL isHybridCD = [_workspace isHybridCDAtPath: self.basePath];
+                BOOL isHybridCD = [_workspace isHybridCDAtURL: [NSURL fileURLWithPath: self.basePath]];
                 Class errorClass = isHybridCD ? [BXImportHybridCDError class] : [BXImportMacAppError class];
                 
                 self.error = [errorClass errorWithSourcePath: self.basePath

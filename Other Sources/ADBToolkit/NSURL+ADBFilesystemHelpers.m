@@ -181,6 +181,8 @@
 {
     NSString *UTI = self.typeIdentifier;
     return (UTI != nil && UTTypeConformsTo((CFStringRef)self.typeIdentifier, (CFStringRef)comparisonUTI));
+    //TODO: also check if the file extension is suitable for the given type,
+    //in case of conflicting UTI definitions.
 }
 
 - (NSString *) matchingFileType: (NSSet *)UTIs
@@ -194,6 +196,9 @@
                 return comparisonUTI;
         }
     }
+    
+    //TODO: also check if the file extension is suitable for any of the given types,
+    //in case of conflicting UTI definitions.
     
     return nil;
 }

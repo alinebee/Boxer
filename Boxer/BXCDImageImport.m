@@ -142,9 +142,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 - (void) main
 {
     NSAssert(self.drive != nil, @"No drive provided for drive import operation.");
-    NSAssert(self.destinationFolderURL != nil, @"No destination folder provided for drive import operation.");
-    if (!self.drive || !self.destinationFolderURL)
-        return;
+    NSAssert(self.destinationURL != nil || self.destinationFolderURL != nil, @"No destination folder provided for drive import operation.");
     
     if (!self.destinationURL)
         self.destinationURL = self.preferredDestinationURL;
@@ -168,7 +166,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	}
 	
 	//Determine the /dev/diskx device name of the volume
-	NSString *deviceName = [[NSWorkspace sharedWorkspace] BSDNameForVolumePath: sourcePath];
+	NSString *deviceName = [[NSWorkspace sharedWorkspace] BSDDeviceNameForVolumeAtURL: [NSURL fileURLWithPath: sourcePath]];
 	if (!deviceName)
 	{
 		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: sourcePath forKey: NSFilePathErrorKey];

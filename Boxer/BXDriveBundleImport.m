@@ -102,9 +102,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 - (void) main
 {
     NSAssert(self.drive != nil, @"No drive provided for drive import operation.");
-    NSAssert(self.destinationFolderURL != nil, @"No destination folder provided for drive import operation.");
-    if (!self.drive || !self.destinationFolderURL)
-        return;
+    NSAssert(self.destinationURL != nil || self.destinationFolderURL != nil, @"No destination folder provided for drive import operation.");
     
     if (!self.destinationURL)
         self.destinationURL = self.preferredDestinationURL;

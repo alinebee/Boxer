@@ -27,6 +27,7 @@
 #import "NSWorkspace+ADBMountedVolumes.h"
 #import "NSWorkspace+ADBFileTypes.h"
 #import "NSString+ADBPaths.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 #include <sys/mount.h>
 
 
@@ -38,7 +39,7 @@ NSString * const ADBFATVolumeType		= @"msdos";
 NSString * const ADBHFSVolumeType		= @"hfs";
 
 //FAT volumes smaller than 2MB will be treated as floppy drives by isFloppyDriveAtPath.
-#define ADBFloppySizeCutoff 2 * 1024 * 1024;
+#define ADBFloppySizeCutoff 2 * 1024 * 1024
 
 
 #pragma mark - Error helper classes
@@ -50,7 +51,8 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
 @end
 
 @interface ADBCouldNotMountImageError : ADBMountedVolumesError
-+ (id) errorWithImagePath: (NSString *)imagePath userInfo: (NSDictionary *)userInfo;
++ (id) errorWithImageURL: (NSURL *)imageURL userInfo: (NSDictionary *)userInfo;
+
 @end
 
 
@@ -58,51 +60,60 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
 
 @implementation NSWorkspace (ADBMountedVolumes)
 
-- (NSArray *) mountedVolumesOfType: (NSString *)requiredType includingHidden: (BOOL)hidden
+- (NSArray *) mountedVolumeURLsIncludingHidden: (BOOL)hidden
 {
-	NSArray *volumes		= [self mountedLocalVolumePathsIncludingHidden: hidden];
+    NSVolumeEnumerationOptions options = (hidden) ? 0 : NSVolumeEnumerationSkipHiddenVolumes;
+    return [[NSFileManager defaultManager] mountedVolumeURLsIncludingResourceValuesForKeys: nil
+                                                                                   options: options];
+}
+
+- (NSArray *) mountedVolumeURLsOfType: (NSString *)requiredType includingHidden: (BOOL)hidden
+{
+    NSAssert(requiredType != nil, @"A volume type must be specified.");
+    
+	NSArray *volumeURLs		= [self mountedVolumeURLsIncludingHidden: hidden];
 	NSMutableArray *matches	= [NSMutableArray arrayWithCapacity: 5];
 	
-	NSString *volumePath, *volumeType;
-	
-	for (volumePath in volumes)
+	for (NSURL *volumeURL in volumeURLs)
 	{
-		volumeType = [self volumeTypeForPath: volumePath];
-		if ([volumeType isEqualToString: requiredType]) { [matches addObject: volumePath]; }
+		NSString *volumeType = [self volumeTypeForURL: volumeURL];
+		if ([volumeType isEqualToString: requiredType])
+            [matches addObject: volumeURL];
 	}
+    
 	return matches;
 }
 
-- (NSArray *) mountedLocalVolumePathsIncludingHidden: (BOOL)hidden
+- (BOOL) volumeIsVisibleAtURL: (NSURL *)URL
 {
-    NSFileManager *manager = [NSFileManager defaultManager];
-    //10.6 and above
-    if ([manager respondsToSelector: @selector(mountedVolumeURLsIncludingResourceValuesForKeys:options:)])
+    NSAssert(URL != nil, @"No URL provided!");
+    
+    //The NSURLVolumeIsBrowsableKey constant is only supported on 10.7+.
+    BOOL URLVisibililityKeyAvailable = (&NSURLVolumeIsBrowsableKey != NULL);
+    if (URLVisibililityKeyAvailable)
     {
-        NSVolumeEnumerationOptions options = (hidden) ? 0 : NSVolumeEnumerationSkipHiddenVolumes;
-        NSArray *volumeURLs = [manager mountedVolumeURLsIncludingResourceValuesForKeys: nil
-                                                                               options: options];
-        
-        
-        return [volumeURLs valueForKey: @"path"];
+        NSNumber *visibleFlag = nil;
+        BOOL checkedVisible = [URL getResourceValue: &visibleFlag forKey: NSURLVolumeIsBrowsableKey error: NULL];
+        if (checkedVisible)
+            return visibleFlag.boolValue;
+        else
+            return YES;
     }
-    //10.5 and below
-    //NOTE: there appears to be no way to detect whether a volume is hidden in 10.5.
-    else 
+    //For 10.6, we need to actually check the list of non-hidden volumes.
+    else
     {
-        return [self mountedLocalVolumePaths];
+        return [[self mountedVolumeURLsIncludingHidden: NO] containsObject: URL];
     }
 }
 
-- (BOOL) volumeIsVisibleAtPath: (NSString *)path
-{   
-    return [[self mountedLocalVolumePathsIncludingHidden: NO] containsObject: path];
-}
-
-- (NSString *) volumeTypeForPath: (NSString *)path
+- (NSString *) volumeTypeForURL: (NSURL *)URL
 {
+    NSAssert(URL != nil, @"No URL provided!");
+    
+    //IMPLEMENTATION NOTE: we stick with the NSWorkspace API for this because as of 10.7, the patchy NSURL API
+    //does not provide any way to get for the volume type (just the volume's localized format description).
 	NSString *volumeType;
-	BOOL retrieved = [self getFileSystemInfoForPath: path
+	BOOL retrieved = [self getFileSystemInfoForPath: URL.path
                                         isRemovable: nil
                                          isWritable: nil
                                       isUnmountable: nil
@@ -112,282 +123,308 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
 	return (retrieved) ? volumeType : nil;
 }
 
-- (NSString *) volumeForPath: (NSString *)path
++ (NSSet *) rawImageTypes
 {
-    NSString *volumesBasePath = @"/Volumes";
-	NSString *resolvedPath	= [path stringByStandardizingPath];
-    
-    //Shortcut: if the specified path is located directly within /Volumes/,
-    //then return the path itself without checking further.
-    //(This prevents us being unable to resolve paths for hidden volumes
-    //in OS X Lion, which does not list them in the local volume paths.)
-    if ([[resolvedPath stringByDeletingLastPathComponent] isEqualToString: volumesBasePath])
-        return resolvedPath;
-	
-	//Sort the volumes by length from longest to shortest,
-    //to make sure we get the right volume (and not a parent volume)
-    //TODO: make this use mountedVolumeURLsIncludingResourceValuesForKeys:options
-    //so that it'll pick up all available volumes on 10.6+
-	NSArray *volumes		= [self mountedLocalVolumePathsIncludingHidden: YES];
-	NSArray *sortedVolumes	= [volumes sortedArrayUsingSelector: @selector(pathDepthCompare:)];
-	
-    //TWEAK: if the path is located within /Volumes/, don't return the
-    //root directory if we can't find the path anywhere in /Volumes/.
-    //(That would indicate that the volume is in some way unavailable,
-    //and that deserves a nil.)
-    BOOL restrictToVolumes = [path isRootedInPath: volumesBasePath];
-    
-	for (NSString *volumePath in [sortedVolumes reverseObjectEnumerator])
-	{
-        if (restrictToVolumes && ![volumePath isRootedInPath: volumesBasePath]) continue;
-        
-		if ([resolvedPath isRootedInPath: volumePath]) return volumePath;
-	}
-	return nil;
+    static NSSet *types;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        types = [[NSSet alloc] initWithObjects:
+                 @"com.winimage.raw-disk-image",
+                 @"com.apple.disk-image-ndif",
+                 @"com.microsoft.virtualpc-disk-image",
+                 nil];
+    });
+    return types;
 }
 
-- (NSString *) mountImageAtPath: (NSString *)path
-					   readOnly: (BOOL)readOnly
-					  invisibly: (BOOL)invisible
-						  error: (NSError **)outError
+- (NSURL *) mountImageAtURL: (NSURL *)URL
+                    options: (ADBImageMountingOptions)options
+                      error: (out NSError **)outError
 {
-	path = [path stringByStandardizingPath];
-    
-    //TODO: abstract this list somewhere else
-	BOOL isRawImage = [self file: path matchesTypes: [NSSet setWithObjects:
-                        @"com.winimage.raw-disk-image",
-                        @"com.apple.disk-image-ndif",
-                        @"com.microsoft.virtualpc-disk-image",
-                        nil]];
+    BOOL isRawImage = (options & ADBMountRaw);
+    if (!isRawImage)
+    {
+        //hdiutil doesn't recognise these image types automatically,
+        //but can handle them if we mount them as raw.
+        NSString *rawImageType = [URL matchingFileType: [self.class rawImageTypes]];
+        isRawImage = (rawImageType != nil);
+    }
 	
 	NSTask *hdiutil		= [[NSTask alloc] init];
 	NSPipe *outputPipe	= [NSPipe pipe];
 	NSPipe *errorPipe	= [NSPipe pipe];
-	NSDictionary *hdiInfo;
-	
-	NSMutableArray *arguments = [NSMutableArray arrayWithObjects: @"attach", path, @"-plist", nil];
+    
+	NSMutableArray *arguments = @[@"attach", URL.path, @"-plist"].mutableCopy;
+    
 	//Raw images need additional flags so that hdiutil will recognise them
 	if (isRawImage)
 	{
 		[arguments addObject: @"-imagekey"];
 		[arguments addObject: @"diskimage-class=CRawDiskImage"];
 	}
-	if (invisible)
+	if (options & ADBMountInvisible)
 	{
 		[arguments addObject: @"-nobrowse"];
 	}
-	if (readOnly)
+	if (options & ADBMountReadOnly)
 	{
 		[arguments addObject: @"-readonly"];
 	}
 	
-	[hdiutil setLaunchPath:		@"/usr/bin/hdiutil"];
-	[hdiutil setArguments:		arguments];
-	[hdiutil setStandardOutput: outputPipe];
-	[hdiutil setStandardError: errorPipe];
-	
+    hdiutil.launchPath = @"/usr/bin/hdiutil";
+	hdiutil.arguments = arguments;
+    hdiutil.standardOutput = outputPipe;
+    hdiutil.standardError = errorPipe;
+    
 	[hdiutil launch];
 	
 	//Read off all stdout data (this will block until the task terminates)
 	//FIXME: there's a potential deadlock here if errorPipe's buffer
 	//fills up: errorPipe will block while it waits for its buffer to clear,
 	//but readDataToEndOfFile will keep blocking too.
-	NSData *output = [[outputPipe fileHandleForReading] readDataToEndOfFile];
+	NSData *output = [outputPipe.fileHandleForReading readDataToEndOfFile];
 	
 	//Ensure the task really has finished
 	[hdiutil waitUntilExit];
 	
-	int returnValue = [hdiutil terminationStatus];
+	int returnValue = hdiutil.terminationStatus;
+    
 	[hdiutil release];
+    [arguments release];
 	
 	//If hdiutil couldn't mount the drive, populate an error object with the details
 	if (returnValue > 0)
 	{
-		NSData *errorData		= [[errorPipe fileHandleForReading] readDataToEndOfFile];
-		NSString *failureReason	= [[NSString alloc] initWithData: errorData encoding: NSUTF8StringEncoding];
+		NSData *errorData		= [errorPipe.fileHandleForReading readDataToEndOfFile];
+		NSString *failureReason	= [[NSString alloc] initWithData: errorData
+                                                        encoding: NSUTF8StringEncoding];
 		
-		NSDictionary *userInfo	= [NSDictionary dictionaryWithObject: failureReason forKey: NSLocalizedFailureReasonErrorKey];
+		NSDictionary *userInfo	= @{ NSLocalizedFailureReasonErrorKey: failureReason };
+        
 		[failureReason release];
 		
         if (outError)
-            *outError = [ADBCouldNotMountImageError errorWithImagePath: path userInfo: userInfo];
-    
+        {
+            *outError = [ADBCouldNotMountImageError errorWithImageURL: URL
+                                                             userInfo: userInfo];
+        }
 		return nil;
 	}
 	else
 	{
-		hdiInfo	= [NSPropertyListSerialization propertyListFromData: output
-											   mutabilityOption: NSPropertyListImmutable
-														 format: nil
-											   errorDescription: nil];
-	
+		NSDictionary *hdiInfo = [NSPropertyListSerialization propertyListWithData: output
+                                                                          options: NSPropertyListImmutable
+                                                                           format: NULL
+                                                                            error: outError];
+        if (!hdiInfo)
+            return nil;
+        
 		NSArray *mountPoints = [hdiInfo objectForKey: @"system-entities"];
 		for (NSDictionary *mountPoint in mountPoints)
 		{
-			//Return the first mount point that has a valid volume path
-			NSString *destination = [[mountPoint objectForKey: @"mount-point"] stringByStandardizingPath];
-			if (destination) return destination;
+			//Return the first mount point that has a valid volume path.
+			NSString *destination = [mountPoint objectForKey: @"mount-point"];
+			if (destination)
+            {
+                return [NSURL fileURLWithPath: destination isDirectory: YES];
+            }
 		}
-		//TODO: if no mount points were found, populate an error to that effect
+        
+        //If we couldn't find a valid mount point, assume the operation
+        //has actually failed.
+        if (outError)
+        {
+            *outError = [ADBCouldNotMountImageError errorWithImageURL: URL userInfo: nil];
+        }
 		return nil;
 	}
 }
 
-- (NSString *) sourceImageForVolume: (NSString *)volumePath
+//Return the currently-mounted images as reported by hdiutil in plist format.
+//Returns nil and populates outError if the data could not be retrieved.
+- (NSArray *) mountedImageInfoWithError: (out NSError **)outError
 {
-	NSString *resolvedPath	= [volumePath stringByStandardizingPath];
+	NSTask *hdiutil = [[NSTask alloc] init];
+	NSPipe *outputPipe = [NSPipe pipe];
+    NSPipe *errorPipe = [NSPipe pipe];
 	
-	//Optimisation: if the path is not a known volume, assume
-    //it doesn't have a source image and don't check further
-	NSArray *knownVolumes = [self mountedLocalVolumePathsIncludingHidden: YES];
-	if ([knownVolumes containsObject: resolvedPath])
-	{
-		NSArray *mountedImages = [self mountedImages];	
-		
-		NSDictionary *imageInfo, *mountPoint;
-		NSArray *mountPoints;
-		NSString *source, *destination;
-		
-		for (imageInfo in mountedImages)
-		{
-			mountPoints	= [imageInfo objectForKey: @"system-entities"];
-			for (mountPoint in mountPoints)
-			{
-				destination = [[mountPoint objectForKey: @"mount-point"] stringByStandardizingPath];
-				if ([resolvedPath isEqualToString: destination])
-				{
-					source = [[imageInfo objectForKey: @"image-path"] stringByStandardizingPath];
-					return source;
-				}
-			}
-		}
-	}
-	return nil;
-}
-
-- (NSString *) volumeForSourceImage: (NSString *)imagePath
-{
-	NSString *resolvedPath	= [imagePath stringByStandardizingPath];
-	NSArray *mountedImages = [self mountedImages];
-		
-	NSDictionary *imageInfo, *mountPoint;
-	NSString *source, *destination;
-	
-	for (imageInfo in mountedImages)
-	{
-		source = [[imageInfo objectForKey: @"image-path"] stringByStandardizingPath];
-		if ([resolvedPath isEqualToString: source])
-		{
-			//Only use the first mount-point listed in the set
-            NSArray *entities = [imageInfo objectForKey: @"system-entities"];
-            if ([entities count])
-            {
-                mountPoint  = [entities objectAtIndex: 0];
-                destination = [[mountPoint objectForKey: @"mount-point"] stringByStandardizingPath];
-                return destination;
-            }
-		}
-	}
-	return nil;
-}
-
-
-//Return the currently-mounted images reported by hdiutil
-//Todo: cache this data for n seconds, to avoid slow calls to hdiutil
-- (NSArray *) mountedImages
-{
-	NSTask *hdiutil		= [[NSTask alloc] init];
-	NSPipe *outputPipe	= [NSPipe pipe];
-	NSData *output;
-	NSDictionary *hdiInfo;
-	
-	[hdiutil setLaunchPath:		@"/usr/bin/hdiutil"];
-	[hdiutil setArguments:		[NSArray arrayWithObjects: @"info", @"-plist", nil]];
-	[hdiutil setStandardOutput: outputPipe];
+    hdiutil.launchPath = @"/usr/bin/hdiutil";
+    hdiutil.arguments = @[@"info", @"-plist"];
+    hdiutil.standardOutput = outputPipe;
+    hdiutil.standardError = errorPipe;
 	
 	[hdiutil launch];
 	
-	output	= [[outputPipe fileHandleForReading] readDataToEndOfFile];
+	NSData *output = [outputPipe.fileHandleForReading readDataToEndOfFile];
 	
 	[hdiutil waitUntilExit];
+    
+	int returnValue = hdiutil.terminationStatus;
+    
 	[hdiutil release];
 	
-	hdiInfo	= [NSPropertyListSerialization propertyListFromData: output
-											   mutabilityOption: NSPropertyListImmutable
-														 format: nil
-											   errorDescription: nil];
-
-	return [hdiInfo objectForKey: @"images"];
+    if (returnValue > 0)
+    {
+        if (outError)
+        {
+            NSData *errorData		= [errorPipe.fileHandleForReading readDataToEndOfFile];
+            NSString *failureReason	= [[NSString alloc] initWithData: errorData
+                                                            encoding: NSUTF8StringEncoding];
+            
+            NSDictionary *userInfo	= @{ NSLocalizedFailureReasonErrorKey: failureReason };
+            
+            [failureReason release];
+            
+            *outError = [ADBMountedVolumesError errorWithDomain: ADBMountedVolumesErrorDomain
+                                                           code: ADBMountedVolumesHDIUtilInfoFailed
+                                                       userInfo: userInfo];
+        }
+        return nil;
+    }
+    else
+    {
+        NSDictionary *hdiInfo = [NSPropertyListSerialization propertyListWithData: output
+                                                                          options: NSPropertyListImmutable
+                                                                           format: NULL
+                                                                            error: outError];
+        
+        if (hdiInfo)
+            return [hdiInfo objectForKey: @"images"];
+        else
+            return nil;
+    }
 }
 
-- (NSString *) dataVolumeOfAudioCD: (NSString *)audioVolumePath
+- (NSURL *) sourceImageForVolumeAtURL: (NSURL *)volumeURL
 {
-	audioVolumePath				= [audioVolumePath stringByStandardizingPath];
-	NSString *audioDeviceName	= [self BSDNameForVolumePath: audioVolumePath];
-	NSArray *dataVolumes		= [self mountedVolumesOfType: ADBDataCDVolumeType includingHidden: YES];
-	
-	for (NSString *dataVolumePath in dataVolumes)
-	{
-		NSString *dataDeviceName = [self BSDNameForVolumePath: dataVolumePath];
-		if ([dataDeviceName hasPrefix: audioDeviceName]) return dataVolumePath;
-	}
+    NSURL *resolvedURL = volumeURL.URLByResolvingSymlinksInPath;
+    
+    //Preflight checks: if the URL doesn't exist or doesn't represent
+    //the root of a volume, don't bother checking further.
+    //(This is important because scanning for image mounts can be time-consuming and will block.)
+    if (![resolvedURL checkResourceIsReachableAndReturnError: NULL])
+        return nil;
+
+    NSNumber *isVolumeFlag = nil;
+    BOOL checkedVolume = [resolvedURL getResourceValue: &isVolumeFlag
+                                                forKey: NSURLIsVolumeKey
+                                                 error: NULL];
+    if (!checkedVolume || !isVolumeFlag.boolValue)
+        return nil;
+    
+    NSString *resolvedPath = resolvedURL.path;
+    NSArray *mountedImages = [self mountedImageInfoWithError: NULL];
+    for (NSDictionary *imageInfo in mountedImages)
+    {
+        for (NSDictionary *mountPointInfo in [imageInfo objectForKey: @"system-entities"])
+        {
+            NSString *destinationPath = [mountPointInfo objectForKey: @"mount-point"];
+            
+            if ([resolvedPath isEqualToString: destinationPath])
+            {
+                NSString *sourcePath = [imageInfo objectForKey: @"image-path"];
+                if (sourcePath)
+                {
+                    return [NSURL fileURLWithPath: sourcePath];
+                }
+            }
+        }
+    }
+    
+    //If we got this far, we couldn't find a match so this isn't an image-based volume.
 	return nil;
 }
 
-- (NSString *) audioVolumeOfDataCD: (NSString *)dataVolumePath
+- (NSArray *) mountedVolumeURLsForSourceImageAtURL: (NSURL *)imageURL
 {
-	dataVolumePath				= [dataVolumePath stringByStandardizingPath];
-	NSString *dataDeviceName	= [self BSDNameForVolumePath: dataVolumePath];
-	NSArray *audioVolumes		= [self mountedVolumesOfType: ADBAudioCDVolumeType includingHidden: YES];
+    NSURL *resolvedURL = imageURL.URLByResolvingSymlinksInPath;
+    NSString *resolvedPath = resolvedURL.path;
+	NSArray *mountedImages = [self mountedImageInfoWithError: NULL];
 	
-	for (NSString *audioVolumePath in audioVolumes)
+    NSMutableArray *mountedVolumes = [NSMutableArray arrayWithCapacity: 1];
+	for (NSDictionary *imageInfo in mountedImages)
 	{
-		NSString *audioDeviceName = [self BSDNameForVolumePath: audioVolumePath];
-		if ([dataDeviceName hasPrefix: audioDeviceName]) return audioVolumePath;
+		NSString *sourcePath = [[imageInfo objectForKey: @"image-path"] stringByStandardizingPath];
+		if ([resolvedPath isEqualToString: sourcePath])
+		{
+			//For multi-volume images, only return the first mount-point listed in the set.
+            NSArray *entities = [imageInfo objectForKey: @"system-entities"];
+            for (NSDictionary *mountPointInfo in entities)
+            {
+                NSString *destinationPath = [mountPointInfo objectForKey: @"mount-point"];
+                if (destinationPath)
+                {
+                    [mountedVolumes addObject: [NSURL fileURLWithPath: destinationPath]];
+                }
+            }
+            //TODO: break after the first volume we find?
+            //Does hdiutil allow an image to be mounted multiple times?
+		}
 	}
-	return nil;
+	return mountedVolumes;
 }
 
-//Returns the BSD device name (dev/diskXsY) for the specified volume. Returns nil if no matching device name could be determined.
-- (NSString *) BSDNameForVolumePath: (NSString *)volumePath
+//Returns the BSD device name (dev/diskXsY) for the specified volume.
+//Returns nil if no matching device name could be determined.
+- (NSString *) BSDDeviceNameForVolumeAtURL: (NSURL *)volumeURL
 {
 	NSString *deviceName = nil;
 	struct statfs fs;
 	
-	if (statfs([volumePath fileSystemRepresentation], &fs) == ERR_SUCCESS)
+	if (statfs(volumeURL.fileSystemRepresentation, &fs) == ERR_SUCCESS)
 	{
-		NSFileManager *manager	= [NSFileManager defaultManager];
-		deviceName = [manager stringWithFileSystemRepresentation: fs.f_mntfromname length: strlen(fs.f_mntfromname)];
+		NSFileManager *manager = [NSFileManager defaultManager];
+		deviceName = [manager stringWithFileSystemRepresentation: fs.f_mntfromname
+                                                          length: strlen(fs.f_mntfromname)];
 	}
 	return deviceName;
 }
 
-- (BOOL) isFloppyVolumeAtPath: (NSString *)path
+//IMPLEMENTATION NOTE: this pair of methods relies on the fact that in OSX, data+audio CDs
+//are mounted as BSD devices with a specific structure:
+//dev/diskX: audio volume
+//dev/diskXs1: ISO data volume
+//Thus, we can match up audio volumes with data volumes just by checking if the data
+//volume's device name has the audio volume's device name as a prefix.
+- (NSURL *) dataVolumeOfAudioCDAtURL: (NSURL *)audioCDURL
 {
-	if (![[self volumeTypeForPath: path] isEqualToString: ADBFATVolumeType]) return NO;
-
-	return [self isFloppySizedVolumeAtPath: path];
+	NSString *audioDeviceName	= [self BSDDeviceNameForVolumeAtURL: audioCDURL];
+	NSArray *dataVolumes		= [self mountedVolumeURLsOfType: ADBDataCDVolumeType includingHidden: YES];
+	
+	for (NSURL *dataVolumeURL in dataVolumes)
+	{
+		NSString *dataDeviceName = [self BSDDeviceNameForVolumeAtURL: dataVolumeURL];
+		if ([dataDeviceName hasPrefix: audioDeviceName])
+            return dataVolumeURL;
+	}
+	return nil;
 }
 
-- (BOOL) isFloppySizedVolumeAtPath: (NSString *)path
+- (NSURL *) audioVolumeOfDataCDAtURL: (NSURL *)dataCDURL;
 {
-	NSFileManager *manager = [NSFileManager defaultManager];
-	NSDictionary *fsAttrs = [manager attributesOfFileSystemForPath: path error: nil];
-	unsigned long long volumeSize = [[fsAttrs valueForKey: NSFileSystemSize] unsignedLongLongValue];
-	return volumeSize <= ADBFloppySizeCutoff;	
+	NSString *dataDeviceName	= [self BSDDeviceNameForVolumeAtURL: dataCDURL];
+	NSArray *audioVolumes		= [self mountedVolumeURLsOfType: ADBAudioCDVolumeType includingHidden: YES];
+	
+	for (NSURL *audioVolumeURL in audioVolumes)
+	{
+		NSString *audioDeviceName = [self BSDDeviceNameForVolumeAtURL: audioVolumeURL];
+		if ([dataDeviceName hasPrefix: audioDeviceName])
+            return audioVolumeURL;
+	}
+	return nil;
 }
 
-- (BOOL) isHybridCDAtPath: (NSString *)path
+- (BOOL) isHybridCDAtURL: (NSURL *)volumeURL
 {
-    return ([self BSDNameForISOVolumeOfHybridCD: path] != nil);
+    return ([self BSDDeviceNameForISOVolumeOfHybridCDAtURL: volumeURL] != nil);
 }
 
-- (NSString *) BSDNameForISOVolumeOfHybridCD:(NSString *)volumePath
+- (NSString *) BSDDeviceNameForISOVolumeOfHybridCDAtURL: (NSURL *)volumeURL
 {
     BOOL isRemovable, isWriteable;
     NSString *fsType;
     
-    if (![self getFileSystemInfoForPath: volumePath
+    if (![self getFileSystemInfoForPath: volumeURL.path
                             isRemovable: &isRemovable
                              isWritable: &isWriteable
                           isUnmountable: NULL
@@ -406,7 +443,7 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
     //diskXs1: ISO volume
     //diskXs1s1 apple partition map
     //diskXs1s2 HFS volume (the one we're looking at)
-    NSString *BSDName = [self BSDNameForVolumePath: volumePath];
+    NSString *BSDName = [self BSDDeviceNameForVolumeAtURL: volumeURL];
     NSString *isoSuffix = @"s1";
     NSString *hfsSuffix = @"s1s2";
     
@@ -415,6 +452,124 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
     
     NSString *baseName = [BSDName substringToIndex: BSDName.length - hfsSuffix.length];
     return [baseName stringByAppendingString: isoSuffix];
+}
+
+
+- (BOOL) isFloppyVolumeAtURL: (NSURL *)volumeURL
+{
+    NSString *volumeType = [self volumeTypeForURL: volumeURL];
+    if (![volumeType isEqualToString: ADBFATVolumeType])
+        return NO;
+    
+    NSNumber *filesystemSize = nil;
+    BOOL gotSize = [volumeURL getResourceValue: &filesystemSize
+                                        forKey: NSURLVolumeTotalCapacityKey
+                                         error: NULL];
+    
+    if (!gotSize || !filesystemSize)
+        return NO;
+    
+    return (filesystemSize.unsignedLongLongValue <= ADBFloppySizeCutoff);
+}
+
+@end
+
+
+
+@implementation NSWorkspace (ADBMountedVolumesLegacyPathAPI)
+
+- (NSArray *) mountedVolumesOfType: (NSString *)requiredType includingHidden: (BOOL)hidden
+{
+    NSArray *matchingVolumeURLs = [self mountedVolumeURLsOfType: requiredType includingHidden: hidden];
+    return [matchingVolumeURLs valueForKey: @"path"];
+}
+
+- (NSArray *) mountedLocalVolumePathsIncludingHidden: (BOOL)hidden
+{
+    NSArray *volumeURLs = [self mountedVolumeURLsIncludingHidden: hidden];
+    return [volumeURLs valueForKey: @"path"];
+}
+
+- (BOOL) volumeIsVisibleAtPath: (NSString *)path
+{
+    return [self volumeIsVisibleAtURL: [NSURL fileURLWithPath: path]];
+}
+
+- (NSString *) volumeTypeForPath: (NSString *)path
+{
+    return [self volumeTypeForURL: [NSURL fileURLWithPath: path]];
+}
+
+- (NSString *) volumeForPath: (NSString *)path
+{
+    NSURL *URL = [NSURL fileURLWithPath: path];
+    NSURL *volumeURL = nil;
+    BOOL gotVolume = [URL getResourceValue: &volumeURL forKey: NSURLVolumeURLKey error: NULL];
+    
+    if (gotVolume)
+        return volumeURL.path;
+    else
+        return nil;
+}
+
+- (NSString *) mountImageAtPath: (NSString *)path
+					   readOnly: (BOOL)readOnly
+					  invisibly: (BOOL)invisible
+						  error: (NSError **)outError
+{
+    ADBImageMountingOptions options = 0;
+    if (readOnly)   options |= ADBMountReadOnly;
+    if (invisible)  options |= ADBMountInvisible;
+    
+    NSURL *mountedURL = [self mountImageAtURL: [NSURL fileURLWithPath: path]
+                                      options: options
+                                        error: outError];
+    
+    return mountedURL.path;
+}
+
+- (NSString *) sourceImageForVolume: (NSString *)volumePath
+{
+    NSURL *volumeURL = [NSURL fileURLWithPath: volumePath];
+    NSURL *imageURL = [self sourceImageForVolumeAtURL: volumeURL];
+    return imageURL.path;
+}
+
+- (NSString *) volumeForSourceImage: (NSString *)imagePath
+{
+    NSURL *imageURL = [NSURL fileURLWithPath: imagePath];
+    NSArray *volumes = [self mountedVolumeURLsForSourceImageAtURL: imageURL];
+    if (volumes.count)
+        return [(NSURL *)[volumes objectAtIndex: 0] path];
+    else
+        return nil;
+}
+
+- (NSString *) dataVolumeOfAudioCD: (NSString *)audioVolumePath
+{
+    NSURL *audioVolumeURL = [NSURL fileURLWithPath: audioVolumePath];
+    NSURL *dataVolumeURL = [self dataVolumeOfAudioCDAtURL: audioVolumeURL];
+    return dataVolumeURL.path;
+}
+
+- (NSString *) audioVolumeOfDataCD: (NSString *)dataVolumePath
+{
+    NSURL *dataVolumeURL = [NSURL fileURLWithPath: dataVolumePath];
+    NSURL *audioVolumeURL = [self audioVolumeOfDataCDAtURL: dataVolumeURL];
+    return audioVolumeURL.path;
+}
+
+- (BOOL) isFloppyVolumeAtPath: (NSString *)path
+{
+    return [self isFloppyVolumeAtURL: [NSURL fileURLWithPath: path]];
+}
+
+- (BOOL) isFloppySizedVolumeAtPath: (NSString *)path
+{
+	NSFileManager *manager = [NSFileManager defaultManager];
+	NSDictionary *fsAttrs = [manager attributesOfFileSystemForPath: path error: nil];
+	unsigned long long volumeSize = [[fsAttrs valueForKey: NSFileSystemSize] unsignedLongLongValue];
+	return volumeSize <= ADBFloppySizeCutoff;
 }
 
 @end
@@ -426,7 +581,8 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
 
 @implementation ADBCouldNotMountImageError
 
-+ (id) errorWithImagePath: (NSString *)imagePath userInfo: (NSDictionary *)userInfo
++ (id) errorWithImageURL: (NSURL *)imageURL
+                userInfo: (NSDictionary *)userInfo
 {
 	NSString *descriptionFormat = NSLocalizedString(@"The disk image “%@” could not be opened.",
                                                     @"Error message shown after failing to mount an image. %@ is the display name of the disk image."
@@ -436,15 +592,18 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
                                               @"Explanatory text for error message shown after failing to mount an image."
                                               );
 	
-	NSString *displayName			= [[NSFileManager defaultManager] displayNameAtPath: imagePath];
-	if (!displayName) displayName	= imagePath.lastPathComponent;
+	NSString *displayName = nil;
+    BOOL gotDisplayName = [imageURL getResourceValue: &displayName forKey: NSURLLocalizedNameKey error: NULL];
+    if (!gotDisplayName)
+        displayName = imageURL.lastPathComponent;
 	
 	NSString *description = [NSString stringWithFormat: descriptionFormat, displayName];
 	
 	NSMutableDictionary *defaultInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 										description,	NSLocalizedDescriptionKey,
 										explanation,	NSLocalizedRecoverySuggestionErrorKey,
-										imagePath,		NSFilePathErrorKey,
+										imageURL,		NSURLErrorKey,
+                                        imageURL.path,  NSFilePathErrorKey, //For legacy code
 										nil];
 	
 	if (userInfo) [defaultInfo addEntriesFromDictionary: userInfo];

@@ -51,14 +51,110 @@ extern NSString * const ADBMountedVolumesErrorDomain;
 //Mount-related error codes
 enum
 {
-	//Produced when hdiutil cannot mount the image passed to mountImageAtPath:error:
+	//Produced when hdiutil cannot mount the image passed to mountImageAtURL:options:error:
 	ADBMountedVolumesHDIUtilAttachFailed,
+    
+    //Produced when hdiutil failed to return volume data. Returned by mountedImageInfoWithError:.
+    ADBMountedVolumesHDIUtilInfoFailed,
 };
+
+typedef enum {
+    ADBMountReadOnly = 1 << 0,  //Mount the image as a read-only volume
+    ADBMountInvisible = 1 << 1, //Hide the mounted volume from Finder
+    ADBMountRaw = 1 << 2,       //Force the image to be mounted as raw
+} ADBImageMountingOptions;
+
 
 
 #pragma mark - Interface
 
 @interface NSWorkspace (ADBMountedVolumes)
+
+//The UTIs of disk image formats that mountImageAtURL:options:error:
+//will automatically treat as raw images.
++ (NSSet *) rawImageTypes;
+
+#pragma mark - Introspecting mounted volumes
+
+//Returns an array of the URLs of all locally-mounted volumes, i.e. excluding network volumes.
+//If hidden is YES, this will include invisible volumes.
+//Note that this will block and can take a significant time to return if a volume has been
+//disconnected unexpectedly or is not responding.
+- (NSArray *) mountedVolumeURLsIncludingHidden: (BOOL)hidden;
+
+//Returns the URLs all mounted filesystems of the specified filesystem type.
+- (NSArray *) mountedVolumeURLsOfType: (NSString *)volumeType
+                      includingHidden: (BOOL)hidden;
+
+//Returns whether the volume at the specified file path is visible in Finder.
+//If this is NO, it means the volume has been mounted hidden.
+- (BOOL) volumeIsVisibleAtURL: (NSURL *)URL;
+
+//Returns the underlying filesystem type of the specified URL.
+- (NSString *) volumeTypeForURL: (NSURL *)URL;
+
+
+#pragma mark - Dealing with mounted images
+
+//Tells hdiutil to mount the specified disk image with the specified volume options.
+//On success, returns the URL to the newly-mounted volume. On failure, returns nil
+//and populates outError.
+- (NSURL *) mountImageAtURL: (NSURL *)URL
+                    options: (ADBImageMountingOptions)options
+                      error: (out NSError **)outError;
+
+//Returns structured plist info from hdiutil about mounted images and their volumes.
+//Returns nil and populates outError if the information could not be retrieved.
+- (NSArray *) mountedImageInfoWithError: (out NSError **)outError;
+
+//Returns the URL of the source disk image from which the specified volume path was mounted.
+//Returns nil if the source image could not be determined (e.g. if the volume is not mounted
+//from a disk image.)
+- (NSURL *) sourceImageForVolumeAtURL: (NSURL *)volumeURL;
+
+//Returns all volume URLs mounted from the specified source disk image.
+//Returns an empty array if the source image is not currently mounted.
+- (NSArray *) mountedVolumeURLsForSourceImageAtURL: (NSURL *)volumeURL;
+
+
+#pragma mark - Dealing with mounted CD-ROMs
+
+//Returns the URL of the data volume associated with the specified CD volume.
+//Returns nil if the CD volume has no corresponding data volume.
+- (NSURL *) dataVolumeOfAudioCDAtURL: (NSURL *)audioCDURL;
+
+//Returns the URL of the audio CD volume associated with the specified data CD volume.
+//Returns nil if the CD volume has no corresponding audio volume.
+- (NSURL *) audioVolumeOfDataCDAtURL: (NSURL *)dataCDURL;
+
+//Returns YES if the specified path points to the HFS volume of a hybrid Mac+PC CD,
+//NO otherwise.
+- (BOOL) isHybridCDAtURL: (NSURL *)volumeURL;
+
+//When given a path to the HFS volume of a hybrid Mac+PC CD, returns the BSD device name
+//of the corresponding ISO volume. Returns nil if the path was not a hybrid CD or if no
+//matching device name could be determined.
+- (NSString *) BSDDeviceNameForISOVolumeOfHybridCDAtURL: (NSURL *)volumeURL;
+
+
+#pragma mark - Dealing with mounted floppy disks
+
+//Returns whether the specified volume appears to be a FAT-formatted floppy disk.
+- (BOOL) isFloppyVolumeAtURL: (NSURL *)volumeURL;
+
+
+#pragma mark - Low-level methods
+
+//Returns the BSD device name (dev/diskXsY) for the specified volume.
+//Returns nil if no matching device name could be determined.
+- (NSString *) BSDDeviceNameForVolumeAtURL: (NSURL *)volumeURL;
+
+@end
+
+
+#pragma mark - Creaky old NSString path API
+
+@interface NSWorkspace (ADBMountedVolumesLegacyPathAPI)
 
 //Returns an array of visible locally mounted volumes.
 //If hidden is YES, or on 10.5, this will also include invisible volumes.
@@ -94,10 +190,6 @@ enum
 					  invisibly: (BOOL)invisible
 						  error: (NSError **)error;
 
-//Returns an array of NSDictionaries containing details about each mounted image volume, as reported by hdiutil.
-//This data is used by sourceImageForPath: and is probably not much use otherwise.
-- (NSArray *) mountedImages;
-
 //Returns the path of the data volume associated with the specified CD volume path.
 //Returns nil if the CD volume has no corresponding data volume.
 - (NSString *) dataVolumeOfAudioCD: (NSString *)volumePath;
@@ -106,23 +198,10 @@ enum
 //Returns nil if the CD volume has no corresponding audio volume.
 - (NSString *) audioVolumeOfDataCD: (NSString *)volumePath;
 
-//Returns the BSD device name (dev/diskXsY) for the specified volume.
-//Returns nil if no matching device name could be determined.
-- (NSString *) BSDNameForVolumePath: (NSString *)volumePath;
-
 //Returns whether the specified volume is actually a DOS floppy disk.
 - (BOOL) isFloppyVolumeAtPath: (NSString *)volumePath;
 
 //Returns whether the specified volume is the size of a DOS floppy disk.
 - (BOOL) isFloppySizedVolumeAtPath: (NSString *)volumePath;
-
-//When given a path to the HFS volume of a hybrid Mac+PC CD, returns the BSD device name
-//of the corresponding ISO volume. Returns nil if the path was not a hybrid CD or no
-//matching device name could be determined.
-- (NSString *) BSDNameForISOVolumeOfHybridCD: (NSString *)volumePath;
-
-//Returns YES if the specified path points to the HFS volume of a hybrid Mac+PC CD,
-//NO otherwise.
-- (BOOL) isHybridCDAtPath: (NSString *)volumePath;
 
 @end

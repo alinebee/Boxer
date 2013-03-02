@@ -140,6 +140,9 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 
 - (void) main
 {
+    NSAssert(self.drive != nil, @"No drive provided for drive import operation.");
+    NSAssert(self.destinationURL != nil || self.destinationFolderURL != nil, @"No destination folder provided for drive import operation.");
+    
     if (!self.destinationURL)
         self.destinationURL = self.preferredDestinationURL;
     
@@ -154,7 +157,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	
 	
 	//Determine the /dev/diskx device name for the imported volume
-	NSString *volumeDeviceName = [[NSWorkspace sharedWorkspace] BSDNameForVolumePath: sourcePath];
+	NSString *volumeDeviceName = [[NSWorkspace sharedWorkspace] BSDDeviceNameForVolumeAtURL: [NSURL fileURLWithPath: sourcePath]];
 	if (!volumeDeviceName)
 	{
 		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: sourcePath forKey: NSFilePathErrorKey];

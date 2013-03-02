@@ -258,7 +258,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	
 	if (_currentEmulator == self)
     {
-        [_currentEmulator autorelease];
+        [_currentEmulator release];
         _currentEmulator = nil;
 	}
     
@@ -1001,13 +1001,18 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 @implementation BXEmulator (BXParallelInternals)
 
+- (void) setDelegate: (id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate, BXEmulatedPrinterDelegate>)delegate
+{
+    _delegate = delegate;
+    self.printer.delegate = delegate;
+}
 - (void) _didRequestPrinterOnLPTPort: (NSUInteger)portNumber
 {
     if (!self.printer)
     {
         self.printer = [[[BXEmulatedPrinter alloc] init] autorelease];
         self.printer.port = (BXEmulatedPrinterPort)(portNumber + 1);
-        [self.printer bind: @"delegate" toObject: self withKeyPath: @"delegate" options: 0];
+        self.printer.delegate = self.delegate;
     }
 }
 

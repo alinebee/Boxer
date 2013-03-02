@@ -68,6 +68,7 @@ extern NSString * const shellProcessPath;
 @class BXDrive;
 
 @protocol BXEmulatedJoystick;
+@protocol BXEmulatedPrinterDelegate;
 @protocol BXEmulatorDelegate;
 @protocol BXEmulatorFileSystemDelegate;
 @protocol BXEmulatorAudioDelegate;
@@ -76,7 +77,7 @@ extern NSString * const shellProcessPath;
 
 @interface BXEmulator : NSObject
 {
-	__unsafe_unretained id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate> _delegate;
+	__unsafe_unretained id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate, BXEmulatedPrinterDelegate> _delegate;
 	BXVideoHandler *_videoHandler;
 	BXEmulatedKeyboard *_keyboard;
 	BXEmulatedMouse *_mouse;
@@ -130,7 +131,7 @@ extern NSString * const shellProcessPath;
 #pragma mark Properties
 
 //The delegate responsible for this emulator.
-@property (assign) id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate> delegate;
+@property (assign) id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate, BXEmulatedPrinterDelegate> delegate;
 
 @property (readonly, retain) BXVideoHandler *videoHandler;       //Our DOSBox video and rendering handler.
 @property (readonly, retain) BXEmulatedKeyboard *keyboard;       //Our emulated keyboard.

@@ -67,10 +67,3 @@
 - (NSString *) matchingFileType: (NSSet *)UTIs;
 
 @end
-
-@interface NSArray (ADBURLArrayExtensions)
-
-//An analogue for NSArray pathsMatchingExtensions:
-- (NSArray *) URLsMatchingExtensions: (NSArray *)extensions;
-
-@end

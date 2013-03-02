@@ -203,24 +203,3 @@
     return nil;
 }
 @end
-
-
-
-@implementation NSArray (ADBURLArrayExtensions)
-
-- (NSArray *) URLsMatchingExtensions: (NSArray *)extensions
-{
-    NSArray *lowercaseExtensions = [extensions valueForKey: @"lowercaseString"];
-    
-    NSMutableArray *matches = [NSMutableArray arrayWithCapacity: self.count];
-    for (NSURL *URL in self)
-    {
-        NSString *extension = URL.pathExtension.lowercaseString;
-        if ([lowercaseExtensions containsObject: extension])
-            [matches addObject: URL];
-    }
-    
-    return matches;
-}
-
-@end

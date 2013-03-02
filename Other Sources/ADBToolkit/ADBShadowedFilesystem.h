@@ -47,7 +47,7 @@ extern NSString * const ADBShadowedDeletionMarkerExtension;
 
 //The location to which shadows will be committed.
 //The contents of this location can be mapped directly onto the source location.
-@property (copy, nonatomic) NSURL *shadowURL;
+@property (readonly, copy, nonatomic) NSURL *shadowURL;
 
 
 #pragma mark - Constructors

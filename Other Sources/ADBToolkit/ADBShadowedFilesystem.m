@@ -25,6 +25,7 @@
  */
 
 #import "ADBShadowedFilesystem.h"
+#import "ADBLocalFilesystemPrivate.h"
 #import "NSURL+ADBFilesystemHelpers.h"
 #import "NSError+ADBErrorHelpers.h"
 #import "ADBForwardCompatibility.h"
@@ -40,6 +41,9 @@ NSString * const ADBShadowedDeletionMarkerExtension = @"deleted";
 #pragma mark Private method declarations
 
 @interface ADBShadowedFilesystem ()
+
+//Overridden to be read-writable.
+@property (copy, nonatomic) NSURL *shadowURL;
 
 //Create a 0-byte deletion marker at the specified shadow URL.
 - (void) _createDeletionMarkerAtURL: (NSURL *)markerURL;

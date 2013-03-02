@@ -39,7 +39,7 @@
 //The OS X filesystem location that forms the root of this filesystem.
 //All paths will be resolved relative to this location, and the filesystem
 //will not provide access to locations outside of this root folder.
-@property (copy, nonatomic) NSURL *baseURL;
+@property (readonly, copy, nonatomic) NSURL *baseURL;
 
 #pragma mark - Constructors
 
@@ -51,20 +51,4 @@
 - (id <ADBFileHandleAccess, ADBReadable, ADBWritable, ADBSeekable>) fileHandleAtPath: (NSString *)path
                                                                              options: (ADBHandleOptions)options
                                                                                error: (out NSError **)outError;
-@end
-
-
-//These methods are only intended for use by subclasses.
-@interface ADBLocalFilesystem ()
-
-//Our own file manager for internal use.
-@property (retain, nonatomic) NSFileManager *manager;
-
-//A base implementation for copyItemAtPath:toPath:error: and moveItemAtPath:toPath:error:,
-//which share 95% of their logic.
-- (BOOL) _transferItemAtPath: (NSString *)fromPath
-                      toPath: (NSString *)toPath
-                     copying: (BOOL)copying
-                       error: (out NSError **)outError;
-
 @end

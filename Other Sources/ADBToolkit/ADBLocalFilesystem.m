@@ -24,34 +24,8 @@
  *	POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ADBLocalFilesystem.h"
+#import "ADBLocalFilesystemPrivate.h"
 #import "NSURL+ADBFilesystemHelpers.h"
-
-//An extremely thin wrapper for an NSDirectoryEnumerator to implement
-//the ADBFilesystem enumeration protocols and allow filesystem-relative
-//paths to be returned.
-@interface ADBLocalDirectoryEnumerator : NSEnumerator <ADBFilesystemPathEnumeration, ADBFilesystemLocalFileURLEnumeration>
-{
-    BOOL _returnsFileURLs;
-    NSDirectoryEnumerator *_enumerator;
-    ADBLocalFilesystem *_filesystem;
-    NSURL *_currentURL;
-}
-
-@property (copy, nonatomic) NSURL *currentURL;
-@property (retain, nonatomic) NSDirectoryEnumerator *enumerator;
-@property (retain, nonatomic) ADBLocalFilesystem *filesystem;
-
-- (id) initWithURL: (NSURL *)localURL
-       inFilesytem: (ADBLocalFilesystem *)filesystem
-includingPropertiesForKeys: (NSArray *)keys
-                options: (NSDirectoryEnumerationOptions)mask
-             returnURLs: (BOOL)returnURLs
-           errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler;
-
-@end
-
-
 
 @implementation ADBLocalFilesystem
 @synthesize baseURL = _baseURL;

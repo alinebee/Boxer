@@ -76,7 +76,7 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
 	
 	for (NSURL *volumeURL in volumeURLs)
 	{
-		NSString *volumeType = [self volumeTypeForURL: volumeURL];
+		NSString *volumeType = [self typeOfVolumeAtURL: volumeURL];
 		if ([volumeType isEqualToString: requiredType])
             [matches addObject: volumeURL];
 	}
@@ -84,7 +84,7 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
 	return matches;
 }
 
-- (BOOL) volumeIsVisibleAtURL: (NSURL *)URL
+- (BOOL) isVisibleVolumeAtURL: (NSURL *)URL
 {
     NSAssert(URL != nil, @"No URL provided!");
     
@@ -106,7 +106,7 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
     }
 }
 
-- (NSString *) volumeTypeForURL: (NSURL *)URL
+- (NSString *) typeOfVolumeAtURL: (NSURL *)URL;
 {
     NSAssert(URL != nil, @"No URL provided!");
     
@@ -137,9 +137,9 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
     return types;
 }
 
-- (NSURL *) mountImageAtURL: (NSURL *)URL
-                    options: (ADBImageMountingOptions)options
-                      error: (out NSError **)outError
+- (NSArray *) mountImageAtURL: (NSURL *)URL
+                      options: (ADBImageMountingOptions)options
+                        error: (out NSError **)outError
 {
     BOOL isRawImage = (options & ADBMountRaw);
     if (!isRawImage)
@@ -220,23 +220,17 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
             return nil;
         
 		NSArray *mountPoints = [hdiInfo objectForKey: @"system-entities"];
+        NSMutableArray *mountedVolumeURLs = [NSMutableArray arrayWithCapacity: mountPoints.count];
 		for (NSDictionary *mountPoint in mountPoints)
 		{
 			//Return the first mount point that has a valid volume path.
 			NSString *destination = [mountPoint objectForKey: @"mount-point"];
 			if (destination)
             {
-                return [NSURL fileURLWithPath: destination isDirectory: YES];
+                [mountedVolumeURLs addObject: [NSURL fileURLWithPath: destination isDirectory: YES]];
             }
 		}
-        
-        //If we couldn't find a valid mount point, assume the operation
-        //has actually failed.
-        if (outError)
-        {
-            *outError = [ADBCouldNotMountImageError errorWithImageURL: URL userInfo: nil];
-        }
-		return nil;
+        return mountedVolumeURLs;
 	}
 }
 
@@ -457,7 +451,7 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
 
 - (BOOL) isFloppyVolumeAtURL: (NSURL *)volumeURL
 {
-    NSString *volumeType = [self volumeTypeForURL: volumeURL];
+    NSString *volumeType = [self typeOfVolumeAtURL: volumeURL];
     if (![volumeType isEqualToString: ADBFATVolumeType])
         return NO;
     
@@ -492,12 +486,12 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
 
 - (BOOL) volumeIsVisibleAtPath: (NSString *)path
 {
-    return [self volumeIsVisibleAtURL: [NSURL fileURLWithPath: path]];
+    return [self isVisibleVolumeAtURL: [NSURL fileURLWithPath: path]];
 }
 
 - (NSString *) volumeTypeForPath: (NSString *)path
 {
-    return [self volumeTypeForURL: [NSURL fileURLWithPath: path]];
+    return [self typeOfVolumeAtURL: [NSURL fileURLWithPath: path]];
 }
 
 - (NSString *) volumeForPath: (NSString *)path
@@ -521,11 +515,14 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
     if (readOnly)   options |= ADBMountReadOnly;
     if (invisible)  options |= ADBMountInvisible;
     
-    NSURL *mountedURL = [self mountImageAtURL: [NSURL fileURLWithPath: path]
-                                      options: options
-                                        error: outError];
-    
-    return mountedURL.path;
+    NSArray *mountedURLs = [self mountImageAtURL: [NSURL fileURLWithPath: path]
+                                         options: options
+                                           error: outError];
+
+    if (mountedURLs.count)
+        return [(NSURL *)[mountedURLs objectAtIndex: 0] path];
+    else
+        return nil;
 }
 
 - (NSString *) sourceImageForVolume: (NSString *)volumePath

@@ -88,20 +88,21 @@ typedef enum {
 
 //Returns whether the volume at the specified file path is visible in Finder.
 //If this is NO, it means the volume has been mounted hidden.
-- (BOOL) volumeIsVisibleAtURL: (NSURL *)URL;
+- (BOOL) isVisibleVolumeAtURL: (NSURL *)URL;
 
 //Returns the underlying filesystem type of the specified URL.
-- (NSString *) volumeTypeForURL: (NSURL *)URL;
+- (NSString *) typeOfVolumeAtURL: (NSURL *)URL;
 
 
 #pragma mark - Dealing with mounted images
 
 //Tells hdiutil to mount the specified disk image with the specified volume options.
-//On success, returns the URL to the newly-mounted volume. On failure, returns nil
-//and populates outError.
-- (NSURL *) mountImageAtURL: (NSURL *)URL
-                    options: (ADBImageMountingOptions)options
-                      error: (out NSError **)outError;
+//On success, returns an array of one or more URLs representing volumes mounted from
+//the image.
+//On failure, returns nil and populates outError.
+- (NSArray *) mountImageAtURL: (NSURL *)URL
+                      options: (ADBImageMountingOptions)options
+                        error: (out NSError **)outError;
 
 //Returns structured plist info from hdiutil about mounted images and their volumes.
 //Returns nil and populates outError if the information could not be retrieved.

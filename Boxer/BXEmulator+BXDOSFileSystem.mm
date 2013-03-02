@@ -1261,9 +1261,12 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                          inMode: (const char *)mode
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
+              @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
     NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
+    NSString *logicalPath = [filesystem logicalPathForLocalFileURL: localURL];
     return [drive.filesystem openFileAtPath: logicalPath inMode: mode error: NULL];
 }
 
@@ -1271,9 +1274,12 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
+              @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
     NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
+    NSString *logicalPath = [filesystem logicalPathForLocalFileURL: localURL];
     return [drive.filesystem removeItemAtPath: logicalPath error: NULL];
 }
 
@@ -1282,35 +1288,44 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
           onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
+              @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
-    NSURL *localSourceURL = [NSURL URLFromFileSystemRepresentation: sourcePath];
-    NSURL *localDestinationURL = [NSURL URLFromFileSystemRepresentation: destinationPath];
-    NSString *logicalSourcePath = [drive.filesystem logicalPathForLocalFileURL: localSourceURL];
-    NSString *logicalDestinationPath = [drive.filesystem logicalPathForLocalFileURL: localDestinationURL];
+    NSURL *localSourceURL       = [NSURL URLFromFileSystemRepresentation: sourcePath];
+    NSURL *localDestinationURL  = [NSURL URLFromFileSystemRepresentation: destinationPath];
+    NSString *logicalSourcePath = [filesystem logicalPathForLocalFileURL: localSourceURL];
+    NSString *logicalDestinationPath = [filesystem logicalPathForLocalFileURL: localDestinationURL];
     
-    return [drive.filesystem moveItemAtPath: logicalSourcePath toPath: logicalDestinationPath error: NULL];
+    return [filesystem moveItemAtPath: logicalSourcePath toPath: logicalDestinationPath error: NULL];
 }
 
 - (BOOL) _createDirectoryAtLocalPath: (const char *)path
                        onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
+              @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
-    NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
-    return [drive.filesystem createDirectoryAtPath: logicalPath
-                       withIntermediateDirectories: NO
-                                             error: NULL];
+    NSURL *localURL         = [NSURL URLFromFileSystemRepresentation: path];
+    NSString *logicalPath   = [filesystem logicalPathForLocalFileURL: localURL];
+    return [filesystem createDirectoryAtPath: logicalPath
+                 withIntermediateDirectories: NO
+                                       error: NULL];
 }
 
 - (BOOL) _removeDirectoryAtLocalPath: (const char *)path
                        onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
+              @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
     NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
-    return [drive.filesystem removeItemAtPath: logicalPath error: NULL];
+    NSString *logicalPath = [filesystem logicalPathForLocalFileURL: localURL];
+    return [filesystem removeItemAtPath: logicalPath error: NULL];
 }
 
 - (BOOL) _getStats: (struct stat *)outStatus
@@ -1318,11 +1333,14 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
      onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
+              @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
     //Round-trip the path in case the filesystem remaps it to a different file location
-    NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
-    NSURL *resolvedURL = [drive.filesystem localFileURLForLogicalPath: logicalPath];
+    NSURL *localURL         = [NSURL URLFromFileSystemRepresentation: path];
+    NSString *logicalPath   = [filesystem logicalPathForLocalFileURL: localURL];
+    NSURL *resolvedURL      = [filesystem localFileURLForLogicalPath: logicalPath];
     
     const char *filesystemPath = resolvedURL.fileSystemRepresentation;
     if (filesystemPath)
@@ -1339,34 +1357,43 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                  onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
+              @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
     BOOL isDirectory;
     NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
-    return [drive.filesystem fileExistsAtPath: logicalPath isDirectory: &isDirectory] && isDirectory;
+    NSString *logicalPath = [filesystem logicalPathForLocalFileURL: localURL];
+    return [filesystem fileExistsAtPath: logicalPath isDirectory: &isDirectory] && isDirectory;
 }
 
 - (BOOL) _localFileExists: (const char *)path
             onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
+              @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
     BOOL isDirectory;
     NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
-    NSString *logicalPath = [drive.filesystem logicalPathForLocalFileURL: localURL];
-    return [drive.filesystem fileExistsAtPath: logicalPath isDirectory: &isDirectory] && !isDirectory;
+    NSString *logicalPath = [filesystem logicalPathForLocalFileURL: localURL];
+    return [filesystem fileExistsAtPath: logicalPath isDirectory: &isDirectory] && !isDirectory;
 }
 
 - (id <ADBFilesystemLocalFileURLEnumeration>) _directoryEnumeratorForLocalPath: (const char *)path
                                                                  onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
+              @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
     NSURL *localFileURL = [NSURL URLFromFileSystemRepresentation: path];
-    return [drive.filesystem enumeratorAtLocalFileURL: localFileURL
-                           includingPropertiesForKeys: [NSArray arrayWithObjects: NSURLIsDirectoryKey, NSURLNameKey, nil]
-                                              options: NSDirectoryEnumerationSkipsSubdirectoryDescendants
-                                         errorHandler: NULL];
+    return [filesystem enumeratorAtLocalFileURL: localFileURL
+                     includingPropertiesForKeys: [NSArray arrayWithObjects: NSURLIsDirectoryKey, NSURLNameKey, nil]
+                                        options: NSDirectoryEnumerationSkipsSubdirectoryDescendants
+                                   errorHandler: NULL];
 }
 
 @end

@@ -17,12 +17,13 @@
 #import "BXEmulatorErrors.h"
 #import "BXEmulator+BXShell.h"
 #import "ADBShadowedFilesystem.h"
+#import "ADBBinCueImage.h"
 #import "BXGamebox.h"
 #import "BXDrive.h"
 #import "BXDrivesInUseAlert.h"
 #import "BXGameProfile.h"
 #import "BXDriveImport.h"
-#import "BXExecutableScan.h"
+#import "ADBFilesystemScan.h"
 
 #import "NSWorkspace+ADBMountedVolumes.h"
 #import "NSWorkspace+ADBFileTypes.h"
@@ -171,21 +172,41 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 + (NSSet *) preferredMountPointTypes
 {
-	static NSSet *types = nil;
-	if (!types) types = [[NSSet alloc] initWithObjects: BXGameboxType, BXMountableFolderType, nil];
+	static NSSet *types;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        types = [[NSSet alloc] initWithObjects:
+                 BXGameboxType,
+                 BXMountableFolderType,
+                 nil];
+    });
 	return types;
 }
 
 + (NSSet *) separatelyMountedTypes
 {
-	static NSSet *types = nil;
-	if (!types)
-	{
-		NSSet *imageTypes	= [BXFileTypes mountableImageTypes];
-		NSSet *folderTypes	= [self preferredMountPointTypes];
-		types = [[imageTypes setByAddingObjectsFromSet: folderTypes] retain];
-	}
+	static NSSet *types;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSSet *imageTypes	= [BXFileTypes mountableImageTypes];
+        NSSet *folderTypes	= [self preferredMountPointTypes];
+        types = [[imageTypes setByAddingObjectsFromSet: folderTypes] retain];
+    });
 	return types;
+}
+
++ (NSSet *) automountedVolumeFormats
+{
+	static NSSet *formats;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        formats = [[NSSet alloc] initWithObjects:
+         ADBDataCDVolumeType,
+         ADBAudioCDVolumeType,
+         ADBFATVolumeType,
+         nil];
+    });
+	return formats;
 }
 
 + (BOOL) isExecutable: (NSString *)path
@@ -1531,55 +1552,44 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	//Don't respond to mounts if the emulator isn't actually running
 	if (!self.isEmulating) return;
 	
-	//Ignore mounts if we currently have the mount panel open;
-	//we assume that the user will want to handle the new volume manually.
-	NSWindow *attachedSheet = self.windowForSheet.attachedSheet;
-	if ([attachedSheet isMemberOfClass: [NSOpenPanel class]]) return;
-	
-	NSArray *automountedTypes = [NSArray arrayWithObjects:
-								 ADBDataCDVolumeType,
-								 ADBAudioCDVolumeType,
-								 ADBFATVolumeType,
-								 nil];
-	
+	NSURL *volumeURL        = [theNotification.userInfo objectForKey: NSWorkspaceVolumeURLKey];
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSString *volumePath	= [theNotification.userInfo objectForKey: @"NSDevicePath"];
-	NSString *volumeType	= [workspace volumeTypeForPath: volumePath];
+	NSString *volumeType	= [workspace typeOfVolumeAtURL: volumeURL];
     
     //Ignore the mount if it's a hidden volume.
-    if (![workspace volumeIsVisibleAtPath: volumePath]) return;
-	
-    //Ignore mount if we're scanning this volume for executables:
-    //this indicates that the scan is responsible for the mount,
-    //and it's not a user-mounted drive.
-    for (BXExecutableScan *scan in self.scanQueue.operations)
-    {
-        if ([scan.mountedVolumePath isEqualToString: volumePath]) return;
-    }
+    if (![workspace isVisibleVolumeAtURL: volumeURL]) return;
     
-	//Only mount volumes that are of an appropriate type
-	if (![automountedTypes containsObject: volumeType]) return;
+	//Only mount volumes that are of an appropriate type.
+	if (![[self.class automountedVolumeFormats] containsObject: volumeType])
+        return;
 	
 	//Only mount CD audio volumes if they have no corresponding data volume
 	//(Otherwise, we mount the data volume instead and shadow it with the audio CD's tracks)
-	if ([volumeType isEqualToString: ADBAudioCDVolumeType] && [workspace dataVolumeOfAudioCD: volumePath]) return;
+	if ([volumeType isEqualToString: ADBAudioCDVolumeType] &&
+        [workspace dataVolumeOfAudioCDAtURL: volumeURL] != nil)
+        return;
 	
-	//Only mount FAT volumes that are floppy-sized
-	if ([volumeType isEqualToString: ADBFATVolumeType] && ![workspace isFloppySizedVolumeAtPath: volumePath]) return;
+	//Only mount FAT volumes that are actual floppy disks
+	if ([volumeType isEqualToString: ADBFATVolumeType] &&
+        ![workspace isFloppyVolumeAtURL: volumeURL])
+        return;
 	
-	NSString *mountPoint = [self.class preferredMountPointForPath: volumePath];
     
-	if ([self.emulator pathIsMountedAsDrive: mountPoint]) return;
+	NSString *mountPoint = [self.class preferredMountPointForPath: volumeURL.path];
+    
+    //If the path is already mounted, don't mess around further.
+	if ([self.emulator pathIsMountedAsDrive: mountPoint])
+        return;
 	
-    //If an existing drive corresponds to this volume already,
-    //then mount it if it's not already
+    //If an existing queued drive corresponds to this volume already,
+    //then mount it if it's not already mounted.
     BXDrive *existingDrive  = [self queuedDriveForPath: mountPoint];
     if (existingDrive)
     {
         [self mountDrive: existingDrive
                 ifExists: BXDriveReplace
                  options: BXDefaultDriveMountOptions
-                   error: nil];
+                   error: NULL];
     }
 	//Alright, if we got this far then it's ok to mount a new drive for it
     else
@@ -1591,7 +1601,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
         [self mountDrive: drive
                 ifExists: BXDriveReplace
                  options: BXDefaultDriveMountOptions
-                   error: nil];
+                   error: NULL];
     }
 }
 
@@ -1783,37 +1793,55 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 #pragma mark -
 #pragma mark Drive executable scanning
 
-- (BXExecutableScan *) executableScanForDrive: (BXDrive *)drive
-                             startImmediately: (BOOL)start
+- (ADBOperation *) executableScanForDrive: (BXDrive *)drive
+                         startImmediately: (BOOL)start
 {
-    NSString *scanPath = drive.path;
-    //Don't scan non-physical drives
-    if (!scanPath) return nil;
+    id <ADBFilesystemPathAccess> filesystem = drive.filesystem;
     
-    BXExecutableScan *scan = [BXExecutableScan scanWithBasePath: scanPath];
+    if (!drive.filesystem) return nil;
+    
+    id <ADBFilesystemPathEnumeration> enumerator = [filesystem enumeratorAtPath: @"/"
+                                                                        options: NSDirectoryEnumerationSkipsHiddenFiles
+                                                                   errorHandler: NULL];
+    
+    ADBOperation *scan = [ADBFilesystemScan scanWithEnumerator: enumerator
+                                                    usingBlock: ^BOOL(NSString *path, id <ADBFilesystemPathEnumeration> e, BOOL *stop)
+    {
+        //Don't scan nested drives
+        if ([e.filesystem typeOfFileAtPath: path matchingTypes: [BXFileTypes mountableFolderTypes]])
+        {
+            [e skipDescendants];
+            return NO;
+        }
+        else 
+        {
+            return [BXFileTypes isCompatibleExecutableAtPath: path filesystem: e.filesystem error: NULL];
+        }
+    }];
+    
     scan.delegate = self;
     scan.didFinishSelector = @selector(executableScanDidFinish:);
     scan.contextInfo = drive;
     
     if (start)
     {
-        for (BXExecutableScan *otherScan in self.scanQueue.operations)
+        for (ADBOperation *otherScan in self.scanQueue.operations)
         {
             //Ignore completed scans
             if (otherScan.isFinished) continue;
 
             //If a scan for this drive is already in progress and hasn't been cancelled,
             //then use that scan instead.
-            if (!otherScan.isCancelled && [otherScan.contextInfo isEqual: drive])
+            BXDrive *otherDrive = otherScan.contextInfo;
+            
+            if (!otherScan.isCancelled && [otherDrive isEqual: drive])
             {
                 return otherScan;
             }
             
-            //If there's a scan going on for the same path, then make ours wait for that
-            //one to finish. This prevents image scans from piling up and un/re-mounting
-            //drives out of turn.
-            else if ([otherScan.basePath isEqualToString: scanPath] ||
-                     [otherScan.mountedVolumePath isEqualToString: scanPath])
+            //If there's a scan going on for the same path,
+            //then make ours wait for that one to finish.
+            else if ([otherDrive.mountPoint isEqualToString: drive.mountPoint])
                 [scan addDependency: otherScan];
         }    
 
@@ -1833,11 +1861,12 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     return NO;
 }
 
-- (BXExecutableScan *) activeExecutableScanForDrive: (BXDrive *)drive
+- (ADBOperation *) activeExecutableScanForDrive: (BXDrive *)drive
 {
-    for (BXExecutableScan *scan in self.scanQueue.operations)
+    for (ADBOperation *scan in self.scanQueue.operations)
 	{
-		if (scan.isExecuting && [scan.contextInfo isEqual: drive]) return scan;
+		if (scan.isExecuting && [scan.contextInfo isEqual: drive])
+            return scan;
 	}    
     return nil;
 }
@@ -1845,7 +1874,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 - (BOOL) cancelExecutableScanForDrive: (BXDrive *)drive
 {
     BOOL didCancelScan = NO;
-    for (BXExecutableScan *operation in self.scanQueue.operations)
+    for (ADBOperation *operation in self.scanQueue.operations)
 	{
         //Ignore completed scans
         if (operation.isFinished) continue;
@@ -1863,14 +1892,16 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (void) executableScanDidFinish: (NSNotification *)theNotification
 {
-    BXExecutableScan *scan = theNotification.object;
+    ADBFilesystemScan *scan = theNotification.object;
 	BXDrive *drive = scan.contextInfo;
     
     [self willChangeValueForKey: @"isScanningForExecutables"];
 	if (scan.succeeded)
 	{
         //Construct absolute paths out of the relative ones returned by the scan.
-        NSArray *driveExecutables = [scan.basePath stringsByAppendingPaths: scan.matchingPaths];
+        NSArray *driveExecutables = [drive.mountPoint stringsByAppendingPaths: scan.matchingPaths];
+        
+        NSLog(@"%@", driveExecutables);
         
         //Only send notifications if any executables were found, to prevent unnecessary redraws
         BOOL notify = (driveExecutables.count > 0);

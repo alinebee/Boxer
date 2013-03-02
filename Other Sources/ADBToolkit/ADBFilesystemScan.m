@@ -66,6 +66,9 @@ NSString * const ADBFilesystemScanLatestPathKey = @"ADBFilesystemScanLatestPath"
     NSAssert(self.enumerator != nil, @"No enumerator provided.");
     NSAssert(self.matchCallback != nil, @"No callback block provided.");
     
+    
+    self.matchingPaths = [NSMutableArray arrayWithCapacity: 10];
+    
     for (NSString *path in self.enumerator)
     {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -75,7 +78,7 @@ NSString * const ADBFilesystemScanLatestPathKey = @"ADBFilesystemScanLatestPath"
         if (matched)
         {
             [self addMatchingPath: path];
-            if (self.matchingPaths.count > self.maxMatches)
+            if (self.maxMatches > 0 && self.matchingPaths.count > self.maxMatches)
                 stop = YES;
         }
         

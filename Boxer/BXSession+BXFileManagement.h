@@ -120,7 +120,6 @@ typedef NSUInteger BXDriveMountOptions;
 @class BXDrive;
 @class BXDrivesInUseAlert;
 @class ADBOperation;
-@class BXExecutableScan;
 @protocol BXDriveImport;
 
 @interface BXSession (BXFileManagement) <BXEmulatorFileSystemDelegate, ADBOperationDelegate>
@@ -171,6 +170,9 @@ typedef NSUInteger BXDriveMountOptions;
 //Used by preferredMountPointForPath: which will also prefer the root folders of floppy and CD-ROM volumes.
 + (NSSet *) preferredMountPointTypes;
 
+//The volume formats (as listed in NSWorkspace+ADBMountedVolumes) that will be automatically mounted
+//as new DOS drives when they appear in Finder.
++ (NSSet *) automountedVolumeFormats;
 
 //UTI filetypes that should be given their own drives, even if they are already accessible within an existing DOS drive.
 //This is used by shouldMountDriveForPath: to allow disc images or drive folders inside a gamebox to be mounted as
@@ -385,8 +387,8 @@ typedef NSUInteger BXDriveMountOptions;
 #pragma mark Executable scanning
 
 //Returns a scan operation for the specified drive.
-- (BXExecutableScan *) executableScanForDrive: (BXDrive *)drive
-                             startImmediately: (BOOL)start;
+- (ADBOperation *) executableScanForDrive: (BXDrive *)drive
+                         startImmediately: (BOOL)start;
 
 //Aborts the scan for the specified drive.
 //Returns YES if a scan was aborted, NO if no scan was in progress.
@@ -394,7 +396,7 @@ typedef NSUInteger BXDriveMountOptions;
 
 //Returns any ongoing executable scan for the specified specified drive,
 //or nil if no scan is in progress.
-- (BXExecutableScan *) activeExecutableScanForDrive: (BXDrive *)drive;
+- (ADBOperation *) activeExecutableScanForDrive: (BXDrive *)drive;
 
 //Called when an executable scan has finished.
 //Updates the executable cache for the specified drive.

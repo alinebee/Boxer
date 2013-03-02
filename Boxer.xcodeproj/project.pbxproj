@@ -296,7 +296,6 @@
 		9F2D30A015B8233800FAE848 /* BXCoalfaceDrives.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */; };
 		9F2D30A115B8233800FAE848 /* NSShadow+ADBShadowExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F482413DC74CA00C7E022 /* NSShadow+ADBShadowExtensions.m */; };
 		9F2D30A215B8233800FAE848 /* ADBFileScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58BB5013DD975F00358512 /* ADBFileScan.m */; };
-		9F2D30A315B8233800FAE848 /* BXExecutableScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58BB5313DDAC3A00358512 /* BXExecutableScan.m */; };
 		9F2D30A415B8233800FAE848 /* BXDOSWindowControllerLion.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0C0BD613E1751E0039C081 /* BXDOSWindowControllerLion.m */; };
 		9F2D30A515B8233800FAE848 /* ADBFullscreenCapableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD95D6913E2A45C005EF2C0 /* ADBFullscreenCapableWindow.m */; };
 		9F2D30A615B8233800FAE848 /* BXPrecisionProControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = B7900B3D13E47D9E00B37913 /* BXPrecisionProControllerProfile.m */; };
@@ -466,7 +465,6 @@
 		9F586CF1143E51DD00E840C8 /* CM32L.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F586CEF143E51DD00E840C8 /* CM32L.png */; };
 		9F586CF2143E51DD00E840C8 /* MT32.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F586CF0143E51DD00E840C8 /* MT32.png */; };
 		9F58BB5113DD975F00358512 /* ADBFileScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58BB5013DD975F00358512 /* ADBFileScan.m */; };
-		9F58BB5413DDAC3A00358512 /* BXExecutableScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58BB5313DDAC3A00358512 /* BXExecutableScan.m */; };
 		9F596502163D8D910094FD6B /* BXSession+BXPrinting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F596501163D8D910094FD6B /* BXSession+BXPrinting.m */; };
 		9F596503163D8D910094FD6B /* BXSession+BXPrinting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F596501163D8D910094FD6B /* BXSession+BXPrinting.m */; };
 		9F59D99810AE0956008DBBC1 /* BoxArtShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F59D99710AE0956008DBBC1 /* BoxArtShine.png */; };
@@ -1182,8 +1180,6 @@
 		9F586CF0143E51DD00E840C8 /* MT32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MT32.png; sourceTree = "<group>"; };
 		9F58BB4F13DD975F00358512 /* ADBFileScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBFileScan.h; sourceTree = "<group>"; };
 		9F58BB5013DD975F00358512 /* ADBFileScan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBFileScan.m; sourceTree = "<group>"; };
-		9F58BB5213DDAC3A00358512 /* BXExecutableScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXExecutableScan.h; sourceTree = "<group>"; };
-		9F58BB5313DDAC3A00358512 /* BXExecutableScan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXExecutableScan.m; sourceTree = "<group>"; };
 		9F596500163D8D910094FD6B /* BXSession+BXPrinting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXPrinting.h"; sourceTree = "<group>"; };
 		9F596501163D8D910094FD6B /* BXSession+BXPrinting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXPrinting.m"; sourceTree = "<group>"; };
 		9F59D99710AE0956008DBBC1 /* BoxArtShine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BoxArtShine.png; sourceTree = "<group>"; };
@@ -2499,8 +2495,6 @@
 				9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */,
 				9F596500163D8D910094FD6B /* BXSession+BXPrinting.h */,
 				9F596501163D8D910094FD6B /* BXSession+BXPrinting.m */,
-				9F58BB5213DDAC3A00358512 /* BXExecutableScan.h */,
-				9F58BB5313DDAC3A00358512 /* BXExecutableScan.m */,
 				9F0F9ED812108A9000ED7A64 /* BXSessionError.h */,
 				9F0F9ED912108A9000ED7A64 /* BXSessionError.m */,
 			);
@@ -4150,7 +4144,6 @@
 				9FCA702213DAE6F5006C5DF8 /* BXCoalfaceDrives.mm in Sources */,
 				9F8F482513DC74CA00C7E022 /* NSShadow+ADBShadowExtensions.m in Sources */,
 				9F58BB5113DD975F00358512 /* ADBFileScan.m in Sources */,
-				9F58BB5413DDAC3A00358512 /* BXExecutableScan.m in Sources */,
 				9F0C0BD713E1751E0039C081 /* BXDOSWindowControllerLion.m in Sources */,
 				9FD95D6A13E2A45C005EF2C0 /* ADBFullscreenCapableWindow.m in Sources */,
 				B7900B3E13E47D9E00B37913 /* BXPrecisionProControllerProfile.m in Sources */,
@@ -4572,7 +4565,6 @@
 				9F2D30A015B8233800FAE848 /* BXCoalfaceDrives.mm in Sources */,
 				9F2D30A115B8233800FAE848 /* NSShadow+ADBShadowExtensions.m in Sources */,
 				9F2D30A215B8233800FAE848 /* ADBFileScan.m in Sources */,
-				9F2D30A315B8233800FAE848 /* BXExecutableScan.m in Sources */,
 				9F2D30A415B8233800FAE848 /* BXDOSWindowControllerLion.m in Sources */,
 				9F2D30A515B8233800FAE848 /* ADBFullscreenCapableWindow.m in Sources */,
 				9F2D30A615B8233800FAE848 /* BXPrecisionProControllerProfile.m in Sources */,

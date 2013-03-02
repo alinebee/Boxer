@@ -13,7 +13,10 @@
 #import "RegexKitLite.h"
 #import "NDAlias.h"
 #import "BXFileTypes.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 #import "ADBShadowedFilesystem.h"
+#import "ADBMountableImage.h"
+#import "ADBBinCueImage.h"
 
 @interface BXDrive ()
 
@@ -442,11 +445,8 @@
 		
         _hasAutodetectedMountPoint = NO;
         
-        //Update our filesystem object to point to the new mount point
-        if (self.mountPoint && [_filesystem respondsToSelector: @selector(setBaseURL:)])
-        {
-            [(id)_filesystem setBaseURL: [NSURL fileURLWithPath: self.mountPoint]];
-        }
+        //Clear our old filesystem: it will be recreated as needed.
+        self.filesystem = nil;
 	}
 }
 
@@ -457,27 +457,44 @@
 		[_shadowPath release];
 		_shadowPath = [path copy];
         
-        //Update our filesystem object to point to the new mount point
-        if (self.shadowPath && [_filesystem respondsToSelector: @selector(setShadowURL:)])
+        //Clear our old filesystem, if it was shadowed.
+        if (self.shadowPath && [_filesystem isKindOfClass: [ADBShadowedFilesystem class]])
         {
-            [(id)_filesystem setShadowURL: [NSURL fileURLWithPath: self.shadowPath]];
+            self.filesystem = nil;
         }
 	}
 }
 
-- (id <ADBFilesystemLocalFileURLAccess>) filesystem
+- (id <ADBFilesystemPathAccess>) filesystem
 {
-    if (self.mountPoint)
+    if (!_filesystem && self.mountPoint)
     {
-        if (!_filesystem)
+        NSURL *baseURL = [NSURL fileURLWithPath: self.mountPoint];
+        
+        if ([baseURL conformsToFileType: BXCuesheetImageType])
         {
-            //TODO: return other manager types for drives without shadows, image-backed drives etc.
-            NSURL *sourceURL = [NSURL fileURLWithPath: self.mountPoint];
-            NSURL *shadowURL = (self.shadowPath) ? [NSURL fileURLWithPath: self.shadowPath] : nil;
-            
-            self.filesystem = [ADBShadowedFilesystem filesystemWithBaseURL: sourceURL
+            self.filesystem = [ADBBinCueImage imageWithContentsOfURL: baseURL error: NULL];
+        }
+        else if ([baseURL matchingFileType: [NSSet setWithObjects: BXISOImageType, BXCDRImageType, nil]])
+        {
+            self.filesystem = [ADBISOImage imageWithContentsOfURL: baseURL error: NULL];
+        }
+        else if ([baseURL matchingFileType: [ADBMountableImage supportedImageTypes]])
+        {
+            self.filesystem = [ADBMountableImage imageWithContentsOfURL: baseURL error: NULL];
+        }
+        else if (self.shadowPath)
+        {
+            NSURL *shadowURL = [NSURL fileURLWithPath: self.shadowPath];
+            self.filesystem = [ADBShadowedFilesystem filesystemWithBaseURL: baseURL
                                                                  shadowURL: shadowURL];
         }
+        else
+        {
+            self.filesystem = [ADBLocalFilesystem filesystemWithBaseURL: baseURL];
+        }
+        
+        NSAssert1(self.filesystem != nil, @"No suitable filesystem could be found for mount point %@", self.mountPoint);
     }
     return [[_filesystem retain] autorelease];
 }

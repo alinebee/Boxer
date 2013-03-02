@@ -1105,6 +1105,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 {
 	if (!_hasConfigured)
 	{
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        
         if ([self _shouldAllowSkippingStartupProgram])
         {
             //If the Option key is held down during the startup process, skip the default program.
@@ -1116,6 +1118,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		
 		//Flag that we have completed our initial game configuration.
 		_hasConfigured = YES;
+        
+        [pool drain];
 	}
 }
 
@@ -1136,6 +1140,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
 	if (target)
 	{
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        
         BOOL targetIsExecutable = [self.class isExecutable: target];
         
         //If the Option key is held down during the startup process, skip the default program.
@@ -1165,6 +1171,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             [self.DOSWindowController switchToPanel: initialPanel animate: NO];
             [self.DOSWindowController enterFullScreen];
         }
+        
+        [pool drain];
         
 		[self openFileAtPath: target
                withArguments: arguments

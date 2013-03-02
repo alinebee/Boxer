@@ -938,29 +938,37 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	
 	try
 	{
-		//Create a new configuration instance and feed it an empty set of parameters.
-		char const *argv[0];
-		CommandLine commandLine(0, argv);
-		Config configuration(&commandLine);
-		control=&configuration;
-		
-		//Sets up the vast swathes of DOSBox configuration file parameters,
-		//and registers the shell to start up when we finish initializing.
-		DOSBOX_Init();
+        //Once DOSBox starts, it'll take over the run loop and any objects that were allocated
+        //before it starts will stay alive until it finishes. To mitigate this we wrap the
+        //emulator startup sequence in an autorelease block, so that at least those objects
+        //will get released before we begin emulating in earnest.
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        
+            //Create a new configuration instance and feed it an empty set of parameters.
+            char const *argv[0];
+            CommandLine commandLine(0, argv);
+            Config configuration(&commandLine);
+            control=&configuration;
+            
+            //Sets up the vast swathes of DOSBox configuration file parameters,
+            //and registers the shell to start up when we finish initializing.
+            DOSBOX_Init();
 
-		//Ask our delegate for the configuration files we should be loading today.
-        NSArray *configURLs = [self.delegate configurationURLsForEmulator: self];
-		for (NSURL *configURL in configURLs)
-		{
-			const char *encodedConfigPath = configURL.path.fileSystemRepresentation;
-			control->ParseConfigFile(encodedConfigPath);
-		}
+            //Ask our delegate for the configuration files we should be loading today.
+            NSArray *configURLs = [self.delegate configurationURLsForEmulator: self];
+            for (NSURL *configURL in configURLs)
+            {
+                const char *encodedConfigPath = configURL.path.fileSystemRepresentation;
+                control->ParseConfigFile(encodedConfigPath);
+            }
 
-		//Initialise the configuration.
-		control->Init();
+            //Initialise the configuration.
+            control->Init();
+            
+            [self _didInitialize];
 		
-		[self _didInitialize];
-		
+        [pool drain];
+        
 		//Start up the main machine.
 		control->StartUp();
 	}

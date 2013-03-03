@@ -29,11 +29,9 @@
 //iterated and extracted.
 
 //TODOS:
-// - Support multi-session images
-// - POSIX streams for individual files on the image
 // - More disc metadata (abstract name, etc.)
-// - Better handling of nonstandard image layouts (MODE2, raw)
-// - Handling of Logical Block Address sizes other than 2048
+// - Handle Logical Block Address sizes other than 2048
+// - Handle interleaved files
 
 
 #import <Foundation/Foundation.h>

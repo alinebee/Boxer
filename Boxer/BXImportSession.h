@@ -21,8 +21,8 @@
 
 //Constants returned by importStage
 typedef enum {
-	BXImportSessionWaitingForSourcePath,
-	BXImportSessionLoadingSourcePath,
+	BXImportSessionWaitingForSource,
+	BXImportSessionLoadingSource,
 	BXImportSessionWaitingForInstaller,
 	BXImportSessionReadyToLaunchInstaller,
 	BXImportSessionRunningInstaller,
@@ -54,14 +54,14 @@ typedef enum {
 
 @interface BXImportSession : BXSession <ADBOperationDelegate>
 {
-	NSString *_sourcePath;
+	NSURL *_sourceURL;
 	BXImportWindowController *_importWindowController;
-	NSArray *_installerPaths;
+	NSArray *_installerURLs;
     
-    NSString *_bundledConfigurationPath;
+    NSURL *_bundledConfigurationURL;
     BXEmulatorConfiguration *_configurationToImport;
 	
-	NSString *_rootDrivePath;
+	NSURL *_rootDriveURL;
 	
 	BXImportStage _importStage;
 	ADBOperationProgress _stageProgress;
@@ -83,18 +83,15 @@ typedef enum {
 
 
 //The source path from which we are installing the game.
-@property (copy, nonatomic) NSString *sourcePath;
+@property (copy, nonatomic) NSURL *sourceURL;
 
 //The path of the DOSBox configuration file we will use for guiding the import.
-//Only used when a suitable configuration file has been found in the source path.
-@property (copy, nonatomic) NSString *bundledConfigurationPath;
+//Populated when a suitable configuration file is found in the source path.
+@property (copy, nonatomic) NSURL *bundledConfigurationURL;
 @property (retain, nonatomic) BXEmulatorConfiguration *configurationToImport;
 
-//The range of possible DOS installers to choose from.
-@property (retain, nonatomic) NSArray *installerPaths;
-
-//The path of the installer we would choose as the default from among installerPaths.
-@property (readonly, nonatomic) NSString *preferredInstallerPath;
+//The range of possible DOS installers to choose from, ordered by preference.
+@property (retain, nonatomic) NSArray *installerURLs;
 
 //The display filename of the gamebox, minus extension.
 //Changing this will rename the gamebox file itself.
@@ -102,15 +99,15 @@ typedef enum {
 
 
 //What stage of the import process we are up to (as a BXImportStage constant.)
-@property (readonly, assign, nonatomic) BXImportStage importStage;
+@property (readonly, nonatomic) BXImportStage importStage;
 
 //How far through the current stage we have progressed.
 //Only relevant during the BXImportSessionLoadingSourcePath and BXImportSessionImportingSourceFiles stages.
-@property (readonly, assign, nonatomic) ADBOperationProgress stageProgress;
+@property (readonly, nonatomic) ADBOperationProgress stageProgress;
 
 //Whether our progress cannot be meaningfully determined currently.
 //Only relevant during the BXImportSessionLoadingSourcePath and BXImportSessionImportingSourceFiles stages.
-@property (readonly, assign, nonatomic) BOOL stageProgressIndeterminate;
+@property (readonly, nonatomic) BOOL stageProgressIndeterminate;
 
 //The final import/file transfer operation being performed to import the game's source files into the gamebox.
 //Only relevant during the BXImportSessionImportingSourceFiles stage.
@@ -118,10 +115,10 @@ typedef enum {
 
 //The specific way we are importing the game's source files into the gamebox.
 //This affects descriptions in the progress UI and confirmation prompts.
-@property (readonly, assign, nonatomic) BXSourceFileImportType sourceFileImportType;
+@property (readonly, nonatomic) BXSourceFileImportType sourceFileImportType;
 
-//Whether the user is allowed to skip the step of importing the source files into the game folder.
-//Will be NO if the game did not install any files into the gamebox to start with.
+//Whether it is necessary to import the source files into the gamebox after installation.
+//If YES, then the user will not be able to skip the final importing step.
 @property (assign, nonatomic) BOOL sourceFileImportRequired;
 
 
@@ -132,7 +129,7 @@ typedef enum {
 + (NSSet *)acceptedSourceTypes;
 
 //Whether the specified source path is a folder, volume or image type we can import.
-+ (BOOL) canImportFromSourcePath: (NSString *)sourcePath;
++ (BOOL) canImportFromSourceURL: (NSURL *)sourceURL;
 
 //Whether the game has installed any files into the gamebox's C drive.
 //Only relevant after the game's installer has been run.
@@ -151,18 +148,18 @@ typedef enum {
 #pragma mark -
 #pragma mark Import steps
 
-//Selects the specified source path, detects the game's details based on it,
+//Selects the specified source URL, detects the installers available in the source URL,
 //and continues to the next step of importing.
-- (void) importFromSourcePath: (NSString *)path;
+- (void) importFromSourceURL: (NSURL *)URL;
 
 //Cancels an in-progress installer scan started from importFromSourcePath:.
 - (void) cancelInstallerScan;
 
-//Cancels a previously-specified source path and returns to the source path choice step.
-- (void) cancelSourcePath;
+//Clears any previously-specified source URL and returns to the source selection step.
+- (void) cancelSourceSelection;
 
-//Selects the specified installer and launches it to continue importing.
-- (void) launchInstaller: (NSString *)path;
+//Launches the specified DOS installer program to continue importing.
+- (void) launchInstallerAtURL: (NSURL *)URL;
 
 //Skips the installer selection process and continues to the next step of importing.
 - (void) skipInstaller;

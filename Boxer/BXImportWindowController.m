@@ -74,30 +74,30 @@
 
 - (void) syncActivePanel
 {
-    switch ([[self document] importStage])
+    switch (self.document.importStage)
     {
-        case BXImportSessionWaitingForSourcePath:
-            [self setCurrentPanel: [self dropzonePanel]];
+        case BXImportSessionWaitingForSource:
+            self.currentPanel = self.dropzonePanel;
             break;
             
-        case BXImportSessionLoadingSourcePath:
-            [self setCurrentPanel: [self loadingPanel]];
+        case BXImportSessionLoadingSource:
+            self.currentPanel = self.loadingPanel;
             break;
             
         case BXImportSessionWaitingForInstaller:
         case BXImportSessionReadyToLaunchInstaller:
         case BXImportSessionRunningInstaller:
-            [self setCurrentPanel: [self installerPanel]];
+            self.currentPanel = self.installerPanel;
             break;
             
         case BXImportSessionReadyToFinalize:
         case BXImportSessionImportingSourceFiles:
         case BXImportSessionCleaningGamebox:
-            [self setCurrentPanel: [self finalizingPanel]];
+            self.currentPanel = self.finalizingPanel;
             break;
             
         case BXImportSessionFinished:
-            [self setCurrentPanel: [self finishedPanel]];
+            self.currentPanel = self.finishedPanel;
             break;
     }
 }

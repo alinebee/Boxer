@@ -17,6 +17,7 @@
 #import "BXFileTypes.h"
 #import "ADBPathEnumerator.h"
 #import "BXEmulatorConfiguration.h"
+#import "NSFileManager+ADBUniqueFilenames.h"
 
 
 
@@ -197,36 +198,47 @@
 #pragma mark -
 #pragma mark Deciding how best to import a game
 
-+ (BOOL) isCDROMSizedGameAtPath: (NSString *)path
++ (BOOL) isCDROMSizedGameAtURL: (NSURL *)baseURL
 {
-	unsigned long long pathSize = 0;
-	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
-	while (enumerator.nextObject)
-	{
-		pathSize += enumerator.fileAttributes.fileSize;
-		if (pathSize > (NSUInteger)BXCDROMSizeThreshold) return YES;
-	}
-	return NO;
+    NSDictionary *fileAttrs = [baseURL resourceValuesForKeys: @[NSURLFileSizeKey, NSURLIsDirectoryKey] error: NULL];
+    if (fileAttrs)
+    {
+        unsigned long long fileSize = [[fileAttrs objectForKey: NSURLFileSizeKey] unsignedLongLongValue];
+        if (fileSize > BXCDROMSizeThreshold)
+            return YES;
+        
+        if ([[fileAttrs objectForKey: NSURLIsDirectoryKey] boolValue])
+        {
+            NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL: baseURL
+                                                                     includingPropertiesForKeys: @[NSURLFileSizeKey]
+                                                                                        options: 0
+                                                                                   errorHandler: nil];
+            
+            for (NSURL *URL in enumerator)
+            {
+                NSNumber *fileSizeWrapper = nil;
+                [URL getResourceValue: &fileSizeWrapper forKey: NSURLFileSizeKey error: NULL];
+                fileSize += [fileSizeWrapper unsignedLongLongValue];
+                if (fileSize > BXCDROMSizeThreshold) return YES;
+            }
+        }
+    }
+    
+    return NO;
 }
 
-+ (NSString *) preferredSourcePathForPath: (NSString *)path
-									error: (NSError **)outError
++ (NSURL *) preferredSourceURLForURL: (NSURL *)URL
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
 	//If the chosen path was an audio CD, check if it has a corresponding data path and use that instead
-	if ([[workspace volumeTypeForPath: path] isEqualToString: ADBAudioCDVolumeType])
+	if ([[workspace typeOfVolumeAtURL: URL] isEqualToString: ADBAudioCDVolumeType])
 	{
-		NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: path];
-		if (dataVolumePath) return dataVolumePath;
+		NSURL *dataVolumeURL = [workspace dataVolumeOfAudioCDAtURL: URL];
+		if (dataVolumeURL) return dataVolumeURL;
 	}
-	
-	//Otherwise, for now stick with the original path as it was provided
-	//TODO: return the base volume path if the path was on a CD or floppy disk?
-	//TODO: search for a preferred import folder based on game profile?
-    //That would require us to know the profile in advance though,
-    //which makes it the purview of BXInstallerScan instead.
-	return path;
+    
+	return URL;
 }
 
 
@@ -248,66 +260,57 @@
 	return nil;
 }
 
-+ (BOOL) shouldImportSourceFilesFromPath: (NSString *)path
++ (BOOL) shouldUseSubfolderForSourceFilesAtURL: (NSURL *)baseURL
 {
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	
-	//If the source path is a mountable image, it should be imported
-	if ([workspace file: path matchesTypes: [BXFileTypes mountableImageTypes]]) return YES;
-	
-	//If the source path is on a CD, it should be imported
-	if ([[workspace volumeTypeForPath: path] isEqualToString: ADBDataCDVolumeType]) return YES;
-	
-	//If the source path looks CD-sized, it should be imported
-	if ([self isCDROMSizedGameAtPath: path]) return YES;
-	
-	return NO;
-}
-
-+ (BOOL) shouldUseSubfolderForSourceFilesAtPath: (NSString *)basePath
-{
-	ADBPathEnumerator *enumerator = [ADBPathEnumerator enumeratorAtPath: basePath];
-	enumerator.skipSubdirectories = YES;
+    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL: baseURL
+                                                             includingPropertiesForKeys: @[NSURLTypeIdentifierKey]
+                                                                                options: NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles
+                                                                           errorHandler: nil];
 	
 	BOOL hasExecutables = NO;
-	for (NSString *path in enumerator)
+	for (NSURL *URL in enumerator)
 	{
 		//This is an indication that the game is installed and playable;
 		//break out immediately and don’t use a subfolder 
-		if ([self isPlayableGameTelltaleAtPath: path]) return NO;
+		if ([self isPlayableGameTelltaleAtPath: URL.path]) return NO;
 		
 		//Otherwise, if the folder contains executables, it probably does need a subfolder
 		//(but keep scanning in case we find a playable telltale.)
-		else if ([self isExecutable: path]) hasExecutables = YES;
+		else if ([self isExecutable: URL.path]) hasExecutables = YES;
 	}
 	return hasExecutables;
 }
 
 
-+ (NSImage *) boxArtForGameAtPath: (NSString *)path
++ (NSImage *) boxArtForGameAtURL: (NSURL *)baseURL
 {
-    NSString *iconPath = nil;
+    NSURL *iconURL = nil;
     
 	//At the moment this is a very simple check for the existence of a Games For Windows
 	//icon, included with GOG games.
     NSString *pattern = @"^gfw_high\\.ico$";
-    ADBPathEnumerator *enumerator = [ADBPathEnumerator enumeratorAtPath: path];
-    for (NSString *subPath in enumerator)
+    
+    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL: baseURL
+                                                             includingPropertiesForKeys: nil
+                                                                                options: NSDirectoryEnumerationSkipsHiddenFiles
+                                                                           errorHandler: nil];
+    
+    for (NSURL *URL in enumerator)
     {
-        NSString *fileName = subPath.lastPathComponent;
+        NSString *fileName = URL.lastPathComponent;
         if ([fileName isMatchedByRegex: pattern
                                options: RKLCaseless
                                inRange: NSMakeRange(0, fileName.length)
                                  error: nil])
         {
-            iconPath = subPath;
+            iconURL = URL;
             break;
         }
     }
     
-	if (iconPath)
+	if (iconURL)
 	{
-		NSImage *icon = [[[NSImage alloc] initByReferencingFile: iconPath] autorelease];
+		NSImage *icon = [[[NSImage alloc] initWithContentsOfURL: iconURL] autorelease];
 		
 		//TWEAK: strip out the 16x16 and 32x32 versions from GOG icons 
 		//as these are usually terrible 16-colour Windows 3.1 icons.
@@ -317,20 +320,26 @@
 		for (NSImageRep *rep in reps)
 		{
 			NSSize size = rep.size;
-			if (size.width <= 32.0f && size.height <= 32.0f) [icon removeRepresentation: rep];
+			if (size.width <= 32.0f && size.height <= 32.0f)
+                [icon removeRepresentation: rep];
 		}
 		[reps release];
 		
 		//Sanity check: if there are no representations left, forget about the icon
-		if (!icon.representations.count) return nil;
-		else return icon;
+		if (icon.representations.count)
+            return icon;
+		else
+            return nil;
 	}
-	return nil;
+    else
+    {
+        return nil;
+    }
 }
 
-+ (NSString *) nameForGameAtPath: (NSString *)path
++ (NSString *) gameboxNameForGameAtURL: (NSURL *)URL
 {
-	NSString *filename = path.lastPathComponent;
+	NSString *filename = URL.lastPathComponent;
 	
 	//Strip any of our own file extensions from the path
 	NSArray *strippedExtensions = [NSArray arrayWithObjects:
@@ -384,40 +393,10 @@
 	
 	
 	//If all these substitutions somehow ended up with an empty string, then fall back on the original filename
-	if (!filename.length) filename = path.lastPathComponent;
+	if (!filename.length)
+        filename = URL.lastPathComponent;
 	
 	return filename;
-}
-
-+ (BXGamebox *) createGameboxAtPath: (NSString *)path
-							  error: (NSError **)outError
-{
-	NSFileManager *manager = [NSFileManager defaultManager];
-	
-	NSString *extension	= path.pathExtension;
-	NSString *basePath	= path.stringByDeletingPathExtension;
-	
-	//Check if a gamebox already exists at that location;
-	//if so, append an incremented extension until we land on a name that isn't taken
-	unsigned int suffix = 2;
-	while ([manager fileExistsAtPath: path])
-	{
-		path = [[basePath stringByAppendingFormat: @" (%u)", suffix++] stringByAppendingPathExtension: extension];
-	}
-	
-	NSDictionary *hideFileExtension = [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
-																  forKey: NSFileExtensionHidden];
-	BOOL success = [manager createDirectoryAtPath: path
-					  withIntermediateDirectories: NO
-									   attributes: hideFileExtension
-											error: outError];
-	
-	if (success)
-	{
-		BXGamebox *gamebox = [BXGamebox bundleWithPath: path];
-		return gamebox;
-	}
-	else return nil;	
 }
 
 //TODO: move this into BXGamebox?
@@ -446,42 +425,27 @@
 	return shortName;
 }
 
-NSInteger filenameLengthSort(NSString *path1, NSString *path2, void *context)
-{
-    NSUInteger length1 = path1.lastPathComponent.length;
-    NSUInteger length2 = path2.lastPathComponent.length;
-    
-    if (length1 < length2)
-        return NSOrderedAscending;
-    else if (length1 > length2)
-        return NSOrderedDescending;
-    else
-        return NSOrderedSame;
-}
-
-+ (NSString *) preferredConfigurationFileFromPaths: (NSArray *)paths
++ (NSURL *) preferredConfigurationFileFromURLs: (NSArray *)URLs
 {
     //Compare configuration filenames by length to determine the shortest
     //(which we deem most likely to be the 'default')
-    if (paths.count)
+    if (URLs.count)
     {
-        NSArray *sortedPaths = [paths sortedArrayUsingFunction: filenameLengthSort
-                                                       context: NULL];
+        NSArray *sortedURLs = [URLs sortedArrayUsingComparator: ^NSComparisonResult(NSURL *url1, NSURL *url2) {
+            NSUInteger length1 = url1.lastPathComponent.length;
+            NSUInteger length2 = url2.lastPathComponent.length;
+            
+            if (length1 < length2)
+                return NSOrderedAscending;
+            else if (length1 > length2)
+                return NSOrderedDescending;
+            else
+                return NSOrderedSame;
+        }];
         
-        return [sortedPaths objectAtIndex: 0];
+        return [sortedURLs objectAtIndex: 0];
     }
     else return nil;
-}
-
-+ (NSString *) preferredConfigurationFileInPath: (NSString *)path
-                                          error: (NSError **)error
-{
-    //Compare configuration filenames by length to determine the shortest
-    //(which we deem most likely to be the 'default')
-    ADBPathEnumerator *enumerator = [ADBPathEnumerator enumeratorAtPath: path];
-    enumerator.fileTypes = [NSSet setWithObject: @"gnu.org.configuration-file"];
-    
-    return [self preferredConfigurationFileFromPaths: enumerator.allObjects];
 }
 
 + (BOOL) isConfigurationFileAtPath: (NSString *)path

@@ -24,10 +24,10 @@
 @interface BXWelcomeWindowController ()
 
 //Handle file drag-drop onto the Import Game/Open DOS Prompt buttons.
-- (BOOL) _canOpenFilePaths: (NSArray *)filePaths;
-- (BOOL) _canImportFilePaths: (NSArray *)filePaths;
-- (void) _openFilePaths: (NSArray *)filePaths;
-- (void) _importFilePaths: (NSArray *)filePaths;
+- (BOOL) _canOpenURLs: (NSArray *)URLs;
+- (BOOL) _canImportURLs: (NSArray *)URLs;
+- (void) _openURLs: (NSArray *)URLs;
+- (void) _importURLs: (NSArray *)URLs;
 
 @end
 
@@ -174,43 +174,43 @@
 #pragma mark -
 #pragma mark Drag-drop behaviours
 
-- (BOOL) _canOpenFilePaths: (NSArray *)filePaths
+- (BOOL) _canOpenURLs: (NSArray *)URLs
 {
-	for (NSString *path in filePaths)
+	for (NSURL *URL in URLs)
 	{
 		//If any of the files were not of a recognised type, bail out
-		NSString *fileType = [[NSApp delegate] typeForContentsOfURL: [NSURL fileURLWithPath: path] error: NULL];
+		NSString *fileType = [[NSApp delegate] typeForContentsOfURL: URL error: NULL];
 		Class documentClass = [[NSApp delegate] documentClassForType: fileType];
 		if (!documentClass) return NO;
 	}
 	return YES;
 }
 
-- (BOOL) _canImportFilePaths: (NSArray *)filePaths
-{
-	for (NSString *path in filePaths)
-	{
-		if (![BXImportSession canImportFromSourcePath: path]) return NO;
-	}
-	return YES;
-}
 
-- (void) _openFilePaths: (NSArray *)filePaths
+- (void) _openURLs: (NSArray *)URLs
 {
-	for (NSString *filePath in filePaths)
+	for (NSURL *URL in URLs)
 	{
-		[[NSApp delegate] openDocumentWithContentsOfURL: [NSURL fileURLWithPath: filePath]
+		[[NSApp delegate] openDocumentWithContentsOfURL: URL
 												display: YES
 												  error: NULL];
 	}
 }
 
-- (void) _importFilePaths: (NSArray *)filePaths
+- (BOOL) _canImportURLs: (NSArray *)URLs
+{
+	for (NSURL *URL in URLs)
+	{
+		if (![BXImportSession canImportFromSourceURL: URL]) return NO;
+	}
+	return YES;
+}
+- (void) _importURLs: (NSArray *)URLs
 {
 	//Import only the first file, since we can't (and don't want to) support
 	//multiple concurrent import sessions
-	NSString *importPath = [filePaths objectAtIndex: 0];
-	[[NSApp delegate] openImportSessionWithContentsOfURL: [NSURL fileURLWithPath: importPath]
+	NSURL *URLToImport = [URLs objectAtIndex: 0];
+	[[NSApp delegate] openImportSessionWithContentsOfURL: URLToImport
 												 display: YES
 												   error: NULL];
 }
@@ -219,46 +219,51 @@
 {
 	NSPasteboard *pboard = [sender draggingPasteboard]; 
 	
-	if ([[pboard types] containsObject: NSFilenamesPboardType])
-	{
-		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		
-		//Check that we can actually open the files being dropped
-		if (button == [self importGameButton] && ![self _canImportFilePaths: filePaths]) return NO;
-		if (button == [self openPromptButton] && ![self _canOpenFilePaths: filePaths]) return NO;
+    NSArray *droppedURLs = [pboard readObjectsForClasses: @[[NSURL class]]
+                                                 options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];
+    
+    if (droppedURLs.count)
+    {
+        //Check that we can actually open the files being dropped
+		if (button == self.importGameButton && ![self _canImportURLs: droppedURLs])
+            return NSDragOperationNone;
+        
+		if (button == self.openPromptButton && ![self _canOpenURLs: droppedURLs])
+            return NSDragOperationNone;
 		
 		//If so, highlight the button and go for it
-		[button setHighlighted: YES];
+        button.highlighted = YES;
 		return NSDragOperationGeneric;
-	}
-	else return NSDragOperationNone;
+    }
+    
+    return NSDragOperationNone;
 }
 
 - (void) button: (BXWelcomeButton *)button draggingExited: (id <NSDraggingInfo>)sender
 {
-	[button setHighlighted: NO];
+    button.highlighted = NO;
 }
 
 - (BOOL) button: (BXWelcomeButton *)button performDragOperation: (id <NSDraggingInfo>)sender
 {
+    button.highlighted = NO;
 	NSPasteboard *pboard = [sender draggingPasteboard];
-	[button setHighlighted: NO];
-	
-	if ([[pboard types] containsObject: NSFilenamesPboardType])
-	{
-		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		
-		//These functions will block, so we delay the actual call until after we've returned
-		//so that we don't keep OS X waiting to clean up the drag operation. 
-		if (button == [self importGameButton])
-			[self performSelector: @selector(_importFilePaths:) withObject: filePaths afterDelay: 0.1];
-		else if (button == [self openPromptButton])
-			[self performSelector: @selector(_openFilePaths:) withObject: filePaths afterDelay: 0.1];
-		
-		return YES;
-	}
-	else return NO;
+    
+    NSArray *droppedURLs = [pboard readObjectsForClasses: @[[NSURL class]]
+                                                 options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];
+    
+    if (droppedURLs.count)
+    {
+        //These functions will block, so we delay the actual call until after we've returned
+		//so that we don't keep OS X waiting to clean up the drag operation.
+		if (button == self.importGameButton)
+			[self performSelector: @selector(_importURLs:) withObject: droppedURLs afterDelay: 0.1];
+		else if (button == self.openPromptButton)
+			[self performSelector: @selector(_openURLs:) withObject: droppedURLs afterDelay: 0.1];
+        
+        return YES;
+    }
+    return NO;
 }
-
 
 @end

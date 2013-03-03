@@ -28,6 +28,9 @@
 //The drop-down selector we populate with our installer program options
 @property (retain, nonatomic) IBOutlet NSPopUpButton *installerSelector;
 
+//Whether we can show a menu option to let the user pick an installer from an open panel.
+//Will be NO if the source URL of the import is a disk image, rather than a folder.
+@property (readonly, nonatomic) BOOL canBrowseInstallers;
 
 #pragma mark -
 #pragma mark UI actions

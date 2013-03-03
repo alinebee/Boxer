@@ -13,6 +13,7 @@
 #import "BXAppController.h"
 #import "BXValueTransformers.h"
 #import "NSString+ADBPaths.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 
 #pragma mark -
 #pragma mark Private method declarations
@@ -25,7 +26,7 @@
 
 //Returns an installer menu item suitable for the specified path.
 //Used by _syncInstallerSelectorItems and _addChosenInstaller:returnCode:contextInfo:
-- (NSMenuItem *) _installerSelectorItemForPath: (NSString *)path;
+- (NSMenuItem *) _installerSelectorItemForURL: (NSURL *)URL;
 
 @end
 
@@ -50,12 +51,12 @@
 
 - (void) awakeFromNib
 {
-	[self.controller addObserver: self forKeyPath: @"document.installerPaths" options: 0 context: nil];
+	[self.controller addObserver: self forKeyPath: @"document.installerURLs" options: 0 context: nil];
 }
 
 - (void) dealloc
 {
-	[self.controller removeObserver: self forKeyPath: @"document.installerPaths"];
+	[self.controller removeObserver: self forKeyPath: @"document.installerURLs"];
 
     self.installerSelector = nil;
 	
@@ -67,7 +68,7 @@
 						 change: (NSDictionary *)change
 						context: (void *)context
 {
-	if ([keyPath isEqualToString: @"document.installerPaths"])
+	if ([keyPath isEqualToString: @"document.installerURLs"])
 	{
 		[self _syncInstallerSelectorItems];
 	}
@@ -86,15 +87,15 @@
 	//...and then add all the new ones in their place
 	NSUInteger insertionPoint = 0;
 	
-	NSArray *installerPaths = self.controller.document.installerPaths;
+	NSArray *installerURLs = self.controller.document.installerURLs;
 	
-	if (installerPaths)
+	if (installerURLs)
 	{		
-		for (NSString *installerPath in installerPaths)
+		for (NSURL *installerURL in installerURLs)
 		{
 			NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 			
-			NSMenuItem *item = [self _installerSelectorItemForPath: installerPath];
+			NSMenuItem *item = [self _installerSelectorItemForURL: installerURL];
 			
             [menu insertItem: item atIndex: insertionPoint];
 			
@@ -111,25 +112,24 @@
 	[self.installerSelector synchronizeTitleAndSelectedItem];
 }
 
-- (NSMenuItem *) _installerSelectorItemForPath: (NSString *)path
+- (NSMenuItem *) _installerSelectorItemForURL: (NSURL *)URL
 {
-	NSString *basePath = self.controller.document.sourcePath;
-	NSUInteger baseLength = basePath.length;
+	NSURL *baseURL = self.controller.document.sourceURL;
 	
 	//Remove the base source path to make shorter relative paths for display
-	NSString *shortenedPath = path;
-	if ([path isRootedInPath: basePath])
+	NSURL *shortenedURL = URL;
+	if ([URL isBasedInURL: baseURL])
 	{
-		shortenedPath = [path substringFromIndex: baseLength + 1];
-	}
+		shortenedURL = [URL URLRelativeToURL: baseURL];
+    }
 	
 	//Prettify the shortened path by using display names and converting slashes to arrows
 	NSValueTransformer *nameTransformer = [NSValueTransformer valueTransformerForName: @"BXImportInstallerMenuTitle"];
 	
-	NSString *title = [nameTransformer transformedValue: shortenedPath];
+	NSString *title = [nameTransformer transformedValue: shortenedURL.path];
 	
 	NSMenuItem *item = [[NSMenuItem alloc] init];
-	item.representedObject = path;
+	item.representedObject = URL;
     item.title = title;
 	
 	return [item autorelease];
@@ -139,15 +139,44 @@
 #pragma mark -
 #pragma mark UI actions
 
+- (BOOL) validateMenuItem: (NSMenuItem *)menuItem
+{
+    //Disable the "Choose Installer..." menu item if we don't actually have a folder to browse
+    //(e.g. if we're importing from a disk image.)
+    if (menuItem.action == @selector(showInstallerPicker:))
+    {
+        return self.canBrowseInstallers;
+    }
+    else
+    {
+        return YES;
+    }
+}
+
++ (NSSet *) keyPathsForValuesAffectingCanBrowseInstallers
+{
+    return [NSSet setWithObject: @"controller.document.sourceURL"];
+}
+
+- (BOOL) canBrowseInstallers
+{
+    NSNumber *isDirFlag;
+    BOOL checkedDir = [self.controller.document.sourceURL getResourceValue: &isDirFlag forKey: NSURLIsDirectoryKey error: NULL];
+    if (checkedDir && isDirFlag.boolValue)
+        return YES;
+    else
+        return NO;
+}
+
 - (IBAction) launchSelectedInstaller: (id)sender
 {
-	NSString *installerPath = self.installerSelector.selectedItem.representedObject;
-	[self.controller.document launchInstaller: installerPath];
+	NSURL *installerURL = self.installerSelector.selectedItem.representedObject;
+	[self.controller.document launchInstallerAtURL: installerURL];
 }
 
 - (IBAction) cancelInstallerChoice: (id)sender
 {
-	[self.controller.document cancelSourcePath];
+	[self.controller.document cancelSourceSelection];
 }
 
 - (IBAction) skipInstaller: (id)sender
@@ -169,7 +198,7 @@
                                           @"Help text shown at the top of choose-an-installer panel.");
 	
     openPanel.allowedFileTypes = [BXFileTypes executableTypes].allObjects;
-    openPanel.directoryURL = [NSURL fileURLWithPath: self.controller.document.sourcePath];
+    openPanel.directoryURL = self.controller.document.sourceURL;
     
     [openPanel beginSheetModalForWindow: self.view.window completionHandler: ^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton)
@@ -187,16 +216,13 @@
 
 - (BOOL) panel: (id)sender shouldEnableURL: (NSURL *)URL
 {
-    NSString *path = URL.path;
-	//Disable files outside the source path of the import process, for sanity's sake
-	return [path isRootedInPath: self.controller.document.sourcePath];
+	//Disable files outside the source URL of the import process, for sanity's sake
+	return [URL isBasedInURL: self.controller.document.sourceURL];
 }
      
 - (void) addInstallerFromURL: (NSURL *)URL
 {
-    NSString *path = URL.path;
-    
-    NSInteger itemIndex = [self.installerSelector indexOfItemWithRepresentedObject: path];
+    NSInteger itemIndex = [self.installerSelector indexOfItemWithRepresentedObject: URL];
     if (itemIndex != -1)
     {
         //This path already exists in the menu, select it
@@ -205,7 +231,7 @@
     else
     {
         //This installer is not yet in the menu - add a new entry for it and select it
-        NSMenuItem *item = [self _installerSelectorItemForPath: path];
+        NSMenuItem *item = [self _installerSelectorItemForURL: URL];
         [self.installerSelector.menu insertItem: item atIndex: 0];
         [self.installerSelector selectItemAtIndex: 0];
     }

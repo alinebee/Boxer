@@ -43,8 +43,8 @@
 + (NSString *) cancelButtonLabelForImportType: (BXSourceFileImportType)importType;
 + (NSString *) stageDescriptionForImportType: (BXSourceFileImportType)importType;
 
-+ (NSAlert *) skipAlertForSourcePath: (NSString *)sourcePath
-								type: (BXSourceFileImportType)importType;
++ (NSAlert *) skipAlertForSourceURL: (NSURL *)sourceURL
+                               type: (BXSourceFileImportType)importType;
 
 
 #pragma mark -

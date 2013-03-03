@@ -73,13 +73,11 @@
                       completionHandler: ^(NSInteger result) {
                           if (result == NSFileHandlingPanelOKButton)
                           {
-                              NSString *path = openPanel.URL.path;
-                              
                               //Ensure the open panel is closed before we continue,
                               //in case importFromSourcePath: decides to display errors.
                               [openPanel orderOut: self];
                               
-                              [self.controller.document importFromSourcePath: path];
+                              [self.controller.document importFromSourceURL: openPanel.URL];
                           }
                       }];
 }
@@ -96,14 +94,20 @@
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
 {
 	NSPasteboard *pboard = sender.draggingPasteboard;
-	if ([pboard.types containsObject: NSFilenamesPboardType])
+    NSArray *dragClasses = @[[NSURL class]];
+    NSDictionary *dragOptions = @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) };
+	if ([pboard canReadObjectForClasses: dragClasses options: dragOptions])
 	{
-		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		BXImportSession *importer = self.controller.document;
-		for (NSString *path in filePaths)
+		NSArray *droppedURLs = [pboard readObjectsForClasses: dragClasses
+                                                     options: dragOptions];
+        
+        BXImportSession *importer = self.controller.document;
+        
+		for (NSURL *URL in droppedURLs)
 		{
 			//If any of the dropped files cannot be imported, reject the drop
-			if (![importer.class canImportFromSourcePath: path]) return NSDragOperationNone;
+			if (![importer.class canImportFromSourceURL: URL])
+                return NSDragOperationNone;
 		}
 		
         self.dropzone.highlighted = YES;
@@ -115,23 +119,22 @@
 
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
 {
-    self.dropzone.highlighted = NO;
 	NSPasteboard *pboard = sender.draggingPasteboard;
 	
-    if ([pboard.types containsObject: NSFilenamesPboardType])
-	{
-        NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		BXImportSession *importer = self.controller.document;
-		for (NSString *path in filePaths)
-		{
-			if ([importer.class canImportFromSourcePath: path])
-			{
-				//Defer import to give the drag operation and animations time to clean up
-				[importer performSelector: @selector(importFromSourcePath:) withObject: path afterDelay: 0.5];
-				return YES;
-			}
-		}
-	}
+    NSArray *droppedURLs = [pboard readObjectsForClasses: @[[NSURL class]]
+                                                 options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];
+    
+    BXImportSession *importer = self.controller.document;
+    for (NSURL *URL in droppedURLs)
+    {
+        if ([importer.class canImportFromSourceURL: URL])
+        {
+            //Defer import to give the drag operation and animations time to clean up
+            [importer performSelector: @selector(importFromSourceURL:) withObject: URL afterDelay: 0.5];
+            return YES;
+        }
+    }
+    
 	return NO;
 }
 

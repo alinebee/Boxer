@@ -207,8 +207,8 @@
 #pragma mark -
 #pragma mark UI actions
 
-+ (NSAlert *) skipAlertForSourcePath: (NSString *)sourcePath
-								type: (BXSourceFileImportType)importType
++ (NSAlert *) skipAlertForSourceURL: (NSURL *)sourceURL
+                               type: (BXSourceFileImportType)importType
 {
 	NSString *message;
 	NSString *informativeText;
@@ -269,8 +269,8 @@
 	//Otherwise, show a custom are-you-sure-you-want-to-skip-this alert sheet.
 	else
 	{
-		NSAlert *skipAlert = [self.class skipAlertForSourcePath: session.sourcePath
-                                                           type: session.sourceFileImportType];
+		NSAlert *skipAlert = [self.class skipAlertForSourceURL: session.sourceURL
+                                                          type: session.sourceFileImportType];
 		
 		if (skipAlert)
 		{
@@ -280,7 +280,7 @@
 								 didEndSelector: @selector(_skipAlertDidEnd:returnCode:contextInfo:)
 									contextInfo: NULL];
 		}
-		//If skipAlertForSourcePath:type: thought that it wasn't worth showing any confirmation
+		//If skipAlertForSourceURLtype: thought that it wasn't worth showing any confirmation
 		//at all, then go right ahead and cancel.
 		//TODO: move that decision downstream into BXImportSession. 
 		else

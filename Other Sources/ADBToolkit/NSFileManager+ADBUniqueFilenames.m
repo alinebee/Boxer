@@ -27,7 +27,7 @@
 #import "NSFileManager+ADBUniqueFilenames.h"
 #import "NSError+ADBErrorHelpers.h"
 
-NSString * const ADBDefaultIncrementedFilenameFormat = @"%1$@ (%2$lu).%3$@";
+NSString * const ADBDefaultIncrementedFilenameFormat = @"%1$@ (%3$lu).%2$@";
 
 typedef BOOL(^ADBUniqueFilenameOperation)(NSURL *uniqueURL, NSError **outError);
 
@@ -53,7 +53,7 @@ typedef BOOL(^ADBUniqueFilenameOperation)(NSURL *uniqueURL, NSError **outError);
 - (NSURL *) uniqueURLForURL: (NSURL *)URL
              filenameFormat: (NSString *)filenameFormat
 {
-    ADBUniqueFilenameOperation operation = ^BOOL(NSURL *uniqueURL, NSError **outError) {
+    ADBUniqueFilenameOperation operation = ^BOOL(NSURL *uniqueURL, NSError **operationError) {
         return ![uniqueURL checkResourceIsReachableAndReturnError: NULL];
     };
     
@@ -82,13 +82,14 @@ typedef BOOL(^ADBUniqueFilenameOperation)(NSURL *uniqueURL, NSError **outError);
            filenameFormat: (NSString *)filenameFormat
                     error: (out NSError **)outError
 {
-    ADBUniqueFilenameOperation operation = ^BOOL (NSURL *uniqueURL, NSError **outErrorp) {
-        return [self copyItemAtURL: sourceURL toURL: uniqueURL error: outError];
+    ADBUniqueFilenameOperation operation = ^BOOL (NSURL *uniqueURL, NSError **operationError) {
+        return [self copyItemAtURL: sourceURL toURL: uniqueURL error: operationError];
     };
     
     return [self _performFileOperation: operation
                                withURL: destinationURL
-                        filenameFormat: filenameFormat error: outError];
+                        filenameFormat: filenameFormat
+                                 error: outError];
 }
 
 - (NSURL *) moveItemAtURL: (NSURL *)sourceURL
@@ -96,13 +97,14 @@ typedef BOOL(^ADBUniqueFilenameOperation)(NSURL *uniqueURL, NSError **outError);
            filenameFormat: (NSString *)filenameFormat
                     error: (out NSError **)outError
 {
-    ADBUniqueFilenameOperation operation = ^BOOL (NSURL *uniqueURL, NSError **outErrorp) {
-        return [self moveItemAtURL: sourceURL toURL: uniqueURL error: outError];
+    ADBUniqueFilenameOperation operation = ^BOOL (NSURL *uniqueURL, NSError **operationError) {
+        return [self moveItemAtURL: sourceURL toURL: uniqueURL error: operationError];
     };
     
     return [self _performFileOperation: operation
                                withURL: destinationURL
-                        filenameFormat: filenameFormat error: outError];
+                        filenameFormat: filenameFormat
+                                 error: outError];
 }
 
 - (NSURL *) createDirectoryAtURL: (NSURL *)URL
@@ -110,11 +112,11 @@ typedef BOOL(^ADBUniqueFilenameOperation)(NSURL *uniqueURL, NSError **outError);
                       attributes: (NSDictionary *)attributes
                            error: (out NSError **)outError
 {
-    ADBUniqueFilenameOperation operation = ^BOOL (NSURL *uniqueURL, NSError **outErrorp) {
-        return [self createDirectoryAtURL: URL
+    ADBUniqueFilenameOperation operation = ^BOOL (NSURL *uniqueURL, NSError **operationError) {
+        return [self createDirectoryAtURL: uniqueURL
               withIntermediateDirectories: NO //Must be no, because otherwise this method will blithely return YES when the destination already exists.
                                attributes: attributes
-                                    error: outError];
+                                    error: operationError];
     };
     
     return [self _performFileOperation: operation
@@ -144,6 +146,7 @@ typedef BOOL(^ADBUniqueFilenameOperation)(NSURL *uniqueURL, NSError **outError);
         
         if (succeeded)
         {
+            NSLog(@"File operation on unique URL %@ succeeded.", uniqueURL);
             return uniqueURL;
         }
         else if ([uniqueURL checkResourceIsReachableAndReturnError: NULL])
@@ -154,6 +157,7 @@ typedef BOOL(^ADBUniqueFilenameOperation)(NSURL *uniqueURL, NSError **outError);
         }
         else
         {
+            NSLog(@"File operation failed for some other reason: %@", operationError);
             if (outError)
                 *outError = operationError;
             return nil;

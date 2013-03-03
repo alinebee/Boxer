@@ -37,9 +37,8 @@
 
 
 #import <Foundation/Foundation.h>
-#import "ADBISOImageConstants.h"
 #import "ADBFilesystem.h"
-
+#import "ADBISOImageConstants.h"
 
 #pragma mark -
 #pragma mark Public interface
@@ -51,11 +50,7 @@
     
     NSURL *_baseURL;
     NSString *_volumeName;
-    
-    NSUInteger _sectorSize;
-    NSUInteger _logicalBlockSize;
-    NSUInteger _rawSectorSize;
-    NSUInteger _leadInSize;
+    ADBISOFormat _format;
     
     NSMutableDictionary *_pathCache;
 }
@@ -67,6 +62,9 @@
 //The name of the image volume.
 @property (readonly, copy, nonatomic) NSString *volumeName;
 
+//The sector layout format of this ISO, detected when the ISO is first loaded.
+//See ADBISOImageConstants for available constants.
+@property (readonly, nonatomic) ADBISOFormat format;
 
 #pragma mark - Constructors
 

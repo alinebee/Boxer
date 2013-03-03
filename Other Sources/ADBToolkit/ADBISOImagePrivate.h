@@ -31,8 +31,7 @@
 #import "ADBFilesystem.h"
 #import "ADBTreeEnumerator.h"
 
-#pragma mark -
-#pragma mark Private method declarations
+#pragma mark - Private method declarations
 
 @class ADBISOFileEntry;
 @class ADBISODirectoryEntry;
@@ -41,17 +40,24 @@
 
 @property (copy, nonatomic) NSURL *baseURL;
 @property (copy, nonatomic) NSString *volumeName;
+@property (assign, nonatomic) ADBISOFormat format;
 
 @property (retain, nonatomic) id <ADBReadable, ADBSeekable> handle;
 
 @property (retain, nonatomic) NSMutableDictionary *pathCache;
 
-@property (readonly, nonatomic) NSUInteger sectorSize;
-@property (readonly, nonatomic) NSUInteger rawSectorSize;
-@property (readonly, nonatomic) NSUInteger leadInSize;
 
 #pragma mark -
 #pragma mark Private helper class methods
+
+//Autodetects the format of the ISO at the specified location.
+//This is done by scanning for strings at known offsets in each
+//of the formats in turn until one matches. Returns ADBISOFormatUnknown
+//and populates outError if there was a read error or the format could
+//not be determined.
++ (ADBISOFormat) _formatOfISOAtURL: (NSURL *)URL error: (out NSError **)outError;
++ (ADBISOFormat) _formatOfISOInHandle: (id <ADBReadable, ADBSeekable>)handle error: (out NSError **)outError;
+
 
 //Returns autoreleased NSDate instances created from the date and time
 //data in the specified ISO-format date struct.

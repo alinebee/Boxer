@@ -152,16 +152,6 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
     return isCue;
 }
 
-- (id) init
-{
-    if ((self = [super init]))
-    {
-        _rawSectorSize = ADBBINCUERawSectorSize;
-        _leadInSize = ADBBINCUELeadInSize;
-    }
-    return self;
-}
-
 - (BOOL) _loadImageAtURL: (NSURL *)URL
                    error: (out NSError **)outError
 {

@@ -28,8 +28,18 @@
 #import "NSString+ADBPaths.h"
 #import "ADBFileHandle.h"
 
-#pragma mark -
-#pragma mark Date helper macros
+#pragma mark - Constants
+
+const ADBISOFormat ADBISOFormatUnknown        = { 0, 0, 0 };
+const ADBISOFormat ADBISOFormatAudio          = { 2352, 0, 0 };       //Audio track sector layout
+const ADBISOFormat ADBISOFormatMode1          = { 2048, 16, 288 };    //Typical sector layout for BIN+CUE images
+const ADBISOFormat ADBISOFormatMode1Unpadded  = { 2048, 0, 0 };       //Typical sector layout for ISO and CDR images
+const ADBISOFormat ADBISOFormatMode2          = { 2336, 16, 0 };      //VCD sector layout (no error correction)
+
+const ADBISOFormat ADBISOFormatXAMode2Form1   = { 2048, 24, 280 };
+const ADBISOFormat ADBISOFormatXAMode2Form2   = { 2324, 24, 4 };
+
+#pragma mark - Date helpers
 
 //Converts the digits of an ISO extended date format (e.g. {'1','9','9','0'})
 //into a proper integer (e.g. 1990).
@@ -45,16 +55,16 @@ int extdate_to_int(uint8_t *digits, int length)
 }
 
 
-
 @implementation ADBISOImage
 
 @synthesize baseURL = _baseURL;
 @synthesize volumeName = _volumeName;
 @synthesize pathCache = _pathCache;
-@synthesize sectorSize = _sectorSize;
-@synthesize rawSectorSize = _rawSectorSize;
-@synthesize leadInSize = _leadInSize;
+@synthesize format = _format;
 @synthesize handle = _handle;
+
+
+#pragma mark - Class helper methods
 
 + (NSDate *) _dateFromDateTime: (ADBISODateTime)dateTime
 {
@@ -88,6 +98,80 @@ int extdate_to_int(uint8_t *digits, int length)
     return [NSDate dateWithTimeIntervalSince1970: epochtime];
 }
 
++ (ADBISOFormat) _formatOfISOAtURL: (NSURL *)URL error: (out NSError **)outError
+{
+    ADBFileHandle *handle = [ADBFileHandle handleForURL: URL options: ADBOpenForReading error: outError];
+    if (handle)
+    {
+        ADBISOFormat format = [self _formatOfISOInHandle: handle error: outError];
+        [handle close];
+        return format;
+    }
+    else
+    {
+        return ADBISOFormatUnknown;
+    }
+}
+
++ (ADBISOFormat) _formatOfISOInHandle: (id <ADBReadable, ADBSeekable>)handle error: (out NSError **)outError
+{
+    NSAssert(handle, @"No handle provided!");
+
+    //Ordered by commonness, with the standard 2048-unpadded-sector ISO format first.
+    ADBISOFormat formats[6] = {
+        ADBISOFormatMode1Unpadded,
+        ADBISOFormatMode1,
+        ADBISOFormatMode2,
+        ADBISOFormatAudio,
+        
+        ADBISOFormatXAMode2Form1,
+        ADBISOFormatXAMode2Form2,
+    };
+    
+    NSUInteger i, numFormats = 6;
+    const char *comparison = "CD001";
+    NSUInteger numBytes = strlen(comparison);
+    char *magicBytes[5];
+    
+    for (i=0; i<numFormats; i++)
+    {
+        ADBISOFormat format = formats[i];
+        NSUInteger rawSectorSize = format.sectorSize + format.sectorLeadIn + format.sectorLeadOut;
+        NSUInteger firstDescriptorOffset = (rawSectorSize * ADBISOVolumeDescriptorSectorOffset) + format.sectorLeadIn;
+        NSUInteger magicByteOffset = firstDescriptorOffset + 1;
+        
+        BOOL sought = [handle seekToOffset: magicByteOffset relativeTo: ADBSeekFromStart error: outError];
+        if (!sought)
+            return ADBISOFormatUnknown;
+        
+        NSUInteger bytesRead;
+        BOOL readBytes = [handle readBytes: magicBytes maxLength: numBytes bytesRead: &bytesRead error: outError];
+        if (!readBytes)
+            return ADBISOFormatUnknown;
+        
+        if (bytesRead == numBytes)
+        {
+            BOOL magicBytesFound = (bcmp(magicBytes, comparison, 5) == 0);
+            if (magicBytesFound)
+                return format;
+        }
+        //Truncated file: throw back the error below
+        else
+        {
+            break;
+        }
+    }
+    
+    //If we got this far, we could not determine the handle.
+    if (outError)
+    {
+        *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                        code: NSFileReadCorruptFileError
+                                    userInfo: NULL];
+    }
+    return ADBISOFormatUnknown;
+}
+
 
 #pragma mark - Initalization and cleanup
 
@@ -95,18 +179,6 @@ int extdate_to_int(uint8_t *digits, int length)
                         error: (NSError **)outError
 {
     return [[(ADBISOImage *)[self alloc] initWithContentsOfURL: URL error: outError] autorelease];
-}
-
-- (id) init
-{
-    self = [super init];
-    if (self)
-    {
-        _sectorSize = ADBISODefaultSectorSize;
-        _rawSectorSize = ADBISODefaultSectorSize;
-        _leadInSize = ADBISOLeadInSize;
-    }
-    return self;
 }
 
 - (id) initWithContentsOfURL: (NSURL *)URL
@@ -295,17 +367,17 @@ int extdate_to_int(uint8_t *digits, int length)
 
 - (uint32_t) _logicalOffsetForSector: (uint32_t)sector
 {
-    return sector * _sectorSize;
+    return sector * self.format.sectorSize;
 }
 
 - (uint32_t) _sectorForLogicalOffset: (uint32_t)offset
 {
-    return offset / _sectorSize;
+    return offset / self.format.sectorSize;
 }
 
 - (uint32_t) _logicalOffsetWithinSector: (uint32_t)offset
 {
-    return offset % _sectorSize;
+    return offset % self.format.sectorSize;
 }
 
 - (BOOL) _getBytes: (void *)buffer atLogicalRange: (NSRange)range error: (out NSError **)outError
@@ -362,16 +434,24 @@ int extdate_to_int(uint8_t *digits, int length)
     if (!rawHandle)
         return NO;
     
-    if (_sectorSize == _rawSectorSize)
+    //Attempt to determine the format of the ISO.
+    self.format = [self.class _formatOfISOInHandle: rawHandle error: outError];
+    
+    if (self.format.sectorSize == 0) //ADBISOUnknownFormat
+        return NO;
+    
+    //If the ISO format has padding before or after each sector, then wrap the raw file handle
+    //in a padding-aware handle to make reading easier.
+    if (self.format.sectorLeadIn == 0 && self.format.sectorLeadOut == 0)
     {
         self.handle = rawHandle;
     }
     else
     {
         self.handle = [ADBBlockHandle handleForHandle: rawHandle
-                                     logicalBlockSize: _sectorSize
-                                               leadIn: _leadInSize
-                                              leadOut: (_rawSectorSize - _sectorSize - _leadInSize)];
+                                     logicalBlockSize: self.format.sectorSize
+                                               leadIn: self.format.sectorLeadIn
+                                              leadOut: self.format.sectorLeadOut];
     }
     
     //Search the volume descriptors to find the primary descriptor
@@ -379,27 +459,11 @@ int extdate_to_int(uint8_t *digits, int length)
     
     BOOL foundDescriptor = [self _getPrimaryVolumeDescriptor: &descriptor
                                                        error: outError];
-    if (!foundDescriptor) return NO;
-    
-    //Sanity check: if the string "CD001" is present in the identifier of the primary volume descriptor,
-    //we can be pretty sure we have a real ISO on our hands and didn't just get this far by chance thanks
-    //to a junk file.
-    //TODO: if the format of the ISO is unknown we could search for this string to determine the raw block
-    //size (and thus likely padding) for the ISO.
-    BOOL identifierFound = bcmp(descriptor.identifier, "CD001", 5) == 0;
-    if (!identifierFound)
-    {
-        if (outError)
-        {
-            NSDictionary *info = @{ NSURLErrorKey: URL };
-            *outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSFileReadCorruptFileError userInfo: info];
-        }
+    if (!foundDescriptor)
         return NO;
-    }
     
     //If we got this far, then we succeeded in loading the image. Hurrah!
     //Get on with parsing out whatever other info interests us from the primary volume descriptor.
-    
     self.volumeName = [[[NSString alloc] initWithBytes: descriptor.volumeID
                                                 length: ADBISOVolumeIdentifierLength
                                               encoding: NSASCIIStringEncoding] autorelease];
@@ -430,6 +494,7 @@ int extdate_to_int(uint8_t *digits, int length)
         
         NSRange descriptorTypeRange = NSMakeRange(offset, sizeof(uint8_t));
         BOOL readType = [self _getBytes: &type atLogicalRange: descriptorTypeRange error: outError];
+        
         //Bail out if there was a read error or we hit the end of the file
         //(_getBytes:range:error: will have populated outError with the reason.)
         if (!readType)
@@ -542,11 +607,12 @@ int extdate_to_int(uint8_t *digits, int length)
     NSMutableArray *entries = [NSMutableArray array];
     NSUInteger bytesToParse = entryData.length;
     NSUInteger index = 0;
-    NSUInteger offsetFromSectorBoundary = range.location % _sectorSize;
+    NSUInteger sectorSize = self.format.sectorSize;
+    NSUInteger offsetFromSectorBoundary = range.location % sectorSize;
     
     while (index < bytesToParse)
     {
-        NSUInteger bytesRemainingInSector = _sectorSize - ((offsetFromSectorBoundary + index) % _sectorSize);
+        NSUInteger bytesRemainingInSector = sectorSize - ((offsetFromSectorBoundary + index) % sectorSize);
         
         uint8_t recordSize = 0;
         [entryData getBytes: &recordSize range: NSMakeRange(index, sizeof(uint8_t))];
@@ -619,7 +685,7 @@ int extdate_to_int(uint8_t *digits, int length)
         //and the actual file data will be shoved into the next sector beyond this.
         NSUInteger numExtendedAttributeSectors = 0;
         if (record.extendedAttributeLength > 0)
-            numExtendedAttributeSectors = ceilf(record.extendedAttributeLength / (float)image.sectorSize);
+            numExtendedAttributeSectors = ceilf(record.extendedAttributeLength / (float)image.format.sectorSize);
             
 #if defined(__BIG_ENDIAN__)
         _dataRange.location    = (NSUInteger)[image _logicalOffsetForSector: record.extentLBALocationBigEndian + numExtendedAttributeSectors];

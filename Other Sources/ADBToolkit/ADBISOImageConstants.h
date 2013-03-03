@@ -29,12 +29,6 @@
 //and its subclasses. They are not exposed by ADBISOImage's public API.
 
 
-#define ADBISODefaultSectorSize 2048
-#define ADBBINCUERawSectorSize 2352
-
-#define ADBISOLeadInSize 0
-#define ADBBINCUELeadInSize 16
-
 #define ADBISOVolumeDescriptorSectorOffset 0x10
 #define ADBISOVolumeDescriptorSize 2048
 
@@ -175,3 +169,20 @@ typedef struct {
     uint8_t identifier[222];
     
 } __attribute__ ((packed)) ADBISODirectoryRecord;
+
+
+typedef struct {
+    NSUInteger sectorSize;
+    NSUInteger sectorLeadIn;
+    NSUInteger sectorLeadOut;
+} ADBISOFormat;
+
+//q.v. http://en.wikipedia.org/wiki/CD-ROM#Extensions for details of these track modes.
+extern const ADBISOFormat ADBISOFormatUnknown;
+extern const ADBISOFormat ADBISOFormatAudio;
+extern const ADBISOFormat ADBISOFormatMode1;
+extern const ADBISOFormat ADBISOFormatMode1Unpadded;    //Typical sector layout for ISO and CDR images
+extern const ADBISOFormat ADBISOFormatMode2;            //VCD sector layout (no error correction)
+
+extern const ADBISOFormat ADBISOFormatXAMode2Form1;
+extern const ADBISOFormat ADBISOFormatXAMode2Form2;

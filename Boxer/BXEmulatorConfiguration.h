@@ -45,35 +45,31 @@
 #pragma mark -
 #pragma mark Loading and saving configurations
 
-//Returns an autoreleased instance initialized with the settings in the file at the specified path.
+//Returns an instance containing the settings in the file at the specified location.
 //Will return nil and populate outError on failure to read the file.
-+ (id) configurationWithContentsOfFile: (NSString *)filePath error: (NSError **)outError;
++ (id) configurationWithContentsOfURL: (NSURL *)URL error: (out NSError **)outError;
+- (id) initWithContentsOfURL: (NSURL *)URL error: (out NSError **)outError;
++ (id) configurationWithContentsOfFile: (NSString *)filePath error: (out NSError **)outError;
 
-//Returns an autoreleased instance initialized with settings parsed from the specified string.
+//Returns an instance containing the settings parsed from the specified DOSBox-formatted
+//configuration string.
 + (id) configurationWithString: (NSString *)configuration;
+- (id) initWithString: (NSString *)configuration;
+
+//Returns an instance using the specified heirarchical dictionary of sections and settings.
+- (id) initWithSettings: (NSDictionary *)initialSettings;
 
 //Returns an autoreleased empty configuration.
 + (id) configuration;
 
 
-//Initializes with the settings in the file at the specified path.
-//Will return nil and populate outError on failure to read the file.
-- (id) initWithContentsOfFile: (NSString *)filePath error: (NSError **)outError;
-
-//Initializes with settings parsed from the specified DOSBox-formatted configuration string.
-- (id) initWithString: (NSString *)configuration;
-
-//Initializes with a heirarchical dictionary of sections and settings.
-- (id) initWithSettings: (NSDictionary *)initialSettings;
-
-
 //Writes the configuration in DOSBox format atomically to the specified location.
 //Returns YES if write was successful, or NO and sets error if the write failed.
-
-//NOTE: this will overwrite any file that exists at that path. It will not currently
+//NOTE: this will overwrite any file that exists at that location. It will not currently
 //preserve the layout or comments of the file it is replacing, nor the file from which
 //the configuration was originally loaded (if any).
-- (BOOL) writeToFile: (NSString *)filePath error: (NSError **)error;
+- (BOOL) writeToURL: (NSURL *)URL error: (out NSError **)outError;
+- (BOOL) writeToFile: (NSString *)filePath error: (out NSError **)outError;
 
 //Returns a string representation of the configuration in DOSBox format,
 //as it would look when written to a file.

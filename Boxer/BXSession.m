@@ -1217,7 +1217,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     //If we've finished the startup process, then show the DOS view at this point.
     //(We won't show the DOS view before then, because we don't want startup programs
     //to trigger a switch of view: we don't know at that point yet whether the user is
-    //overriding the startup program to show the launch panel.
+    //overriding the startup program to show the launch panel.)
     if (_hasLaunched)
     {
         [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
@@ -1721,6 +1721,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 - (void) _saveConfiguration: (BXEmulatorConfiguration *)configuration toFile: (NSString *)filePath
 {
+    NSAssert(filePath != nil, @"No file path provided.");
+    
 	NSFileManager *manager = [NSFileManager defaultManager];
 	BOOL fileExists = [manager fileExistsAtPath: filePath];
 	
@@ -1749,8 +1751,13 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		//Compare against the combined configuration we'll inherit from Boxer's base settings plus
         //the profile-specific configurations (if any), and eliminate any duplicate configuration
         //parameters from the gamebox conf. This way, we don't persist settings we don't need to.
-        NSString *baseConfPath = [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
+        NSString *baseConfPath = [[NSBundle mainBundle] pathForResource: @"Preflight"
+                                                                 ofType: @"conf"
+                                                            inDirectory: @"Configurations"];
+        
+        NSAssert(baseConfPath != nil, @"Missing preflight conf file");
         BXEmulatorConfiguration *baseConf = [BXEmulatorConfiguration configurationWithContentsOfFile: baseConfPath error: nil];
+        
         [baseConf removeStartupCommands];
         
 		for (NSString *profileConfName in self.gameProfile.configurations)
@@ -1759,8 +1766,12 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 																		ofType: @"conf"
 																   inDirectory: @"Configurations"];
 			
-			BXEmulatorConfiguration *profileConf = [BXEmulatorConfiguration configurationWithContentsOfFile: profileConfPath error: nil];
-            if (profileConf) [baseConf addSettingsFromConfiguration: profileConf];
+            NSAssert1(profileConfPath != nil, @"Missing configuration file: %@", profileConfName);
+            if (profileConfPath)
+            {
+                BXEmulatorConfiguration *profileConf = [BXEmulatorConfiguration configurationWithContentsOfFile: profileConfPath error: nil];
+                if (profileConf) [baseConf addSettingsFromConfiguration: profileConf];
+            }
 		}
         
         [gameboxConf excludeDuplicateSettingsFromConfiguration: baseConf];

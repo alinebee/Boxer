@@ -73,9 +73,14 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 	return [[[self alloc] initWithString: configuration] autorelease];
 }
 
-+ (id) configurationWithContentsOfFile: (NSString *)filePath error: (NSError **)outError
++ (id) configurationWithContentsOfURL: (NSURL *)URL error: (out NSError **)outError
 {
-	return [[[self alloc] initWithContentsOfFile: filePath error: outError] autorelease];
+	return [[(BXEmulatorConfiguration *)[self alloc] initWithContentsOfURL: URL error: outError] autorelease];
+}
+
++ (id) configurationWithContentsOfFile: (NSString *)filePath error: (out NSError **)outError
+{
+    return [self configurationWithContentsOfURL: [NSURL fileURLWithPath: filePath] error: outError];
 }
 
 + (id) configuration
@@ -84,23 +89,24 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 }
 
 
-- (id) initWithContentsOfFile: (NSString *)filePath error: (NSError **)outError
+- (id) initWithContentsOfURL: (NSURL *)URL error: (out NSError **)outError
 {
-	NSString *fileContents = [NSString stringWithContentsOfFile: filePath
-                                                   usedEncoding: NULL
-                                                          error: outError];
+	NSString *fileContents = [NSString stringWithContentsOfURL: URL
+                                                  usedEncoding: NULL
+                                                         error: outError];
 
 	if (fileContents)
 	{
-		return [self initWithString: fileContents];
+		self = [self initWithString: fileContents];
 	}
 	
 	//If there was any problem loading the file, don't continue with initialization
 	else
 	{
 		[self release];
-		return nil;
+		self = nil;
 	}
+    return self;
 }
 
 - (id) initWithString: (NSString *)configuration
@@ -142,11 +148,15 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 #pragma mark -
 #pragma mark Persisting configurations
 
-- (BOOL) writeToFile: (NSString *)filePath error: (NSError **)error
+- (BOOL) writeToFile: (NSString *)filePath error: (out NSError **)outError
+{
+    return [self writeToURL: [NSURL fileURLWithPath: filePath] error: outError];
+}
+
+- (BOOL) writeToURL: (NSURL *)URL error: (out NSError **)outError
 {
 	NSString *formattedString = self.description;
-	
-	return [formattedString writeToFile: filePath atomically: YES encoding: BXDirectStringEncoding error: error];
+	return [formattedString writeToURL: URL atomically: YES encoding: NSUTF8StringEncoding error: outError];
 }
 
 - (NSString *) description

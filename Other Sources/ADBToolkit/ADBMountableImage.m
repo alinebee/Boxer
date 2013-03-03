@@ -92,23 +92,34 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
     self = [super init];
     if (self)
     {
-        NSNotificationCenter *center = [NSWorkspace sharedWorkspace].notificationCenter;
+        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+        NSNotificationCenter *wsCenter = [NSWorkspace sharedWorkspace].notificationCenter;
         
         [center addObserver: self
-                   selector: @selector(volumeDidUnmount:)
-                       name: NSWorkspaceDidUnmountNotification
+                   selector: @selector(applicationWillTerminate:)
+                       name: NSApplicationWillTerminateNotification
                      object: nil];
         
-        [center addObserver: self
-                   selector: @selector(volumeDidRename:)
-                       name: NSWorkspaceDidRenameVolumeNotification
-                     object: nil];
+        [wsCenter addObserver: self
+                     selector: @selector(volumeDidUnmount:)
+                         name: NSWorkspaceDidUnmountNotification
+                       object: nil];
+        
+        [wsCenter addObserver: self
+                     selector: @selector(volumeDidRename:)
+                         name: NSWorkspaceDidRenameVolumeNotification
+                       object: nil];
+        
+        
     }
     return self;
 }
 
 - (void) dealloc
 {
+    [[NSWorkspace sharedWorkspace].notificationCenter removeObserver: self];
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    
     if (self.unmountWhenDone && self.mountedVolumeURL)
         [self unmountVolumeWithError: NULL];
     
@@ -118,6 +129,14 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
 
 
 #pragma mark - Mounting and unmounting
+
+- (void) applicationWillTerminate: (NSNotification *)notification
+{
+    if (self.unmountWhenDone && self.mountedVolumeURL)
+    {
+        [self unmountVolumeWithError: NULL];
+    }
+}
 
 - (void) volumeDidUnmount: (NSNotification *)notification
 {
@@ -193,6 +212,7 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
                                                                          error: outError];
     if (unmounted)
     {
+        self.mountedVolumeURL = nil;
         self.unmountWhenDone = NO;
     }
     return unmounted;

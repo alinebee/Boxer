@@ -74,6 +74,12 @@ enum {
 - (void) volumeDidUnmount: (NSNotification *)notification;
 - (void) volumeDidRename: (NSNotification *)notification;
 
+//Called when the application is about to shut down to unmount the disk image's volume
+//if unmountWhenDone is YES (i.e. if the instance was responsible for mounting the volume.)
+//Although the instance would ordinarily do this anyway when deallocated, it is not
+//guaranteed that dealloc will be called during application shutdown.
+- (void) applicationWillTerminate: (NSNotification *)notification;
+
 //Returns the filesystem URL of the mounted volume representing the image's contents.
 //If mountIfNeeded is YES, the filesystem will attempt to mount the backing image
 //if it's not already, returning nil and populating outError if the image could

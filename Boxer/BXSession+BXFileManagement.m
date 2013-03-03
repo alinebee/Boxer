@@ -1798,7 +1798,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 {
     id <ADBFilesystemPathAccess> filesystem = drive.filesystem;
     
-    if (!drive.filesystem) return nil;
+    if (!filesystem) return nil;
     
     id <ADBFilesystemPathEnumeration> enumerator = [filesystem enumeratorAtPath: @"/"
                                                                         options: NSDirectoryEnumerationSkipsHiddenFiles
@@ -1899,9 +1899,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	if (scan.succeeded)
 	{
         //Construct absolute paths out of the relative ones returned by the scan.
-        NSArray *driveExecutables = [drive.mountPoint stringsByAppendingPaths: scan.matchingPaths];
-        
-        NSLog(@"%@", driveExecutables);
+        NSArray *driveExecutables = [drive.path stringsByAppendingPaths: scan.matchingPaths];
         
         //Only send notifications if any executables were found, to prevent unnecessary redraws
         BOOL notify = (driveExecutables.count > 0);

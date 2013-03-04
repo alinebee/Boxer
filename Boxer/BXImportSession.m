@@ -350,7 +350,8 @@
 	if (alert.showsSuppressionButton && alert.suppressionButton.state == NSOnState)
 		[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"suppressCloseAlert"];
 	
-    //Hide the alert
+    //Hide the alert before we go any further, so that it has time to get out of the way
+    //before we animate the DOS window back to the import window's size.
     [alert.window orderOut: self];
     
 	BOOL shouldClose = NO;

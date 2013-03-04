@@ -131,7 +131,7 @@
 	unsigned long long bytes = 0;
 	for (ADBOperation <ADBFileTransfer> *operation in self.operations)
 	{
-		bytes += [operation numBytes];
+		bytes += operation.numBytes;
 	}
 	return bytes;
 }
@@ -141,7 +141,7 @@
 	unsigned long long bytes = 0;
 	for (ADBOperation <ADBFileTransfer> *operation in self.operations)
 	{
-		bytes += [operation bytesTransferred];
+		bytes += operation.bytesTransferred;
 	}
 	return bytes;
 }
@@ -151,7 +151,7 @@
 	NSUInteger files = 0;
 	for (ADBOperation <ADBFileTransfer> *operation in self.operations)
 	{
-		files += [operation numFiles];
+		files += operation.numFiles;
 	}
 	return files;
 }
@@ -161,7 +161,7 @@
 	NSUInteger files = 0;
 	for (ADBOperation <ADBFileTransfer> *operation in self.operations)
 	{
-		files += [operation filesTransferred];
+		files += operation.filesTransferred;
 	}
 	return files;
 }
@@ -171,7 +171,7 @@
 	for (ADBOperation <ADBFileTransfer> *transfer in self.operations)
 	{
 		if (transfer.isExecuting)
-            return [transfer currentPath];
+            return transfer.currentPath;
 	}
 	return nil;
 }
@@ -186,8 +186,9 @@
                                                    ADBFileTransferBytesTransferredKey: @(self.bytesTransferred),
                                                          ADBFileTransferFilesTotalKey: @(self.numFiles),
                                                          ADBFileTransferBytesTotalKey: @(self.numBytes),
-                                                        ADBFileTransferCurrentPathKey: self.currentPath,
                                           }];
+    if (self.currentPath)
+        [extendedInfo setObject: self.currentPath forKey: ADBFileTransferCurrentPathKey];
 	
 	if (info)
         [extendedInfo addEntriesFromDictionary: info];

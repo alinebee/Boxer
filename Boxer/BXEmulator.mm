@@ -58,13 +58,14 @@ NSString * const BXEmulatorDriveKey             = @"drive";
 NSString * const BXEmulatorLocalPathKey         = @"localPath";
 NSString * const BXEmulatorLaunchArgumentsKey   = @"arguments";
 
+NSString * const BXDOSBoxErrorDomain = @"BXDOSBoxErrorDomain";
+
 
 //Use for strings that should be displayed to the user
 NSStringEncoding BXDisplayStringEncoding	= CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSLatin1);
 //Use for strings that should be left unmunged (usually filesystem paths)
 NSStringEncoding BXDirectStringEncoding		= NSUTF8StringEncoding;
 
-NSString * const BXDOSBoxErrorDomain = @"BXDOSBoxErrorDomain";
 
 
 #pragma mark -
@@ -974,9 +975,17 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	}
 	catch (char *errMessage)
 	{
-		NSLog(@"DOSBox died with the following error: %@",
-			  [NSString stringWithCString: errMessage encoding: BXDirectStringEncoding]);
+        NSString *reason = [NSString stringWithCString: errMessage encoding: BXDirectStringEncoding];
+        [NSException raise: BXEmulatorUnrecoverableException
+                    format: @"DOSBox aborted with the following error: %@", reason];
 	}
+    catch (BXExceptionInfo exceptionInfo)
+    {
+        NSException *exception = [BXEmulatorException exceptionWithName: BXEmulatorUnrecoverableException
+                                                          exceptionInfo: exceptionInfo];
+        
+        [exception raise];
+    }
 	catch (int)
 	{
 		//This means that something pressed the killswitch in DOSBox and we should shut down normally.
@@ -991,7 +1000,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	[self.videoHandler shutdown];
     control = NULL;
 }
-
 @end
 
 

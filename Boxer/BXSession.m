@@ -23,6 +23,7 @@
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
+#import "BXEmulatorErrors.h"
 #import "NSWorkspace+ADBFileTypes.h"
 #import "NSString+ADBPaths.h"
 #import "NSWorkspace+BXExecutableTypes.h"
@@ -30,6 +31,8 @@
 #import "NSObject+ADBPerformExtensions.h"
 #import "NSKeyedArchiver+ADBArchivingAdditions.h"
 #import "ADBUserNotificationDispatcher.h"
+#import "NSError+ADBErrorHelpers.h"
+#import "NSObject+ADBPerformExtensions.h"
 
 #import "ADBAppKitVersionHelpers.h"
 
@@ -1581,9 +1584,107 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	
 	//Start up the emulator itself.
     if ([[NSUserDefaults standardUserDefaults] boolForKey: @"useMultithreadedEmulation"])
+    {
         [self.emulator performSelectorInBackground: @selector(start) withObject: nil];
+    }
     else
-        [self.emulator start];
+    {
+        @try
+        {
+            [self.emulator start];
+        }
+        @catch (NSException *exception)
+        {
+            //Convert unrecoverable exceptions into errors and display them to the user.
+            if ([exception.name isEqualToString: BXEmulatorUnrecoverableException])
+            {
+                [self _reportEmulatorException: exception];
+            }
+            //Throw all other exceptions upstairs.
+            else
+            {
+                @throw exception;
+            }
+        }
+    }
+}
+
+- (void) _reportEmulatorException: (NSException *)exception
+{
+    //Ensure it gets logged to the console, if nothing else
+    NSLog(@"%@", exception.debugDescription);
+    
+    NSString *errorMessage;
+    NSString *currentProcessName = self.processDisplayName;
+    if (currentProcessName)
+    {
+        NSString *messageFormat = NSLocalizedString(@"%1$@ has encountered a serious error and must be relaunched.",
+                                                    @"Bold message shown in alert when an unrecoverable emulation error is encountered while running a process. %1$@ is the name of the currently-active program");
+        
+        errorMessage = [NSString stringWithFormat: messageFormat, currentProcessName];
+    }
+    else
+    {
+        errorMessage = NSLocalizedString(@"The MS-DOS prompt has encountered a serious error and must be relaunched.",
+                                         @"Bold message shown in alert when an unrecoverable emulation error while no process is running.");
+    }
+    
+    NSString *suggestion = NSLocalizedString(@"If this continues to occur after relaunching, please send us an error report.", @"Suggestion text shown in alert when an unrecoverable emulation error is encountered.");
+    
+    NSArray *options = @[NSLocalizedString(@"Relaunch", @"Button to restart the current session, shown in alert when Boxer encounters an unrecoverable emulation error."),
+                         
+                         NSLocalizedString(@"Close", @"Button to close the current session, shown in alert when Boxer encounters an unrecoverable emulation error."),
+                         
+                         NSLocalizedString(@"Send Report…", @"Button to open the issue tracker, shown in alert when Boxer encounters an unrecoverable emulation error."),
+                         ];
+    
+    NSDictionary *userInfo = @{NSLocalizedDescriptionKey: errorMessage,
+                               NSLocalizedRecoverySuggestionErrorKey: suggestion,
+                               NSLocalizedRecoveryOptionsErrorKey: options,
+                               NSRecoveryAttempterErrorKey: self,
+                               @"exception": exception,
+                               };
+    
+    NSError *userError = [NSError errorWithDomain: BXEmulatorErrorDomain
+                                             code: BXEmulatorUnrecoverableError
+                                         userInfo: userInfo];
+    
+    [self presentError: userError
+        modalForWindow: self.windowForSheet
+              delegate: nil
+    didPresentSelector: NULL
+           contextInfo: NULL];
+}
+
+- (void) attemptRecoveryFromError: (NSError *)error
+                      optionIndex: (NSUInteger)recoveryOptionIndex
+                         delegate: (id)delegate
+               didRecoverSelector: (SEL)didRecoverSelector
+                      contextInfo: (void *)contextInfo
+{
+    BOOL didRecover;
+    if ([error matchesDomain: BXEmulatorErrorDomain code: BXEmulatorUnrecoverableError])
+    {
+        switch(recoveryOptionIndex)
+        {
+            case 0: //Restart
+                //Restart at the launch panel, in case it's unsafe to launch the previous program
+                [self restartShowingLaunchPanel: YES];
+                break;
+            case 1: //Close
+                [self close];
+                break;
+            case 2: //Report
+                [[NSApp delegate] reportIssueForError: error inSession: self];
+                [self close];
+                break;
+        }
+    }
+    else
+    {
+        didRecover = NO;
+    }
+    [delegate performSelector: didRecoverSelector withValues: &didRecover, &contextInfo];
 }
 
 - (void) _mountDrivesForSession

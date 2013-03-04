@@ -21,6 +21,9 @@
 #import "BXDOSWindow.h"
 
 #import "BXSession.h"
+#import "BXEmulator.h"
+#import "BXEmulatorErrors.h"
+#import "NSError+ADBErrorHelpers.h"
 
 #import "ADBUserNotificationDispatcher.h"
 
@@ -399,22 +402,25 @@
 - (void) openURLFromKey: (NSString *)infoKey
 {
 	NSString *URLString = [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
-	if (URLString.length)
-        [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
+    NSAssert(URLString.length, @"No URL found in Info.plist for key %@", infoKey);
+    
+    [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
 }
 
 - (void) searchURLFromKey: (NSString *)infoKey withSearchString: (NSString *)search
 {
-	NSString *encodedSearch = [search stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
-	NSString *siteString	= [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
-	NSString *URLString		= [NSString stringWithFormat: siteString, encodedSearch];
-	if (URLString.length)
-        [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
+	NSString *siteString = [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
+    NSAssert(siteString.length, @"No search URL found in Info.plist for key %@", infoKey);
+    
+    NSString *encodedSearch = [search stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+    NSString *URLString		= [NSString stringWithFormat: siteString, encodedSearch];
+    [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
 }
 
 - (void) sendEmailFromKey: (NSString *)infoKey withSubject:(NSString *)subject
 {
 	NSString *address = [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
+    NSAssert(address.length, @"No email address found in Info.plist for key %@", infoKey);
 	if (address.length)
 	{
 		NSString *encodedSubject	= [subject stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
@@ -661,4 +667,98 @@
     [[BXBezelController controller] showVolumeBezelForVolume: self.effectiveVolume];
 }
 
+@end
+
+
+@implementation BXBaseAppController (BXErrorReporting)
+
+- (void) reportIssueWithTitle: (NSString *)title body: (NSString *)body
+{
+    NSString *issueURLString = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"BugReportURL"];
+    NSAssert(issueURLString.length, @"No issue URL found in Info.plist for key %@", @"BugReportURL");
+    
+    if (issueURLString.length)
+    {
+        NSString *encodedTitle  = (title) ? [title stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding] : @"";
+        NSString *encodedBody   = (body) ? [body stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding] : @"";
+        
+        NSString *completeURLString = [NSString stringWithFormat: @"%@?title=%@&body=%@", issueURLString, encodedTitle, encodedBody];
+		[[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: completeURLString]];
+    }
+}
+
+- (void) reportIssueForError: (NSError *)error
+                   inSession: (BXSession *)session
+{
+    if ([error matchesDomain: BXEmulatorErrorDomain code: BXEmulatorUnrecoverableError])
+    {
+        NSString *sessionName = session.displayName;
+        
+        NSString *issueTitle;
+        if (sessionName)
+        {
+            NSString *issueTitleFormat = NSLocalizedString(@"Unrecoverable emulation error when running %@",
+                                                           @"Title of issue when reporting an unrecoverable emulator error. %@ is the name of the gamebox (or current program, if unavailable.)");
+            
+            issueTitle = [NSString stringWithFormat: issueTitleFormat, sessionName];
+        }
+        else
+        {
+            issueTitle = NSLocalizedString(@"Unrecoverable emulation error at MS-DOS prompt",
+                                           @"Title of issue when reporting an unrecoverable emulator error that occurred at the DOS prompt.");
+        }
+        
+        //TODO: the one really useful thing we're missing here is a record of running time.
+        NSException *exception  = [error.userInfo objectForKey: @"exception"];
+        NSString *function      = [exception.userInfo objectForKey: @"function"];
+        NSNumber *lineNumber    = [exception.userInfo objectForKey: @"line"];
+        
+        NSMutableString *issueBody = [NSMutableString stringWithString: @"\n\n*[[ Please describe what you were doing when this error occurred! ]]*\n\n\n\n"];
+        
+        //----
+        [issueBody appendString: @"#### Error details ####\n\n"];
+        [issueBody appendFormat: @"**Error message:** %@\n", exception.reason];
+        
+        if (function)
+        {
+            [issueBody appendFormat: @"**In function:** `%@` (line %@)\n", function, lineNumber];
+        }
+        
+        [issueBody appendString: @"**Full stack trace:**\n\n"];
+        for (NSString *stackLine in exception.callStackSymbols)
+        {
+            [issueBody appendFormat: @"    %@\n", stackLine];
+        }
+        
+        //----
+        
+        if (session.fileURL || session.emulator.runningProcesses.count)
+        {
+            [issueBody appendString: @"\n\n#### Game details ####\n\n"];
+            
+            if (session.fileURL)
+            {
+                [issueBody appendFormat: @"**Session path:** %@\n", session.fileURL.path];
+            }
+            
+            if (session.emulator.runningProcesses.count)
+            {
+                [issueBody appendString: @"**DOSBox processes:**\n\n"];
+                for (NSDictionary *processInfo in session.emulator.runningProcesses)
+                {
+                    NSString *dosPath = [processInfo objectForKey: BXEmulatorDOSPathKey];
+                    NSString *args = [processInfo objectForKey: BXEmulatorLaunchArgumentsKey];
+                    [issueBody appendFormat: @"    %@ %@\n", dosPath, args];
+                }
+            }
+        }
+        
+        [[NSApp delegate] reportIssueWithTitle: issueTitle body: issueBody];
+    }
+    //We don't yet have suitable formulations for other kinds of errors, so just open the issue page blank.
+    else
+    {
+        [[NSApp delegate] reportIssueWithTitle: nil body: nil];
+    }
+}
 @end

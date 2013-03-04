@@ -13,6 +13,7 @@
 #import "cross.h"
 #import "shell.h"
 #import "ADBFilesystem.h"
+#include <execinfo.h>
 
 #pragma mark -
 #pragma mark Application state functions
@@ -540,20 +541,31 @@ void boxer_log(char const* format,...)
 #endif
 }
 
-void boxer_die(const char *functionName, const char *fileName, int lineNumber, const char * format,...)
+void boxer_die(const char *cFunctionName, const char *cFileName, int lineNumber, const char * cFormat,...)
 {
-	char err[512];
+	char cErr[1024];
 	va_list params;
-	va_start(params, format);
-	vsprintf(err, format, params);
+	va_start(params, cFormat);
+	vsnprintf(cErr, 1024, cFormat, params);
 	va_end(params);
 
-    [[NSAssertionHandler currentHandler] handleFailureInFunction: [NSString stringWithCString: functionName encoding: NSASCIIStringEncoding]
-                                                            file: [NSString stringWithCString: fileName encoding: NSASCIIStringEncoding]
-                                                      lineNumber: lineNumber
-                                                     description: [NSString stringWithCString: err encoding: NSASCIIStringEncoding], nil];
+#define stackLength 10
+    void *callstack[stackLength];
+    size_t size;
+    
+    size = backtrace(callstack, stackLength);
+    
+    BXExceptionInfo exceptionInfo = {
+        .fileName = cFileName,
+        .function = cFunctionName,
+        .lineNumber = lineNumber,
+        .failureReason = cErr,
+        .backtraceSize = size,
+        .backtraceAddresses = callstack
+    };
+    
+    throw exceptionInfo;
 }
-
 
 double boxer_realTime()
 {

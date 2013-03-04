@@ -19,8 +19,7 @@
 
 #import <Foundation/Foundation.h>
 
-#pragma mark -
-#pragma mark Emulator constants
+#pragma mark - Emulator constants
 
 enum {
 	BXSpeedFixed	= NO,
@@ -58,6 +57,12 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //The name and path to the DOSBox shell. Used when determining the current process.
 extern NSString * const shellProcessName;
 extern NSString * const shellProcessPath;
+
+//Keys used in dictionaries returned by -runningProcesses. 
+extern NSString * const BXEmulatorDOSPathKey;
+extern NSString * const BXEmulatorDriveKey;
+extern NSString * const BXEmulatorLocalPathKey;
+extern NSString * const BXEmulatorLaunchArgumentsKey;
 
 
 @class BXVideoHandler;

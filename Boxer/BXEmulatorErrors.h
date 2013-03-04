@@ -18,11 +18,19 @@ extern NSString * const BXEmulatorErrorDomain;
 //The error domain used for drive- and DOS filesystem-related errors.
 extern NSString * const BXDOSFilesystemErrorDomain;
 
+//The name of exceptions generated when the emulation hits an error it cannot recover from.
+//The emulator should be assumed to be in an unusable state.
+extern NSString * const BXEmulatorUnrecoverableException;
 
 
 //User info key representing a BXDrive instance in drive-related errors.
 extern NSString * const BXDOSFilesystemErrorDriveKey;
 
+//Error constants for BXEmulatorErrorDomain
+enum {
+    BXEmulatorUnknownError,
+    BXEmulatorUnrecoverableError,   //Error code used when DOSBox encounters any kind of unrecoverable error and must quit.
+};
 
 //Error constants for BXDOSFilesystemErrorDomain
 enum {
@@ -88,4 +96,31 @@ enum {
 @end
 
 @interface BXEmulatorDriveInUseError : NSError <BXDriveError>
+@end
+
+
+//An NSException subclass for wrapping exception data passed out
+//from deep within DOSBox. This is subclassed to allow us to include
+//our own stacktrace info.
+
+//A C-compatible struct for throwing up exception data through the C++ throw()
+//mechanism, which we can then safely convert into a BXEmulatorException on the
+//other side. Thrown by boxer_die().
+typedef struct {
+    const char *fileName;
+    const char *function;
+    int lineNumber;
+    const char *failureReason;
+    size_t backtraceSize;
+    void * const * backtraceAddresses;
+} BXExceptionInfo;
+
+@interface BXEmulatorException: NSException
+{
+    NSArray *_BXCallStackReturnAddresses;
+    NSArray *_BXCallStackSymbols;
+}
+
++ (id) exceptionWithName: (NSString *)name exceptionInfo: (BXExceptionInfo)info;
+
 @end

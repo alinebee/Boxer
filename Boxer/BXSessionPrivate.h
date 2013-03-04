@@ -16,8 +16,7 @@
 #import "BXSessionError.h"
 
 
-#pragma mark -
-#pragma mark Private constants
+#pragma mark - Private constants
 
 extern NSString * const BXPagesReadyNotificationType;
 extern NSString * const BXDriveImportedNotificationType;
@@ -114,10 +113,11 @@ extern NSString * const BXGameImportedNotificationType;
 //to redetect it later. Base implementation returns YES in all cases.
 - (BOOL) _shouldPersistGameProfile: (BXGameProfile *)profile;
 
-
 //Cleans up temporary files after the session is closed.
 - (void) _cleanup;
 
+//Called if DOSBox encounters an unrecoverable error and throws an exception.
+- (void) _reportEmulatorException: (NSException *)exception;
 
 
 //Callback for close alert. Confirms document close when window is closed or application is shut down. 

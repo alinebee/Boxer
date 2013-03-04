@@ -8,6 +8,7 @@
 #import "BXEmulatorErrors.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXDrive.h"
+#include <execinfo.h>
 
 #pragma mark -
 #pragma mark Private constants
@@ -16,6 +17,7 @@ NSString * const BXEmulatorErrorDomain      = @"BXEmulatorErrorDomain";
 NSString * const BXDOSFilesystemErrorDomain = @"BXDOSFilesystemErrorDomain";
 NSString * const BXDOSFilesystemErrorDriveKey = @"BXDOSFilesystemErrorDriveKey";
 
+NSString * const BXEmulatorUnrecoverableException = @"BXEmulatorUnrecoverableException";
 
 @implementation BXEmulatorCouldNotReadDriveError
 
@@ -195,4 +197,81 @@ NSString * const BXDOSFilesystemErrorDriveKey = @"BXDOSFilesystemErrorDriveKey";
                             code: BXDOSFilesystemDriveInUse
                         userInfo: userInfo];
 }
+@end
+
+
+@interface BXEmulatorException ()
+
+@property (retain, nonatomic) NSArray *callStackReturnAddresses;
+@property (retain, nonatomic) NSArray *callStackSymbols;
+
+@end
+
+@implementation BXEmulatorException
+@synthesize callStackReturnAddresses = _BXCallStackReturnAddresses;
+@synthesize callStackSymbols = _BXCallStackSymbols;
+
++ (id) exceptionWithName: (NSString *)name exceptionInfo: (BXExceptionInfo)info
+{
+    return [[[self alloc] initWithName: name exceptionInfo: info] autorelease];
+}
+
+- (id) initWithName: (NSString *)name exceptionInfo: (BXExceptionInfo)exceptionInfo
+{
+    NSString *fileName      = [NSString stringWithUTF8String: exceptionInfo.fileName];
+    NSString *functionName  = [NSString stringWithUTF8String: exceptionInfo.function];
+    NSString *reason        = [NSString stringWithUTF8String: exceptionInfo.failureReason];
+    NSInteger lineNumber    = exceptionInfo.lineNumber;
+    
+    NSMutableDictionary *errorInfo = [NSMutableDictionary dictionaryWithCapacity: 4];
+    if (fileName)
+    {
+        [errorInfo setObject: fileName forKey: @"file"];
+    }
+    
+    if (functionName)
+    {
+        [errorInfo setObject: functionName forKey: @"function"];
+        [errorInfo setObject: @(lineNumber) forKey: @"line"];
+    }
+
+    self = [self initWithName: name reason: reason userInfo: errorInfo];
+    if (self)
+    {
+        NSUInteger i, numAddresses = exceptionInfo.backtraceSize;
+        if (numAddresses > 0)
+        {
+            char **symbolDescriptions = backtrace_symbols(exceptionInfo.backtraceAddresses, numAddresses);
+            
+            NSMutableArray *addresses   = [NSMutableArray arrayWithCapacity: numAddresses];
+            NSMutableArray *symbols     = [NSMutableArray arrayWithCapacity: numAddresses];
+            
+            for (i = 0; i < numAddresses; i++)
+            {
+                NSUInteger addr = (NSUInteger)exceptionInfo.backtraceAddresses[i];
+                const char *symbol = symbolDescriptions[i];
+                if (symbol)
+                {
+                    NSString *desc = [NSString stringWithUTF8String: symbol];
+                    [symbols addObject: desc];
+                    [addresses addObject: @(addr)];
+                }
+            }
+            
+            self.callStackReturnAddresses = addresses;
+            self.callStackSymbols = symbols;
+            
+            free(symbolDescriptions);
+        }
+    }
+    return self;
+}
+
+- (void) dealloc
+{
+    self.callStackSymbols = nil;
+    self.callStackReturnAddresses = nil;
+    [super dealloc];
+}
+
 @end

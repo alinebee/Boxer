@@ -220,7 +220,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (IBAction) relaunchTargetProgram: (id)sender
 {
-	if ([self targetPath]) [self openFileAtPath: self.targetPath];
+	if (self.targetPath)
+        [self openFileAtPath: self.targetPath];
 }
 
 - (IBAction) openInDOS: (id)sender
@@ -880,6 +881,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 		//If an executable was specified, execute it
         self.lastLaunchedProgramPath = path;
         self.lastLaunchedProgramArguments = arguments;
+        
 		[self.emulator executeProgramAtDOSPath: dosPath
                                  withArguments: arguments
                              changingDirectory: YES];

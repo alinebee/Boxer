@@ -163,3 +163,16 @@
               withSubject: (NSString *)subject;
 
 @end
+
+
+@interface BXBaseAppController (BXErrorReporting)
+
+//Opens an issue tracker page for a new issue, prefilling the issue with the specified title and body text (if provided).
+- (void) reportIssueWithTitle: (NSString *)title
+                         body: (NSString *)body;
+
+//Opens an issue tracker page prefilled with the details of the specified error.
+- (void) reportIssueForError: (NSError *)error
+                   inSession: (BXSession *)session;
+
+@end

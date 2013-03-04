@@ -198,6 +198,7 @@ typedef NSUInteger BXDriveMountOptions;
 - (BOOL) openFileAtPath: (NSString *)path
           withArguments: (NSString *)arguments
          clearingScreen: (BOOL)clearScreen;
+
 - (BOOL) openFileAtPath: (NSString *)path;
 
 

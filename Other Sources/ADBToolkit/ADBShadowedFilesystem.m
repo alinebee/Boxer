@@ -242,7 +242,6 @@ includingPropertiesForKeys: (NSArray *)keys
     {
         NSURL *originalURL = [self _sourceURLForLogicalPath: path];
         NSURL *shadowedURL = [self _shadowedURLForLogicalPath: path];
-        
 
         NSURL *deletionMarkerURL = [shadowedURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
         
@@ -255,7 +254,7 @@ includingPropertiesForKeys: (NSArray *)keys
         }
         
         //Otherwise, if either the source or a shadow exist, treat the file as existing.
-        if ([self.manager fileExistsAtPath: shadowedURL.path isDirectory: isDirectory])
+        else if ([self.manager fileExistsAtPath: shadowedURL.path isDirectory: isDirectory])
         {
             return YES;
         }
@@ -404,7 +403,7 @@ includingPropertiesForKeys: (NSArray *)keys
             //...but we are able to create a new file, then remove both the deletion marker
             //and any leftover shadow, and open a new file handle at the shadowed location.
             if (createIfMissing)
-            {   
+            {
                 //TODO: it should be a failure state if we cannot remove the deletion marker.
                 [self.manager removeItemAtURL: deletionMarkerURL error: NULL];
                 [self.manager removeItemAtURL: shadowedURL error: NULL];
@@ -505,11 +504,25 @@ includingPropertiesForKeys: (NSArray *)keys
         NSURL *deletionMarkerURL = [shadowedURL URLByAppendingPathExtension: ADBShadowedDeletionMarkerExtension];
         
         BOOL originalExists = [sourceURL checkResourceIsReachableAndReturnError: NULL];
+        BOOL deletionMarkerExists = [deletionMarkerURL checkResourceIsReachableAndReturnError: NULL];
+        
+        //If this file has already been marked as deleted, pretend to fail
+        //since we cannot delete an already-deleted file.
+        if (deletionMarkerExists)
+        {
+            if (outError)
+            {
+                *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                                code: NSFileNoSuchFileError
+                                            userInfo: @{ NSFilePathErrorKey: path }];
+            }
+            return NO;
+        }
         
         //If a file exists at the original location, create a marker in the shadow location
         //indicating that the file has been deleted. We also clean up any shadowed
         //version of the file.
-        if (originalExists)
+        else if (originalExists)
         {
             [self _createDeletionMarkerAtURL: deletionMarkerURL];
             

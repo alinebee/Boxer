@@ -228,8 +228,7 @@
                     error: (out NSError **)outError
 {
     NSURL *localURL = [self localFileURLForLogicalPath: path];
-    const char *rep = [self.manager fileSystemRepresentationWithPath: localURL.path];
-    return fopen(rep, accessMode);
+    return [[ADBFileHandle handleForURL: localURL mode: accessMode error: outError] fileHandleAdoptingOwnership: YES];
 }
 
 - (id <ADBFilesystemPathEnumeration>) enumeratorAtPath: (NSString *)path

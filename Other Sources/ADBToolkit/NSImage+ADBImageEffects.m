@@ -154,47 +154,63 @@
     
     BOOL drawFlipped = respectContextIsFlipped && context.isFlipped;
     
-    //The total area of the context that will be affected by our drawing,
-    //including our drop shadow.
+    //Now calculate the total area of the context that will be affected by our drawing,
+    //including our drop shadow. Our mask images will be created at this size to ensure
+    //that the whole canvas is properly masked.
+    
     NSRect totalDirtyRect = drawRect;
     if (dropShadow)
     {
-        totalDirtyRect = [dropShadow expandedRectForShadow: drawRect flipped: NO];
+        totalDirtyRect = NSUnionRect(totalDirtyRect, [dropShadow shadowedRect: drawRect flipped: NO]);
     }
     
-    //First create a mask by rendering the original (black-and-alpha) image.
-    //We will use this to mask our fill and inner-shadow drawing.
-    CGRect maskRect = NSRectToCGRect(drawRect);
-    CGImageRef imageMask = [self CGImageForProposedRect: &drawRect context: context hints: nil];
+    //TWEAK: also expand the dirty rect to encompass our *inner* shadow as well.
+    //Because the resulting mask is used to draw the inner shadow, it needs to have enough
+    //padding around all relevant edges that the inner shadow appears 'solid' and doesn't
+    //get cut off.
+    if (innerShadow)
+    {
+        totalDirtyRect = NSUnionRect(totalDirtyRect, [dropShadow rectToCastInnerShadow: drawRect flipped: NO]);
+    }
     
-    //Next, create an inverted version of the mask. We will use this to mask our drawing of the drop shadow.
-    //Note that the inverted mask is larger than the original mask because it needs to cover the total draw region:
-    //otherwise it could inadvertently mask out parts of the drop shadow.
-    CGRect invertedMaskRect = CGRectIntegral(NSRectToCGRect(totalDirtyRect));
-    //Because CGBitmapContexts are not retina-aware and use device pixels,
+    CGRect maskRect = CGRectIntegral(NSRectToCGRect(totalDirtyRect));
+    
+    
+    //First get a representation of the image suitable for drawing into the destination.
+    CGRect imageRect = NSRectToCGRect(drawRect);
+    CGImageRef baseImage = [self CGImageForProposedRect: &drawRect context: context hints: nil];
+    
+    //Next, render it into a new bitmap context sized to cover the whole dirty area.
+    //We then grab regular and inverted CGImages from that context to use as masks.
+    
+    //NOTE: Because CGBitmapContexts are not retina-aware and use device pixels,
     //we have to compensate accordingly when we're rendering for a retina backing.
-    CGSize invertedMaskPixelSize = CGSizeMake(invertedMaskRect.size.width * pointSize.width,
-                                              invertedMaskRect.size.height * pointSize.height);
+    CGSize maskPixelSize = CGSizeMake(maskRect.size.width * pointSize.width,
+                                      maskRect.size.height * pointSize.height);
+    
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef maskContext = CGBitmapContextCreate(NULL,
-                                                     invertedMaskPixelSize.width,
-                                                     invertedMaskPixelSize.height,
+                                                     maskPixelSize.width,
+                                                     maskPixelSize.height,
                                                      8,
-                                                     invertedMaskPixelSize.width * 4,
+                                                     maskPixelSize.width * 4,
                                                      colorSpace,
                                                      kCGImageAlphaPremultipliedLast);
     CGColorSpaceRelease(colorSpace);
     
-    //Render the inverted mask by drawing the original mask into our temporary context and then XORing the result.
-    CGRect relativeMaskRect = CGRectMake((maskRect.origin.x - invertedMaskRect.origin.x) * pointSize.width,
-                                         (maskRect.origin.y - invertedMaskRect.origin.y) * pointSize.height,
-                                         maskRect.size.width * pointSize.width,
-                                         maskRect.size.height * pointSize.height);
+    CGRect relativeMaskRect = CGRectMake((imageRect.origin.x - maskRect.origin.x) * pointSize.width,
+                                         (imageRect.origin.y - maskRect.origin.y) * pointSize.height,
+                                         imageRect.size.width * pointSize.width,
+                                         imageRect.size.height * pointSize.height);
     
-    CGContextDrawImage(maskContext, relativeMaskRect, imageMask);
+    CGContextDrawImage(maskContext, relativeMaskRect, baseImage);
+    //Grab our first mask image, which is just the original image with padding.
+    CGImageRef imageMask = CGBitmapContextCreateImage(maskContext);
+    
+    //Now invert the colors in the context and grab another image, which will be our inverse mask.
     CGContextSetBlendMode(maskContext, kCGBlendModeXOR);
     CGContextSetRGBFillColor(maskContext, 1.0, 1.0, 1.0, 1.0);
-    CGContextFillRect(maskContext, CGRectMake(0, 0, invertedMaskPixelSize.width, invertedMaskPixelSize.height));
+    CGContextFillRect(maskContext, CGRectMake(0, 0, maskPixelSize.width, maskPixelSize.height));
     CGImageRef invertedImageMask = CGBitmapContextCreateImage(maskContext);
     
 
@@ -216,15 +232,15 @@
             //So, we draw that image wayyy off the top of the canvas, and offset the shadow far enough that
             //it lands in the expected position.
             
-            CGRect imageOffset = CGRectOffset(maskRect, 0, invertedMaskRect.size.height);
+            CGRect imageOffset = CGRectOffset(maskRect, 0, maskRect.size.height);
             CGSize shadowOffset = CGSizeMake(dropShadow.shadowOffset.width,
-                                             dropShadow.shadowOffset.height - invertedMaskRect.size.height);
+                                             dropShadow.shadowOffset.height - maskRect.size.height);
             
             CGFloat components[dropShadow.shadowColor.numberOfComponents];
             [dropShadow.shadowColor getComponents: components];
             CGColorRef shadowColor = CGColorCreate(dropShadow.shadowColor.colorSpace.CGColorSpace, components);
             
-            CGContextClipToMask(cgContext, invertedMaskRect, invertedImageMask);
+            CGContextClipToMask(cgContext, maskRect, invertedImageMask);
             CGContextSetShadowWithColor(cgContext, shadowOffset, dropShadow.shadowBlurRadius, shadowColor);
             CGContextDrawImage(cgContext, imageOffset, imageMask);
             
@@ -253,9 +269,9 @@
             if (innerShadow)
             {
                 //See dropShadow note above about offsets.
-                CGRect imageOffset = CGRectOffset(invertedMaskRect, 0, invertedMaskRect.size.height);
+                CGRect imageOffset = CGRectOffset(maskRect, 0, maskRect.size.height);
                 CGSize shadowOffset = CGSizeMake(innerShadow.shadowOffset.width,
-                                                 innerShadow.shadowOffset.height - invertedMaskRect.size.height);
+                                                 innerShadow.shadowOffset.height - maskRect.size.height);
                 
                 CGFloat components[innerShadow.shadowColor.numberOfComponents];
                 [innerShadow.shadowColor getComponents: components];
@@ -270,6 +286,7 @@
     }
     
     CGContextRelease(maskContext);
+    CGImageRelease(imageMask);
     CGImageRelease(invertedImageMask);
 }
 

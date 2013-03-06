@@ -119,8 +119,29 @@
 {   
     NSRect insetFrame = [self imageRectForBounds: frame];
     
+    NSImageAlignment alignment;
+    
+    switch (self.imagePosition)
+    {
+        case NSImageOnly:
+        case NSImageOverlaps:
+            alignment = NSImageAlignCenter;
+            break;
+        case NSImageLeft:
+            alignment = NSImageAlignLeft;
+            break;
+        case NSImageRight:
+            alignment = NSImageAlignRight;
+            break;
+        case NSImageAbove:
+            alignment = NSImageAlignTop;
+        case NSNoImage:
+        default:
+            return NSZeroRect;
+    }
+    
     NSRect imageFrame = [image imageRectAlignedInRect: insetFrame
-                                            alignment: NSImageAlignCenter
+                                            alignment: alignment
                                               scaling: self.imageScaling];
     
     return imageFrame;

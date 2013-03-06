@@ -71,6 +71,12 @@
 
 - (NSRect) expandedRectForShadow: (NSRect)origRect flipped: (BOOL)flipped
 {
+    NSRect shadowRect = [self shadowedRect: origRect flipped: flipped];
+    return NSUnionRect(origRect, shadowRect);
+}
+
+- (NSRect) shadowedRect: (NSRect)origRect flipped: (BOOL)flipped
+{
     CGFloat radius  = self.shadowBlurRadius;
     NSSize offset   = self.shadowOffset;
     
@@ -78,9 +84,31 @@
         offset.height = -offset.height;
     
     NSRect shadowRect = NSInsetRect(origRect, -radius, -radius);
-    shadowRect = NSOffsetRect(shadowRect, offset.width, offset.height);
+    return NSOffsetRect(shadowRect, offset.width, offset.height);
+}
+
+- (NSRect) rectToCastShadow: (NSRect)origRect flipped: (BOOL)flipped
+{
+    CGFloat radius  = self.shadowBlurRadius;
+    NSSize offset   = self.shadowOffset;
     
-    return NSUnionRect(origRect, shadowRect);
+    if (flipped)
+        offset.height = -offset.height;
+    
+    NSRect shadowRect = NSInsetRect(origRect, radius, radius);
+    return NSOffsetRect(shadowRect, -offset.width, -offset.height);
+}
+
+- (NSRect) rectToCastInnerShadow: (NSRect)origRect flipped: (BOOL)flipped
+{
+    CGFloat radius  = self.shadowBlurRadius;
+    NSSize offset   = self.shadowOffset;
+    
+    if (flipped)
+        offset.height = -offset.height;
+    
+    NSRect shadowRect = NSInsetRect(origRect, -radius, -radius);
+    return NSOffsetRect(shadowRect, -offset.width, -offset.height);
 }
 
 @end

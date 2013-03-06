@@ -55,4 +55,16 @@
 //and needs the total region that will be drawn including the shadow.
 - (NSRect) expandedRectForShadow: (NSRect)origRect flipped: (BOOL)flipped;
 
+//Returns the area that will be filled if the specified rect cast this shadow.
+//If flipped is YES, the offset rect will be calculated as if it will be used
+//in a flipped coordinate system.
+- (NSRect) shadowedRect: (NSRect)origRect flipped: (BOOL)flipped;
+
+//The inverse of the above: returns the rect that would be needed to produce
+//a shadow in the specified area.
+- (NSRect) rectToCastShadow: (NSRect)origRect flipped: (BOOL)flipped;
+
+//The rectangle needed to draw an inner shadow in the specified area.
+- (NSRect) rectToCastInnerShadow: (NSRect)origRect flipped: (BOOL)flipped;
+
 @end

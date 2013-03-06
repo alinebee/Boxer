@@ -926,7 +926,8 @@
         //Once reversion is completed, restart the session to complete the operation.
         if (reverted)
         {
-            [self restartShowingLaunchPanel: NO];
+            //Tweak: clear the last-launched program so that we return the user to the launch panel.
+            [self restartShowingLaunchPanel: YES];
         }
         
         //If reversion failed, tell the user the reason and restart the app afterward.

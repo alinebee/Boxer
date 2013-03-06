@@ -286,36 +286,36 @@
 
 - (void) drawImage: (NSImage *)image withFrame: (NSRect)frame inView: (NSView *)controlView
 {
-    NSRect imageRect = [self imageRectForImage: image
-                                     forBounds: frame];
-    
-    NSColor *tint;
+    NSGradient *fill;
     
     if (self.isHighlighted)
     {
-        tint = [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.7];
+        fill = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.6]
+                                              endingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.4]] autorelease];
     }
     else
     {
-        tint = [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.6];
+        fill = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.3]
+                                              endingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.4]] autorelease];
     }
     
     NSColor *indentColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.33f];
     NSShadow *indent = [NSShadow shadowWithBlurRadius: 1.0
-                                               offset: NSMakeSize(0, -1.0f)
+                                               offset: NSMakeSize(0, -1.0)
                                                 color: indentColor];
     
-    NSImage *tintedImage = [image imageFilledWithColor: tint atSize: imageRect.size];
-        
-    [NSGraphicsContext saveGraphicsState];
-        [indent set];
-        [tintedImage drawInRect: imageRect
-                       fromRect: NSZeroRect
-                      operation: NSCompositeSourceOver
-                       fraction: 1.0f
-                 respectFlipped: YES
-                          hints: nil];
-    [NSGraphicsContext restoreGraphicsState];
+    NSShadow *innerShadow = [NSShadow shadowWithBlurRadius: 1.0
+                                                    offset: NSMakeSize(0, -1.0)
+                                                     color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]];
+    
+    NSRect imageRect = [self imageRectForImage: image
+                                     forBounds: frame];
+    
+    [image drawInRect: imageRect
+         withGradient: fill
+           dropShadow: indent
+          innerShadow: innerShadow
+       respectFlipped: YES];
 }
 
 @end

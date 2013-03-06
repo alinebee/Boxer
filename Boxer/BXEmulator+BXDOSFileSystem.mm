@@ -1267,7 +1267,18 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     
     NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
     NSString *logicalPath = [filesystem logicalPathForLocalFileURL: localURL];
-    return [drive.filesystem openFileAtPath: logicalPath inMode: mode error: NULL];
+    
+    NSError *openError = nil;
+    FILE * file = [drive.filesystem openFileAtPath: logicalPath inMode: mode error: &openError];
+    if (!file)
+    {
+        //NSLog(@"Open of file %@ (%@) in mode %s failed, error: %@", logicalPath, localURL, mode, openError);
+    }
+    else
+    {
+        //NSLog(@"Opened %@ (%@) in mode %s", logicalPath, localURL, mode);
+    }
+    return file;
 }
 
 - (BOOL) _removeFileAtLocalPath: (const char *)path
@@ -1280,7 +1291,18 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     
     NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
     NSString *logicalPath = [filesystem logicalPathForLocalFileURL: localURL];
-    return [drive.filesystem removeItemAtPath: logicalPath error: NULL];
+    
+    NSError *removeError = nil;
+    BOOL removed = [drive.filesystem removeItemAtPath: logicalPath error: &removeError];
+    if (!removed)
+    {
+        //NSLog(@"Removal of %@ (%@) failed, error: %@", logicalPath, localURL, removeError);
+    }
+    else
+    {
+        //NSLog(@"Removal of %@ (%@) succeeded.", logicalPath, localURL);
+    }
+    return removed;
 }
 
 - (BOOL) _moveLocalPath: (const char *)sourcePath
@@ -1297,7 +1319,19 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     NSString *logicalSourcePath = [filesystem logicalPathForLocalFileURL: localSourceURL];
     NSString *logicalDestinationPath = [filesystem logicalPathForLocalFileURL: localDestinationURL];
     
-    return [filesystem moveItemAtPath: logicalSourcePath toPath: logicalDestinationPath error: NULL];
+    NSError *moveError = nil;
+    BOOL moved = [filesystem moveItemAtPath: logicalSourcePath toPath: logicalDestinationPath error: &moveError];
+    /*
+    if (!moved)
+    {
+        NSLog(@"Move of %@ (%@) to %@ (%@) failed, error: %@", logicalSourcePath, localSourceURL, logicalDestinationPath, localDestinationURL, moveError);
+    }
+    else
+    {
+        NSLog(@"Move of %@ (%@) to %@ (%@) succeeded.", logicalSourcePath, localSourceURL, logicalDestinationPath, localDestinationURL);
+    }
+     */
+    return moved;
 }
 
 - (BOOL) _createDirectoryAtLocalPath: (const char *)path
@@ -1310,9 +1344,22 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     
     NSURL *localURL         = [NSURL URLFromFileSystemRepresentation: path];
     NSString *logicalPath   = [filesystem logicalPathForLocalFileURL: localURL];
-    return [filesystem createDirectoryAtPath: logicalPath
-                 withIntermediateDirectories: NO
-                                       error: NULL];
+
+    NSError *createError = nil;
+    BOOL created = [filesystem createDirectoryAtPath: logicalPath
+                         withIntermediateDirectories: NO
+                                               error: &createError];
+    /*
+    if (!created)
+    {
+        NSLog(@"Creation of directory at %@ (%@) failed, error: %@", logicalPath, localURL, createError);
+    }
+    else
+    {
+        NSLog(@"Creation of directory at %@ (%@) succeeded.", logicalPath, localURL);
+    }
+     */
+    return created;
 }
 
 - (BOOL) _removeDirectoryAtLocalPath: (const char *)path
@@ -1325,7 +1372,20 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     
     NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
     NSString *logicalPath = [filesystem logicalPathForLocalFileURL: localURL];
-    return [filesystem removeItemAtPath: logicalPath error: NULL];
+    
+    NSError *removeError = nil;
+    BOOL removed = [drive.filesystem removeItemAtPath: logicalPath error: &removeError];
+    /*
+    if (!removed)
+    {
+        NSLog(@"Removal of %@ (%@) failed, error: %@", logicalPath, localURL, removeError);
+    }
+    else
+    {
+        NSLog(@"Removal of %@ (%@) succeeded.", logicalPath, localURL);
+    }
+     */
+    return removed;
 }
 
 - (BOOL) _getStats: (struct stat *)outStatus
@@ -1340,17 +1400,24 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     //Round-trip the path in case the filesystem remaps it to a different file location
     NSURL *localURL         = [NSURL URLFromFileSystemRepresentation: path];
     NSString *logicalPath   = [filesystem logicalPathForLocalFileURL: localURL];
-    NSURL *resolvedURL      = [filesystem localFileURLForLogicalPath: logicalPath];
     
-    const char *filesystemPath = resolvedURL.fileSystemRepresentation;
-    if (filesystemPath)
+    //TWEAK: ensure that the file actually exists at that path before statting it.
+    //That way we won't return stats blocks for files that are ostensibly deleted.
+    //TODO: move the stats retrieval upstream into the filesystem classes where they
+    //can make that call themselves; OR replace the entire downstream localDrive API
+    //to avoid the need for all this bullshit.
+    if ([filesystem fileExistsAtPath: logicalPath isDirectory: NULL])
     {
-        return stat(filesystemPath, outStatus) == 0;
+        NSURL *resolvedURL = [filesystem localFileURLForLogicalPath: logicalPath];
+        const char *filesystemPath = resolvedURL.fileSystemRepresentation;
+        
+        //NSLog(@"Getting stats block for %@ (%@)", logicalPath, resolvedURL);
+        if (filesystemPath)
+        {
+            return stat(filesystemPath, outStatus) == 0;
+        }
     }
-    else
-    {
-        return NO;
-    }
+    return NO;
 }
 
 - (BOOL) _localDirectoryExists: (const char *)path
@@ -1364,7 +1431,11 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     BOOL isDirectory;
     NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
     NSString *logicalPath = [filesystem logicalPathForLocalFileURL: localURL];
-    return [filesystem fileExistsAtPath: logicalPath isDirectory: &isDirectory] && isDirectory;
+    
+    BOOL exists = [filesystem fileExistsAtPath: logicalPath isDirectory: &isDirectory];
+    //NSLog(@"Checking existence of %@ (%@), exists: %i is directory: %i", localURL, logicalPath, exists, exists && isDirectory);
+    
+    return (exists && isDirectory);
 }
 
 - (BOOL) _localFileExists: (const char *)path
@@ -1378,7 +1449,11 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     BOOL isDirectory;
     NSURL *localURL = [NSURL URLFromFileSystemRepresentation: path];
     NSString *logicalPath = [filesystem logicalPathForLocalFileURL: localURL];
-    return [filesystem fileExistsAtPath: logicalPath isDirectory: &isDirectory] && !isDirectory;
+    
+    BOOL exists = [filesystem fileExistsAtPath: logicalPath isDirectory: &isDirectory];
+    //NSLog(@"Checking existence of %@ (%@), exists: %i is directory: %i", localURL, logicalPath, exists, exists && isDirectory);
+    
+    return (exists && !isDirectory);
 }
 
 - (id <ADBFilesystemLocalFileURLEnumeration>) _directoryEnumeratorForLocalPath: (const char *)path

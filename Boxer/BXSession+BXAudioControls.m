@@ -51,15 +51,11 @@
 - (id <BXMIDIDevice>) MIDIDeviceForEmulator: (BXEmulator *)theEmulator
                          meetingDescription: (NSDictionary *)description
 {
-    //TODO: make this method handle errors properly, or at least log them.
-    id <BXMIDIDevice> device;
-    
     //Defaults to BXMIDIMusicAutodetect if unspecified.
     BXMIDIMusicType musicType = [[description objectForKey: BXMIDIMusicTypeKey] integerValue];
     
     //Defaults to NO if unspecified.
     BOOL preferExternal = [[description objectForKey: BXMIDIPreferExternalKey] boolValue];
-    
     
     //Check if the device the emulator is already using is a suitable match,
     //and just return that if so.
@@ -88,19 +84,21 @@
         //whatever the game plays.
         
         Class deviceClass = (needsMT32Delays) ? [BXExternalMT32 class] : [BXExternalMIDIDevice class];
+        
+        BXExternalMIDIDevice *externalDevice;
         if (uniqueID)
         {
-            device = [[deviceClass alloc] initWithDestinationAtUniqueID: uniqueID error: NULL];
+            externalDevice = [[[deviceClass alloc] initWithDestinationAtUniqueID: uniqueID error: NULL] autorelease];
         }
         //If neither unique ID nor destination index were specified, we'll implicitly
         //fall back on a destination index of 0 (i.e. the first destination we can find.)
         else
         {
-            device = [[deviceClass alloc] initWithDestinationAtIndex: destinationIndex error: NULL];
+            externalDevice = [[[deviceClass alloc] initWithDestinationAtIndex: destinationIndex error: NULL] autorelease];
         }
         
-        if (device)
-            return [device autorelease];
+        if (externalDevice)
+            return externalDevice;
         
         //If we cannot connect to an external MIDI device, keep going and
         //fall back on internal MIDI devices.
@@ -111,21 +109,25 @@
     if (musicType == BXMIDIMusicMT32)
     {
         NSArray *deviceIDs = [[NSApp delegate] MIDIDeviceMonitor].discoveredMT32s;
+        
         for (NSNumber *deviceID in deviceIDs)
         {
-            device = [[BXExternalMT32 alloc] initWithDestinationAtUniqueID: (MIDIUniqueID)deviceID.integerValue
-                                                                     error: NULL];
+            BXExternalMT32 *externalMT32 = [[[BXExternalMT32 alloc] initWithDestinationAtUniqueID: (MIDIUniqueID)deviceID.integerValue
+                                                                                      error: NULL] autorelease];
             
-            if (device) return [device autorelease];
+            if (externalMT32)
+                return externalMT32;
         }
         
         NSError *emulatedMT32Error = nil;
-        device = [[BXEmulatedMT32 alloc] initWithPCMROM: [[NSApp delegate] pathToMT32PCMROM]
-                                             controlROM: [[NSApp delegate] pathToMT32ControlROM]
-                                               delegate: theEmulator
-                                                  error: &emulatedMT32Error];
+        BXEmulatedMT32 *emulatedMT32 = [[[BXEmulatedMT32 alloc] initWithPCMROM: [[NSApp delegate] pathToMT32PCMROM]
+                                                                    controlROM: [[NSApp delegate] pathToMT32ControlROM]
+                                                                      delegate: theEmulator
+                                                                         error: &emulatedMT32Error] autorelease];
         
-        if (device) return [device autorelease];
+        if (emulatedMT32)
+            return emulatedMT32;
+        
         else if (emulatedMT32Error)
         {
             //If we don't have the ROMs for MT-32 emulation, warn the user
@@ -148,16 +150,25 @@
     //fall back on the good old reliable OS X MIDI synth.
     //Reuse the emulator's existing one if available, otherwise create
     //a new one.
+    BXMIDISynth *fallbackSynth;
     if ([self.emulator.activeMIDIDevice isKindOfClass: [BXMIDISynth class]])
     {
-        return self.emulator.activeMIDIDevice;
+        fallbackSynth = self.emulator.activeMIDIDevice;
     }
     else
     {
-        //TODO: assert upon error.
-        device = [[BXMIDISynth alloc] initWithError: NULL];
-        return [device autorelease];
+        fallbackSynth = [[[BXMIDISynth alloc] initWithError: NULL] autorelease];
     }
+    
+    //If a custom soundfont has been specified for the MIDI synth, load that now also.
+    NSString *soundfontPath = [[NSUserDefaults standardUserDefaults] objectForKey: @"MIDISoundFontPath"];
+    if (soundfontPath)
+    {
+        [fallbackSynth loadSoundFontWithContentsOfURL: [NSURL fileURLWithPath: soundfontPath]
+                                                error: NULL];
+    }
+    
+    return fallbackSynth;
 }
 
 - (BOOL) MIDIDevice: (id <BXMIDIDevice>)device meetsDescription: (NSDictionary *)description

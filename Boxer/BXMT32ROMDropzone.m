@@ -82,7 +82,7 @@
     self.titleLayer.font            = (__bridge CFTypeRef)([NSFont boldSystemFontOfSize: 0]);
     self.titleLayer.fontSize        = 16.0f;
     
-    self.titleLayer.shadowOffset = CGSizeMake(0, -1.0f);
+    self.titleLayer.shadowOffset = CGSizeMake(0, 1.0f);
     self.titleLayer.shadowRadius = 3.0f;
     self.titleLayer.shadowOpacity = 0.75f;
     
@@ -107,7 +107,7 @@
         CATransition *fade = [CATransition animation];
         fade.type = kCATransitionFade;
         fade.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionEaseIn];
-        fade.duration = 0.5;
+        fade.duration = 0.33;
         
         return fade;
     }
@@ -134,8 +134,8 @@
 - (void) _syncDisplayedDevice
 {
     [CATransaction begin];
-        self.CM32LLayer.hidden      = !(self.ROMType == BXMT32ROMTypeCM32L);
-        self.MT32Layer.hidden       = !(self.ROMType == BXMT32ROMTypeMT32);
+        self.CM32LLayer.hidden      = !(self.ROMType & BXMT32ROMIsCM32L);
+        self.MT32Layer.hidden       = !(self.ROMType & BXMT32ROMIsMT32);
         self.highlightLayer.hidden  = !(self.ROMType == BXMT32ROMTypeUnknown && self.isHighlighted);
     [CATransaction commit];
     

@@ -11,19 +11,16 @@
 #import "MT32Emu/FileStream.h"
 #import "BXEmulatedMT32Delegate.h"
 #import "NSError+ADBErrorHelpers.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 
 
 #pragma mark -
 #pragma mark Private constants
 
 NSString * const BXEmulatedMT32ErrorDomain = @"BXEmulatedMT32ErrorDomain";
-NSString * const BXMT32ControlROMTypeKey = @"BXMT32ControlROMTypeKey";
-NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMTypeKey";
+NSString * const BXMT32ControlROMTypeKey = @"BXMT32ControlROMType";
+NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMType";
 
-
-#define BXMT32ControlROMSize    64 * 1024
-#define BXMT32PCMROMSize        512 * 1024
-#define BXCM32LPCMROMSize       1024 * 1024
 #define BXMT32DefaultSampleRate 32000
 
 
@@ -44,184 +41,87 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMTypeKey";
 
 @implementation BXEmulatedMT32
 @synthesize delegate = _delegate;
-@synthesize PCMROMPath = _PCMROMPath;
-@synthesize controlROMPath = _controlROMPath;
+@synthesize PCMROMURL = _PCMROMURL;
+@synthesize controlROMURL = _controlROMURL;
 @synthesize synthError = _synthError;
 @synthesize sampleRate = _sampleRate;
 
 
-#pragma mark -
-#pragma mark ROM validation methods
+#pragma mark - ROM validation methods
 
-+ (unsigned long long) PCMSizeForROMType: (BXMT32ROMType)ROMType
++ (BXMT32ROMType) typeOfROMAtURL: (NSURL *)URL
+                           error: (out NSError **)outError
 {
-    if (ROMType == BXMT32ROMTypeCM32L)
-        return BXCM32LPCMROMSize;
-    else
-        return BXMT32PCMROMSize;
-}
-
-+ (BXMT32ROMType) typeOfControlROMAtPath: (NSString *)path
-                                   error: (NSError **)outError
-{
-    if (outError) *outError = nil;
-    
-    if (!path)
+    BOOL exists = [URL checkResourceIsReachableAndReturnError: NULL];
+    if (!exists)
     {
         if (outError)
         {
-            *outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
-                                            code: BXEmulatedMT32MissingROM
-                                        userInfo: nil];
+            NSDictionary *userInfo = nil;
+            if (URL) userInfo = @{ NSURLErrorKey: URL };
+			*outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
+											code: BXEmulatedMT32MissingROM
+										userInfo: userInfo];
         }
         return BXMT32ROMTypeUnknown;
     }
     
-    NSFileHandle *file = [NSFileHandle fileHandleForReadingAtPath: path];
-	
-	//File could not be opened for reading, bail out
-	if (!file)
-	{
-		if (outError)
-		{
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject: path
-                                                                 forKey: NSFilePathErrorKey];
+    MT32Emu::FileStream *file = new MT32Emu::FileStream();
+    bool opened = file->open(URL.fileSystemRepresentation);
+    if (!opened)
+    {
+        NSLog(@"Could not open ROM at %@", URL);
+        delete file;
+        if (outError)
+        {
 			*outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
 											code: BXEmulatedMT32CouldNotReadROM
-										userInfo: userInfo];
-		}
-		return BXMT32ROMTypeUnknown;
-	}
-
-    @try
-    {
-        //Measure how large the control ROM is
-        [file seekToEndOfFile];
-        unsigned long long fileSize = file.offsetInFile;
-        [file seekToFileOffset: 0];
-        
-        //If the file matches our expected size for control ROMs, check what ROM type it is
-        if (fileSize == BXMT32ControlROMSize)
-        {
-            NSString *ROMProfilePath = [[NSBundle mainBundle] pathForResource: @"MT32ROMTypes" ofType: @"plist"];
-            NSArray *ROMProfiles = [NSArray arrayWithContentsOfFile: ROMProfilePath];
-            
-            for (NSDictionary *profile in ROMProfiles)
-            {
-                NSData *nameBytes = [[profile objectForKey: @"name"] dataUsingEncoding: NSASCIIStringEncoding];
-                NSUInteger nameOffset = [[profile objectForKey: @"nameOffset"] unsignedIntegerValue];
-                
-                [file seekToFileOffset: nameOffset];
-                NSData *bytesInROM = [file readDataOfLength: nameBytes.length];
-                
-                if ([bytesInROM isEqualToData: nameBytes])
-                    return [[profile objectForKey: @"type"] unsignedIntegerValue];
-            }
+										userInfo: @{ NSURLErrorKey: URL }];
         }
-    }
-    //If we couldn't read data at any point, then bail out with an error. 
-    @catch (NSException *exception)
-    {
-        if (outError)
-		{
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject: path forKey: NSFilePathErrorKey];
-			*outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
-											code: BXEmulatedMT32CouldNotReadROM
-										userInfo: userInfo];
-		}
         return BXMT32ROMTypeUnknown;
     }
     
-    //If we got this far, the control ROM was the wrong size or not recognised as any of our known types.
-    if (outError)
+    const MT32Emu::ROMInfo *info = MT32Emu::ROMInfo::getROMInfo(file);
+    if (info == NULL)
     {
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject: path
-                                                             forKey: NSFilePathErrorKey];
-        
-        *outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
-                                        code: BXEmulatedMT32InvalidROM
-                                    userInfo: userInfo];
+        NSLog(@"No matching ROM type found for %@", URL);
+        delete file;
+        if (outError)
+        {
+			*outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
+											code: BXEmulatedMT32InvalidROM
+										userInfo: @{ NSURLErrorKey: URL }];
+        }
+        return BXMT32ROMTypeUnknown;
     }
-    return nil;
+    
+    BOOL isControlROM = (info->type == MT32Emu::ROMInfo::Control);
+    BOOL isCM32L = (strstr(info->shortName, "cm32l") != NULL);
+    
+    BXMT32ROMType type = (isControlROM ? BXMT32ROMIsControl : BXMT32ROMIsPCM);
+    type |= (isCM32L ? BXMT32ROMIsCM32L : BXMT32ROMIsMT32);
+    
+    delete file;
+    MT32Emu::ROMInfo::freeROMInfo(info);
+    
+    return type;
 }
 
-+ (BXMT32ROMType) typeOfPCMROMAtPath: (NSString *)path
-                               error: (NSError **)outError
-{
-    if (outError) *outError = nil;
-    
-    if (!path)
-    {
-        if (outError)
-        {
-            *outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
-                                            code: BXEmulatedMT32MissingROM
-                                        userInfo: nil];
-        }
-        return BXMT32ROMTypeUnknown;
-    }
-    
-    NSFileHandle *file = [NSFileHandle fileHandleForReadingAtPath: path];
-	
-	//File could not be opened for reading, bail out
-	if (!file)
-	{
-		if (outError)
-		{
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject: path forKey: NSFilePathErrorKey];
-			*outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
-											code: BXEmulatedMT32CouldNotReadROM
-										userInfo: userInfo];
-		}
-		return BXMT32ROMTypeUnknown;
-	}
-    
-    //Measure how large the file is, to determine what type of ROM it should be.
-    //(It would be nice if we had a more authoritative heuristic than this, but
-    //that's all MT32Emu::Synth uses to determine ROM viability.)
-    
-    [file seekToEndOfFile];
-    unsigned long long fileSize = file.offsetInFile;
-    [file seekToFileOffset: 0];
-    
-    if (fileSize == BXMT32PCMROMSize)
-        return BXMT32ROMTypeMT32;
-    else if (fileSize == BXCM32LPCMROMSize)
-        return BXMT32ROMTypeCM32L;
-    else
-    {
-        if (outError)
-        {
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject: path forKey: NSFilePathErrorKey];
-            *outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
-                                            code: BXEmulatedMT32InvalidROM
-                                        userInfo: userInfo];
-        }
-        return BXMT32ROMTypeUnknown;
-    } 
-}
-
-+ (BXMT32ROMType) typeofROMPairWithControlROMPath: (NSString *)controlROMPath
-                                       PCMROMPath: (NSString *)PCMROMPath 
-                                            error: (NSError **)outError
++ (BXMT32ROMType) typeOfROMPairWithControlROMURL: (NSURL *)controlROMURL
+                                       PCMROMURL: (NSURL *)PCMROMURL
+                                           error: (out NSError **)outError
 {
     NSError *controlError = nil, *PCMError = nil;
     
     //Validate both ROMs individually.
-    BXMT32ROMType controlType   = [self typeOfControlROMAtPath: controlROMPath
-                                                         error: (outError) ? &controlError : NULL];
+    BXMT32ROMType controlType   = [self typeOfROMAtURL: controlROMURL error: &controlError];
+    BXMT32ROMType PCMType       = [self typeOfROMAtURL: PCMROMURL error: &PCMError];
     
-    BXMT32ROMType PCMType       = [self typeOfPCMROMAtPath: PCMROMPath
-                                                     error: (outError) ? &PCMError : NULL];
-    
-    //If the ROM types could be determined and did match, we have a winner
-    if (controlType != BXMT32ROMTypeUnknown && controlType == PCMType) return controlType;
-    
-    //Otherwise, work out what went wrong
-    else
+    //If either type could not be determined, bail out now.
+    if (controlType == BXMT32ROMTypeUnknown || PCMType == BXMT32ROMTypeUnknown)
     {
         if (outError)
-        {   
+        {
             //If one or the other ROM was invalid, then treat that as the canonical error.
             if ([controlError matchesDomain: BXEmulatedMT32ErrorDomain code: BXEmulatedMT32InvalidROM])
                 *outError = controlError;
@@ -229,43 +129,74 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMTypeKey";
             else if ([PCMError matchesDomain: BXEmulatedMT32ErrorDomain code: BXEmulatedMT32InvalidROM])
                 *outError = PCMError;
             
-            //Otherwise, return the first error we got.
+            //Otherwise, return the first error we got from the check.
             else if (controlError)
                 *outError = controlError;
             
             else if (PCMError)
                 *outError = PCMError;
-            
-            //If there were no actual errors, but the ROM types didn't match,
-            //then flag this as a mismatch.
-            else
-            {
-                NSDictionary *userInfo = @{BXMT32ControlROMTypeKey: @(controlType),
-                                           BXMT32PCMROMTypeKey: @(PCMType)};
-                
-                *outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
-                                                code: BXEmulatedMT32MismatchedROMs
-                                            userInfo: userInfo];
-            }
         }
         return BXMT32ROMTypeUnknown;
     }
+    
+    //If either ROM was not the expected type, bail out also.
+    else if (!(controlType & BXMT32ROMIsControl))
+    {
+        if (outError)
+        {
+			*outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
+											code: BXEmulatedMT32InvalidROM
+										userInfo: @{ NSURLErrorKey: controlROMURL }];
+        }
+        return BXMT32ROMTypeUnknown;
+    }
+    
+    if (!(PCMType & BXMT32ROMIsPCM))
+    {
+        if (outError)
+        {
+			*outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
+											code: BXEmulatedMT32InvalidROM
+										userInfo: @{ NSURLErrorKey: controlROMURL }];
+        }
+        return BXMT32ROMTypeUnknown;
+    }
+    
+    //Finally, check if both ROMs were from the same model of MT-32.
+    BOOL controlIsCM32L = (controlType & BXMT32ROMIsCM32L) == BXMT32ROMIsCM32L;
+    BOOL PCMIsCM32L = (PCMType & BXMT32ROMIsCM32L) == BXMT32ROMIsCM32L;
+    if (controlIsCM32L != PCMIsCM32L)
+    {
+        if (outError)
+        {
+            NSDictionary *userInfo = @{BXMT32ControlROMTypeKey: @(controlType),
+                                       BXMT32PCMROMTypeKey: @(PCMType)};
+            
+            *outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
+                                            code: BXEmulatedMT32MismatchedROMs
+                                        userInfo: userInfo];
+        }
+        return BXMT32ROMTypeUnknown;
+    }
+    
+    //If we got this far, both ROMs are a valid pair.
+    return (controlIsCM32L) ? BXMT32ROMIsCM32L : BXMT32ROMIsMT32;
 }
 
 
 #pragma mark -
 #pragma mark Initialization and deallocation
 
-- (id <BXMIDIDevice>) initWithPCMROM: (NSString *)PCMROM
-                          controlROM: (NSString *)controlROM
+- (id <BXMIDIDevice>) initWithPCMROM: (NSURL *)PCMROMURL
+                          controlROM: (NSURL *)controlROMURL
                             delegate: (id <BXEmulatedMT32Delegate>)delegate
                                error: (NSError **)outError
 {
     self = [self init];
     if (self)
     {
-        self.PCMROMPath = PCMROM;
-        self.controlROMPath = controlROM;
+        self.PCMROMURL = PCMROMURL;
+        self.controlROMURL = controlROMURL;
         self.sampleRate = BXMT32DefaultSampleRate;
         self.delegate = delegate;
         
@@ -315,8 +246,8 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMTypeKey";
     [self close];
     
     self.synthError = nil;
-    self.PCMROMPath = nil;
-    self.controlROMPath = nil;
+    self.PCMROMURL = nil;
+    self.controlROMURL = nil;
     
     [super dealloc];
 }
@@ -403,7 +334,7 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMTypeKey";
 - (BOOL) _prepareMT32EmulatorWithError: (NSError **)outError
 {
     //Bail out early if we haven't been told where to find the necessary ROMs
-    if (!self.PCMROMPath || !self.controlROMPath)
+    if (!self.PCMROMURL || !self.controlROMURL)
     {
         if (outError)
         {
@@ -419,10 +350,10 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMTypeKey";
     _synth = new MT32Emu::Synth(_reportHandler);
     
     _PCMROMHandle = new MT32Emu::FileStream();
-    _PCMROMHandle->open(self.PCMROMPath.fileSystemRepresentation);
+    _PCMROMHandle->open(self.PCMROMURL.fileSystemRepresentation);
     
     _controlROMHandle = new MT32Emu::FileStream();
-    _controlROMHandle->open(self.controlROMPath.fileSystemRepresentation);
+    _controlROMHandle->open(self.controlROMURL.fileSystemRepresentation);
     
     _controlROMImage = MT32Emu::ROMImage::makeROMImage(_controlROMHandle);
     _PCMROMImage = MT32Emu::ROMImage::makeROMImage(_PCMROMHandle);
@@ -449,10 +380,10 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMTypeKey";
 
 void BXEmulatedMT32ReportHandler::onErrorControlROM()
 {
-    NSString *ROMPath = _delegate.controlROMPath;
+    NSURL *URL = _delegate.controlROMURL;
     NSDictionary *userInfo = nil;
-    if (ROMPath)
-        userInfo = @{ NSFilePathErrorKey: ROMPath };
+    if (URL)
+        userInfo = @{ NSURLErrorKey: URL };
     
     _delegate.synthError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
                                                code: BXEmulatedMT32InvalidROM
@@ -461,10 +392,10 @@ void BXEmulatedMT32ReportHandler::onErrorControlROM()
 
 void BXEmulatedMT32ReportHandler::onErrorPCMROM()
 {
-    NSString *ROMPath = _delegate.PCMROMPath;
+    NSURL *URL = _delegate.PCMROMURL;
     NSDictionary *userInfo = nil;
-    if (ROMPath)
-        userInfo = @{ NSFilePathErrorKey: ROMPath };
+    if (URL)
+        userInfo = @{ NSURLErrorKey: URL };
     
     _delegate.synthError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
                                                code: BXEmulatedMT32InvalidROM

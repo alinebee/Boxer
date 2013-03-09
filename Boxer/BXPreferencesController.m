@@ -59,12 +59,12 @@
     
     //Listen for changes to the ROMs so that we can set the correct device in the ROM dropzone.
     [[NSApp delegate] addObserver: self
-                       forKeyPath: @"pathToMT32ControlROM"
+                       forKeyPath: @"MT32ControlROMURL"
                           options: 0
                           context: nil];
     
     [[NSApp delegate] addObserver: self
-                       forKeyPath: @"pathToMT32PCMROM"
+                       forKeyPath: @"MT32PCMROMURL"
                           options: 0
                           context: nil];
     
@@ -107,8 +107,8 @@
     
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     [[NSApp delegate] removeObserver: self forKeyPath: @"MIDIDeviceMonitor.discoveredMT32s"];
-    [[NSApp delegate] removeObserver: self forKeyPath: @"pathToMT32ControlROM"];
-    [[NSApp delegate] removeObserver: self forKeyPath: @"pathToMT32PCMROM"];
+    [[NSApp delegate] removeObserver: self forKeyPath: @"MT32ControlROMURL"];
+    [[NSApp delegate] removeObserver: self forKeyPath: @"MT32PCMROMURL"];
     
 	[self.currentGamesFolderItem unbind: @"attributedTitle"];
 	
@@ -134,7 +134,7 @@
 	{
 		[self syncFilterControls];
 	}
-    else if ([keyPath isEqualToString: @"pathToMT32ControlROM"] || [keyPath isEqualToString: @"pathToMT32PCMROM"] || [keyPath isEqualToString: @"MIDIDeviceMonitor.discoveredMT32s"])
+    else if ([keyPath isEqualToString: @"MT32ControlROMURL"] || [keyPath isEqualToString: @"MT32PCMROMURL"] || [keyPath isEqualToString: @"MIDIDeviceMonitor.discoveredMT32s"])
     {
         //Ensure the syncing is done on the main thread: notifications from BXMIDIMonitor
         //will come from the monitor's own thread.
@@ -187,7 +187,7 @@
                                   @"Title shown in MT-32 ROM dropzone when user has a real MT-32 connected to their Mac.");
         
         //Assume the device is an MT-32 rather than a CM-32L.
-        type = BXMT32ROMTypeMT32;
+        type = BXMT32ROMIsMT32;
         
         showROMHelp         = NO;
         showROMOptions      = NO;
@@ -196,22 +196,22 @@
     //Failing that, check what type of MT-32 ROMs we have installed.
     else
     {
-        NSString *controlPath   = [[NSApp delegate] pathToMT32ControlROM];
-        NSString *PCMPath       = [[NSApp delegate] pathToMT32PCMROM];
+        NSURL *controlURL   = [[NSApp delegate] MT32ControlROMURL];
+        NSURL *PCMURL       = [[NSApp delegate] MT32PCMROMURL];
         
         NSError *error = nil;
-        type = [BXEmulatedMT32 typeofROMPairWithControlROMPath: controlPath
-                                                    PCMROMPath: PCMPath
-                                                         error: &error];
+        type = [BXEmulatedMT32 typeOfROMPairWithControlROMURL: controlURL
+                                                    PCMROMURL: PCMURL
+                                                        error: &error];
         
         
         //If ROMs are installed correctly, show the user what kind they have.
-        if (type == BXMT32ROMTypeMT32)
+        if (type & BXMT32ROMIsMT32)
         {
             title = NSLocalizedString(@"Roland MT-32 emulation is installed.",
                                       @"Title shown in MT-32 ROM dropzone when MT-32 ROMs are installed.");
         }
-        else if (type == BXMT32ROMTypeCM32L)
+        else if (type & BXMT32ROMIsCM32L)
         {
             title = NSLocalizedString(@"Roland CM-32L emulation is installed.",
                                       @"Title shown in MT-32 ROM dropzone when CM-32L ROMs are installed.");
@@ -226,7 +226,7 @@
                 case BXEmulatedMT32MissingROM:
                 {
                     //If neither ROM is present, show the standard prompt.
-                    if (!PCMPath && !controlPath)
+                    if (!PCMURL && !controlURL)
                     {
                         title = NSLocalizedString(@"Drop MT-32 ROMs here to enable MT-32 emulation.",
                                                   @"Title shown in MT-32 ROM dropzone when no ROMs are present.");
@@ -235,17 +235,17 @@
                     else
                     {
                         NSString *titleFormat, *expectedROMName;
-                        if (!PCMPath)
+                        if (!PCMURL)
                         {
-                            BXMT32ROMType controlType = [BXEmulatedMT32 typeOfControlROMAtPath: controlPath error: nil];
-                            expectedROMName = (controlType == BXMT32ROMTypeCM32L) ? @"CM32L_PCM.ROM" : @"MT32_PCM.ROM";
+                            BXMT32ROMType controlType = [BXEmulatedMT32 typeOfROMAtURL: controlURL error: NULL];
+                            expectedROMName = (controlType & BXMT32ROMIsCM32L) ? @"CM32L_PCM.ROM" : @"MT32_PCM.ROM";
                             titleFormat = NSLocalizedString(@"Now drop in the matching PCM ROM\n(e.g. “%1$@”.)",
                                                             @"Title shown in MT-32 ROM dropzone when a control ROM is present without a PCM ROM. %1$@ is the expected name of the matching ROM.");
                         }
                         else
                         {
-                            BXMT32ROMType PCMType = [BXEmulatedMT32 typeOfPCMROMAtPath: PCMPath error: nil];
-                            expectedROMName = (PCMType == BXMT32ROMTypeCM32L) ? @"CM32L_CONTROL.ROM" : @"MT32_CONTROL.ROM";
+                            BXMT32ROMType PCMType = [BXEmulatedMT32 typeOfROMAtURL: PCMURL error: nil];
+                            expectedROMName = (PCMType == BXMT32ROMIsCM32L) ? @"CM32L_CONTROL.ROM" : @"MT32_CONTROL.ROM";
                             titleFormat = NSLocalizedString(@"Now drop in the matching control ROM\n(e.g. “%1$@”.)",
                                                             @"Title shown in MT-32 ROM dropzone when a PCM ROM is present without a control ROM. %1$@ is the expected name of the matching ROM.");
                         }
@@ -276,14 +276,15 @@
     self.MT32ROMOptions.hidden = !showROMOptions;
 }
 
-- (BOOL) handleROMImportFromPaths: (NSArray *)paths
+- (BOOL) handleROMImportFromURLs: (NSArray *)URLs
 {
-    NSError *error = nil;
-    BOOL succeeded = [[NSApp delegate] importMT32ROMsFromPaths: paths error: &error];
+    NSError *error;
+    BOOL succeeded = [[NSApp delegate] importMT32ROMsFromURLs: URLs error: &error];
     
-    if (error)
+    if (!succeeded)
     {
         [self.window.attachedSheet orderOut: self];
+        
         [self presentError: error
             modalForWindow: self.window
                   delegate: nil
@@ -295,8 +296,12 @@
 
 - (IBAction) showMT32ROMsInFinder: (id)sender
 {
-    NSString *basePath = [[NSApp delegate] MT32ROMPathCreatingIfMissing: YES];
-    if (basePath) [[NSApp delegate] revealPath: basePath];
+    NSURL *ROMsURL = [[NSApp delegate] MT32ROMURLCreatingIfMissing: YES error: NULL];
+    if (ROMsURL)
+    {
+        NSWorkspace *ws = [NSWorkspace sharedWorkspace];
+        [ws activateFileViewerSelectingURLs: @[ROMsURL]];
+    }
 }
 
 - (IBAction) showMT32ROMFileChooser: (id)sender
@@ -319,15 +324,13 @@
     //of UTI codes because the ".rom" extension is owned by a
     //dozen-and-one console emulators and any UTI definition
     //of our own would just fight with them.
-    openPanel.allowedFileTypes = [NSArray arrayWithObject: @"rom"];
+    openPanel.allowedFileTypes = @[@"rom"];
     
     [openPanel beginSheetModalForWindow: self.window
                       completionHandler: ^(NSInteger result) {
                           if (result == NSFileHandlingPanelOKButton)
                           {
-                              NSArray *paths = [openPanel.URLs valueForKey: @"path"];
-                              
-                              [self handleROMImportFromPaths: paths];
+                              [self handleROMImportFromURLs: openPanel.URLs];
                           }
                       }];
 }
@@ -412,13 +415,13 @@
 
 - (void) syncFilterControls
 {
-	NSInteger defaultFilter = [[NSUserDefaults standardUserDefaults] integerForKey: @"renderingStyle"];
+	NSInteger activeFilter = [[NSUserDefaults standardUserDefaults] integerForKey: @"renderingStyle"];
 
-	for (id view in self.filterGallery.subviews)
+	for (NSButton *button in self.filterGallery.subviews)
 	{
-		if ([view isKindOfClass: [NSButton class]])
+		if ([button isKindOfClass: [NSButton class]])
 		{
-			[view setState: ([view tag] == defaultFilter)];
+            button.state = (button.tag == activeFilter);
 		}
 	}
 }
@@ -448,40 +451,46 @@
 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
 {
-	NSPasteboard *pboard = [sender draggingPasteboard];
-	if ([[pboard types] containsObject: NSFilenamesPboardType])
-	{
-        //Highlight the shelf when the drag operation is over it,
-        //if the pasteboard contents are acceptable
-        [[self MT32ROMDropzone] setHighlighted: YES];
+	NSPasteboard *pboard = sender.draggingPasteboard;
+    
+    BOOL hasURLs = [pboard canReadObjectForClasses: @[[NSURL class]]
+                                           options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];
+    
+    if (hasURLs)
+    {
+        //Highlight the shelf when files are dragged over it.
+        self.MT32ROMDropzone.highlighted = YES;
         
-        //Don't bother validating the ROMs here,
-        //just change the cursor to show we'll accept them.
+        //Don't bother validating the ROMs here, just change the cursor to show we'll accept them.
         return NSDragOperationCopy;
-	}
+    }
 	else return NSDragOperationNone;
 }
 
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
 {	
-    //Unhighlight the shelf when the drag operation is done
-    [[self MT32ROMDropzone] setHighlighted: NO];
+    //Unhighlight the shelf when the drag operation is done.
+    self.MT32ROMDropzone.highlighted = NO;
     
-	NSPasteboard *pboard = [sender draggingPasteboard];
-	if ([[pboard types] containsObject: NSFilenamesPboardType])
-	{
-		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-        
-        //This will validate the ROMs and reject them if they could not be imported.
-        return [self handleROMImportFromPaths: filePaths];
-	}
-	return NO;
+	NSPasteboard *pboard = sender.draggingPasteboard;
+    
+    NSArray *droppedURLs = [pboard readObjectsForClasses: @[[NSURL class]]
+                                                 options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];
+    
+    if (droppedURLs.count)
+    {
+        return [self handleROMImportFromURLs: droppedURLs];
+    }
+    else
+    {
+        return NO;
+    }
 }
 
 - (void) draggingExited: (id<NSDraggingInfo>)sender
 {
-    //Unhighlight the shelf when the drag operation leaves it
-    [[self MT32ROMDropzone] setHighlighted: NO];
+    //Unhighlight the shelf when the drag operation leaves it.
+    self.MT32ROMDropzone.highlighted = NO;
 }
 
 @end

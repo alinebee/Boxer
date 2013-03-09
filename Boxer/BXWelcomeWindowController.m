@@ -217,7 +217,7 @@
 
 - (NSDragOperation) button: (BXWelcomeButton *)button draggingEntered: (id <NSDraggingInfo>)sender
 {
-	NSPasteboard *pboard = [sender draggingPasteboard]; 
+	NSPasteboard *pboard = sender.draggingPasteboard;
 	
     NSArray *droppedURLs = [pboard readObjectsForClasses: @[[NSURL class]]
                                                  options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];
@@ -247,7 +247,7 @@
 - (BOOL) button: (BXWelcomeButton *)button performDragOperation: (id <NSDraggingInfo>)sender
 {
     button.highlighted = NO;
-	NSPasteboard *pboard = [sender draggingPasteboard];
+	NSPasteboard *pboard = sender.draggingPasteboard;
     
     NSArray *droppedURLs = [pboard readObjectsForClasses: @[[NSURL class]]
                                                  options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];

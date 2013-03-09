@@ -364,15 +364,6 @@ enum {
 - (void) _suspendAudio;
 - (void) _resumeAudio;
 
-//Returns the file path for the specified MT-32 ROM,
-//or nil if no such ROM is available. This calls
-//one of the delegate methods pathToMT32ControlROMForEmulator:
-//or pathToMT32PCMROMForEmulator: to retrieve the path.
-//ROMName is expected to be one of MT32_CONTROL.ROM, MT32_PCM.ROM,
-//CM32L_CONTROL.ROM or CM32L_PCM.ROM, as specified by the MT32Emu
-//framework.
-- (NSString *) _pathForMT32ROMNamed: (NSString *)romName;
-
 //Removes any automatically chosen MIDI device so that we can redetect it.
 //Called when emulator returns to the DOS prompt.
 - (void) _resetMIDIDevice;

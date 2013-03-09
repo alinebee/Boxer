@@ -84,10 +84,10 @@ enum {
 //Show the ROM file chooser panel.
 - (IBAction) showMT32ROMFileChooser: (id)sender;
 
-//Does the work of importing ROMs from the specified path. Called when drag-dropping
+//Does the work of importing ROMs from the specified file URLs. Called when drag-dropping
 //ROMs onto the MT-32 ROM dropzone or choosing them from the file picker.
 //Will display an error sheet in the Preferences window if importing failed.
-- (BOOL) handleROMImportFromPaths: (NSArray *)paths;
+- (BOOL) handleROMImportFromURLs: (NSArray *)URLs;
 
 
 #pragma mark -

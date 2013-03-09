@@ -56,9 +56,24 @@ enum {
 
 enum {
     BXMT32ROMTypeUnknown    = 0,
-    BXMT32ROMTypeMT32       = 1,
-    BXMT32ROMTypeCM32L      = 2
+    
+    //Mutually exclusive
+    BXMT32ROMIsControl      = 1 << 0,
+    BXMT32ROMIsPCM          = 1 << 1,
+    
+    //Mutually exclusive
+    BXMT32ROMIsMT32         = 1 << 2,
+    BXMT32ROMIsCM32L        = 1 << 3,
+    
+    BXMT32Control   = BXMT32ROMIsControl | BXMT32ROMIsMT32,
+    BXMT32PCM       = BXMT32ROMIsPCM | BXMT32ROMIsMT32,
+    BXCM32LControl  = BXMT32ROMIsControl | BXMT32ROMIsCM32L,
+    BXCM32LPCM      = BXMT32ROMIsPCM | BXMT32ROMIsCM32L,
+    
+    BXMT32ModelMask = BXMT32ROMIsMT32 | BXMT32ROMIsCM32L,
+    BXMT32TypeMask  = BXMT32ROMIsControl | BXMT32ROMIsPCM,
 };
+
 typedef NSUInteger BXMT32ROMType;
 
 
@@ -70,9 +85,9 @@ typedef NSUInteger BXMT32ROMType;
 
 @interface BXEmulatedMT32 : NSObject <BXMIDIDevice, BXAudioSource>
 {
-    NSString *_PCMROMPath;
-    NSString *_controlROMPath;
     __unsafe_unretained id <BXEmulatedMT32Delegate> _delegate;
+    NSURL *_PCMROMURL;
+    NSURL *_controlROMURL;
     NSError *_synthError;
     unsigned int _sampleRate;
     
@@ -86,13 +101,13 @@ typedef NSUInteger BXMT32ROMType;
 #endif
 }
 
-@property (copy, nonatomic) NSString *PCMROMPath;
-@property (copy, nonatomic) NSString *controlROMPath;
+@property (copy, nonatomic) NSURL *PCMROMURL;
+@property (copy, nonatomic) NSURL *controlROMURL;
 @property (assign, nonatomic) id <BXEmulatedMT32Delegate> delegate;
 @property (assign, nonatomic) unsigned int sampleRate;
 
-- (id <BXMIDIDevice>) initWithPCMROM: (NSString *)PCMROM
-                          controlROM: (NSString *)controlROM
+- (id <BXMIDIDevice>) initWithPCMROM: (NSURL *)PCMROMURL
+                          controlROM: (NSURL *)controlROMURL
                             delegate: (id <BXEmulatedMT32Delegate>)delegate
                                error: (NSError **)outError;
 
@@ -100,13 +115,15 @@ typedef NSUInteger BXMT32ROMType;
 #pragma mark -
 #pragma mark Helper class methods
 
-+ (BXMT32ROMType) typeOfControlROMAtPath: (NSString *)ROMPath
-                                   error: (NSError **)outError;
+//Returns the exact type of ROM at the specified URL: PCM/Control, MT32/CM32L.
+//Returns BXMT32ROMTypeUnknown and populates outError if the type of ROM could
+//not be determined.
++ (BXMT32ROMType) typeOfROMAtURL: (NSURL *)URL error: (out NSError **)outError;
 
-+ (BXMT32ROMType) typeOfPCMROMAtPath: (NSString *)ROMPath
-                               error: (NSError **)outError;
-
-+ (BXMT32ROMType) typeofROMPairWithControlROMPath: (NSString *)controlROMPath
-                                       PCMROMPath: (NSString *)PCMROMPath 
-                                            error: (NSError **)outError;
+//Returns whether the specified pair of ROMs is MT32 or CM32L.
+//Returns BXMT32ROMTypeUnknown and populates outError if there was an error
+//determining the types of the ROMs or if they are mismatched.
++ (BXMT32ROMType) typeOfROMPairWithControlROMURL: (NSURL *)controlROMURL
+                                       PCMROMURL: (NSURL *)PCMROMURL
+                                           error: (out NSError **)outError;
 @end

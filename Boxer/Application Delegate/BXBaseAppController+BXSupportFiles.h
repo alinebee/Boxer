@@ -35,31 +35,31 @@
 
 //Returns the path to the application support folder where Boxer keeps MT-32 ROM files.
 //If createIfMissing is YES, the folder will be created if it does not exist.
-- (NSString *) MT32ROMPathCreatingIfMissing: (BOOL)createIfMissing;
+- (NSURL *) MT32ROMURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
 
 
 #pragma mark -
 #pragma mark ROM management
 
 //Returns the path to the requested ROM file, or nil if it is not present.
-- (NSString *) pathToMT32ControlROM;
-- (NSString *) pathToMT32PCMROM;
+- (NSURL *) MT32ControlROMURL;
+- (NSURL *) MT32PCMROMURL;
 
-//Copies the specified ROM into the application support folder,
-//making it accessible via the respective path method above.
-//Returns YES if the ROM was imported successfully, NO and populates
-//NSError if the ROM could not be imported or was invalid.
-- (BOOL) importMT32ControlROM: (NSString *)ROMPath error: (NSError **)outError;
-- (BOOL) importMT32PCMROM: (NSString *)ROMPath error: (NSError **)outError;
+//Copies the specified MT32 PCM or control ROM into the application support folder,
+//making it accessible via the appropriate URL method above (depending on whether
+//it was a control or PCM ROM).
+//Returns the URL of the imported ROM if successful. Returns nil and populates NSError
+//if the ROM could not be imported or was invalid.
+- (NSURL *) importMT32ROMAtURL: (NSURL *)URL error: (out NSError **)outError;
 
-//When given an array of file paths, scans them for valid ROMs and imports
+//Validate that the ROM at the specified URL is valid and suitable for use by Boxer.
+- (BOOL) validateMT32ROMAtURL: (inout NSURL **)ioValue error: (out NSError **)outError;
+
+//When given an array of file URLs, scans them for valid ROMs and imports
 //the first pair it finds. Recurses into any folders in the list.
 //Returns YES if one or more ROMs were imported, or NO and populates outError
-//if there was a problem (including if the paths did not contain any MT-32 ROMs.)
-- (BOOL) importMT32ROMsFromPaths: (NSArray *)paths error: (NSError **)outError;
+//if there was a problem (including if the URLs did not contain any MT-32 ROMs.)
+- (BOOL) importMT32ROMsFromURLs: (NSArray *)URLs error: (out NSError **)outError;
 
-//Validate that the ROM at the specified path is valid and suitable for use by Boxer.
-- (BOOL) validateMT32ControlROM: (NSString **)ioValue error: (NSError **)outError;
-- (BOOL) validateMT32PCMROM: (NSString **)ioValue error: (NSError **)outError;
 
 @end

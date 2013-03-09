@@ -120,8 +120,8 @@
         }
         
         NSError *emulatedMT32Error = nil;
-        BXEmulatedMT32 *emulatedMT32 = [[[BXEmulatedMT32 alloc] initWithPCMROM: [[NSApp delegate] pathToMT32PCMROM]
-                                                                    controlROM: [[NSApp delegate] pathToMT32ControlROM]
+        BXEmulatedMT32 *emulatedMT32 = [[[BXEmulatedMT32 alloc] initWithPCMROM: [[NSApp delegate] MT32PCMROMURL]
+                                                                    controlROM: [[NSApp delegate] MT32ControlROMURL]
                                                                       delegate: theEmulator
                                                                          error: &emulatedMT32Error] autorelease];
         

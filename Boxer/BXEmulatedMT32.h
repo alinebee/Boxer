@@ -16,6 +16,23 @@
 
 #ifdef __cplusplus
     #import "MT32Emu/mt32emu.h"
+
+//MT32Emu has a C++ callback class for handling emulated synth notifications.
+//We implement a thin C++ wrapper that sends messages back to BXEmulatedMT32 for handling.
+    @class BXEmulatedMT32;
+    class BXEmulatedMT32ReportHandler : public MT32Emu::ReportHandler
+    {
+    public:
+        BXEmulatedMT32ReportHandler(BXEmulatedMT32 *delegate) { _delegate = delegate; };
+        
+    protected:
+        void onErrorControlROM();
+        void onErrorPCMROM();
+        void showLCDMessage(const char *message);
+        void printDebug(const char *fmt, va_list list);
+    private:
+        BXEmulatedMT32 *_delegate;
+    };
 #endif
 
 
@@ -61,6 +78,11 @@ typedef NSUInteger BXMT32ROMType;
     
 #ifdef __cplusplus
     MT32Emu::Synth *_synth;
+    BXEmulatedMT32ReportHandler *_reportHandler;
+    MT32Emu::FileStream *_PCMROMHandle;
+    MT32Emu::FileStream *_controlROMHandle;
+    const MT32Emu::ROMImage *_PCMROMImage;
+    const MT32Emu::ROMImage *_controlROMImage;
 #endif
 }
 

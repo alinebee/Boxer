@@ -35,14 +35,6 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMTypeKey";
 @property (retain, nonatomic) NSError *synthError;
 
 - (BOOL) _prepareMT32EmulatorWithError: (NSError **)outError;
-- (NSString *) _pathToROMMatchingName: (NSString *)ROMName;
-- (void) _reportMT32MessageOfType: (MT32Emu::ReportType)type data: (const void *)reportData;
-
-//Callbacks for MT32Emu::Synth
-MT32Emu::File * _openMT32ROM(void *userData, const char *filename);
-void _closeMT32ROM(void *userData, MT32Emu::File *file);
-int _reportMT32Message(void *userData, MT32Emu::ReportType type, const void *reportData);
-void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
 
 @end
 
@@ -248,10 +240,8 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
             //then flag this as a mismatch.
             else
             {
-                NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                          [NSNumber numberWithInteger: controlType], BXMT32ControlROMTypeKey,
-                                          [NSNumber numberWithInteger: PCMType], BXMT32PCMROMTypeKey,
-                                          nil];
+                NSDictionary *userInfo = @{BXMT32ControlROMTypeKey: @(controlType),
+                                           BXMT32PCMROMTypeKey: @(PCMType)};
                 
                 *outError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
                                                 code: BXEmulatedMT32MismatchedROMs
@@ -295,6 +285,28 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
         _synth->close();
         delete _synth;
         _synth = NULL;
+    }
+    
+    if (_reportHandler)
+    {
+        delete _reportHandler;
+        _reportHandler = NULL;
+    }
+    
+    if (_PCMROMImage)
+    {
+        MT32Emu::ROMImage::freeROMImage(_PCMROMImage);
+        delete _PCMROMHandle;
+        _PCMROMImage = NULL;
+        _PCMROMHandle = NULL;
+    }
+    
+    if (_controlROMImage)
+    {
+        MT32Emu::ROMImage::freeROMImage(_controlROMImage);
+        delete _controlROMHandle;
+        _controlROMImage = NULL;
+        _controlROMHandle = NULL;
     }
 }
 
@@ -402,123 +414,72 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
         return NO;
     }
     
-    _synth = new MT32Emu::Synth();
+    //Coooool I love really awkward C++ APIs
+    _reportHandler = new BXEmulatedMT32ReportHandler(self);
+    _synth = new MT32Emu::Synth(_reportHandler);
     
-    MT32Emu::SynthProperties properties;
+    _PCMROMHandle = new MT32Emu::FileStream();
+    _PCMROMHandle->open(self.PCMROMPath.fileSystemRepresentation);
     
-    properties.userData = self;
-    properties.report = &_reportMT32Message;
-    properties.openFile = &_openMT32ROM;
-    properties.closeFile = &_closeMT32ROM;
-    properties.printDebug = &_logMT32DebugMessage;
-    properties.sampleRate = self.sampleRate;
-    properties.baseDir = NULL;
+    _controlROMHandle = new MT32Emu::FileStream();
+    _controlROMHandle->open(self.controlROMPath.fileSystemRepresentation);
     
-    if (!_synth->open(properties))
+    _controlROMImage = MT32Emu::ROMImage::makeROMImage(_controlROMHandle);
+    _PCMROMImage = MT32Emu::ROMImage::makeROMImage(_PCMROMHandle);
+    
+    if (!_synth->open(*_controlROMImage, *_PCMROMImage))
     {
         //Pick up the initialization error we'll have received from
         //the callback, and post it back upstream
         if (outError)
             *outError = self.synthError;
 
-        delete _synth;
+        //Clean up any resources that were created during failed initialization.
+        [self close];
         return NO;
     }
     
     return YES;
 }
 
-- (NSString *) _pathToROMMatchingName: (NSString *)ROMName
+@end
+
+
+#pragma mark MT-32 emulator callbacks
+
+void BXEmulatedMT32ReportHandler::onErrorControlROM()
 {
-    ROMName = ROMName.lowercaseString;
-    if ([ROMName isMatchedByRegex: @"control"])
-    {
-        return self.controlROMPath;
-    }
-    else if ([ROMName isMatchedByRegex: @"pcm"])
-    {
-        return self.PCMROMPath;
-    }
-    else return nil;
-}
-
-- (void) _reportMT32MessageOfType: (MT32Emu::ReportType)type data: (const void *)reportData
-{
-    switch (type) {
-        case MT32Emu::ReportType_lcdMessage:
-            //Pass LCD messages on to our delegate
-            {
-                NSString *message = [NSString stringWithCString: (const char *)reportData
-                                                       encoding: NSASCIIStringEncoding];
-                [self.delegate emulatedMT32: self didDisplayMessage: message];
-            }
-            break;
-        
-        case MT32Emu::ReportType_errorControlROM:
-        case MT32Emu::ReportType_errorPCMROM:
-            //If ROM loading failed, record the error that occurred so we can retrieve it back in the initializer.
-            {
-                NSString *ROMPath;
-                if (type == MT32Emu::ReportType_errorControlROM)
-                    ROMPath = self.controlROMPath;
-                else
-                    ROMPath = self.PCMROMPath;
-                
-                NSDictionary *userInfo = nil;
-                if (ROMPath) userInfo = [NSDictionary dictionaryWithObject: ROMPath
-                                                                    forKey: NSFilePathErrorKey];
-                
-                [self setSynthError: [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
-                                                         code: BXEmulatedMT32InvalidROM
-                                                     userInfo: userInfo]];
-            }
-            break;
-            
-        default:
-            break;
-    }
-}
-
-
-#pragma mark -
-#pragma mark C++-facing callbacks
-
-
-MT32Emu::File * _openMT32ROM(void *userData, const char *filename)
-{
-    NSString *requestedROMName = [NSString stringWithUTF8String: filename];
-    NSString *ROMPath = [(__bridge BXEmulatedMT32 *)userData _pathToROMMatchingName: requestedROMName];
-    
+    NSString *ROMPath = _delegate.controlROMPath;
+    NSDictionary *userInfo = nil;
     if (ROMPath)
-    {
-        MT32Emu::FileStream *file = new MT32Emu::FileStream();
-        BOOL opened = file->open(ROMPath.fileSystemRepresentation);
-        if (!opened)
-        {
-            delete file;
-            return NULL;
-        }
-        else return file;
-    }
-    else return NULL;
+        userInfo = @{ NSFilePathErrorKey: ROMPath };
+    
+    _delegate.synthError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
+                                               code: BXEmulatedMT32InvalidROM
+                                           userInfo: userInfo];
 }
 
-void _closeMT32ROM(void *userData, MT32Emu::File *file)
+void BXEmulatedMT32ReportHandler::onErrorPCMROM()
 {
-    file->close();
+    NSString *ROMPath = _delegate.PCMROMPath;
+    NSDictionary *userInfo = nil;
+    if (ROMPath)
+        userInfo = @{ NSFilePathErrorKey: ROMPath };
+    
+    _delegate.synthError = [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
+                                               code: BXEmulatedMT32InvalidROM
+                                           userInfo: userInfo];
 }
 
-int _reportMT32Message(void *userData, MT32Emu::ReportType type, const void *reportData)
+void BXEmulatedMT32ReportHandler::showLCDMessage(const char *cMessage)
 {
-    [(__bridge BXEmulatedMT32 *)userData _reportMT32MessageOfType: type data: reportData];
-    return 0;
+    NSString *message = [NSString stringWithCString: cMessage encoding: NSASCIIStringEncoding];
+    [_delegate.delegate emulatedMT32: _delegate didDisplayMessage: message];
 }
 
-void _logMT32DebugMessage(void *userData, const char *fmt, va_list list)
+void BXEmulatedMT32ReportHandler::printDebug(const char *fmt, va_list list)
 {
 #ifdef BOXER_DEBUG
     NSLogv([NSString stringWithCString: fmt encoding: NSASCIIStringEncoding], list);
 #endif
 }
-
-@end

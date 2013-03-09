@@ -261,18 +261,18 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (NSURL *) currentGameStateURL
 {
-    if (!self.hasGamebox)
+    if (self.hasGamebox)
+    {
+        NSURL *stateURL = [[NSApp delegate] gameStatesURLForGamebox: self.gamebox
+                                                  creatingIfMissing: NO
+                                                              error: NULL];
+        
+        return [stateURL URLByAppendingPathComponent: @"Current.boxerstate"];
+    }
+    else
+    {
         return nil;
-    
-    NSString *statePath = [[NSApp delegate] statesPathForGamebox: self.gamebox
-                                               creatingIfMissing: NO];
-    
-    if (!statePath)
-        return nil;
-    
-    NSURL *stateURL = [NSURL fileURLWithPath: statePath isDirectory: YES];
-    
-    return [stateURL URLByAppendingPathComponent: @"Current.boxerstate"];
+    }
 }
 
 - (NSURL *) shadowURLForDrive: (BXDrive *)drive

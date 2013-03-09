@@ -26,31 +26,35 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
 
 @implementation BXBaseAppController (BXSupportFiles)
 
-- (NSString *) statesPathForGamebox: (BXGamebox *)gamebox
+- (NSURL *) gameStatesURLForGamebox: (BXGamebox *)gamebox
                   creatingIfMissing: (BOOL) createIfMissing
+                              error: (out NSError **)outError
 {
-    if (gamebox == nil)
-        return nil;
+    NSAssert(gamebox != nil, @"No gamebox specified.");
     
-	NSString *supportPath = [self supportPathCreatingIfMissing: NO];
-    NSString *statesPath = [supportPath stringByAppendingPathComponent: @"Gamebox States"];
+	NSURL *supportURL   = [self supportURLCreatingIfMissing: NO error: NULL];
+    NSURL *statesURL    = [supportURL URLByAppendingPathComponent: @"Gamebox States"];
     
     NSString *identifier = gamebox.gameIdentifier;
     
-    //If the package lacks an identifier, we cannot assign it a path for state storage.
-    if (!identifier)
-        return nil;
+    //If the package lacks an identifier, we cannot assign a folder for its states.
+    //This is an assertion condition because BXGamebox should automatically generate
+    //an identifier if it doesn't already have one.
+    NSAssert(identifier != nil, @"Gamebox at %@ has no valid identifier.", gamebox.bundleURL);
     
-    NSString *gameboxStatesPath = [statesPath stringByAppendingPathComponent: identifier];
+    NSURL *gameboxStatesURL = [statesURL URLByAppendingPathComponent: identifier];
     if (createIfMissing)
     {
-		[[NSFileManager defaultManager] createDirectoryAtPath: gameboxStatesPath
-								  withIntermediateDirectories: YES
-												   attributes: nil
-														error: NULL];
+		BOOL created = [[NSFileManager defaultManager] createDirectoryAtURL: gameboxStatesURL
+                                                withIntermediateDirectories: YES
+                                                                 attributes: nil
+                                                                      error: outError];
+        
+        if (!created)
+            return nil;
     }
     
-    return gameboxStatesPath;
+    return gameboxStatesURL;
 }
 
 - (NSURL *) recordingsURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError
@@ -65,16 +69,23 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
 - (NSURL *) supportURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError
 {
     NSFileManager *manager = [NSFileManager defaultManager];
-    NSURL *baseURL = [[manager URLsForDirectory: NSApplicationSupportDirectory inDomains: NSUserDomainMask] objectAtIndex: 0];
+    NSArray *appSupportURLs = [manager URLsForDirectory: NSApplicationSupportDirectory
+                                              inDomains: NSUserDomainMask];
+    
+    NSURL *baseURL = [appSupportURLs objectAtIndex: 0];
     NSURL *supportURL = [baseURL URLByAppendingPathComponent: @"Boxer"];
     
     if (createIfMissing)
 	{
-		[[NSFileManager defaultManager] createDirectoryAtURL: supportURL
-                                 withIntermediateDirectories: YES
-                                                  attributes: nil
-                                                       error: outError];
+		BOOL created = [[NSFileManager defaultManager] createDirectoryAtURL: supportURL
+                                                withIntermediateDirectories: YES
+                                                                 attributes: nil
+                                                                      error: outError];
+        
+        if (!created)
+            return nil;
 	}
+    
     return supportURL;
 }
 
@@ -95,10 +106,13 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
     
 	if (createIfMissing)
 	{
-		[[NSFileManager defaultManager] createDirectoryAtURL: ROMsURL
-                                 withIntermediateDirectories: YES
-                                                  attributes: nil
-                                                       error: outError];
+		BOOL created = [[NSFileManager defaultManager] createDirectoryAtURL: ROMsURL
+                                                withIntermediateDirectories: YES
+                                                                 attributes: nil
+                                                                      error: outError];
+        
+        if (!created)
+            return nil;
 	}
 	return ROMsURL;
 }

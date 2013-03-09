@@ -19,22 +19,31 @@
 
 //Returns Boxer's default location for screenshots and other recordings.
 //If createIfMissing is YES, the folder will be created if it does not exist.
-- (NSURL *) recordingsURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
-- (NSString *) recordingsPathCreatingIfMissing: (BOOL)createIfMissing;
+//Returns nil and populates outError if createIfMissing is YES but the folder
+//could not be created.
+- (NSURL *) recordingsURLCreatingIfMissing: (BOOL)createIfMissing
+                                     error: (out NSError **)outError;
 
 //Returns Boxer's application support URL.
 //If createIfMissing is YES, the folder will be created if it does not exist.
-- (NSURL *) supportURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
-- (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing;
+//Returns nil and populates outError if createIfMissing is YES but the folder
+//could not be created.
+- (NSURL *) supportURLCreatingIfMissing: (BOOL)createIfMissing
+                                  error: (out NSError **)outError;
 
 //Returns the path to the application support folder where Boxer should
 //store state data for the specified gamebox.
 //If createIfMissing is YES, the folder will be created if it does not exist.
-- (NSString *) statesPathForGamebox: (BXGamebox *)gamebox
-                  creatingIfMissing: (BOOL) createIfMissing;
+//Returns nil and populates outError if createIfMissing is YES but the folder
+//could not be created.
+- (NSURL *) gameStatesURLForGamebox: (BXGamebox *)gamebox
+                  creatingIfMissing: (BOOL)createIfMissing
+                              error: (out NSError **)outError;
 
 //Returns the path to the application support folder where Boxer keeps MT-32 ROM files.
 //If createIfMissing is YES, the folder will be created if it does not exist.
+//Returns nil and populates outError if createIfMissing is YES but the folder
+//could not be created.
 - (NSURL *) MT32ROMURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
 
 

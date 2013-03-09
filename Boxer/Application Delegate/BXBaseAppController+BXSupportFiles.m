@@ -235,7 +235,6 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
         
         if (isDir)
         {
-            NSLog(@"Scanning directory at %@ for subfiles", URL);
             NSDirectoryEnumerator *enumerator = [manager enumeratorAtURL: URL
                                               includingPropertiesForKeys: @[NSURLIsDirectoryKey]
                                                                  options: NSDirectoryEnumerationSkipsHiddenFiles
@@ -243,7 +242,6 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
             
             for (NSURL *subURL in enumerator)
             {
-                NSLog(@"Scanning file at %@ for ROMness", subURL);
                 isDirFlag = nil;
                 checkedDir = [subURL getResourceValue: &isDirFlag forKey: NSURLIsDirectoryKey error: NULL];
                 //Skip directories
@@ -261,7 +259,6 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
         }
         else
         {
-            NSLog(@"Scanning file at %@ for ROMness", URL);
             type = [BXEmulatedMT32 typeOfROMAtURL: URL error: NULL];
             if (type != BXMT32ROMTypeUnknown)
             {

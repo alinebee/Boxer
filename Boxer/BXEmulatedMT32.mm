@@ -70,7 +70,6 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMType";
     bool opened = file->open(URL.fileSystemRepresentation);
     if (!opened)
     {
-        NSLog(@"Could not open ROM at %@", URL);
         delete file;
         if (outError)
         {
@@ -84,7 +83,6 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMType";
     const MT32Emu::ROMInfo *info = MT32Emu::ROMInfo::getROMInfo(file);
     if (info == NULL)
     {
-        NSLog(@"No matching ROM type found for %@", URL);
         delete file;
         if (outError)
         {

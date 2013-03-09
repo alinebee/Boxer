@@ -252,7 +252,7 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
                                                    options: (NSDirectoryEnumerationOptions)mask
                                               errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler
 {
-    NSError *mountingError;
+    NSError *mountingError = nil;
     NSURL *mountedURL = [self volumeURLMountingIfNeeded: YES error: &mountingError];
     if (mountedURL)
     {

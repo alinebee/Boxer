@@ -135,6 +135,7 @@
             break;
         case NSImageAbove:
             alignment = NSImageAlignTop;
+            break;
         case NSNoImage:
         default:
             return NSZeroRect;

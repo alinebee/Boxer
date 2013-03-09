@@ -6,23 +6,13 @@
  */
 
 
-//The BXApplicationModes category extends BXAppController with functions
-//for managing Boxer's various Application Support files.
+//The BXApplicationModes category extends BXAppController with methods
+//for looking up Boxer's Application Support files and folders.
 
 #import "BXBaseAppController.h"
 
 @class BXGamebox;
 @interface BXBaseAppController (BXSupportFiles)
-
-#pragma mark -
-#pragma mark Supporting directories
-
-//Returns Boxer's default location for screenshots and other recordings.
-//If createIfMissing is YES, the folder will be created if it does not exist.
-//Returns nil and populates outError if createIfMissing is YES but the folder
-//could not be created.
-- (NSURL *) recordingsURLCreatingIfMissing: (BOOL)createIfMissing
-                                     error: (out NSError **)outError;
 
 //Returns Boxer's application support URL.
 //If createIfMissing is YES, the folder will be created if it does not exist.
@@ -30,6 +20,13 @@
 //could not be created.
 - (NSURL *) supportURLCreatingIfMissing: (BOOL)createIfMissing
                                   error: (out NSError **)outError;
+
+//Returns Boxer's default location for screenshots and other recordings.
+//If createIfMissing is YES, the folder will be created if it does not exist.
+//Returns nil and populates outError if createIfMissing is YES but the folder
+//could not be created.
+- (NSURL *) recordingsURLCreatingIfMissing: (BOOL)createIfMissing
+                                     error: (out NSError **)outError;
 
 //Returns the path to the application support folder where Boxer should
 //store state data for the specified gamebox.
@@ -47,10 +44,11 @@
 - (NSURL *) MT32ROMURLCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
 
 
-#pragma mark -
-#pragma mark ROM management
+#pragma mark - MT-32 ROM management
 
 //Returns the path to the requested ROM file, or nil if it is not present.
+//These properties are KVO-compliant and will send out KVO notifications
+//whenever new ROMs are imported.
 - (NSURL *) MT32ControlROMURL;
 - (NSURL *) MT32PCMROMURL;
 
@@ -69,6 +67,5 @@
 //Returns YES if one or more ROMs were imported, or NO and populates outError
 //if there was a problem (including if the URLs did not contain any MT-32 ROMs.)
 - (BOOL) importMT32ROMsFromURLs: (NSArray *)URLs error: (out NSError **)outError;
-
 
 @end

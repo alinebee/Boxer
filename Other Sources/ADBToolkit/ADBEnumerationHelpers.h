@@ -24,14 +24,35 @@
  *	POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ADBTreeEnumerator provides an abstract implementation of an enumerator for depth-first
-//iteration of nested arrays of nodes. It is designed to be subclassed with concrete
-//implementations for node retrieval.
-
-//Subclasses must implement childrenForNode: but all other methods are optional.
-
+//ADBEnumerationHelpers defines a set of enumeration classes for a variety
+//of general applications.
 
 #import <Foundation/Foundation.h>
+
+
+#pragma mark - Protocols
+
+//Represents the interface of NSEnumerator as a protocol, for enumeration classes
+//that don't want to descend directly from NSEnumerator.
+@protocol ADBStepwiseEnumeration <NSFastEnumeration>
+
+- (NSArray *) allObjects;
+- (id) nextObject;
+
+@end
+
+//Declare that NSEnumerator already conforms to the ADBStepwiseEnumeration protocol.
+@interface NSEnumerator (ADBScanningExtensions) <ADBStepwiseEnumeration>
+@end
+
+
+#pragma mark - ADBTreeEnumerator
+
+//ADBTreeEnumerator provides an abstract implementation of an enumerator for depth-first
+//iteration of nested arrays of nodes. It must be subclassed with concrete implementations
+//for node retrieval.
+
+//Subclasses must implement childrenForNode: but all other methods are optional.
 
 @interface ADBTreeEnumerator : NSEnumerator
 {
@@ -88,3 +109,34 @@
 - (NSArray *) childrenForNode: (id)node;
 
 @end
+
+
+#pragma mark ADBScanningEnumerator
+
+//Used by ADBScanningEnumerator's nextObject method to scan forward through each object
+//of its inner enumerator. If this block returns an object, enumeration will pause and
+//ADBScanningEnumerator -nextObject will return that object; if this block returns nil,
+//enumeration of the inner enumerator will continue.
+//scannedObject is the next object from the inner enumerator; stop is a boolean reference
+//which, if set to YES, will halt enumeration after the current object.
+typedef id (^ADBScanCallback)(id scannedObject, BOOL *stop);
+
+
+//An enumerator that scans forwards through an inner enumerator,
+//passing each enumerated object to an ADBScanCallback block and returning
+//an object only when the block itself produces an object. This is intended
+//as a generic way to provide 'pre-filtered' enumerator objects without
+//the need for NSEnumerator subclasses.
+@interface ADBScanningEnumerator : NSEnumerator
+{
+    id <ADBStepwiseEnumeration> _innerEnumerator;
+    ADBScanCallback _scanCallback;
+}
+@property (retain, nonatomic) id <ADBStepwiseEnumeration> innerEnumerator;
+@property (copy, nonatomic) ADBScanCallback scanCallback;
+
++ (id) enumeratorWithEnumerator: (id <ADBStepwiseEnumeration>)enumerator usingBlock: (ADBScanCallback)scanCallback;
+- (id) initWithEnumerator: (id <ADBStepwiseEnumeration>)enumerator usingBlock: (ADBScanCallback)scanCallback;
+
+@end
+

@@ -226,23 +226,22 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
     return nil;
 }
 
-+ (NSArray *) profilesDetectedInContentsOfEnumerator: (id <ADBFilesystemPathEnumeration>)enumerator
++ (NSEnumerator *) profilesDetectedInContentsOfEnumerator: (id <ADBFilesystemPathEnumeration>)enumerator
 {
-    NSMutableArray *profiles = [NSMutableArray arrayWithCapacity: 1];
-    for (NSString *path in enumerator)
-    {
-        BXGameProfile *profile = [self profileMatchingPath: path inFilesystem: enumerator.filesystem];
-        if (profile)
-            [profiles addObject: profile];
-    }
-    return profiles;
+    ADBScanCallback callback = ^id(NSString *path, BOOL *outStop) {
+        return [self profileMatchingPath: path inFilesystem: enumerator.filesystem];
+    };
+    
+    return [ADBScanningEnumerator enumeratorWithEnumerator: enumerator usingBlock: callback];
 }
 
 + (ADBScanOperation *) profileScanWithEnumerator: (id <ADBFilesystemPathEnumeration>)enumerator
 {
-    return [ADBScanOperation scanWithEnumerator: enumerator usingBlock: ^id(NSString *path, id <ADBFilesystemPathEnumeration> e, BOOL *outStop) {
-        return [self profileMatchingPath: path inFilesystem: e.filesystem];
-    }];
+    ADBScanCallback callback = ^id(NSString *path, BOOL *outStop) {
+        return [self profileMatchingPath: path inFilesystem: enumerator.filesystem];
+    };
+    
+    return [ADBScanOperation scanWithEnumerator: enumerator usingBlock: callback];
 }
 
 - (id) init

@@ -38,8 +38,8 @@ NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
 + (id) scanWithEnumerator: (id <NSFastEnumeration>)enumerator
                usingBlock: (ADBScanCallback)matchCallback
 {
-    return [[[self alloc] initWithEnumerator: enumerator
-                                  usingBlock: matchCallback] autorelease];
+    return [[(ADBScanOperation *)[self alloc] initWithEnumerator: enumerator
+                                                      usingBlock: matchCallback] autorelease];
 }
 
 - (id) initWithEnumerator: (id <NSFastEnumeration>)enumerator
@@ -75,7 +75,7 @@ NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         
         BOOL stop = NO;
-        id matchedObject = self.matchCallback(object, self.enumerator, &stop);
+        id matchedObject = self.matchCallback(object, &stop);
         if (matchedObject != nil)
         {
             [self addMatch: matchedObject];

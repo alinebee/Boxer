@@ -1807,15 +1807,15 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
                                                                    errorHandler: NULL];
     
     ADBOperation *scan = [ADBScanOperation scanWithEnumerator: enumerator
-                                                   usingBlock: ^id(NSString *path, id <ADBFilesystemPathEnumeration> e, BOOL *stop)
+                                                   usingBlock: ^id(NSString *path, BOOL *stop)
     {
         //Don't scan nested drives. This allows for old-style gameboxes that treat the root folder of the gamebox as drive C. 
-        if ([e.filesystem typeOfFileAtPath: path matchingTypes: [BXFileTypes mountableFolderTypes]])
+        if ([enumerator.filesystem typeOfFileAtPath: path matchingTypes: [BXFileTypes mountableFolderTypes]])
         {
-            [e skipDescendants];
+            [enumerator skipDescendants];
             return nil;
         }
-        else if ([BXFileTypes isCompatibleExecutableAtPath: path filesystem: e.filesystem error: NULL])
+        else if ([BXFileTypes isCompatibleExecutableAtPath: path filesystem: enumerator.filesystem error: NULL])
         {
             return path;
         }

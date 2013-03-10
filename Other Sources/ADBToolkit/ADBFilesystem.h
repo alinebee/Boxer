@@ -26,6 +26,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ADBFileHandle.h"
+#import "ADBEnumerationHelpers.h"
 
 typedef BOOL (^ADBFilesystemPathErrorHandler)(NSString *path, NSError *error);
 typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error);
@@ -142,7 +143,7 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 
 
 //A protocol for NSDirectoryEnumerator-alike objects. See that class for general behaviour.
-@protocol ADBFilesystemPathEnumeration <NSObject, NSFastEnumeration>
+@protocol ADBFilesystemPathEnumeration <NSObject, ADBStepwiseEnumeration>
 
 //The filesystem represented by this enumerator.
 - (id <ADBFilesystemPathAccess>) filesystem;
@@ -160,7 +161,7 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 
 @end
 
-@protocol ADBFilesystemLocalFileURLEnumeration <NSObject, NSFastEnumeration>
+@protocol ADBFilesystemLocalFileURLEnumeration <NSObject, ADBStepwiseEnumeration>
 
 //The parent filesystem represented by this enumerator.
 - (id <ADBFilesystemLocalFileURLAccess>) filesystem;

@@ -175,9 +175,10 @@ extern NSString * const BXGenericProfileIdentifier;
 + (id) profileMatchingPath: (NSString *)basePath
               inFilesystem: (id <ADBFilesystemPathAccess>)filesystem;
 
-//Returns a list of all game profiles detected by traversing the specified enumerator,
-//in descending order of priority (so that the most canonical profile is the first result.)
-+ (NSArray *) profilesDetectedInContentsOfEnumerator: (id <ADBFilesystemPathEnumeration>)enumerator;
+//Returns an enumerator of all game profiles detected by traversing the specified enumerator.
+//(As a convenience this returns an enumerator instead of an array, so that scanning can be
+//terminated prematurely without the cost of a full filesystem search.)
++ (NSEnumerator *) profilesDetectedInContentsOfEnumerator: (id <ADBFilesystemPathEnumeration>)enumerator;
 
 //Returns a scan operaiton ready to scan the contents of the specified enumerator.
 + (ADBScanOperation *) profileScanWithEnumerator: (id <ADBFilesystemPathEnumeration>)enumerator;

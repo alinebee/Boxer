@@ -29,7 +29,6 @@
 
 #import "ADBISOImage.h"
 #import "ADBFilesystem.h"
-#import "ADBTreeEnumerator.h"
 
 #pragma mark - Private method declarations
 

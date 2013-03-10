@@ -33,6 +33,7 @@
 //This class is intended for applications like asynchronous filesystem scanning.
 
 #import "ADBOperation.h"
+#import "ADBEnumerationHelpers.h"
 
 //Keys included in update notifications
 
@@ -42,15 +43,6 @@ extern NSString * const ADBScanLatestScannedObjectKey;
 //Contains the object that was most recently matched.
 //Will be NSNull if no matches have been found.
 extern NSString * const ADBScanLatestMatchKey;
-
-
-//Called for each object that is traversed by the enumerator: should return the
-//object to store as a match (which may be different from the object that was traversed)
-//or nil if the object did not match.
-//inObject is the object returned by the enumerator's nextObject method,
-//inEnumerator is the enumerator that was passed into the operation, and outStop
-//is an output boolean that can be set to YES to halt enumeration after this object.
-typedef id (^ADBScanCallback)(id inObject, id <NSFastEnumeration> inEnumerator, BOOL *outStop);
 
 
 @interface ADBScanOperation : ADBOperation

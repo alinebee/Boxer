@@ -24,7 +24,7 @@
  *	POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ADBTreeEnumerator.h"
+#import "ADBEnumerationHelpers.h"
 
 @implementation ADBTreeEnumerator
 @synthesize levels = _levels;
@@ -144,6 +144,60 @@
 - (BOOL) shouldEnumerateChildrenOfNode: (id)node
 {
     return YES;
+}
+
+@end
+
+
+
+
+@implementation ADBScanningEnumerator
+@synthesize scanCallback = _scanCallback;
+@synthesize innerEnumerator = _innerEnumerator;
+
+- (id) nextObject
+{
+    id innerObject;
+    while ((innerObject = self.innerEnumerator.nextObject) != nil)
+    {
+        BOOL stop;
+        id matchedObject = self.scanCallback(innerObject, &stop);
+        if (stop)
+        {
+            self.innerEnumerator = nil;
+            self.scanCallback = nil;
+        }
+        
+        if (matchedObject)
+        {
+            return matchedObject;
+        }
+    }
+    return nil;
+}
+
+- (id) initWithEnumerator: (id <ADBStepwiseEnumeration>)enumerator
+               usingBlock: (ADBScanCallback)scanCallback
+{
+    self = [self init];
+    if (self)
+    {
+        self.innerEnumerator = enumerator;
+        self.scanCallback = scanCallback;
+    }
+    return self;
+}
+
++ (id) enumeratorWithEnumerator: (id <ADBStepwiseEnumeration>)enumerator usingBlock: (ADBScanCallback)scanCallback
+{
+    return [[[self alloc] initWithEnumerator: enumerator usingBlock: scanCallback] autorelease];
+}
+
+- (void) dealloc
+{
+    self.scanCallback = nil;
+    self.innerEnumerator = nil;
+    [super dealloc];
 }
 
 @end

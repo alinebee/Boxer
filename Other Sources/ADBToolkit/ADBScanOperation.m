@@ -97,7 +97,7 @@ NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
 - (void) addMatch: (id)match
 {
     //Ensures KVO notifications are sent properly for this key.
-	[[self mutableArrayValueForKey: @"matchingPaths"] addObject: match];
+	[[self mutableArrayValueForKey: @"matches"] addObject: match];
 }
 
 @end

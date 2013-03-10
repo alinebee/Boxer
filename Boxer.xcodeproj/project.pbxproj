@@ -48,8 +48,8 @@
 		9F1D58F216921AD9007C32AD /* BunnyTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1D58F016921AD9007C32AD /* BunnyTemplate.pdf */; };
 		9F1D58F316921AD9007C32AD /* TurtleTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1D58F116921AD9007C32AD /* TurtleTemplate.pdf */; };
 		9F1DE9B214FB7F3800F9C91E /* NSObject+ADBPerformExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1DE9B114FB7F3800F9C91E /* NSObject+ADBPerformExtensions.m */; };
-		9F1E8CDA16E16C0400F1C908 /* ADBFilesystemScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1E8CD916E16C0400F1C908 /* ADBFilesystemScan.m */; };
-		9F1E8CDB16E16C0400F1C908 /* ADBFilesystemScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1E8CD916E16C0400F1C908 /* ADBFilesystemScan.m */; };
+		9F1E8CDA16E16C0400F1C908 /* ADBScanOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1E8CD916E16C0400F1C908 /* ADBScanOperation.m */; };
+		9F1E8CDB16E16C0400F1C908 /* ADBScanOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1E8CD916E16C0400F1C908 /* ADBScanOperation.m */; };
 		9F1E8CDE16E16EB800F1C908 /* ADBMountableImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1E8CDD16E16EB800F1C908 /* ADBMountableImage.m */; };
 		9F1E8CDF16E16EB800F1C908 /* ADBMountableImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1E8CDD16E16EB800F1C908 /* ADBMountableImage.m */; };
 		9F1E959A15BD88D700C3C6A0 /* UserDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F1E959915BD88D700C3C6A0 /* UserDefaults.plist */; };
@@ -1033,8 +1033,8 @@
 		9F1D58F116921AD9007C32AD /* TurtleTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = TurtleTemplate.pdf; sourceTree = "<group>"; };
 		9F1DE9B014FB7F3800F9C91E /* NSObject+ADBPerformExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+ADBPerformExtensions.h"; sourceTree = "<group>"; };
 		9F1DE9B114FB7F3800F9C91E /* NSObject+ADBPerformExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+ADBPerformExtensions.m"; sourceTree = "<group>"; };
-		9F1E8CD816E16C0400F1C908 /* ADBFilesystemScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBFilesystemScan.h; sourceTree = "<group>"; };
-		9F1E8CD916E16C0400F1C908 /* ADBFilesystemScan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBFilesystemScan.m; sourceTree = "<group>"; };
+		9F1E8CD816E16C0400F1C908 /* ADBScanOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBScanOperation.h; sourceTree = "<group>"; };
+		9F1E8CD916E16C0400F1C908 /* ADBScanOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBScanOperation.m; sourceTree = "<group>"; };
 		9F1E8CDC16E16EB800F1C908 /* ADBMountableImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBMountableImage.h; sourceTree = "<group>"; };
 		9F1E8CDD16E16EB800F1C908 /* ADBMountableImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBMountableImage.m; sourceTree = "<group>"; };
 		9F1E959915BD88D700C3C6A0 /* UserDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefaults.plist; sourceTree = "<group>"; };
@@ -2147,8 +2147,8 @@
 		9F0F2B9712AD464800CD7078 /* Operations */ = {
 			isa = PBXGroup;
 			children = (
-				9F1E8CD816E16C0400F1C908 /* ADBFilesystemScan.h */,
-				9F1E8CD916E16C0400F1C908 /* ADBFilesystemScan.m */,
+				9F1E8CD816E16C0400F1C908 /* ADBScanOperation.h */,
+				9F1E8CD916E16C0400F1C908 /* ADBScanOperation.m */,
 				9FAD1DFB14641ECD00C3074E /* ADBContinuousThread.h */,
 				9FAD1DFC14641ECD00C3074E /* ADBContinuousThread.m */,
 				9FEAA3EA1204595B0085F008 /* ADBOperation.h */,
@@ -4340,7 +4340,7 @@
 				9F80E7FF16DA3170001C3162 /* ADBFileHandle.m in Sources */,
 				9F693D5E16DD40DD00CCEA7C /* ADBTreeEnumerator.m in Sources */,
 				9F38B38B16DFB1960050AB15 /* ADBLocalFilesystem.m in Sources */,
-				9F1E8CDA16E16C0400F1C908 /* ADBFilesystemScan.m in Sources */,
+				9F1E8CDA16E16C0400F1C908 /* ADBScanOperation.m in Sources */,
 				9F1E8CDE16E16EB800F1C908 /* ADBMountableImage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4650,7 +4650,7 @@
 				9F80E80016DA3170001C3162 /* ADBFileHandle.m in Sources */,
 				9F693D5F16DD40DD00CCEA7C /* ADBTreeEnumerator.m in Sources */,
 				9F38B38C16DFB1960050AB15 /* ADBLocalFilesystem.m in Sources */,
-				9F1E8CDB16E16C0400F1C908 /* ADBFilesystemScan.m in Sources */,
+				9F1E8CDB16E16C0400F1C908 /* ADBScanOperation.m in Sources */,
 				9F1E8CDF16E16EB800F1C908 /* ADBMountableImage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

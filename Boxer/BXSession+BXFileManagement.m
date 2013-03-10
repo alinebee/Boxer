@@ -23,7 +23,7 @@
 #import "BXDrivesInUseAlert.h"
 #import "BXGameProfile.h"
 #import "BXDriveImport.h"
-#import "ADBFilesystemScan.h"
+#import "ADBScanOperation.h"
 
 #import "NSWorkspace+ADBMountedVolumes.h"
 #import "NSWorkspace+ADBFileTypes.h"
@@ -1806,7 +1806,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
                                                                         options: NSDirectoryEnumerationSkipsHiddenFiles
                                                                    errorHandler: NULL];
     
-    ADBOperation *scan = [ADBFilesystemScan scanWithEnumerator: enumerator
+    ADBOperation *scan = [ADBScanOperation scanWithEnumerator: enumerator
                                                     usingBlock: ^BOOL(NSString *path, id <ADBFilesystemPathEnumeration> e, BOOL *stop)
     {
         //Don't scan nested drives
@@ -1894,14 +1894,14 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (void) executableScanDidFinish: (NSNotification *)theNotification
 {
-    ADBFilesystemScan *scan = theNotification.object;
+    ADBScanOperation *scan = theNotification.object;
 	BXDrive *drive = scan.contextInfo;
     
     [self willChangeValueForKey: @"isScanningForExecutables"];
-	if (scan.succeeded)
+	if (scan.succeeded && scan.matches.count)
 	{
         //Construct absolute paths out of the relative ones returned by the scan.
-        NSArray *driveExecutables = [drive.path stringsByAppendingPaths: scan.matchingPaths];
+        NSArray *driveExecutables = [drive.path stringsByAppendingPaths: scan.matches];
         
         //Only send notifications if any executables were found, to prevent unnecessary redraws
         BOOL notify = (driveExecutables.count > 0);

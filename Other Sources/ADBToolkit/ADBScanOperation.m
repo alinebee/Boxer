@@ -24,25 +24,26 @@
  *	POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ADBFilesystemScan.h"
+#import "ADBScanOperation.h"
 
-NSString * const ADBFilesystemScanLatestPathKey = @"ADBFilesystemScanLatestPath";
+NSString * const ADBScanLatestObjectKey = @"ADBScanLatestObject";
+NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
 
-@implementation ADBFilesystemScan
+@implementation ADBScanOperation
 @synthesize enumerator = _enumerator;
 @synthesize matchCallback = _matchCallback;
-@synthesize matchingPaths = _matchingPaths;
+@synthesize matches = _matches;
 @synthesize maxMatches = _maxMatches;
 
-+ (id) scanWithEnumerator: (id<ADBFilesystemPathEnumeration>)enumerator
-               usingBlock: (ADBFilesystemMatchCallback)matchCallback
++ (id) scanWithEnumerator: (NSEnumerator *)enumerator
+               usingBlock: (ADBScanCallback)matchCallback
 {
     return [[[self alloc] initWithEnumerator: enumerator
                                   usingBlock: matchCallback] autorelease];
 }
 
-- (id) initWithEnumerator: (id<ADBFilesystemPathEnumeration>)enumerator
-               usingBlock: (ADBFilesystemMatchCallback)matchCallback
+- (id) initWithEnumerator: (NSEnumerator *)enumerator
+               usingBlock: (ADBScanCallback)matchCallback
 {
     self = [self init];
     if (self)
@@ -57,7 +58,7 @@ NSString * const ADBFilesystemScanLatestPathKey = @"ADBFilesystemScanLatestPath"
 {
     self.enumerator = nil;
     self.matchCallback = nil;
-    self.matchingPaths = nil;
+    self.matches = nil;
     [super dealloc];
 }
 
@@ -66,25 +67,25 @@ NSString * const ADBFilesystemScanLatestPathKey = @"ADBFilesystemScanLatestPath"
     NSAssert(self.enumerator != nil, @"No enumerator provided.");
     NSAssert(self.matchCallback != nil, @"No callback block provided.");
     
-    self.matchingPaths = [NSMutableArray arrayWithCapacity: 10];
+    self.matches = [NSMutableArray arrayWithCapacity: 10];
     
-    for (NSString *path in self.enumerator)
+    NSMutableDictionary *updateInfo = [NSMutableDictionary dictionaryWithCapacity: 2];
+    for (id object in self.enumerator)
     {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         
         BOOL stop = NO;
-        BOOL matched = self.matchCallback(path, self.enumerator, &stop);
+        BOOL matched = self.matchCallback(object, self.enumerator, &stop);
         if (matched)
         {
-            [self addMatchingPath: path];
-            if (self.maxMatches > 0 && self.matchingPaths.count > self.maxMatches)
+            [self addMatch: object];
+            [updateInfo setObject: object forKey: ADBScanLatestMatchKey];
+            if (self.maxMatches > 0 && self.matches.count > self.maxMatches)
                 stop = YES;
         }
         
-        //Send a notification for every path we iterate, matched or not
-        [self _sendInProgressNotificationWithInfo: @{
-           ADBFilesystemScanLatestPathKey: path
-         }];
+        [updateInfo setObject: object forKey: ADBScanLatestObjectKey];
+        [self _sendInProgressNotificationWithInfo: updateInfo];
         
         [pool drain];
         
@@ -93,10 +94,10 @@ NSString * const ADBFilesystemScanLatestPathKey = @"ADBFilesystemScanLatestPath"
     }
 }
 
-- (void) addMatchingPath: (NSString *)path
+- (void) addMatch: (id)match
 {
     //Ensures KVO notifications are sent properly for this key.
-	[[self mutableArrayValueForKey: @"matchingPaths"] addObject: path];
+	[[self mutableArrayValueForKey: @"matchingPaths"] addObject: match];
 }
 
 @end

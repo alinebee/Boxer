@@ -9,7 +9,6 @@
 
 #import "BXDrive.h"
 #import "NSString+ADBPaths.h"
-#import "BXGameProfile.h"
 #import "RegexKitLite.h"
 #import "ADBFilesystem.h"
 #import "NSURL+ADBFilesystemHelpers.h"

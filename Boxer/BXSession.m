@@ -156,7 +156,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	{
 		//IMPLEMENTATION NOTE: we only scan subfolders of the detection path if it's a gamebox,
 		//mountable folder or CD/floppy disk, since these will have a finite and manageable file
-		//heirarchy to scan.
+		//hierarchy to scan.
 		//Otherwise, we restrict our search to just the base folder to avoids massive blowouts
 		//if the user opens something big like their home folder or startup disk, and to avoid
 		//false positives when opening the DOS Games folder.
@@ -166,11 +166,12 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	return nil;
 }
 
-+ (NSImage *) bootlegCoverArtForGamebox: (BXGamebox *)gamebox withMedium: (BXReleaseMedium)medium
++ (NSImage *) bootlegCoverArtForGamebox: (BXGamebox *)gamebox
+                             withMedium: (BXReleaseMedium)medium
 {
 	Class <BXBootlegCoverArt> coverArtClass;
 	if (medium == BXUnknownMedium)
-        medium = [BXGameProfile mediumOfGameAtPath: gamebox.bundlePath];
+        medium = [BXGameProfile mediumOfGameAtURL: gamebox.bundleURL];
     
 	switch (medium)
 	{
@@ -946,7 +947,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         //game bundle, because then we'll be using the app's own icon instead.
         if (!icon && ![[NSApp delegate] isStandaloneGameBundle])
         {
-            BXReleaseMedium medium = self.gameProfile.coverArtMedium;
+            BXReleaseMedium medium = self.gameProfile.releaseMedium;
             icon = [self.class bootlegCoverArtForGamebox: self.gamebox
                                               withMedium: medium];
             

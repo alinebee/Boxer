@@ -8,6 +8,8 @@
 
 #import "BXGameProfile.h"
 #import "BXDrive.h"
+#import "ADBScanOperation.h"
+#import "ADBFilesystem.h"
 
 NSString * const BXGenericProfileIdentifier = @"net.washboardabs.generic";
 
@@ -33,30 +35,31 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 @property (retain, nonatomic) NSDictionary *driveLabelMappings;
 
 //Loads, caches and returns the contents of GameProfiles.plist to avoid multiple hits to the filesystem.
-+ (NSDictionary *) gameProfileData;
++ (NSDictionary *) _gameProfileData;
 
 //Generates, caches and returns a dictionary of identifier -> profile lookups.
 //Used by profileWithIdentifier:
-+ (NSDictionary *) identifierIndex;
++ (NSDictionary *) _identifierIndex;
 
 //Generates, caches and returns an array of lookup tables in order of priority.
-//Used by detectedProfileForPath: to perform detection in multiple passes of the file heirarchy.
-+ (NSArray *) lookupTables;
+//Used by detectedProfileForPath: to perform detection in multiple passes of the file hierarchy.
++ (NSArray *) _lookupTables;
 
 //Generates and returns a lookup table of filename->profile mappings for the specified set of profiles.
 //Used by _lookupTables.
-+ (NSDictionary *) lookupTableForProfiles: (NSArray *)profiles;
++ (NSDictionary *) _lookupTableForProfiles: (NSArray *)profiles;
+
 @end
 
 
 @implementation BXGameProfile
-
+@synthesize priority = _priority;
 @synthesize gameName = _gameName;
 @synthesize configurations = _configurations;
 @synthesize identifier = _identifier;
 @synthesize profileDescription = _profileDescription;
 @synthesize sourceDriveType = _sourceDriveType;
-@synthesize coverArtMedium = _coverArtMedium;
+@synthesize releaseMedium = _coverArtMedium;
 @synthesize requiredDiskSpace = _requiredDiskSpace;
 @synthesize shouldMountHelperDrivesDuringImport = _shouldMountHelperDrivesDuringImport;
 @synthesize shouldMountTempDrive = _shouldMountTempDrive;
@@ -71,48 +74,68 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 @synthesize shouldImportSettings = _shouldImportSettings;
 @synthesize preferredInstallationFolderPath = _preferredInstallationFolderPath;
 
-
-+ (BXReleaseMedium) mediumOfGameAtPath: (NSString *)basePath
++ (BXReleaseMedium) mediumOfGameAtURL: (NSURL *)baseURL
 {
     //TODO: check first if the base path is a disc image or an external volume,
     //and if so return a medium based on the size and type of volume/image.
     
     //Scan the size and age of the files in the folder to determine what kind of media
     //the game probably used.
-    
+    NSArray *propertyKeys = @[NSURLCreationDateKey, NSURLFileSizeKey];
 	NSFileManager *manager = [NSFileManager defaultManager];
-	NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath: basePath];
+	NSDirectoryEnumerator *enumerator = [manager enumeratorAtURL: baseURL
+                                      includingPropertiesForKeys: propertyKeys
+                                                         options: NSDirectoryEnumerationSkipsHiddenFiles
+                                                    errorHandler: NULL];
 	
 	NSDate *cutoffDate525       = [NSDate dateWithString: BX525DisketteGameDateThreshold];
 	NSDate *cutoffDate35        = [NSDate dateWithString: BX35DisketteGameDateThreshold];
 	NSDate *cutoffDateInvalid	= [NSDate dateWithString: BXInvalidGameDateThreshold];
 	unsigned long long pathSize = 0;
 	
-	while ([enumerator nextObject])
+	for (NSURL *URL in enumerator)
 	{
-		NSDictionary *attrs = enumerator.fileAttributes;
-		NSDate *creationDate = attrs.fileCreationDate;
+        NSDictionary *attrs = [URL resourceValuesForKeys: propertyKeys error: NULL];
+        if (!attrs)
+            continue;
+        
+		NSDate *creationDate = [attrs objectForKey: NSURLCreationDateKey];
         
         //If the file timestamps suggest the game was released before CDs
         //became commonplace, treat it as a diskette game.
 		if (creationDate && [creationDate timeIntervalSinceDate: cutoffDateInvalid] > 0)
 		{
-			if ([creationDate timeIntervalSinceDate: cutoffDate525] < 0)	return BX525DisketteMedium;
-			if ([creationDate timeIntervalSinceDate: cutoffDate35] < 0)		return BX35DisketteMedium;
+			if ([creationDate timeIntervalSinceDate: cutoffDate525] < 0)
+                return BX525DisketteMedium;
+            
+			if ([creationDate timeIntervalSinceDate: cutoffDate35] < 0)
+                return BX35DisketteMedium;
 		}
 		
+        
 		//If the game is too big to have been released on diskettes, treat it as a CD game
-		pathSize += attrs.fileSize;
-		if (pathSize > BXDisketteGameSizeThreshold) return BXCDROMMedium;
+		unsigned long long fileSize = [[attrs objectForKey: NSURLFileSizeKey] unsignedLongLongValue];
+        pathSize += fileSize;
+		if (pathSize > BXDisketteGameSizeThreshold)
+            return BXCDROMMedium;
 	}
     
 	//When all else fails, assume it's a 3.5 diskette game
 	return BX35DisketteMedium;
 }
 
-+ (NSString *) catalogueVersion     { return [[self gameProfileData] objectForKey: @"BXGameProfileCatalogueVersion"]; }
-+ (NSArray *) genericProfiles		{ return [[self gameProfileData] objectForKey: @"BXGenericProfiles"]; }
-+ (NSArray *) specificGameProfiles	{ return [[self gameProfileData] objectForKey: @"BXSpecificGameProfiles"]; }
++ (NSString *) catalogueVersion
+{
+    return [[self _gameProfileData] objectForKey: @"BXGameProfileCatalogueVersion"];
+}
++ (NSArray *) genericProfiles
+{
+    return [[self _gameProfileData] objectForKey: @"BXGenericProfiles"];
+}
++ (NSArray *) specificGameProfiles
+{
+    return [[self _gameProfileData] objectForKey: @"BXSpecificGameProfiles"];
+}
 
 
 #pragma mark -
@@ -131,7 +154,7 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
     }
     else
     {
-        NSDictionary *profileData = [[self identifierIndex] objectForKey: identifier];
+        NSDictionary *profileData = [[self _identifierIndex] objectForKey: identifier];
         if (profileData) return [[[self alloc] initWithDictionary: profileData] autorelease];
         else return nil;
     }
@@ -148,7 +171,7 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 	
 	//We check the entire filesystem for one set of profiles first, before starting on the next:
 	//This allows game-specific profiles to override generic ones that would otherwise match sooner.
-	for (NSDictionary *lookups in [self lookupTables])
+	for (NSDictionary *lookups in [self _lookupTables])
 	{
 		NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath: basePath];
 		for (NSString *path in enumerator)
@@ -172,18 +195,69 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 	return nil;
 }
 
++ (BXGameProfile *) profileMatchingPath: (NSString *)path
+                           inFilesystem: (id<ADBFilesystemPathAccess>)filesystem
+{
+    NSArray *lookupTables = [self _lookupTables];
+    NSUInteger numLookups = lookupTables.count;
+    
+    NSString *filename = path.lastPathComponent.lowercaseString;
+    NSString *wildcardFilename = [filename.stringByDeletingPathExtension stringByAppendingString: @".*"];
+    
+    for (NSUInteger i=0; i<numLookups; i++)
+    {
+        NSDictionary *lookups = [lookupTables objectAtIndex: i];
+        NSDictionary *matchingProfile = [lookups objectForKey: filename];
+        if (!matchingProfile)
+            matchingProfile = [lookups objectForKey: wildcardFilename];
+        
+        if (matchingProfile)
+        {
+            //Give earlier lookup tables higher priority than later ones:
+            //our lookup tables are ordered from most specific to most generic.
+            NSUInteger priorityMultiplier = numLookups - i;
+            
+            BXGameProfile *profile = [[self alloc] initWithDictionary: matchingProfile];
+            profile.priority *= priorityMultiplier;
+            
+            return [profile autorelease];
+        }
+    }
+    return nil;
+}
+
++ (NSArray *) profilesDetectedInContentsOfEnumerator: (id <ADBFilesystemPathEnumeration>)enumerator
+{
+    NSMutableArray *profiles = [NSMutableArray arrayWithCapacity: 1];
+    for (NSString *path in enumerator)
+    {
+        BXGameProfile *profile = [self profileMatchingPath: path inFilesystem: enumerator.filesystem];
+        if (profile)
+            [profiles addObject: profile];
+    }
+    return profiles;
+}
+
++ (ADBScanOperation *) profileScanWithEnumerator: (id <ADBFilesystemPathEnumeration>)enumerator
+{
+    return [ADBScanOperation scanWithEnumerator: enumerator usingBlock: ^id(NSString *path, id <ADBFilesystemPathEnumeration> e, BOOL *outStop) {
+        return [self profileMatchingPath: path inFilesystem: e.filesystem];
+    }];
+}
+
 - (id) init
 {
 	if ((self = [super init]))
 	{
 		//Set our standard defaults
+        self.priority = 1;
         self.identifier = BXGenericProfileIdentifier;
         
         self.sourceDriveType = BXDriveAutodetect;
         self.requiredDiskSpace = BXDefaultFreeSpace;
         self.shouldMountHelperDrivesDuringImport = YES;
         self.shouldMountTempDrive = YES;
-        self.coverArtMedium = BXUnknownMedium;
+        self.releaseMedium = BXUnknownMedium;
         
         self.shouldImportMountCommands = YES;
         self.shouldImportLaunchCommands = YES;
@@ -211,7 +285,7 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
             //otherwise, let the upstream context decide, since the source drive type doesn't distinguish
             //between 3.5" and 3.25" floppies.
             if (self.sourceDriveType == BXDriveCDROM)
-                self.coverArtMedium = BXCDROMMedium;
+                self.releaseMedium = BXCDROMMedium;
         }
 		
 		NSNumber *requiredSpace = [profileDict objectForKey: @"BXRequiredDiskSpace"];
@@ -232,7 +306,7 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 		
 		NSNumber *era = [profileDict objectForKey: @"BXProfileGameEra"];
 		if (era)
-            self.coverArtMedium = era.unsignedIntegerValue;
+            self.releaseMedium = era.unsignedIntegerValue;
         
 		NSNumber *importMountCommands = [profileDict objectForKey: @"BXShouldImportMountCommands"];
 		if (importMountCommands)
@@ -246,6 +320,10 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 		if (importSettings)
             self.shouldImportSettings = importSettings.boolValue;
 		
+		NSNumber *priorityLevel = [profileDict objectForKey: @"BXPriority"];
+		if (priorityLevel)
+            self.priority = priorityLevel.unsignedIntegerValue;
+        
         self.preferredInstallationFolderPath = [profileDict objectForKey: @"BXPreferredInstallationFolderPath"];
         
 		//Used by isDesignatedInstallerAtPath:
@@ -327,57 +405,71 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 	return NO;
 }
 
-#pragma mark -
-#pragma mark Private methods
+#pragma mark - Private methods
 							   
-+ (NSDictionary *) gameProfileData
++ (NSDictionary *) _gameProfileData
 {
-	static NSDictionary *dict = nil;
-	if (!dict)
-	{
-		NSString *profilePath = [[NSBundle mainBundle] pathForResource: @"GameProfiles" ofType: @"plist"];
-		dict = [[NSDictionary alloc] initWithContentsOfFile: profilePath];
-	}
+	static NSDictionary *dict;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSURL *profileURL = [[NSBundle mainBundle] URLForResource: @"GameProfiles" withExtension: @"plist"];
+        dict = [[NSDictionary alloc] initWithContentsOfURL: profileURL];
+    });
 	return dict;
 }
 
-+ (NSDictionary *) identifierIndex
++ (NSDictionary *) _identifierIndex
 {
-    static NSMutableDictionary *lookups = nil;
-    if (!lookups)
-    {
+    static NSMutableDictionary *lookups;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         lookups = [[NSMutableDictionary alloc] initWithCapacity: 200];
-        NSArray *allProfiles = [[self specificGameProfiles] arrayByAddingObjectsFromArray: [self genericProfiles]];
-        
-        for (NSDictionary *profile in allProfiles)
+        for (NSDictionary *profile in [self specificGameProfiles])
         {
             NSString *identifier = [profile objectForKey: @"BXProfileIdentifier"];
-            if (identifier) [lookups setObject: profile forKey: identifier];
+            if (identifier)
+            {
+                NSAssert1([lookups objectForKey: identifier] == nil, @"Duplicate profile identifier: %@", identifier);
+                [lookups setObject: profile forKey: identifier];
+            }
         }
-    }
+        
+        for (NSDictionary *profile in [self genericProfiles])
+        {
+            NSString *identifier = [profile objectForKey: @"BXProfileIdentifier"];
+            if (identifier)
+            {
+                NSAssert1([lookups objectForKey: identifier] == nil, @"Duplicate profile identifier: %@", identifier);
+                [lookups setObject: profile forKey: identifier];
+            }
+        }
+    });
     return lookups;
 }
 
-+ (NSArray *) lookupTables
++ (NSArray *) _lookupTables
 {
-	static NSArray *lookupTables = nil;
-	if (!lookupTables)
-	{
+	static NSArray *lookupTables;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
 		lookupTables = [[NSArray alloc] initWithObjects:
-						[self lookupTableForProfiles: [self specificGameProfiles]],
-						[self lookupTableForProfiles: [self genericProfiles]],
+						[self _lookupTableForProfiles: [self specificGameProfiles]],
+						[self _lookupTableForProfiles: [self genericProfiles]],
 						nil];
-	}
+	});
 	return lookupTables;
 }
 							   
-+ (NSDictionary *) lookupTableForProfiles: (NSArray *)profiles
++ (NSDictionary *) _lookupTableForProfiles: (NSArray *)profiles
 {
 	NSMutableDictionary *lookups = [[NSMutableDictionary alloc] initWithCapacity: 200];
 	for (NSDictionary *profile in profiles)
 	{
 		for (NSString *telltale in [profile objectForKey: @"BXProfileTelltales"])
-            [lookups setObject: profile forKey: telltale]; 
+        {
+            NSAssert1([lookups objectForKey: telltale] == nil, @"Duplicate profile telltale: %@", telltale);
+            [lookups setObject: profile forKey: telltale];
+        }
 	}
 	return [lookups autorelease];
 }

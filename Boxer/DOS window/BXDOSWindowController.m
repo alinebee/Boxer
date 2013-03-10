@@ -71,7 +71,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 {	
 	//Assign references to our document for our view controllers, or clear those references when the document is cleared.
 	//(We're careful about the order in which we do this, because these controllers may need to use the existing object
-	//heirarchy to set up/release bindings.
+	//hierarchy to set up/release bindings.
 	if (self.document)
 	{
 		self.programPanelController.representedObject = nil;

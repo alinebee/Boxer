@@ -579,26 +579,26 @@
 
 - (void) generateBootlegIcon
 {
-	BXReleaseMedium medium = self.gameProfile.coverArtMedium;
+	BXReleaseMedium medium = self.gameProfile.releaseMedium;
 	
 	//If the game profile doesn't have an era, then autodetect it
 	if (medium == BXUnknownMedium)
 	{
 		//We prefer the original source path for autodetection,
-		//but fall back on the contents of the game package if the source path has been removed.
+		//but fall back on the contents of the gamebox if the source path has been removed.
 		if ([self.sourceURL checkResourceIsReachableAndReturnError: NULL])
         {
-            //TODO: detect here whether the source path is original media (floppy disk, CD-ROM, ISO/IMG)
-            //and if so match the era to the kind of media used. This should be handled in eraOfGameAtPath:.
-			medium = [BXGameProfile mediumOfGameAtPath: self.sourceURL.path];
+            //TODO: check whether our source URL is original media (floppy disk, CD-ROM, ISO/IMG)
+            //and if so match the era to the kind of media used.
+			medium = [BXGameProfile mediumOfGameAtURL: self.sourceURL];
         }
 		else if (self.gamebox)
         {
-			medium = [BXGameProfile mediumOfGameAtPath: self.gamebox.bundlePath];
+			medium = [BXGameProfile mediumOfGameAtURL: self.gamebox.bundleURL];
         }
 		
 		//Record the autodetected era so we don't have to scan the filesystem next time.
-		self.gameProfile.coverArtMedium = medium;
+		self.gameProfile.releaseMedium = medium;
 	}
 	
 	NSImage *icon = [self.class bootlegCoverArtForGamebox: self.gamebox

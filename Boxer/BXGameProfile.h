@@ -19,7 +19,6 @@
 #pragma mark -
 #pragma mark Constants
 
-//Constants used by eraOfGameAtPath:
 typedef enum {
 	BXUnknownMedium = 0,
 	BX525DisketteMedium = 1,
@@ -31,10 +30,12 @@ typedef enum {
 //The default identifier string used for game profiles that don't match a known profile.
 extern NSString * const BXGenericProfileIdentifier;
 
-
+@class ADBScanOperation;
+@protocol ADBFilesystemPathAccess, ADBFilesystemPathEnumeration;
 @interface BXGameProfile : NSObject
 {
     NSString *_identifier;
+    NSUInteger _priority;
 	NSString *_gameName;
 	NSString *_profileDescription;
 	NSArray *_configurations;
@@ -58,6 +59,10 @@ extern NSString * const BXGenericProfileIdentifier;
 
 #pragma mark -
 #pragma mark Properties
+
+//Returns the relative priority of this profile, for choosing between multiple matching profiles:
+//profiles with higher priority should be considered more "canonical" than lower-priority profiles.
+@property (assign, nonatomic) NSUInteger priority;
 
 //A unique identifier for this profile. Used for quick lookups via +profileWithIdentifier:.
 @property (copy, nonatomic) NSString *identifier;
@@ -108,9 +113,9 @@ extern NSString * const BXGenericProfileIdentifier;
 
 //The type of media upon which this game was likely released: currently this
 //is used only for deciding on cover art, not for emulation decisions.
-//(See installMedium above, which does affect how the game is installed.)
+//(See sourceDriveType above, which does affect how the game is installed.)
 //Defaults to BXUnknownMedium.
-@property (assign, nonatomic) BXReleaseMedium coverArtMedium;
+@property (assign, nonatomic) BXReleaseMedium releaseMedium;
 
 //If a DOSBox configuration file is bundled with a game we're importing,
 //what to import from it: drive mounts, launch commands, and/or configuration settings.
@@ -136,9 +141,10 @@ extern NSString * const BXGenericProfileIdentifier;
 //This corresponds the contents of the BXSpecificGameProfiles key in GameProfiles.plist.
 + (NSArray *) specificGameProfiles;
 
-//Returns the game era that the contents of the specified file path look like, based on filesize
-//and age of files. This is used by BXDockTileController to decide which bootleg coverart style to use.
-+ (BXReleaseMedium) mediumOfGameAtPath: (NSString *)basePath;
+//Returns the kind of distribution medium (CD-ROM, floppy) that the contents of the specified
+//file URL probably used, based on filesize and age of files. Among other things, this is used
+//to decide what kind of bootleg coverart style to use.
++ (BXReleaseMedium) mediumOfGameAtURL: (NSURL *)URL;
 
 
 #pragma mark -
@@ -151,16 +157,32 @@ extern NSString * const BXGenericProfileIdentifier;
 //or nil if no such profile was found.
 + (id) profileWithIdentifier: (NSString *)identifier;
 
+//Creates a new profile from the specified GameProfiles.plist-format dictionary.
+- (id) initWithDictionary: (NSDictionary *)profileDictionary;
+
+
 //Detects and returns an appropriate game profile for the specified path,
-//by scanning for telltale files in the file heirarchy starting at basePath.
+//by scanning for telltale files in the file hierarchy starting at basePath.
 //Will return nil if no profile could be found.
 //If searchSubfolders is NO, only the base path will be scanned without
 //recursing into subfolders.
 + (id) detectedProfileForPath: (NSString *)basePath
              searchSubfolders: (BOOL) searchSubfolders;
 
-//Creates a new profile from the specified GameProfiles.plist-format dictionary.
-- (id) initWithDictionary: (NSDictionary *)profileDictionary;
+//Returns the profile whose telltales match the specified path, or nil if no matching profile
+//is found. This only checks the specified path and does not perform any recursion of directories.
+//Used internally by profilesDetectedInContentsOfEnumerator: and profileScanWithEnumerator:.
++ (id) profileMatchingPath: (NSString *)basePath
+              inFilesystem: (id <ADBFilesystemPathAccess>)filesystem;
+
+//Returns a list of all game profiles detected by traversing the specified enumerator,
+//in descending order of priority (so that the most canonical profile is the first result.)
++ (NSArray *) profilesDetectedInContentsOfEnumerator: (id <ADBFilesystemPathEnumeration>)enumerator;
+
+//Returns a scan operaiton ready to scan the contents of the specified enumerator.
++ (ADBScanOperation *) profileScanWithEnumerator: (id <ADBFilesystemPathEnumeration>)enumerator;
+
+
 
 #pragma mark -
 #pragma mark Methods affecting emulation behaviour

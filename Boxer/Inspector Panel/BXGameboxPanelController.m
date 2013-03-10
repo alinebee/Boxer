@@ -272,7 +272,7 @@ enum {
                 //Skip drives with no executables on them
                 if (programsInDrive.count)
                 {
-                    //Sort the executables in order of path depth, so we can prioritise programs 'higher up' in the file heirarchy
+                    //Sort the executables in order of path depth, so we can prioritise programs 'higher up' in the file hierarchy
                     NSArray *sortedPrograms = [programsInDrive sortedArrayUsingSelector: @selector(pathDepthCompare:)];
                     
                     for (NSString *path in sortedPrograms)

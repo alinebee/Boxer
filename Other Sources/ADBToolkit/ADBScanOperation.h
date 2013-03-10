@@ -24,34 +24,38 @@
  *	POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ADBScanOperation is a generic operation to asynchronously traverse an enumerator to
-//build up an array of matching objects. It sends out notifications when matches are found,
-//and can be cancelled midstream or set to end after a maximum number of matches.
-//This class is intended for e.g. asynchronous filesystem scanning.
+//ADBScanOperation is a generic operation that asynchronously traverses an enumerator
+//to generate an array of filtered objects, using a user-supplied block which can filter
+//and/or convert the objects being enumerated.
+//It sends out notifications when enumerating and matching, and can be cancelled midstream
+//by the block itself, by reaching a maximum number of matches, or through the standard
+//NSOperation API.
+//This class is intended for applications like asynchronous filesystem scanning.
 
 #import "ADBOperation.h"
 
 //Keys included in update notifications
 
 //Contains the object most recently enumerated (whether it was considered a match or not.)
-extern NSString * const ADBScanLatestObjectKey;
+extern NSString * const ADBScanLatestScannedObjectKey;
 
 //Contains the object that was most recently matched.
 //Will be NSNull if no matches have been found.
 extern NSString * const ADBScanLatestMatchKey;
 
 
-//Called for each object that is traversed by the enumerator: should return YES
-//if the specified object is considered a match, NO otherwise.
-//Object is the object returned by the enumerator's nextObject method,
-//enumerator is the enumerator that was passed into the operation, and stop
+//Called for each object that is traversed by the enumerator: should return the
+//object to store as a match (which may be different from the object that was traversed)
+//or nil if the object did not match.
+//inObject is the object returned by the enumerator's nextObject method,
+//inEnumerator is the enumerator that was passed into the operation, and outStop
 //is an output boolean that can be set to YES to halt enumeration after this object.
-typedef BOOL(^ADBScanCallback)(id object, NSEnumerator *enumerator, BOOL *stop);
+typedef id (^ADBScanCallback)(id inObject, id <NSFastEnumeration> inEnumerator, BOOL *outStop);
 
 
 @interface ADBScanOperation : ADBOperation
 {
-    NSEnumerator *_enumerator;
+    id <NSFastEnumeration> _enumerator;
     ADBScanCallback _matchCallback;
     NSMutableArray *_matches;
     NSUInteger _maxMatches;
@@ -60,7 +64,7 @@ typedef BOOL(^ADBScanCallback)(id object, NSEnumerator *enumerator, BOOL *stop);
 #pragma mark - Public properties
 
 //The enumerator which this scan will traverse.
-@property (retain) NSEnumerator *enumerator;
+@property (retain) id <NSFastEnumeration> enumerator;
 
 //The callback block this scan will call with each object returned by the enumerator,
 //to determine whether it is a match or not.
@@ -77,17 +81,17 @@ typedef BOOL(^ADBScanCallback)(id object, NSEnumerator *enumerator, BOOL *stop);
 
 #pragma mark - Constructors
 
-+ (id) scanWithEnumerator: (NSEnumerator *)enumerator
++ (id) scanWithEnumerator: (id <NSFastEnumeration>)enumerator
                usingBlock: (ADBScanCallback)matchCallback;
 
-- (id) initWithEnumerator: (NSEnumerator *)enumerator
+- (id) initWithEnumerator: (id <NSFastEnumeration>)enumerator
                usingBlock: (ADBScanCallback)matchCallback;
 
 
 #pragma mark - Subclassable methods
 
-//Adds the specified object to the matches. This can be overridden in subclasses
-//to do further processing.
+//Adds the specified object to the matches.
+//This can be overridden in subclasses to perform further processing.
 - (void) addMatch: (id)match;
 
 @end

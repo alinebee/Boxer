@@ -26,7 +26,7 @@
 
 #import "ADBScanOperation.h"
 
-NSString * const ADBScanLatestObjectKey = @"ADBScanLatestObject";
+NSString * const ADBScanLatestScannedObjectKey = @"ADBScanLatestScannedObject";
 NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
 
 @implementation ADBScanOperation
@@ -35,14 +35,14 @@ NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
 @synthesize matches = _matches;
 @synthesize maxMatches = _maxMatches;
 
-+ (id) scanWithEnumerator: (NSEnumerator *)enumerator
++ (id) scanWithEnumerator: (id <NSFastEnumeration>)enumerator
                usingBlock: (ADBScanCallback)matchCallback
 {
     return [[[self alloc] initWithEnumerator: enumerator
                                   usingBlock: matchCallback] autorelease];
 }
 
-- (id) initWithEnumerator: (NSEnumerator *)enumerator
+- (id) initWithEnumerator: (id <NSFastEnumeration>)enumerator
                usingBlock: (ADBScanCallback)matchCallback
 {
     self = [self init];
@@ -75,16 +75,16 @@ NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         
         BOOL stop = NO;
-        BOOL matched = self.matchCallback(object, self.enumerator, &stop);
-        if (matched)
+        id matchedObject = self.matchCallback(object, self.enumerator, &stop);
+        if (matchedObject != nil)
         {
-            [self addMatch: object];
-            [updateInfo setObject: object forKey: ADBScanLatestMatchKey];
+            [self addMatch: matchedObject];
+            [updateInfo setObject: matchedObject forKey: ADBScanLatestMatchKey];
             if (self.maxMatches > 0 && self.matches.count > self.maxMatches)
                 stop = YES;
         }
         
-        [updateInfo setObject: object forKey: ADBScanLatestObjectKey];
+        [updateInfo setObject: object forKey: ADBScanLatestScannedObjectKey];
         [self _sendInProgressNotificationWithInfo: updateInfo];
         
         [pool drain];

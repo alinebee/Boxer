@@ -152,7 +152,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	}
 	
 	//If we get this far, then treat the path as a regular file or folder and recommend against
-	//searching subfolders (since the file heirarchy could be potentially huge.)
+	//searching subfolders (since the file hierarchy could be potentially huge.)
 	if (shouldRecurse) *shouldRecurse = NO;
 	BOOL isFolder;
 	NSFileManager *manager = [NSFileManager defaultManager];
@@ -1807,17 +1807,21 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
                                                                    errorHandler: NULL];
     
     ADBOperation *scan = [ADBScanOperation scanWithEnumerator: enumerator
-                                                    usingBlock: ^BOOL(NSString *path, id <ADBFilesystemPathEnumeration> e, BOOL *stop)
+                                                   usingBlock: ^id(NSString *path, id <ADBFilesystemPathEnumeration> e, BOOL *stop)
     {
-        //Don't scan nested drives
+        //Don't scan nested drives. This allows for old-style gameboxes that treat the root folder of the gamebox as drive C. 
         if ([e.filesystem typeOfFileAtPath: path matchingTypes: [BXFileTypes mountableFolderTypes]])
         {
             [e skipDescendants];
-            return NO;
+            return nil;
         }
-        else 
+        else if ([BXFileTypes isCompatibleExecutableAtPath: path filesystem: e.filesystem error: NULL])
         {
-            return [BXFileTypes isCompatibleExecutableAtPath: path filesystem: e.filesystem error: NULL];
+            return path;
+        }
+        else
+        {
+            return nil;
         }
     }];
     

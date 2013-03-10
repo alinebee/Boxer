@@ -80,7 +80,7 @@ NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
         {
             [self addMatch: matchedObject];
             [updateInfo setObject: matchedObject forKey: ADBScanLatestMatchKey];
-            if (self.maxMatches > 0 && self.matches.count > self.maxMatches)
+            if (self.maxMatches > 0 && self.matches.count >= self.maxMatches)
                 stop = YES;
         }
         

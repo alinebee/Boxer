@@ -189,7 +189,7 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 			NSString *baseName	= [fileName.stringByDeletingPathExtension stringByAppendingString: @".*"];
 			if ((matchingProfile = [lookups objectForKey: baseName]))
 				return [[[self alloc] initWithDictionary: matchingProfile] autorelease];
-		}		
+		}
 	}
 	
 	return nil;

@@ -471,19 +471,8 @@
     {
         NSURL *baseURL = [NSURL fileURLWithPath: self.mountPoint];
         
-        if ([baseURL conformsToFileType: BXCuesheetImageType])
-        {
-            self.filesystem = [ADBBinCueImage imageWithContentsOfURL: baseURL error: NULL];
-        }
-        else if ([baseURL matchingFileType: [NSSet setWithObjects: BXISOImageType, BXCDRImageType, nil]])
-        {
-            self.filesystem = [ADBISOImage imageWithContentsOfURL: baseURL error: NULL];
-        }
-        else if ([baseURL matchingFileType: [ADBMountableImage supportedImageTypes]])
-        {
-            self.filesystem = [ADBMountableImage imageWithContentsOfURL: baseURL error: NULL];
-        }
-        else if (self.shadowPath)
+        //TODO: support filesystem shadowing for image-based filesystems
+        if (self.shadowPath)
         {
             NSURL *shadowURL = [NSURL fileURLWithPath: self.shadowPath];
             self.filesystem = [ADBShadowedFilesystem filesystemWithBaseURL: baseURL
@@ -491,7 +480,7 @@
         }
         else
         {
-            self.filesystem = [ADBLocalFilesystem filesystemWithBaseURL: baseURL];
+            self.filesystem = [BXFileTypes filesystemWithContentsOfURL: baseURL error: NULL];
         }
         
         NSAssert1(self.filesystem != nil, @"No suitable filesystem could be found for mount point %@", self.mountPoint);

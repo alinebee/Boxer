@@ -170,7 +170,7 @@ extern NSString * const BXGenericProfileIdentifier;
              searchSubfolders: (BOOL) searchSubfolders;
 
 //Returns the profile whose telltales match the specified path, or nil if no matching profile
-//is found. This only checks the specified path and does not perform any recursion of directories.
+//is found. This checks only the specified path and does not perform any recursion of directories.
 //Used internally by profilesDetectedInContentsOfEnumerator: and profileScanWithEnumerator:.
 + (id) profileMatchingPath: (NSString *)basePath
               inFilesystem: (id <ADBFilesystemPathAccess>)filesystem;
@@ -180,7 +180,7 @@ extern NSString * const BXGenericProfileIdentifier;
 //terminated prematurely without the cost of a full filesystem search.)
 + (NSEnumerator *) profilesDetectedInContentsOfEnumerator: (id <ADBFilesystemPathEnumeration>)enumerator;
 
-//Returns a scan operaiton ready to scan the contents of the specified enumerator.
+//Returns a scan operation ready to scan the contents of the specified enumerator.
 + (ADBScanOperation *) profileScanWithEnumerator: (id <ADBFilesystemPathEnumeration>)enumerator;
 
 

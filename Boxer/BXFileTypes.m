@@ -10,6 +10,9 @@
 #import "NSURL+ADBFilesystemHelpers.h"
 #import "ADBFileHandle.h"
 #import "ADBFilesystem.h"
+#import "ADBBinCueImage.h"
+#import "ADBMountableImage.h"
+#import "ADBLocalFilesystem.h"
 
 NSString * const BXGameboxType      = @"net.washboardabs.boxer-game-package";
 NSString * const BXGameStateType    = @"net.washboardabs.boxer-game-state";
@@ -465,6 +468,33 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
     
 	//Otherwise, assume the file is incompatible.
 	return NO;
+}
+
+@end
+
+
+@implementation BXFileTypes (BXFilesystemDetection)
+
++ (id <ADBFilesystemPathAccess>) filesystemWithContentsOfURL: (NSURL *)URL
+                                                       error: (out NSError **)outError
+{
+    if ([URL conformsToFileType: BXCuesheetImageType])
+    {
+        return [ADBBinCueImage imageWithContentsOfURL: URL error: outError];
+    }
+    else if ([URL matchingFileType: [NSSet setWithObjects: BXISOImageType, BXCDRImageType, nil]])
+    {
+        //TODO: if parsing of the image fails, fall back on ADBMountableImage
+        return [ADBISOImage imageWithContentsOfURL: URL error: outError];
+    }
+    else if ([URL matchingFileType: [ADBMountableImage supportedImageTypes]])
+    {
+        return [ADBMountableImage imageWithContentsOfURL: URL error: outError];
+    }
+    else
+    {
+        return [ADBLocalFilesystem filesystemWithBaseURL: URL];
+    }
 }
 
 @end

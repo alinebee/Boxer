@@ -159,4 +159,14 @@
 	[spotlight release];
 }
 
+- (void)drawFocusRingMaskWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
+{
+    [self.image drawInRect:[self imageRectForBounds:cellFrame]
+                  fromRect:NSZeroRect
+                 operation:NSCompositeSourceOver
+                  fraction:0.4999
+            respectFlipped:YES
+                     hints:nil];
+}
+
 @end

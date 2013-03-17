@@ -534,7 +534,6 @@ enum {
     return trashedSuccessfully;
 }
 
-
 - (IBAction) trashSelectedDocumentationItems: (id)sender
 {
     [self removeDocumentationURLs: self.selectedDocumentationURLs];
@@ -568,6 +567,11 @@ enum {
     }
 }
 
+- (void) cancelOperation: (id)sender
+{
+    if ([self.delegate respondsToSelector: @selector(documentationBrowserDidCancel:)])
+        [self.delegate documentationBrowserDidCancel: self];
+}
 
 #pragma mark - Drag-drop
 

@@ -135,15 +135,8 @@
 
 - (NSColor *) titleColor
 {
-    if (self.controlView.isFirstResponder)
-    {
-        return [NSColor whiteColor];
-    }
-    else
-    {
-        CGFloat alpha = 0.75f + (0.25f * self.controlView.illumination);
-        return [NSColor colorWithCalibratedWhite: 1.0f alpha: alpha];
-    }
+    CGFloat alpha = 0.75f + (0.25f * self.controlView.illumination);
+    return [NSColor colorWithCalibratedWhite: 1.0f alpha: alpha];
 }
 
 - (CGFloat) imageHighlightLevel

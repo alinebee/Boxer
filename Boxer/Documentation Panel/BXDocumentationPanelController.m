@@ -294,6 +294,11 @@
 
 #pragma mark - Delegate responses
 
+- (void) documentationBrowserDidCancel: (BXDocumentationBrowser *)browser
+{
+    [self close];
+}
+
 //Close our popover/window when the user performs any action.
 - (void) documentationBrowser: (BXDocumentationBrowser *)browser didOpenURLs: (NSArray *)URLs
 {

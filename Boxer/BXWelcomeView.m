@@ -154,7 +154,7 @@
 - (NSRect) titleRectForBounds: (NSRect)theRect
 {
 	//Position the title to occupy the bottom quarter of the button.
-	theRect.origin.y = 68;
+	theRect.origin.y = 72;
 	return theRect;
 }
 

@@ -1211,14 +1211,24 @@
     if (locked)
     {
         //Conceal the Inspector panel while the mouse is locked
+        //(it will be revealed again when the mouse is unlocked).
         [[BXInspectorController controller] hideIfVisible];
         
-        //Close the documentation browser too
-        [self.documentationPanelController close];
+        //Close the documentation browser when the mouse is locked also.
+        //HACK: if the documentation browser is being displayed in an NSPopover,
+        //it will be automatically dismissed at the end of the event loop
+        //as a result of clicking outside the popover.
+        //However, if the popover receives our own close message *before* it gets
+        //around to doing this, then next time it is displayed it will dismiss
+        //itself as soon as it is clicked: this is a bug that's reproducible in
+        //OS X 10.8.2.
+        //To work around this, we wait until the popover's own dismissal should
+        //have kicked in, before sending our own (now redundant) close request.
+        [self.documentationPanelController performSelector: @selector(close) withObject: nil afterDelay: 0.1];
     }
     else
     {
-        //If we were previously concealing the Inspector, then reveal it now
+        //If we were previously concealing the Inspector, then reveal it now.
         [[BXInspectorController controller] revealIfHidden];
     }
     

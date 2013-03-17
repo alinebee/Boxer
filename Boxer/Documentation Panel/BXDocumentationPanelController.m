@@ -229,7 +229,9 @@
             self.popoverBrowser.delegate = self;
             
             self.popover = [[[NSPopover alloc] init] autorelease];
-            self.popover.behavior = NSPopoverBehaviorSemitransient; //Allows files to be drag-dropped into the popover
+            //NSPopoverBehaviorSemitransient stays open when the application is inactive,
+            //which allows files to be drag-dropped into the popover from Finder.
+            self.popover.behavior = NSPopoverBehaviorSemitransient;
             self.popover.animates = YES;
             self.popover.delegate = self;
             
@@ -267,13 +269,16 @@
 
 - (void) close
 {
+    
     [self willChangeValueForKey: @"shown"];
     
-    if (self.isWindowLoaded)
+    if (self.isWindowLoaded && self.window.isVisible)
         [self.window orderOut: self];
     
-    if (self.popover)
+    if (self.popover.isShown)
+    {
         [self.popover performClose: self];
+    }
     
     [self didChangeValueForKey: @"shown"];
 }

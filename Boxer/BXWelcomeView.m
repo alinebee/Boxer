@@ -27,9 +27,9 @@
 	NSGradient *background = [[NSGradient alloc] initWithStartingColor: grey endingColor: black];
 	
 	//We set a particularly huge radius and offset to give a subtle curvature to the gradient
-	CGFloat innerRadius = [self bounds].size.width * 1.5f;
-	CGFloat outerRadius = innerRadius + ([self bounds].size.height * 0.5f);
-	NSPoint center = NSMakePoint(NSMidX([self bounds]), ([self bounds].size.height * 0.15f) - innerRadius);
+	CGFloat innerRadius = self.bounds.size.width * 1.5f;
+	CGFloat outerRadius = innerRadius + (self.bounds.size.height * 0.5f);
+	NSPoint center = NSMakePoint(NSMidX(self.bounds), (self.bounds.size.height * 0.15f) - innerRadius);
 	
 	[background drawFromCenter: center radius: innerRadius
 					  toCenter: center radius: outerRadius
@@ -41,38 +41,78 @@
 @end
 
 
+@interface BXWelcomeButton ()
+@property (assign, nonatomic, getter=isFirstResponder) BOOL firstResponder;
+@end
+
 @implementation BXWelcomeButton
 @synthesize draggingDelegate = _draggingDelegate;
+@synthesize firstResponder = _firstResponder;
 
-//Ignore state altogether (overrides BXFilterPortrait behaviour of highlighting when state changes)
-- (void) setState: (NSInteger)value {}
+- (void) awakeFromNib
+{
+    NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect: NSZeroRect
+                                                                options: NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect | NSTrackingActiveAlways
+                                                                  owner: self
+                                                               userInfo: nil];
+    
+    [self addTrackingArea: trackingArea];
+    [trackingArea release];
+}
+
+- (BOOL) becomeFirstResponder
+{
+    BOOL became = [super becomeFirstResponder];
+    if (became)
+        self.firstResponder = YES;
+    return became;
+}
+
+- (BOOL) resignFirstResponder
+{
+    BOOL resigned = [super resignFirstResponder];
+    if (resigned)
+        self.firstResponder = NO;
+    return resigned;
+}
 
 - (void) setHighlighted: (BOOL)flag
 {
-	[[self animator] setIllumination: (flag ? 1.0f : 0.0f)];
+	[self.animator setIllumination: (flag ? 1.0f : 0.0f)];
 }
 
 - (BOOL) isHighlighted
 {
-	return [self illumination] > 0;
+	return self.illumination > 0 || self.state == NSOnState;
 }
+
+- (void) mouseEntered: (NSEvent *)event
+{
+    self.highlighted = YES;
+}
+
+- (void) mouseExited: (NSEvent *)event
+{
+    self.highlighted = NO;
+}
+
 
 #pragma mark -
 #pragma mark Supporting drag-drop
 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
 {
-	return [[self draggingDelegate] button: self draggingEntered: sender];
+	return [self.draggingDelegate button: self draggingEntered: sender];
 }
 
 - (void) draggingExited: (id <NSDraggingInfo>)sender
 {
-	[[self draggingDelegate] button: self draggingExited: sender];
+	[self.draggingDelegate button: self draggingExited: sender];
 }
 
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
 {
-	return [[self draggingDelegate] button: self performDragOperation: sender];
+	return [self.draggingDelegate button: self performDragOperation: sender];
 }
 
 @end
@@ -85,28 +125,6 @@
     return (BXWelcomeButton *)[super controlView];
 }
 
-- (void) awakeFromNib
-{
-	//So that we receive mouseEntered and mouseExited events
-	[self setShowsBorderOnlyWhileMouseInside: YES];
-	[super awakeFromNib];
-}
-
-
-#pragma mark -
-#pragma mark Hover events
-
-- (void) mouseEntered: (NSEvent *)event
-{
-	[[self controlView] setHighlighted: YES];
-}
-
-- (void) mouseExited: (NSEvent *)event
-{
-	[[self controlView] setHighlighted: NO];
-}
-
-
 #pragma mark -
 #pragma mark Button style
 
@@ -117,8 +135,15 @@
 
 - (NSColor *) titleColor
 {
-	CGFloat alpha = 0.75f + (0.25f * [[self controlView] illumination]);
-	return [NSColor colorWithCalibratedWhite: 1.0f alpha: alpha];
+    if (self.controlView.isFirstResponder)
+    {
+        return [NSColor whiteColor];
+    }
+    else
+    {
+        CGFloat alpha = 0.75f + (0.25f * self.controlView.illumination);
+        return [NSColor colorWithCalibratedWhite: 1.0f alpha: alpha];
+    }
 }
 
 - (CGFloat) imageHighlightLevel
@@ -142,21 +167,38 @@
 #pragma mark -
 #pragma mark Button drawing
 
+- (void) drawWithFrame: (NSRect)frame inView: (BXWelcomeButton *)controlView
+{
+    if (controlView.isFirstResponder)
+        [self drawFocusSpotlightWithFrame: frame inView: controlView];
+    
+    [super drawWithFrame: frame inView: controlView];
+}
+
 - (void) drawSpotlightWithFrame: (NSRect)frame inView: (NSView *)controlView withAlpha: (CGFloat)alpha
 {
-	NSImage *spotlight = [[NSImage imageNamed: @"WelcomeSpotlight"] copy];
-	[spotlight setFlipped: [controlView isFlipped]];
-	
-	NSRect spotlightFrame;
-	spotlightFrame.size = [spotlight size];
-	spotlightFrame.origin = NSMakePoint(0, 0);
+	NSImage *spotlight = [NSImage imageNamed: @"WelcomeSpotlight"];
+	NSRect spotlightFrame = NSMakeRect(0, 0, spotlight.size.width, spotlight.size.height);
 	
 	[spotlight drawInRect: spotlightFrame
 				 fromRect: NSZeroRect
 				operation: NSCompositePlusLighter
-				 fraction: alpha];
+				 fraction: alpha
+           respectFlipped: YES
+                    hints: nil];
+}
+
+- (void) drawFocusSpotlightWithFrame: (NSRect)cellFrame inView: (NSView *)controlView
+{
+	NSImage *spotlight = [NSImage imageNamed: @"WelcomeFocusRing"];
+	NSRect spotlightFrame = NSMakeRect(0, 0, spotlight.size.width, spotlight.size.height);
 	
-	[spotlight release];
+	[spotlight drawInRect: spotlightFrame
+				 fromRect: NSZeroRect
+				operation: NSCompositePlusLighter
+				 fraction: 1.0
+           respectFlipped: YES
+                    hints: nil];
 }
 
 @end

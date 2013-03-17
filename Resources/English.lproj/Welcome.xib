@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">12B19</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2549</string>
-		<string key="IBDocument.AppKitVersion">1187</string>
-		<string key="IBDocument.HIToolboxVersion">624.00</string>
+		<string key="IBDocument.SystemVersion">12C60</string>
+		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
+		<string key="IBDocument.AppKitVersion">1187.34</string>
+		<string key="IBDocument.HIToolboxVersion">625.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2549</string>
+			<string key="NS.object.0">3084</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSButton</string>
@@ -404,11 +404,27 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="904970911"/>
+						<reference key="destination" ref="719745099"/>
+					</object>
+					<int key="connectionID">272</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
 						<string key="label">draggingDelegate</string>
 						<reference key="source" ref="719745099"/>
 						<reference key="destination" ref="1001"/>
 					</object>
 					<int key="connectionID">188</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="719745099"/>
+						<reference key="destination" ref="808147803"/>
+					</object>
+					<int key="connectionID">273</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -421,10 +437,26 @@
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
+						<reference key="source" ref="808147803"/>
+						<reference key="destination" ref="910787578"/>
+					</object>
+					<int key="connectionID">274</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="197877380"/>
+						<reference key="destination" ref="904970911"/>
+					</object>
+					<int key="connectionID">277</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
 						<reference key="source" ref="910787578"/>
 						<reference key="destination" ref="197877380"/>
 					</object>
-					<int key="connectionID">180</int>
+					<int key="connectionID">275</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -488,9 +520,9 @@
 						<reference key="object" ref="860667949"/>
 						<array class="NSMutableArray" key="children">
 							<reference ref="808147803"/>
-							<reference ref="719745099"/>
 							<reference ref="904970911"/>
 							<reference ref="454524449"/>
+							<reference ref="719745099"/>
 						</array>
 						<reference key="parent" ref="553231048"/>
 					</object>
@@ -644,7 +676,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">270</int>
+			<int key="maxID">277</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -654,8 +686,6 @@
 					<dictionary class="NSMutableDictionary" key="actions">
 						<string key="hideWelcomePanel:">id</string>
 						<string key="orderFrontAboutPanel:">id</string>
-						<string key="orderFrontFirstRunPanel:">id</string>
-						<string key="orderFrontFirstRunPanelWithTransition:">id</string>
 						<string key="orderFrontImportGamePanel:">id</string>
 						<string key="orderFrontInspectorPanel:">id</string>
 						<string key="orderFrontPreferencesPanel:">id</string>
@@ -684,14 +714,6 @@
 						</object>
 						<object class="IBActionInfo" key="orderFrontAboutPanel:">
 							<string key="name">orderFrontAboutPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontFirstRunPanel:">
-							<string key="name">orderFrontFirstRunPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontFirstRunPanelWithTransition:">
-							<string key="name">orderFrontFirstRunPanelWithTransition:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="orderFrontImportGamePanel:">

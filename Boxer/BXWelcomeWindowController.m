@@ -50,35 +50,27 @@
 
 + (id) controller
 {
-	static id singleton = nil;
-	
-	if (!singleton) singleton = [[self alloc] initWithWindowNibName: @"Welcome"];
+	static id singleton;
+	static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        singleton = [[self alloc] initWithWindowNibName: @"Welcome"];
+    });
 	return singleton;
-}
-
-- (void) dealloc
-{
-	[self setRecentDocumentsButton: nil],	[recentDocumentsButton release];
-	[self setImportGameButton: nil],		[importGameButton release];
-	[self setOpenPromptButton: nil],		[openPromptButton release];
-	[self setShowGamesFolderButton: nil],	[showGamesFolderButton release];
-	
-	[super dealloc];
 }
 
 - (void) windowDidLoad
 {	
 	//Set up drag-drop events for the buttons
 	NSArray *types = [NSArray arrayWithObject: NSFilenamesPboardType];
-	[[self importGameButton] registerForDraggedTypes: types];
-	[[self openPromptButton] registerForDraggedTypes: types];
+	[self.importGameButton registerForDraggedTypes: types];
+	[self.openPromptButton registerForDraggedTypes: types];
 }
 
 - (void) windowDidBecomeKey: (NSNotification *)notification
 {
 	//Highlight the button the mouse is over currently
-	NSView *contentView		= [[self window] contentView];
-	NSPoint mouseLocation	= [[self window] mouseLocationOutsideOfEventStream];
+	NSView *contentView		= self.window.contentView;
+	NSPoint mouseLocation	= self.window.mouseLocationOutsideOfEventStream;
 	NSView *clickTarget		= [contentView hitTest: [contentView convertPoint: mouseLocation fromView: nil]];
 	
 	if ([clickTarget isKindOfClass: [BXWelcomeButton class]])
@@ -91,20 +83,20 @@
 {
 	//Clear the hover state of all welcome buttons when the window
 	//disappears or loses focus
-	[[self showGamesFolderButton] setHighlighted: NO];
-	[[self importGameButton] setHighlighted: NO];
-	[[self openPromptButton] setHighlighted: NO];
+    self.showGamesFolderButton.highlighted = NO;
+    self.importGameButton.highlighted = NO;
+    self.openPromptButton.highlighted = NO;
 }
 
 - (void) showWindowWithTransition: (id)sender
 {
 #ifdef USE_PRIVATE_APIS
-	[[self window] revealWithTransition: CGSFlip
-							  direction: CGSDown
-							   duration: 0.4
-						   blockingMode: NSAnimationNonblocking];
+	[self.window revealWithTransition: CGSFlip
+                            direction: CGSDown
+                             duration: 0.4
+                         blockingMode: NSAnimationNonblocking];
 #else
-    [[self window] fadeInWithDuration: 0.4];
+    [self.window fadeInWithDuration: 0.4];
 #endif
     
 	[self showWindow: sender];
@@ -116,7 +108,7 @@
 
 - (IBAction) openRecentDocument: (NSMenuItem *)sender
 {
-	NSURL *url = [sender representedObject];
+	NSURL *url = sender.representedObject;
 	
 	[[NSApp delegate] openDocumentWithContentsOfURL: url display: YES error: NULL];
 }
@@ -135,7 +127,7 @@
 	NSUInteger endOfDocuments	= [menu indexOfItemWithTag: BXDocumentEndTag];
 	NSRange documentRange		= NSMakeRange(startOfDocuments, endOfDocuments - startOfDocuments);
 
-	for (NSMenuItem *oldItem in [[menu itemArray] subarrayWithRange: documentRange])
+	for (NSMenuItem *oldItem in [menu.itemArray subarrayWithRange: documentRange])
 		[menu removeItem: oldItem];
 	
 	//Then, repopulate it with the recent documents
@@ -145,25 +137,27 @@
 		NSAutoreleasePool *pool	= [[NSAutoreleasePool alloc] init];
 		NSMenuItem *item		= [[NSMenuItem alloc] init];
 		
-		[item setRepresentedObject: url];
-		[item setTarget: self];
-		[item setAction: @selector(openRecentDocument:)];
+        item.representedObject = url;
+        item.target = self;
+        item.action = @selector(openRecentDocument:);
 		
-		NSString *path	= [url path];
-		NSImage *icon	= [workspace iconForFile: path];
+		NSString *path	= url.path;
+        //Copy because we will be resizing the icon and don't want to affect cached versions
+		NSImage *icon	= [[workspace iconForFile: path] copy];
 		NSString *title	= [manager displayNameAtPath: path];
 		
-		[icon setSize: NSMakeSize(16, 16)];
-		[item setImage: icon];
-		[item setTitle: title];
+        icon.size = NSMakeSize(16, 16);
+        item.image = icon;
+        item.title = title;
 		
 		[menu insertItem: item atIndex: insertionPoint++];
 		
+        [icon release];
 		[item release];
 		[pool drain];
 	}
 	//Finish off the list with a separator
-	if ([documents count])
+	if (documents.count)
 		[menu insertItem: [NSMenuItem separatorItem] atIndex: insertionPoint];
 }
 

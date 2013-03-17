@@ -22,16 +22,16 @@
 }
 
 //The Open Recent popup button.
-@property (retain, nonatomic) NSPopUpButton *recentDocumentsButton;
+@property (assign, nonatomic) NSPopUpButton *recentDocumentsButton;
 
 //The import-a-new-game button. Drag-drop events onto this button will be handled by this controller.
-@property (retain, nonatomic) BXWelcomeButton *importGameButton;
+@property (assign, nonatomic) BXWelcomeButton *importGameButton;
 
 //The open-DOS-prompt button. Drag-drop events onto this button will be handled by this controller.
-@property (retain, nonatomic) BXWelcomeButton *openPromptButton;
+@property (assign, nonatomic) BXWelcomeButton *openPromptButton;
 
 //The browse-games-folder button. Has no special behaviour.
-@property (retain, nonatomic) BXWelcomeButton *showGamesFolderButton;
+@property (assign, nonatomic) BXWelcomeButton *showGamesFolderButton;
 
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime

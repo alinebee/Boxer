@@ -435,6 +435,8 @@
 		9F45A424109C867E00593456 /* BXMountPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F45A423109C867E00593456 /* BXMountPanelController.m */; };
 		9F45A46C109C9A0400593456 /* MountPanelOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A46A109C9A0400593456 /* MountPanelOptions.xib */; };
 		9F466AFC11A92C4B00C50965 /* UserDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F466AFB11A92C4B00C50965 /* UserDefaults.plist */; };
+		9F486F6116F5E78800FE263E /* WelcomeFocusRing.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F486F5F16F5E78800FE263E /* WelcomeFocusRing.png */; };
+		9F486F6216F5E78800FE263E /* WelcomeFocusRing@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F486F6016F5E78800FE263E /* WelcomeFocusRing@2x.png */; };
 		9F4971BB108EF02F00282261 /* BXEmulator+BXDOSFileSystem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */; };
 		9F4B1AFA165C122F001AE063 /* BXDriveItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4B1AF9165C122F001AE063 /* BXDriveItem.m */; };
 		9F4B5284122591960055022A /* prompt.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F4B5283122591960055022A /* prompt.icns */; };
@@ -1139,6 +1141,8 @@
 		9F45A423109C867E00593456 /* BXMountPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMountPanelController.m; sourceTree = "<group>"; };
 		9F45A46B109C9A0400593456 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/MountPanelOptions.xib; sourceTree = "<group>"; };
 		9F466AFB11A92C4B00C50965 /* UserDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefaults.plist; sourceTree = "<group>"; };
+		9F486F5F16F5E78800FE263E /* WelcomeFocusRing.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WelcomeFocusRing.png; sourceTree = "<group>"; };
+		9F486F6016F5E78800FE263E /* WelcomeFocusRing@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "WelcomeFocusRing@2x.png"; sourceTree = "<group>"; };
 		9F4B1AF8165C122F001AE063 /* BXDriveItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveItem.h; sourceTree = "<group>"; };
 		9F4B1AF9165C122F001AE063 /* BXDriveItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDriveItem.m; sourceTree = "<group>"; };
 		9F4B5283122591960055022A /* prompt.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = prompt.icns; sourceTree = "<group>"; };
@@ -3343,10 +3347,12 @@
 				9F9606ED14F65B1A0072E90C /* Cover art */,
 				9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */,
 				9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */,
+				9FCA157C1597222D00C42D10 /* WelcomeSpotlight@2x.png */,
+				9F486F5F16F5E78800FE263E /* WelcomeFocusRing.png */,
+				9F486F6016F5E78800FE263E /* WelcomeFocusRing@2x.png */,
 				9FB05B9D168FA0940051CE6F /* DocumentationTemplate.pdf */,
 				9F4C10E01691E0D50092441A /* DiscSwapTemplate.pdf */,
 				9F44C5C415F274BE00FE0A88 /* PromptFreestandingTemplate.pdf */,
-				9FCA157C1597222D00C42D10 /* WelcomeSpotlight@2x.png */,
 				9FA9E27F121FD874006E20C4 /* PanelExpandTemplate.pdf */,
 				9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */,
 				9FAEBE5415D67C3A00C9AC5F /* DOSWindowGrille.png */,
@@ -3894,6 +3900,8 @@
 				9FB6AE8E16C8366D00EB1D40 /* Joystick@2x.png in Resources */,
 				9FB6AE8F16C8366D00EB1D40 /* Mouse@2x.png in Resources */,
 				9F5E389716C85140009774A9 /* Game.png in Resources */,
+				9F486F6116F5E78800FE263E /* WelcomeFocusRing.png in Resources */,
+				9F486F6216F5E78800FE263E /* WelcomeFocusRing@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

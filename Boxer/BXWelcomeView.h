@@ -21,6 +21,7 @@
 @interface BXWelcomeButton : BXFilterPortrait
 {
 	__unsafe_unretained id <BXWelcomeButtonDraggingDelegate> _draggingDelegate;
+    BOOL _firstResponder;
 }
 //The delegate used for drag-drop operations.
 @property (assign) IBOutlet id <BXWelcomeButtonDraggingDelegate> draggingDelegate;

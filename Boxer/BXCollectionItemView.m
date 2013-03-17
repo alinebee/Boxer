@@ -10,6 +10,7 @@
 #import "NSBezierPath+MCAdditions.h"
 #import "NSShadow+ADBShadowExtensions.h"
 #import "BXThemedImageCell.h"
+#import "NSView+ADBDrawingHelpers.h"
 
 @implementation BXCollectionItemView
 @synthesize delegate = _delegate;
@@ -127,13 +128,45 @@
     [self setNeedsDisplay: YES];
 }
 
+- (void) _windowDidChangeActiveStatus
+{
+    if (self.delegate.isSelected)
+        [self setNeedsDisplay: YES];
+}
+
+//Redraw whenever the window became the main window so that our selection color correctly matches the status of the window.
+- (void) viewWillMoveToWindow: (NSWindow *)newWindow
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    if (self.window)
+    {
+        [center removeObserver: self name: NSWindowDidBecomeMainNotification object: self.window];
+        [center removeObserver: self name: NSWindowDidResignMainNotification object: self.window];
+        [center removeObserver: self name: NSApplicationDidBecomeActiveNotification object: NSApp];
+        [center removeObserver: self name: NSApplicationDidResignActiveNotification object: NSApp];
+    }
+    
+    if (newWindow)
+    {
+        [center addObserver: self selector: @selector(_windowDidChangeActiveStatus) name: NSWindowDidBecomeMainNotification object: newWindow];
+        [center addObserver: self selector: @selector(_windowDidChangeActiveStatus) name: NSWindowDidResignMainNotification object: newWindow];
+        [center addObserver: self selector: @selector(_windowDidChangeActiveStatus) name: NSApplicationDidBecomeActiveNotification object: NSApp];
+        [center addObserver: self selector: @selector(_windowDidChangeActiveStatus) name: NSApplicationDidResignActiveNotification object: NSApp];
+    }
+}
+
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [super dealloc];
+}
+
 - (void) drawRect: (NSRect)dirtyRect
 {
 	if (self.delegate.isSelected)
 	{
-        [NSBezierPath clipRect: dirtyRect];
+		NSColor *selectionColor	= (self.windowIsActive) ? [NSColor alternateSelectedControlColor] : [NSColor secondarySelectedControlColor];
         
-		NSColor *selectionColor	= [NSColor alternateSelectedControlColor];
 		NSColor *fadeColor      = [selectionColor shadowWithLevel: 0.20f];
 		NSColor *shadowColor	= [selectionColor shadowWithLevel: 0.33f];
 		NSColor *bevelColor     = [selectionColor highlightWithLevel: 0.1f];

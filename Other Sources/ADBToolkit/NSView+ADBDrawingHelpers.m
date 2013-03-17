@@ -45,7 +45,7 @@
 
 - (BOOL) windowIsActive
 {
-    return (self.window.isMainWindow || !self.window.canBecomeMainWindow);
+    return [NSApp isActive] && (self.window.isMainWindow || !self.window.canBecomeMainWindow);
 }
 
 - (NSImage *) imageWithContentsOfRect: (NSRect)rect

@@ -257,6 +257,10 @@ typedef NSUInteger BXDriveMountOptions;
 #pragma mark -
 #pragma mark Mounting and queuing drives
 
+//The window in which we should present drive-related sheets, such as errors and open dialogs.
+//This will be the Drive Inspector panel if it's visible, otherwise the main DOS window.
+- (NSWindow *) windowForDriveSheet;
+
 //Whether we allow drives to be added or removed.
 //This will return YES normally, or NO when part of a standalone game bundle.
 - (BOOL) allowsDriveChanges;

@@ -14,6 +14,7 @@
 #import "NSWorkspace+ADBFileTypes.h"
 #import "BXDrive.h"
 #import "BXGamebox.h"
+#import "BXInspectorController.h"
 
 
 @implementation BXMountPanelController
@@ -39,6 +40,8 @@
 
 - (void) showMountPanelForSession: (BXSession *)theSession
 {
+    NSAssert(theSession != nil, @"No session provided.");
+    
 	self.representedObject = theSession;
 	
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
@@ -59,7 +62,9 @@
 	
 	[self populateDrivesFromSession: theSession];
     
-    [openPanel beginSheetModalForWindow: theSession.windowForSheet
+    NSWindow *hostingWindow = theSession.windowForDriveSheet;
+    
+    [openPanel beginSheetModalForWindow: hostingWindow
                       completionHandler: ^(NSInteger result) {
                           if (result == NSFileHandlingPanelOKButton)
                           {
@@ -73,7 +78,7 @@
                                   //Display the error to the user as a sheet in the same window
                                   //as we displayed the panel
                                   [theSession presentError: mountError
-                                            modalForWindow: theSession.windowForSheet
+                                            modalForWindow: hostingWindow
                                                   delegate: nil
                                         didPresentSelector: NULL
                                                contextInfo: NULL];

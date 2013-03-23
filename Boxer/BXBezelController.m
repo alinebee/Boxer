@@ -268,7 +268,7 @@
 {
     //Tweak: if the CPU inspector panel is visible, don’t bother showing the bezel.
     BXInspectorController *inspector = [NSClassFromString(@"BXInspectorController") controller];
-    if (inspector.panelShown && inspector.selectedTabViewItemIndex == BXCPUInspectorPanelTag)
+    if (inspector.isVisible && inspector.selectedTabViewItemIndex == BXCPUInspectorPanelIndex)
         return;
     
     NSView *bezel = self.CPUSpeedBezel;
@@ -373,9 +373,17 @@
 
 - (BOOL) shouldShowDriveNotifications
 {
-    //Suppress drive notifications while the Drive Inspector panel is open.
+    //Suppress drive notifications while the Drive Inspector panel is open,
+    //since any changes will be visible there.
     BXInspectorController *inspector = [NSClassFromString(@"BXInspectorController") controller];
-    return !(inspector.panelShown && inspector.selectedTabViewItemIndex == BXDriveInspectorPanelTag);
+    if (inspector)
+    {
+        return !(inspector.isVisible && inspector.selectedTabViewItemIndex == BXDriveInspectorPanelIndex);
+    }
+    else
+    {
+        return NO;
+    }
 }
 
 - (void) showDriveAddedBezelForDrive: (BXDrive *)drive

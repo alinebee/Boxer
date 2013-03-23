@@ -250,17 +250,17 @@ enum {
     
     for (BXDrive *drive in self.selectedDrives)
     {
-        NSError *unmountError;
-        [session mountDrive: drive
-                   ifExists: BXDriveReplace
-                    options: BXDefaultDriveMountOptions
-                      error: &unmountError];
+        NSError *mountError = nil;
+        BXDrive *mountedDrive = [session mountDrive: drive
+                                           ifExists: BXDriveReplace
+                                            options: BXDefaultDriveMountOptions
+                                              error: &mountError];
         
-        if (unmountError)
+        if (!mountedDrive && mountError)
         {
-            NSWindow *targetWindow = [[NSApp delegate] currentSession].windowForSheet;
+            NSWindow *targetWindow = session.windowForDriveSheet;
             [targetWindow.attachedSheet orderOut: self];
-            [targetWindow presentError: unmountError
+            [targetWindow presentError: mountError
                         modalForWindow: targetWindow
                               delegate: nil
                     didPresentSelector: NULL
@@ -278,13 +278,13 @@ enum {
                               sender: self])
     {
         NSError *unmountError = nil;
-		[session unmountDrives: drives
-                       options: options
-                         error: &unmountError];
+		BOOL unmounted = [session unmountDrives: drives
+                                        options: options
+                                          error: &unmountError];
         
-        if (unmountError)
+        if (!unmounted && unmountError)
         {
-            NSWindow *targetWindow = [[NSApp delegate] currentSession].windowForSheet;
+            NSWindow *targetWindow = session.windowForDriveSheet;
             [targetWindow.attachedSheet orderOut: self];
             [targetWindow presentError: unmountError
                         modalForWindow: targetWindow

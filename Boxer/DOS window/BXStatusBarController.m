@@ -68,7 +68,7 @@
 {	
 	//Because we have no easy way of telling which segment was just toggled, just synchronise them all
 	
-	if ([sender isSelectedForSegment: BXStatusBarInspectorSegment] != self.inspector.panelShown)
+	if ([sender isSelectedForSegment: BXStatusBarInspectorSegment] != self.inspector.isVisible)
 	{
 		[[NSApp delegate] toggleInspectorPanel: sender];
 	}
@@ -150,7 +150,7 @@
 
 - (void) _syncSegmentedButtonStates
 {	
-	[self.statusBarControls setSelected: self.inspector.panelShown                      forSegment: BXStatusBarInspectorSegment];
+	[self.statusBarControls setSelected: self.inspector.visible                      forSegment: BXStatusBarInspectorSegment];
 	[self.statusBarControls setSelected: self.controller.programPanelShown              forSegment: BXStatusBarProgramPanelSegment];
 	[self.statusBarControls setSelected: self.controller.inputController.mouseLocked    forSegment: BXStatusBarMouseLockSegment];
 	
@@ -206,7 +206,7 @@
                          context: nil];
 	
 	[self.inspector addObserver: self
-                     forKeyPath: @"panelShown"
+                     forKeyPath: @"visible"
                         options: 0
                         context: nil];
 	
@@ -235,7 +235,7 @@
 	[self.controller removeObserver: self forKeyPath: @"document.hasGamebox"];
 	[self.controller removeObserver: self forKeyPath: @"programPanelShown"];
 	
-	[self.inspector removeObserver: self forKeyPath: @"panelShown"];
+	[self.inspector removeObserver: self forKeyPath: @"visible"];
 	
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 }

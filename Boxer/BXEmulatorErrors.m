@@ -183,15 +183,14 @@ NSString * const BXEmulatorUnrecoverableException = @"BXEmulatorUnrecoverableExc
 
 + (id) errorWithDrive: (BXDrive *)drive
 {
-	NSString *descriptionFormat = NSLocalizedString(@"Drive %1$@ is currently busy and cannot be ejected.",
-													@"Error shown when a drive was in use and cannot be ejected. %1$@ is the drive's letter.");
+	NSString *descriptionFormat = NSLocalizedString(@"Drive %1$@ (%2$@) is currently busy and cannot be ejected.",
+													@"Error shown when a drive was in use and cannot be ejected. %1$@ is the drive's letter, and %2$@ its user-visible label.");
 	
-	NSString *description	= [NSString stringWithFormat: descriptionFormat, drive.letter];
+	NSString *description	= [NSString stringWithFormat: descriptionFormat, drive.letter, drive.title];
     
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                              description, NSLocalizedDescriptionKey,
-                              drive, BXDOSFilesystemErrorDriveKey,
-                              nil];
+    NSDictionary *userInfo = @{NSLocalizedDescriptionKey: description,
+                               BXDOSFilesystemErrorDriveKey: drive,
+                               };
     
     return [self errorWithDomain: BXDOSFilesystemErrorDomain
                             code: BXDOSFilesystemDriveInUse

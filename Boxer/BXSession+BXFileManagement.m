@@ -636,6 +636,19 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 #pragma mark -
 #pragma mark Drive mounting
 
+- (NSWindow *) windowForDriveSheet
+{
+    BXInspectorController *inspector = [BXInspectorController controller];
+    if (inspector.isVisible && inspector.selectedTabViewItemIndex == BXDriveInspectorPanelIndex)
+    {
+        return inspector.window;
+    }
+    else
+    {
+        return self.windowForSheet;
+    }
+}
+
 - (void) _mountQueuedSiblingsAtOffset: (NSInteger)offset
 {
     for (BXDrive *currentDrive in self.mountedDrives)
@@ -643,16 +656,16 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
         BXDrive *siblingDrive = [self siblingOfQueuedDrive: currentDrive atOffset: offset];
         if (siblingDrive && ![siblingDrive isEqual: currentDrive])
         {
-            NSError *mountError;
-            [self mountDrive: siblingDrive
-                    ifExists: BXDriveReplace
-                     options: BXDefaultDriveMountOptions
-                       error: &mountError];
+            NSError *mountError = nil;
+            BXDrive *mountedDrive = [self mountDrive: siblingDrive
+                                            ifExists: BXDriveReplace
+                                             options: BXDefaultDriveMountOptions
+                                               error: &mountError];
             
-            if (mountError)
+            if (!mountedDrive && mountError)
             {
                 [self presentError: mountError
-                    modalForWindow: self.windowForSheet
+                    modalForWindow: self.windowForDriveSheet
                           delegate: nil
                 didPresentSelector: NULL
                        contextInfo: NULL];
@@ -695,17 +708,9 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 		//Note that alert stays retained - it is released by the didEndSelector
 		BXDrivesInUseAlert *alert = [[BXDrivesInUseAlert alloc] initWithDrives: drivesInUse forSession: self];
 		
-		NSWindow *sheetWindow;
-		if (sender && [sender respondsToSelector: @selector(window)])
-			sheetWindow = [sender window];
-		else sheetWindow = [self windowForSheet]; 
-		
-        NSDictionary *contextInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     selectedDrives, @"drives",
-                                     [NSNumber numberWithInteger: options], @"options",
-                                     nil];
+        NSDictionary *contextInfo = @{ @"drives": selectedDrives, @"options": @(options) };
         
-		[alert beginSheetModalForWindow: sheetWindow
+		[alert beginSheetModalForWindow: self.windowForDriveSheet
 						  modalDelegate: self
 						 didEndSelector: @selector(drivesInUseAlertDidEnd:returnCode:contextInfo:)
 							contextInfo: (__bridge void *)([contextInfo retain])];
@@ -729,15 +734,15 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
         //It's OK to force removal here since we've already gotten permission
         //from the user to eject in-use drives.
         NSError *unmountError = nil;
-        [self unmountDrives: selectedDrives
-                    options: options | BXDriveForceUnmounting
-                      error: &unmountError];
+        BOOL unmounted = [self unmountDrives: selectedDrives
+                                     options: options | BXDriveForceUnmounting
+                                       error: &unmountError];
         
-        if (unmountError)
+        if (!unmounted && unmountError)
         {
             [alert.window orderOut: self];
             [self presentError: unmountError
-                modalForWindow: self.windowForSheet
+                modalForWindow: self.windowForDriveSheet
                       delegate: nil
             didPresentSelector: NULL
                    contextInfo: NULL];
@@ -1783,7 +1788,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     if (validationError)
     {
         [self presentError: validationError
-            modalForWindow: self.windowForSheet
+            modalForWindow: self.windowForSheet //Use the main DOS window instead of the Inspector, since the user will have tried to mount from the DOS shell.
                   delegate: nil
         didPresentSelector: NULL
                contextInfo: NULL];
@@ -2136,7 +2141,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 		if (import.error && !import.error.isUserCancelledError)
 		{
 			[self presentError: import.error
-				modalForWindow: self.windowForSheet
+				modalForWindow: self.windowForDriveSheet
 					  delegate: nil
 			didPresentSelector: NULL
 				   contextInfo: NULL];

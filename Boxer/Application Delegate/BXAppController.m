@@ -380,7 +380,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     
 	//Hide the Inspector panel if there's no longer any sessions open
 	if (!self.currentSession)
-        [BXInspectorController controller].panelShown = NO;
+        [BXInspectorController controller].visible = NO;
 }
 
 
@@ -487,10 +487,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) toggleInspectorPanel: (id)sender
 {
 	BXInspectorController *controller = [BXInspectorController controller];
-	BOOL show = !controller.panelShown;
+	BOOL show = !controller.visible;
 	if (!show || self.currentSession.isEmulating)
 	{
-        controller.panelShown = show;		
+        controller.visible = show;		
 	}
 }
 

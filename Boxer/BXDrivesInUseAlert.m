@@ -43,7 +43,7 @@
 		{
 			BXDrive *drive = [drivesInUse lastObject];
 			NSString *messageFormat = NSLocalizedString(
-				@"Drive %1$@: is in use by %2$@. Are you sure you want to eject it?",
+				@"Drive %1$@ is in use by %2$@. Are you sure you want to eject it?",
 				@"Title for confirmation sheet when unmounting a single drive that is in use. %1$@ is the uppercase letter of the drive, %@ is the display-ready name of the current DOS process.");
             self.messageText = [NSString stringWithFormat: messageFormat, drive.letter, processName];
 		}

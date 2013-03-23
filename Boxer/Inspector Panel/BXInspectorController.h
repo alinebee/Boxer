@@ -12,11 +12,11 @@
 #import "ADBTabbedWindowController.h"
 
 enum {
-	BXGameInspectorPanelTag		= 0,
-	BXCPUInspectorPanelTag		= 1,
-	BXMouseInspectorPanelTag	= 2,
-	BXDriveInspectorPanelTag	= 3,
-	BXJoystickInspectorPanelTag	= 4
+	BXGameInspectorPanelIndex		= 0,
+	BXCPUInspectorPanelIndex        = 1,
+	BXMouseInspectorPanelIndex      = 2,
+	BXDriveInspectorPanelIndex      = 3,
+	BXJoystickInspectorPanelIndex	= 4,
 };
 
 
@@ -24,15 +24,15 @@ enum {
 
 @interface BXInspectorController : ADBTabbedWindowController
 {
-	IBOutlet NSSegmentedControl *panelSelector;
-	BOOL isTemporarilyHidden;
+	NSSegmentedControl *_panelSelector;
+	BOOL _isTemporarilyHidden;
 }
 
 //The segmented tab selector button at the top of the inspector.
-@property (retain, nonatomic) NSSegmentedControl *panelSelector;
+@property (retain, nonatomic) IBOutlet NSSegmentedControl *panelSelector;
 
 //Whether the inspector panel is currently visible.
-@property (assign, nonatomic) BOOL panelShown;
+@property (assign, nonatomic, getter=isVisible) BOOL visible;
 
 //A singleton instance of the inspector controller, which is shared by all session windows.
 //The controller should always be accessed through this method.

@@ -330,6 +330,30 @@
 	}
 }
 
+- (void) keyDown: (NSEvent *)theEvent
+{
+    //Mount/unmount the selected drive(s) when the user presses Space.
+    if ([theEvent.charactersIgnoringModifiers isEqualToString: @" "])
+    {
+        [NSApp sendAction: @selector(toggleSelectedDrives:) to: self.delegate from: self];
+    }
+    //Open the selected drive(s) in Finder when the user presses Return.
+    else if ([theEvent.charactersIgnoringModifiers isEqualToString: @"\r"])
+    {
+        [NSApp sendAction: @selector(revealSelectedDrivesInFinder:) to: self.delegate from: self];
+    }
+    //Remove the selected drive(s) from the drive list when the user presses Cmd+Backspace.
+    else if ([theEvent.charactersIgnoringModifiers isEqualToString: @"\x7f"] &&
+             (theEvent.modifierFlags & NSCommandKeyMask))
+    {
+        [NSApp sendAction: @selector(removeSelectedDrives:) to: self.delegate from: self];
+    }
+    else
+    {
+        [super keyDown: theEvent];
+    }
+}
+
 - (BXDriveItemView *) viewForDrive: (BXDrive *)drive
 {
 	for (BXDriveItemView *view in self.subviews)

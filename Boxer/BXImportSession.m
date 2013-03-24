@@ -720,7 +720,7 @@
 	[self.DOSWindowController hideProgramPanel: self];
 	
 	//Close the inspector panel also
-	[BXInspectorController controller].panelShown = NO;
+	[BXInspectorController controller].visible = NO;
 	
 	//Hide the DOS view
     [self.DOSWindowController switchToPanel: BXDOSWindowLoadingPanel animate: YES];

@@ -713,10 +713,10 @@
         NSString *function      = [exception.userInfo objectForKey: @"function"];
         NSNumber *lineNumber    = [exception.userInfo objectForKey: @"line"];
         
-        NSMutableString *issueBody = [NSMutableString stringWithString: @"\n\n*[[ Please describe what you were doing when this error occurred! ]]*\n\n\n\n"];
+        NSMutableString *issueBody = [NSMutableString stringWithString: @"*Please add a description here of what you were doing (or what the game was doing) when this error occurred.*\n\n\n\n"];
         
         //----
-        [issueBody appendString: @"#### Error details ####\n\n"];
+        [issueBody appendString: @"## Error details ##\n\n"];
         [issueBody appendFormat: @"**Error message:** %@\n", exception.reason];
         
         if (function)
@@ -725,16 +725,20 @@
         }
         
         [issueBody appendString: @"**Full stack trace:**\n\n"];
-        for (NSString *stackLine in exception.callStackSymbols)
+        for (NSDictionary *description in exception.callStackDescriptions)
         {
-            [issueBody appendFormat: @"    %@\n", stackLine];
+            NSString *libraryName   = [description objectForKey: ADBCallstackLibraryName];
+            NSString *funcName      = [description objectForKey: ADBCallstackHumanReadableFunctionName];
+            NSNumber *offset        = [description objectForKey: ADBCallstackSymbolOffset];
+            
+            [issueBody appendFormat: @"    %@ -- %@ (%@)\n", libraryName, funcName, offset];
         }
         
         //----
         
         if (session.fileURL || session.emulator.runningProcesses.count)
         {
-            [issueBody appendString: @"\n\n#### Game details ####\n\n"];
+            [issueBody appendString: @"\n\n## Game details ##\n\n"];
             
             if (session.fileURL)
             {
@@ -748,6 +752,7 @@
                 {
                     NSString *dosPath = [processInfo objectForKey: BXEmulatorDOSPathKey];
                     NSString *args = [processInfo objectForKey: BXEmulatorLaunchArgumentsKey];
+                    if (!args) args = @"";
                     [issueBody appendFormat: @"    %@ %@\n", dosPath, args];
                 }
             }

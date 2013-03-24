@@ -13,7 +13,6 @@
 #import "cross.h"
 #import "shell.h"
 #import "ADBFilesystem.h"
-#include <execinfo.h>
 
 #pragma mark -
 #pragma mark Application state functions
@@ -541,30 +540,15 @@ void boxer_log(char const* format,...)
 #endif
 }
 
-void boxer_die(const char *cFunctionName, const char *cFileName, int lineNumber, const char * cFormat,...)
+void boxer_die(const char *functionName, const char *fileName, int lineNumber, const char * format,...)
 {
-	char cErr[1024];
+    char errorReason[1024];
 	va_list params;
-	va_start(params, cFormat);
-	vsnprintf(cErr, 1024, cFormat, params);
+	va_start(params, format);
+	vsnprintf(errorReason, sizeof(errorReason), format, params);
 	va_end(params);
-
-#define stackLength 10
-    void *callstack[stackLength];
-    size_t size;
     
-    size = backtrace(callstack, stackLength);
-    
-    BXExceptionInfo exceptionInfo = {
-        .fileName = cFileName,
-        .function = cFunctionName,
-        .lineNumber = lineNumber,
-        .failureReason = cErr,
-        .backtraceSize = size,
-        .backtraceAddresses = callstack
-    };
-    
-    throw exceptionInfo;
+    throw boxer_emulatorException(errorReason, fileName, functionName, lineNumber);
 }
 
 double boxer_realTime()

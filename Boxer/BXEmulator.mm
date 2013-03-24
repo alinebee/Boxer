@@ -389,7 +389,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 - (NSInteger) fixedSpeed
 {
 	NSInteger fixedSpeed = 0;
-	if ([self isExecuting])
+	if (self.isExecuting)
 	{
 		fixedSpeed = (NSInteger)CPU_CycleMax;
 	}
@@ -398,11 +398,11 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (void) setFixedSpeed: (NSInteger)newSpeed
 {
-	if ([self isExecuting])
+	if (self.isExecuting)
 	{
 		//Turn off automatic speed scaling
-		[self setAutoSpeed: NO];
-	
+        self.autoSpeed = NO;
+        
 		CPU_OldCycleMax = CPU_CycleMax = (Bit32s)newSpeed;
 		
 		//Stop DOSBox from resetting the cycles after a program exits
@@ -428,7 +428,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (void) setAutoSpeed: (BOOL)autoSpeed
 {
-	if ([self isExecuting] && [self isAutoSpeed] != autoSpeed)
+	if (self.isExecuting && self.isAutoSpeed != autoSpeed)
 	{
         //While we're in turbo, don't change the auto-speed setting directly;
         //instead, set the value we'll return to when we come out of turbo.
@@ -491,7 +491,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (BXCoreMode) coreMode
 {
-	if ([self isExecuting])
+	if (self.isExecuting)
 	{
 		if (cpudecoder == &CPU_Core_Normal_Run ||
 			cpudecoder == &CPU_Core_Normal_Trap_Run)	return BXCoreNormal;
@@ -515,7 +515,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 }
 - (void) setCoreMode: (BXCoreMode)coreMode
 {
-	if ([self isExecuting] && [self coreMode] != coreMode)
+	if (self.isExecuting && self.coreMode != coreMode)
 	{
 		switch(coreMode)
 		{
@@ -963,7 +963,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
                 control->ParseConfigFile(encodedConfigPath);
             }
 
-            //Initialise the configuration.
+            //Initialise each DOSBox module based on the loaded configuration.
             control->Init();
             
             [self _didInitialize];
@@ -975,14 +975,17 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	}
 	catch (char *errMessage)
 	{
+        self.executing = NO;
+        
         NSString *reason = [NSString stringWithCString: errMessage encoding: BXDirectStringEncoding];
         [NSException raise: BXEmulatorUnrecoverableException
                     format: @"DOSBox aborted with the following error: %@", reason];
 	}
-    catch (BXExceptionInfo exceptionInfo)
+    catch (boxer_emulatorException &e)
     {
+        self.executing = NO;
         NSException *exception = [BXEmulatorException exceptionWithName: BXEmulatorUnrecoverableException
-                                                          exceptionInfo: exceptionInfo];
+                                                      originalException: &e];
         
         [exception raise];
     }
@@ -992,14 +995,12 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	}
 	//Any other exception is a genuine fuckup and needs to be thrown all the way up.
 	
-	//Shut down SDL after DOSBox exits.
+	//Clean up after DOSBox finishes.
 	SDL_Quit();
-	
-	
-	//Clean up after DOSBox finishes
 	[self.videoHandler shutdown];
     control = NULL;
 }
+
 @end
 
 

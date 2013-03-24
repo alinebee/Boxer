@@ -300,7 +300,7 @@
 		9F2D30A615B8233800FAE848 /* BXPrecisionProControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = B7900B3D13E47D9E00B37913 /* BXPrecisionProControllerProfile.m */; };
 		9F2D30A715B8233800FAE848 /* BXMOMORacingControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA1CF6713E5B43F00416D74 /* BXMOMORacingControllerProfile.m */; };
 		9F2D30A915B8233800FAE848 /* ADBImageAwareFileScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61F78213EC2D5100505436 /* ADBImageAwareFileScan.m */; };
-		9F2D30AA15B8233800FAE848 /* BXEmulatorErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */; };
+		9F2D30AA15B8233800FAE848 /* BXEmulatorErrors.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.mm */; };
 		9F2D30AB15B8233800FAE848 /* ADBISOImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F81CFB813EEA3F4008F0265 /* ADBISOImage.m */; };
 		9F2D30AC15B8233800FAE848 /* ADBBinCueImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98589613EF71F600E66877 /* ADBBinCueImage.m */; };
 		9F2D30AD15B8233800FAE848 /* NSImage+ADBImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE1B61213FFBE430001640C /* NSImage+ADBImageEffects.m */; };
@@ -409,7 +409,7 @@
 		9F38B38C16DFB1960050AB15 /* ADBLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F38B38A16DFB1960050AB15 /* ADBLocalFilesystem.m */; };
 		9F39A43B1452CE9100942D0F /* BXBezelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F39A43A1452CE9100942D0F /* BXBezelView.m */; };
 		9F3DD6CC15EE8047003C9A25 /* BXCHFlightstickProUSB.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3DD6CB15EE8047003C9A25 /* BXCHFlightstickProUSB.m */; };
-		9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */; };
+		9F3E57A513F694B40070A14D /* BXEmulatorErrors.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.mm */; };
 		9F3EDA171434A6E4009BFBA2 /* BXSession+BXAudioControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA161434A6E4009BFBA2 /* BXSession+BXAudioControls.m */; };
 		9F3EDA1B1434B48D009BFBA2 /* BXExternalMT32.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA1A1434B48D009BFBA2 /* BXExternalMT32.m */; };
 		9F3FB1AF1306F88800DB8FBE /* BXScriptablePreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1AE1306F88800DB8FBE /* BXScriptablePreferences.m */; };
@@ -714,8 +714,8 @@
 		9FB554220F6EAC5F00A33017 /* NSAlert+BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */; };
 		9FB60E8E15C5552F00CD0D63 /* NSURL+ADBFilesystemHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+ADBFilesystemHelpers.m */; };
 		9FB60E8F15C5552F00CD0D63 /* NSURL+ADBFilesystemHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+ADBFilesystemHelpers.m */; };
-		9FB60E9215C5643200CD0D63 /* NSError+ADBErrorHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E9115C5643200CD0D63 /* NSError+ADBErrorHelpers.m */; };
-		9FB60E9315C5643200CD0D63 /* NSError+ADBErrorHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E9115C5643200CD0D63 /* NSError+ADBErrorHelpers.m */; };
+		9FB60E9215C5643200CD0D63 /* NSError+ADBErrorHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E9115C5643200CD0D63 /* NSError+ADBErrorHelpers.mm */; };
+		9FB60E9315C5643200CD0D63 /* NSError+ADBErrorHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E9115C5643200CD0D63 /* NSError+ADBErrorHelpers.mm */; };
 		9FB60E9415C573C100CD0D63 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
 		9FB642A313FEB71D00385DD3 /* ADBISOImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F81CFB813EEA3F4008F0265 /* ADBISOImage.m */; };
 		9FB642A413FEB71D00385DD3 /* ADBBinCueImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98589613EF71F600E66877 /* ADBBinCueImage.m */; };
@@ -1101,7 +1101,7 @@
 		9F39A43A1452CE9100942D0F /* BXBezelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBezelView.m; sourceTree = "<group>"; };
 		9F3DD6CB15EE8047003C9A25 /* BXCHFlightstickProUSB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCHFlightstickProUSB.m; sourceTree = "<group>"; };
 		9F3E57A313F694B40070A14D /* BXEmulatorErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorErrors.h; sourceTree = "<group>"; };
-		9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorErrors.m; sourceTree = "<group>"; };
+		9F3E57A413F694B40070A14D /* BXEmulatorErrors.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulatorErrors.mm; sourceTree = "<group>"; };
 		9F3EDA151434A6E4009BFBA2 /* BXSession+BXAudioControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXAudioControls.h"; sourceTree = "<group>"; };
 		9F3EDA161434A6E4009BFBA2 /* BXSession+BXAudioControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXAudioControls.m"; sourceTree = "<group>"; };
 		9F3EDA191434B48D009BFBA2 /* BXExternalMT32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXExternalMT32.h; sourceTree = "<group>"; };
@@ -1623,7 +1623,7 @@
 		9FB60E8C15C5552F00CD0D63 /* NSURL+ADBFilesystemHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ADBFilesystemHelpers.h"; sourceTree = "<group>"; };
 		9FB60E8D15C5552F00CD0D63 /* NSURL+ADBFilesystemHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ADBFilesystemHelpers.m"; sourceTree = "<group>"; };
 		9FB60E9015C5643200CD0D63 /* NSError+ADBErrorHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+ADBErrorHelpers.h"; sourceTree = "<group>"; };
-		9FB60E9115C5643200CD0D63 /* NSError+ADBErrorHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+ADBErrorHelpers.m"; sourceTree = "<group>"; };
+		9FB60E9115C5643200CD0D63 /* NSError+ADBErrorHelpers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "NSError+ADBErrorHelpers.mm"; sourceTree = "<group>"; };
 		9FB6AE7A16C800BD00EB1D40 /* CPU.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CPU.png; sourceTree = "<group>"; };
 		9FB6AE7D16C808A800EB1D40 /* Mouse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mouse.png; sourceTree = "<group>"; };
 		9FB6AE7F16C80ED700EB1D40 /* Drives.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Drives.png; sourceTree = "<group>"; };
@@ -2296,7 +2296,7 @@
 				9F34BE3F142B700100A69FAF /* BXCoalfaceAudio.h */,
 				9F34BE3E142B700100A69FAF /* BXCoalfaceAudio.mm */,
 				9F3E57A313F694B40070A14D /* BXEmulatorErrors.h */,
-				9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */,
+				9F3E57A413F694B40070A14D /* BXEmulatorErrors.mm */,
 				9F9DF413153B058200233968 /* BXKeyBuffer.h */,
 				9F9DF414153B058200233968 /* BXKeyBuffer.mm */,
 			);
@@ -3034,7 +3034,7 @@
 				9F5F12C415ADCE74007A070F /* NSKeyedArchiver+ADBArchivingAdditions.h */,
 				9F5F12C515ADCE74007A070F /* NSKeyedArchiver+ADBArchivingAdditions.m */,
 				9FB60E9015C5643200CD0D63 /* NSError+ADBErrorHelpers.h */,
-				9FB60E9115C5643200CD0D63 /* NSError+ADBErrorHelpers.m */,
+				9FB60E9115C5643200CD0D63 /* NSError+ADBErrorHelpers.mm */,
 				9FF5413C169990A100270658 /* ADBUndoExtensions.h */,
 				9F201E361657DB7F0086F1BB /* ADBUserNotificationDispatcher.h */,
 				9F201E371657DB7F0086F1BB /* ADBUserNotificationDispatcher.m */,
@@ -4160,7 +4160,7 @@
 				9FA1CF6813E5B44000416D74 /* BXMOMORacingControllerProfile.m in Sources */,
 				9F18BE9513EB07190047C217 /* BXInstallerScan.m in Sources */,
 				9F61F78313EC2D5100505436 /* ADBImageAwareFileScan.m in Sources */,
-				9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */,
+				9F3E57A513F694B40070A14D /* BXEmulatorErrors.mm in Sources */,
 				9FB642A313FEB71D00385DD3 /* ADBISOImage.m in Sources */,
 				9FB642A413FEB71D00385DD3 /* ADBBinCueImage.m in Sources */,
 				9FE1B61313FFBE430001640C /* NSImage+ADBImageEffects.m in Sources */,
@@ -4204,7 +4204,7 @@
 				9FCB7B1015B844AB00CC7CC7 /* BXBaseAppController.m in Sources */,
 				9F98410215BEE64400B50CDA /* ADBShadowedFilesystem.m in Sources */,
 				9FB60E8E15C5552F00CD0D63 /* NSURL+ADBFilesystemHelpers.m in Sources */,
-				9FB60E9215C5643200CD0D63 /* NSError+ADBErrorHelpers.m in Sources */,
+				9FB60E9215C5643200CD0D63 /* NSError+ADBErrorHelpers.mm in Sources */,
 				9FA2C09215C8409000380261 /* BXDOSWindowBackgroundView.m in Sources */,
 				9FCA6D9615C85D8500E1650C /* BXLaunchPanelController.m in Sources */,
 				9FAEBE4F15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m in Sources */,
@@ -4580,7 +4580,7 @@
 				9F2D30A615B8233800FAE848 /* BXPrecisionProControllerProfile.m in Sources */,
 				9F2D30A715B8233800FAE848 /* BXMOMORacingControllerProfile.m in Sources */,
 				9F2D30A915B8233800FAE848 /* ADBImageAwareFileScan.m in Sources */,
-				9F2D30AA15B8233800FAE848 /* BXEmulatorErrors.m in Sources */,
+				9F2D30AA15B8233800FAE848 /* BXEmulatorErrors.mm in Sources */,
 				9F2D30AB15B8233800FAE848 /* ADBISOImage.m in Sources */,
 				9F2D30AC15B8233800FAE848 /* ADBBinCueImage.m in Sources */,
 				9F2D30AD15B8233800FAE848 /* NSImage+ADBImageEffects.m in Sources */,
@@ -4631,7 +4631,7 @@
 				9FCB7B1A15B8589B00CC7CC7 /* BXDOSWindowController.m in Sources */,
 				9F98410315BEE64400B50CDA /* ADBShadowedFilesystem.m in Sources */,
 				9FB60E8F15C5552F00CD0D63 /* NSURL+ADBFilesystemHelpers.m in Sources */,
-				9FB60E9315C5643200CD0D63 /* NSError+ADBErrorHelpers.m in Sources */,
+				9FB60E9315C5643200CD0D63 /* NSError+ADBErrorHelpers.mm in Sources */,
 				9F458D9C15D83B8800DF9102 /* BXLaunchPanelButtonCell.m in Sources */,
 				9F458D9D15D83B8C00DF9102 /* BXLaunchPanelController.m in Sources */,
 				9F458D9E15D83B9000DF9102 /* BXDOSWindowBackgroundView.m in Sources */,

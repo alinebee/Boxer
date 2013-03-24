@@ -6,9 +6,10 @@
  */
 
 #import "BXEmulatorErrors.h"
+#import "BXEmulatorPrivate.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXDrive.h"
-#include <execinfo.h>
+#import "RegexKitLite.h"
 
 #pragma mark -
 #pragma mark Private constants
@@ -199,28 +200,26 @@ NSString * const BXEmulatorUnrecoverableException = @"BXEmulatorUnrecoverableExc
 @end
 
 
-@interface BXEmulatorException ()
-
-@property (retain, nonatomic) NSArray *callStackReturnAddresses;
-@property (retain, nonatomic) NSArray *callStackSymbols;
-
-@end
 
 @implementation BXEmulatorException
 @synthesize callStackReturnAddresses = _BXCallStackReturnAddresses;
 @synthesize callStackSymbols = _BXCallStackSymbols;
 
-+ (id) exceptionWithName: (NSString *)name exceptionInfo: (BXExceptionInfo)info
++ (id) exceptionWithName: (NSString *)name
+       originalException: (boxer_emulatorException *)cppException
 {
-    return [[[self alloc] initWithName: name exceptionInfo: info] autorelease];
+    return [[[self alloc] initWithName: name originalException: cppException] autorelease];
 }
 
-- (id) initWithName: (NSString *)name exceptionInfo: (BXExceptionInfo)exceptionInfo
+- (id) initWithName: (NSString *)name
+  originalException: (boxer_emulatorException *)cppException
 {
-    NSString *fileName      = [NSString stringWithUTF8String: exceptionInfo.fileName];
-    NSString *functionName  = [NSString stringWithUTF8String: exceptionInfo.function];
-    NSString *reason        = [NSString stringWithUTF8String: exceptionInfo.failureReason];
-    NSInteger lineNumber    = exceptionInfo.lineNumber;
+    NSLog(@"Failure reason: %s", cppException->errorReason);
+    
+    NSString *fileName      = [NSString stringWithUTF8String: cppException->fileName];
+    NSString *functionName  = [NSString stringWithUTF8String: cppException->functionName];
+    NSString *failureReason = [NSString stringWithUTF8String: cppException->errorReason];
+    NSInteger lineNumber    = cppException->lineNumber;
     
     NSMutableDictionary *errorInfo = [NSMutableDictionary dictionaryWithCapacity: 4];
     if (fileName)
@@ -234,21 +233,19 @@ NSString * const BXEmulatorUnrecoverableException = @"BXEmulatorUnrecoverableExc
         [errorInfo setObject: @(lineNumber) forKey: @"line"];
     }
 
-    self = [self initWithName: name reason: reason userInfo: errorInfo];
+    self = [self initWithName: name reason: failureReason userInfo: errorInfo];
     if (self)
     {
-        NSUInteger i, numAddresses = exceptionInfo.backtraceSize;
+        NSUInteger i, numAddresses = cppException->backtraceSize;
         if (numAddresses > 0)
-        {
-            char **symbolDescriptions = backtrace_symbols(exceptionInfo.backtraceAddresses, numAddresses);
-            
+        {   
             NSMutableArray *addresses   = [NSMutableArray arrayWithCapacity: numAddresses];
             NSMutableArray *symbols     = [NSMutableArray arrayWithCapacity: numAddresses];
             
             for (i = 0; i < numAddresses; i++)
             {
-                NSUInteger addr = (NSUInteger)exceptionInfo.backtraceAddresses[i];
-                const char *symbol = symbolDescriptions[i];
+                NSUInteger addr = (NSUInteger)cppException->backtraceAddresses[i];
+                const char *symbol = cppException->backtraceSymbols[i];
                 if (symbol)
                 {
                     NSString *desc = [NSString stringWithUTF8String: symbol];
@@ -259,8 +256,6 @@ NSString * const BXEmulatorUnrecoverableException = @"BXEmulatorUnrecoverableExc
             
             self.callStackReturnAddresses = addresses;
             self.callStackSymbols = symbols;
-            
-            free(symbolDescriptions);
         }
     }
     return self;

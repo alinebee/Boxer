@@ -37,3 +37,24 @@
 - (BOOL) isUserCancelledError;
 
 @end
+
+
+//Keys included in callstackDescriptions dictionaries
+extern NSString * const ADBCallstackRawSymbol;                  //The raw output of callstack_symbols.
+extern NSString * const ADBCallstackLibraryName;                //The name of the binary in which the stack entry is located.
+extern NSString * const ADBCallstackAddress;                    //The memory address of the stack entry as a hex string.
+extern NSString * const ADBCallstackFunctionName;               //The raw function name, mangled in the case of C++ names.
+extern NSString * const ADBCallstackHumanReadableFunctionName;  //For C++ functions, a demangled version of the function name;
+                                                                //otherwise identical to ADBCallstackFunctionName.
+extern NSString * const ADBCallstackSymbolOffset;               //An NSNumber representing the offset within the function.
+
+@interface NSException (ADBExceptionHelpers)
+
+//Takes a mangled C++ function name produced by callstackSymbols or backtrace_symbols and returns a demangled version.
+//Returns nil if the provided string could not be resolved (which will be the case if it is a C or Objective C symbol name.)
++ (NSString *) demangledFunctionName: (NSString *)functionName;
+
+//Returns the results of -callstackSymbols parsed into NSDictionaries with the attributes listed above.
+- (NSArray *) callStackDescriptions;
+
+@end

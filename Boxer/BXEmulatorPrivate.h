@@ -25,6 +25,8 @@
 #import "BXKeyBuffer.h"
 #import "BXAudioSource.h"
 #import "BXCoalfaceAudio.h"
+#include <stdexcept>
+#include <execinfo.h>
 
 
 #pragma mark -
@@ -448,5 +450,56 @@ enum {
 //Called when the DOS session wants an emulated printer to be attached to the specified port.
 //(i.e., when any emulated parallel port has been configured to point to a printer.)
 - (void) _didRequestPrinterOnLPTPort: (NSUInteger)portNumber;
+
+@end
+
+
+#pragma mark -
+#pragma mark Exception handling
+
+//Thrown by boxer_die. Encapsulates as much data as we can about the stack at the moment of creation.
+//Caught and converted into a BXEmulatorException by BXEmulator _startDOSBox.
+struct boxer_emulatorException: public std::exception {
+    char errorReason[1024];
+    char fileName[256];
+    char functionName[256];
+    int lineNumber;
+    void *backtraceAddresses[20];
+    char **backtraceSymbols;
+    int backtraceSize;
+    
+    boxer_emulatorException(const char *reason,
+                            const char *file,
+                            const char *function,
+                            int line)
+    {
+        strlcpy(errorReason, reason, sizeof(errorReason));
+        strlcpy(fileName, file, sizeof(fileName));
+        strlcpy(functionName, function, sizeof(functionName));
+        lineNumber = line;
+        
+        backtraceSize = backtrace(backtraceAddresses, 20);
+        backtraceSymbols = backtrace_symbols(backtraceAddresses, backtraceSize);
+    }
+    
+    ~boxer_emulatorException() throw()
+    {
+        free(backtraceSymbols);
+    }
+    
+    const char * what() const throw() { return errorReason; }
+};
+
+
+@interface BXEmulatorException: NSException
+{
+    NSArray *_BXCallStackReturnAddresses;
+    NSArray *_BXCallStackSymbols;
+}
+
+@property (retain, nonatomic) NSArray *callStackReturnAddresses;
+@property (retain, nonatomic) NSArray *callStackSymbols;
+
++ (id) exceptionWithName: (NSString *)name originalException: (boxer_emulatorException *)info;
 
 @end

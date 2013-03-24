@@ -97,30 +97,3 @@ enum {
 
 @interface BXEmulatorDriveInUseError : NSError <BXDriveError>
 @end
-
-
-//An NSException subclass for wrapping exception data passed out
-//from deep within DOSBox. This is subclassed to allow us to include
-//our own stacktrace info.
-
-//A C-compatible struct for throwing up exception data through the C++ throw()
-//mechanism, which we can then safely convert into a BXEmulatorException on the
-//other side. Thrown by boxer_die().
-typedef struct {
-    const char *fileName;
-    const char *function;
-    int lineNumber;
-    const char *failureReason;
-    size_t backtraceSize;
-    void * const * backtraceAddresses;
-} BXExceptionInfo;
-
-@interface BXEmulatorException: NSException
-{
-    NSArray *_BXCallStackReturnAddresses;
-    NSArray *_BXCallStackSymbols;
-}
-
-+ (id) exceptionWithName: (NSString *)name exceptionInfo: (BXExceptionInfo)info;
-
-@end

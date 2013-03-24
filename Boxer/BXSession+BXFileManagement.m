@@ -1107,7 +1107,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	else if (drive.isCDROM)     letters = [BXEmulator CDROMDriveLetters];
 	else                        letters = [BXEmulator hardDriveLetters];
     
-    BOOL avoidDriveC =  (options & BXDriveAvoidAssigningDriveC) == BXDriveAvoidAssigningDriveC;
+    BOOL avoidDriveC = (options & BXDriveAvoidAssigningDriveC) == BXDriveAvoidAssigningDriveC;
 	for (NSString *letter in letters)
     {
         if (avoidDriveC && [letter isEqualToString: @"C"])

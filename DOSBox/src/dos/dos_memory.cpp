@@ -31,9 +31,13 @@ static void DOS_CompressMemory(void) {
 	Bit16u mcb_segment=dos.firstMCB;
 	DOS_MCB mcb(mcb_segment);
 	DOS_MCB mcb_next(0);
-
-	while (mcb.GetType()!=0x5a) {
-		mcb_next.SetPt((Bit16u)(mcb_segment+mcb.GetSize()+1));
+    
+    //--Modified 2013-03-24 by Alun Bestor: safer loop in case the MCB chain
+    //has gotten corrupted. See note below under DOS_FreeProcessMemory for explanation.
+	//while (mcb.GetType()!=0x5a) {
+    while (mcb.GetType() == 0x4d) {
+    //--End of modifications
+    	mcb_next.SetPt((Bit16u)(mcb_segment+mcb.GetSize()+1));
 		if ((mcb.GetPSPSeg()==0) && (mcb_next.GetPSPSeg()==0)) {
 			mcb.SetSize(mcb.GetSize()+mcb_next.GetSize()+1);
 			mcb.SetType(mcb_next.GetType());
@@ -51,14 +55,24 @@ void DOS_FreeProcessMemory(Bit16u pspseg) {
 		if (mcb.GetPSPSeg()==pspseg) {
 			mcb.SetPSPSeg(MCB_FREE);
 		}
-		if (mcb.GetType()==0x5a) {
+        //--Modified 2013-03-24 by Alun Bestor: previous versions looped through the MCBs
+        //until they found the one explicitly marked as the last entry, but it seems at least
+        //Tyrian 2000 was occasionally fucking up the MCB chain such that the last entry
+        //isn't marked as such, causing an infinite loop.
+        //This was changed to check instead if the MCB is *not* marked as an intermediate MCB,
+        //which should break out safely in the case of memory corruption.
+        Bit8u mcbType = mcb.GetType();
+		//if (mcb.GetType()==0x5a) {
+        if (mcbType != 0x4d) {
 			/* check if currently last block reaches up to the PCJr graphics memory */
-			if ((machine==MCH_PCJR) && (mcb_segment+mcb.GetSize()==0x17fe) &&
+			if (mcbType == 0x5a && (machine==MCH_PCJR) && (mcb_segment+mcb.GetSize()==0x17fe) &&
 			   (real_readb(0x17ff,0)==0x4d) && (real_readw(0x17ff,1)==8)) {
 				/* re-enable the memory past segment 0x2000 */
 				mcb.SetType(0x4d);
 			} else break;
 		}
+        //--End of modifications
+        
 		mcb_segment+=mcb.GetSize()+1;
 		mcb.SetPt(mcb_segment);
 	}

@@ -19,7 +19,6 @@
 #import "BXDocumentationPanelController.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXCloseAlert.h"
-#import "NDAlias.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
@@ -769,13 +768,14 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
         //Add the gamebox name into the settings, to make it easier
         //to identify to which gamebox the record belongs.
-        [settingsToPersist setObject: self.gamebox.gameName forKey: BXGameboxSettingsNameKey];
+        [settingsToPersist setObject: self.gamebox.gameName
+                              forKey: BXGameboxSettingsNameKey];
         
-        //While we're here, update the game settings to reflect the current location of the gamebox.
-        NDAlias *packageLocation = [NDAlias aliasWithPath: self.gamebox.bundlePath];
-        if (packageLocation)
-            [settingsToPersist setObject: packageLocation.data
-                                  forKey: BXGameboxSettingsLastLocationKey];
+        //While we're here, update the game settings to record the last known location of the gamebox.
+        //(This is currently unused by Boxer, but is being tracked in case later versions want to check
+        //if a gamebox has been renamed or moved.)
+        [settingsToPersist setObject: self.gamebox.bundleURL.path
+                              forKey: BXGameboxSettingsLastLocationKey];
         
         //Record the state of the drive queues for next time we launch this gamebox.
         if ([self _shouldPersistQueuedDrives])
@@ -1763,6 +1763,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     //Now, restore any drives that the user had in the drives list last time they ran this session.
     NSArray *previousDrives = [self.gameSettings objectForKey: BXGameboxSettingsDrivesKey];
+    
     for (NSData *driveInfo in previousDrives)
     {
         BXDrive *drive = [NSKeyedUnarchiver unarchiveObjectWithData: driveInfo];

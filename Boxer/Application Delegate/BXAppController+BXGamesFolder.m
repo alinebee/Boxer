@@ -9,7 +9,6 @@
 #import "BXAppController+BXGamesFolder.h"
 #import "BXBaseAppController+BXSupportFiles.h"
 
-#import "NDAlias+AliasFile.h"
 #import "NSWorkspace+ADBFileTypes.h"
 #import "NSWorkspace+ADBIconHelpers.h"
 #import "BXGamesFolderPanelController.h"
@@ -21,6 +20,7 @@
 #import "BXShelfAppearanceOperation.h"
 #import "NSString+ADBPaths.h"
 #import "NSURL+ADBFilesystemHelpers.h"
+#import "NSURL+ADBAliasHelpers.h"
 #import "ADBAppKitVersionHelpers.h"
 
 //For determining maximum Finder folder-background sizes
@@ -29,15 +29,19 @@
 #import <OpenGL/glu.h>
 
 
-#pragma mark -
-#pragma mark Error constants
+#pragma mark - Constants
 
 NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
+//Boxer 1.3.x and below stored the games folder as a serialized alias record under this user defaults key.
+NSString * const BXGamesFolderAliasUserDefaultsKey = @"gamesFolder";
+
+//Modern versions of Boxer store the games folder as NSURL bookmark data under this user defaults key.
+NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark";
 
 
-#pragma mark -
-#pragma mark Private method declarations
+
+#pragma mark - Private method declarations
 
 @interface BXAppController (BXGamesFolderPrivate)
 
@@ -65,7 +69,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 @implementation BXAppController (BXGamesFolder)
 
-+ (NSArray *) defaultGamesFolderURLs
++ (NSArray *) commonGamesFolderURLs
 {
 	static NSArray *URLs = nil;
     static dispatch_once_t onceToken;
@@ -95,7 +99,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 + (NSString *) preferredGamesFolderURL
 {
-    return [[self defaultGamesFolderURLs] objectAtIndex: 0];
+    return [[self commonGamesFolderURLs] objectAtIndex: 0];
 }
 
 + (NSSet *) reservedURLs
@@ -241,68 +245,146 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 - (BOOL) gamesFolderChosen
 {
-	return [[NSUserDefaults standardUserDefaults] dataForKey: @"gamesFolder"] != nil;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults dataForKey: BXGamesFolderBookmarkUserDefaultsKey] != nil)
+        return YES;
+    
+    if ([defaults dataForKey: BXGamesFolderAliasUserDefaultsKey] != nil)
+        return YES;
+    
+    return NO;
 }
-
 
 - (NSURL *) gamesFolderURL
 {
-	//Load the games folder path from our preferences alias the first time we need it
-	if (!_gamesFolderURL)
+	//Resolve the games folder URL from our user defaults bookmark the first time we need it.
+	if (_gamesFolderURL == nil)
 	{
-		NSData *aliasData = [[NSUserDefaults standardUserDefaults] dataForKey: @"gamesFolder"];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        
+		NSData *bookmarkData = [defaults dataForKey: BXGamesFolderBookmarkUserDefaultsKey];
 		
-		if (aliasData)
+		if (bookmarkData)
 		{
-			NDAlias *alias = [NDAlias aliasWithData: aliasData];
-			_gamesFolderURL = [alias.URL copy];
-			
-			//If the alias was updated while resolving it because the target had moved,
-			//then re-save the new alias data
-			if (alias.changed)
-			{
-				[[NSUserDefaults standardUserDefaults] setObject: alias.data forKey: @"gamesFolder"];
-			}
-		}
-		else
-		{
-			//If no games folder has been set yet, look for one from Boxer 0.8x.
-			NSURL *legacyURL = self.legacyGamesFolderURL;
-            BOOL foundLegacyURL = NO;
-			if (legacyURL)
-            {
-                foundLegacyURL = [self adoptLegacyGamesFolderFromURL: legacyURL error: nil];
-            }
+            BOOL dataIsStale;
+            NSError *resolutionError;
+            NSURL *folderURL = [NSURL URLByResolvingBookmarkData: bookmarkData
+                                                         options: NSURLBookmarkResolutionWithoutUI
+                                                   relativeToURL: nil
+                                             bookmarkDataIsStale: &dataIsStale
+                                                           error: &resolutionError];
             
-            //If that fails, try one of the default locations to see if a folder is there.
-            if (!foundLegacyURL)
+            if (folderURL)
             {
-                for (NSURL *URL in [self.class defaultGamesFolderURLs])
+                _gamesFolderURL = [folderURL.fileReferenceURL copy];
+                
+                //Re-save the bookmark data if it was stale (e.g. if the folder has moved or been renamed.)
+                if (dataIsStale)
                 {
-                    if ([URL checkResourceIsReachableAndReturnError: NULL])
+                    NSData *updatedBookmarkData = [folderURL bookmarkDataWithOptions: 0
+                                                      includingResourceValuesForKeys: nil
+                                                                       relativeToURL: nil
+                                                                               error: NULL];
+                    if (updatedBookmarkData)
+                        [defaults setObject: updatedBookmarkData forKey: BXGamesFolderBookmarkUserDefaultsKey];
+                }
+            }
+            //TODO: properly handle failure to resolve the bookmark, e.g. by presenting a warning to the user.
+            else
+            {
+            }
+		}
+        
+        //Boxer 1.3.x and below: games folder was stored as a serialized alias record.
+        else
+        {
+            NSData *aliasData = [defaults dataForKey: BXGamesFolderAliasUserDefaultsKey];
+            
+            if (aliasData != nil)
+            {
+                NSError *resolutionError;
+                NSURL *folderURL = [NSURL URLByResolvingAliasRecord: aliasData
+                                                            options: NSURLBookmarkResolutionWithoutUI
+                                                      relativeToURL: nil
+                                                bookmarkDataIsStale: NULL
+                                                              error: &resolutionError];
+                
+                if (folderURL)
+                {
+                    //This will re-record the legacy games folder URL in user defaults,
+                    //storing it as a bookmark this time instead of as an alias record.
+                    self.gamesFolderURL = folderURL;
+                }
+                //TODO: properly handle failure to resolve the bookmark, e.g. by presenting a warning to the user.
+                else
+                {
+                }
+            }
+            else
+            {
+                //If no games folder has been chosen yet, look for one from Boxer 0.8x.
+                NSURL *legacyURL = self.legacyGamesFolderURL;
+                if ([legacyURL checkResourceIsReachableAndReturnError: NULL])
+                {
+                    //This will re-record the legacy games folder URL in user defaults.
+                    self.gamesFolderURL = legacyURL;
+                    
+                    //Check if the old folder had a .background folder: if so,
+                    //then update the folder with our own games-folder appearance.
+                    NSURL *backgroundURL = [legacyURL URLByAppendingPathComponent: @".background"];
+                    if ([backgroundURL checkResourceIsReachableAndReturnError: NULL])
                     {
-                        self.gamesFolderURL = URL;
-                        break;
+                        self.appliesShelfAppearanceToGamesFolder = YES;
+                        [self applyShelfAppearanceToURL: legacyURL andSubFolders: YES switchToShelfMode: NO];
+                    }
+                    
+                }
+                
+                //If a games folder from a previous Boxer version couldn't be found,
+                //then check one of the usual games folder locations to see if a folder is there.
+                else
+                {
+                    for (NSURL *URL in [self.class commonGamesFolderURLs])
+                    {
+                        if ([URL checkResourceIsReachableAndReturnError: NULL])
+                        {
+                            //This will re-record the legacy games folder URL in user defaults.
+                            self.gamesFolderURL = URL;
+                            break;
+                        }
                     }
                 }
             }
-		}
+        }
 	}
+    
 	return [[_gamesFolderURL retain] autorelease];
 }
 
 - (void) setGamesFolderURL: (NSURL *)newURL
 {
+    //Use a file reference URL so that we can continue tracking the games folder
+    //if it's moved or renamed while we're running.
+    newURL = newURL.fileReferenceURL;
+    
 	if (![_gamesFolderURL isEqual: newURL])
 	{
 		[_gamesFolderURL release];
-		_gamesFolderURL = [newURL copy];
+		_gamesFolderURL = [newURL.fileReferenceURL retain];
 		
+        //Store the new location in user defaults as a bookmark, so that users can safely move the folder around.
 		if (newURL != nil)
 		{
-			//Store the new path in the preferences as an alias, so that users can move it around.
-			NDAlias *alias = [NDAlias aliasWithURL: newURL];
-			[[NSUserDefaults standardUserDefaults] setObject: alias.data forKey: @"gamesFolder"];
+            NSData *bookmarkData = [newURL bookmarkDataWithOptions: 0
+                                    includingResourceValuesForKeys: nil
+                                                     relativeToURL: nil
+                                                             error: NULL];
+            
+            if (bookmarkData)
+            {
+                [[NSUserDefaults standardUserDefaults] setObject: bookmarkData
+                                                          forKey: BXGamesFolderBookmarkUserDefaultsKey];
+            }
 		}
 	}
 }
@@ -482,29 +564,6 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
     return YES;
 }
 
-- (BOOL) adoptLegacyGamesFolderFromURL: (NSURL *)URL error: (out NSError **)outError
-{
-	if ([URL checkResourceIsReachableAndReturnError: outError])
-	{
-		//Check if the old path has a .background folder: if so,
-		//then automatically apply the games-folder appearance.
-		NSURL *backgroundURL = [URL URLByAppendingPathComponent: @".background"];
-		if ([backgroundURL checkResourceIsReachableAndReturnError: NULL])
-		{
-            self.appliesShelfAppearanceToGamesFolder = YES;
-			[self applyShelfAppearanceToURL: URL andSubFolders: YES switchToShelfMode: NO];
-		}
-		
-        self.gamesFolderURL = URL;
-        
-		return YES;
-	}
-    else
-    {
-        return NO;
-    }
-}
-
 + (NSSet *) keyPathsForValuesAffectingGamesFolderIcon
 {
 	return [NSSet setWithObjects: @"gamesFolderURL", @"appliesShelfAppearanceToGamesFolder", nil];
@@ -525,15 +584,27 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 - (NSURL *) legacyGamesFolderURL
 {
-	//Check for an alias reference from 0.8x versions of Boxer
 	NSURL *libraryURL = [[[NSFileManager defaultManager] URLsForDirectory: NSLibraryDirectory inDomains: NSUserDomainMask] objectAtIndex: 0];
     
     [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
 	NSURL *legacyAliasURL = [libraryURL URLByAppendingPathComponent: @"Preferences/Boxer/Default Folder"];
 	
-	//Resolve the previous games folder location from that alias
-	NDAlias *alias = [NDAlias aliasWithContentsOfURL: legacyAliasURL];
-	return alias.URL;
+    NSData *bookmarkData = [NSURL bookmarkDataWithContentsOfURL: legacyAliasURL error: NULL];
+    if (bookmarkData)
+    {
+        NSURL *legacyURL = [NSURL URLByResolvingBookmarkData: bookmarkData
+                                                     options: 0
+                                               relativeToURL: nil
+                                         bookmarkDataIsStale: NULL
+                                                       error: NULL];
+        
+        //Will be nil if the bookmark could not be resolved
+        return legacyURL;
+    }
+    else
+    {
+        return nil;
+    }
 }
 
 - (NSURL *) fallbackGamesFolderURL

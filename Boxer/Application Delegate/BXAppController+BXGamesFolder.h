@@ -48,12 +48,12 @@ enum {
 //The icon of the games folder path. This is used for UIs that need to display the games folder.
 @property (readonly, nonatomic) NSImage *gamesFolderIcon;
 
-//The game folder path from 0.8x versions of Boxer (stored as an alias at ~/Library/Preferences/Boxer/Default Folder).
-//Will be nil if no path was stored by an older version of Boxer, or if the alias could not be resolved.
+//The game folder location stored by 0.8x versions of Boxer (stored as an alias at ~/Library/Preferences/Boxer/Default Folder).
+//Will be nil if no path was stored by an older version of Boxer or if the alias could not be resolved.
 @property (readonly, nonatomic) NSURL *legacyGamesFolderURL;
 
-//The 'emergency' path at which to store new gameboxes, used when the games folder cannot be found
-//and we don't have the chance to ask the user for a new one. This is currently set to the user's Desktop.
+//The 'emergency' location at which to store new gameboxes, when the games folder cannot be found
+//and we don't have the chance to ask the user for a new one. This currently uses the user's Desktop.
 @property (readonly, nonatomic) NSURL *fallbackGamesFolderURL;
 
 //Whether to apply our fancy games-shelf appearance to the games folder each time we open it.
@@ -61,7 +61,7 @@ enum {
 //The value for this property is persisted in user defaults.
 @property (assign, nonatomic) BOOL appliesShelfAppearanceToGamesFolder;
 
-//Whether we have a games folder preference.
+//Whether we have a games folder location stored in user defaults.
 //(This does not check if the folder actually exists.)
 @property (readonly, nonatomic) BOOL gamesFolderChosen;
 
@@ -77,7 +77,7 @@ enum {
 //Returns an array of suitable paths for the games folder location.
 //Boxer will look in these locations for existing games folders if it has
 //no record of a specific folder (i.e. if its prefs file has been deleted.)
-+ (NSArray *) defaultGamesFolderURLs;
++ (NSArray *) commonGamesFolderURLs;
 
 //Returns the game folder location that will be automatically created
 //when the user launches Boxer for the first time.
@@ -111,13 +111,6 @@ enum {
               shelfAppearance: (BXShelfAppearance)applyShelfAppearance
               createIfMissing: (BOOL)createIfMissing
                         error: (out NSError **)outError;
-
-//Imports a games folder from a previous version of Boxer.
-//This freshens the folder and autodetects the presence of old
-//background art, enabling the shelf background if it is found.
-//Returns YES if successful, NO and populates outError if the
-//folder could not be located.
-- (BOOL) adoptLegacyGamesFolderFromURL: (NSURL *)URL error: (out NSError **)outError;
 
 //Validate and sanitise the specified games folder path.
 //This will return NO and populate outError if the chosen path was reserved

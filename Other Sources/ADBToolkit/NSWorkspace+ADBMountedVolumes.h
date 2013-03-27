@@ -159,29 +159,29 @@ typedef enum {
 
 //Returns an array of visible locally mounted volumes.
 //If hidden is YES, or on 10.5, this will also include invisible volumes.
-- (NSArray *) mountedLocalVolumePathsIncludingHidden: (BOOL)hidden;
+- (NSArray *) mountedLocalVolumePathsIncludingHidden: (BOOL)hidden __deprecated;
 
 //Returns whether the volume at the specified file path is visible in Finder.
 //If this is NO, it means the volume has been mounted hidden (and should probably be ignored.)
-- (BOOL) volumeIsVisibleAtPath: (NSString *)path;
+- (BOOL) volumeIsVisibleAtPath: (NSString *)path __deprecated;
 
 //Returns all mounted filesystems of the specified filesystem type.
 //If hidden is YES, or on 10.5, this will also include invisible volumes.
-- (NSArray *) mountedVolumesOfType: (NSString *)volumeType includingHidden: (BOOL)hidden;
+- (NSArray *) mountedVolumesOfType: (NSString *)volumeType includingHidden: (BOOL)hidden __deprecated;
 
 //Returns the underlying filesystem type of the specified path.
-- (NSString *) volumeTypeForPath: (NSString *)path;
+- (NSString *) volumeTypeForPath: (NSString *)path __deprecated;
 
 //Return the base volume path upon which the specified path resides.
-- (NSString *) volumeForPath: (NSString *)path;
+- (NSString *) volumeForPath: (NSString *)path __deprecated;
 
 //Returns the path to the source disk image from which the specified volume path was created.
 //Returns nil if the source image could not be determined (e.g. if the volume is not mounted from a disk image)
-- (NSString *) sourceImageForVolume: (NSString *)volumePath;
+- (NSString *) sourceImageForVolume: (NSString *)volumePath __deprecated;
 
 //Returns the first path at which the specified source disk image is mounted.
 //Returns nil if the source image is not currently mounted.
-- (NSString *) volumeForSourceImage: (NSString *)imagePath;
+- (NSString *) volumeForSourceImage: (NSString *)imagePath __deprecated;
 
 //Mounts the disk image at the specified path, and returns the path to the newly-mounted volume if successful.
 //Returns nil and populates error if mounting failed.
@@ -189,20 +189,20 @@ typedef enum {
 - (NSString *) mountImageAtPath: (NSString *)path
 					   readOnly: (BOOL)readOnly
 					  invisibly: (BOOL)invisible
-						  error: (NSError **)error;
+						  error: (NSError **)error __deprecated;
 
 //Returns the path of the data volume associated with the specified CD volume path.
 //Returns nil if the CD volume has no corresponding data volume.
-- (NSString *) dataVolumeOfAudioCD: (NSString *)volumePath;
+- (NSString *) dataVolumeOfAudioCD: (NSString *)volumePath __deprecated;
 
 //Returns the path of the audio CD volume associated with the specified data CD volume path.
 //Returns nil if the CD volume has no corresponding audio volume.
-- (NSString *) audioVolumeOfDataCD: (NSString *)volumePath;
+- (NSString *) audioVolumeOfDataCD: (NSString *)volumePath __deprecated;
 
 //Returns whether the specified volume is actually a DOS floppy disk.
-- (BOOL) isFloppyVolumeAtPath: (NSString *)volumePath;
+- (BOOL) isFloppyVolumeAtPath: (NSString *)volumePath __deprecated;
 
 //Returns whether the specified volume is the size of a DOS floppy disk.
-- (BOOL) isFloppySizedVolumeAtPath: (NSString *)volumePath;
+- (BOOL) isFloppySizedVolumeAtPath: (NSString *)volumePath __deprecated;
 
 @end

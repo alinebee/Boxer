@@ -145,13 +145,17 @@ enum {
     //Start the panel with the current target selected.
     //If we don't have one, then start it up in the folder of the main drive (usually drive C.)
     //If we don't have one of *those*, then start it up in the root folder of the gamebox.
-    NSString *initialPath = self.session.gamebox.targetPath;
-    if (!initialPath)
-        initialPath = self.session.principalDrive.path;
-    if (!initialPath)
-        initialPath = self.session.gamebox.gamePath;
+    NSString *currentTargetPath = self.session.gamebox.targetPath;
     
-    openPanel.directoryURL = [NSURL fileURLWithPath: initialPath];
+    NSURL *initialLocation;
+    if (currentTargetPath)
+        initialLocation = [NSURL fileURLWithPath: currentTargetPath];
+    else if (self.session.principalDrive)
+        initialLocation = self.session.principalDrive.mountPointURL;
+    else
+        initialLocation = self.session.gamebox.bundleURL;
+    
+    openPanel.directoryURL = initialLocation;
     
     [openPanel beginSheetModalForWindow: self.view.window
                       completionHandler: ^(NSInteger result) {

@@ -58,6 +58,7 @@
 		9F1F00AB143F091300FF163A /* Audio.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F00AA143F091300FF163A /* Audio.png */; };
 		9F201E381657DB7F0086F1BB /* ADBUserNotificationDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F201E371657DB7F0086F1BB /* ADBUserNotificationDispatcher.m */; };
 		9F201E391657DB7F0086F1BB /* ADBUserNotificationDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F201E371657DB7F0086F1BB /* ADBUserNotificationDispatcher.m */; };
+		9F20ADD01702E87B007263C8 /* BXDrive+BXDriveArchiving.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F20ADCF1702E87B007263C8 /* BXDrive+BXDriveArchiving.m */; };
 		9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
 		9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
@@ -1031,6 +1032,8 @@
 		9F1F00AA143F091300FF163A /* Audio.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Audio.png; sourceTree = "<group>"; };
 		9F201E361657DB7F0086F1BB /* ADBUserNotificationDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBUserNotificationDispatcher.h; sourceTree = "<group>"; };
 		9F201E371657DB7F0086F1BB /* ADBUserNotificationDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBUserNotificationDispatcher.m; sourceTree = "<group>"; };
+		9F20ADCE1702E87B007263C8 /* BXDrive+BXDriveArchiving.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXDrive+BXDriveArchiving.h"; sourceTree = "<group>"; };
+		9F20ADCF1702E87B007263C8 /* BXDrive+BXDriveArchiving.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXDrive+BXDriveArchiving.m"; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = "/Volumes/Macintosh HD/System/Library/Frameworks/QTKit.framework"; sourceTree = "<absolute>"; };
 		9F2120F613015653002AB1B7 /* BXShelfArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShelfArt.h; sourceTree = "<group>"; };
@@ -1960,8 +1963,6 @@
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				9F573D370F8E69AF0089D8B7 /* BXGamebox.h */,
 				9F573D380F8E69AF0089D8B7 /* BXGamebox.m */,
-				9F69133110A2F62A00EA78CD /* BXDrive.h */,
-				9F69133210A2F62A00EA78CD /* BXDrive.m */,
 				9F61FC8310DE3F7F00F3896C /* BXGameProfile.h */,
 				9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */,
 				9F53411612059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.h */,
@@ -1974,7 +1975,7 @@
 				9F1D50280F5C0ACD009F0AB9 /* Emulator */,
 				9F496E3D108EEB0700282261 /* DOS session */,
 				9F1CBA55120C783800C5E926 /* Game import session */,
-				9FDE33FF1351DA0B000DCE44 /* Drive importing */,
+				9FDE33FF1351DA0B000DCE44 /* Drives */,
 				9F23EB0111390A2600DC5AB6 /* Rendering */,
 				9FC6381213C0B5C0004478A3 /* Input */,
 				9F27133610C1253E0003CB58 /* DOS window */,
@@ -3549,9 +3550,13 @@
 			name = Themes;
 			sourceTree = "<group>";
 		};
-		9FDE33FF1351DA0B000DCE44 /* Drive importing */ = {
+		9FDE33FF1351DA0B000DCE44 /* Drives */ = {
 			isa = PBXGroup;
 			children = (
+				9F69133110A2F62A00EA78CD /* BXDrive.h */,
+				9F69133210A2F62A00EA78CD /* BXDrive.m */,
+				9F20ADCE1702E87B007263C8 /* BXDrive+BXDriveArchiving.h */,
+				9F20ADCF1702E87B007263C8 /* BXDrive+BXDriveArchiving.m */,
 				9FBAA6E0134A21A50092BF95 /* BXDriveImport.m */,
 				9F44509F12AECC4700A2D405 /* BXDriveImport.h */,
 				9F44500012AEC0FC00A2D405 /* BXSimpleDriveImport.h */,
@@ -3563,7 +3568,7 @@
 				9F444FFD12AEBE5200A2D405 /* BXDriveBundleImport.h */,
 				9F444FFE12AEBE5200A2D405 /* BXDriveBundleImport.m */,
 			);
-			name = "Drive importing";
+			name = Drives;
 			sourceTree = "<group>";
 		};
 		9FF982141646C76C0080F763 /* Printing */ = {
@@ -4285,6 +4290,7 @@
 				9F1E8CDA16E16C0400F1C908 /* ADBScanOperation.m in Sources */,
 				9F1E8CDE16E16EB800F1C908 /* ADBMountableImage.m in Sources */,
 				9F13768A17020B2C00B9A359 /* NSURL+ADBAliasHelpers.m in Sources */,
+				9F20ADD01702E87B007263C8 /* BXDrive+BXDriveArchiving.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

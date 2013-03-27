@@ -1768,8 +1768,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     {
         BXDrive *drive = [NSKeyedUnarchiver unarchiveObjectWithData: driveInfo];
         
-        //Skip drives that couldn't be decoded (which will happen if the path for the drive
-        //had moved or been ejected/deleted in the interim.)
+        //Skip drives that couldn't be decoded (which will happen if the drive's location
+        //can no longer be resolved.)
         if (!drive) continue;
         
         //The drive has a flag indicating whether it was currently mounted last time.

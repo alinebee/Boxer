@@ -31,7 +31,7 @@ typedef enum {
 #pragma mark Interface
 
 @protocol ADBFilesystemPathAccess;
-@interface BXDrive : NSObject <NSCoding>
+@interface BXDrive : NSObject
 {
 	NSString *_path;
     NSString *_shadowPath;
@@ -60,8 +60,7 @@ typedef enum {
 }
 
 
-#pragma mark -
-#pragma mark Properties
+#pragma mark - Properties
 
 //The absolute path on the OS X filesystem which represents this drive.
 //This may or may not be the same as the path that gets mounted in DOS:
@@ -86,55 +85,62 @@ typedef enum {
 @property (readonly, retain, nonatomic) NSMutableSet *pathAliases;
 
 //The DOS drive letter under which this drive will be mounted.
-//If nil, BXEmulator mountDrive: will choose an appropriate drive letter at mount time.
-//This property is not prescriptive: if a drive is already mounted at the specified letter,
-//BXEmulator mountDrive: may mount the drive as a different letter and modify the letter
-//property of the returned drive to match.
+//If nil, BXEmulator will choose an appropriate drive letter at mount time
+//(and update this property with the chosen letter).
 @property (copy, nonatomic) NSString *letter;
 
-//The display title to show for this drive in drive lists. Automatically derived from
-//the source path of the drive, but can be modified.
+//The display title to show for this drive in drive lists. Automatically derived
+//from the filename of the source URL, but can be modified.
 @property (copy, nonatomic) NSString *title;
 
-//The volume label to use for this drive in DOS. Automatically derived from the source path
-//of the drive, but can be modified. For image-based drives this value is ignored, since the
-//volume label is stored inside the image itself.
+//The volume label to use for this drive in DOS. Automatically derived from the filename
+//of the source URL, but can be modified. For image-based drives this value is ignored,
+//since the volume label is stored inside the image itself.
 @property (copy, nonatomic) NSString *volumeLabel;
 
-//The volume label that the drive ended up being given when mounted in DOS.
+//The volume label that the drive ended up with after mounting in DOS.
+//This is populated by BXEmulator when the drive is first mounted and will be a munged
+//version of the above: cropped to 11 characters and uppercased for most drive types.
 @property (copy, nonatomic) NSString *DOSVolumeLabel;
 
-//The type of DOS drive to mount, as a BXDriveType constant (see above.) This will
-//be auto-detected based on the source folder or image, if not explicitly provided.
-@property (assign, nonatomic) BXDriveType type;
-
-//The amount of free disk space to represent on the drive, in bytes. Defaults to
+//The amount of free disk space to report for the drive, in bytes. Defaults to
 //BXDefaultFreeSpace: which is ~250MB for hard disks, 1.44MB for floppies and 0B for CDROMs.
+//Note that this is not an enforced limit: it only affects how much free space is reported
+//to DOS programs.
 @property (assign, nonatomic) NSInteger freeSpace;
 
-//Whether to use SDL CD-ROM audio: only relevant for CD-ROM drives. If YES, DOS emulation
-//will read CD audio for this drive from the first audio CD volume mounted in OS X.
+//Whether to use SDL CD-ROM audio: only relevant for folders mounted as CD-ROM drives.
+//If YES, DOS emulation will read CD audio for this drive from the first audio CD volume mounted in OS X.
 @property (assign, nonatomic) BOOL usesCDAudio;
 
-//Whether to prevent writing to the OS X filesystem representing this drive: defaults to NO.
+//Whether to prevent DOS from writing to the OS X filesystem representing this drive. Defaults to NO.
 @property (assign, nonatomic, getter=isReadOnly) BOOL readOnly;
 
-//Whether to protect this drive from being unmounted from the drive manager UI: defaults to NO.
-//Ignored for DOSBox internal drives (which are always locked).
+//Whether to protect this drive from being unmounted from Boxer's drive manager UI. Defaults to NO.
+//Ignored for DOSBox's Z drive, which is always locked.
 @property (assign, nonatomic, getter=isLocked) BOOL locked;
 
-//Whether to hide this drive from Boxer's drive manager UI: defaults to NO.
-//Ignored for DOSBox internal drives (which are always hidden).
+//Whether to hide this drive from Boxer's drive manager UI. Defaults to NO.
+//Ignored for DOSBox's Z drive, which is always hidden.
 @property (assign, nonatomic, getter=isHidden) BOOL hidden;
 
-//Whether this drive is mounted in an emulation session. 
+//Whether this drive is currently mounted in an emulation session.
 //This is merely a flag to make displaying the state of a drive easier; setting it to YES
 //will not actually mount the drive, just indicate that it is mounted somewhere.
 @property (assign, nonatomic, getter=isMounted) BOOL mounted;
 
 
-#pragma mark -
-#pragma mark Immutable properties
+#pragma mark - Immutable properties
+
+//The type of DOS drive that was mounted.
+//Determined at drive creation and cannot be changed afterward.
+@property (readonly, nonatomic) BXDriveType type;
+
+//Returns whether this drive is the specified drive type.
+@property (readonly, nonatomic) BOOL isInternal;
+@property (readonly, nonatomic) BOOL isCDROM;
+@property (readonly, nonatomic) BOOL isFloppy;
+@property (readonly, nonatomic) BOOL isHardDisk;
 
 //A filesystem instance appropriate for the backing medium of this drive.
 @property (readonly, retain, nonatomic) id <ADBFilesystemPathAccess> filesystem;
@@ -145,16 +151,8 @@ typedef enum {
 //A friendly OS X name for the drive's source path. This corresponds to NSManager displayNameAtPath:.
 @property (readonly, nonatomic) NSString *displayName;
 
-//Returns whether this drive is the specified drive type.
-@property (readonly, nonatomic) BOOL isInternal;
-@property (readonly, nonatomic) BOOL isCDROM;
-@property (readonly, nonatomic) BOOL isFloppy;
-@property (readonly, nonatomic) BOOL isHardDisk;
 
-
-
-#pragma mark -
-#pragma mark Class methods
+#pragma mark - Class methods
 
 //Returns a localised descriptive name for the specified drive type. e.g. @"hard disk", @"CD-ROM" etc. 
 + (NSString *) descriptionForType: (BXDriveType)driveType;

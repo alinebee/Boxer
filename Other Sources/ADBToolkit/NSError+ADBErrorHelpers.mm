@@ -86,7 +86,8 @@ NSString * const ADBCallstackSymbolPattern = @"^\\d+\\s+(\\S+)\\s+(0x[a-fA-F0-9]
         NSArray *captures = [symbol captureComponentsMatchedByRegex: ADBCallstackSymbolPattern];
         if (captures.count == 5)
         {
-        
+            //FIXME: reimplement this using NSScanner so that we don't have dependencies
+            //on RegexKitLite.
             NSString *libraryName   = [captures objectAtIndex: 1];
             NSString *hexAddress    = [captures objectAtIndex: 2];
             NSString *rawSymbolName = [captures objectAtIndex: 3];
@@ -114,7 +115,7 @@ NSString * const ADBCallstackSymbolPattern = @"^\\d+\\s+(\\S+)\\s+(0x[a-fA-F0-9]
                             };
             
         }
-        //If the was malformed, make an effort to provide *something* back
+        //If the string couldn't be parsed, make an effort to provide *something* back
         else
         {
             description = @{ ADBCallstackRawSymbol: symbol };

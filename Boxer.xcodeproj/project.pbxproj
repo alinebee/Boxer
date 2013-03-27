@@ -1034,6 +1034,7 @@
 		9F201E371657DB7F0086F1BB /* ADBUserNotificationDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBUserNotificationDispatcher.m; sourceTree = "<group>"; };
 		9F20ADCE1702E87B007263C8 /* BXDrive+BXDriveArchiving.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXDrive+BXDriveArchiving.h"; sourceTree = "<group>"; };
 		9F20ADCF1702E87B007263C8 /* BXDrive+BXDriveArchiving.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXDrive+BXDriveArchiving.m"; sourceTree = "<group>"; };
+		9F20ADD117030CE0007263C8 /* BXDrivePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrivePrivate.h; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = "/Volumes/Macintosh HD/System/Library/Frameworks/QTKit.framework"; sourceTree = "<absolute>"; };
 		9F2120F613015653002AB1B7 /* BXShelfArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShelfArt.h; sourceTree = "<group>"; };
@@ -3555,6 +3556,7 @@
 			children = (
 				9F69133110A2F62A00EA78CD /* BXDrive.h */,
 				9F69133210A2F62A00EA78CD /* BXDrive.m */,
+				9F20ADD117030CE0007263C8 /* BXDrivePrivate.h */,
 				9F20ADCE1702E87B007263C8 /* BXDrive+BXDriveArchiving.h */,
 				9F20ADCF1702E87B007263C8 /* BXDrive+BXDriveArchiving.m */,
 				9FBAA6E0134A21A50092BF95 /* BXDriveImport.m */,

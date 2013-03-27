@@ -6,7 +6,7 @@
  */
 
 
-#import "BXDrive.h"
+#import "BXDrivePrivate.h"
 #import "NSWorkspace+ADBMountedVolumes.h"
 #import "NSWorkspace+ADBFileTypes.h"
 #import "NSString+ADBPaths.h"
@@ -16,23 +16,13 @@
 #import "ADBShadowedFilesystem.h"
 
 
-#pragma mark - Private API declarations
-
-@interface BXDrive ()
-
-@property (readwrite, assign, nonatomic) BXDriveType type;
-@property (readwrite, retain, nonatomic) NSMutableSet *pathAliases;
-@property (readwrite, retain, nonatomic) id <ADBFilesystemLocalFileURLAccess> filesystem;
-
-@end
-
 #pragma mark - Implementation
 
 @implementation BXDrive
-@synthesize path = _path;
-@synthesize shadowPath = _shadowPath;
-@synthesize mountPoint = _mountPoint;
-@synthesize pathAliases = _pathAliases;
+@synthesize sourceURL = _sourceURL;
+@synthesize shadowURL = _shadowURL;
+@synthesize mountPointURL = _mountPointURL;
+@synthesize equivalentURLs = _equivalentURLs;
 @synthesize letter = _letter;
 @synthesize title = _title;
 @synthesize volumeLabel = _volumeLabel;
@@ -46,9 +36,33 @@
 @synthesize mounted = _mounted;
 @synthesize filesystem = _filesystem;
 
-#pragma mark - Class methods
 
-+ (NSString *) descriptionForType: (BXDriveType)driveType
+#pragma mark - Helper class methods
+
++ (NSSet *) mountableTypesWithExtensions
+{
+	static NSMutableSet *types;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        types = [[BXFileTypes mountableImageTypes] mutableCopy];
+        [types unionSet: [BXFileTypes mountableFolderTypes]];
+        [types addObject: BXGameboxType];
+    });
+	return types;
+}
+
++ (NSSet *) mountableTypesWithEmbeddedDriveLetters
+{
+	static NSMutableSet *types;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        types = [[BXFileTypes mountableImageTypes] mutableCopy];
+        [types unionSet: [BXFileTypes mountableFolderTypes]];
+    });
+	return types;
+}
+
++ (NSString *) localizedDescriptionForType: (BXDriveType)driveType
 {
 	static NSArray *descriptions = nil;
 	if (!descriptions) descriptions = [[NSArray alloc] initWithObjects:
@@ -63,54 +77,64 @@
 	return [descriptions objectAtIndex: driveType];
 }
 
-+ (BXDriveType) preferredTypeForPath: (NSString *)filePath
-{	
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	if ([workspace file: filePath matchesTypes: [BXFileTypes cdVolumeTypes]])		return BXDriveCDROM;
-	if ([workspace file: filePath matchesTypes: [BXFileTypes floppyVolumeTypes]])	return BXDriveFloppyDisk;
 
-	//Check the volume type of the underlying filesystem for that path
-	NSString *volumeType = [workspace volumeTypeForPath: filePath];
++ (BXDriveType) preferredTypeForContentsOfURL: (NSURL *)URL
+{
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+    
+    //First check if the file's UTI corresponds to one of our known types.
+    //This catches disk images and Boxer mountable folders (.cdrom, .harddisk etc.)
+    if ([URL matchingFileType: [BXFileTypes cdVolumeTypes]] != nil)
+        return BXDriveCDROM;
+    
+    if ([URL matchingFileType: [BXFileTypes floppyVolumeTypes]] != nil)
+        return BXDriveFloppyDisk;
+    
+    if ([URL matchingFileType: [BXFileTypes hddVolumeTypes]] != nil)
+        return BXDriveFloppyDisk;
+    
+    //Failing that, check the volume type of the underlying filesystem at that location.
+    NSString *volumeType = [workspace typeOfVolumeAtURL: URL];
 	
-	//Mount data or audio CD volumes as CD-ROM drives 
+	//Mount locations on data or audio CD volumes as CD-ROM drives.
 	if ([volumeType isEqualToString: ADBDataCDVolumeType] || [volumeType isEqualToString: ADBAudioCDVolumeType])
 		return BXDriveCDROM;
-
-	//If the path is a FAT/FAT32 volume, check its volume size:
-	//volumes smaller than BXFloppySizeCutoff will be treated as floppy disks.
-	if ([workspace isFloppyVolumeAtPath: filePath]) return BXDriveFloppyDisk;
+    
+	//If the location is on a FAT/FAT32 volume, check if it's floppy-sized.
+	if ([workspace isFloppyVolumeAtURL: URL])
+        return BXDriveFloppyDisk;
 	
-	//Fall back on a standard hard-disk mount
+	//In all other cases, fall back on a standard hard-disk mount.
 	return BXDriveHardDisk;
 }
 
-+ (NSString *) preferredTitleForPath: (NSString *)filePath
++ (NSString *) preferredTitleForContentsOfURL: (NSURL *)URL
 {
-    NSString *label = [self preferredVolumeLabelForPath: filePath];
-    if (label.length > 1) return label;
-	else return [[NSFileManager defaultManager] displayNameAtPath: filePath];
+    NSString *label = [self preferredVolumeLabelForContentsOfURL: URL];
+    if (label.length > 1)
+    {
+        return label;
+    }
+	else
+    {
+        NSString *localizedName;
+        BOOL gotName = [URL getResourceValue: &localizedName forKey: NSURLLocalizedNameKey error: NULL];
+        if (gotName)
+            return localizedName;
+        else
+            return URL.lastPathComponent;
+    }
 }
 
-+ (NSSet *) mountableTypesWithExtensions
-{
-	static NSMutableSet *types;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        types = [[BXFileTypes mountableImageTypes] mutableCopy];
-        [types unionSet: [BXFileTypes mountableFolderTypes]];
-        [types addObject: BXGameboxType];
-    });
-	return types;
-}
 
-+ (NSString *) preferredVolumeLabelForPath: (NSString *)filePath
++ (NSString *) preferredVolumeLabelForContentsOfURL: (NSURL *)URL
 {
     //Dots in DOS volume labels are acceptable, but may be confused with file extensions which
     //we do want to remove. So, we strip off the extensions for our known image/folder types.
-    BOOL stripExtension = [[NSWorkspace sharedWorkspace] file: filePath matchesTypes: [self mountableTypesWithExtensions]];
+    BOOL shouldStripExtension = ([URL matchingFileType: [self mountableTypesWithExtensions]] != nil);
     
-    NSString *baseName = filePath.lastPathComponent;
-    if (stripExtension)
+    NSString *baseName = URL.lastPathComponent;
+    if (shouldStripExtension)
         baseName = baseName.stringByDeletingPathExtension;
 	
     //Imported drives may have an increment on the end to avoid filename collisions, so parse that off too.
@@ -126,156 +150,189 @@
     if (letterPrefix)
         baseName = [baseName substringFromIndex: letterPrefix.length];
     
-    //TODO: should we trim leading and trailing whitespace? Are spaces meaningful DOS volume labels?
-    
+    //TODO: should we trim leading and trailing whitespace? Are spaces meaningful in DOS volume labels?
 	return baseName;
 }
 
-+ (NSString *) preferredDriveLetterForPath: (NSString *)filePath
++ (NSString *) preferredDriveLetterForContentsOfURL: (NSURL *)URL
 {
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	if ([workspace file: filePath matchesTypes: [BXFileTypes mountableImageTypes]] ||
-		[workspace file: filePath matchesTypes: [BXFileTypes mountableFolderTypes]])
+    //If the URL represents a Boxer mountable folder or a disk image,
+    //try to parse the drive letter from the name.
+    if ([URL matchingFileType: [self mountableTypesWithEmbeddedDriveLetters]] != nil)
 	{
-		NSString *baseName			= filePath.stringByDeletingPathExtension.lastPathComponent;
+		NSString *baseName          = URL.lastPathComponent.stringByDeletingPathExtension;
 		NSString *detectedLetter	= [baseName stringByMatching: @"^([a-xA-X])( .*)?$" capture: 1];
 		return detectedLetter;	//will be nil if no match was found
 	}
 	return nil;
 }
 
-+ (NSString *) mountPointForPath: (NSString *)filePath
++ (NSURL *) mountPointForContentsOfURL: (NSURL *)URL
 {
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	if ([workspace file: filePath matchesTypes: [NSSet setWithObject: @"net.washboardabs.boxer-cdrom-bundle"]])
-	{
-		return [filePath stringByAppendingPathComponent: @"tracks.cue"];
-	}
-	else return filePath;
-}
-
-//Pretty much all our properties depend on our path, so we add it here
-+ (NSSet *)keyPathsForValuesAffectingValueForKey: (NSString *)key
-{
-	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey: key];
-	if (![key isEqualToString: @"path"]) keyPaths = [keyPaths setByAddingObject: @"path"];
-	return keyPaths;
+    if ([URL conformsToFileType: BXCDROMImageBundleType])
+    {
+        return [URL URLByAppendingPathComponent: @"tracks.cue" isDirectory: NO];
+    }
+    else return URL;
 }
 
 
-#pragma mark -
-#pragma mark Initializers
+#pragma mark - Initialization and cleanup
 
 - (id) init
 {
-	if ((self = [super init]))
+    self = [super init];
+	if (self)
 	{
 		//Initialise properties to sensible defaults
         self.type = BXDriveHardDisk;
         self.freeSpace = BXDefaultFreeSpace;
         self.usesCDAudio = YES;
         
-        self.pathAliases = [NSMutableSet setWithCapacity: 1];
+        self.equivalentURLs = [NSMutableSet setWithCapacity: 1];
 	}
+    
 	return self;
 }
 
-- (id) initFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter withType: (BXDriveType)driveType
++ (id) driveWithContentsOfURL: (NSURL *)sourceURL
+                       letter: (NSString *)driveLetter
+                         type: (BXDriveType)driveType
 {
-    NSAssert1(!(drivePath == nil && driveType != BXDriveInternal), @"Nil drive path passed to BXDrive -initFromPath:atLetter:withType:. Drive type was %i, which is not permitted to have an empty drive path.", driveType);
+    return [[[self alloc] initWithContentsOfURL: sourceURL letter: driveLetter type: driveType] autorelease];
+}
+
+- (id) initWithContentsOfURL: (NSURL *)sourceURL
+                      letter: (NSString *)driveLetter
+                        type: (BXDriveType)driveType
+{
+    NSAssert(!(sourceURL == nil && driveType != BXDriveVirtual),
+             @"A source URL must be provided for drives of all types except BXDriveVirtual.");
     
-	if ((self = [self init]))
+    self = [self init];
+	if (self)
 	{
 		if (driveLetter)
             self.letter = driveLetter;
         
-		if (drivePath)
-            self.path = drivePath;
+		if (sourceURL)
+            self.sourceURL = sourceURL;
         
-		//Detect the appropriate mount type for the specified path
+		//Detect the appropriate type for the specified source
 		if (driveType == BXDriveAutodetect)
         {
-            self.type = [self.class preferredTypeForPath: self.path];
+            self.type = [self.class preferredTypeForContentsOfURL: sourceURL];
             _hasAutodetectedType = YES;
 		}
-		else self.type = driveType;
+		else
+        {
+            self.type = driveType;
+        }
 	}
 	return self;
 }
 
-+ (id) driveFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter withType: (BXDriveType)driveType
++ (id) virtualDriveWithLetter: (NSString *)driveLetter
 {
-	return [[[self alloc] initFromPath: drivePath atLetter: driveLetter withType: driveType] autorelease];
+    return [self driveWithContentsOfURL: nil letter: driveLetter type: BXDriveVirtual];
 }
-
-+ (id) driveFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter
-{
-	return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveAutodetect];
-}
-
-+ (id) CDROMFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter
-{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveCDROM]; }
-+ (id) floppyDriveFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter
-{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveFloppyDisk]; }
-+ (id) hardDriveFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter
-{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveHardDisk]; }
-+ (id) internalDriveAtLetter: (NSString *)driveLetter
-{ return [self driveFromPath: nil atLetter: driveLetter withType: BXDriveInternal]; }
 
 - (void) dealloc
 {
-    self.path = nil;
-    self.shadowPath = nil;
-    self.mountPoint = nil;
-    self.letter = nil;
-    self.title = nil;
-    self.volumeLabel = nil;
-    self.DOSVolumeLabel = nil;
-    self.pathAliases = nil;
-    self.filesystem = nil;
+    //Avoid using our setter methods as they have a lot of magic in them.
+    [_sourceURL release], _sourceURL = nil;
+    [_shadowURL release], _shadowURL = nil;
+    [_mountPointURL release], _mountPointURL = nil;
+    [_equivalentURLs release], _equivalentURLs = nil;
+    [_filesystem release], _filesystem = nil;
+    
+    [_volumeLabel release], _volumeLabel = nil;
+    [_DOSVolumeLabel release], _DOSVolumeLabel = nil;
+    [_title release], _title = nil;
+    [_letter release], _letter = nil;
     
 	[super dealloc];
 }
 
 
-- (void) setPath: (NSString *)filePath
+#pragma mark - Setters and getters
+
+//Pretty much all our properties depend on our source URL, so we add it here
++ (NSSet *) keyPathsForValuesAffectingValueForKey: (NSString *)key
 {
-	filePath = [filePath stringByStandardizingPath];
-	
-	if (![self.path isEqualToString: filePath])
+	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey: key];
+	if (![key isEqualToString: @"sourceURL"])
+        keyPaths = [keyPaths setByAddingObject: @"sourceURL"];
+    
+	return keyPaths;
+}
+
+- (void) setSourceURL: (NSURL *)sourceURL
+{
+	if (![_sourceURL isEqual: sourceURL])
 	{
-		[_path release];
-		_path = [filePath copy];
+		[_sourceURL release];
+		_sourceURL = [sourceURL copy];
 		
-		if (filePath)
+		if (_sourceURL)
 		{
-			if (!self.mountPoint)
+			if (!self.mountPointURL)
             {
-				self.mountPoint = [self.class mountPointForPath: filePath];
+				self.mountPointURL = [self.class mountPointForContentsOfURL: _sourceURL];
                 _hasAutodetectedMountPoint = YES;
             }
 			
 			//Automatically parse the drive letter, title and volume label from the name of the drive
 			if (!self.letter)
             {
-                self.letter = [self.class preferredDriveLetterForPath: filePath];
+                self.letter = [self.class preferredDriveLetterForContentsOfURL: _sourceURL];
                 _hasAutodetectedLetter = YES;
             }
             
 			if (!self.volumeLabel)
             {
-                self.volumeLabel = [self.class preferredVolumeLabelForPath: filePath];
+                self.volumeLabel = [self.class preferredVolumeLabelForContentsOfURL: _sourceURL];
                 _hasAutodetectedVolumeLabel = YES;
             }
             
 			if (!self.title)
             {
-                self.title = [self.class preferredTitleForPath: filePath];
+                self.title = [self.class preferredTitleForContentsOfURL: _sourceURL];
                 _hasAutodetectedTitle = YES;
             }
 		}
 	}
 }
+
+- (void) setMountPointURL: (NSURL *)mountPointURL
+{
+    if (![_mountPointURL isEqual: mountPointURL])
+	{
+		[_mountPointURL release];
+		_mountPointURL = [mountPointURL copy];
+		
+        _hasAutodetectedMountPoint = NO;
+        
+        //Clear our old filesystem whenever the source changes: it will be recreated when needed.
+        self.filesystem = nil;
+	}
+}
+
+- (void) setShadowURL: (NSURL *)shadowURL
+{
+    if (![_shadowURL isEqual: shadowURL])
+	{
+		[_shadowURL release];
+		_shadowURL = [shadowURL copy];
+        
+        //Clear our old filesystem, if it was shadowed: it will be recreated when needed.
+        if (_shadowURL && [_filesystem isKindOfClass: [ADBShadowedFilesystem class]])
+        {
+            self.filesystem = nil;
+        }
+	}
+}
+
 
 - (void) setLetter: (NSString *)driveLetter
 {
@@ -312,34 +369,6 @@
 	}
 }
 
-- (void) setMountPoint: (NSString *)path
-{
-    if (![_mountPoint isEqualToString: path])
-	{
-		[_mountPoint release];
-		_mountPoint = [path copy];
-		
-        _hasAutodetectedMountPoint = NO;
-        
-        //Clear our old filesystem: it will be recreated as needed.
-        self.filesystem = nil;
-	}
-}
-
-- (void) setShadowPath: (NSString *)path
-{
-    if (![_shadowPath isEqualToString: path])
-	{
-		[_shadowPath release];
-		_shadowPath = [path copy];
-        
-        //Clear our old filesystem, if it was shadowed.
-        if (self.shadowPath && [_filesystem isKindOfClass: [ADBShadowedFilesystem class]])
-        {
-            self.filesystem = nil;
-        }
-	}
-}
 
 - (id <ADBFilesystemPathAccess>) filesystem
 {
@@ -364,118 +393,229 @@
     return [[_filesystem retain] autorelease];
 }
 
-#pragma mark -
-#pragma mark Introspecting file paths
 
-- (BOOL) representsPath: (NSString *)basePath
+#pragma mark - Drive descriptions
+
+- (BOOL) isVirtual	{ return (self.type == BXDriveVirtual); }
+- (BOOL) isCDROM	{ return (self.type == BXDriveCDROM); }
+- (BOOL) isFloppy	{ return (self.type == BXDriveFloppyDisk); }
+- (BOOL) isHardDisk	{ return (self.type == BXDriveHardDisk); }
+- (BOOL) isReadOnly { return _readOnly || self.isCDROM || self.isVirtual; }
+
+- (NSString *) localizedTypeDescription
 {
-	if (self.isInternal) return NO;
-	basePath = [basePath stringByStandardizingPath];
-	
-	if ([self.path isEqualToString: basePath]) return YES;
-	if ([self.mountPoint isEqualToString: basePath]) return YES;
-	if ([self.pathAliases containsObject: basePath]) return YES;
+	return [self.class localizedDescriptionForType: self.type];
+}
+
+- (NSString *) description
+{
+	return [NSString stringWithFormat: @"%@: %@ (%@)", self.letter, self.path, self.localizedTypeDescription];
+}
+
+
+#pragma mark - File location lookups
+
+- (BOOL) representsURL: (NSURL *)URL
+{
+	if (self.isVirtual) return NO;
+
+	if ([self.sourceURL isEqual: URL])
+        return YES;
+    
+	if ([self.mountPointURL isEqual: URL])
+        return YES;
+    
+	if ([self.equivalentURLs containsObject: URL])
+        return YES;
 	
 	return NO;
 }
 
-- (BOOL) exposesPath: (NSString *)subPath
+- (BOOL) containsURL: (NSURL *)URL
 {
-	if (self.isInternal) return NO;
-	subPath = [subPath stringByStandardizingPath];
+	if (self.isVirtual) return NO;
+    
+	if ([URL isEqual: self.sourceURL])
+        return YES;
+    
+	if ([URL isBasedInURL: self.mountPointURL])
+        return YES;
 	
-	if ([subPath isEqualToString: self.path]) return YES;
-	if ([subPath isRootedInPath: self.mountPoint]) return YES;
-	
-	for (NSString *alias in self.pathAliases)
+	for (NSURL *equivalentURL in self.equivalentURLs)
 	{
-		if ([subPath isRootedInPath: alias]) return YES;
+		if ([URL isBasedInURL: equivalentURL])
+            return YES;
 	}
 	
 	return NO;
 }
 
-- (NSString *) relativeLocationOfPath: (NSString *)realPath
+- (NSString *) relativeLocationOfURL: (NSURL *)URL
 {
-	if (self.isInternal) return nil;
-	realPath = [realPath stringByStandardizingPath];
+	if (self.isVirtual)
+        return nil;
 	
 	NSString *relativePath = nil;
-	
-	//Special-case: map the 'represented' path directly onto the mount path
-	if ([realPath isEqualToString: self.path])
+    
+	if ([URL isEqual: self.sourceURL])
 	{
 		relativePath = @"";
 	}
 	
-	else if ([realPath isRootedInPath: self.mountPoint])
+	else if ([URL isBasedInURL: self.mountPointURL])
 	{
-		relativePath = [realPath substringFromIndex: self.mountPoint.length];
+		relativePath = [URL pathRelativeToURL: self.mountPointURL];
 	}
 	
 	else
 	{
-		for (NSString *alias in self.pathAliases)
+		for (NSURL *equivalentURL in self.equivalentURLs)
 		{
-			if ([realPath isRootedInPath: alias])
+			if ([URL isBasedInURL: equivalentURL])
 			{
-				relativePath = [realPath substringFromIndex: alias.length];
+				relativePath = [URL pathRelativeToURL: equivalentURL];
 				break;
 			}
 		}
 	}
 	
-	//Strip any leading slash from the relative path
-	if (relativePath && [relativePath hasPrefix: @"/"])
-		relativePath = [relativePath substringFromIndex: 1];
-	
 	return relativePath;
 }
 
-- (BOOL) isInternal	{ return (self.type == BXDriveInternal); }
-- (BOOL) isCDROM	{ return (self.type == BXDriveCDROM); }
-- (BOOL) isFloppy	{ return (self.type == BXDriveFloppyDisk); }
-- (BOOL) isHardDisk	{ return (self.type == BXDriveHardDisk); }
-- (BOOL) isReadOnly { return _readOnly || self.isCDROM || self.isInternal; }
-
-- (NSString *) typeDescription
+- (void) addEquivalentURL: (NSURL *)URL
 {
-	return [self.class descriptionForType: self.type];
-}
-- (NSString *) description
-{
-	return [NSString stringWithFormat: @"%@: %@ (%@)", self.letter, self.path, self.typeDescription]; 
+    [self.equivalentURLs addObject: URL];
 }
 
-- (NSString *) displayName
+- (void) removeEquivalentURL: (NSURL *)URL
 {
-	if      (self.title) return self.title;
-	else if (self.volumeLabel) return self.volumeLabel;
-	else if (self.path)
-	{
-		NSFileManager *manager = [NSFileManager defaultManager];
-		return [manager displayNameAtPath: self.path];
-	}
-	else
-	{
-		return self.typeDescription;
-	}
+    [self.equivalentURLs removeObject: URL];
 }
 
 
-#pragma mark -
-#pragma mark Drive sort comparisons
+#pragma mark - Drive sort comparisons
+
+- (NSComparisonResult) sourceDepthCompare: (BXDrive *)comparison
+{
+    //TODO: reimplement this with a URL-centric solution.
+	return [self.sourceURL.path pathDepthCompare: comparison.sourceURL.path];
+}
+
+- (NSComparisonResult) letterCompare: (BXDrive *)comparison
+{
+	return [self.letter caseInsensitiveCompare: comparison.letter];
+}
+
+@end
+
+
+
+@implementation BXDrive (BXLegacyPathAPI)
+
+#pragma mark - Helper class methods
+
++ (BXDriveType) preferredTypeForPath: (NSString *)filePath
+{
+    return [self preferredTypeForContentsOfURL: [NSURL fileURLWithPath: filePath]];
+}
+
++ (NSString *) preferredVolumeLabelForPath: (NSString *)filePath
+{
+    return [self preferredVolumeLabelForContentsOfURL: [NSURL fileURLWithPath: filePath]];
+}
+
+
+#pragma mark - Constructors
+
++ (id) driveFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter withType: (BXDriveType)driveType
+{
+    NSURL *sourceURL = (drivePath != nil) ? [NSURL fileURLWithPath: drivePath] : nil;
+    return [self driveWithContentsOfURL: sourceURL letter: driveLetter type: driveType];
+}
+
++ (id) driveFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter
+{
+	return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveAutodetect];
+}
+
++ (id) CDROMFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter
+{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveCDROM]; }
+
++ (id) floppyDriveFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter
+{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveFloppyDisk]; }
+
++ (id) hardDriveFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter
+{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveHardDisk]; }
+
++ (id) internalDriveAtLetter: (NSString *)driveLetter
+{
+    return [self virtualDriveWithLetter: driveLetter];
+}
+
+
+#pragma mark - Setters and getters
+
+- (NSString *) path
+{
+    return self.sourceURL.path;
+}
+
+- (void) setPath: (NSString *)path
+{
+    if (path == nil)
+        self.sourceURL = nil;
+    else
+        self.sourceURL = [NSURL fileURLWithPath: path];
+}
+
+- (NSString *) mountPoint
+{
+    return self.mountPointURL.path;
+}
+
+- (NSString *) shadowPath
+{
+    return self.shadowURL.path;
+}
+
+- (void) setShadowPath: (NSString *)shadowPath
+{
+    if (shadowPath == nil)
+        self.shadowURL = nil;
+    else
+        self.shadowURL = [NSURL fileURLWithPath: shadowPath];
+}
+
+- (BOOL) isInternal
+{
+    return self.isVirtual;
+}
+
+
+#pragma mark - File path lookups
+
+- (BOOL) representsPath: (NSString *)basePath
+{
+    return [self representsURL: [NSURL fileURLWithPath: basePath]];
+}
+
+- (BOOL) exposesPath: (NSString *)subPath
+{
+    return [self containsURL: [NSURL fileURLWithPath: subPath]];
+}
+
+- (NSString *) relativeLocationOfPath: (NSString *)path
+{
+    return [self relativeLocationOfURL: [NSURL fileURLWithPath: path]];
+}
+
+
+#pragma mark - Drive sort comparisons
 
 //Sort by path depth
 - (NSComparisonResult) pathDepthCompare: (BXDrive *)comparison
 {
 	return [self.path pathDepthCompare: comparison.path];
-}
-
-//Sort by drive letter
-- (NSComparisonResult) letterCompare: (BXDrive *)comparison
-{
-	return [self.letter caseInsensitiveCompare: comparison.letter];
 }
 
 @end

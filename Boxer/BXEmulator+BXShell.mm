@@ -286,7 +286,7 @@ nil];
 			localizedFormat = NSLocalizedStringFromTable(@"%1$@: %2$@\n",
 														 @"Shell",
 														 @"Format for listing internal DOSBox drives via the DRIVES command: %1$@ is the drive letter, %2$@ is the localized drive type.");
-			description = [NSString stringWithFormat: localizedFormat, drive.letter, drive.typeDescription];
+			description = [NSString stringWithFormat: localizedFormat, drive.letter, drive.localizedTypeDescription];
 		}
 		else
 		{
@@ -294,7 +294,7 @@ nil];
 														 @"Shell",
 														 @"Format for listing regular drives via the DRIVES command: %1$@ is the drive letter, %2$@ is the localized drive type, %3$@ is the drive's OS X filesystem path");
             NSString *displayPath = [pathTransformer transformedValue: drive.path];
-			description = [NSString stringWithFormat: localizedFormat, drive.letter, drive.typeDescription, displayPath];
+			description = [NSString stringWithFormat: localizedFormat, drive.letter, drive.localizedTypeDescription, displayPath];
 		}
 
 		[self displayString: description];

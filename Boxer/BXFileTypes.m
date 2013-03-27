@@ -29,8 +29,8 @@ NSString * const BXVirtualPCImageType   = @"com.microsoft.virtualpc-disk-image";
 NSString * const BXRawFloppyImageType   = @"com.winimage.raw-disk-image";
 NSString * const BXNDIFImageType        = @"com.apple.disk-image-ndif";
 
-NSString * const BXDiskBundleType   = @"net.washboardabs.boxer-disk-bundle";
-NSString * const BXCDROMBundleType  = @"net.washboardabs.boxer-cdrom-bundle";
+NSString * const BXDiskBundleType       = @"net.washboardabs.boxer-disk-bundle";
+NSString * const BXCDROMImageBundleType = @"net.washboardabs.boxer-cdrom-bundle";
 
 NSString * const BXEXEProgramType   = @"com.microsoft.windows-executable";
 NSString * const BXCOMProgramType   = @"com.microsoft.msdos-executable";
@@ -61,7 +61,7 @@ NSString * const BXDOCFileType      = @"com.microsoft.word.doc";
         types = [[NSSet alloc] initWithObjects:
                  BXCuesheetImageType,
                  BXCDROMFolderType,
-                 BXCDROMBundleType,
+                 BXCDROMImageBundleType,
                  BXISOImageType,
                  BXCDRImageType,
                  nil];

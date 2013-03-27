@@ -1175,8 +1175,10 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
             //TODO: should we handle this case upstairs in mountDriveForPath:?
             BXDrive *existingDrive = [self queuedDriveForPath: sourceImagePath];
             if (![existingDrive isEqual: drive] && [existingDrive.letter isEqual: drive.letter])
-            {   
-                [existingDrive.pathAliases addObject: drive.path];
+            {
+                [existingDrive addEquivalentURL: drive.sourceURL];
+                [existingDrive addEquivalentURL: drive.mountPointURL];
+                
                 if ([self driveIsMounted: existingDrive])
                 {
                     return existingDrive;
@@ -1196,7 +1198,9 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
                 imageDrive.readOnly = drive.readOnly;
                 imageDrive.hidden = drive.isHidden;
                 imageDrive.locked = drive.isLocked;
-                [imageDrive.pathAliases addObject: drive.path];
+                
+                [imageDrive addEquivalentURL: drive.sourceURL];
+                [imageDrive addEquivalentURL: drive.mountPointURL];
                 
                 driveToMount = imageDrive;
                 fallbackDrive = drive;
@@ -1631,8 +1635,9 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	for (BXDrive *drive in self.allDrives)
 	{
         //TODO: refactor this so that we can move the decision off to BXDrive itself
-		//(We can't use representsPath: because that includes path aliases too, and we
-        //don't want to eject backing-image drives inadvertently.)
+		//(We can't use BXDrive representsPath: because that would give false positives
+        //for drives with backing images: we don't want to eject drives whose images
+        //are still accessible to us, just because OS X unmounted the image.
 		if ([drive.path isEqualToString: standardizedPath] || [drive.mountPoint isEqualToString: standardizedPath])
 		{
             //Drive import processes may unmount a volume themselves in the course
@@ -1656,7 +1661,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 		}
 		else
 		{
-			[drive.pathAliases removeObject: standardizedPath];
+            [drive removeEquivalentURL: [NSURL fileURLWithPath: standardizedPath]];
 		}
 	}
 }
@@ -2065,7 +2070,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
                                                         atLetter: originalDrive.letter];
 			
             //Make the new drive an alias for the old one.
-            [importedDrive.pathAliases addObject: originalDrive.path];
+            [importedDrive addEquivalentURL: originalDrive.sourceURL];
+            [importedDrive addEquivalentURL: originalDrive.mountPointURL];
             
             //If the old drive is currently mounted, or was mounted back when we started
             //then replace it entirely.

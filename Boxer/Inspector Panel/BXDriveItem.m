@@ -202,7 +202,7 @@
 
 - (NSString *) typeDescription
 {
-    NSString *description = self.drive.typeDescription;
+    NSString *description = self.drive.localizedTypeDescription;
     if (self.isBundled)
     {
         NSString *bundledDescriptionFormat = NSLocalizedString(@"gamebox %@", @"Description format for bundled drives. %@ is the original description of the drive (e.g. 'CD-ROM', 'hard disk' etc.)");

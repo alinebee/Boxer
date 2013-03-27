@@ -1464,6 +1464,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
               @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
     NSURL *localFileURL = [NSURL URLFromFileSystemRepresentation: path];
+    
     return [filesystem enumeratorAtLocalFileURL: localFileURL
                      includingPropertiesForKeys: [NSArray arrayWithObjects: NSURLIsDirectoryKey, NSURLNameKey, nil]
                                         options: NSDirectoryEnumerationSkipsSubdirectoryDescendants

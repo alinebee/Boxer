@@ -6,6 +6,7 @@
  */
 
 #import "BXDrive+BXDriveArchiving.h"
+#import "BXDrivePrivate.h"
 #import "NSURL+ADBAliasHelpers.h"
 
 
@@ -50,11 +51,11 @@
             NSData *sourcePathBookmarkData = [aDecoder decodeObjectForKey: @"sourceURLBookmark"];
             if (sourcePathBookmarkData)
             {
-                self.path = URL_FROM_BOOKMARK(sourcePathBookmarkData).path;
+                self.sourceURL = URL_FROM_BOOKMARK(sourcePathBookmarkData);
             }
             //If we couldn't resolve the bookmark to this drive's path, this drive is useless
             //and we shouldn't bother continuing.
-            if (self.path == nil)
+            if (self.sourceURL == nil)
             {
                 [self release];
                 return nil;
@@ -63,13 +64,13 @@
             NSData *shadowPathBookmarkData = [aDecoder decodeObjectForKey: @"shadowURLBookmark"];
             if (shadowPathBookmarkData)
             {
-                self.shadowPath = URL_FROM_BOOKMARK(shadowPathBookmarkData).path;
+                self.shadowURL = URL_FROM_BOOKMARK(shadowPathBookmarkData);
             }
             
             NSData *mountPointBookmarkData = [aDecoder decodeObjectForKey: @"mountPointURLBookmark"];
             if (mountPointBookmarkData)
             {
-                self.mountPoint = URL_FROM_BOOKMARK(mountPointBookmarkData).path;
+                self.mountPointURL = URL_FROM_BOOKMARK(mountPointBookmarkData);
             }
             
             NSSet *equivalentURLBookmarks = [aDecoder decodeObjectForKey: @"equivalentURLBookmarks"];
@@ -79,7 +80,7 @@
                 {
                     NSURL *equivalentURL = URL_FROM_BOOKMARK(bookmarkData);
                     if (equivalentURL)
-                        [self.pathAliases addObject: equivalentURL.path];
+                        [self.equivalentURLs addObject: equivalentURL];
                 }
             }
         }
@@ -99,10 +100,10 @@
             NSData *sourcePathAliasData = [aDecoder decodeObjectForKey: @"path"];
             if (sourcePathAliasData)
             {
-                self.path = URL_FROM_ALIAS(sourcePathAliasData).path;
+                self.sourceURL = URL_FROM_ALIAS(sourcePathAliasData);
             }
             
-            if (self.path == nil)
+            if (self.sourceURL == nil)
             {
                 [self release];
                 return nil;
@@ -110,22 +111,22 @@
             
             NSData *shadowPathAliasData = [aDecoder decodeObjectForKey: @"shadowPath"];
             if (shadowPathAliasData)
-                self.shadowPath = URL_FROM_ALIAS(shadowPathAliasData).path;
+                self.shadowURL = URL_FROM_ALIAS(shadowPathAliasData);
             
             NSData *mountPointAliasData = [aDecoder decodeObjectForKey: @"mountPoint"];
             if (mountPointAliasData)
-                self.mountPoint = URL_FROM_ALIAS(mountPointAliasData).path;
+                self.mountPointURL = URL_FROM_ALIAS(mountPointAliasData);
             
             NSSet *pathAliases = [aDecoder decodeObjectForKey: @"pathAliases"];
             for (NSData *aliasData in pathAliases)
             {
                 NSURL *equivalentURL = URL_FROM_ALIAS(aliasData);
                 if (equivalentURL)
-                    [self.pathAliases addObject: equivalentURL.path];
+                    [self.equivalentURLs addObject: equivalentURL];
             }
         }
         
-        _type = [aDecoder decodeIntegerForKey: @"type"];
+        self.type = [aDecoder decodeIntegerForKey: @"type"];
         
         NSString *letter = [aDecoder decodeObjectForKey: @"letter"];
         if (letter) self.letter = letter;
@@ -153,12 +154,12 @@
 
 - (void) encodeWithCoder: (NSCoder *)aCoder
 {
-    NSAssert1(self.path, @"Attempt to serialize internal drive or drive missing path: %@", self);
+    NSAssert1(self.sourceURL != nil, @"Attempt to serialize virtual drive or drive missing URL: %@", self);
     
 #define BOOKMARK_FROM_URL(url) ((NSData *)[url bookmarkDataWithOptions: 0 includingResourceValuesForKeys: nil relativeToURL: nil error: NULL])
     
     //Convert all paths to bookmarks before encoding, so that we can track them if they move.
-    NSData *sourceURLBookmark = BOOKMARK_FROM_URL([NSURL fileURLWithPath: self.path]);
+    NSData *sourceURLBookmark = BOOKMARK_FROM_URL(self.sourceURL);
     [aCoder encodeObject: sourceURLBookmark forKey: @"sourceURLBookmark"];
     
     [aCoder encodeInteger: self.type forKey: @"type"];
@@ -168,7 +169,7 @@
     
     if (self.shadowPath)
     {
-        NSData *shadowURLBookmark = BOOKMARK_FROM_URL([NSURL fileURLWithPath: self.shadowPath]);
+        NSData *shadowURLBookmark = BOOKMARK_FROM_URL(self.shadowURL);
         [aCoder encodeObject: shadowURLBookmark forKey: @"shadowURLBookmark"];
     }
     
@@ -176,7 +177,7 @@
     //manually changed from their autodetected versions.
     if (self.mountPoint && !_hasAutodetectedMountPoint)
     {
-        NSData *mountPointURLBookmark = BOOKMARK_FROM_URL([NSURL fileURLWithPath: self.mountPoint]);
+        NSData *mountPointURLBookmark = BOOKMARK_FROM_URL(self.mountPointURL);
         [aCoder encodeObject: mountPointURLBookmark forKey: @"mountPointURLBookmark"];
     }
     
@@ -188,13 +189,13 @@
     if (self.volumeLabel && !_hasAutodetectedVolumeLabel)
         [aCoder encodeObject: self.volumeLabel forKey: @"volumeLabel"];
     
-    if (self.pathAliases.count)
+    if (self.equivalentURLs.count)
     {
-        NSMutableSet *equivalentURLBookmarks = [[NSMutableSet alloc] initWithCapacity: self.pathAliases.count];
+        NSMutableSet *equivalentURLBookmarks = [[NSMutableSet alloc] initWithCapacity: self.equivalentURLs.count];
         
-        for (NSString *path in self.pathAliases)
+        for (NSURL *equivalentURL in self.equivalentURLs)
         {
-            NSData *bookmarkData = BOOKMARK_FROM_URL([NSURL fileURLWithPath: path]);
+            NSData *bookmarkData = BOOKMARK_FROM_URL(equivalentURL);
             [equivalentURLBookmarks addObject: bookmarkData];
         }
         

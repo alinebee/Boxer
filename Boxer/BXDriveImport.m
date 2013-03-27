@@ -85,8 +85,8 @@ NSString * const BXUniqueDriveNameFormat = @"%1$@ (%3$lu).%2$@";
         volumeName = drive.volumeLabel;
     }
     //Otherwise, derive a default volume label *only if the drive's name would be empty otherwise.*
-    //This lets us clear the volume label to avoid giving an unnecessary label to the imported drive
-    //(in the case of e.g. C.harddisk).
+    //This lets us explicitly clear the volume label to avoid giving an unnecessary label to the
+    //imported drive (in the case of e.g. C.harddisk).
     else if (baseName == nil)
     {
         volumeName = [BXDrive preferredVolumeLabelForPath: drive.path];

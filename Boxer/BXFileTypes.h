@@ -25,7 +25,7 @@ extern NSString * const BXRawFloppyImageType;   //.ima
 extern NSString * const BXNDIFImageType;        //.img
 
 extern NSString * const BXDiskBundleType;       //Base UTI for .cdmedia
-extern NSString * const BXCDROMBundleType;      //.cdmedia
+extern NSString * const BXCDROMImageBundleType;      //.cdmedia
 
 extern NSString * const BXEXEProgramType;       //.exe
 extern NSString * const BXCOMProgramType;       //.com

@@ -31,7 +31,17 @@
 
 @interface NSURL (ADBFilePaths)
 
-//Returns a path string for this URL relative to the specified file URL.
+//Returns a path for this URL that's relative to the specified file URL,
+//producing the following results:
+// - /foo/bar relative to / becomes @"foo/bar"
+// - /foo/bar relative to /foo/bar becomes @""
+// - /foo/bar relative to /foo becomes @"bar"
+// - /foo/bar relative to /foo/baz becomes @"../bar"
+// - /foo/bar relative to /baz becomes @"../foo/bar"
+// - /foo/bar relative to /baz/bla becomes @"../../foo/bar"
+
+//That is, the resulting string can be appended to the base URL with URLByAppendingPathComponent:
+//to form an absolute URL to the original resource.
 - (NSString *) pathRelativeToURL: (NSURL *)baseURL;
 
 //Convert a URL to/from a local filesystem path representation.

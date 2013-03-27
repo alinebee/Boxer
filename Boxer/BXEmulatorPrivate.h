@@ -25,6 +25,7 @@
 #import "BXKeyBuffer.h"
 #import "BXAudioSource.h"
 #import "BXCoalfaceAudio.h"
+#import "BXDrive.h"
 #include <stdexcept>
 #include <execinfo.h>
 
@@ -159,13 +160,11 @@ enum {
 @protocol ADBFilesystemLocalFileURLEnumeration;
 @interface BXEmulator (BXDOSFileSystemInternals)
 
-#pragma mark -
-#pragma mark Translating between Boxer and DOSBox drives
+#pragma mark - Translating between Boxer and DOSBox drives
 
 //Returns the DOSBox drive index for a specified drive letter and vice-versa.
 - (NSUInteger)_indexOfDriveLetter: (NSString *)driveLetter;
 - (NSString *)_driveLetterForIndex: (NSUInteger)driveIndex;
-
 
 //Returns the Boxer drive that matches the specified DOSBox drive, or nil if no drive was found.
 - (BXDrive *)_driveMatchingDOSBoxDrive: (DOS_Drive *)dosDrive;
@@ -173,13 +172,8 @@ enum {
 //Does the inverse of the above - returns the DOSBox drive corresponding to the specified Boxer drive.
 - (DOS_Drive *)_DOSBoxDriveMatchingDrive: (BXDrive *)drive;
 
-//Returns the local filesystem path corresponding to the specified DOS path on the specified drive.
-//Returns nil if there is no corresponding local file (e.g. if the drive is a disk image or DOSBox-internal drive.)
-- (NSString *)_filesystemPathForDOSPath: (const char *)dosPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-
-#pragma mark -
-#pragma mark Adding and removing DOSBox drives
+#pragma mark - Adding and removing DOSBox drives
 
 //Returns the drive index at which the specified DOSBox drive is mounted.
 //Returns NSNotFound if specified drive is not mounted.
@@ -203,6 +197,9 @@ enum {
 
 //Generates a Boxer drive object for a drive at the specified drive index.
 - (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)driveIndex;
+
+//Returns the Boxer drive type of the drive at the specified index.
+- (BXDriveType) _typeOfDOSBoxDrive: (DOS_Drive *)drive;
 
 //Create and return new DOSBox drive instance of the appropriate type.
 //This can then be mounted by _addDOSBoxDrive:atIndex:
@@ -242,8 +239,7 @@ enum {
 - (void) _removeDriveFromCache: (BXDrive *)drive;
 
 
-#pragma mark -
-#pragma mark Filesystem validation and notifications
+#pragma mark - Filesystem validation and notifications
 
 //Returns whether the specified drive is being used by DOS programs.
 //Currently, this means whether any files are open on that drive.
@@ -266,6 +262,11 @@ enum {
 
 #pragma mark -
 #pragma mark Local filesystem access
+
+//Returns the local filesystem location corresponding to the specified DOS path on the specified drive.
+//Returns nil if there is no corresponding local file (e.g. if the drive is a disk image or DOSBox-internal drive.)
+//Used internally by many methods; the public-facing version of this is URLForDOSPath:.
+- (NSURL *) _filesystemURLForDOSPath: (const char *)dosPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
 - (FILE *) _openFileAtLocalPath: (const char *)path
                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive

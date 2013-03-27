@@ -813,11 +813,11 @@
             for (NSString *mountCommand in mountCommands)
             {
                 BXDrive *driveToImport = [BXEmulator driveFromMountCommand: mountCommand
-                                                                  basePath: baseURL.path
+                                                             relativeToURL: baseURL
                                                                      error: NULL];
                 
                 ADBOperation <BXDriveImport> *driveImport = [self importOperationForDrive: driveToImport
-                                                                        startImmediately: NO];
+                                                                         startImmediately: NO];
                 
                 if (driveImport)
                 {

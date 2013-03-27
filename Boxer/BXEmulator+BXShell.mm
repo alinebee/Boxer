@@ -331,10 +331,10 @@ nil];
     
 	
     //Now, look up where the path lies in the OS X filesystem.
-	NSString *OSXPath = [self pathForDOSPath: cleanedPath];
+	NSURL *localURL = [self URLForDOSPath: cleanedPath];
     
-    //Path does not exist in OS X, so we cannot continue.
-	if (!OSXPath)
+    //Path is not resolvable to an OS X filesystem location, so we cannot continue.
+	if (!localURL)
     {
         BXDrive *drive = [self driveForDOSPath: cleanedPath];
         
@@ -356,19 +356,20 @@ nil];
     }
     
     //If we got this far, we finally have a path we can reveal in OS X.
-    //FIXME: we should never be talking directly to the app controller from this level.
-    //Instead, pass this responsibility up to our delegate.
-	BXBaseAppController *appController = [NSApp delegate];
-    BOOL revealed = [appController revealPath: OSXPath];
-    
+    //FIXME: we shouldn't be dealing with NSWorkspace at this level.
+    //This should be handled upstream as a delegate callback.
+    if ([localURL checkResourceIsReachableAndReturnError: NULL])
+    {
+        [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: @[localURL]];
+    }
     //The file did not exist in OS X so could not be revealed.
-    if (!revealed)
+    else
     {
         NSString *errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" does not exist in OS X.",
                                                            @"Shell",
                                                            @"Error message displayed when the REVEAL command cannot reveal a path in OS X because it did not exist. %1$@ is the absolute DOS path, including drive letter.");
         
-		[self displayString: [NSString stringWithFormat: errorFormat, resolvedPath, nil]];
+		[self displayString: [NSString stringWithFormat: errorFormat, resolvedPath]];
         return;
     }
 }
@@ -649,7 +650,7 @@ nil];
 {
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
 	NSUInteger driveIndex = [self _indexOfDOSBoxDrive: dosboxDrive];
-	NSString *localPath	= [self _filesystemPathForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
+	NSURL *localURL	= [self _filesystemURLForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
     
 	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\\%@",
 							   [self _driveLetterForIndex: driveIndex],
@@ -664,8 +665,11 @@ nil];
                                         drive,       BXEmulatorDriveKey,
                                         nil];
     
-	if (localPath)
-        [processInfo setObject: localPath forKey: BXEmulatorLocalPathKey];
+	if (localURL)
+    {
+        [processInfo setObject: localURL forKey: BXEmulatorLocalURLKey];
+        [processInfo setObject: localURL.path forKey: BXEmulatorLocalPathKey];
+    }
     
     if (argumentString.length)
         [processInfo setObject: argumentString forKey: BXEmulatorLaunchArgumentsKey];
@@ -691,7 +695,7 @@ nil];
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
 	NSUInteger driveIndex = [self _indexOfDOSBoxDrive: dosboxDrive];
 	
-	NSString *localPath		= [self _filesystemPathForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
+	NSURL *localURL         = [self _filesystemURLForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
 	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\\%@",
 							   [self _driveLetterForIndex: driveIndex],
 							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding]];
@@ -703,8 +707,11 @@ nil];
                                         drive,       BXEmulatorDriveKey,
                                         nil];
     
-    if (localPath)
-        [processInfo setObject: localPath forKey: BXEmulatorLocalPathKey];
+    if (localURL)
+    {
+        [processInfo setObject: localURL forKey: BXEmulatorLocalURLKey];
+        [processInfo setObject: localURL.path forKey: BXEmulatorLocalPathKey];
+    }
     
     if (argumentString.length)
         [processInfo setObject: argumentString forKey: BXEmulatorLaunchArgumentsKey];

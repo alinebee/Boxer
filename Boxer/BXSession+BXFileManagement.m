@@ -1328,7 +1328,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
                 
                 if (replacedDrive)
                 {
-                    [self.emulator mountDrive: replacedDrive error: nil];
+                    [self.emulator mountDrive: replacedDrive error: NULL];
                     
                     if (replacedDriveWasCurrent && self.emulator.isAtPrompt)
                     {

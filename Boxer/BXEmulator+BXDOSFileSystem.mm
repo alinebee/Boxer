@@ -80,7 +80,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 }
 
 + (BXDrive *) driveFromMountCommand: (NSString *)mountCommand
-                           basePath: (NSString *)basePath
+                      relativeToURL: (NSURL *)baseURL
                               error: (NSError **)outError
 {
     NSString *basePattern = @"(?:mount\\s+|imgmount\\s+)(?# Optional command name )?([a-z])(?# Drive letter )\\s+(\"(?:\\\\?+.)*?\"(?# Double-quoted path, respecting escaped quotes )|\\S+(?# Unquoted path with no spaces ))(.*)(?# Additional mount parameters )";
@@ -97,16 +97,20 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     NSString *path      = [matches objectAtIndex: 2];
     NSString *params    = [matches objectAtIndex: 3];
     
+    //First clean up the path and resolve it into a proper URL.
+    
     //Trim surrounding quotes from the path, standardize slashes and escaped quotes.
     path = [path stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\""]];
     path = [path stringByReplacingOccurrencesOfString: @"\\\"" withString: @"\""];
     path = [path stringByReplacingOccurrencesOfString: @"\\" withString: @"/"];
     
-    //Resolve the path relative to the base path, if provided, then standardize the path.
-    if (basePath && !path.isAbsolutePath)
-        path = [basePath stringByAppendingPathComponent: path];
+    NSURL *driveURL;
+    if (baseURL && !path.isAbsolutePath)
+        driveURL = [baseURL URLByAppendingPathComponent: path];
+    else
+        driveURL = [NSURL fileURLWithPath: path];
     
-    path = path.stringByStandardizingPath;
+    //--Now parse the parameters
     
     //Trim extra whitespace from additional parameters.
     params = [params stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
@@ -146,9 +150,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                                            error: outError].lastObject;
     }
     
-    BXDrive *drive = [BXDrive driveFromPath: path
-                                   atLetter: letter
-                                   withType: type];
+    BXDrive *drive = [BXDrive driveWithContentsOfURL: driveURL
+                                              letter: letter
+                                                type: type];
     
     if (label.length)
         drive.volumeLabel = label;
@@ -165,21 +169,19 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     //This is not permitted and indicates a programming error
     NSAssert(self.isExecuting, @"mountDrive:error: called while emulator is not running.");
     
-    if (outError) *outError = nil;
-    
-	NSFileManager *manager	= [NSFileManager defaultManager];
-	NSString *mountPath = drive.mountPoint;
-	BOOL isFolder;
+	NSURL *mountURL = drive.mountPointURL;
 	
 	//File does not exist or cannot be read, don't continue mounting
-	if (![manager fileExistsAtPath: mountPath isDirectory: &isFolder] ||
-        ![manager isReadableFileAtPath: mountPath])
+	if (![mountURL checkResourceIsReachableAndReturnError: NULL])
     {
         if (outError) *outError = [BXEmulatorCouldNotReadDriveError errorWithDrive: drive];
         return nil;
     }
 	
-	BOOL isImage = !isFolder;
+    NSNumber *isDirFlag;
+    BOOL checkedDir = [mountURL getResourceValue: &isDirFlag forKey: NSURLIsDirectoryKey error: NULL];
+	BOOL isDir = checkedDir && isDirFlag.boolValue;
+	BOOL isImage = !isDir;
 
 	NSString *driveLetter = drive.letter;
 	NSString *driveLabel = drive.volumeLabel;
@@ -211,9 +213,11 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	DOS_Drive *DOSBoxDrive = NULL;
 	NSUInteger index = [self _indexOfDriveLetter: driveLetter];
     
-	//The standardized path returned by BXDrive will not have a trailing slash,
-    //but DOSBox expects it, so add it ourselves
-	if (isFolder) mountPath = [mountPath stringByAppendingString: @"/"];
+    
+    NSString *mountPath = mountURL.path;
+    //Ensure that folder paths have a trailing slash, otherwise DOSBox will get shirty
+	if (isDir && ![mountPath hasSuffix: @"/"])
+        mountPath = [mountPath stringByAppendingString: @"/"];
 	
     NSError *mountError = nil;
     if (isImage)
@@ -450,8 +454,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 }
 
 
-#pragma mark -
-#pragma mark Drive and filesystem introspection
+#pragma mark - Drive and filesystem introspection
 
 - (NSArray *) mountedDrives
 {
@@ -486,32 +489,6 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	return [self _DOSBoxDriveInUseAtIndex: [self _indexOfDriveLetter: driveLetter]];
 }
 
-- (BOOL) pathIsMountedAsDrive: (NSString *)path
-{
-	for (BXDrive *drive in _driveCache.objectEnumerator)
-	{
-		if ([drive representsPath: path]) return YES;
-	}
-	return NO;
-}
-
-- (BOOL) pathIsDOSAccessible: (NSString *)path
-{
-	for (BXDrive *drive in _driveCache.objectEnumerator)
-	{
-		if ([drive exposesPath: path]) return YES;
-	}
-	return NO;
-}
-
-- (BOOL) pathExistsInDOS: (NSString *)path
-{
-    NSString *dosPath = [self DOSPathForPath: path];
-    if (!dosPath) return NO;
-    
-    return [self DOSPathExists: dosPath];
-}
-
 - (BOOL) DOSPathExists: (NSString *)dosPath
 {
     DOS_Drive *dosDrive;
@@ -542,106 +519,11 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     return dosDrive->FileExists(cPath) || dosDrive->TestDir(cPath);
 }
 
-
-- (BXDrive *) driveForPath: (NSString *)path
-{	
-	//Sort the drives by path depth, so that deeper mounts are picked over 'shallower' ones.
-	//e.g. when MyGame.boxer and MyGame.boxer/MyCD.cdrom are both mounted, it should pick the latter.
-	//Todo: filter this down to matching drives first, then do the sort, which would be quicker.
-	NSArray *sortedDrives = [_driveCache.allValues sortedArrayUsingSelector: @selector(pathDepthCompare:)];
-	
-	for (BXDrive *drive in sortedDrives.reverseObjectEnumerator)
-	{
-		if ([drive exposesPath: path]) return drive;
-	}
-	return nil;
-}
-
-- (NSString *) DOSPathForPath: (NSString *)path
+- (BXDrive *) currentDrive
 {
-	BXDrive *drive = [self driveForPath: path];
-    
-	if (drive)
-        return [self DOSPathForPath: path onDrive: drive];
-	else
-        return nil;
+    return [_driveCache objectForKey: self.currentDriveLetter];
 }
 
-- (NSString *) DOSPathForPath: (NSString *)path onDrive: (BXDrive *)drive
-{
-	if (!self.isExecuting) return nil;
-	
-	NSString *subPath = [drive relativeLocationOfPath: path];
-	
-	//The path is not be accessible on this drive; give up before we go any further. 
-	if (!subPath) return nil;
-	
-	NSString *dosDrive = [NSString stringWithFormat: @"%@:", [drive letter]];
-	
-	//If the path is at the root of the drive, bail out now.
-	if (!subPath.length)
-        return dosDrive;
-
-	NSString *basePath  = drive.mountPoint;
-	NSArray *components = subPath.pathComponents;
-	
-	NSUInteger driveIndex	= [self _indexOfDriveLetter: drive.letter];
-	DOS_Drive *DOSBoxDrive	= Drives[driveIndex];
-	if (!DOSBoxDrive) return nil;
-	
-	//To be sure we get this right, flush the drive cache before we look anything up
-	DOSBoxDrive->EmptyCache();
-
-	NSMutableString *dosPath = [NSMutableString stringWithCapacity: CROSS_LEN];
-	
-	for (NSString *fileName in components)
-	{
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		
-        //We use DOSBox's own file lookup API to convert a real file path into its
-        //corresponding DOS 8.3 name: starting with the base path of the drive,
-        //and converting each component into its DOS 8.3 equivalent as we go.
-        
-        //One peculiarity of this API is that to look up successive paths we need
-        //to weld the DOS 8.3 relative path onto the drive's real filesystem path
-        //to create "frankenPath", and provide this as a reference point when we
-        //look up the DOS name of the next component in the path.
-        
-		NSString *frankenPath = [basePath stringByAppendingString: dosPath];
-		NSString *dosName = nil;
-		
-		char buffer[CROSS_LEN] = {0};
-		const char *cFrankenPath	= [frankenPath cStringUsingEncoding: BXDirectStringEncoding];
-		const char *cFileName		= [fileName cStringUsingEncoding: BXDirectStringEncoding];
-		
-		BOOL hasShortName = NO;
-		//If the file paths could not be encoded to acceptable C strings,
-		//don't feed them to DOSBox's functions
-		if (cFrankenPath && cFileName)
-		{
-			hasShortName = DOSBoxDrive->getShortName([frankenPath cStringUsingEncoding: BXDirectStringEncoding],
-													 [fileName cStringUsingEncoding: BXDirectStringEncoding],
-													 buffer);
-		}
-			
-		if (hasShortName)
-		{
-			dosName = [NSString stringWithCString: (const char *)buffer encoding: BXDirectStringEncoding];
-		}
-		else
-		{
-			//TODO: if filename is longer than 8.3, crop and append ~1 as a last-ditch guess.
-			dosName = fileName.uppercaseString;
-		}
-		
-		[dosPath appendFormat: @"\\%@", dosName, nil];
-		
-		[pool release];
-	}
-	return [dosDrive stringByAppendingString: dosPath];
-}
-
-- (BXDrive *) currentDrive { return [_driveCache objectForKey: self.currentDriveLetter]; }
 - (NSString *) currentDriveLetter
 {
 	if (self.isExecuting)
@@ -659,54 +541,6 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
         const char *currentDir = currentDOSBoxDrive->curdir;
 		return [NSString stringWithCString: currentDir
                                   encoding: BXDirectStringEncoding];
-	}
-	else return nil;
-}
-
-- (NSString *) pathOfCurrentDirectory
-{
-	if (self.isExecuting)
-	{
-		DOS_Drive *currentDOSBoxDrive = Drives[DOS_GetDefaultDrive()];
-		const char *currentDir = currentDOSBoxDrive->curdir;
-		
-		NSString *localPath	= [self _filesystemPathForDOSPath: currentDir
-                                                onDOSBoxDrive: currentDOSBoxDrive];
-		
-        if (localPath)
-            return localPath;
-		
-		//If no accurate local path could be determined, then return the source path of the current drive instead 
-		else return self.currentDrive.path;
-	}
-	else return nil;
-}
-
-- (NSString *) pathForDOSPath: (NSString *)path
-{
-	if (self.isExecuting)
-	{
-		const char *dosPath = [path cStringUsingEncoding: BXDirectStringEncoding];
-		//If the path couldn't be encoded successfully, don't do further lookups
-		if (!dosPath) return nil;
-		
-		char fullPath[DOS_PATHLENGTH];
-		Bit8u driveIndex;
-		BOOL resolved = DOS_MakeName(dosPath, fullPath, &driveIndex);
-
-		if (resolved)
-		{
-			DOS_Drive *dosboxDrive = Drives[driveIndex];
-			NSString *localPath	= [self _filesystemPathForDOSPath: fullPath onDOSBoxDrive: dosboxDrive];
-			
-			if (localPath) return localPath;
-			else
-			{
-				BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-				return drive.path;
-			}			
-		}
-		else return nil;
 	}
 	else return nil;
 }
@@ -757,11 +591,249 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	else return nil;
 }
 
+#pragma mark Resolving paths to OS X resources
+
+- (NSURL *) currentDirectoryURL
+{
+	if (self.isExecuting)
+	{
+		DOS_Drive *currentDOSBoxDrive = Drives[DOS_GetDefaultDrive()];
+		const char *currentDir = currentDOSBoxDrive->curdir;
+		
+		NSURL *localURL	= [self _filesystemURLForDOSPath: currentDir
+                                           onDOSBoxDrive: currentDOSBoxDrive];
+		
+        if (localURL)
+        {
+            return localURL;
+        }
+		//If no accurate local path could be determined (e.g. for disk image-based drives)
+        //fall back on the root of the drive
+		else
+        {
+            return self.currentDrive.sourceURL;
+        }
+	}
+	else return nil;
+}
+
+- (NSURL *) URLForDOSPath: (NSString *)path
+{
+	if (self.isExecuting)
+	{
+		const char *dosPath = [path cStringUsingEncoding: BXDirectStringEncoding];
+		//If the path couldn't be encoded successfully, don't do further lookups
+		if (!dosPath)
+            return nil;
+		
+		char fullPath[DOS_PATHLENGTH];
+		Bit8u driveIndex;
+		BOOL resolved = DOS_MakeName(dosPath, fullPath, &driveIndex);
+        
+		if (resolved)
+		{
+			DOS_Drive *dosboxDrive = Drives[driveIndex];
+			NSURL *localURL	= [self _filesystemURLForDOSPath: fullPath onDOSBoxDrive: dosboxDrive];
+			
+			if (localURL)
+            {
+                return localURL;
+            }
+			else
+			{
+				BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+				return drive.sourceURL;
+			}
+		}
+		else return nil;
+	}
+	else return nil;
+}
+
+- (BOOL) URLIsMountedInDOS: (NSURL *)URL
+{
+	for (BXDrive *drive in _driveCache.objectEnumerator)
+	{
+		if ([drive representsURL: URL])
+            return YES;
+	}
+	return NO;
+}
+
+- (BXDrive *) driveContainingURL: (NSURL *)URL
+{
+	//Sort the drives by path depth, so that deeper mounts are picked over 'shallower' ones.
+	//e.g. when MyGame.boxer and MyGame.boxer/MyCD.cdrom are both mounted, it should pick the latter.
+	//Todo: filter this down to matching drives first, then do the sort, which would be quicker.
+	NSArray *sortedDrives = [_driveCache.allValues sortedArrayUsingSelector: @selector(sourceDepthCompare:)];
+	
+	for (BXDrive *drive in sortedDrives.reverseObjectEnumerator)
+	{
+		if ([drive containsURL: URL])
+            return drive;
+	}
+	return nil;
+}
+
+- (BOOL) URLIsAccessibleInDOS: (NSURL *)URL
+{
+	for (BXDrive *drive in _driveCache.objectEnumerator)
+	{
+		if ([drive containsURL: URL])
+            return YES;
+	}
+	return NO;
+}
+
+- (NSString *) DOSPathForURL: (NSURL *)URL
+{
+	BXDrive *drive = [self driveContainingURL: URL];
+    
+	if (drive)
+        return [self DOSPathForURL: URL onDrive: drive];
+	else
+        return nil;
+}
+
+- (NSString *) DOSPathForURL: (NSURL *)URL onDrive: (BXDrive *)drive
+{
+	if (!self.isExecuting) return nil;
+	
+	NSString *subPath = [drive relativeLocationOfURL: URL];
+	
+	//The path is not be accessible on this drive; give up before we go any further.
+	if (!subPath) return nil;
+	
+	NSString *dosDrive = [NSString stringWithFormat: @"%@:", drive.letter];
+	
+	//If the path is at the root of the drive, bail out now.
+	if (!subPath.length)
+        return dosDrive;
+    
+	NSString *basePath = drive.mountPointURL.path;
+	NSArray *components = subPath.pathComponents;
+	
+	NSUInteger driveIndex	= [self _indexOfDriveLetter: drive.letter];
+	DOS_Drive *DOSBoxDrive	= Drives[driveIndex];
+	if (!DOSBoxDrive) return nil;
+	
+	//To be sure we get this right, flush the drive cache before we look anything up
+	DOSBoxDrive->EmptyCache();
+    
+	NSMutableString *dosPath = [NSMutableString stringWithCapacity: CROSS_LEN];
+	
+	for (NSString *fileName in components)
+	{
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+		
+        //We use DOSBox's own file lookup API to convert a real file path into its
+        //corresponding DOS 8.3 name: starting with the base path of the drive,
+        //and converting each component into its DOS 8.3 equivalent as we go.
+        
+        //One peculiarity of this API is that to look up successive paths we need
+        //to weld the DOS 8.3 relative path onto the drive's real filesystem path
+        //to create "frankenPath", and provide this as a reference point when we
+        //look up the DOS name of the next component in the path.
+        
+		NSString *frankenPath = [basePath stringByAppendingString: dosPath];
+		NSString *dosName = nil;
+		
+		char buffer[CROSS_LEN] = {0};
+		const char *cFrankenPath	= [frankenPath cStringUsingEncoding: BXDirectStringEncoding];
+		const char *cFileName		= [fileName cStringUsingEncoding: BXDirectStringEncoding];
+		
+		BOOL hasShortName = NO;
+		//If the file paths could not be encoded to acceptable C strings,
+		//don't feed them to DOSBox's functions
+		if (cFrankenPath && cFileName)
+		{
+			hasShortName = DOSBoxDrive->getShortName([frankenPath cStringUsingEncoding: BXDirectStringEncoding],
+													 [fileName cStringUsingEncoding: BXDirectStringEncoding],
+													 buffer);
+		}
+        
+		if (hasShortName)
+		{
+			dosName = [NSString stringWithCString: (const char *)buffer encoding: BXDirectStringEncoding];
+		}
+		else
+		{
+			//TODO: if filename is longer than 8.3, crop and append ~1 as a last-ditch guess.
+			dosName = fileName.uppercaseString;
+		}
+		
+		[dosPath appendFormat: @"\\%@", dosName, nil];
+		
+		[pool release];
+	}
+	return [dosDrive stringByAppendingString: dosPath];
+}
+
+
 @end
 
 
-#pragma mark -
-#pragma mark Private methods
+#pragma mark - Legacy API
+
+@implementation BXEmulator (BXDOSFilesystemLegacyPathAPI)
+
+- (NSString *) pathOfCurrentDirectory
+{
+    return self.currentDirectoryURL.path;
+}
+
+- (NSString *) pathForDOSPath: (NSString *)path
+{
+    return [self URLForDOSPath: path].path;
+}
+
+- (BOOL) pathIsMountedAsDrive: (NSString *)path
+{
+    return [self URLIsMountedInDOS: [NSURL fileURLWithPath: path]];
+}
+
+- (BOOL) pathIsDOSAccessible: (NSString *)path
+{
+    return [self URLIsAccessibleInDOS: [NSURL fileURLWithPath: path]];
+}
+
+- (BOOL) pathExistsInDOS: (NSString *)path
+{
+    NSString *dosPath = [self DOSPathForPath: path];
+    if (!dosPath) return NO;
+    
+    return [self DOSPathExists: dosPath];
+}
+
+- (NSString *) DOSPathForPath: (NSString *)path
+{
+    return [self DOSPathForURL: [NSURL fileURLWithPath: path]];
+}
+
+- (NSString *) DOSPathForPath: (NSString *)path onDrive: (BXDrive *)drive
+{
+    return [self DOSPathForURL: [NSURL fileURLWithPath: path] onDrive: drive];
+}
+
+- (BXDrive *) driveForPath: (NSString *)path
+{
+    return [self driveContainingURL: [NSURL fileURLWithPath: path]];
+}
+
++ (BXDrive *) driveFromMountCommand: (NSString *)mountCommand
+                           basePath: (NSString *)basePath
+                              error: (NSError **)outError
+{
+    NSURL *baseURL = (basePath != nil) ? [NSURL fileURLWithPath: basePath] : nil;
+    return [self driveFromMountCommand: mountCommand
+                         relativeToURL: baseURL
+                                 error: outError];
+}
+
+@end
+
+
+#pragma mark - Private methods
 
 @implementation BXEmulator (BXDOSFileSystemInternals)
 
@@ -811,22 +883,6 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	else return NULL;
 }
 
-- (NSString *)_filesystemPathForDOSPath: (const char *)dosPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
-{	
-	localDrive *localDOSBoxDrive = dynamic_cast<localDrive *>(dosboxDrive);
-	if (localDOSBoxDrive)
-	{
-		char filePath[CROSS_LEN];
-		localDOSBoxDrive->GetSystemFilename(filePath, (char const * const)dosPath);
-		NSString *thePath = [[NSFileManager defaultManager]
-							 stringWithFileSystemRepresentation: filePath
-							 length: strlen(filePath)];
-		
-		return [thePath stringByStandardizingPath];
-	}
-	//We can't return a system file path for non-local drives
-	else return nil;
-}
 
 #pragma mark -
 #pragma mark Adding and removing new DOSBox drives
@@ -913,34 +969,61 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 - (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)index
 {
 	NSAssert1(index < DOS_DRIVES, @"index %lu passed to _driveFromDOSBoxDriveAtIndex was beyond the range of DOSBox's drive array.", (unsigned long)index);
-	if (Drives[index])
+    
+    DOS_Drive *dosboxDrive = Drives[index];
+	if (dosboxDrive != NULL)
 	{
 		NSString *driveLetter	= [[self.class driveLetters] objectAtIndex: index];
-		NSString *path			= [NSString stringWithCString: Drives[index]->getSystemPath()
-                                                     encoding: BXDirectStringEncoding];
-		NSString *label			= [NSString stringWithCString: Drives[index]->GetLabel()
-                                                     encoding: BXDirectStringEncoding];
-		
-		BXDrive *drive;
-		//TODO: detect the specific type of drive here!
-		//Requires drive-size heuristics, or keeping track of drive type in MOUNT/IMGMOUNT
-		if (!path.length)
+        BXDriveType type        = [self _typeOfDOSBoxDrive: dosboxDrive];
+        
+        BXDrive *drive;
+		if (type == BXDriveVirtual)
 		{
-			drive = [BXDrive internalDriveAtLetter: driveLetter];
+			drive = [BXDrive virtualDriveWithLetter: driveLetter];
 		}
 		else
 		{
-			//Have a decent crack at resolving relative file paths
-			if (!path.isAbsolutePath)
-			{
-				path = [self.basePath stringByAppendingPathComponent: path];
-			}
-			drive = [BXDrive driveFromPath: path.stringByStandardizingPath atLetter: driveLetter];
+            NSString *drivePath = [NSString stringWithCString: dosboxDrive->getSystemPath()
+                                                     encoding: BXDirectStringEncoding];
+            
+            NSURL *driveURL, *baseURL = self.baseURL;
+            if (!drivePath.isAbsolutePath && baseURL)
+            {
+                driveURL = [baseURL URLByAppendingPathComponent: drivePath];
+            }
+            else
+            {
+                driveURL = [NSURL fileURLWithPath: drivePath];
+            }
+            
+			drive = [BXDrive driveWithContentsOfURL: driveURL
+                                             letter: driveLetter
+                                               type: type];
 		}
-        drive.DOSVolumeLabel = label;
+        
+		drive.DOSVolumeLabel = [NSString stringWithCString: dosboxDrive->GetLabel()
+                                                  encoding: BXDirectStringEncoding];
+		
 		return drive;
 	}
 	else return nil;
+}
+
+- (BXDriveType) _typeOfDOSBoxDrive: (DOS_Drive *)drive
+{
+    if (dynamic_cast<Virtual_Drive *>(drive) != NULL)
+        return BXDriveVirtual;
+    
+    if (dynamic_cast<isoDrive *>(drive) != NULL)
+        return BXDriveCDROM;
+    
+    if (dynamic_cast<cdromDrive *>(drive) != NULL)
+        return BXDriveCDROM;
+    
+    if (drive->GetMediaByte() == BXFloppyMediaID)
+        return BXDriveFloppyDisk;
+    else
+        return BXDriveHardDisk;
 }
 
 //Create a new DOS_Drive CDROM from a path to a disc image.
@@ -1254,6 +1337,35 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 #pragma mark -
 #pragma mark Mapping local filesystem access
+
+- (NSURL *) _filesystemURLForDOSPath: (const char *)dosPath
+                       onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+{
+	localDrive *localDOSBoxDrive = dynamic_cast<localDrive *>(dosboxDrive);
+	if (localDOSBoxDrive)
+	{
+        BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+        id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+        NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
+                  @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
+        
+		char filePath[CROSS_LEN];
+		localDOSBoxDrive->GetSystemFilename(filePath, (char const * const)dosPath);
+        
+        NSURL *localURL = [NSURL URLFromFileSystemRepresentation: filePath];
+        
+        //Roundtrip the URL through the filesystem, in case it remaps it to another location.
+        NSString *logicalPath = [filesystem logicalPathForLocalFileURL: localURL];
+        NSURL *resolvedURL = [filesystem localFileURLForLogicalPath: logicalPath];
+        
+        return resolvedURL;
+	}
+	//We can't resolve filesystem URLs for non-local drives
+	else
+    {
+        return nil;
+    }
+}
 
 - (FILE *) _openFileAtLocalPath: (const char *)path
                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive

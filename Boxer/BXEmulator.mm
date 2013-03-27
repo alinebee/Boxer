@@ -56,6 +56,7 @@ NSString * const BXEmulatorDidRemoveFileNotification				= @"BXEmulatorDidRemoveF
 NSString * const BXEmulatorDOSPathKey           = @"DOSPath";
 NSString * const BXEmulatorDriveKey             = @"drive";
 NSString * const BXEmulatorLocalPathKey         = @"localPath";
+NSString * const BXEmulatorLocalURLKey          = @"URL";
 NSString * const BXEmulatorLaunchArgumentsKey   = @"arguments";
 
 NSString * const BXDOSBoxErrorDomain = @"BXDOSBoxErrorDomain";
@@ -299,26 +300,18 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 }
 
 
-- (NSString *) basePath
+- (NSURL *) baseURL
 {
-    NSString *path;
-    @synchronized(self)
-    {
-        NSFileManager *manager = [[NSFileManager alloc] init];
-        path = [[manager currentDirectoryPath] retain];
-        [manager release];
-    }
-	return [path autorelease];
+    NSString *cwdPath = [[NSFileManager defaultManager] currentDirectoryPath];
+    if (cwdPath)
+        return [NSURL fileURLWithPath: cwdPath];
+    else
+        return nil;
 }
 
-- (void) setBasePath: (NSString *)basePath
+- (void) setBaseURL: (NSURL *)URL
 {
-    @synchronized(self)
-    {
-        NSFileManager *manager = [[NSFileManager alloc] init];
-        [manager changeCurrentDirectoryPath: basePath];
-        [manager release];
-    }
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath: URL.path];
 }
 
 
@@ -338,19 +331,24 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (NSString *) processPath
 {
-    NSDictionary *currentProcess = [_runningProcesses lastObject];
-    return [currentProcess objectForKey: BXEmulatorDOSPathKey];
+    NSString *processPath;
+    @synchronized(_runningProcesses)
+    {
+        NSDictionary *currentProcess = [_runningProcesses lastObject];
+        processPath = [[currentProcess objectForKey: BXEmulatorDOSPathKey] retain];
+    }
+    return [processPath autorelease];
 }
 
-+ (NSSet *) keyPathsForValuesAffectingProcessLocalPath
+- (NSURL *) processURL
 {
-    return [NSSet setWithObject: @"runningProcesses"];
-}
-
-- (NSString *) processLocalPath
-{
-    NSDictionary *currentProcess = [_runningProcesses lastObject];
-    return [currentProcess objectForKey: BXEmulatorLocalPathKey];
+    NSURL *processURL;
+    @synchronized(_runningProcesses)
+    {
+        NSDictionary *currentProcess = [_runningProcesses lastObject];
+        processURL = [[currentProcess objectForKey: BXEmulatorLocalURLKey] retain];
+    }
+    return [processURL autorelease];
 }
 
 - (BOOL) processIsInternal
@@ -1023,6 +1021,32 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
         self.printer.port = (BXEmulatedPrinterPort)(portNumber + 1);
         self.printer.delegate = self.delegate;
     }
+}
+
+@end
+
+
+
+@implementation BXEmulator (BXEmulatorLegacyPathAPI)
+
+- (NSString *) basePath
+{
+    return self.baseURL.path;
+}
+
+- (void) setBasePath: (NSString *)basePath
+{
+    [self setBaseURL: [NSURL fileURLWithPath: basePath]];
+}
+
++ (NSSet *) keyPathsForValuesAffectingProcessLocalPath
+{
+    return [NSSet setWithObject: @"runningProcesses"];
+}
+
+- (NSString *) processLocalPath
+{
+    return self.processURL.path;
 }
 
 @end

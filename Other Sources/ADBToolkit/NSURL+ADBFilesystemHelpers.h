@@ -34,9 +34,6 @@
 //Returns a path string for this URL relative to the specified file URL.
 - (NSString *) pathRelativeToURL: (NSURL *)baseURL;
 
-//Returns a URL constructed relative to the specified file URL.
-- (NSURL *) URLRelativeToURL: (NSURL *)baseURL;
-
 //Convert a URL to/from a local filesystem path representation.
 - (const char *) fileSystemRepresentation;
 + (NSURL *) URLFromFileSystemRepresentation: (const char *)representation;

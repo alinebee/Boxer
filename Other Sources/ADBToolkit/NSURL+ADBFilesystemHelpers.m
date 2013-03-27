@@ -72,12 +72,6 @@
     }
 }
 
-- (NSURL *) URLRelativeToURL: (NSURL *)baseURL
-{
-    NSString *relativePath = [self pathRelativeToURL: baseURL];
-    return [NSURL URLWithString: relativePath relativeToURL: baseURL];
-}
-
 - (const char *) fileSystemRepresentation
 {
     return self.path.fileSystemRepresentation;

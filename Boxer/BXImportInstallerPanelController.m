@@ -117,16 +117,16 @@
 	NSURL *baseURL = self.controller.document.sourceURL;
 	
 	//Remove the base source path to make shorter relative paths for display
-	NSURL *shortenedURL = URL;
+	NSString *shortenedPath = URL.path;
 	if ([URL isBasedInURL: baseURL])
 	{
-		shortenedURL = [URL URLRelativeToURL: baseURL];
+		shortenedPath = [URL pathRelativeToURL: baseURL];
     }
 	
 	//Prettify the shortened path by using display names and converting slashes to arrows
 	NSValueTransformer *nameTransformer = [NSValueTransformer valueTransformerForName: @"BXImportInstallerMenuTitle"];
 	
-	NSString *title = [nameTransformer transformedValue: shortenedURL.path];
+	NSString *title = [nameTransformer transformedValue: shortenedPath];
 	
 	NSMenuItem *item = [[NSMenuItem alloc] init];
 	item.representedObject = URL;

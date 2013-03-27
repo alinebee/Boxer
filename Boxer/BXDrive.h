@@ -145,10 +145,10 @@ typedef enum {
 //A filesystem instance appropriate for the backing medium of this drive.
 @property (readonly, retain, nonatomic) id <ADBFilesystemPathAccess> filesystem;
 
-//A friendly OS X title for the drive's type.
+//A localized human-readable title for the drive's type, for display in the UI.
 @property (readonly, nonatomic) NSString *typeDescription;
 
-//A friendly OS X name for the drive's source path. This corresponds to NSManager displayNameAtPath:.
+//A human-readable name for the drive, for display in the UI.
 @property (readonly, nonatomic) NSString *displayName;
 
 

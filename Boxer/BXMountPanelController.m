@@ -139,7 +139,7 @@
 		{
             //If the drive is hidden or an internal DOSBox drive,
             //skip it altogether and don't show an entry
-            if (drive.isHidden || drive.isInternal) continue;
+            if (drive.isHidden || drive.isVirtual) continue;
             
             //If the drive is locked, disable the entry - it cannot be replaced
             if (drive.isLocked)

@@ -24,12 +24,12 @@ NSString * const BXEmulatorUnrecoverableException = @"BXEmulatorUnrecoverableExc
 
 + (id) errorWithDrive: (BXDrive *)drive
 {
-    NSString *displayName = [[drive path] lastPathComponent];
+    NSString *displayName = drive.sourceURL.lastPathComponent;
 	NSString *descriptionFormat = NSLocalizedString(@"The file “%1$@” could not be read.",
-													@"Error shown when a drive's source path does not exist or could not be accessed. %1$@ is the filename of the drive's source path.");
+													@"Error shown when a drive's source does not exist or could not be accessed. %1$@ is the filename of the drive's source.");
 	
 	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName];
-    NSString *suggestion    = NSLocalizedString(@"Ensure that you have permission to access this file and that the volume containing it is still available.", @"Recovery suggestion shown when a drive's source path does not exist or could not be accessed.");
+    NSString *suggestion    = NSLocalizedString(@"Ensure that you have permission to access this file and that the volume containing it is still available.", @"Recovery suggestion shown when a drive's source does not exist or could not be accessed.");
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               description, NSLocalizedDescriptionKey,
@@ -47,8 +47,8 @@ NSString * const BXEmulatorUnrecoverableException = @"BXEmulatorUnrecoverableExc
 
 + (id) errorWithDrive: (BXDrive *)drive
 {
-    NSString *displayName = [[drive path] lastPathComponent];
-	NSString *descriptionFormat = NSLocalizedString(@"The disk image “%1$@” could not be opened.",
+    NSString *displayName = drive.sourceURL.lastPathComponent;
+    NSString *descriptionFormat = NSLocalizedString(@"The disk image “%1$@” could not be opened.",
 													@"Error shown when a drive's source image could not be loaded by DOSBox. %1$@ is the filename of the image.");
     
     NSString *suggestion    = NSLocalizedString(@"The disk image file may be corrupted or incomplete.", @"Recovery suggestion shown when a drive's source image could not be loaded by DOSBox.");

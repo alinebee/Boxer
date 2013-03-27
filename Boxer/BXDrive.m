@@ -372,23 +372,21 @@
 
 - (id <ADBFilesystemPathAccess>) filesystem
 {
-    if (!_filesystem && self.mountPoint)
+    if (!_filesystem && self.mountPointURL)
     {
-        NSURL *baseURL = [NSURL fileURLWithPath: self.mountPoint];
-        
         //TODO: support filesystem shadowing for image-based filesystems
-        if (self.shadowPath)
+        if (self.shadowURL)
         {
-            NSURL *shadowURL = [NSURL fileURLWithPath: self.shadowPath];
-            self.filesystem = [ADBShadowedFilesystem filesystemWithBaseURL: baseURL
-                                                                 shadowURL: shadowURL];
+            self.filesystem = [ADBShadowedFilesystem filesystemWithBaseURL: self.mountPointURL
+                                                                 shadowURL: self.shadowURL];
         }
         else
         {
-            self.filesystem = [BXFileTypes filesystemWithContentsOfURL: baseURL error: NULL];
+            self.filesystem = [BXFileTypes filesystemWithContentsOfURL: self.mountPointURL
+                                                                 error: NULL];
         }
         
-        NSAssert1(self.filesystem != nil, @"No suitable filesystem could be found for mount point %@", self.mountPoint);
+        NSAssert1(self.filesystem != nil, @"No suitable filesystem could be found for mount point %@", self.mountPointURL);
     }
     return [[_filesystem retain] autorelease];
 }
@@ -409,7 +407,7 @@
 
 - (NSString *) description
 {
-	return [NSString stringWithFormat: @"%@: %@ (%@)", self.letter, self.path, self.localizedTypeDescription];
+	return [NSString stringWithFormat: @"%@: %@ (%@)", self.letter, self.sourceURL, self.localizedTypeDescription];
 }
 
 

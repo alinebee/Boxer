@@ -363,7 +363,7 @@ enum {
 		//Check if any of the selected drives are locked or internal
 		for (BXDrive *drive in selectedDrives)
 		{
-			if (drive.isLocked || drive.isInternal) return NO;
+			if (drive.isLocked || drive.isVirtual) return NO;
             if (!selectionContainsMountedDrives && [session driveIsMounted: drive])
                 selectionContainsMountedDrives = YES;
 		}

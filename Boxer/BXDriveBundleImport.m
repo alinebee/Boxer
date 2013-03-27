@@ -11,7 +11,7 @@
 #import "ADBBinCueImage.h"
 #import "BXDrive.h"
 #import "RegexKitLite.h"
-#import "NSWorkspace+ADBFileTypes.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 #import "NSFileManager+ADBUniqueFilenames.h"
 
 NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
@@ -42,16 +42,12 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 
 + (BOOL) isSuitableForDrive: (BXDrive *)drive
 {
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	
-	NSSet *cueTypes = [NSSet setWithObject: @"com.goldenhawk.cdrwin-cuesheet"];
-	
-    //If OS X thinks the file's extension makes it a valid CUE file, treat it as a match.
-	if ([workspace file: drive.path matchesTypes: cueTypes]) return YES;
+    if ([drive.sourceURL conformsToFileType: @"com.goldenhawk.cdrwin-cuesheet"])
+        return YES;
     
     //If the file can be parsed as a CUE, treat it as a match too (catches renamed GOG images.)
-    NSURL *sourceURL = [NSURL fileURLWithPath: drive.path];
-    if ([ADBBinCueImage isCueAtURL: sourceURL error: NULL]) return YES;
+    if ([ADBBinCueImage isCueAtURL: drive.sourceURL error: NULL])
+        return YES;
 
 	return NO;
 }
@@ -107,13 +103,13 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
     if (!self.destinationURL)
         self.destinationURL = self.preferredDestinationURL;
     
-	NSString *sourcePath		= self.drive.path;
-	NSString *destinationPath	= self.destinationURL.path;
+	NSURL *sourceURL		= self.drive.mountPointURL;
+	NSURL *destinationURL	= self.destinationURL;
 	
 	NSError *readError = nil;
-	NSString *cueContents = [[[NSString alloc] initWithContentsOfFile: sourcePath
-                                                         usedEncoding: NULL
-                                                                error: &readError] autorelease];
+	NSString *cueContents = [[[NSString alloc] initWithContentsOfURL: sourceURL
+                                                        usedEncoding: NULL
+                                                               error: &readError] autorelease];
     
 	if (!cueContents)
 	{
@@ -136,7 +132,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	if (self.isCancelled) return;
     
     //Work out what to do with the related file paths we've parsed from the cue file
-    NSString *sourceBasePath = [sourcePath stringByDeletingLastPathComponent];
+    NSURL *baseURL = sourceURL.URLByDeletingLastPathComponent;
     NSMutableDictionary *revisedPaths = [NSMutableDictionary dictionaryWithCapacity: numRelatedPaths];
     
     for (NSString *fromPath in relatedPaths)
@@ -144,11 +140,11 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
         //Rewrite Windows-style paths
         NSString *sanitisedFromPath = [fromPath stringByReplacingOccurrencesOfString: @"\\" withString: @"/"];
         
-        NSString *fullFromPath	= [sourceBasePath stringByAppendingPathComponent: sanitisedFromPath].stringByStandardizingPath;
-        NSString *fromName		= fullFromPath.lastPathComponent;
-        NSString *fullToPath	= [destinationPath stringByAppendingPathComponent: fromName];
+        NSURL *fromURL      = [baseURL URLByAppendingPathComponent: sanitisedFromPath];
+        NSString *fromName	= fromURL.lastPathComponent;
+        NSURL *toURL        = [destinationURL URLByAppendingPathComponent: fromName];
         
-        [self addTransferFromPath: fullFromPath toPath: fullToPath];
+        [self addTransferFromPath: fromURL.path toPath: toURL.path];
         
         //Make a note of the path if it needs to be changed when we rewrite the CUE file
         //(e.g. if it's in a subdirectory that will no longer exist when the files are imported)
@@ -179,13 +175,13 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
                                              range: NSMakeRange(0, revisedCue.length)];
         }
         
-        NSString *finalCuePath = [destinationPath stringByAppendingPathComponent: @"tracks.cue"];
+        NSURL *finalCueURL = [destinationURL URLByAppendingPathComponent: @"tracks.cue"];
         
         NSError *cueError = nil;
-        BOOL cueWritten = [revisedCue writeToFile: finalCuePath
-                                       atomically: YES
-                                         encoding: NSUTF8StringEncoding
-                                            error: &cueError];
+        BOOL cueWritten = [revisedCue writeToURL: finalCueURL
+                                      atomically: YES
+                                        encoding: NSUTF8StringEncoding
+                                           error: &cueError];
         [revisedCue release];
         
         if (!cueWritten)
@@ -196,9 +192,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
         {
             //If we were moving rather than copying, then delete the original
             //cue file once we've written the new one
-            NSFileManager *manager = [[NSFileManager alloc] init];
-            [manager removeItemAtPath: sourcePath error: nil];
-            [manager release];
+            [[NSFileManager defaultManager] removeItemAtURL: sourceURL error: NULL];
         }
     }
     
@@ -235,7 +229,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
 							   description,		NSLocalizedDescriptionKey,
 							   suggestion,		NSLocalizedRecoverySuggestionErrorKey,
-							   drive.path,      NSFilePathErrorKey,
+							   drive.sourceURL, NSURLErrorKey,
 							   nil];
 	
 	return [NSError errorWithDomain: BXDriveBundleErrorDomain

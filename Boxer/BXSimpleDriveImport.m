@@ -9,7 +9,7 @@
 #import "BXSimpleDriveImport.h"
 #import "BXFileTypes.h"
 #import "BXDrive.h"
-#import "NSWorkspace+ADBFileTypes.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 #import "NSFileManager+ADBUniqueFilenames.h"
 
 
@@ -35,47 +35,54 @@
 + (NSString *) nameForDrive: (BXDrive *)drive
 {
 	NSString *importedName = nil;
-	NSString *drivePath = drive.path;
 	
-	NSFileManager *manager = [NSFileManager defaultManager];
-    BOOL isDir, exists = [manager fileExistsAtPath: drivePath isDirectory: &isDir];
-	
-	if (exists)
+	if ([drive.sourceURL checkResourceIsReachableAndReturnError: NULL])
 	{
-        NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	
         NSString *baseName = [BXDriveImport baseNameForDrive: drive];
         NSString *extension;
+        
         //Decide on what kind of extension to use for the file:
         //If this is one of our known image/mountable folder types then use its extension as-is
 		NSSet *readyTypes = [[BXFileTypes mountableFolderTypes] setByAddingObjectsFromSet: [BXFileTypes mountableImageTypes]];
-        if ([workspace file: drivePath matchesTypes: readyTypes])
+        if ([drive.sourceURL matchingFileType: readyTypes] != nil)
         {
-            extension = drivePath.pathExtension;
+            extension = drive.sourceURL.pathExtension;
         }
+        
 		//Otherwise: if it's a directory, it will need to be renamed as a mountable folder.
-		else if (isDir)
+		else
         {
-			switch (drive.type)
-			{
-				case BXDriveCDROM:
-					extension = [workspace preferredFilenameExtensionForType: BXCDROMFolderType];
-					break;
-				case BXDriveFloppyDisk:
-					extension = [workspace preferredFilenameExtensionForType: BXFloppyFolderType];
-					break;
-				case BXDriveHardDisk:
-				default:
-					extension = [workspace preferredFilenameExtensionForType: BXHardDiskFolderType];
-					break;
-			}
-        }
-        //Otherwise: if it's a file, then it's *presumably* an ISO disc image that's been given
-        //a file extension we don't recognise (hello GOG!) and should be renamed to something sensible.
-        //TODO: validate it to determine what kind of image it really is.
-        else
-        {
-            extension = @"iso";
+            NSNumber *isDirFlag;
+            BOOL checkedDir = [drive.sourceURL getResourceValue: &isDirFlag
+                                                         forKey: NSURLIsDirectoryKey
+                                                          error: NULL];
+            
+            if (checkedDir && isDirFlag.boolValue)
+            {
+                NSString *UTI;
+                switch (drive.type)
+                {
+                    case BXDriveCDROM:
+                        UTI = BXCDROMFolderType;
+                        break;
+                    case BXDriveFloppyDisk:
+                        UTI = BXFloppyFolderType;
+                        break;
+                    case BXDriveHardDisk:
+                    default:
+                        UTI = BXHardDiskFolderType;
+                        break;
+                }
+                
+                extension = [NSURL preferredExtensionForFileType: UTI];
+            }
+            //Otherwise: if it's a file, then it's *presumably* an ISO disc image that's been given
+            //a file extension we don't recognise (hello GOG!) and should be renamed to something sensible.
+            //TODO: validate it to determine what kind of image it really is.
+            else
+            {
+                extension = @"iso";
+            }
         }
         
         importedName = [baseName stringByAppendingPathExtension: extension];
@@ -120,7 +127,7 @@
     if (!self.destinationURL)
         self.destinationURL = self.preferredDestinationURL;
     
-    self.sourcePath = self.drive.path;
+    self.sourcePath = self.drive.sourceURL.path;
     self.destinationPath = self.destinationURL.path;
     
     [super main];

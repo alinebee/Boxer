@@ -89,7 +89,7 @@ NSString * const BXUniqueDriveNameFormat = @"%1$@ (%3$lu).%2$@";
     //imported drive (in the case of e.g. C.harddisk).
     else if (baseName == nil)
     {
-        volumeName = [BXDrive preferredVolumeLabelForPath: drive.path];
+        volumeName = [BXDrive preferredVolumeLabelForContentsOfURL: drive.sourceURL];
     }
     
     if (volumeName.length)

@@ -344,7 +344,10 @@ bool boxer_localFileExists(const char *path, DOS_Drive *drive)
 void *boxer_openLocalDirectory(const char *path, DOS_Drive *drive)
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
-    id <ADBFilesystemLocalFileURLEnumeration> enumerator = [emulator _directoryEnumeratorForLocalPath: path onDOSBoxDrive: drive];
+    id <ADBFilesystemLocalFileURLEnumeration> enumerator = [emulator _directoryEnumeratorForLocalPath: path
+                                                                                        onDOSBoxDrive: drive];
+    
+    NSCAssert1(enumerator != nil, @"No enumerator found for %s", path);
     
     //Our own enumerators don't include directory entries for . and ..,
     //which are expected by DOSBox. So, we insert them ourselves during iteration.

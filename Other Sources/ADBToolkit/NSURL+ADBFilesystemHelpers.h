@@ -73,4 +73,10 @@
 //or nil if it doesn't match any of them.
 - (NSString *) matchingFileType: (NSSet *)UTIs;
 
+//Returns the recommended file extension to use for files of the specified type.
+//Analogous to NSWorkspace preferredExtensionForFileType:.
++ (NSString *) preferredExtensionForFileType: (NSString *)UTI;
+
+//Returns the UTI most applicable to files with the specified extension.
++ (NSString *) fileTypeForExtension: (NSString *)extension;
 @end

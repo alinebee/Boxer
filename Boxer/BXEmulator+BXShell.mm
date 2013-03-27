@@ -281,7 +281,7 @@ nil];
 	{
 		NSString *localizedFormat;
 		
-		if (drive.isInternal)
+		if (drive.isVirtual)
 		{
 			localizedFormat = NSLocalizedStringFromTable(@"%1$@: %2$@\n",
 														 @"Shell",
@@ -339,7 +339,7 @@ nil];
         BXDrive *drive = [self driveForDOSPath: cleanedPath];
         
         NSString *errorFormat;
-        if (drive.isInternal)
+        if (drive.isVirtual)
         {
             errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" is a virtual drive used by Boxer and does not exist in OS X.",
                                                                @"Shell",

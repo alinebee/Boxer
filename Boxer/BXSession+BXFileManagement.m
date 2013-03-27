@@ -1682,7 +1682,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	
     //If this drive is part of the gamebox, and we're not a standalone app,
     //scan it for executables to display in the program panel
-	if (![[NSApp delegate] isStandaloneGameBundle] && !drive.isInternal && [self driveIsBundled: drive])
+	if (![[NSApp delegate] isStandaloneGameBundle] && !drive.isVirtual && [self driveIsBundled: drive])
 	{
         [self executableScanForDrive: drive startImmediately: YES];
 	}
@@ -1978,8 +1978,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	//...we're not running a gamebox
 	if (!self.hasGamebox) return NO;
 	
-	//...the drive is DOSBox-internal or hidden (which means it's a Boxer-internal drive)
-	if (drive.isInternal || drive.isHidden) return NO;
+	//...the drive is one of our own internal drives
+	if (drive.isVirtual || drive.isHidden) return NO;
 	
 	//...the drive is currently being imported or is already bundled in the current gamebox
 	if ([self activeImportOperationForDrive: drive] ||

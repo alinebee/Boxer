@@ -13,7 +13,6 @@
 @interface BXBinCueImageImport : BXCDImageImport
 {	
 	@protected
-	NSFileManager *_manager;
 	BOOL _usesErrorCorrection;
 }
 //Enables/disables cdrdao's error-correction when reading audio tracks.

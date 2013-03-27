@@ -350,7 +350,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     if (![self driveIsMounted: drive])
         return YES;
     
-	if (drive.isInternal || drive.isLocked)
+	if (drive.isVirtual || drive.isLocked)
     {
         if (outError) *outError = [BXEmulatorDriveLockedError errorWithDrive: drive];
         return NO;

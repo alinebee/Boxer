@@ -785,7 +785,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             for (BXDrive *drive in self.allDrives)
             {
                 //Skip our own internal drives and drives that are bundled into the gamebox.
-                if (drive.isHidden || drive.isInternal || [self driveIsBundled: drive])
+                if (drive.isHidden || drive.isVirtual || [self driveIsBundled: drive])
                     continue;
                 
                 NSData *driveInfo = [NSKeyedArchiver archivedDataWithRootObject: drive];

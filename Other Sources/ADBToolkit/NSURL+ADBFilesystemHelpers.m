@@ -145,6 +145,21 @@
 
 @implementation NSURL (ADBFileTypes)
 
++ (NSString *) preferredExtensionForFileType: (NSString *)UTI
+{
+    CFStringRef extensionForUTI = UTTypeCopyPreferredTagWithClass((CFStringRef)UTI, kUTTagClassFilenameExtension);
+    return [(NSString *)extensionForUTI autorelease];
+}
+
++ (NSString *) fileTypeForExtension: (NSString *)extension
+{
+    CFStringRef UTIForExtension = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
+                                                                        (CFStringRef)extension,
+                                                                        NULL);
+    
+    return [(NSString *)UTIForExtension autorelease];
+}
+
 - (NSString *) typeIdentifier
 {
     NSString *UTI = nil;
@@ -159,11 +174,7 @@
         if (pathExtension)
         {
             //Attempt to return a UTI based solely on our file extension instead.
-            CFStringRef UTIForExtension = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
-                                                                                (CFStringRef)pathExtension,
-                                                                                NULL);
-            
-            return [(NSString *)UTIForExtension autorelease];
+            return [self.class fileTypeForExtension: pathExtension];
         }
         else
         {

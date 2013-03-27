@@ -167,7 +167,7 @@
     if (self.letter)
         [aCoder encodeObject: self.letter forKey: @"letter"];
     
-    if (self.shadowPath)
+    if (self.shadowURL)
     {
         NSData *shadowURLBookmark = BOOKMARK_FROM_URL(self.shadowURL);
         [aCoder encodeObject: shadowURLBookmark forKey: @"shadowURLBookmark"];
@@ -175,7 +175,7 @@
     
     //For other paths and strings, only bother recording them if they have been
     //manually changed from their autodetected versions.
-    if (self.mountPoint && !_hasAutodetectedMountPoint)
+    if (self.mountPointURL && !_hasAutodetectedMountPoint)
     {
         NSData *mountPointURLBookmark = BOOKMARK_FROM_URL(self.mountPointURL);
         [aCoder encodeObject: mountPointURLBookmark forKey: @"mountPointURLBookmark"];

@@ -40,17 +40,15 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 
 + (BOOL) isSuitableForDrive: (BXDrive *)drive
 {
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+    NSDictionary *volumeAttrs = [drive.sourceURL resourceValuesForKeys: @[NSURLIsVolumeKey, NSURLVolumeURLKey]
+                                                                 error: NULL];
 	
-	NSString *volumePath = [workspace volumeForPath: drive.path];
-	
-	//If the drive is a data CD, then let 'er rip
-	if ([volumePath isEqualToString: drive.path] &&
-		[[workspace volumeTypeForPath: drive.path] isEqualToString: ADBDataCDVolumeType])
-	{
-		return YES;
-	}
-	return NO;
+    if (![[volumeAttrs objectForKey: NSURLIsVolumeKey] boolValue])
+        return NO;
+    
+    NSURL *volumeURL = [volumeAttrs objectForKey: NSURLVolumeURLKey];
+    NSString *volumeType = [[NSWorkspace sharedWorkspace] typeOfVolumeAtURL: volumeURL];
+    return [volumeType isEqualToString: ADBDataCDVolumeType];
 }
 
 + (NSString *) nameForDrive: (BXDrive *)drive
@@ -111,7 +109,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 
 - (NSString *) currentPath
 {
-    return self.isFinished ? nil : self.drive.path;
+    return self.isFinished ? nil : self.drive.sourceURL.path;
 }
 
 - (BOOL) copyFiles
@@ -147,43 +145,44 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
     if (!self.destinationURL)
         self.destinationURL = self.preferredDestinationURL;
     
-	NSString *sourcePath		= self.drive.path;
-	NSString *destinationPath	= self.destinationURL.path;
+	NSURL *sourceURL        = self.drive.sourceURL;
+	NSURL *destinationURL	= self.destinationURL;
 	
+    
 	//Measure the size of the volume to determine how much data we'll be importing
-	NSFileManager *manager = [[NSFileManager alloc] init];
-	NSError *volumeSizeError = nil;
-	NSDictionary *volumeAttrs = [manager attributesOfFileSystemForPath: sourcePath error: &volumeSizeError];
-	if (volumeAttrs)
-	{		
-		self.numBytes = [[volumeAttrs objectForKey: NSFileSystemSize] unsignedLongLongValue];
-	}
-	else
-	{
-		self.error = volumeSizeError;
-		[manager release];
-		return;
-	}
+    NSNumber *volumeSizeResource;
+	NSError *volumeSizeError;
+    BOOL gotVolumeSize = [sourceURL getResourceValue: &volumeSizeResource
+                                              forKey: NSURLVolumeTotalCapacityKey
+                                               error: &volumeSizeError];
+    
+    if (gotVolumeSize)
+    {
+        self.numBytes = volumeSizeResource.unsignedLongLongValue;
+    }
+    else
+    {
+        self.error = volumeSizeError;
+        return;
+    }
 	
 	//Determine the /dev/diskx device name of the volume
-	NSString *deviceName = [[NSWorkspace sharedWorkspace] BSDDeviceNameForVolumeAtURL: [NSURL fileURLWithPath: sourcePath]];
+	NSString *deviceName = [[NSWorkspace sharedWorkspace] BSDDeviceNameForVolumeAtURL: sourceURL];
 	if (!deviceName)
 	{
-		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: sourcePath forKey: NSFilePathErrorKey];
 		NSError *unknownDeviceError = [NSError errorWithDomain: NSCocoaErrorDomain
 														  code: NSFileReadUnknownError
-													  userInfo: userInfo];
+													  userInfo: @{ NSURLErrorKey: sourceURL }];
 		self.error = unknownDeviceError;
-		[manager release];
 		return;
 	}
 	
 	//If the destination filename doesn't end in .cdr, then hdiutil will add it itself:
 	//so we'll do so for it, to ensure we know exactly what the destination path will be.
-	NSString *tempDestinationPath = destinationPath;
-	if (![destinationPath.pathExtension.lowercaseString isEqualToString: @"cdr"])
+	NSURL *tempDestinationURL = destinationURL;
+	if (![destinationURL.pathExtension.lowercaseString isEqualToString: @"cdr"])
 	{
-		tempDestinationPath = [destinationPath stringByAppendingPathExtension: @"cdr"];
+		tempDestinationURL = [destinationURL URLByAppendingPathExtension: @"cdr"];
 	}
 	
 	//Prepare the hdiutil task
@@ -193,7 +192,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 						  @"-srcdevice", deviceName,
 						  @"-format", @"UDTO",
 						  @"-puppetstrings",
-						  tempDestinationPath,
+						  tempDestinationURL.path,
 						  nil];
 	
 	hdiutil.launchPath = @"/usr/bin/hdiutil";
@@ -212,14 +211,14 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	if (!self.error)
 	{
 		//If image creation succeeded, then rename the new image to its final destination name
-		if ([manager fileExistsAtPath: tempDestinationPath])
+		if ([tempDestinationURL checkResourceIsReachableAndReturnError: NULL])
 		{
-			if (![destinationPath isEqualToString: tempDestinationPath])
+			if (![tempDestinationURL isEqual: destinationURL])
 			{
                 NSError *renameError = nil;
-				BOOL moved = [manager moveItemAtPath: tempDestinationPath
-                                              toPath: destinationPath
-                                               error: &renameError];
+				BOOL moved = [[NSFileManager defaultManager] moveItemAtURL: tempDestinationURL
+                                                                     toURL: destinationURL
+                                                                     error: &renameError];
                 
                 if (!moved)
                 {
@@ -232,14 +231,14 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 			self.error = [BXCDImageImportRipFailedError errorWithDrive: self.drive];
 		}
 	}
-	
-	[manager release];
     
     
     //If the import failed for any reason (including cancellation),
     //then clean up the partial files.
     if (self.error)
+    {
         [self undoTransfer];
+    }
 }
 
 - (void) checkTaskProgress: (NSTimer *)timer
@@ -299,10 +298,10 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 													@"Error shown when CD-image ripping fails for an unknown reason. %1$@ is the display title of the drive.");
 	
 	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName];
-	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
-							   description, NSLocalizedDescriptionKey,
-							   drive.path, NSFilePathErrorKey,
-							   nil];
+	NSDictionary *userInfo	= @{
+                                NSLocalizedDescriptionKey: description,
+                                NSURLErrorKey: drive.sourceURL,
+                                };
 	
 	return [NSError errorWithDomain: BXCDImageImportErrorDomain
                                code: BXCDImageImportErrorRipFailed
@@ -322,11 +321,11 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName];
 	NSString *suggestion	= NSLocalizedString(@"Close Finder windows or other applications that are using the disc, then try importing again.", @"Explanatory message shown when CD-image ripping fails because the disc is in use.");
 	
-	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
-							   description, NSLocalizedDescriptionKey,
-							   suggestion, NSLocalizedRecoverySuggestionErrorKey,
-							   drive.path, NSFilePathErrorKey,
-							   nil];
+	NSDictionary *userInfo	= @{
+                                NSLocalizedDescriptionKey: description,
+                                NSLocalizedRecoverySuggestionErrorKey: suggestion,
+                                NSURLErrorKey: drive.sourceURL
+                                };
 	
 	return [NSError errorWithDomain: BXCDImageImportErrorDomain
                                code: BXCDImageImportErrorDiscInUse

@@ -17,8 +17,14 @@
 #import "NSURL+ADBFilesystemHelpers.h"
 #import "NSError+ADBErrorHelpers.h"
 
-#pragma mark -
-#pragma mark Constants
+#pragma mark - Constants
+
+typedef enum {
+    BXGameboxDocumentationCopy,
+    BXGameboxDocumentationMove,
+    BXGameboxDocumentationSymlink,
+} BXGameboxDocumentationOperation;
+
 
 NSString * const BXGameIdentifierGameInfoKey        = @"BXGameIdentifier";
 NSString * const BXGameIdentifierTypeGameInfoKey    = @"BXGameIdentifierType";
@@ -34,10 +40,11 @@ NSString * const BXGameInfoFileExtension		= @"plist";
 NSString * const BXDocumentationFolderName		= @"Documentation";
 
 
-NSString * const BXLauncherTitleKey     = @"BXLauncherTitle";
-NSString * const BXLauncherPathKey      = @"BXLauncherPath";
-NSString * const BXLauncherArgsKey      = @"BXLauncherArguments";
-NSString * const BXLauncherDefaultKey   = @"BXLauncherIsDefault";
+NSString * const BXLauncherTitleKey         = @"BXLauncherTitle";
+NSString * const BXLauncherRelativePathKey  = @"BXLauncherPath";
+NSString * const BXLauncherURLKey           = @"BXLauncherURL";
+NSString * const BXLauncherArgsKey          = @"BXLauncherArguments";
+NSString * const BXLauncherDefaultKey       = @"BXLauncherIsDefault";
 
 
 NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
@@ -50,8 +57,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 #define BXGameboxWritableCheckCacheDuration 3.0
 
 
-#pragma mark -
-#pragma mark Private method declarations
+#pragma mark - Private method declarations
 
 @interface BXGamebox ()
 @property (readwrite, retain, nonatomic) NSDictionary *gameInfo;
@@ -94,11 +100,6 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	return exclusions;
 }
 
-+ (BXGamebox *) bundleWithPath: (NSString *)path
-{
-	return [[[self alloc] initWithPath: path] autorelease];
-}
-
 + (BXGamebox *) bundleWithURL: (NSURL *)URL
 {
 	return [[[self alloc] initWithURL: URL] autorelease];
@@ -115,124 +116,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	[super dealloc];
 }
 
-- (NSArray *) hddVolumes	{ return [self volumesOfTypes: [BXFileTypes hddVolumeTypes]]; }
-- (NSArray *) cdVolumes		{ return [self volumesOfTypes: [BXFileTypes cdVolumeTypes]]; }
-- (NSArray *) floppyVolumes	{ return [self volumesOfTypes: [BXFileTypes floppyVolumeTypes]]; }
-
-- (NSArray *) volumesOfTypes: (NSSet *)acceptedTypes
-{
-	ADBPathEnumerator *enumerator = [ADBPathEnumerator enumeratorAtPath: self.resourcePath];
-	enumerator.skipSubdirectories = YES;
-	enumerator.fileTypes = acceptedTypes;
-	return enumerator.allObjects;
-}
-
-- (NSString *) gamePath { return self.bundlePath; }
-
-- (NSString *) targetPath
-{
-    NSString *targetPath = [self gameInfoForKey: BXTargetProgramGameInfoKey];
-    
-	//Resolve the path from a gamebox-relative path into an absolute path
-    if (targetPath)
-    {
-        targetPath = [self.resourcePath stringByAppendingPathComponent: targetPath];
-    }
-    //If there's no target path stored in game info, check for an old-style symlink
-    else
-	{
-		NSString *symlinkPath = [self pathForResource: BXTargetSymlinkName ofType: nil];
-        targetPath = symlinkPath.stringByResolvingSymlinksInPath;
-        
-        if (targetPath)
-        {
-            //If the resolved symlink path is the same as the path to the symlink itself,
-            //this indicates it was a broken link that could not be resolved
-            if ([targetPath isEqualToString: symlinkPath]) targetPath = nil;
-            else
-            {
-                //Once we've resolved the symlink, store it in the game info for future use
-                self.targetPath = targetPath;
-            }
-        }
-	}
-    
-	return targetPath;
-}
-
-- (void) setTargetPath: (NSString *)path
-{
-    if (path)
-    {
-        //Make the path relative to the game package
-        NSString *basePath		= self.resourcePath;
-        NSString *relativePath	= [path pathRelativeToPath: basePath];
-    
-        [self setGameInfo: relativePath forKey: BXTargetProgramGameInfoKey];
-    }
-    else
-    {
-        [self setGameInfo: nil forKey: BXTargetProgramGameInfoKey];
-        
-        //Delete any leftover symlink
-		NSString *symlinkPath = [self pathForResource: BXTargetSymlinkName ofType: nil];
-        [[NSFileManager defaultManager] removeItemAtPath: symlinkPath error: nil];
-    }
-}
-
-- (BOOL) validateTargetPath: (id *)ioValue error: (NSError **)outError
-{
-	NSString *filePath = *ioValue;
-    
-    //Nil values will clear the target path
-    if (filePath == nil) return YES;
-    
-	NSFileManager *manager = [NSFileManager defaultManager];
-	
-	//If the destination file does not exist, show an error
-    //TWEAK: this condition is disabled for now, to allow links to files within
-    //disk images.
-    /*
-	if (![manager fileExistsAtPath: filePath])
-	{
-		if (outError)
-		{
-			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-									  filePath, NSFilePathErrorKey,
-									  nil];
-			*outError = [NSError errorWithDomain: NSCocoaErrorDomain
-											code: NSFileNoSuchFileError
-										userInfo: userInfo];
-		}
-		return NO;
-	}
-     */
-	
-	//Reject target paths that are not located inside the gamebox
-	if (![filePath isRootedInPath: self.gamePath])
-	{
-		if (outError)
-		{
-			NSString *format = NSLocalizedString(@"The file “%@” was not located inside this gamebox.",
-												 @"Error message shown when trying to set the target path of a gamebox to a file outside the gamebox. %@ is the display filename of the file in question.");
-			
-			NSString *displayName = [manager displayNameAtPath: filePath];
-			NSString *description = [NSString stringWithFormat: format, displayName];
-			
-			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-									  filePath, NSFilePathErrorKey,
-									  description, NSLocalizedDescriptionKey,
-									  nil];
-			
-			*outError = [NSError errorWithDomain: BXGameboxErrorDomain
-											code: BXTargetPathOutsideGameboxError
-										userInfo: userInfo];
-		}
-		return NO;
-	}
-    
-	return YES;
-}
+#pragma mark - Launchers
 
 - (NSArray *) launchers
 {
@@ -244,35 +128,34 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
         
         if (recordedLaunchers.count)
         {
-            //Resolve each relative launcher path to an absolute path before storing it.
+            //Resolve each relative launcher path to an absolute URL before storing it.
             for (NSDictionary *launcher in recordedLaunchers)
             {
-                NSString *relativePath = [launcher objectForKey: BXLauncherPathKey];
-                NSString *absolutePath = [self.resourcePath stringByAppendingPathComponent: relativePath];
+                NSString *relativePath = [launcher objectForKey: BXLauncherRelativePathKey];
+                NSURL *absoluteURL = [self.resourceURL URLByAppendingPathComponent: relativePath];
                 
                 NSMutableDictionary *resolvedLauncher = [launcher mutableCopy];
-                [resolvedLauncher setObject: absolutePath forKey: BXLauncherPathKey];
+                [resolvedLauncher setObject: absoluteURL forKey: BXLauncherURLKey];
                 
                 [_launchers addObject: resolvedLauncher];
                 
                 [resolvedLauncher release];
             }
         }
-        //If no launchers have been defined for this gamebox, create a launcher item
-        //based on the target program of the gamebox.
-        else if (self.targetPath)
+        
+        //If no launchers have been defined for this gamebox, create and record a launcher item
+        //based on the original target program of the gamebox specified by a previous Boxer version.
+        else
         {
-            NSString *launcherPath = self.targetPath;
-            NSString *titleFormat = NSLocalizedString(@"Launch %@", @"Placeholder title for a game launcher autogenerated from a gamebox's previous default program. %@ will be the name of the gamebox itself.");
-            
-            NSString *launcherTitle = [NSString stringWithFormat: titleFormat, self.gameName];
-            
-            NSDictionary *targetProgramLauncher = [NSDictionary dictionaryWithObjectsAndKeys:
-                                                   launcherPath, BXLauncherPathKey,
-                                                   launcherTitle, BXLauncherTitleKey,
-                                                   nil];
-            
-            [_launchers addObject: targetProgramLauncher];
+            NSURL *targetURL = self.legacyTargetURL;
+            if (targetURL)
+            {
+                NSString *titleFormat = NSLocalizedString(@"Launch %@", @"Placeholder title for a game launcher autogenerated from a gamebox's previous default program. %@ will be the name of the gamebox itself.");
+                
+                NSString *launcherTitle = [NSString stringWithFormat: titleFormat, self.gameName];
+                
+                [self addLauncherWithURL: targetURL arguments: nil title: launcherTitle];
+            }
         }
     }
 
@@ -281,20 +164,20 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 - (void) _persistLaunchers
 {
-    NSMutableArray *relativeLaunchers = [NSMutableArray arrayWithCapacity: self.launchers.count];
+    NSMutableArray *sanitisedLaunchers = [NSMutableArray arrayWithCapacity: self.launchers.count];
     for (NSDictionary *launcher in self.launchers)
     {
-        NSMutableDictionary *relativeLauncher = [launcher mutableCopy];
+        NSMutableDictionary *sanitisedLauncher = [launcher mutableCopy];
         
-        NSString *path = [relativeLauncher objectForKey: BXLauncherPathKey];
-        NSString *relativePath = [path pathRelativeToPath: self.resourcePath];
-        [relativeLauncher setObject: relativePath forKey: BXLauncherPathKey];
-        [relativeLaunchers addObject: relativeLauncher];
+        //Strip out the absolute URL: we don't want to persist this into the plist.
+        [sanitisedLauncher removeObjectForKey: BXLauncherURLKey];
+        [sanitisedLaunchers addObject: sanitisedLauncher];
         
-        [relativeLauncher release];
+        [sanitisedLauncher release];
     }
     
-    [self setGameInfo: relativeLaunchers forKey: BXLaunchersGameInfoKey];
+    [self setGameInfo: sanitisedLaunchers
+               forKey: BXLaunchersGameInfoKey];
 }
 
 - (void) insertObject: (NSDictionary *)object inLaunchersAtIndex: (NSUInteger)index
@@ -327,30 +210,76 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     [[self mutableArrayValueForKey: @"launchers"] addObject: launcher];
 }
 
-- (void) insertLauncherWithTitle: (NSString *)title
-                            path: (NSString *)path
-                       arguments: (NSString *)launchArguments
-                         atIndex: (NSUInteger)index
+- (void) insertLauncherWithURL: (NSURL *)URL
+                     arguments: (NSString *)launchArguments
+                         title: (NSString *)title
+                       atIndex: (NSUInteger)index
 {
-    NSMutableDictionary *launcher = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                     [[title copy] autorelease], BXLauncherTitleKey,
-                                     path, BXLauncherPathKey,
-                                     nil];
+    NSAssert(URL != nil, @"URL must be provided.");
+    NSAssert1([URL isBasedInURL: self.resourceURL], @"Launcher URL must be located within gamebox: %@", URL);
     
-    if (launchArguments)
-        [launcher setObject: [[launchArguments copy] autorelease] forKey: BXLauncherArgsKey];
+    NSString *relativePath = [URL pathRelativeToURL: self.resourceURL];
+    
+    if (title.length)
+        title = [[title copy] autorelease];
+    else
+        title = relativePath.lastPathComponent;
+    
+    
+    NSMutableDictionary *launcher = [@{ BXLauncherTitleKey:         title,
+                                        BXLauncherRelativePathKey:  relativePath,
+                                        BXLauncherURLKey:           URL
+                                      } mutableCopy];
+    
+    if (launchArguments.length)
+    {
+        launchArguments = [[launchArguments copy] autorelease];
+        [launcher setObject: launchArguments forKey: BXLauncherArgsKey];
+    }
     
     [self insertLauncher: launcher atIndex: index];
+    [launcher release];
 }
 
-- (void) addLauncherWithTitle: (NSString *)title
-                         path: (NSString *)path
-                    arguments: (NSString *)launchArguments
+- (void) addLauncherWithURL: (NSURL *)URL
+                  arguments: (NSString *)launchArguments
+                      title: (NSString *)title
 {
-    [self insertLauncherWithTitle: title
-                             path: path
-                        arguments: launchArguments
-                          atIndex: self.launchers.count];
+    [self insertLauncherWithURL: URL
+                      arguments: launchArguments
+                          title: title
+                        atIndex: self.launchers.count];
+}
+
+- (BOOL) validateLauncherURL: (NSURL **)ioValue error:(NSError **)outError
+{
+    NSURL *URL = *ioValue;
+    
+    //Yes I know this is a validation method but supplying a nil URL indicates a programming error.
+    NSAssert(URL != nil, @"A launcher must have a URL.");
+    
+    if (![URL isBasedInURL: self.resourceURL])
+	{
+		if (outError)
+		{
+			NSString *format = NSLocalizedString(@"The file “%@” was not located inside this gamebox.",
+												 @"Error message shown when trying to add a launcher pointing to a URL outside the gamebox. %@ is the display filename of the URL in question.");
+			
+			NSString *displayName = URL.lastPathComponent;
+			NSString *description = [NSString stringWithFormat: format, displayName];
+			
+			NSDictionary *userInfo = @{
+                                        NSURLErrorKey: URL,
+                                        NSLocalizedDescriptionKey: description,
+                                        };
+			
+			*outError = [NSError errorWithDomain: BXGameboxErrorDomain
+											code: BXLauncherURLOutsideGameboxError
+										userInfo: userInfo];
+		}
+		return NO;
+	}
+    return YES;
 }
 
 - (void) removeLauncherAtIndex: (NSUInteger)index
@@ -425,7 +354,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     }
 }
 
-
+#pragma mark - Gamebox metadata
 
 - (BOOL) closeOnExit
 {
@@ -436,25 +365,6 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 {
     [self setGameInfo: [NSNumber numberWithBool: closeOnExit]
                forKey: BXCloseOnExitGameInfoKey];
-}
-
-- (NSString *) configurationFile
-{
-    //LAZY ASS FIX: this used to use pathForResource:ofType: but this was incorrectly returning nil
-    //in the case where a configuration file had just been written but NSBundle had checked before
-    //for a file and found it missing. This will be fixed once we migrate this wretched class away
-    //from NSBundle once and for all.
-    NSFileManager *manager = [NSFileManager defaultManager];
-    
-    NSString *configPath = self.configurationFilePath;
-    if ([manager fileExistsAtPath: configPath]) return configPath;
-    else return nil;
-}
-
-- (NSString *) configurationFilePath
-{
-	NSString *fileName = [BXConfigurationFileName stringByAppendingPathExtension: BXConfigurationFileExtension];
-	return [self.resourcePath stringByAppendingPathComponent: fileName];
 }
 
 //Set/return the cover art associated with this game package (currently, the package file's icon)
@@ -553,9 +463,83 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	return displayName;
 }
 
+
 - (void) refresh
 {
     self.gameInfo = nil;
+}
+
+#pragma mark - Gamebox contents
+
+- (NSArray *) URLsOfVolumesMatchingTypes: (NSSet *)fileTypes
+{
+    NSDirectoryEnumerationOptions options = NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles;
+    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL: self.resourceURL
+                                                             includingPropertiesForKeys: @[NSURLTypeIdentifierKey]
+                                                                                options: options
+                                                                           errorHandler: NULL];
+    
+    NSMutableArray *matches = [NSMutableArray arrayWithCapacity: 10];
+    for (NSURL *URL in enumerator)
+    {
+        if ([URL matchingFileType: fileTypes] != nil)
+            [matches addObject: URL];
+    }
+    return matches;
+}
+
+- (NSArray *) hddVolumeURLs
+{
+    return [self URLsOfVolumesMatchingTypes: [BXFileTypes hddVolumeTypes]];
+}
+
+- (NSArray *) cdVolumeURLs
+{
+    return [self URLsOfVolumesMatchingTypes: [BXFileTypes cdVolumeTypes]];
+}
+
+- (NSArray *) floppyVolumeURLs
+{
+    return [self URLsOfVolumesMatchingTypes: [BXFileTypes floppyVolumeTypes]];
+}
+
+- (NSURL *) configurationFileURL
+{
+	NSString *fileName = [BXConfigurationFileName stringByAppendingPathExtension: BXConfigurationFileExtension];
+	return [self.resourceURL URLByAppendingPathComponent: fileName];
+}
+
+- (NSURL *) legacyTargetURL
+{
+    NSString *targetPath = [self gameInfoForKey: BXTargetProgramGameInfoKey];
+    
+    //Resolve the path from a gamebox-relative path into an absolute URL
+    if (targetPath)
+    {
+        return [self.resourceURL URLByAppendingPathComponent: targetPath];
+    }
+    //If there's no target path stored in game info, check for an old-style symlink
+    else
+    {
+        NSURL *symlinkURL = [self URLForResource: BXTargetSymlinkName withExtension: nil];
+        
+        if (symlinkURL)
+        {
+            NSURL *resolvedURL = symlinkURL.URLByResolvingSymlinksInPath;
+            
+            //If the resolved symlink is the same location as the symlink itself,
+            //this indicates it was a broken link that could not be resolved
+            if ([symlinkURL isEqual: resolvedURL])
+            {
+                return nil;
+            }
+            else
+            {
+                return resolvedURL;
+            }
+        }
+        else return nil;
+    }
 }
 
 - (BOOL) isWritable
@@ -584,8 +568,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 }
 
 
-#pragma mark -
-#pragma mark Private methods
+#pragma mark - Private methods
 
 //Write the game info back to the plist file
 - (void) _persistGameInfo
@@ -671,14 +654,6 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 }
 
 @end
-
-
-
-typedef enum {
-    BXGameboxDocumentationCopy,
-    BXGameboxDocumentationMove,
-    BXGameboxDocumentationSymlink,
-} BXGameboxDocumentationOperation;
 
 
 @implementation BXGamebox (BXGameDocumentation)
@@ -1221,6 +1196,156 @@ typedef enum {
     
     //If we get this far, it checks out as a documentation file.
     return YES;
+}
+
+@end
+
+
+#pragma mark - Legacy API
+
+@implementation BXGamebox (BXGameboxLegacyPathAPI)
+
++ (BXGamebox *) bundleWithPath: (NSString *)path
+{
+	return [[[self alloc] initWithPath: path] autorelease];
+}
+
+- (NSArray *) hddVolumes	{ return [self volumesOfTypes: [BXFileTypes hddVolumeTypes]]; }
+- (NSArray *) cdVolumes		{ return [self volumesOfTypes: [BXFileTypes cdVolumeTypes]]; }
+- (NSArray *) floppyVolumes	{ return [self volumesOfTypes: [BXFileTypes floppyVolumeTypes]]; }
+
+- (NSArray *) volumesOfTypes: (NSSet *)acceptedTypes
+{
+	ADBPathEnumerator *enumerator = [ADBPathEnumerator enumeratorAtPath: self.resourcePath];
+	enumerator.skipSubdirectories = YES;
+	enumerator.fileTypes = acceptedTypes;
+	return enumerator.allObjects;
+}
+
+- (NSString *) gamePath { return self.bundlePath; }
+
+- (NSString *) targetPath
+{
+    NSString *targetPath = [self gameInfoForKey: BXTargetProgramGameInfoKey];
+    
+	//Resolve the path from a gamebox-relative path into an absolute path
+    if (targetPath)
+    {
+        targetPath = [self.resourcePath stringByAppendingPathComponent: targetPath];
+    }
+    //If there's no target path stored in game info, check for an old-style symlink
+    else
+	{
+		NSString *symlinkPath = [self pathForResource: BXTargetSymlinkName ofType: nil];
+        targetPath = symlinkPath.stringByResolvingSymlinksInPath;
+        
+        if (targetPath)
+        {
+            //If the resolved symlink path is the same as the path to the symlink itself,
+            //this indicates it was a broken link that could not be resolved
+            if ([targetPath isEqualToString: symlinkPath]) targetPath = nil;
+            else
+            {
+                //Once we've resolved the symlink, store it in the game info for future use
+                self.targetPath = targetPath;
+            }
+        }
+	}
+    
+	return targetPath;
+}
+
+- (void) setTargetPath: (NSString *)path
+{
+    if (path)
+    {
+        //Make the path relative to the game package
+        NSString *basePath		= self.resourcePath;
+        NSString *relativePath	= [path pathRelativeToPath: basePath];
+        
+        [self setGameInfo: relativePath forKey: BXTargetProgramGameInfoKey];
+    }
+    else
+    {
+        [self setGameInfo: nil forKey: BXTargetProgramGameInfoKey];
+        
+        //Delete any leftover symlink
+		NSString *symlinkPath = [self pathForResource: BXTargetSymlinkName ofType: nil];
+        [[NSFileManager defaultManager] removeItemAtPath: symlinkPath error: nil];
+    }
+}
+
+- (BOOL) validateTargetPath: (id *)ioValue error: (NSError **)outError
+{
+	NSString *filePath = *ioValue;
+    
+    //Nil values will clear the target path
+    if (filePath == nil) return YES;
+    
+	NSFileManager *manager = [NSFileManager defaultManager];
+	
+	//If the destination file does not exist, show an error
+    //TWEAK: this condition is disabled for now, to allow links to files within
+    //disk images.
+    /*
+     if (![manager fileExistsAtPath: filePath])
+     {
+     if (outError)
+     {
+     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+     filePath, NSFilePathErrorKey,
+     nil];
+     *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+     code: NSFileNoSuchFileError
+     userInfo: userInfo];
+     }
+     return NO;
+     }
+     */
+	
+	//Reject target paths that are not located inside the gamebox
+	if (![filePath isRootedInPath: self.resourcePath])
+	{
+		if (outError)
+		{
+			NSString *format = NSLocalizedString(@"The file “%@” was not located inside this gamebox.",
+												 @"Error message shown when trying to set the target path of a gamebox to a file outside the gamebox. %@ is the display filename of the file in question.");
+			
+			NSString *displayName = [manager displayNameAtPath: filePath];
+			NSString *description = [NSString stringWithFormat: format, displayName];
+			
+			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  filePath, NSFilePathErrorKey,
+									  description, NSLocalizedDescriptionKey,
+									  nil];
+			
+			*outError = [NSError errorWithDomain: BXGameboxErrorDomain
+											code: BXTargetPathOutsideGameboxError
+										userInfo: userInfo];
+		}
+		return NO;
+	}
+    
+	return YES;
+}
+
+- (NSString *) configurationFile
+{
+    //LAZY ASS FIX: this used to use pathForResource:ofType: but this was incorrectly returning nil
+    //in the case where a configuration file had just been written but NSBundle had checked before
+    //for a file and found it missing. This will be fixed once we migrate this wretched class away
+    //from NSBundle once and for all.
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
+    NSString *configPath = self.configurationFilePath;
+    if ([manager fileExistsAtPath: configPath]) return configPath;
+    else return nil;
+}
+
+- (NSString *) configurationFilePath
+{
+	NSString *fileName = [BXConfigurationFileName stringByAppendingPathExtension: BXConfigurationFileExtension];
+	return [self.resourcePath stringByAppendingPathComponent: fileName];
 }
 
 @end

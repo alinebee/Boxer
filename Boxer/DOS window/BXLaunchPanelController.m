@@ -158,18 +158,18 @@
     
     for (NSDictionary *launcher in session.gamebox.launchers)
     {
-        NSString *path      = [launcher objectForKey: BXLauncherPathKey];
+        NSURL *URL          = [launcher objectForKey: BXLauncherURLKey];
         NSString *title     = [launcher objectForKey: BXLauncherTitleKey];
         NSString *arguments = [launcher objectForKey: BXLauncherArgsKey]; //May be nil
-        NSString *dosPath   = [session.emulator DOSPathForPath: path]; //May be nil
+        NSString *dosPath   = [session.emulator DOSPathForURL: URL]; //May be nil
         
         //If no title was provided, use the program's filename.
         if (!title.length)
-            title = [programNameFormatter transformedValue: path];
+            title = [programNameFormatter transformedValue: URL.path];
         
         NSMutableDictionary *launcherRow = [NSMutableDictionary dictionary];
         
-        [launcherRow setObject: path forKey: @"path"];
+        [launcherRow setObject: URL.path forKey: @"path"];
         [launcherRow setObject: title forKey: @"title"];
         
         if (dosPath)

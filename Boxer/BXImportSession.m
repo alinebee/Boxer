@@ -1197,9 +1197,9 @@
                 
                 if (createdLauncher)
                 {
-                    [self.gamebox addLauncherWithTitle: self.gameboxName
-                                                  path: launcherURL.path
-                                             arguments: nil];
+                    [self.gamebox addLauncherWithURL: launcherURL
+                                           arguments: nil
+                                               title: self.gameboxName];
                 }
             }
         }

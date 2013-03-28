@@ -335,7 +335,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                 
                 if (defaultLauncher)
                 {
-                    self.targetPath = [defaultLauncher objectForKey: BXLauncherPathKey];
+                    NSURL *targetURL = [defaultLauncher objectForKey: BXLauncherURLKey];
+                    self.targetPath = targetURL.path;
                     self.targetArguments = [defaultLauncher objectForKey: BXLauncherArgsKey];
                 }
             }

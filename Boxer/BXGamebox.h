@@ -18,18 +18,18 @@
 #import "ADBUndoExtensions.h"
 
 
-#pragma mark Gamebox-related error constants
+#pragma mark - Gamebox-related error constants
 
 extern NSString * const BXGameboxErrorDomain;
 enum {
-	BXTargetPathOutsideGameboxError,    //Attempted to set gamebox's target path to a location outside the gamebox
+	BXLauncherURLOutsideGameboxError,   //Attempted to set gamebox's target path to a location outside the gamebox
     BXGameboxLockedGameboxError,        //Attempted a mutation operation that was not possible because the gamebox is locked
-    BXDocumentationNotInFolderError,    //Attempted a destructive documentation operation on a URL that was not within the gamebox's documentation folder  
+    BXDocumentationNotInFolderError,    //Attempted a destructive documentation operation on a URL that was not within the gamebox's documentation folder
+    BXTargetPathOutsideGameboxError = BXLauncherURLOutsideGameboxError,
 };
 
 
-#pragma mark -
-#pragma mark Game Info plist constants
+#pragma mark - Game Info.plist constants
 
 //The gameInfo key under which we store the game's identifier.
 //Will be an NSString.
@@ -52,14 +52,20 @@ extern NSString * const BXLaunchersGameInfoKey;
 extern NSString * const BXCloseOnExitGameInfoKey;
 
 
-#pragma mark -
-#pragma mark Launcher dictionary constants.
+#pragma mark - Launcher dictionary constants.
 
 //The display name for the launcher item.
 extern NSString * const BXLauncherTitleKey;
 
-//The path of the program for the launcher, relative to the base folder of the gamebox.
-extern NSString * const BXLauncherPathKey;
+//The path of the program for the launcher relative to the root of the gamebox.
+//This path is stored in the gamebox's Game Info.plist file.
+extern NSString * const BXLauncherRelativePathKey;
+
+//The absolute URL of the program for the launcher, resolved from
+//BXLauncherRelativePathKey at launch time.
+//Note that in the case of paths located on disk images, this URL may not be
+//accessible in the DOS filesystem.
+extern NSString * const BXLauncherURLKey;
 
 //Launch-time parameters to pass to the launched program at startup.
 extern NSString * const BXLauncherArgsKey;
@@ -69,8 +75,7 @@ extern NSString * const BXLauncherArgsKey;
 extern NSString * const BXLauncherIsDefaultKey;
 
 
-#pragma mark -
-#pragma mark Filename constants
+#pragma mark - Filename constants
 
 //The filename of the symlink pointing to the gamebox's target executable.
 //No longer used.
@@ -97,8 +102,8 @@ enum {
 };
 typedef NSUInteger BXGameIdentifierType;
 
-#pragma mark -
-#pragma mark Interface
+
+#pragma mark - Interface
 
 @interface BXGamebox : NSBundle <ADBUndoable>
 {
@@ -109,16 +114,11 @@ typedef NSUInteger BXGameIdentifierType;
     CFAbsoluteTime _nextWriteableCheckTime;
 }
 
-#pragma mark -
-#pragma mark Properties
+#pragma mark - Properties
 
 //Returns a dictionary of gamebox metadata loaded from Boxer.plist.
-//Keys in this can also be retrieved with objectForInfoDictionaryKey: and set with setObjectForInfoDictionaryKey:
-//(They cannot be set directly on gameInfo.)
+//Keys in this dictionary also be retrieved with gameInfoForKey:, and set with setGameInfo:forKey:.
 @property (readonly, retain, nonatomic) NSDictionary *gameInfo;
-
-//The path to the DOS game's base folder. Currently this is equal to [NSBundle bundlePath].
-@property (readonly, nonatomic) NSString *gamePath;
 
 //The name of the game, suitable for display. This is the gamebox's filename minus any ".boxer" extension.
 @property (readonly, nonatomic) NSString *gameName;
@@ -126,21 +126,19 @@ typedef NSUInteger BXGameIdentifierType;
 //The unique identifier of this game.
 @property (copy, nonatomic) NSString *gameIdentifier;
 
-//Arrays of paths to additional DOS drives discovered within the package.
-@property (readonly, nonatomic) NSArray *hddVolumes;
-@property (readonly, nonatomic) NSArray *cdVolumes;
-@property (readonly, nonatomic) NSArray *floppyVolumes;
+//URLs to bundled drives and images of the specified types.
+@property (readonly, nonatomic) NSArray *hddVolumeURLs;
+@property (readonly, nonatomic) NSArray *cdVolumeURLs;
+@property (readonly, nonatomic) NSArray *floppyVolumeURLs;
 
-//Returns the path at which the configuration file is located (or would be, if it doesn’t exist.)
-@property (readonly, nonatomic) NSString *configurationFilePath;
+//Returns the URL at which the configuration file is stored (which may not yet exist.)
+@property (readonly, nonatomic) NSString *configurationFileURL;
 
-//The path to the DOSBox configuration file for this package. Will be nil if one does not exist.
-@property (readonly, nonatomic) NSString *configurationFile;
+//Returns the URL of the target program saved under Boxer 1.3.x and below.
+@property (readonly, nonatomic) NSURL *legacyTargetURL;
 
-//The path to the default executable for this gamebox. Will be nil if the gamebox has no target executable.
-@property (copy, nonatomic) NSString *targetPath;
-
-//Whether the emulation should finish once the target program exits, rather than returning to the DOS prompt.
+//Whether the emulation should finish once the default launcher exits,
+//rather than returning to the DOS prompt. No longer supported.
 @property (assign, nonatomic) BOOL closeOnExit;
 
 //The cover art image for this gamebox. Will be nil if the gamebox has no custom cover art.
@@ -160,22 +158,13 @@ typedef NSUInteger BXGameIdentifierType;
 //The delegate from whom we will request an undo manager for undoable operations.
 @property (assign, nonatomic) id <ADBUndoDelegate> undoDelegate;
 
-#pragma mark -
-#pragma mark Class methods
+#pragma mark - Class methods
 
 //Re-casts the return value as a BXGamebox instead of an NSBundle
-+ (BXGamebox *)bundleWithPath: (NSString *)path;
 + (BXGamebox *)bundleWithURL: (NSURL *)URL;
 
 
-#pragma mark -
-#pragma mark Instance methods
-
-//Returns whether the specified path is valid to be the default target of this gamebox
-- (BOOL) validateTargetPath: (id *)ioValue error: (NSError **)outError;
-
-//Retrieve all volumes matching the specified filetypes.
-- (NSArray *) volumesOfTypes: (NSSet *)fileTypes;
+#pragma mark - Instance methods
 
 //Get/set metadata in the gameInfo dictionary.
 - (id) gameInfoForKey: (NSString *)key;
@@ -188,24 +177,33 @@ typedef NSUInteger BXGameIdentifierType;
 - (void) addLauncher: (NSDictionary *)launcher;
 - (void) insertLauncher: (NSDictionary *)launcher atIndex: (NSUInteger)index;
 
-//Insert new launchers into the launcher array.
-- (void) insertLauncherWithTitle: (NSString *)title
-                            path: (NSString *)path
-                       arguments: (NSString *)launchArguments
-                         atIndex: (NSUInteger)index;
+//Insert a new launcher item into the launcher list at the specified location,
+//with the specified optional launch arguments.
+//title is optional: if omitted, the filename of the URL will be used.
+//Will raise an assertion if URL does not point to a location within the gamebox.
+- (void) insertLauncherWithURL: (NSURL *)URL
+                     arguments: (NSString *)launchArguments
+                         title: (NSString *)title
+                       atIndex: (NSUInteger)index;
 
+//Same as above, but adds the launcher item at the end of the list.
+- (void) addLauncherWithURL: (NSURL *)URL
+                  arguments: (NSString *)launchArguments
+                      title: (NSString *)title;
 
-- (void) addLauncherWithTitle: (NSString *)title
-                         path: (NSString *)path
-                    arguments: (NSString *)launchArguments;
-
-//Remove the specified launcher data from the launchers array.
+//Remove the specified launcher item from the launchers array.
 - (void) removeLauncher: (NSDictionary *)launcher;
-
 - (void) removeLauncherAtIndex: (NSUInteger)index;
+
+//Validates that the specified URL is located within the gamebox
+//and is otherwise suitable as the target of a launcher.
+- (BOOL) validateLauncherURL: (NSURL **)ioValue error: (NSError **)outError;
 
 
 #pragma mark - Filesystem methods
+
+//Returns the URLs of all bundled volumes with the specified UTIs.
+- (NSArray *) URLsOfVolumesMatchingTypes: (NSSet *)fileTypes;
 
 //Returns whether the gamebox's disk representation is currently writable to Boxer:
 //according to the NSURLFileIsWritableKey resource property of the bundle's URL.
@@ -327,4 +325,36 @@ typedef enum {
 //Returns whether the specified documentation file can be imported into the gamebox.
 //Will return NO if the gamebox is locked or has no documentation folder into which the file can go.
 - (BOOL) canAddDocumentationFromURL: (NSURL *)documentationURL;
+
+@end
+
+
+@interface BXGamebox (BXGameboxLegacyPathAPI)
+
+//The path to the DOS game's base folder. Currently this is equal to [NSBundle bundlePath].
+@property (readonly, nonatomic) NSString *gamePath __deprecated;
+
+//Arrays of paths to additional DOS drives discovered within the package.
+@property (readonly, nonatomic) NSArray *hddVolumes __deprecated;
+@property (readonly, nonatomic) NSArray *cdVolumes __deprecated;
+@property (readonly, nonatomic) NSArray *floppyVolumes __deprecated;
+
+//Returns the path at which the configuration file is located (or would be, if it doesn’t exist.)
+@property (readonly, nonatomic) NSString *configurationFilePath __deprecated;
+
+//The path to the DOSBox configuration file for this package. Will be nil if one does not exist.
+@property (readonly, nonatomic) NSString *configurationFile __deprecated;
+
+//The path to the default executable for this gamebox. Will be nil if the gamebox has no target executable.
+@property (copy, nonatomic) NSString *targetPath __deprecated;
+
+
+//Returns whether the specified path is valid to be the default target of this gamebox
+- (BOOL) validateTargetPath: (id *)ioValue error: (NSError **)outError;
+
+//Retrieve all volumes matching the specified filetypes.
+- (NSArray *) volumesOfTypes: (NSSet *)fileTypes;
+
++ (BXGamebox *)bundleWithPath: (NSString *)path __deprecated;
+
 @end

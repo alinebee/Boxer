@@ -160,15 +160,15 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 @property (copy, nonatomic) NSString *targetPath;
 @property (copy, nonatomic) NSString *targetArguments;
 
-//The OS X path of the last DOS program or batch file that was executed from the DOS prompt,
+//The OS X path of the last DOS program or batch file that was last launched from the DOS prompt,
 //and any arguments it was launched with. Will be nil if the emulator is at the DOS prompt,
 //or if Boxer is unable to locate the program within the local filesystem.
 @property (readonly, copy, nonatomic) NSString *lastExecutedProgramPath;
 @property (readonly, copy, nonatomic) NSString *lastExecutedProgramArguments;
 
-//The OS X path of the last program the user launched through Boxer, and any arguments it was
-//launched with. Will be nil when the emulator is at the DOS prompt or if the user has launched
-//a program manually from the DOS prompt.
+//The OS X path of the last program the user launched through Boxer's program list,
+//and any arguments it was launched with. Will be nil when the emulator is at the DOS prompt
+//or if the user has launched a program manually from the DOS prompt.
 @property (readonly, copy, nonatomic) NSString *lastLaunchedProgramPath;
 @property (readonly, copy, nonatomic) NSString *lastLaunchedProgramArguments;
 

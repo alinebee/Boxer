@@ -93,6 +93,7 @@
         case BXImportSessionReadyToFinalize:
         case BXImportSessionImportingSourceFiles:
         case BXImportSessionCleaningGamebox:
+        case BXImportSessionCancellingSourceFileImport:
             self.currentPanel = self.finalizingPanel;
             break;
             

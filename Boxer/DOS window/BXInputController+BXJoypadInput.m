@@ -270,7 +270,7 @@
     
     BOOL isWheel = [joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
     BOOL isFlightstick = [joystick conformsToProtocol: @protocol(BXEmulatedFlightstick)];
-    switch (button)
+    switch ((NSInteger)button) //Cast suppresses warnings about case values not being enumerated
     {
         case kJoyInputRButton:
             //Gas pedal
@@ -292,7 +292,9 @@
             [keyboard keyUp: KBD_esc];
             break;
             
-        //'Fake' d-pad buttons for compact flightstick hat switch layouts
+        //'Fake' d-pad buttons for compact flightstick hat switch layouts.
+        //These do not correspond to any enumerated constants, but are still
+        //round-tripped by the Joypad API successfully.
         case BXJoyInputFakeDPadButtonUp:
             if (isFlightstick) [(id <BXEmulatedFlightstick>)joystick POV: 0 directionUp: BXEmulatedPOVNorth];
             break;
@@ -329,7 +331,7 @@
     
     BOOL isWheel = [joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
     BOOL isFlightstick = [joystick conformsToProtocol: @protocol(BXEmulatedFlightstick)];
-    switch (button)
+    switch ((NSInteger)button) //Cast suppresses warnings about case values not being enumerated
     {
         case kJoyInputRButton:
             //Gas pedal
@@ -350,8 +352,10 @@
             //ESC button
             [keyboard keyDown: KBD_esc];
             break;
-        
-        //'Fake' d-pad buttons for compact flightstick hat switch layouts
+            
+        //'Fake' d-pad buttons for compact flightstick hat switch layouts.
+        //These do not correspond to any enumerated constants, but are still
+        //round-tripped by the Joypad API successfully.
         case BXJoyInputFakeDPadButtonUp:
             if (isFlightstick) [(id <BXEmulatedFlightstick>)joystick POV: 0 directionDown: BXEmulatedPOVNorth];
             break;

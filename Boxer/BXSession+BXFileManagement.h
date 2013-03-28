@@ -149,7 +149,7 @@ typedef NSUInteger BXDriveMountOptions;
 + (NSSet *) hiddenFilenamePatterns;
 
 //Returns the most appropriate base location for a drive to expose the specified path:
-//If path points to a disc image, that will be returned
+//If path points to a disc image, that will be returned.
 //If path is inside a gamebox or Boxer mountable folder type, that container will be returned.
 //If path is on a CD or floppy volume, then the volume will be returned.
 //Otherwise, the parent folder of the item, or the item itself if it is a folder, will be returned. 

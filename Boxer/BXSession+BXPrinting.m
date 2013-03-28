@@ -156,6 +156,9 @@
                     [self showWindows];
                     [self finishPrintSession: self];
                     break;
+                
+                default:
+                    break;
             }
             
             //Once the user has clicked on the notification, remove it from the notification area

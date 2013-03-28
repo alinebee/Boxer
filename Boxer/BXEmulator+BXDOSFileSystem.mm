@@ -237,6 +237,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                 DOSBoxDrive = [self _floppyDriveFromImageAtPath: mountPath
                                                           error: &mountError];
                 break;
+                
+            default:
+                NSAssert1(NO, @"Drive type cannot be mounted: %i", drive.type);
         }
     }
     else
@@ -261,6 +264,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                                                freeSpace: drive.freeSpace
                                                    error: &mountError];
                 break;
+                
+            default:
+                NSAssert1(NO, @"Drive type cannot be mounted: %i", drive.type);
         }
     }
     

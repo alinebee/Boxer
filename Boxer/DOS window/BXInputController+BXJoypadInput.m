@@ -400,7 +400,7 @@
         float y = -sinf(newPosition.angle) * ratio;
         
         //Stretch the circular travel out to a square one.
-        float maxDim = fmax(ABS(x), ABS(y));
+        float maxDim = fmaxf(ABS(x), ABS(y));
         if (maxDim > 0)
         {
             x *= ratio / maxDim;

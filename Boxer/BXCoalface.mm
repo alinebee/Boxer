@@ -554,11 +554,6 @@ void boxer_die(const char *functionName, const char *fileName, int lineNumber, c
     throw boxer_emulatorException(errorReason, fileName, functionName, lineNumber);
 }
 
-double boxer_realTime()
-{
-	return CFAbsoluteTimeGetCurrent();
-}
-
 
 #pragma mark -
 #pragma mark No-ops

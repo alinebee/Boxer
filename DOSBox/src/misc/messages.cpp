@@ -90,7 +90,7 @@ static void LoadMessageFile(const char * fname) {
 			if (*parser!=10 && *parser!=13) {
 				*writer++=*parser;
 			}
-			*parser++;
+			*parser += 1;
 		}
 		*writer=0;
 		/* New string name */

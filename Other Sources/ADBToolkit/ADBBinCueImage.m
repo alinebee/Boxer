@@ -166,7 +166,7 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
         }
         else
         {
-            return nil;
+            return NO;
         }
     }
     

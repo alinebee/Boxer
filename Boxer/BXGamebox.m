@@ -71,6 +71,9 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 //On return, type will be the type of identifier generated.
 - (NSString *) _generatedIdentifierOfType: (BXGameIdentifierType *)type;
 
+//Lazily populates the launchers array from the game info the first time the array is accessed.
+- (void) _populateLaunchers;
+
 //Rewrite the launchers array in the game info.
 - (void) _persistLaunchers;
 
@@ -118,7 +121,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 #pragma mark - Launchers
 
-- (NSArray *) launchers
+- (void) _populateLaunchers
 {
     if (!_launchers)
     {
@@ -158,7 +161,11 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
             }
         }
     }
+}
 
+- (NSArray *) launchers
+{
+    [self _populateLaunchers];
     return _launchers;
 }
 
@@ -183,7 +190,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 - (void) insertObject: (NSDictionary *)object inLaunchersAtIndex: (NSUInteger)index
 {
     //Ensure the launchers array has been lazily populated from the game info.
-    self.launchers;
+    [self _populateLaunchers];
     [_launchers insertObject: object atIndex: index];
     
     //Sync the revised launcher data back into the game info.
@@ -193,7 +200,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 - (void) removeObjectFromLaunchersAtIndex: (NSUInteger)index
 {
     //Ensure the launchers array has been lazily populated from the game info.
-    self.launchers;
+    [self _populateLaunchers];
     [_launchers removeObjectAtIndex: index];
     
     //Sync the revised launcher data back into the game info.

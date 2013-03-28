@@ -259,7 +259,7 @@
     [self willChangeValueForKey: @"shown"];
     
     //Ensure the window and associated browser are created.
-    self.window;
+    [self window];
     
     self.session = session;
     [self.window makeKeyAndOrderFront: self];

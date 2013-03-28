@@ -64,7 +64,7 @@
 #if 0
 #define DYN_LOG	LOG_MSG
 #else 
-#define DYN_LOG
+#define DYN_LOG(...) do {} while (0)
 #endif
 
 #if C_FPU

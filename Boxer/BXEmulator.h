@@ -21,33 +21,29 @@
 
 #pragma mark - Emulator constants
 
-enum {
-	BXSpeedFixed	= NO,
-	BXSpeedAuto		= YES
-};
-typedef BOOL BXSpeedMode;
+typedef enum {
+	BXSpeedFixed,
+	BXSpeedAuto
+} BXSpeedMode;
 
-enum {
+typedef enum {
 	BXCoreUnknown	= -1,
 	BXCoreNormal	= 0,
 	BXCoreDynamic	= 1,
 	BXCoreSimple	= 2,
 	BXCoreFull		= 3
-};
-typedef NSInteger BXCoreMode;
+} BXCoreMode;
 
-enum {
-	BXGameportTimingPollBased = NO,
-	BXGameportTimingClockBased = YES
-};
-typedef BOOL BXGameportTimingMode;
+typedef enum {
+	BXGameportTimingPollBased,
+	BXGameportTimingClockBased
+} BXGameportTimingMode;
 
-enum {
-	BXNoJoystickSupport = 0,
+typedef enum {
+	BXNoJoystickSupport,
 	BXJoystickSupportSimple,
 	BXJoystickSupportFull
-};
-typedef NSUInteger BXJoystickSupportLevel;
+} BXJoystickSupportLevel;
 
 
 //C string encodings, used by BXShell executeCommand:encoding: and executeCommand:withArgumentString:encoding:

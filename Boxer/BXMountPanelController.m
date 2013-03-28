@@ -95,7 +95,7 @@
     
     BXDriveType preferredType	= (BXDriveType)self.driveType.selectedItem.tag;
     NSString *preferredLetter	= self.driveLetter.selectedItem.representedObject;
-    BOOL readOnly				= self.readOnlyToggle.state;
+    BOOL readOnly				= (self.readOnlyToggle.state != NSOffState);
     
     BXDrive *drive = [BXDrive driveFromPath: path atLetter: preferredLetter withType: preferredType];
     drive.readOnly = readOnly;

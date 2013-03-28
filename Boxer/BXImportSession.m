@@ -1510,7 +1510,7 @@
                                                 error: outError];
     
     if (!gameboxURL)
-        return nil;
+        return NO;
     
     BXGamebox *gamebox = [BXGamebox bundleWithURL: gameboxURL];
 	if (gamebox)

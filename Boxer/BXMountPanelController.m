@@ -182,7 +182,7 @@
 			}
 			
 			BOOL isFloppyImage = [workspace file: path matchesTypes: [BXFileTypes floppyVolumeTypes]];
-			NSUInteger optionIndex = [self.driveType indexOfItemWithTag: isFloppyImage ? BXDriveFloppyDisk : BXDriveCDROM];
+			NSInteger optionIndex = [self.driveType indexOfItemWithTag: isFloppyImage ? BXDriveFloppyDisk : BXDriveCDROM];
 			[self.driveType selectItemAtIndex: optionIndex];
 		}
 		else

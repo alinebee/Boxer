@@ -135,13 +135,13 @@ typedef enum {
 - (IBAction) releaseFastForward: (id)sender;
 
 //Caps the speed within minimum and maximum limits
-- (BOOL) validateCPUSpeed: (id *)ioValue error: (NSError **)outError;
+- (BOOL) validateCPUSpeed: (NSNumber **)ioValue error: (NSError **)outError;
 
 //Caps the frameskip amount within minimum and maximum limits
-- (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError;
+- (BOOL) validateFrameskip: (NSNumber **)ioValue error: (NSError **)outError;
 
 //Snaps the speed to set increments, and switches to auto speed above the maximum speed.
-- (BOOL) validateSliderSpeed: (id *)ioValue error: (NSError **)outError;
+- (BOOL) validateSliderSpeed: (NSNumber **)ioValue error: (NSError **)outError;
 
 //Paste data from the clipboard into the DOS session.
 - (IBAction) paste: (id)sender;

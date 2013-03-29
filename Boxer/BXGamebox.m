@@ -323,7 +323,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     return [NSSet setWithObject: @"launchers"];
 }
 
-- (NSInteger) defaultLauncherIndex
+- (NSUInteger) defaultLauncherIndex
 {
     NSUInteger i, numLaunchers = self.launchers.count;
     for (i=0; i<numLaunchers; i++)
@@ -336,9 +336,9 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     return NSNotFound;
 }
 
-- (void) setDefaultLauncherIndex: (NSInteger)newIndex
+- (void) setDefaultLauncherIndex: (NSUInteger)newIndex
 {
-    NSInteger oldIndex = self.defaultLauncherIndex;
+    NSUInteger oldIndex = self.defaultLauncherIndex;
     if (oldIndex != newIndex)
     {
         [self willChangeValueForKey: @"launchers"];

@@ -28,12 +28,12 @@
 					 toViewport: (NSSize)viewportSize 
 					 isTextMode: (BOOL)isTextMode;
 
-- (NSInteger) _filterScaleForType: (BXFilterType)type
-				   fromResolution: (NSSize)resolution
-					   toViewport: (NSSize)viewportSize
-					   isTextMode: (BOOL)isTextMode;
+- (NSUInteger) _filterScaleForType: (BXFilterType)type
+                    fromResolution: (NSSize)resolution
+                        toViewport: (NSSize)viewportSize
+                        isTextMode: (BOOL)isTextMode;
 
-- (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution;
+- (NSUInteger) _maxFilterScaleForResolution: (NSSize)resolution;
 
 - (void) _syncHerculesTint;
 - (void) _syncCGAHueAdjustment;
@@ -318,7 +318,7 @@
 							  blue: (NSUInteger)blue;
 {
 	//Copypasta straight from sdlmain.cpp.
-	return ((blue << 0) | (green << 8) | (red << 16)) | (255 << 24);
+	return ((blue << 0) | (green << 8) | (red << 16)) | (255U << 24);
 }
 
 
@@ -332,12 +332,12 @@
 	NSSize viewportSize			= [self.emulator.delegate viewportSizeForEmulator: self.emulator];
 	
 	BOOL isTextMode				= self.isInTextMode;
-	NSInteger maxFilterScale	= [self _maxFilterScaleForResolution: resolution];	
+	NSUInteger maxFilterScale	= [self _maxFilterScaleForResolution: resolution];
 	
 	
 	//Start off with a passthrough filter as the default
 	BXFilterType activeType		= BXFilterNormal;
-	NSInteger filterScale		= 1;
+	NSUInteger filterScale		= 1;
 	BXFilterType desiredType	= self.filterType;
 	
 	//Decide if we can use our selected filter at this scale, and if so at what scale
@@ -385,10 +385,10 @@
 //However we finesse this for some filters that look like shit when scaled down too much.
 //(We base this on height rather than width, so that we'll use the larger filter size for
 //aspect-ratio corrected surfaces.)
-- (NSInteger) _filterScaleForType: (BXFilterType)type
-				   fromResolution: (NSSize)resolution
-					   toViewport: (NSSize)viewportSize
-					   isTextMode: (BOOL) isTextMode
+- (NSUInteger) _filterScaleForType: (BXFilterType)type
+                    fromResolution: (NSSize)resolution
+                        toViewport: (NSSize)viewportSize
+                        isTextMode: (BOOL) isTextMode
 {
 	const BXFilterDefinition *params = [self _paramsForFilterType: type];
 	
@@ -424,11 +424,11 @@
 	return YES;
 }
 
-- (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution
+- (NSUInteger) _maxFilterScaleForResolution: (NSSize)resolution
 {
 	NSSize maxFrameSize	= [self.emulator.delegate maxFrameSizeForEmulator: self.emulator];
 	//Work out how big a filter operation size we can use, given the maximum output size
-	NSInteger maxScale	= floorf(MIN(maxFrameSize.width / resolution.width,
+	NSUInteger maxScale	= floorf(MIN(maxFrameSize.width / resolution.width,
                                      maxFrameSize.height / resolution.height));
 	
 	return maxScale;

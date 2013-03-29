@@ -236,7 +236,7 @@ NSString * const BXEmulatorUnrecoverableException = @"BXEmulatorUnrecoverableExc
     self = [self initWithName: name reason: failureReason userInfo: errorInfo];
     if (self)
     {
-        NSUInteger i, numAddresses = cppException->backtraceSize;
+        NSUInteger i, numAddresses = (NSUInteger)cppException->backtraceSize;
         if (numAddresses > 0)
         {   
             NSMutableArray *addresses   = [NSMutableArray arrayWithCapacity: numAddresses];

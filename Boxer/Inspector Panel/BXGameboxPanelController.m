@@ -212,21 +212,21 @@ enum {
 {
 	NSMenu *menu = self.programSelector.menu;
 	
-	NSInteger startOfPrograms	= [menu indexOfItemWithTag: BXGameboxPanelNoProgramTag] + 1;
-	NSInteger endOfPrograms		= [menu indexOfItemWithTag: BXGameboxPanelEndOfProgramsTag];
-	NSRange programItemRange	= NSMakeRange(startOfPrograms, endOfPrograms - startOfPrograms);
-	
+    NSInteger startMarkerIndex  = [menu indexOfItemWithTag: BXGameboxPanelNoProgramTag];
+    NSInteger endMarkerIndex    = [menu indexOfItemWithTag: BXGameboxPanelEndOfProgramsTag];
+    
+    NSInteger insertionPoint = startMarkerIndex + 1;
+    NSInteger removalPoint = endMarkerIndex - 1;
+    
 	//Remove all the original program options...
-	for (NSMenuItem *oldItem in [menu.itemArray subarrayWithRange: programItemRange])
-		[menu removeItem: oldItem];
+    while (removalPoint >= insertionPoint)
+        [menu removeItemAtIndex: removalPoint--];
 	
 	//...and then add all the new ones in their place
 	NSArray *newItems = [self _programMenuItems];
 	
 	if (newItems.count)
 	{
-		NSUInteger insertionPoint = startOfPrograms;
-		
 		for (NSMenuItem *newItem in newItems)
 		{
 			[menu insertItem: newItem atIndex: insertionPoint++];

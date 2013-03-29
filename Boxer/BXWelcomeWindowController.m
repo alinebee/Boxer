@@ -122,16 +122,21 @@
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSFileManager *manager = [NSFileManager defaultManager];
 	
-	//Delete all document items
-	NSUInteger startOfDocuments	= [menu indexOfItemWithTag: BXDocumentStartTag] + 1;
-	NSUInteger endOfDocuments	= [menu indexOfItemWithTag: BXDocumentEndTag];
-	NSRange documentRange		= NSMakeRange(startOfDocuments, endOfDocuments - startOfDocuments);
-
-	for (NSMenuItem *oldItem in [menu.itemArray subarrayWithRange: documentRange])
-		[menu removeItem: oldItem];
+	//Delete all previous recent-document items
+    NSInteger documentStartMarkerIndex = [menu indexOfItemWithTag: BXDocumentStartTag];
+    NSInteger documentEndMarkerIndex = [menu indexOfItemWithTag: BXDocumentEndTag];
+    
+    NSAssert(documentStartMarkerIndex > -1, @"Recent items menu start marker is missing.");
+    NSAssert(documentEndMarkerIndex > -1, @"Recent items menu end marker is missing.");
+    
+	NSInteger insertionPoint = documentStartMarkerIndex + 1;
+    NSInteger removalPoint = documentEndMarkerIndex - 1;
+    while (removalPoint >= insertionPoint)
+    {
+        [menu removeItemAtIndex: removalPoint--];
+    }
 	
-	//Then, repopulate it with the recent documents
-	NSUInteger insertionPoint = startOfDocuments;
+	//Then, repopulate it with the new recent documents
 	for (NSURL *url in documents)
 	{
 		NSAutoreleasePool *pool	= [[NSAutoreleasePool alloc] init];
@@ -156,6 +161,7 @@
 		[item release];
 		[pool drain];
 	}
+    
 	//Finish off the list with a separator
 	if (documents.count)
 		[menu insertItem: [NSMenuItem separatorItem] atIndex: insertionPoint];

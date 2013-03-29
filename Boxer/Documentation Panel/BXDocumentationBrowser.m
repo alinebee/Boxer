@@ -689,12 +689,12 @@ enum {
 
 - (NSInteger) numberOfPreviewItemsInPreviewPanel: (QLPreviewPanel *)panel
 {
-    return self.documentationURLs.count;
+    return (NSInteger)self.documentationURLs.count;
 }
 
 - (id <QLPreviewItem>) previewPanel: (QLPreviewPanel *)panel previewItemAtIndex: (NSInteger)index
 {
-    NSURL *URL = [self.documentationURLs objectAtIndex: index];
+    NSURL *URL = [self.documentationURLs objectAtIndex: (NSUInteger)index];
     return [BXDocumentationBrowserPreviewItem previewItemWithURL: URL];
 }
 
@@ -702,7 +702,7 @@ enum {
 
 - (NSRect) previewPanel: (QLPreviewPanel *)panel sourceFrameOnScreenForPreviewItem: (BXDocumentationBrowserPreviewItem *)item
 {
-    NSInteger itemIndex = [self.documentationURLs indexOfObject: item.originalURL];
+    NSUInteger itemIndex = [self.documentationURLs indexOfObject: item.originalURL];
     if (itemIndex != NSNotFound)
     {
         NSView *itemView = [self.documentationList itemAtIndex: itemIndex].view;
@@ -728,7 +728,7 @@ enum {
 
 - (NSImage *) previewPanel: (QLPreviewPanel *)panel transitionImageForPreviewItem: (BXDocumentationBrowserPreviewItem *)item contentRect: (NSRect *)contentRect
 {
-    NSInteger itemIndex = [self.documentationURLs indexOfObject: item.originalURL];
+    NSUInteger itemIndex = [self.documentationURLs indexOfObject: item.originalURL];
     
     if (itemIndex != NSNotFound)
     {
@@ -763,7 +763,7 @@ enum {
     //b) there's anything selected in the browser and c) the user has selected
     //documentation items that aren't already being displayed in the panel.
     if (panel.currentController == self && self.documentationSelectionIndexes.count &&
-        ![self.documentationSelectionIndexes containsIndex: panel.currentPreviewItemIndex])
+        ![self.documentationSelectionIndexes containsIndex: (NSUInteger)panel.currentPreviewItemIndex])
     {
         panel.currentPreviewItemIndex = self.documentationSelectionIndexes.firstIndex;
     }

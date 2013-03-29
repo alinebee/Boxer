@@ -727,7 +727,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		
 		if (strictGameportTiming)
 		{
-			NSString *timingString = [BXEmulator configStringForGameportTimingMode: strictGameportTiming.integerValue];
+			NSString *timingString = [BXEmulator configStringForGameportTimingMode: strictGameportTiming.unsignedIntegerValue];
 			[runtimeConf setValue: timingString forKey: @"timed" inSection: @"joystick"];
 		}
 		

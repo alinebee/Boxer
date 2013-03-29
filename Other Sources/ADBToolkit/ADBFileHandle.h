@@ -316,6 +316,8 @@ typedef enum {
               leadOut: (NSUInteger)blockLeadOut;
 
 //Converts to and from and logical byte offsets, taking block padding into account.
+//These will return ADBOffsetUnknown if the specified offset is not representable
+//in the corresponding space.
 - (long long) sourceOffsetForLogicalOffset: (long long)offset;
 - (long long) logicalOffsetForSourceOffset: (long long)offset;
 
@@ -335,8 +337,8 @@ typedef enum {
 + (id) handleForHandle: (id <ADBReadable, ADBSeekable>)sourceHandle range: (NSRange)range;
 - (id) initWithHandle: (id <ADBReadable, ADBSeekable>)sourceHandle range: (NSRange)range;
 
-//Convert to/from. These will return ADBOffsetUnknown if the specified offset is not
-//representable in the corresponding space.
+//Convert to/from logical byte offsets. These will return ADBOffsetUnknown if the specified
+//offset is not representable in the corresponding space.
 - (long long) sourceOffsetForLocalOffset: (long long)offset;
 - (long long) localOffsetForSourceOffset: (long long)offset;
 

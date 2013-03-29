@@ -851,9 +851,13 @@ int _ADBHandleClose(void *cookie)
     if (rawBlockSize == _blockSize)
         return offset;
     
-    unsigned long long block = (offset - _blockLeadIn) / rawBlockSize;
     unsigned long long offsetInBlock = (offset - _blockLeadIn) % rawBlockSize;
     
+    //Offset was located within padding region
+    if (offsetInBlock >= _blockSize)
+        return ADBOffsetUnknown;
+        
+    unsigned long long block = (offset - _blockLeadIn) / rawBlockSize;
     return (block * _blockSize) + offsetInBlock;
 }
 

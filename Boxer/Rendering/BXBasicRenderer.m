@@ -64,7 +64,7 @@ GLfloat viewportVerticesFlipped[8] = {
 {
     CGLContextObj cgl_ctx = glContext;
     
-    return gluCheckExtension((const GLubyte *)featureName, glGetString(GL_EXTENSIONS));
+    return gluCheckExtension((const GLubyte *)featureName, glGetString(GL_EXTENSIONS)) == GL_TRUE;
 }
 
 #pragma mark -

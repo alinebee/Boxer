@@ -3958,7 +3958,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				9FBC352B0F56C7B7001811F2 /* BXAboutController.m in Sources */,
 				9FBC352C0F56C7B7001811F2 /* BXAppController.m in Sources */,
 				9FBC352F0F56C7B7001811F2 /* BXSession.m in Sources */,
@@ -3992,6 +3991,7 @@
 				9FD011BD10C2A02F00670CE1 /* BXGameboxPanelController.m in Sources */,
 				9F76D1B910CA9DFB00C3B081 /* NSWorkspace+ADBFileTypes.m in Sources */,
 				9F76D45610CBE5C500C3B081 /* BXSession+BXDragDrop.m in Sources */,
+				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				9F44E5E410D17A4C0081B8D2 /* BXEmulator+BXPaste.mm in Sources */,
 				9F61FC8510DE3F7F00F3896C /* BXGameProfile.m in Sources */,
 				9F438C5810E3D8C8007D30AD /* BXScroller.m in Sources */,
@@ -4170,6 +4170,16 @@
 				9FA0D0CC1694D62100CEF2EA /* NSURL+ADBQuickLookHelpers.m in Sources */,
 				9F125C4016983A9D003B5B2B /* BXDocumentationPanelController.m in Sources */,
 				9F125C4116983F0C003B5B2B /* BXDocumentationBrowser.m in Sources */,
+				9F6463F716C67415008B65BF /* BXOutputBinding.m in Sources */,
+				9FF91EB616CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */,
+				9F35F3E916CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */,
+				9F80E7FF16DA3170001C3162 /* ADBFileHandle.m in Sources */,
+				9F693D5E16DD40DD00CCEA7C /* ADBEnumerationHelpers.m in Sources */,
+				9F38B38B16DFB1960050AB15 /* ADBLocalFilesystem.m in Sources */,
+				9F1E8CDA16E16C0400F1C908 /* ADBScanOperation.m in Sources */,
+				9F1E8CDE16E16EB800F1C908 /* ADBMountableImage.m in Sources */,
+				9F13768A17020B2C00B9A359 /* NSURL+ADBAliasHelpers.m in Sources */,
+				9F20ADD01702E87B007263C8 /* BXDrive+BXDriveArchiving.m in Sources */,
 				9F77217612B38C4400072AE8 /* callback.cpp in Sources */,
 				9F77217712B38C4400072AE8 /* core_dyn_x86.cpp in Sources */,
 				9F77217812B38C4400072AE8 /* core_dynrec.cpp in Sources */,
@@ -4283,16 +4293,6 @@
 				9F7721E912B38C4400072AE8 /* shell_batch.cpp in Sources */,
 				9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */,
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
-				9F6463F716C67415008B65BF /* BXOutputBinding.m in Sources */,
-				9FF91EB616CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */,
-				9F35F3E916CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */,
-				9F80E7FF16DA3170001C3162 /* ADBFileHandle.m in Sources */,
-				9F693D5E16DD40DD00CCEA7C /* ADBEnumerationHelpers.m in Sources */,
-				9F38B38B16DFB1960050AB15 /* ADBLocalFilesystem.m in Sources */,
-				9F1E8CDA16E16C0400F1C908 /* ADBScanOperation.m in Sources */,
-				9F1E8CDE16E16EB800F1C908 /* ADBMountableImage.m in Sources */,
-				9F13768A17020B2C00B9A359 /* NSURL+ADBAliasHelpers.m in Sources */,
-				9F20ADD01702E87B007263C8 /* BXDrive+BXDriveArchiving.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -41,7 +41,7 @@
     struct FileInfo *finderInfo = (struct FileInfo *)&catInfo.finderInfo;
 	
 	//Get an FSRef filesystem reference to the specified path
-	BOOL gotFileRef = CFURLGetFSRef((CFURLRef)URL, &fileRef);
+	BOOL gotFileRef = (BOOL)CFURLGetFSRef((CFURLRef)URL, &fileRef);
 	//Bail out if we couldn't resolve an FSRef
 	if (!gotFileRef) return NO;
 		

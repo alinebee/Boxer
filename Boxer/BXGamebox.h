@@ -153,7 +153,8 @@ typedef NSUInteger BXGameIdentifierType;
 @property (readonly, nonatomic) NSDictionary *defaultLauncher;
 
 //The index in the launchers array of the default launcher.
-@property (assign, nonatomic) NSInteger defaultLauncherIndex;
+//Will be NSNotFound if no default launcher has been set.
+@property (assign, nonatomic) NSUInteger defaultLauncherIndex;
 
 //The delegate from whom we will request an undo manager for undoable operations.
 @property (assign, nonatomic) id <ADBUndoDelegate> undoDelegate;

@@ -1194,10 +1194,10 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 							 mediaID: (NSUInteger)mediaID
                                error: (NSError **)outError
 {
-	if (freeSpace != BXDefaultFreeSpace)
+	if (freeSpace >= 0) //BXDefaultFreespace is -1
 	{
 		NSUInteger bytesPerCluster = (geometry.bytesPerSector * geometry.sectorsPerCluster);
-		geometry.freeClusters = freeSpace / bytesPerCluster;
+		geometry.freeClusters = (NSUInteger)freeSpace / bytesPerCluster;
 	}
 	
 	const char *drivePath = [[NSFileManager defaultManager] fileSystemRepresentationWithPath: path];

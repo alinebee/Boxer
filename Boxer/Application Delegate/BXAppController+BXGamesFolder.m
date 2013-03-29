@@ -176,7 +176,7 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
             //Just to be safe, check if rectangle textures are supported,
             //falling back on the square texture size otherwise
             const GLubyte *extensions = glGetString(GL_EXTENSIONS);
-            BOOL supportsRectangleTextures = gluCheckExtension((const GLubyte *)"GL_ARB_texture_rectangle", extensions);
+            BOOL supportsRectangleTextures = gluCheckExtension((const GLubyte *)"GL_ARB_texture_rectangle", extensions) == GL_TRUE;
             
             GLenum textureSizeField = supportsRectangleTextures ? GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB : GL_MAX_TEXTURE_SIZE;
             glGetIntegerv(textureSizeField, &maxTextureSize);

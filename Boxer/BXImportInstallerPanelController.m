@@ -15,6 +15,11 @@
 #import "NSString+ADBPaths.h"
 #import "NSURL+ADBFilesystemHelpers.h"
 
+
+//The tag of the divider at the end of the installer options in the installer selector menu.
+#define BXInstallerMenuDividerTag 1
+
+
 #pragma mark -
 #pragma mark Private method declarations
 
@@ -77,16 +82,20 @@
 - (void) _syncInstallerSelectorItems
 {
 	NSMenu *menu = self.installerSelector.menu;
-	NSRange installerRange = NSMakeRange(0, [menu indexOfItemWithTag: 1]);
+    
+    NSInteger dividerIndex = [menu indexOfItemWithTag: BXInstallerMenuDividerTag];
+    NSAssert(dividerIndex > -1, @"Installer menu divider not found.");
 	
-	//Remove all the original installer options
-	for (NSMenuItem *oldItem in [menu.itemArray subarrayWithRange: installerRange])
-		[menu removeItem: oldItem];
-	
+	NSInteger insertionPoint = 0;
+    NSInteger removalPoint = dividerIndex - 1;
+    
+	//Remove all the original installer options...
+    while (removalPoint >= insertionPoint)
+    {
+        [menu removeItemAtIndex: removalPoint--];
+    }
 	
 	//...and then add all the new ones in their place
-	NSUInteger insertionPoint = 0;
-	
 	NSArray *installerURLs = self.controller.document.installerURLs;
 	
 	if (installerURLs)
@@ -97,9 +106,7 @@
 			
 			NSMenuItem *item = [self _installerSelectorItemForURL: installerURL];
 			
-            [menu insertItem: item atIndex: insertionPoint];
-			
-			insertionPoint++;
+            [menu insertItem: item atIndex: insertionPoint++];
 			
 			[pool release];
 		}

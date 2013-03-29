@@ -1264,7 +1264,7 @@ enum {
             else
             {
                 NSUInteger pixelOffset = (row * pixelWidth) + col;
-                currentPixelOn = pixels[pixelOffset];
+                currentPixelOn = pixels[pixelOffset] != 0;
             }
             
             //The run of pixels continues: extend the current line
@@ -1316,13 +1316,13 @@ enum {
         //into our array of pixels.
         for (NSUInteger mask=128; mask > 0; mask >>= 1)
         {
-            BOOL pixelOn = (byte & mask);
+            BOOL pixelOn = (byte & mask) == mask;
             
             NSUInteger pixelOffset = (_bitmapCurrentRow * _bitmapWidth) + _bitmapCurrentColumn;
             pixels[pixelOffset] = (pixelOn) ? 255 : 0;
             
             //Advance the row counter after reading each bit; once we hit the bottom of the column,
-            //advance the column counter so we start filling up next column.
+            //advance the column counter so we start filling up the next column.
             _bitmapCurrentRow++;
             if (_bitmapCurrentRow >= _bitmapHeight)
             {

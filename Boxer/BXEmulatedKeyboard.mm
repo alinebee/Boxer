@@ -269,7 +269,7 @@ const char* DOS_GetLoadedLayout(void);
         
         code = ABS(code);
         KEYBOARD_AddKey((BXDOSKeyCode)code, pressed);
-        _pressedKeys[code] = pressed;
+        _pressedKeys[code] = (NSUInteger)pressed;
         
         numProcessed++;
     }

@@ -17,12 +17,12 @@
 - (void) _populateMenu: (NSMenu *)menu withDocumentationFromSession: (BXSession *)session;
 - (NSMenuItem *) _insertItemForDocumentationURL: (NSURL *)documentationURL
                                          toMenu: (NSMenu *)menu
-                                        atIndex: (NSUInteger)index;
+                                        atIndex: (NSInteger)index;
 
 - (void) _populateMenu: (NSMenu *)menu withHelpLinks: (NSArray *)links;
 - (NSMenuItem *) _insertItemForLink: (NSDictionary *)linkInfo
                              toMenu: (NSMenu *)menu
-                            atIndex: (NSUInteger)index;
+                            atIndex: (NSInteger)index;
 
 @end
 
@@ -183,6 +183,7 @@
 - (void) _populateMenu: (NSMenu *)menu withHelpLinks: (NSArray *)links
 {
     NSInteger insertionPoint = [menu indexOfItem: self.helpLinksDivider];
+    NSAssert(insertionPoint > -1, @"Help link divider is missing from menu.");
     
     for (NSDictionary *linkInfo in links)
     {
@@ -197,6 +198,7 @@
 - (void) _populateMenu: (NSMenu *)menu withDocumentationFromSession: (BXSession *)session
 {
     NSInteger insertionPoint = [menu indexOfItem: self.documentationDivider];
+    NSAssert(insertionPoint > -1, @"Documentation divider is missing from menu.");
     
     //Clear out all menu items after the insertion point,
     //then reconstruct them from the new documentation list.
@@ -239,7 +241,7 @@
 }
 
 
-- (NSMenuItem *) _insertItemForLink: (NSDictionary *)linkInfo toMenu: (NSMenu *)menu atIndex: (NSUInteger)index
+- (NSMenuItem *) _insertItemForLink: (NSDictionary *)linkInfo toMenu: (NSMenu *)menu atIndex: (NSInteger)index
 {
     SEL itemAction = @selector(openLinkFromMenuItem:);
     
@@ -259,7 +261,7 @@
 
 - (NSMenuItem *) _insertItemForDocumentationURL: (NSURL *)documentationURL
                                          toMenu: (NSMenu *)menu
-                                        atIndex: (NSUInteger)index
+                                        atIndex: (NSInteger)index
 {
 	SEL itemAction	= @selector(openDocumentFromMenuItem:);
 	NSSize iconSize	= NSMakeSize(16, 16);

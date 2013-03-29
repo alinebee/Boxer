@@ -298,7 +298,7 @@
     if (_minFilter != minFilter)
     {
         _minFilter = minFilter;
-        [self setIntValue: minFilter forParameter: GL_TEXTURE_MIN_FILTER];
+        [self setIntValue: (GLint)minFilter forParameter: GL_TEXTURE_MIN_FILTER];
     }
 }
 
@@ -307,7 +307,7 @@
     if (_magFilter != magFilter)
     {
         _magFilter = magFilter;
-        [self setIntValue: magFilter forParameter: GL_TEXTURE_MAG_FILTER];
+        [self setIntValue: (GLint)magFilter forParameter: GL_TEXTURE_MAG_FILTER];
     }
 }
 
@@ -316,7 +316,7 @@
     if (_horizontalWrapping != horizontalWrapping)
     {
         _horizontalWrapping = horizontalWrapping;
-        [self setIntValue: horizontalWrapping forParameter: GL_TEXTURE_WRAP_S];
+        [self setIntValue: (GLint)horizontalWrapping forParameter: GL_TEXTURE_WRAP_S];
     }
 }
 
@@ -325,7 +325,7 @@
     if (_verticalWrapping != verticalWrapping)
     {
         _verticalWrapping = verticalWrapping;
-        [self setIntValue: verticalWrapping forParameter: GL_TEXTURE_WRAP_T];
+        [self setIntValue: (GLint)verticalWrapping forParameter: GL_TEXTURE_WRAP_T];
     }
 }
 
@@ -376,7 +376,7 @@
     BOOL succeeded = YES;
     if (outError)
     {
-        GLint status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+        GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
         if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
         {
             *outError = errorForGLFramebufferExtensionStatus(status);

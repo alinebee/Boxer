@@ -20,7 +20,7 @@
 
 + (NSUInteger) _mediaKeyCode: (NSEvent *)theEvent
 {
-    return (theEvent.data1 & 0xFFFF0000) >> 16;
+    return ((NSUInteger)theEvent.data1 & 0xFFFF0000) >> 16;
 }
 
 + (BOOL) _mediaKeyDown: (NSEvent *)theEvent

@@ -74,7 +74,7 @@
 	NSAssert1(driveType >= BXDriveHardDisk && (NSUInteger)driveType < descriptions.count,
 			  @"Unknown drive type supplied to BXDrive descriptionForType: %i", driveType);
 	
-	return [descriptions objectAtIndex: driveType];
+	return [descriptions objectAtIndex: (NSUInteger)driveType];
 }
 
 

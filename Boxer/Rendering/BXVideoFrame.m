@@ -74,7 +74,7 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 	[super dealloc];
 }
 
-- (NSInteger) pitch
+- (NSUInteger) pitch
 {
 	return self.size.width * self.bytesPerPixel;
 }

@@ -47,7 +47,7 @@ extern const CGFloat BX4by3AspectRatio;
 
 //The width in bytes of one scanline in the buffer.
 //This is equal to size.width * bytesPerPixel.
-@property (readonly) NSInteger pitch;
+@property (readonly) NSUInteger pitch;
 
 //The original game resolution represented by the frame.
 @property (assign) NSSize baseResolution;

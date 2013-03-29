@@ -175,31 +175,33 @@
 {
 	self.emulator.videoHandler.frameskip = frameskip;
 	
-	[self.gameSettings setObject: [NSNumber numberWithUnsignedInteger: frameskip]
-                          forKey: @"frameskip"];
+	[self.gameSettings setObject: @(frameskip) forKey: @"frameskip"];
 }
 
-- (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError
+- (BOOL) validateFrameskip: (NSNumber **)ioValue error: (NSError **)outError
 {
 	NSUInteger theValue = [*ioValue unsignedIntegerValue];
 	if (theValue > BXMaxFrameskip)
-        *ioValue = [NSNumber numberWithUnsignedInteger: BXMaxFrameskip];
+        *ioValue = @(BXMaxFrameskip);
     
 	return YES;
 }
 
 - (IBAction) incrementFrameSkip: (id)sender
 {
-	NSNumber *newFrameskip = [NSNumber numberWithInteger: self.frameskip + 1];
+	NSNumber *newFrameskip = @(self.frameskip + 1);
 	if ([self validateFrameskip: &newFrameskip error: nil])
-		self.frameskip = newFrameskip.integerValue;
+		self.frameskip = newFrameskip.unsignedIntegerValue;
 }
 
 - (IBAction) decrementFrameSkip: (id)sender
 {
-	NSNumber *newFrameskip = [NSNumber numberWithInteger: self.frameskip - 1];
-	if ([self validateFrameskip: &newFrameskip error: nil])
-		self.frameskip = newFrameskip.integerValue;
+    if (self.frameskip > 0)
+    {
+        NSNumber *newFrameskip = @(self.frameskip - 1);
+        if ([self validateFrameskip: &newFrameskip error: nil])
+            self.frameskip = newFrameskip.unsignedIntegerValue;
+    }
 }
 
 
@@ -215,8 +217,7 @@
     self.emulator.turboSpeed = NO;
 	
 	//Preserve changes to the speed settings
-	[self.gameSettings setObject: [NSNumber numberWithInteger: BXAutoSpeed]
-                          forKey: @"CPUSpeed"];
+	[self.gameSettings setObject: @(BXAutoSpeed) forKey: @"CPUSpeed"];
 }
 
 - (NSInteger) CPUSpeed
@@ -238,18 +239,17 @@
         //Upon changing the emulator speed, turn off fast-forward.
         self.emulator.turboSpeed = NO;
         
-        [self.gameSettings setObject: [NSNumber numberWithInteger: speed]
-                              forKey: @"CPUSpeed"];
+        [self.gameSettings setObject: @(speed) forKey: @"CPUSpeed"];
     }
 }
 
-- (BOOL) validateCPUSpeed: (id *)ioValue error: (NSError **)outError
+- (BOOL) validateCPUSpeed: (NSNumber **)ioValue error: (NSError **)outError
 {
 	NSInteger theValue = [*ioValue integerValue];
     if (theValue != BXAutoSpeed)
     {
-        if		(theValue < BXMinSpeedThreshold) *ioValue = [NSNumber numberWithInteger: BXMinSpeedThreshold];
-        else if	(theValue > BXMaxSpeedThreshold) *ioValue = [NSNumber numberWithInteger: BXMaxSpeedThreshold];
+        if		(theValue < BXMinSpeedThreshold) *ioValue = @(BXMinSpeedThreshold);
+        else if	(theValue > BXMaxSpeedThreshold) *ioValue = @(BXMaxSpeedThreshold);
     }
 	return YES;
 }
@@ -268,7 +268,7 @@
 		increment -= (currentSpeed % increment);
 		
 		//Validate our final value before assigning it
-		NSNumber *newSpeed = [NSNumber numberWithInteger: currentSpeed + increment];
+		NSNumber *newSpeed = @(currentSpeed + increment);
 		if ([self validateCPUSpeed: &newSpeed error: nil])
 			self.CPUSpeed = newSpeed.integerValue;
 	}
@@ -293,7 +293,7 @@
 		if (diff) increment = diff;
 		
 		//Validate our final value before assigning it
-		NSNumber *newSpeed = [NSNumber numberWithInteger: currentSpeed - increment];
+		NSNumber *newSpeed = @(currentSpeed - increment);
 		if ([self validateCPUSpeed: &newSpeed error: nil])
 			self.CPUSpeed = newSpeed.integerValue;
 	}
@@ -401,13 +401,13 @@
 }
 
 //Snap fixed speed to even increments, unless the Option key is held down
-- (BOOL) validateSliderSpeed: (id *)ioValue error: (NSError **)outError
+- (BOOL) validateSliderSpeed: (NSNumber **)ioValue error: (NSError **)outError
 {
 	if (!([NSApp currentEvent].modifierFlags & NSAlternateKeyMask))
 	{
 		NSInteger speed			= [*ioValue integerValue]; 
 		NSInteger snappedSpeed	= [self.class snappedSpeed: speed];
-		*ioValue = [NSNumber numberWithInteger: snappedSpeed];
+		*ioValue = @(snappedSpeed);
 	}
 	return YES;
 }
@@ -427,8 +427,7 @@
 {
 	self.emulator.coreMode = dynamic ? BXCoreDynamic : BXCoreNormal;
 	
-	[self.gameSettings setObject: [NSNumber numberWithInteger: self.emulator.coreMode]
-                          forKey: @"coreMode"];
+	[self.gameSettings setObject: @(self.emulator.coreMode) forKey: @"coreMode"];
 }
 
 
@@ -474,17 +473,15 @@
     //Display drive titles smaller and greyed out.
     //We use a transcluent black rather than the system grey color, so that
     //it gets properly inverted to white when the menu item is selected.
-    NSDictionary *driveTitleAttrs = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     [NSFont menuFontOfSize: [NSFont smallSystemFontSize]], NSFontAttributeName,
-                                     [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f], NSForegroundColorAttributeName,
-                                     nil];
+    NSDictionary *driveTitleAttrs = @{
+                                      NSFontAttributeName:              [NSFont menuFontOfSize: [NSFont smallSystemFontSize]],
+                                      NSForegroundColorAttributeName:   [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f],
+                                      };
     
     //Display the base title in the standard menu font. We need to explicitly set this
     //because NSAttributedString defaults to Helvetica 12pt, and not Lucida Grande 14pt
     //(the proper menu font.)
-    NSDictionary *baseTitleAttrs = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    [NSFont menuFontOfSize: 14], NSFontAttributeName,
-                                    nil];
+    NSDictionary *baseTitleAttrs = @{ NSFontAttributeName: [NSFont menuFontOfSize: 0] };
     
     NSString *separator = @"  ";
     NSMutableAttributedString *title = [[NSMutableAttributedString alloc] initWithString: [baseTitle stringByAppendingString: separator]
@@ -645,7 +642,7 @@
     {
         NSPasteboard *pboard = [NSPasteboard generalPasteboard];
 
-        NSArray *acceptedPasteTypes = [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil];
+        NSArray *acceptedPasteTypes = @[NSFilenamesPboardType, NSStringPboardType];
         NSString *bestType = [pboard availableTypeFromArray: acceptedPasteTypes];
         NSString *pastedString;
         
@@ -666,7 +663,7 @@
 
 - (BOOL) canPasteFromPasteboard: (NSPasteboard *)pboard 
 {
-	NSArray *acceptedPasteTypes = [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil];
+	NSArray *acceptedPasteTypes = @[NSFilenamesPboardType, NSStringPboardType];
 	NSString *bestType = [pboard availableTypeFromArray: acceptedPasteTypes];
 	NSString *pastedString;
 	
@@ -1188,16 +1185,14 @@
     if (self.emulator.isAtPrompt)
     {
         BOOL panelShown = self.DOSWindowController.programPanelShown;
-        [self.gameSettings setObject: [NSNumber numberWithBool: panelShown]
-                              forKey: BXGameboxSettingsShowProgramPanelKey];
+        [self.gameSettings setObject: @(panelShown) forKey: BXGameboxSettingsShowProgramPanelKey];
     }
 }
 
 - (void) userDidToggleFullScreen
 {
     BOOL isInFullscreen = self.DOSWindowController.window.isFullScreen;
-    [self.gameSettings setObject: [NSNumber numberWithBool: isInFullscreen]
-                          forKey: BXGameboxSettingsStartUpInFullScreenKey];
+    [self.gameSettings setObject: @(isInFullscreen) forKey: BXGameboxSettingsStartUpInFullScreenKey];
 }
 
 - (void) userDidToggleLaunchPanel

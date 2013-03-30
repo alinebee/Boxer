@@ -41,13 +41,8 @@
 @end
 
 
-@interface BXWelcomeButton ()
-@property (assign, nonatomic, getter=isFirstResponder) BOOL firstResponder;
-@end
-
 @implementation BXWelcomeButton
 @synthesize draggingDelegate = _draggingDelegate;
-@synthesize firstResponder = _firstResponder;
 
 - (void) awakeFromNib
 {
@@ -58,22 +53,6 @@
     
     [self addTrackingArea: trackingArea];
     [trackingArea release];
-}
-
-- (BOOL) becomeFirstResponder
-{
-    BOOL became = [super becomeFirstResponder];
-    if (became)
-        self.firstResponder = YES;
-    return became;
-}
-
-- (BOOL) resignFirstResponder
-{
-    BOOL resigned = [super resignFirstResponder];
-    if (resigned)
-        self.firstResponder = NO;
-    return resigned;
 }
 
 - (void) setHighlighted: (BOOL)flag
@@ -162,7 +141,7 @@
 
 - (void) drawWithFrame: (NSRect)frame inView: (BXWelcomeButton *)controlView
 {
-    if (controlView.isFirstResponder)
+    if (controlView.window.firstResponder == controlView)
         [self drawFocusSpotlightWithFrame: frame inView: controlView];
     
     [super drawWithFrame: frame inView: controlView];

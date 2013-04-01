@@ -269,6 +269,7 @@
 
 - (void) setSourceURL: (NSURL *)sourceURL
 {
+    sourceURL = sourceURL.URLByStandardizingPath;
 	if (![_sourceURL isEqual: sourceURL])
 	{
 		[_sourceURL release];
@@ -306,6 +307,7 @@
 
 - (void) setMountPointURL: (NSURL *)mountPointURL
 {
+    mountPointURL = mountPointURL.URLByStandardizingPath;
     if (![_mountPointURL isEqual: mountPointURL])
 	{
 		[_mountPointURL release];
@@ -320,6 +322,7 @@
 
 - (void) setShadowURL: (NSURL *)shadowURL
 {
+    shadowURL = shadowURL.URLByStandardizingPath;
     if (![_shadowURL isEqual: shadowURL])
 	{
 		[_shadowURL release];
@@ -416,11 +419,16 @@
 - (BOOL) representsURL: (NSURL *)URL
 {
 	if (self.isVirtual) return NO;
+    
+    URL = URL.URLByStandardizingPath;
 
 	if ([self.sourceURL isEqual: URL])
         return YES;
     
 	if ([self.mountPointURL isEqual: URL])
+        return YES;
+    
+	if ([self.shadowURL isEqual: URL])
         return YES;
     
 	if ([self.equivalentURLs containsObject: URL])
@@ -433,12 +441,17 @@
 {
 	if (self.isVirtual) return NO;
     
+    URL = URL.URLByStandardizingPath;
+    
 	if ([URL isEqual: self.sourceURL])
         return YES;
     
 	if ([URL isBasedInURL: self.mountPointURL])
         return YES;
 	
+	if ([URL isBasedInURL: self.shadowURL])
+        return YES;
+    
 	for (NSURL *equivalentURL in self.equivalentURLs)
 	{
 		if ([URL isBasedInURL: equivalentURL])
@@ -450,10 +463,13 @@
 
 - (NSString *) relativeLocationOfURL: (NSURL *)URL
 {
+    //TODO: let the drive's filesystem do this work for us.
+    
 	if (self.isVirtual)
         return nil;
 	
 	NSString *relativePath = nil;
+    URL = URL.URLByStandardizingPath;
     
 	if ([URL isEqual: self.sourceURL])
 	{
@@ -465,6 +481,11 @@
 		relativePath = [URL pathRelativeToURL: self.mountPointURL];
 	}
 	
+	else if (self.shadowURL && [URL isBasedInURL: self.shadowURL])
+	{
+		relativePath = [URL pathRelativeToURL: self.shadowURL];
+	}
+    
 	else
 	{
 		for (NSURL *equivalentURL in self.equivalentURLs)

@@ -11,7 +11,7 @@
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulatorErrors.h"
 #import "BXEmulator+BXShell.h"
-#import "NSWorkspace+ADBFileTypes.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 #import "BXDrive.h"
 #import "BXGamebox.h"
 #import "BXInspectorController.h"
@@ -91,14 +91,13 @@
 - (BOOL) mountChosenURL: (NSURL *)URL error: (NSError **)outError
 {
     BXSession *session = self.representedObject;
-    NSString *path = URL.path;
     
     BXDriveType preferredType	= (BXDriveType)self.driveType.selectedItem.tag;
     NSString *preferredLetter	= self.driveLetter.selectedItem.representedObject;
-    BOOL readOnly				= (self.readOnlyToggle.state != NSOffState);
+    BOOL isReadOnly				= (self.readOnlyToggle.state != NSOffState);
     
-    BXDrive *drive = [BXDrive driveFromPath: path atLetter: preferredLetter withType: preferredType];
-    drive.readOnly = readOnly;
+    BXDrive *drive = [BXDrive driveWithContentsOfURL: URL letter: preferredLetter type: preferredType];
+    drive.readOnly = isReadOnly;
     
     drive = [session mountDrive: drive
                        ifExists: BXDriveReplace
@@ -108,7 +107,7 @@
     //Switch to the new mount after adding it
     if (drive)
     {
-        [session openFileAtPath: drive.path];
+        [session openFileAtPath: drive.sourceURL.path];
         return YES;
     }
     else
@@ -164,14 +163,13 @@
 - (void) syncMountOptionsForPanel: (NSOpenPanel *)openPanel
 {
     BXSession *session = self.representedObject;
-	NSString *path = openPanel.URL.path;
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	NSURL *selectedURL = openPanel.URL;
 	
-	if (path)
+	if (selectedURL)
 	{
 		//Don't allow drive type to be configured for disc images: instead,
         //force it to CD-ROM/floppy while an appropriate image is selected
-		BOOL isImage = [workspace file: path matchesTypes: [BXFileTypes mountableImageTypes]];
+		BOOL isImage = ([selectedURL matchingFileType: [BXFileTypes mountableImageTypes]] != nil);
 		if (isImage)
 		{
 			[self.driveType setEnabled: NO];
@@ -181,7 +179,8 @@
 				_previousDriveTypeSelection = self.driveType.selectedItem;
 			}
 			
-			BOOL isFloppyImage = [workspace file: path matchesTypes: [BXFileTypes floppyVolumeTypes]];
+			BOOL isFloppyImage = ([selectedURL matchingFileType: [BXFileTypes floppyVolumeTypes]] != nil);
+            
 			NSInteger optionIndex = [self.driveType indexOfItemWithTag: isFloppyImage ? BXDriveFloppyDisk : BXDriveCDROM];
 			[self.driveType selectItemAtIndex: optionIndex];
 		}
@@ -199,9 +198,9 @@
 		
 		//Now determine what the automatic options will do for the selected path
 		BXDriveType selectedType	= (BXDriveType)self.driveType.selectedItem.tag;
-		BXDriveType preferredType	= [BXDrive preferredTypeForPath: path];
+		BXDriveType preferredType	= [BXDrive preferredTypeForContentsOfURL: selectedURL];
 
-		BXDrive *fakeDrive			= [BXDrive driveFromPath: path atLetter: nil withType: selectedType];
+		BXDrive *fakeDrive			= [BXDrive driveWithContentsOfURL: selectedURL letter: nil type: selectedType];
 		NSString *preferredLetter	= [session preferredLetterForDrive: fakeDrive options: BXDriveKeepWithSameType];
 		
 		NSMenuItem *autoTypeOption		= [self.driveType itemAtIndex: 0];
@@ -223,9 +222,15 @@
 		
 		//Override the read-only option when the drive type is CD-ROM or Auto (CD-ROM),
 		//or when the selected path is not writable
-		if ((selectedType == BXDriveCDROM) || 
-			(selectedType == BXDriveAutodetect && preferredType == BXDriveCDROM) ||
-			(![[NSFileManager defaultManager] isWritableFileAtPath: path]))
+        BOOL readOnly = (selectedType == BXDriveCDROM) || (selectedType == BXDriveAutodetect && preferredType == BXDriveCDROM);
+        if (!readOnly)
+        {
+            NSNumber *writableFlag;
+            BOOL checkedWritable = [selectedURL getResourceValue: &writableFlag forKey: NSURLIsWritableKey error: NULL];
+            readOnly = !(checkedWritable && writableFlag.boolValue);
+        }
+        
+		if (readOnly)
 		{
 			[self.readOnlyToggle setEnabled: NO];
 			//Back up the previous state and override it

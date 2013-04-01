@@ -122,7 +122,7 @@
             NSDictionary *groupRow = [NSDictionary dictionaryWithObjectsAndKeys:
                                       [NSNumber numberWithBool: YES], @"isDriveRow",
                                       driveTitle, @"title",
-                                      drive.path, @"path",
+                                      drive.sourceURL.path, @"path",
                                       nil];
             
             [mutableRows addObject: groupRow];

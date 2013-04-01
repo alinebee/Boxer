@@ -285,11 +285,11 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
             NSString *driveName;
             //If the drive is identical to the gamebox itself (old-style gameboxes)
             //then map it to a different name.
-            if ([drive.path isEqualToString: self.gamebox.bundlePath])
+            if ([drive.sourceURL isEqual: self.gamebox.resourceURL])
                 driveName = @"C.harddisk";
             //Otherwise, use the original filename of the gamebox.
             else
-                driveName = drive.path.lastPathComponent;
+                driveName = drive.sourceURL.lastPathComponent;
             
             NSURL *driveShadowURL = [stateURL URLByAppendingPathComponent: driveName];
             
@@ -301,10 +301,9 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (BOOL) hasShadowedChanges
 {
-    NSFileManager *manager = [NSFileManager defaultManager];
     for (BXDrive *drive in self.allDrives)
     {
-        if (drive.shadowPath != nil && [manager fileExistsAtPath: drive.shadowPath])
+        if ([drive.shadowURL checkResourceIsReachableAndReturnError: NULL])
             return YES;
     }
     return NO;
@@ -602,9 +601,11 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (BXDrive *) queuedDriveForPath: (NSString *)path
 {
+    NSURL *driveURL = [NSURL fileURLWithPath: path];
 	for (BXDrive *drive in self.allDrives)
 	{
-		if ([drive representsPath: path]) return drive;
+		if ([drive representsURL: driveURL])
+            return drive;
 	}
 	return nil;
 }
@@ -855,7 +856,11 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     //Otherwise, create a new drive for the mount
     else
     {
-        BXDrive *drive = [BXDrive driveFromPath: mountPoint atLetter: nil];
+        NSURL *mountPointURL = [NSURL fileURLWithPath: mountPoint];
+        BXDrive *drive = [BXDrive driveWithContentsOfURL: mountPointURL
+                                                  letter: nil
+                                                    type: BXDriveAutodetect];
+        
         return [self mountDrive: drive
                        ifExists: conflictBehaviour
                         options: options
@@ -914,28 +919,28 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 {
 	BXEmulator *theEmulator = self.emulator;
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSArray *volumes = [workspace mountedVolumesOfType: ADBDataCDVolumeType includingHidden: NO];
+	NSArray *volumeURLs = [workspace  mountedVolumeURLsOfType: ADBDataCDVolumeType includingHidden: NO];
 	
 	//If there were no data CD volumes, then check for audio CD volumes and mount them instead
 	//(We avoid doing this if there were data CD volumes, since the audio CDs will then be used
 	//as 'shadow' audio volumes for those data CDs.)
-	if (![volumes count])
-		volumes = [workspace mountedVolumesOfType: ADBAudioCDVolumeType includingHidden: NO];
+	if (!volumeURLs.count)
+		volumeURLs = [workspace mountedVolumeURLsOfType: ADBAudioCDVolumeType includingHidden: NO];
     
     NSMutableArray *mountedDrives = [NSMutableArray arrayWithCapacity: 10];
-	for (NSString *volume in volumes)
+	for (NSURL *volumeURL in volumeURLs)
 	{
-		if (![theEmulator pathIsMountedAsDrive: volume])
+		if (![theEmulator URLIsMountedInDOS: volumeURL])
 		{
-			BXDrive *drive = [BXDrive CDROMFromPath: volume
-                                           atLetter: nil];
+			BXDrive *drive = [BXDrive driveWithContentsOfURL: volumeURL letter: nil type: BXDriveCDROM];
             
             drive = [self mountDrive: drive 
                             ifExists: BXDriveQueue
                              options: BXSystemVolumeMountOptions
                                error: outError];
             
-            if (drive) [mountedDrives addObject: drive];
+            if (drive)
+                [mountedDrives addObject: drive];
             
             //If there was any error in mounting a drive,
             //then bail out and don't attempt to mount further drives
@@ -952,22 +957,23 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 - (NSArray *) mountFloppyVolumesWithError: (NSError **)outError
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSArray *volumePaths = [workspace mountedVolumesOfType: ADBFATVolumeType includingHidden: NO];
+	NSArray *volumeURLs = [workspace mountedVolumeURLsOfType: ADBFATVolumeType includingHidden: NO];
 	BXEmulator *theEmulator = self.emulator;
     
     NSMutableArray *mountedDrives = [NSMutableArray arrayWithCapacity: 10];
-	for (NSString *volumePath in volumePaths)
+	for (NSURL *volumeURL in volumeURLs)
 	{
-		if (![theEmulator pathIsMountedAsDrive: volumePath] && [workspace isFloppySizedVolumeAtPath: volumePath])
+		if (![theEmulator URLIsMountedInDOS: volumeURL] && [workspace isFloppyVolumeAtURL: volumeURL])
 		{
-			BXDrive *drive = [BXDrive floppyDriveFromPath: volumePath atLetter: nil];
+			BXDrive *drive = [BXDrive driveWithContentsOfURL: volumeURL letter: nil type: BXDriveFloppyDisk];
             
             drive = [self mountDrive: drive
                             ifExists: BXDriveQueue
                              options: BXSystemVolumeMountOptions
                                error: outError];
             
-            if (drive) [mountedDrives addObject: drive];
+            if (drive)
+                [mountedDrives addObject: drive];
             
             //If there was any error in mounting a drive,
             //then bail out and don't attempt to mount further drives
@@ -984,9 +990,9 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	BXEmulator *theEmulator = self.emulator;
 
 	NSString *toolkitDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"toolkitDriveLetter"];
-	NSString *toolkitFiles			= [[NSBundle mainBundle] pathForResource: @"DOS Toolkit" ofType: nil];
+	NSURL *toolkitURL               = [[NSBundle mainBundle] URLForResource: @"DOS Toolkit" withExtension: nil];
     
-	BXDrive *toolkitDrive = [BXDrive hardDriveFromPath: toolkitFiles atLetter: toolkitDriveLetter];
+	BXDrive *toolkitDrive = [BXDrive driveWithContentsOfURL: toolkitURL letter: toolkitDriveLetter type: BXDriveHardDisk];
     toolkitDrive.title = NSLocalizedString(@"DOS Toolkit", @"The display title for Boxer’s toolkit drive.");
 	
 	//Hide and lock the toolkit drive so that it cannot be ejected and will not appear in the drive inspector,
@@ -1028,11 +1034,12 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	NSString *tempDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"temporaryDriveLetter"];
 	NSString *tempDrivePath		= [manager createTemporaryDirectoryWithPrefix: @"Boxer" error: outError];
 	
-	if (tempDrivePath)
+    NSURL *tempURL = [NSURL fileURLWithPath: tempDrivePath isDirectory: YES];
+	if (tempURL)
 	{
-		self.temporaryFolderPath = tempDrivePath;
+		self.temporaryFolderPath = tempURL.path;
 		
-		BXDrive *tempDrive = [BXDrive hardDriveFromPath: tempDrivePath atLetter: tempDriveLetter];
+		BXDrive *tempDrive = [BXDrive driveWithContentsOfURL: tempURL letter: tempDriveLetter type: BXDriveHardDisk];
         tempDrive.title = NSLocalizedString(@"Temporary Files", @"The display title for Boxer’s temp drive.");
         
         //Hide and lock the temp drive so that it cannot be ejected and will not appear in the drive inspector.
@@ -1054,7 +1061,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
         //If we couldn't mount the temporary folder for some reason, then delete it
         else
         {
-            [manager removeItemAtPath: tempDrivePath error: nil];
+            [manager removeItemAtURL: tempURL error: nil];
         }
         
         return tempDrive;
@@ -1072,8 +1079,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     }
     
     
-    NSString *dummyImage    = [[NSBundle mainBundle] pathForResource: @"DummyCD" ofType: @"iso"];
-	BXDrive *dummyDrive     = [BXDrive CDROMFromPath: dummyImage atLetter: nil];
+    NSURL *dummyImageURL    = [[NSBundle mainBundle] URLForResource: @"DummyCD" withExtension: @"iso"];
+	BXDrive *dummyDrive     = [BXDrive driveWithContentsOfURL: dummyImageURL letter: nil type: BXDriveCDROM];
     
     dummyDrive.title = NSLocalizedString(@"Dummy CD",
                                          @"The display title for Boxer’s dummy CD-ROM drive.");
@@ -1164,16 +1171,16 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
         //Check if the specified path has a DOSBox-compatible image backing it:
         //if so then try to mount that instead, and assign the current path as an alias.
         NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-        NSString *sourceImagePath = [workspace sourceImageForVolume: drive.path];
+        NSURL *sourceImageURL = [workspace sourceImageForVolumeAtURL: drive.sourceURL];
         
-        if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXFileTypes mountableImageTypes]])
+        if ([sourceImageURL matchingFileType: [BXFileTypes mountableImageTypes]] != nil)
         {
             //Check if we already have another drive representing the source path
             //at the requested drive letter: if so, then just add the path as an
             //alias to that existing drive, and mount that drive instead
             //(assuming it isn't already.)
             //TODO: should we handle this case upstairs in mountDriveForPath:?
-            BXDrive *existingDrive = [self queuedDriveForPath: sourceImagePath];
+            BXDrive *existingDrive = [self queuedDriveForPath: sourceImageURL.path];
             if (![existingDrive isEqual: drive] && [existingDrive.letter isEqual: drive.letter])
             {
                 [existingDrive addEquivalentURL: drive.sourceURL];
@@ -1191,9 +1198,9 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
             //Otherwise, make a new drive using the image, and mount that instead.
             else
             {
-                BXDrive *imageDrive = [BXDrive driveFromPath: sourceImagePath
-                                                    atLetter: drive.letter
-                                                    withType: drive.type];
+                BXDrive *imageDrive = [BXDrive driveWithContentsOfURL: sourceImageURL
+                                                               letter: drive.letter
+                                                                 type: drive.type];
                 
                 imageDrive.readOnly = drive.readOnly;
                 imageDrive.hidden = drive.isHidden;
@@ -1210,12 +1217,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     
     if (options & BXDriveUseShadowingIfAvailable)
     {
-        //Check if we should shadow this drive.
-        NSURL *shadowURL = [self shadowURLForDrive: drive];
-        if (shadowURL)
-        {
-            drive.shadowPath = shadowURL.path;
-        }
+        drive.shadowURL = [self shadowURLForDrive: drive];
     }
     
     //Check if this is a CD-ROM drive and enabled for CD audio.
@@ -1605,7 +1607,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	//Alright, if we got this far then it's ok to mount a new drive for it
     else
     {
-        BXDrive *drive = [BXDrive driveFromPath: mountPoint atLetter: nil];
+        NSURL *mountPointURL = [NSURL fileURLWithPath: mountPoint];
+        BXDrive *drive = [BXDrive driveWithContentsOfURL: mountPointURL letter: nil type: BXDriveAutodetect];
         
         //Ignore errors when automounting volumes, since these
         //are not directly triggered by the user.
@@ -1626,25 +1629,24 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	//Ignore unmount events if the emulator isn't actually running
 	if (!self.isEmulating) return;
 	
-	NSString *volumePath = [theNotification.userInfo objectForKey: @"NSDevicePath"];
-	//Should already be standardized, but still
-	NSString *standardizedPath = volumePath.stringByStandardizingPath;
+	NSURL *volumeURL = [theNotification.userInfo objectForKey: NSWorkspaceVolumeURLKey];
 	
     //Scan our drive list to see which drives would be affected by this volume
     //becoming unavailable.
 	for (BXDrive *drive in self.allDrives)
 	{
         //TODO: refactor this so that we can move the decision off to BXDrive itself
-		//(We can't use BXDrive representsPath: because that would give false positives
+		//(We can't use BXDrive representsURL: because that would give false positives
         //for drives with backing images: we don't want to eject drives whose images
         //are still accessible to us, just because OS X unmounted the image.
-		if ([drive.path isEqualToString: standardizedPath] || [drive.mountPoint isEqualToString: standardizedPath])
+		if ([drive.mountPointURL isEqual: volumeURL] || [drive.sourceURL isEqual: volumeURL])
 		{
             //Drive import processes may unmount a volume themselves in the course
             //of importing it: in which case we want to leave the drive in place.
             //(TODO: check that this is still the desired behaviour, now that we
             //have implemented drive queues.)
-            if ([[[self activeImportOperationForDrive: drive] class] driveUnavailableDuringImport]) continue;
+            ADBOperation <BXDriveImport> *activeImport = [self activeImportOperationForDrive: drive];
+            if ([activeImport.class driveUnavailableDuringImport]) continue;
             
             //If the drive is mounted, then unmount it now and remove it from the drive list.
             if ([self driveIsMounted: drive])
@@ -1661,7 +1663,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 		}
 		else
 		{
-            [drive removeEquivalentURL: [NSURL fileURLWithPath: standardizedPath]];
+            [drive removeEquivalentURL: volumeURL];
 		}
 	}
 }
@@ -1857,7 +1859,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
             
             //If there's a scan going on for the same path,
             //then make ours wait for that one to finish.
-            else if ([otherDrive.mountPoint isEqualToString: drive.mountPoint])
+            else if ([otherDrive.mountPointURL isEqual: drive.mountPointURL])
                 [scan addDependency: otherScan];
         }    
 
@@ -1915,7 +1917,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	if (scan.succeeded && scan.matches.count)
 	{
         //Construct absolute paths out of the relative ones returned by the scan.
-        NSArray *driveExecutables = [drive.path stringsByAppendingPaths: scan.matches];
+        NSArray *driveExecutables = [drive.sourceURL.path stringsByAppendingPaths: scan.matches];
         
         //Only send notifications if any executables were found, to prevent unnecessary redraws
         BOOL notify = (driveExecutables.count > 0);
@@ -1934,31 +1936,31 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (BOOL) driveIsBundled: (BXDrive *)drive
 {
-	if (drive.path && self.hasGamebox)
-	{
-		NSString *bundlePath = self.gamebox.resourcePath;
-		NSString *drivePath = drive.path;
-
-		if ([drivePath isEqualToString: bundlePath] ||
-            [drivePath.stringByDeletingLastPathComponent isEqualToString: bundlePath])
+    if (self.hasGamebox)
+    {
+        NSURL *driveURL = drive.sourceURL;
+        NSURL *bundleURL = self.gamebox.resourceURL;
+        
+        if ([driveURL isEqual: bundleURL] || [driveURL.URLByDeletingLastPathComponent isEqual: bundleURL])
             return YES;
-	}
+    }
 	return NO;
 }
 
 - (BOOL) equivalentDriveIsBundled: (BXDrive *)drive
 {
-	if (drive.path && self.hasGamebox)
+	if (self.hasGamebox)
 	{
-		Class importClass		= [BXDriveImport importClassForDrive: drive];
-		NSString *importedName	= [importClass nameForDrive: drive];
-		NSString *importedPath	= [self.gamebox.resourcePath stringByAppendingPathComponent: importedName];
-	
-		//A file already exists with the same name as we would import it with,
-		//which probably means the drive was bundled earlier
-		NSFileManager *manager = [NSFileManager defaultManager];
-	
-		return [manager fileExistsAtPath: importedPath];
+		Class importClass = [BXDriveImport importClassForDrive: drive];
+        if (importClass)
+        {
+            NSString *importedName	= [importClass nameForDrive: drive];
+            NSURL *importedURL      = [self.gamebox.resourceURL URLByAppendingPathComponent: importedName];
+            
+            //A file already exists with the same name as we would import it with,
+            //which probably means the drive was bundled earlier
+            return [importedURL checkResourceIsReachableAndReturnError: NULL];
+        }
 	}
 	return NO;
 }
@@ -2065,15 +2067,15 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 		//with the newly-imported version (as long as the old one is not currently in use)
 		if (![self.emulator driveInUse: originalDrive])
 		{
-            NSString *destinationPath	= import.destinationURL.path;
-			BXDrive *importedDrive		= [BXDrive driveFromPath: destinationPath
-                                                        atLetter: originalDrive.letter];
+            BXDrive *importedDrive = [BXDrive driveWithContentsOfURL: import.destinationURL
+                                                              letter: originalDrive.letter
+                                                                type: originalDrive.type];
 			
             //Make the new drive an alias for the old one.
             [importedDrive addEquivalentURL: originalDrive.sourceURL];
             [importedDrive addEquivalentURL: originalDrive.mountPointURL];
             
-            //If the old drive is currently mounted, or was mounted back when we started
+            //If the old drive is currently mounted, or was mounted back when we started,
             //then replace it entirely.
 			if (remountDrive || [self driveIsMounted: originalDrive])
             {

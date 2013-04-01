@@ -839,8 +839,7 @@
                 //If we couldn't determine how to import this drive, flag it up as a failure.
                 else
                 {
-                    BOOL driveExists = [manager fileExistsAtPath: driveToImport.path];
-                    if (!driveExists)
+                    if (![driveToImport.sourceURL checkResourceIsReachableAndReturnError: NULL])
                     {
                         NSError *driveError = [BXImportDriveUnavailableError errorWithSourcePath: self.sourceURL.path
                                                                                            drive: driveToImport
@@ -874,9 +873,9 @@
                 {
                     if (driveImport == otherDriveImport) continue;
                     
-                    NSString *path1 = driveImport.drive.path, *path2 = otherDriveImport.drive.path;
+                    NSURL *driveURL1 = driveImport.drive.sourceURL, *driveURL2 = otherDriveImport.drive.sourceURL;
                     
-                    if (![path1 isEqualToString: path2] && [path1 isRootedInPath: path2])
+                    if (![driveURL1 isEqual: driveURL2] && [driveURL1 isBasedInURL: driveURL2])
                     {
                         //Make the import for the nested drive dependent on the import for the containing drive,
                         //so that it won't start until the other drive has been copied.
@@ -884,11 +883,11 @@
                         
                         //Change the source path for the nested drive to point to where the drive will
                         //have ended up after the containing drive has been copied.
-                        NSString *relativeSourcePath = [path1 pathRelativeToPath: path2];
-                        NSString *driveDestination = otherDriveImport.preferredDestinationURL.path;
-                        NSString *intermediateSourcePath = [driveDestination stringByAppendingPathComponent: relativeSourcePath];
+                        NSString *relativeSourcePath = [driveURL1 pathRelativeToURL: driveURL2];
+                        NSURL *driveDestination = otherDriveImport.preferredDestinationURL;
+                        NSURL *intermediateSourceURL = [driveDestination URLByAppendingPathComponent: relativeSourcePath];
                         
-                        driveImport.drive.path = intermediateSourcePath.stringByStandardizingPath;
+                        driveImport.drive.sourceURL = intermediateSourceURL;
                         
                         //Make the nested drive import into a move operation instead,
                         //since the drive's files will have been copied along with the containing drive.
@@ -918,11 +917,11 @@
         //then import it as a new drive into the gamebox.
         if (isMountableImage || isMountableFolder)
         {
-            driveToImport = [BXDrive driveFromPath: self.sourceURL.path atLetter: nil];
+            driveToImport = [BXDrive driveWithContentsOfURL: self.sourceURL letter: nil type: BXDriveAutodetect];
             
             //If the drive is marked as being for drive C, then check what we need to do with our original C drive
             if ([driveToImport.letter isEqualToString: @"C"])
-            {	
+            {
                 //If any files were installed to the original C drive, then reset the import drive letter
                 //so that the drive will be imported alongside the existing C drive.
                 if (didInstallFiles)
@@ -986,7 +985,7 @@
                     else if (isRealFloppy)	importType = BXImportFromFloppyVolume;
                     else					importType = BXImportFromFolderToFloppy;
                     
-                    driveToImport = [BXDrive floppyDriveFromPath: URLToImport.path atLetter: @"A"];
+                    driveToImport = [BXDrive driveWithContentsOfURL: URLToImport letter: @"A" type: BXDriveFloppyDisk];
                 }
                 //In all other cases, import the source files as a CD-ROM drive.
                 else
@@ -995,7 +994,7 @@
                     else if (isRealCDROM)	importType = BXImportFromCDVolume;
                     else					importType = BXImportFromFolderToCD;
                 
-                    driveToImport = [BXDrive CDROMFromPath: URLToImport.path atLetter: @"D"];
+                    driveToImport = [BXDrive driveWithContentsOfURL: URLToImport letter: @"D" type: BXDriveCDROM];
                 }
                 
                 importOperation = [self importOperationForDrive: driveToImport startImmediately: NO];
@@ -1037,7 +1036,7 @@
                     //Otherwise, remove the old empty C drive we created and import
                     //the source path as a new C drive in its place.
                     [manager removeItemAtURL: self.rootDriveURL error: nil];
-                    driveToImport	= [BXDrive hardDriveFromPath: self.sourceURL.path atLetter: @"C"];
+                    driveToImport = [BXDrive driveWithContentsOfURL: self.sourceURL letter: @"C" type: BXDriveHardDisk];
                     //Don't bother with a volume label for drive C.
                     driveToImport.volumeLabel = nil;
                     importOperation	= [self importOperationForDrive: driveToImport startImmediately: NO];
@@ -1250,7 +1249,7 @@
         //If this file is a mountable type, move it into the gamebox's root folder where we can find it.
 		if (isBundleable)
 		{
-			BXDrive *drive = [BXDrive driveFromPath: URL.path atLetter: nil];
+			BXDrive *drive = [BXDrive driveWithContentsOfURL: URL letter: nil type: BXDriveAutodetect];
 			
 			ADBOperation <BXDriveImport> *importOperation = [BXDriveImport importOperationForDrive: drive
                                                                               destinationFolderURL: self.gamebox.resourceURL
@@ -1444,7 +1443,7 @@
     }
     
 	if (sourceDriveType == BXDriveAutodetect)
-		sourceDriveType = [BXDrive preferredTypeForPath: self.sourceURL.path];
+		sourceDriveType = [BXDrive preferredTypeForContentsOfURL: self.sourceURL];
 	
 	if (freeSpace == BXDefaultFreeSpace && (sourceDriveType == BXDriveCDROM || [self.class isCDROMSizedGameAtURL: self.sourceURL]))
 		freeSpace = BXFreeSpaceForCDROMInstall;
@@ -1452,7 +1451,7 @@
 	
 	//Mount our newly-minted empty gamebox as drive C.
     NSError *mountError = nil;
-	BXDrive *destinationDrive = [BXDrive hardDriveFromPath: self.rootDriveURL.path atLetter: @"C"];
+	BXDrive *destinationDrive = [BXDrive driveWithContentsOfURL: self.rootDriveURL letter: @"C" type: BXDriveHardDisk];
     destinationDrive.title = NSLocalizedString(@"Destination Drive",
                                                @"The display title for the gamebox’s C drive when importing a game.");
 	destinationDrive.freeSpace = freeSpace;
@@ -1463,7 +1462,7 @@
                error: &mountError];
 	
 	//Then, create a drive of the appropriate type from the source files and mount away
-	BXDrive *sourceDrive = [BXDrive driveFromPath: self.sourceURL.path atLetter: nil withType: sourceDriveType];
+	BXDrive *sourceDrive = [BXDrive driveWithContentsOfURL: self.sourceURL letter: nil type: sourceDriveType];
 	[sourceDrive setTitle: NSLocalizedString(@"Source Drive", @"The display title for the source drive when importing.")];
     
     [self mountDrive: sourceDrive

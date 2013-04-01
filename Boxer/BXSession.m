@@ -310,7 +310,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             //If the program path is relative, resolve it relative to the gamebox.
             if (previousProgramPath && !previousProgramPath.isAbsolutePath)
             {
-                NSString *basePath = self.gamebox.gamePath;
+                NSString *basePath = self.gamebox.resourcePath;
                 previousProgramPath = [basePath stringByAppendingPathComponent: previousProgramPath];
             }
             
@@ -819,15 +819,18 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             
             //If we were running a program when we were shut down, then record that;
             //otherwise, record the last directory we were in when we were at the DOS prompt.
+            //TODO: resolve paths to shadowed locations into paths to virtual gamebox resources.
             NSString *basePath = self.gamebox.resourcePath;
             if (lastProgramPath)
             {
-                //Make the program path relative to the gamebox.
-                //TODO: if the program was located outside the gamebox,
-                //record it as an alias instead.
-                NSString *relativePath = [lastProgramPath pathRelativeToPath: basePath];
+                //Make the program path relative to the root of the gamebox, if it was located within the gamebox itself.
+                //TODO: if the program was located outside the gamebox, record it as a bookmark instead of an absolute path.
+                if ([lastProgramPath isRootedInPath: basePath])
+                {
+                    lastProgramPath = [lastProgramPath pathRelativeToPath: basePath];
+                }
                 
-                [settingsToPersist setObject: relativePath
+                [settingsToPersist setObject: lastProgramPath
                                       forKey: BXGameboxSettingsLastProgramPathKey];
                 
                 if (lastArguments)
@@ -842,8 +845,13 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                 NSString *currentDOSPath = self.emulator.pathOfCurrentDirectory;
                 if (currentDOSPath)
                 {
-                    NSString *relativePath = [currentDOSPath pathRelativeToPath: basePath];
-                    [settingsToPersist setObject: relativePath
+                    //Make the location relative to the root of the gamebox, if it was within the gamebox itself.
+                    //TODO: if the location was outside the gamebox, record it as a bookmark instead of an absolute path.
+                    if ([currentDOSPath isRootedInPath: basePath])
+                    {
+                        currentDOSPath = [currentDOSPath pathRelativeToPath: basePath];
+                    }
+                    [settingsToPersist setObject: currentDOSPath
                                           forKey: BXGameboxSettingsLastProgramPathKey];
                 }
                 else
@@ -1698,16 +1706,16 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         		
         //First, mount any bundled drives from the gamebox.
 		NSMutableArray *packageVolumes = [NSMutableArray arrayWithCapacity: 10];
-		[packageVolumes addObjectsFromArray: self.gamebox.floppyVolumes];
-		[packageVolumes addObjectsFromArray: self.gamebox.hddVolumes];
-		[packageVolumes addObjectsFromArray: self.gamebox.cdVolumes];
+		[packageVolumes addObjectsFromArray: self.gamebox.floppyVolumeURLs];
+		[packageVolumes addObjectsFromArray: self.gamebox.hddVolumeURLs];
+		[packageVolumes addObjectsFromArray: self.gamebox.cdVolumeURLs];
 		
 		BOOL hasProperDriveC = NO;
         NSString *titleForDriveC = NSLocalizedString(@"Game Drive", @"The display title for the gamebox’s C drive.");
         
-        for (NSString *volumePath in packageVolumes)
+        for (NSURL *volumeURL in packageVolumes)
 		{
-			BXDrive *bundledDrive = [BXDrive driveFromPath: volumePath atLetter: nil];
+			BXDrive *bundledDrive = [BXDrive driveWithContentsOfURL: volumeURL letter: nil type: BXDriveAutodetect];
             
             //If this will be our C drive, give it a custom title.
             if ([bundledDrive.letter isEqualToString: @"C"])
@@ -1717,8 +1725,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                 
                 //If our target was the gamebox itself, rewrite it to point to this C drive
                 //so that we'll start up at drive C.
-                if ([self.targetPath isEqualToString: self.gamebox.gamePath])
-                    self.targetPath = volumePath;
+                if ([self.targetPath isEqualToString: self.gamebox.bundleURL.path])
+                    self.targetPath = volumeURL.path;
             }
             
             [self mountDrive: bundledDrive
@@ -1732,8 +1740,9 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         //In this case, mount the gamebox itself as drive C.
         if (!hasProperDriveC)
         {
-            BXDrive *packageDrive = [BXDrive hardDriveFromPath: self.gamebox.gamePath
-                                                      atLetter: @"C"];
+            BXDrive *packageDrive = [BXDrive driveWithContentsOfURL: self.gamebox.resourceURL
+                                                             letter: @"C"
+                                                               type: BXDriveHardDisk];
             
             packageDrive.title = titleForDriveC;
             
@@ -1783,7 +1792,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         //Check if we already have a drive queued that represents this drive.
         //If so, we'll ignore the previous drive and just remount the existing one
         //if the drive had been mounted before.
-        BXDrive *existingDrive = [self queuedDriveForPath: drive.path];
+        BXDrive *existingDrive = [self queuedDriveForPath: drive.sourceURL.path];
         
         if (existingDrive)
             drive = existingDrive;
@@ -1794,7 +1803,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                  options: BXBundledDriveMountOptions
                    error: &mountError];
     }
-    
 	
 	//Once all regular drives are in place, check if our target program/folder
     //is now accessible in DOS: if not, add another drive allowing access to it.

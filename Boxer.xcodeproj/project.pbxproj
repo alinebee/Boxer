@@ -640,6 +640,8 @@
 		9F887105156F85F9006CDB5F /* BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F887104156F85F8006CDB5F /* BXFileTypes.m */; };
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
 		9F8A9CD2143E120B00C37A93 /* MT32ROMTypes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */; };
+		9F8B282A1709C4A100B31A14 /* ADBFilesystemBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8B28291709C4A100B31A14 /* ADBFilesystemBase.m */; };
+		9F8B282B1709C4A100B31A14 /* ADBFilesystemBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8B28291709C4A100B31A14 /* ADBFilesystemBase.m */; };
 		9F8F374914F91FEB00E482FB /* BXApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F374814F91FEB00E482FB /* BXApplication.m */; };
 		9F8F374C14F9366F00E482FB /* FastForwardTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F8F374B14F9366F00E482FB /* FastForwardTemplate.pdf */; };
 		9F8F374F14F9442D00E482FB /* BXBaseAppController+BXHotKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F374E14F9442D00E482FB /* BXBaseAppController+BXHotKeys.m */; };
@@ -1514,6 +1516,8 @@
 		9F887104156F85F8006CDB5F /* BXFileTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFileTypes.m; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MT32ROMTypes.plist; sourceTree = "<group>"; };
+		9F8B28281709C4A100B31A14 /* ADBFilesystemBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBFilesystemBase.h; sourceTree = "<group>"; };
+		9F8B28291709C4A100B31A14 /* ADBFilesystemBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBFilesystemBase.m; sourceTree = "<group>"; };
 		9F8F374714F91FEB00E482FB /* BXApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXApplication.h; sourceTree = "<group>"; };
 		9F8F374814F91FEB00E482FB /* BXApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXApplication.m; sourceTree = "<group>"; };
 		9F8F374B14F9366F00E482FB /* FastForwardTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = FastForwardTemplate.pdf; sourceTree = "<group>"; };
@@ -3204,8 +3208,8 @@
 			isa = PBXGroup;
 			children = (
 				9F98410415BF10B700B50CDA /* ADBFilesystem.h */,
-				9F80E7FD16DA316F001C3162 /* ADBFileHandle.h */,
-				9F80E7FE16DA316F001C3162 /* ADBFileHandle.m */,
+				9F8B28281709C4A100B31A14 /* ADBFilesystemBase.h */,
+				9F8B28291709C4A100B31A14 /* ADBFilesystemBase.m */,
 				9F38B38916DFB1960050AB15 /* ADBLocalFilesystem.h */,
 				9F38B38A16DFB1960050AB15 /* ADBLocalFilesystem.m */,
 				9F18E28516E2763F002D4198 /* ADBLocalFilesystemPrivate.h */,
@@ -3213,6 +3217,8 @@
 				9F98410115BEE64400B50CDA /* ADBShadowedFilesystem.m */,
 				9F1E8CDC16E16EB800F1C908 /* ADBMountableImage.h */,
 				9F1E8CDD16E16EB800F1C908 /* ADBMountableImage.m */,
+				9F80E7FD16DA316F001C3162 /* ADBFileHandle.h */,
+				9F80E7FE16DA316F001C3162 /* ADBFileHandle.m */,
 				9FC7481F122A7C8B00E86E6A /* ADBPathEnumerator.h */,
 				9FC74820122A7C8B00E86E6A /* ADBPathEnumerator.m */,
 				9FC8F50A10934F3400AD6307 /* NSString+ADBPaths.h */,
@@ -4293,6 +4299,7 @@
 				9F7721E912B38C4400072AE8 /* shell_batch.cpp in Sources */,
 				9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */,
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
+				9F8B282A1709C4A100B31A14 /* ADBFilesystemBase.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4596,6 +4603,7 @@
 				9F1E8CDF16E16EB800F1C908 /* ADBMountableImage.m in Sources */,
 				9FCA937D16FF37A000720B81 /* BXDocumentationPanelController.m in Sources */,
 				9FCA937E16FF38E700720B81 /* BXDocumentationBrowser.m in Sources */,
+				9F8B282B1709C4A100B31A14 /* ADBFilesystemBase.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

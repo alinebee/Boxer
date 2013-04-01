@@ -181,9 +181,9 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 //This enumerator should respect the same parameters as NSFileManager's
 //enumeratorAtURL:includingPropertiesForKeys:options:errorHandler: method.
 - (id <ADBFilesystemFileURLEnumeration>) enumeratorAtFileURL: (NSURL *)URL
-                                       includingPropertiesForKeys: (NSArray *)keys
-                                                          options: (NSDirectoryEnumerationOptions)mask
-                                                     errorHandler: (ADBFilesystemFileURLErrorHandler)errorHandler;
+                                  includingPropertiesForKeys: (NSArray *)keys
+                                                     options: (NSDirectoryEnumerationOptions)mask
+                                                errorHandler: (ADBFilesystemFileURLErrorHandler)errorHandler;
 
 @end
 

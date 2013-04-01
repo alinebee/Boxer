@@ -36,15 +36,15 @@ enum
 @end
 
 @interface BXSessionCannotMountSystemFolderError : BXSessionError
-+ (id) errorWithPath: (NSString *)systemFolderPath userInfo: (NSDictionary *)userInfo;
++ (id) errorWithPath: (NSString *)systemFolderPath userInfo: (NSDictionary *)userInfo __deprecated;
 @end
 
 @interface BXImportNoExecutablesError : BXImportError
-+ (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo;
++ (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo __deprecated;
 @end
 
 @interface BXImportWindowsOnlyError : BXImportError
-+ (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo;
++ (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo __deprecated;
 - (NSString *) helpAnchor;
 @end
 

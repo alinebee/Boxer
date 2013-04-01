@@ -187,11 +187,11 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 
 + (id) errorWithSourcePath: (NSString *)sourcePath drive: (BXDrive *)drive userInfo: (NSDictionary *)userInfo
 {
-    NSString *drivePath = drive.path;
+    NSString *drivePath = drive.sourceURL.path;
 	NSString *descriptionFormat = NSLocalizedString(@"“%1$@” requires extra files that are currently unavailable.",
                                                     @"Error message shown when importing a folder that has missing drives. %1$@ is the display filename of the imported path.");
 	
-	NSString *suggestionFormat = NSLocalizedString(@"Please ensure that the path “%1$@” is available, then retry the import.",
+	NSString *suggestionFormat = NSLocalizedString(@"Please ensure that the resource “%1$@” is available, then retry the import.",
                                                    @"Informative text of warning shown when importing a folder that has missing drives. %1$@ is the missing drive path.");
 	
     //NSValueTransformer *drivePathFormatter = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];

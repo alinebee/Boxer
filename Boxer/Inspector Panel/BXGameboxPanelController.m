@@ -13,6 +13,7 @@
 #import "BXFileTypes.h"
 #import "BXBaseAppController.h"
 #import "BXGamebox.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 #import "NSString+ADBPaths.h"
 
 
@@ -153,7 +154,7 @@ enum {
     else if (self.session.principalDrive)
         initialLocation = self.session.principalDrive.mountPointURL;
     else
-        initialLocation = self.session.gamebox.bundleURL;
+        initialLocation = self.session.gamebox.resourceURL;
     
     openPanel.directoryURL = initialLocation;
     
@@ -194,12 +195,11 @@ enum {
 - (BOOL) panel: (id)sender shouldEnableURL: (NSURL *)URL
 {
 	BXSession *session = self.session;
-    NSString *path = URL.path;
     
 	//Disable files that are outside the gamebox or that aren't accessible in DOS.
-	if (![path isRootedInPath: session.gamebox.gamePath]) return NO;
+	if (![URL isBasedInURL: session.gamebox.resourceURL]) return NO;
     
-	if (![session.emulator pathIsDOSAccessible: path]) return NO;
+	if (![session.emulator pathIsDOSAccessible: URL.path]) return NO;
     
 	return YES;
 }

@@ -30,7 +30,7 @@ typedef enum {
 #pragma mark -
 #pragma mark Interface
 
-@protocol ADBFilesystemPathAccess;
+@protocol ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess;
 @interface BXDrive : NSObject
 {
     NSURL *_sourceURL;
@@ -56,7 +56,7 @@ typedef enum {
     BOOL _hasAutodetectedVolumeLabel;
     BOOL _hasAutodetectedType;
     
-    id <ADBFilesystemPathAccess> _filesystem;
+    id <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess> _filesystem;
 }
 
 
@@ -235,91 +235,5 @@ typedef enum {
 
 //Sorts drives by drive letter.
 - (NSComparisonResult) letterCompare: (BXDrive *)comparison;
-
-@end
-
-
-
-#pragma mark - Legacy API
-
-//This is the old NSString path-based API from which we are converting to the NSURL API above.
-//This will be removed once all legacy code has been converted.
-
-@interface BXDrive (BXLegacyPathAPI)
-
-#pragma mark - Properties
-
-//The absolute path on the OS X filesystem which represents this drive.
-//This may or may not be the same as the path that gets mounted in DOS:
-//see mountPoint below.
-@property (copy, nonatomic) NSString *path __deprecated;
-
-//The absolute path to the source file or folder that will get mounted
-//in DOS for this drive. Usually this is the same as path, but may differ
-//for drive packages.
-@property (readonly, nonatomic) NSString *mountPoint __deprecated;
-
-//An optional absolute path on the OS X filesystem to which we will perform
-//shadow write operations for this drive. That is, any files that are
-//opened for modification on this drive will be silently written to this
-//location instead of creating/modifying files in the original path.
-@property (copy, nonatomic) NSString *shadowPath __deprecated;
-
-//Equivalent to isVirtual.
-@property (readonly, nonatomic) BOOL isInternal __deprecated;
-
-
-#pragma mark - Helper class methods
-
-//Auto-detects the appropriate drive type for the specified path, based on the path's UTI and the
-//filesystem of the path's volume: e.g. folders located on CD-ROM volume will be detected as CD-ROMs.
-+ (BXDriveType) preferredTypeForPath: (NSString *)filePath __deprecated;
-
-//Autogenerates a suitable DOS volume label for the specified path.
-//For regular folders and CD-ROM volumes, this will be their filename;
-//For .floppy, .cdrom, .cdmedia and .harddisk folders, this will be their filename
-//minus extension and parsed drive letter (see preferredDriveLetterForPath: below.)
-+ (NSString *) preferredVolumeLabelForPath: (NSString *)filePath __deprecated;
-
-
-#pragma mark - Initializers
-
-//Return a new nonretained drive with the specified parameters.
-+ (id) driveFromPath: (NSString *)drivePath
-            atLetter: (NSString *)driveLetter
-            withType: (BXDriveType)driveType __deprecated;
-
-//Return a new nonretained drive, autodetecting the appropriate drive type.
-+ (id) driveFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter __deprecated;
-
-//Return a new nonretained drive initialized as the appropriate type.
-+ (id) CDROMFromPath:		(NSString *)drivePath atLetter: (NSString *)driveLetter __deprecated;
-+ (id) floppyDriveFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter __deprecated;
-+ (id) hardDriveFromPath:	(NSString *)drivePath atLetter: (NSString *)driveLetter __deprecated;
-+ (id) internalDriveAtLetter: (NSString *)driveLetter __deprecated;
-
-
-#pragma mark - Introspecting the drive
-
-//Returns whether the file at the specified path is equivalent to this drive.
-//This is mostly used for determining whether a path is already mounted as a DOS drive.
-- (BOOL) representsPath: (NSString *)basePath __deprecated;
-
-//Returns whether the file at the specified path would be accessible in DOS from this drive.
-//This is determined by checking if the mount path of this drive is a parent of the
-//specified path.
-- (BOOL) exposesPath: (NSString *)subPath __deprecated;
-
-//Returns the location of the specified path relative to the root of the drive,
-//or nil if the specified path was not present on this drive.
-//Used by BXDOSFileSystem for matching OS X filesystem paths with DOS filesystem paths.
-- (NSString *) relativeLocationOfPath: (NSString *)realPath __deprecated;
-
-
-#pragma mark - Sort comparisons
-
-//Sorts drives based on how deep their source URL is.
-//This is used for resolving URLs and paths on nested drives.
-- (NSComparisonResult) pathDepthCompare: (BXDrive *)comparison __deprecated;
 
 @end

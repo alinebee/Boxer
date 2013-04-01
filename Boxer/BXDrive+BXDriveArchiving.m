@@ -48,10 +48,10 @@
         {
 #define URL_FROM_BOOKMARK(bookmark) ((NSURL *)[NSURL URLByResolvingBookmarkData: bookmark options: NSURLBookmarkResolutionWithoutUI relativeToURL: nil bookmarkDataIsStale: NULL error: NULL])
             
-            NSData *sourcePathBookmarkData = [aDecoder decodeObjectForKey: @"sourceURLBookmark"];
-            if (sourcePathBookmarkData)
+            NSData *sourceBookmarkData = [aDecoder decodeObjectForKey: @"sourceURLBookmark"];
+            if (sourceBookmarkData)
             {
-                self.sourceURL = URL_FROM_BOOKMARK(sourcePathBookmarkData);
+                self.sourceURL = URL_FROM_BOOKMARK(sourceBookmarkData);
             }
             //If we couldn't resolve the bookmark to this drive's path, this drive is useless
             //and we shouldn't bother continuing.
@@ -61,10 +61,10 @@
                 return nil;
             }
             
-            NSData *shadowPathBookmarkData = [aDecoder decodeObjectForKey: @"shadowURLBookmark"];
-            if (shadowPathBookmarkData)
+            NSData *shadowBookmarkData = [aDecoder decodeObjectForKey: @"shadowURLBookmark"];
+            if (shadowBookmarkData)
             {
-                self.shadowURL = URL_FROM_BOOKMARK(shadowPathBookmarkData);
+                self.shadowURL = URL_FROM_BOOKMARK(shadowBookmarkData);
             }
             
             NSData *mountPointBookmarkData = [aDecoder decodeObjectForKey: @"mountPointURLBookmark"];
@@ -97,10 +97,10 @@
                 [(NSKeyedUnarchiver *)aDecoder setClass: [__NDAliasDecoder class]
                                            forClassName: @"NDAlias"];
             
-            NSData *sourcePathAliasData = [aDecoder decodeObjectForKey: @"path"];
-            if (sourcePathAliasData)
+            NSData *sourceAliasData = [aDecoder decodeObjectForKey: @"path"];
+            if (sourceAliasData)
             {
-                self.sourceURL = URL_FROM_ALIAS(sourcePathAliasData);
+                self.sourceURL = URL_FROM_ALIAS(sourceAliasData);
             }
             
             if (self.sourceURL == nil)
@@ -109,9 +109,9 @@
                 return nil;
             }
             
-            NSData *shadowPathAliasData = [aDecoder decodeObjectForKey: @"shadowPath"];
-            if (shadowPathAliasData)
-                self.shadowURL = URL_FROM_ALIAS(shadowPathAliasData);
+            NSData *shadowAliasData = [aDecoder decodeObjectForKey: @"shadowPath"];
+            if (shadowAliasData)
+                self.shadowURL = URL_FROM_ALIAS(shadowAliasData);
             
             NSData *mountPointAliasData = [aDecoder decodeObjectForKey: @"mountPoint"];
             if (mountPointAliasData)

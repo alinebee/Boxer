@@ -156,7 +156,7 @@ enum {
 
 - (NSPredicate *) driveFilterPredicate
 {
-    return [NSPredicate predicateWithFormat: @"isHidden = NO && isInternal = NO"];
+    return [NSPredicate predicateWithFormat: @"isHidden = NO && isVirtual = NO"];
 }
 
 - (void) setSelectedDriveIndexes: (NSIndexSet *)indexes
@@ -204,13 +204,17 @@ enum {
 
 - (IBAction) revealSelectedDrivesInFinder: (id)sender
 {
+    NSMutableArray *URLsToReveal = [NSMutableArray arrayWithCapacity: 2];
 	for (BXDrive *drive in self.selectedDrives)
     {
-        [[NSApp delegate] revealPath: drive.path];
-        //Also reveal the drive's shadow directory, if it has one.
-        if (drive.shadowPath)
-            [[NSApp delegate] revealPath: drive.shadowPath];
+        if (drive.sourceURL != nil)
+            [URLsToReveal addObject: drive.sourceURL];
+        
+        if (drive.shadowURL != nil)
+            [URLsToReveal addObject: drive.shadowURL];
     }
+    
+    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: URLsToReveal];
 }
 
 
@@ -578,14 +582,15 @@ enum {
     writeItemsAtIndexes: (NSIndexSet *)indexes
            toPasteboard: (NSPasteboard *)pasteboard
 {
-    //Get a list of all file paths of the selected drives
-    NSArray *chosenDrives = [self.drives objectsAtIndexes: indexes];
-    NSArray *filePaths = [chosenDrives valueForKeyPath: @"path"];
+    NSArray *draggedDrives = [self.drives objectsAtIndexes: indexes];
+    NSArray *draggedURLs = [draggedDrives valueForKey: @"sourceURL"];
     
-    [pasteboard declareTypes: [NSArray arrayWithObject: NSFilenamesPboardType] owner: self];	
-    [pasteboard setPropertyList: filePaths forType: NSFilenamesPboardType];
-    
-    return YES;
+    if (draggedURLs.count)
+    {
+        [pasteboard clearContents];
+        return [pasteboard writeObjects: draggedURLs];
+    }
+    else return NO;
 }
 
 - (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal

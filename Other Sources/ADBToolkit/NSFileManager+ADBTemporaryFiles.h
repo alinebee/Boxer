@@ -38,6 +38,6 @@ extern NSString * const ADBTemporaryFilesErrorDomain;
 //Creates a new temporary directory in the system temp directory with the specified prefix,
 //to which will be appended a path extension of 8 randomly generated digits (a la mkdtemp()).
 //Returns the full path to the new temporary directory, or nil and sets error if an error occurred.
-- (NSString *) createTemporaryDirectoryWithPrefix: (NSString *)namePrefix error: (NSError **)outError;
+- (NSString *) createTemporaryDirectoryWithPrefix: (NSString *)namePrefix error: (NSError **)outError __deprecated;
 
 @end

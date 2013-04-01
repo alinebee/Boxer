@@ -116,7 +116,7 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 //These URLs do not necessarily exist in the real OS X filesystem and may not be usable by
 //standard NSURL introspection methods or AppKit loading methods. They are intended mainly
 //for storing filesystem-unique paths and simplifying lookups across multiple filesystems.
-@protocol ADBFilesystemLogicalURLAccess <ADBFilesystemPathAccess>
+@protocol ADBFilesystemLogicalURLAccess <NSObject>
 
 //Return the canonical logical URL for the specified filesystem-relative path.
 - (NSURL *) logicalURLForPath: (NSString *)path;
@@ -125,6 +125,7 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 //Return nil if the specified URL is not resolvable within this filesystem.
 - (NSString *) pathForLogicalURL: (NSURL *)URL;
 
+
 //Return whether the specified logical URL is resolvable within this filesystem.
 - (BOOL) exposesLogicalURL: (NSURL *)URL;
 
@@ -132,9 +133,6 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 //of the filesystem or equivalent to it in some other way (e.g. the URL represents
 //the mounted filesystem location of a disk image that is the source of the filesystem.)
 - (BOOL) representsLogicalURL: (NSURL *)URL;
-
-
-@optional
 
 //Mark the specified URL as representing this filesystem, such that the filesystem will
 //resolve logical URLs that are located within that URL.
@@ -164,7 +162,7 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 //It is not required that URLs will be identical when 'round-tripped' through these methods.
 
 @protocol ADBFilesystemLocalFileURLEnumeration;
-@protocol ADBFilesystemLocalFileURLAccess <ADBFilesystemPathAccess>
+@protocol ADBFilesystemLocalFileURLAccess <NSObject>
 
 //Return the canonical OS X filesystem URL that corresponds
 //to the specified logical filesystem path.

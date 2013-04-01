@@ -1427,7 +1427,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
           onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    id <ADBFilesystemPathAccess, ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
     NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
               @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
@@ -1455,7 +1455,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                        onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    id <ADBFilesystemPathAccess, ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
     NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
               @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
@@ -1483,7 +1483,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                        onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    id <ADBFilesystemPathAccess, ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
     NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
               @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
@@ -1510,7 +1510,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
      onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    id <ADBFilesystemPathAccess, ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
     NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
               @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
@@ -1541,7 +1541,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                  onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    id <ADBFilesystemPathAccess, ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
     NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
               @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
@@ -1559,7 +1559,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
             onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    id <ADBFilesystemPathAccess, ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
     NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
               @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     
@@ -1577,7 +1577,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                                                                  onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    id <ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
+    id <ADBFilesystemPathAccess, ADBFilesystemLocalFileURLAccess> filesystem = (id)drive.filesystem;
     NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemLocalFileURLAccess)],
               @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
     

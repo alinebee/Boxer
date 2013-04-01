@@ -35,27 +35,22 @@
 
 
 #import <Foundation/Foundation.h>
-#import "ADBFilesystem.h"
+#import "ADBFilesystemBase.h"
 #import "ADBISOImageConstants.h"
 
 #pragma mark -
 #pragma mark Public interface
 
 @protocol ADBReadable, ADBSeekable;
-@interface ADBISOImage : NSObject <ADBFilesystemPathAccess>
+@interface ADBISOImage : ADBFilesystemBase <ADBFilesystemPathAccess>
 {
     id <ADBReadable, ADBSeekable> _handle;
     
-    NSURL *_baseURL;
     NSString *_volumeName;
     ADBISOFormat _format;
     
     NSMutableDictionary *_pathCache;
 }
-
-//The filesystem location of the image file from which this is loaded.
-//This is also used as the base URL for image-relative URLs.
-@property (readonly, copy, nonatomic) NSURL *baseURL;
 
 //The name of the image volume.
 @property (readonly, copy, nonatomic) NSString *volumeName;

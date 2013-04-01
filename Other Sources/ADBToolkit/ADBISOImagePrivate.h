@@ -37,7 +37,6 @@
 
 @interface ADBISOImage ()
 
-@property (copy, nonatomic) NSURL *baseURL;
 @property (copy, nonatomic) NSString *volumeName;
 @property (assign, nonatomic) ADBISOFormat format;
 
@@ -46,8 +45,7 @@
 @property (retain, nonatomic) NSMutableDictionary *pathCache;
 
 
-#pragma mark -
-#pragma mark Private helper class methods
+#pragma mark - Private helper class methods
 
 //Autodetects the format of the ISO at the specified location.
 //This is done by scanning for strings at known offsets in each

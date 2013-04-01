@@ -25,22 +25,15 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "ADBFilesystem.h"
+#import "ADBFilesystemBase.h"
 
-//ADBLocalFilesystem is a thin implementation of the ADBFilesystem protocol which wraps
+//ADBLocalFilesystem is a thin implementation of ADBFilesystem protocols which wraps
 //a location on the OS X filesystem.
 
-@interface ADBLocalFilesystem : NSObject <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess, ADBFilesystemLocalFileURLAccess>
+@interface ADBLocalFilesystem : ADBFilesystemBase <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess, ADBFilesystemLocalFileURLAccess>
 {
-    NSURL *_baseURL;
     NSFileManager *_manager;
-    NSMutableArray *_mutableRepresentedURLs;
 }
-
-//The OS X filesystem location that forms the root of this filesystem.
-//All paths will be resolved relative to this location, and the filesystem
-//will not provide access to locations outside of this root folder.
-@property (readonly, copy, nonatomic) NSURL *baseURL;
 
 #pragma mark - Constructors
 

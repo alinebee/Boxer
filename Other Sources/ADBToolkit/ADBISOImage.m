@@ -25,8 +25,8 @@
  */
 
 #import "ADBISOImagePrivate.h"
-#import "NSString+ADBPaths.h"
 #import "ADBFileHandle.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 
 #pragma mark - Constants
 
@@ -57,7 +57,6 @@ int extdate_to_int(uint8_t *digits, int length)
 
 @implementation ADBISOImage
 
-@synthesize baseURL = _baseURL;
 @synthesize volumeName = _volumeName;
 @synthesize pathCache = _pathCache;
 @synthesize format = _format;
@@ -212,7 +211,7 @@ int extdate_to_int(uint8_t *digits, int length)
 }
 
 
-#pragma mark - Path-based API
+#pragma mark - ADBFilesystemPathAccess API
 
 - (BOOL) fileExistsAtPath: (NSString *)path isDirectory: (BOOL *)isDir
 {

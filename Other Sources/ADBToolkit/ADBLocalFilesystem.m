@@ -82,12 +82,12 @@
 
 
 
-#pragma mark - ADBFilesystemLocalFileURLAccess implementation
+#pragma mark - ADBFilesystemFileURLAccess implementation
 
-- (NSString *) logicalPathForLocalFileURL: (NSURL *)URL
+- (NSString *) pathForFileURL: (NSURL *)URL
 {
     NSString *relativePath = nil;
-    if ([self exposesLocalFileURL: URL])
+    if ([self exposesFileURL: URL])
     {
         relativePath = [URL pathRelativeToURL: self.baseURL];
         return [@"/" stringByAppendingPathComponent: relativePath];
@@ -98,25 +98,25 @@
     }
 }
 
-- (BOOL) exposesLocalFileURL: (NSURL *)URL
+- (BOOL) exposesFileURL: (NSURL *)URL
 {
     return [URL isBasedInURL: self.baseURL];
 }
 
-- (NSURL *) localFileURLForLogicalPath: (NSString *)path
+- (NSURL *) fileURLForPath: (NSString *)path
 {
     //Ensure that paths such as "../path/outside/filesystem/" won't work
     path = path.stringByStandardizingPath;
     return [self.baseURL URLByAppendingPathComponent: path];
 }
 
-- (ADBLocalDirectoryEnumerator *) enumeratorAtLocalFileURL: (NSURL *)URL
+- (ADBLocalDirectoryEnumerator *) enumeratorAtFileURL: (NSURL *)URL
                                 includingPropertiesForKeys: (NSArray *)keys
                                                    options: (NSDirectoryEnumerationOptions)mask
-                                              errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler
+                                              errorHandler: (ADBFilesystemFileURLErrorHandler)errorHandler
 {
     //Refuse to enumerate URLs that aren't located within this filesystem.
-    if ([self exposesLocalFileURL: URL])
+    if ([self exposesFileURL: URL])
     {
         return [[[ADBLocalDirectoryEnumerator alloc] initWithURL: URL
                                                      inFilesytem: self
@@ -143,45 +143,45 @@
 
 - (BOOL) fileExistsAtPath: (NSString *)path isDirectory: (BOOL *)isDirectory
 {
-    NSURL *localURL = [self localFileURLForLogicalPath: path];
+    NSURL *localURL = [self fileURLForPath: path];
     return [self.manager fileExistsAtPath: localURL.path isDirectory: isDirectory];
 }
 
 - (NSString *) typeOfFileAtPath: (NSString *)path
 {
-    NSURL *localURL = [self localFileURLForLogicalPath: path];
+    NSURL *localURL = [self fileURLForPath: path];
     return localURL.typeIdentifier;
 }
 
 - (BOOL) fileAtPath: (NSString *)path conformsToType: (NSString *)UTI
 {
-    NSURL *localURL = [self localFileURLForLogicalPath: path];
+    NSURL *localURL = [self fileURLForPath: path];
     return [localURL conformsToFileType: UTI];
 }
 
 - (NSString *) typeOfFileAtPath: (NSString *)path matchingTypes: (NSSet *)UTIs
 {
-    NSURL *localURL = [self localFileURLForLogicalPath: path];
+    NSURL *localURL = [self fileURLForPath: path];
     return [localURL matchingFileType: UTIs];
 }
 
 - (NSDictionary *) attributesOfFileAtPath: (NSString *)path error: (out NSError **)outError
 {
-    NSURL *localURL = [self localFileURLForLogicalPath: path];
+    NSURL *localURL = [self fileURLForPath: path];
     return [[NSFileManager defaultManager] attributesOfItemAtPath: localURL.path
                                                             error: outError];
 }
 
 - (NSData *) contentsOfFileAtPath: (NSString *)path error: (out NSError **)outError
 {
-    NSURL *localURL = [self localFileURLForLogicalPath: path];
+    NSURL *localURL = [self fileURLForPath: path];
     return [NSData dataWithContentsOfURL: localURL options: 0 error: outError];
 }
 
 
 - (BOOL) removeItemAtPath: (NSString *)path error: (out NSError **)outError
 {
-    NSURL *localURL = [self localFileURLForLogicalPath: path];
+    NSURL *localURL = [self fileURLForPath: path];
     return [self.manager removeItemAtURL: localURL error: outError];
 }
 
@@ -190,8 +190,8 @@
                      copying: (BOOL)copying
                        error: (out NSError **)outError
 {
-    NSURL *fromURL  = [self localFileURLForLogicalPath: fromPath];
-    NSURL *toURL    = [self localFileURLForLogicalPath: toPath];
+    NSURL *fromURL  = [self fileURLForPath: fromPath];
+    NSURL *toURL    = [self fileURLForPath: toPath];
     if (copying)
         return [self.manager copyItemAtURL: fromURL toURL: toURL error: outError];
     else
@@ -212,7 +212,7 @@
    withIntermediateDirectories: (BOOL)createIntermediates
                          error: (out NSError **)outError
 {
-    NSURL *localURL = [self localFileURLForLogicalPath: path];
+    NSURL *localURL = [self fileURLForPath: path];
     return [self.manager createDirectoryAtURL: localURL
                   withIntermediateDirectories: createIntermediates
                                    attributes: nil
@@ -223,7 +223,7 @@
                              options: (ADBHandleOptions)options
                                error: (out NSError **)outError
 {
-    NSURL *localURL = [self localFileURLForLogicalPath: path];
+    NSURL *localURL = [self fileURLForPath: path];
     return [ADBFileHandle handleForURL: localURL options: options error: outError];
 }
 
@@ -231,7 +231,7 @@
                    inMode: (const char *)accessMode
                     error: (out NSError **)outError
 {
-    NSURL *localURL = [self localFileURLForLogicalPath: path];
+    NSURL *localURL = [self fileURLForPath: path];
     return [[ADBFileHandle handleForURL: localURL mode: accessMode error: outError] fileHandleAdoptingOwnership: YES];
 }
 
@@ -239,12 +239,12 @@
                                                options: (NSDirectoryEnumerationOptions)mask
                                           errorHandler: (ADBFilesystemPathErrorHandler)errorHandler
 {
-    NSURL *localURL = [self localFileURLForLogicalPath: path];
-    ADBFilesystemLocalFileURLErrorHandler wrappedHandler;
+    NSURL *localURL = [self fileURLForPath: path];
+    ADBFilesystemFileURLErrorHandler wrappedHandler;
     if (errorHandler)
     {
         wrappedHandler = ^BOOL(NSURL *url, NSError *error) {
-            NSString *logicalPath = [self logicalPathForLocalFileURL: url];
+            NSString *logicalPath = [self pathForFileURL: url];
             return errorHandler(logicalPath, error);
         };
     }
@@ -276,7 +276,7 @@
 includingPropertiesForKeys: (NSArray *)keys
            options: (NSDirectoryEnumerationOptions)mask
         returnURLs: (BOOL)returnURLs
-      errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler
+      errorHandler: (ADBFilesystemFileURLErrorHandler)errorHandler
 {
     self = [self init];
     if (self)
@@ -309,7 +309,7 @@ includingPropertiesForKeys: (NSArray *)keys
     else if (_returnsFileURLs)
         return self.currentURL;
     else
-        return [self.filesystem logicalPathForLocalFileURL: self.currentURL];
+        return [self.filesystem pathForFileURL: self.currentURL];
 }
 
 - (void) skipDescendants

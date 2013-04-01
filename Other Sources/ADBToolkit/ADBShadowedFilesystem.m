@@ -66,7 +66,7 @@ NSString * const ADBShadowedDeletionMarkerExtension = @"deleted";
 //filesystems into a single filesystem. Any files and directories marked as deleted will be skipped.
 //Note that this will return shadowed files first followed by untouched original files, rather
 //than the straight depth-first traversal performed by NSDirectoryEnumerator.
-@interface ADBShadowedDirectoryEnumerator : NSEnumerator <ADBFilesystemPathEnumeration, ADBFilesystemLocalFileURLEnumeration>
+@interface ADBShadowedDirectoryEnumerator : NSEnumerator <ADBFilesystemPathEnumeration, ADBFilesystemFileURLEnumeration>
 {
     BOOL _returnsFileURLs;
     NSDirectoryEnumerator *_localEnumerator;
@@ -87,7 +87,7 @@ NSString * const ADBShadowedDeletionMarkerExtension = @"deleted";
 includingPropertiesForKeys: (NSArray *)keys
                 options: (NSDirectoryEnumerationOptions)mask
              returnURLs: (BOOL)returnURLs
-           errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler;
+           errorHandler: (ADBFilesystemFileURLErrorHandler)errorHandler;
 
 @end
 
@@ -148,7 +148,7 @@ includingPropertiesForKeys: (NSArray *)keys
 
 #pragma mark - Path translation
 
-- (NSString *) logicalPathForLocalFileURL: (NSURL *)URL
+- (NSString *) pathForFileURL: (NSURL *)URL
 {
     if (self.shadowURL)
     {
@@ -173,11 +173,11 @@ includingPropertiesForKeys: (NSArray *)keys
     }
     else
     {
-        return [super logicalPathForLocalFileURL: URL];
+        return [super pathForFileURL: URL];
     }
 }
 
-- (NSURL *) localFileURLForLogicalPath: (NSString *)path
+- (NSURL *) fileURLForPath: (NSString *)path
 {
     if (self.shadowURL)
     {
@@ -199,22 +199,25 @@ includingPropertiesForKeys: (NSArray *)keys
     }
     else
     {
-        return [super localFileURLForLogicalPath: path];
+        return [super fileURLForPath: path];
     }
 }
 
-- (BOOL) exposesLocalFileURL: (NSURL *)URL
+- (BOOL) exposesFileURL: (NSURL *)URL
 {
+    NSAssert(URL != nil, @"No URL provided!");
     return [URL isBasedInURL: self.baseURL] || [URL isBasedInURL: self.shadowURL];
 }
 
 - (NSURL *) _shadowedURLForLogicalPath: (NSString *)path
 {
+    NSAssert(path != nil, @"No path provided!");
     return [self.shadowURL URLByAppendingPathComponent: path.stringByStandardizingPath];
 }
 
 - (NSURL *) _sourceURLForLogicalPath: (NSString *)path
 {
+    NSAssert(path != nil, @"No path provided!");
     return [self.baseURL URLByAppendingPathComponent: path.stringByStandardizingPath];
 }
 
@@ -292,11 +295,11 @@ includingPropertiesForKeys: (NSArray *)keys
         NSURL *sourceURL = [self _sourceURLForLogicalPath: path];
         NSURL *shadowedURL = [self _shadowedURLForLogicalPath: path];
         
-        ADBFilesystemLocalFileURLErrorHandler wrappedHandler;
+        ADBFilesystemFileURLErrorHandler wrappedHandler;
         if (errorHandler)
         {
             wrappedHandler = ^BOOL(NSURL *url, NSError *error) {
-                NSString *logicalPath = [self logicalPathForLocalFileURL: url];
+                NSString *logicalPath = [self pathForFileURL: url];
                 return errorHandler(logicalPath, error);
             };
         }
@@ -561,18 +564,18 @@ includingPropertiesForKeys: (NSArray *)keys
 
 
 
-#pragma mark - ADBFilesystemLocalFileURLAccess methods
+#pragma mark - ADBFilesystemFileURLAccess methods
 
-- (id <ADBFilesystemLocalFileURLEnumeration>) enumeratorAtLocalFileURL: (NSURL *)URL
+- (id <ADBFilesystemFileURLEnumeration>) enumeratorAtFileURL: (NSURL *)URL
                                             includingPropertiesForKeys: (NSArray *)keys
                                                                options: (NSDirectoryEnumerationOptions)options
-                                                          errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler
+                                                          errorHandler: (ADBFilesystemFileURLErrorHandler)errorHandler
 {
     if (self.shadowURL)
     {
-        if ([self exposesLocalFileURL: URL])
+        if ([self exposesFileURL: URL])
         {
-            NSString *path = [self logicalPathForLocalFileURL: URL];
+            NSString *path = [self pathForFileURL: URL];
             NSURL *sourceURL = [self _sourceURLForLogicalPath: path];
             NSURL *shadowedURL = [self _shadowedURLForLogicalPath: path];
             
@@ -599,7 +602,7 @@ includingPropertiesForKeys: (NSArray *)keys
     }
     else
     {
-        return [super enumeratorAtLocalFileURL: URL
+        return [super enumeratorAtFileURL: URL
                     includingPropertiesForKeys: keys
                                        options: options
                                   errorHandler: errorHandler];
@@ -1042,7 +1045,7 @@ includingPropertiesForKeys: (NSArray *)keys
 includingPropertiesForKeys: (NSArray *)keys
                 options: (NSDirectoryEnumerationOptions)mask
              returnURLs: (BOOL)returnURLs
-           errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler
+           errorHandler: (ADBFilesystemFileURLErrorHandler)errorHandler
 {
     self = [self init];
     if (self)
@@ -1129,7 +1132,7 @@ includingPropertiesForKeys: (NSArray *)keys
     else if (_returnsFileURLs)
         return nextURL;
     else
-        return [self.filesystem logicalPathForLocalFileURL: nextURL];
+        return [self.filesystem pathForFileURL: nextURL];
 }
 
 - (NSURL *) _nextURLFromLocal
@@ -1137,7 +1140,7 @@ includingPropertiesForKeys: (NSArray *)keys
     NSURL *nextURL;
     while ((nextURL = [self.localEnumerator nextObject]) != nil)
     {
-        NSString *filesystemPath = [self.filesystem logicalPathForLocalFileURL: nextURL];
+        NSString *filesystemPath = [self.filesystem pathForFileURL: nextURL];
         
         //If this path was marked as deleted in the shadow, ignore it
         //and skip any descendants if it was a directory.
@@ -1161,7 +1164,7 @@ includingPropertiesForKeys: (NSArray *)keys
     NSURL *nextURL;
     while ((nextURL = [self.shadowEnumerator nextObject]) != nil)
     {
-        NSString *filesystemPath = [self.filesystem logicalPathForLocalFileURL: nextURL];
+        NSString *filesystemPath = [self.filesystem pathForFileURL: nextURL];
         
         //Skip over shadow deletion markers, but mark the filename so that we'll also skip
         //the 'deleted' version when enumerating the original source location.

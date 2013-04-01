@@ -236,7 +236,7 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
 
 #pragma mark - Path translation
 
-- (NSString *) logicalPathForLocalFileURL: (NSURL *)URL
+- (NSString *) pathForFileURL: (NSURL *)URL
 {
     NSString *relativePath = nil;
     NSURL *mountedURL = [self volumeURLMountingIfNeeded: YES error: NULL];
@@ -254,7 +254,7 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
     }
 }
 
-- (NSURL *) localFileURLForLogicalPath: (NSString *)path
+- (NSURL *) fileURLForPath: (NSString *)path
 {
     //Ensure that paths such as "../path/outside/filesystem/" won't work
     path = path.stringByStandardizingPath;
@@ -292,10 +292,10 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
 }
 
 
-- (ADBLocalDirectoryEnumerator *) enumeratorAtLocalFileURL: (NSURL *)URL
+- (ADBLocalDirectoryEnumerator *) enumeratorAtFileURL: (NSURL *)URL
                                 includingPropertiesForKeys: (NSArray *)keys
                                                    options: (NSDirectoryEnumerationOptions)mask
-                                              errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler
+                                              errorHandler: (ADBFilesystemFileURLErrorHandler)errorHandler
 {
     NSError *mountingError = nil;
     NSURL *mountedURL = [self volumeURLMountingIfNeeded: YES error: &mountingError];

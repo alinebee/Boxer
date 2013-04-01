@@ -29,7 +29,7 @@
 #import "ADBEnumerationHelpers.h"
 
 typedef BOOL (^ADBFilesystemPathErrorHandler)(NSString *path, NSError *error);
-typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error);
+typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 
 
 #pragma mark Relative path-based filesystem access
@@ -161,29 +161,29 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 
 //It is not required that URLs will be identical when 'round-tripped' through these methods.
 
-@protocol ADBFilesystemLocalFileURLEnumeration;
-@protocol ADBFilesystemLocalFileURLAccess <NSObject>
+@protocol ADBFilesystemFileURLEnumeration;
+@protocol ADBFilesystemFileURLAccess <NSObject>
 
 //Return the canonical OS X filesystem URL that corresponds
 //to the specified logical filesystem path.
-- (NSURL *) localFileURLForLogicalPath: (NSString *)path;
+- (NSURL *) fileURLForPath: (NSString *)path;
 
 //Return the logical filesystem path corresponding to the specified OS X filesystem URL.
 //Return nil if the specified URL is not accessible within this filesystem.
-- (NSString *) logicalPathForLocalFileURL: (NSURL *)URL;
+- (NSString *) pathForFileURL: (NSURL *)URL;
 
 //Whether the specified file URL is accessible under this filesystem.
-- (BOOL) exposesLocalFileURL: (NSURL *)URL;
+- (BOOL) exposesFileURL: (NSURL *)URL;
 
 
 //Returns an enumerator for the specified local filesystem URL, which will return NSURL objects
 //pointing to resources on the local filesystem.
 //This enumerator should respect the same parameters as NSFileManager's
 //enumeratorAtURL:includingPropertiesForKeys:options:errorHandler: method.
-- (id <ADBFilesystemLocalFileURLEnumeration>) enumeratorAtLocalFileURL: (NSURL *)URL
-                                            includingPropertiesForKeys: (NSArray *)keys
-                                                               options: (NSDirectoryEnumerationOptions)mask
-                                                          errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler;
+- (id <ADBFilesystemFileURLEnumeration>) enumeratorAtFileURL: (NSURL *)URL
+                                       includingPropertiesForKeys: (NSArray *)keys
+                                                          options: (NSDirectoryEnumerationOptions)mask
+                                                     errorHandler: (ADBFilesystemFileURLErrorHandler)errorHandler;
 
 @end
 
@@ -208,10 +208,10 @@ typedef BOOL (^ADBFilesystemLocalFileURLErrorHandler)(NSURL *url, NSError *error
 
 @end
 
-@protocol ADBFilesystemLocalFileURLEnumeration <NSObject, ADBStepwiseEnumeration>
+@protocol ADBFilesystemFileURLEnumeration <NSObject, ADBStepwiseEnumeration>
 
 //The parent filesystem represented by this enumerator.
-- (id <ADBFilesystemLocalFileURLAccess>) filesystem;
+- (id <ADBFilesystemFileURLAccess>) filesystem;
 
 - (void) skipDescendants;
 - (NSUInteger) level;

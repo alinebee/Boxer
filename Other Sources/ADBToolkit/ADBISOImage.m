@@ -215,6 +215,7 @@ int extdate_to_int(uint8_t *digits, int length)
 
 - (BOOL) fileExistsAtPath: (NSString *)path isDirectory: (BOOL *)isDir
 {
+    path = path.stringByStandardizingPath; //Clear up . and .. path entries
     ADBISOFileEntry *entry = [self _fileEntryAtPath: path error: NULL];
     if (entry)
     {

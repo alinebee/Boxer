@@ -157,7 +157,7 @@ enum {
 @end
 
 
-@protocol ADBFilesystemLocalFileURLEnumeration;
+@protocol ADBFilesystemFileURLEnumeration;
 @interface BXEmulator (BXDOSFileSystemInternals)
 
 #pragma mark - Translating between Boxer and DOSBox drives
@@ -295,7 +295,7 @@ enum {
 - (BOOL) _localFileExists: (const char *)path
             onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-- (id <ADBFilesystemLocalFileURLEnumeration>) _directoryEnumeratorForLocalPath: (const char *)path
+- (id <ADBFilesystemFileURLEnumeration>) _directoryEnumeratorForLocalPath: (const char *)path
                                                                  onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
 @end

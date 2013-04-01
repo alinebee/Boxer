@@ -45,7 +45,7 @@
 //An extremely thin wrapper for an NSDirectoryEnumerator to implement
 //the ADBFilesystem enumeration protocols and allow filesystem-relative
 //paths to be returned.
-@interface ADBLocalDirectoryEnumerator : NSEnumerator <ADBFilesystemPathEnumeration, ADBFilesystemLocalFileURLEnumeration>
+@interface ADBLocalDirectoryEnumerator : NSEnumerator <ADBFilesystemPathEnumeration, ADBFilesystemFileURLEnumeration>
 {
     BOOL _returnsFileURLs;
     NSDirectoryEnumerator *_enumerator;
@@ -62,6 +62,6 @@
 includingPropertiesForKeys: (NSArray *)keys
            options: (NSDirectoryEnumerationOptions)mask
         returnURLs: (BOOL)returnURLs
-      errorHandler: (ADBFilesystemLocalFileURLErrorHandler)errorHandler;
+      errorHandler: (ADBFilesystemFileURLErrorHandler)errorHandler;
 
 @end

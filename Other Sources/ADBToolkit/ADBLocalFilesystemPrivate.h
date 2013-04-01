@@ -36,6 +36,9 @@
 //Our own file manager for internal use.
 @property (retain, nonatomic) NSFileManager *manager;
 
+//An array of represented URLs sorted by length, used for logical URL resolution.
+@property (retain, nonatomic) NSMutableArray *mutableRepresentedURLs;
+
 //A base implementation for copyItemAtPath:toPath:error: and moveItemAtPath:toPath:error:,
 //which share 95% of their logic.
 - (BOOL) _transferItemAtPath: (NSString *)fromPath

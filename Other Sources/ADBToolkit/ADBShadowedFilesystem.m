@@ -133,10 +133,16 @@ includingPropertiesForKeys: (NSArray *)keys
                          isDirectory: YES];
     }
     
-    if (![URL isEqual: self.shadowURL])
+    if (![URL isEqual: _shadowURL])
     {
+        if (_shadowURL)
+            [self removeRepresentedURL: _shadowURL];
+        
         [_shadowURL release];
         _shadowURL = [URL copy];
+        
+        if (_shadowURL)
+            [self addRepresentedURL: _shadowURL];
     }
 }
 
@@ -147,8 +153,10 @@ includingPropertiesForKeys: (NSArray *)keys
     if (self.shadowURL)
     {
         NSString *relativePath = nil;
+        
         if ([URL isBasedInURL: self.baseURL])
             relativePath = [URL pathRelativeToURL: self.baseURL];
+        
         else if ([URL isBasedInURL: self.shadowURL])
             relativePath = [URL pathRelativeToURL: self.shadowURL];
         
@@ -193,6 +201,11 @@ includingPropertiesForKeys: (NSArray *)keys
     {
         return [super localFileURLForLogicalPath: path];
     }
+}
+
+- (BOOL) exposesLocalFileURL: (NSURL *)URL
+{
+    return [URL isBasedInURL: self.baseURL] || [URL isBasedInURL: self.shadowURL];
 }
 
 - (NSURL *) _shadowedURLForLogicalPath: (NSString *)path
@@ -557,7 +570,7 @@ includingPropertiesForKeys: (NSArray *)keys
 {
     if (self.shadowURL)
     {
-        if ([URL isBasedInURL: self.baseURL])
+        if ([self exposesLocalFileURL: URL])
         {
             NSString *path = [self logicalPathForLocalFileURL: URL];
             NSURL *sourceURL = [self _sourceURLForLogicalPath: path];

@@ -127,6 +127,22 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
     [super dealloc];
 }
 
+- (void) setMountedVolumeURL: (NSURL *)URL
+{
+    if (![URL isEqual: _mountedVolumeURL])
+    {
+        if (_mountedVolumeURL)
+            [self removeRepresentedURL: _mountedVolumeURL];
+        
+        [_mountedVolumeURL release];
+        _mountedVolumeURL = [URL copy];
+        
+        if (_mountedVolumeURL)
+            [self addRepresentedURL: _mountedVolumeURL];
+        
+    }
+}
+
 
 #pragma mark - Mounting and unmounting
 

@@ -30,10 +30,11 @@
 //ADBLocalFilesystem is a thin implementation of the ADBFilesystem protocol which wraps
 //a location on the OS X filesystem.
 
-@interface ADBLocalFilesystem : NSObject <ADBFilesystemPathAccess, ADBFilesystemLocalFileURLAccess>
+@interface ADBLocalFilesystem : NSObject <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess, ADBFilesystemLocalFileURLAccess>
 {
     NSURL *_baseURL;
     NSFileManager *_manager;
+    NSMutableArray *_mutableRepresentedURLs;
 }
 
 //The OS X filesystem location that forms the root of this filesystem.

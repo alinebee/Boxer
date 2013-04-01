@@ -93,8 +93,8 @@
     if (baseURL == nil)
         return NO;
     
-    NSString *basePath = baseURL.path;
-    NSString *originalPath = self.path;
+    NSString *basePath = baseURL.URLByStandardizingPath.path;
+    NSString *originalPath = self.URLByStandardizingPath.path;
     
     if ([originalPath isEqualToString: basePath])
         return YES;

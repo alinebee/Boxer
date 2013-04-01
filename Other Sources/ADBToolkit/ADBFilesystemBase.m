@@ -73,7 +73,10 @@
     for (NSURL *representedURL in self.mutableRepresentedURLs)
     {
         if ([URL isBasedInURL: representedURL])
-            return [URL pathRelativeToURL: representedURL];
+        {
+            NSString *relativePath = [URL pathRelativeToURL: representedURL];
+            return [@"/" stringByAppendingPathComponent: relativePath];
+        }
     }
     
     return nil;

@@ -262,6 +262,35 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
     return [mountedURL URLByAppendingPathComponent: path];
 }
 
+- (NSString *) pathForLogicalURL: (NSURL *)URL
+{
+    NSString *path = [super pathForLogicalURL: URL];
+    
+    //If we couldn't map the URL normally and the image wasn't mounted yet,
+    //mount it now and try again.
+    if (!path && !self.mountedVolumeURL)
+    {
+        NSURL *mountedURL = [self volumeURLMountingIfNeeded: YES error: NULL];
+        if (mountedURL && [URL isBasedInURL: mountedURL])
+        {
+            path = [URL pathRelativeToURL: mountedURL];
+            return [@"/" stringByAppendingPathComponent: path];
+        }
+    }
+    return nil;
+}
+
+- (BOOL) exposesLogicalURL: (NSURL *)URL
+{
+    BOOL exposed = [super exposesLogicalURL: URL];
+    if (!exposed && !self.mountedVolumeURL)
+    {
+        NSURL *mountedURL = [self volumeURLMountingIfNeeded: YES error: NULL];
+        exposed = (mountedURL != nil && [URL isBasedInURL: mountedURL]);
+    }
+    return exposed;
+}
+
 
 - (ADBLocalDirectoryEnumerator *) enumeratorAtLocalFileURL: (NSURL *)URL
                                 includingPropertiesForKeys: (NSArray *)keys

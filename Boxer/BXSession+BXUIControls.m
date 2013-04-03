@@ -448,7 +448,6 @@
     
 	if (theAction == @selector(saveScreenshot:))		return isShowingDOSView;
     
-	if (theAction == @selector(openInDOS:))				return self.emulator.isAtPrompt;
 	if (theAction == @selector(revertShadowedChanges:)) return self.hasShadowedChanges;
 	if (theAction == @selector(mergeShadowedChanges:))  return self.hasShadowedChanges;
     

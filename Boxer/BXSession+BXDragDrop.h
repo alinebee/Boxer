@@ -17,13 +17,13 @@
 - (NSSet *) droppableFileTypes;
 
 //Returns an NSDragOperation indicating what the session would do with the files were they dropped.
-- (NSDragOperation) responseToDroppedFiles: (NSArray *)filePaths;
+- (NSDragOperation) responseToDraggedURLs: (NSArray *)draggedURLs;
 
-- (NSDragOperation) responseToDroppedString: (NSString *)droppedString;
+- (NSDragOperation) responseToDraggedStrings: (NSArray *)draggedStrings;
 
-//Handles an array of dropped files.
-- (BOOL) handleDroppedFiles: (NSArray *)filePaths withLaunching: (BOOL)launch;
+//Handles an array of dropped file URLs.
+- (BOOL) handleDraggedURLs: (NSArray *)URLs launchImmediately: (BOOL)launch;
 
-- (BOOL) handleDroppedString: (NSString *)droppedString;
+- (BOOL) handleDraggedStrings: (NSArray *)strings;
 
 @end

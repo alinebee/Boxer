@@ -25,6 +25,7 @@
 #import "BXEmulatorErrors.h"
 #import "NSWorkspace+ADBFileTypes.h"
 #import "NSString+ADBPaths.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 #import "NSWorkspace+BXExecutableTypes.h"
 #import "BXInputController.h"
 #import "NSObject+ADBPerformExtensions.h"
@@ -114,16 +115,16 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 @synthesize gamebox = _gamebox;
 @synthesize emulator = _emulator;
-@synthesize targetPath = _targetPath;
+
+@synthesize targetURL = _targetURL;
 @synthesize targetArguments = _targetArguments;
-@synthesize lastExecutedProgramPath = _lastExecutedProgramPath;
-@synthesize lastExecutedProgramArguments = _lastExecutedProgramArguments;
-@synthesize lastLaunchedProgramPath = _lastLaunchedProgramPath;
+@synthesize launchedProgramURL = _lastLaunchedProgramURL;
 @synthesize lastLaunchedProgramArguments = _lastLaunchedProgramArguments;
+
 @synthesize gameProfile = _gameProfile;
 @synthesize gameSettings = _gameSettings;
 @synthesize drives = _drives;
-@synthesize executables = _executables;
+@synthesize executableURLs = _executableURLs;
 @synthesize emulating = _emulating;
 @synthesize paused = _paused;
 @synthesize autoPaused = _autoPaused;
@@ -133,25 +134,25 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 @synthesize importQueue = _importQueue;
 @synthesize scanQueue = _scanQueue;
-@synthesize temporaryFolderPath = _temporaryFolderPath;
+@synthesize temporaryFolderURL = _temporaryFolderURL;
 @synthesize MT32MessagesReceived = _MT32MessagesReceived;
 
 
 #pragma mark -
 #pragma mark Helper class methods
 
-+ (BXGameProfile *) profileForPath: (NSString *)path
++ (BXGameProfile *) profileForGameAtURL: (NSURL *)URL
 {
 	//Which folder to look in to detect the game we’re running.
 	//This will choose any gamebox, Boxer drive folder or floppy/CD volume in the
 	//file's path (setting shouldRecurse to YES) if found, falling back on the file's
 	//containing folder otherwise (setting shouldRecurse to NO).
 	BOOL shouldRecurse = NO;
-	NSString *profileDetectionPath = [self gameDetectionPointForPath: path 
-											  shouldSearchSubfolders: &shouldRecurse];
+	NSURL *profileDetectionURL = [self gameDetectionPointForURL: URL
+                                         shouldSearchSubfolders: &shouldRecurse];
 	
 	//Detect any appropriate game profile for this session
-	if (profileDetectionPath)
+	if (profileDetectionURL)
 	{
 		//IMPLEMENTATION NOTE: we only scan subfolders of the detection path if it's a gamebox,
 		//mountable folder or CD/floppy disk, since these will have a finite and manageable file
@@ -159,7 +160,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		//Otherwise, we restrict our search to just the base folder to avoids massive blowouts
 		//if the user opens something big like their home folder or startup disk, and to avoid
 		//false positives when opening the DOS Games folder.
-		return [BXGameProfile detectedProfileForPath: profileDetectionPath
+		return [BXGameProfile detectedProfileForPath: profileDetectionURL.path
 									searchSubfolders: shouldRecurse];	
 	}
 	return nil;
@@ -189,13 +190,14 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 - (id) init
 {
-	if ((self = [super init]))
+    self = [super init];
+	if (self)
 	{
-		NSString *defaultsPath = [[NSBundle mainBundle] pathForResource: @"GameDefaults" ofType: @"plist"];
-		NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithContentsOfFile: defaultsPath];
+		NSURL *defaultsURL = [[NSBundle mainBundle] URLForResource: @"GameDefaults" withExtension: @"plist"];
+		NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithContentsOfURL: defaultsURL];
 		
 		self.drives = [NSMutableDictionary dictionaryWithCapacity: 10];
-		self.executables = [NSMutableDictionary dictionaryWithCapacity: 10];
+		self.executableURLs = [NSMutableDictionary dictionaryWithCapacity: 10];
 		
 		self.emulator = [[[BXEmulator alloc] init] autorelease];
 		self.gameSettings = defaults;
@@ -248,22 +250,20 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     self.gameProfile = nil;
     self.gameSettings = nil;
     
-    self.targetPath = nil;
+    self.targetURL = nil;
     self.targetArguments = nil;
-    self.lastExecutedProgramPath = nil;
-    self.lastExecutedProgramArguments = nil;
-    self.lastLaunchedProgramPath = nil;
+    self.launchedProgramURL = nil;
     self.lastLaunchedProgramArguments = nil;
     
     self.drives = nil;
-    self.executables = nil;
+    self.executableURLs = nil;
     
     self.cachedIcon = nil;
     
     self.importQueue = nil;
     self.scanQueue = nil;
     
-    self.temporaryFolderPath = nil;
+    self.temporaryFolderURL = nil;
     self.MT32MessagesReceived = nil;
     
 	[super dealloc];
@@ -274,25 +274,24 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 			   error: (NSError **)outError
 {
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSString *filePath		= absoluteURL.path;
 	
-	//Set our target launch path to point to this file, if we don't have a target already.
-	if (!self.targetPath)
-        self.targetPath = filePath;
+	//Set our launch target to point to this URL, if we don't have a target already.
+	if (!self.targetURL)
+        self.targetURL = absoluteURL;
     
 	//Check if the chosen file is located inside a gamebox.
-	NSString *gameboxPath = [workspace parentOfFile: filePath
-                                      matchingTypes: [NSSet setWithObject: BXGameboxType]];
+    NSURL *gameboxURL = [workspace nearestAncestorOfURL: absoluteURL
+                                          matchingTypes: [NSSet setWithObject: BXGameboxType]];
 	
 	//If the fileURL is located inside a gamebox, load the gamebox and use the gamebox itself as the fileURL.
 	//This way, the DOS window will show the gamebox as the represented file, and our Recent Documents
 	//list will likewise show the gamebox instead.
-	if (gameboxPath)
+	if (gameboxURL)
 	{
-		self.gamebox = [[[BXGamebox alloc] initWithPath: gameboxPath] autorelease];
+		self.gamebox = [BXGamebox bundleWithURL: gameboxURL];
 		
         //Check if the user opened the gamebox itself or a specific file/folder inside the gamebox.
-        BOOL hasCustomTarget = ![self.targetPath isEqualToString: gameboxPath];
+        BOOL hasCustomTarget = ![self.targetURL isEqual: gameboxURL];
         
         //Check if we are flagged to show the launch panel at startup for this game (instead of looking for a target program.)
         BOOL startWithLaunchPanel = [[self.gameSettings objectForKey: BXGameboxSettingsShowLaunchPanelKey] boolValue];
@@ -305,22 +304,26 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         if (!hasCustomTarget && !startWithLaunchPanel)
 		{
             //Check if the user was running a program last time, and restore that if available.
-		    NSString *previousProgramPath = [self.gameSettings objectForKey: BXGameboxSettingsLastProgramPathKey];
-            
-            //If the program path is relative, resolve it relative to the gamebox.
-            if (previousProgramPath && !previousProgramPath.isAbsolutePath)
+		    NSString *previousPath = [self.gameSettings objectForKey: BXGameboxSettingsLastProgramPathKey];
+            NSURL *previousURL = nil;
+            if (previousPath && !previousPath.isAbsolutePath)
             {
-                NSString *basePath = self.gamebox.resourcePath;
-                previousProgramPath = [basePath stringByAppendingPathComponent: previousProgramPath];
+                if (previousPath.isAbsolutePath)
+                {
+                    previousURL = [NSURL fileURLWithPath: previousPath];
+                }
+                //If the recorded path is relative, resolve it relative to the gamebox.
+                else
+                {
+                    NSURL *baseURL = self.gamebox.resourceURL;
+                    previousURL = [baseURL URLByAppendingPathComponent: previousPath];
+                }
             }
             
-            //Check that the previous target path is still reachable.
-            BOOL previousPathAvailable = previousProgramPath && [[NSFileManager defaultManager] fileExistsAtPath: previousProgramPath];
-            
             //If the previously-running program is available, launch that.
-            if (previousPathAvailable)
+            if ([previousURL checkResourceIsReachableAndReturnError: NULL])
             {
-                self.targetPath = previousProgramPath;
+                self.targetURL = previousURL;
                 self.targetArguments = [self.gameSettings objectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
             }
             //Otherwise, launch the gamebox's default launcher if it has one.
@@ -331,12 +334,11 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                 //If there's no nominated default launcher, but the gamebox only *has* one launcher,
                 //then launch that by default instead.
                 if (!defaultLauncher && self.gamebox.launchers.count == 1)
-                    defaultLauncher = [self.gamebox.launchers objectAtIndex: 0];
+                    defaultLauncher = self.gamebox.launchers.lastObject;
                 
                 if (defaultLauncher)
                 {
-                    NSURL *targetURL = [defaultLauncher objectForKey: BXLauncherURLKey];
-                    self.targetPath = targetURL.path;
+                    self.targetURL = [defaultLauncher objectForKey: BXLauncherURLKey];
                     self.targetArguments = [defaultLauncher objectForKey: BXLauncherArgsKey];
                 }
             }
@@ -345,9 +347,11 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         //Once we've finished, clear any flags that override the startup program for this game.
         [self.gameSettings removeObjectForKey: BXGameboxSettingsShowLaunchPanelKey];
 		
+        //Report the gamebox itself as the source URL for this 'document', appearing as such in the titlebar
+        //and the recent items menu.
 		//FIXME: move the fileURL reset out of here and into a later step: we can't rely on the order
 		//in which NSDocument's setFileURL/readFromURL methods are called.
-		self.fileURL = [NSURL fileURLWithPath: gameboxPath];
+		self.fileURL = gameboxURL;
 	}
     
 	return YES;
@@ -493,20 +497,12 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	}
 }
 
-- (NSString *) activeProgramPath
+- (NSURL *) currentURL
 {
-    if (self.lastExecutedProgramPath)
-        return self.lastExecutedProgramPath;
-    else
-        return self.lastLaunchedProgramPath;
-}
-
-- (NSString *) currentPath
-{
-	if (self.activeProgramPath)
-        return self.activeProgramPath;
+	if (self.launchedProgramURL)
+        return self.launchedProgramURL;
 	else
-        return self.emulator.pathOfCurrentDirectory;
+        return self.emulator.currentDirectoryURL;
 }
 
 #pragma mark -
@@ -746,8 +742,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		[self.gameSettings removeObjectsForKeys: confSettings];
 
 		//Persist these gamebox-specific configuration into the gamebox's configuration file.
-		NSString *configPath = self.gamebox.configurationFilePath;
-		[self _saveConfiguration: runtimeConf toFile: configPath];
+		[self _saveGameboxConfiguration: runtimeConf];
 		
         //Now that we've saved those settings to the gamebox conf,
         //persist the rest of the game state to user defaults.
@@ -805,36 +800,31 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         //Record the last-launched program for next time we launch this gamebox.
         if ([self _shouldPersistPreviousProgram])
         {
-            NSString *lastProgramPath, *lastArguments;
-            if (self.lastExecutedProgramPath)
-            {
-                lastProgramPath = self.lastExecutedProgramPath;
-                lastArguments   = self.lastExecutedProgramArguments;
-            }
-            else
-            {
-                lastProgramPath = self.lastLaunchedProgramPath;
-                lastArguments   = self.lastLaunchedProgramArguments;
-            }
+            NSURL *baseURL = self.gamebox.resourceURL;
+            NSURL *currentURL = self.currentURL;
             
             //If we were running a program when we were shut down, then record that;
             //otherwise, record the last directory we were in when we were at the DOS prompt.
             //TODO: resolve paths to shadowed locations into paths to virtual gamebox resources.
-            NSString *basePath = self.gamebox.resourcePath;
-            if (lastProgramPath)
+            if (currentURL)
             {
                 //Make the program path relative to the root of the gamebox, if it was located within the gamebox itself.
                 //TODO: if the program was located outside the gamebox, record it as a bookmark instead of an absolute path.
-                if ([lastProgramPath isRootedInPath: basePath])
+                NSString *pathToPersist;
+                if ([currentURL isBasedInURL: baseURL])
                 {
-                    lastProgramPath = [lastProgramPath pathRelativeToPath: basePath];
+                    pathToPersist = [currentURL pathRelativeToURL: baseURL];
+                }
+                else
+                {
+                    pathToPersist = currentURL.path;
                 }
                 
-                [settingsToPersist setObject: lastProgramPath
+                [settingsToPersist setObject: pathToPersist
                                       forKey: BXGameboxSettingsLastProgramPathKey];
                 
-                if (lastArguments)
-                    [settingsToPersist setObject: lastArguments
+                if (self.lastLaunchedProgramArguments)
+                    [settingsToPersist setObject: self.lastLaunchedProgramArguments
                                           forKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
                 else
                     [settingsToPersist removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
@@ -842,22 +832,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             }
             else
             {
-                NSString *currentDOSPath = self.emulator.pathOfCurrentDirectory;
-                if (currentDOSPath)
-                {
-                    //Make the location relative to the root of the gamebox, if it was within the gamebox itself.
-                    //TODO: if the location was outside the gamebox, record it as a bookmark instead of an absolute path.
-                    if ([currentDOSPath isRootedInPath: basePath])
-                    {
-                        currentDOSPath = [currentDOSPath pathRelativeToPath: basePath];
-                    }
-                    [settingsToPersist setObject: currentDOSPath
-                                          forKey: BXGameboxSettingsLastProgramPathKey];
-                }
-                else
-                {
-                    [settingsToPersist removeObjectForKey: BXGameboxSettingsLastProgramPathKey];
-                }
+                [settingsToPersist removeObjectForKey: BXGameboxSettingsLastProgramPathKey];
                 [settingsToPersist removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
             }
         }
@@ -886,10 +861,17 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 - (NSString *) displayName
 {
-    if ([[NSApp delegate] isStandaloneGameBundle]) return [BXBaseAppController appName];
-	else if (self.hasGamebox)       return self.gamebox.gameName;
-	else if (self.fileURL)          return [super displayName];
-	else                            return self.processDisplayName;
+    if ([[NSApp delegate] isStandaloneGameBundle])
+        return [BXBaseAppController appName];
+    
+	else if (self.hasGamebox)
+        return self.gamebox.gameName;
+    
+	else if (self.fileURL)
+        return [super displayName];
+    
+	else
+        return self.processDisplayName;
 }
 
 - (NSString *) processDisplayName
@@ -897,10 +879,10 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	NSString *processName = nil;
 	if (self.emulator.isRunningProcess)
 	{
-		//Use the active program name where possible;
+		//Use the name of the last launched program where possible;
 		//Failing that, fall back on the original process name
-		if (self.activeProgramPath)
-            processName = self.activeProgramPath.lastPathComponent;
+		if (self.launchedProgramURL)
+            processName = self.launchedProgramURL.lastPathComponent;
 		else
             processName = self.emulator.processName;
 	}
@@ -990,9 +972,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 + (NSSet *) keyPathsForValuesAffectingHasGamebox        { return [NSSet setWithObject: @"gamebox"]; }
 + (NSSet *) keyPathsForValuesAffectingRepresentedIcon	{ return [NSSet setWithObjects: @"gamebox", @"gamebox.coverArt", nil]; }
-+ (NSSet *) keyPathsForValuesAffectingCurrentPath       { return [NSSet setWithObjects: @"activeProgramPath", @"emulator.pathOfCurrentDirectory", nil]; }
-+ (NSSet *) keyPathsForValuesAffectingActiveProgramPath { return [NSSet setWithObjects: @"lastExecutedProgramPath", @"lastLaunchedProgramPath", nil]; }
-
++ (NSSet *) keyPathsForValuesAffectingCurrentURL        { return [NSSet setWithObjects: @"launchedProgramURL", @"emulator.currentDirectoryURL", nil]; }
 
 
 #pragma mark -
@@ -1047,43 +1027,58 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     //Load Boxer's baseline configuration first.
     NSBundle *appBundle = [NSBundle mainBundle];
-    [configURLs addObject: [appBundle URLForResource: @"Preflight"
-                                       withExtension: @"conf"
-                                        subdirectory: @"Configurations"]];
+    NSURL *preflightConfURL = [appBundle URLForResource: @"Preflight"
+                                          withExtension: @"conf"
+                                           subdirectory: @"Configurations"];
+    NSAssert(preflightConfURL != nil, @"Missing preflight configuration.");
+    [configURLs addObject: preflightConfURL];
 
-	//If we don't have a previously-determined game profile already,
-    //detect the game profile from our target path and set it now.
-	if (self.targetPath && !self.gameProfile)
+	//If we don't have a previously-determined game profile already, detect the game profile
+    //from our gamebox (or target URL, in the case of regular sessions).
+	if (!self.gameProfile)
 	{
-		BXGameProfile *profile = [self.class profileForPath: self.targetPath];
-        
-        //If no specific game can be found, then record the profile explicitly as an unknown game
-        //rather than leaving it blank. This stops us trying to redetect it again next time.
-        if (!profile) profile = [BXGameProfile genericProfile];
-        self.gameProfile = profile;
+        NSURL *detectionURL = (self.hasGamebox) ? self.gamebox.bundleURL : self.targetURL;
+        if (detectionURL)
+        {
+            BXGameProfile *detectedProfile = [self.class profileForGameAtURL: self.targetURL];
+            
+            if (detectedProfile)
+            {
+                self.gameProfile = detectedProfile;
+            }
+            //If no specific game was detected, then record the profile explicitly as an unknown game
+            //rather than leaving it blank. This stops us trying to redetect it again next time.
+            else
+            {
+                self.gameProfile = [BXGameProfile genericProfile];
+            }
+        }
 	}
 	
 	//Load the appropriate configuration files from our game profile.
     for (NSString *confName in self.gameProfile.configurations)
     {
-        NSURL *profileConf = [appBundle URLForResource: confName
+        NSURL *profileConfURL = [appBundle URLForResource: confName
                                          withExtension: @"conf"
                                           subdirectory: @"Configurations"];
         
-        if (profileConf) [configURLs addObject: profileConf];
-        else NSLog(@"Missing configuration profile: %@", confName);
+        NSAssert(profileConfURL != nil, @"Missing configuration profile: %@", confName);
+        [configURLs addObject: profileConfURL];
     }
 	
 	//Next, load the gamebox's own configuration file if it has one.
-    NSString *packageConfPath = self.gamebox.configurationFile;
-    if (packageConfPath)
-        [configURLs addObject: [NSURL fileURLWithPath: packageConfPath isDirectory: NO]];
+    NSURL *packageConfURL = self.gamebox.configurationFileURL;
+    if ([packageConfURL checkResourceIsReachableAndReturnError: NULL])
+        [configURLs addObject: packageConfURL];
     
 	
     //Last but not least, load Boxer's launch configuration.
-    [configURLs addObject: [appBundle URLForResource: @"Launch"
-                                       withExtension: @"conf"
-                                        subdirectory: @"Configurations"]];
+    NSURL *launchURL = [appBundle URLForResource: @"Launch"
+                                   withExtension: @"conf"
+                                    subdirectory: @"Configurations"];
+    
+    NSAssert(launchURL != nil, @"Missing launch configuration profile.");
+    [configURLs addObject: launchURL];
     
     
     //TWEAK: Sanitise the configurations folder of a standalone game app the first time the app is launched,
@@ -1148,12 +1143,12 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	
 	//After all preflight configuration has finished, go ahead and open whatever
     //file or folder we're pointing at.
-	NSString *target = self.targetPath;
+	NSURL *targetURL = self.targetURL;
     NSString *arguments = self.targetArguments;
     
-	if (target)
+	if (targetURL)
 	{
-        BOOL targetIsExecutable = [self.class isExecutable: target];
+        BOOL targetIsExecutable = ([targetURL matchingFileType: [BXFileTypes executableTypes]] != nil);
         
         //If the Option key is held down during the startup process, skip the default program.
         //(Repeated from runPreflightCommandsForEmulator: above, in case the user started
@@ -1168,7 +1163,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		//Instead, just switch to its parent folder.
 		if (_userSkippedDefaultProgram && targetIsExecutable)
 		{
-			target = target.stringByDeletingLastPathComponent;
+			targetURL = targetURL.URLByDeletingLastPathComponent;
             targetIsExecutable = NO;
             arguments = nil;
 		}
@@ -1183,9 +1178,9 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             [self.DOSWindowController enterFullScreen];
         }
         
-		[self openFileAtPath: target
-               withArguments: arguments
-              clearingScreen: YES];
+		[self openURLInDOS: targetURL
+             withArguments: arguments
+            clearingScreen: YES];
 	}
     
     //Clear the program-skipping flag for next launch.
@@ -1241,15 +1236,15 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	//Don't set the active program if we already have one: this way, we keep
 	//track of which program the user manually launched, and won't glom onto
     //other programs spawned by the original program (e.g. if it was a batch file.)
-	if (!self.lastExecutedProgramPath)
+	if (!self.launchedProgramURL)
 	{
-		NSString *programPath = [notification.userInfo objectForKey: BXEmulatorLocalPathKey];
+		NSURL *programURL = [notification.userInfo objectForKey: BXEmulatorLocalURLKey];
         
-        if (programPath.length)
+        if (programURL)
         {
             NSString *arguments = [notification.userInfo objectForKey: BXEmulatorLaunchArgumentsKey];
-            self.lastExecutedProgramPath = programPath;
-            self.lastExecutedProgramArguments = arguments;
+            self.launchedProgramURL = programURL;
+            self.lastLaunchedProgramArguments = arguments;
 		}
 	}
 	
@@ -1262,45 +1257,25 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 - (void) emulatorDidFinishProgram: (NSNotification *)notification
 {
-	//Clear the last executed program when a startup program or 'non-defaultable'
-    //program finishes. This way, programWillStart: won't hang onto programs
-    //we can't use as the default, such as autoexec commands or dispatch batchfiles.
-    
-	//Note that we don't clear lastLaunchedProgramPath here, since the program may be
-    //passing control on to another program afterwards and we want to maintain a record
-    //of which program the user themselves actually launched. Both the last executed
-    //and the last launched program are always cleared down in didReturnToShell:.
-    
-    //FIXME: this is a really convoluted heuristic and we really should redesign this
-    //behaviour to better express what we're trying to do (which is: track the programs
-    //that the user has chosen to launch themselves.)
-	NSString *executedPath = self.lastExecutedProgramPath;
-    BOOL executedPathCanBeDefault = (executedPath && _hasLaunched && [self.gamebox validateTargetPath: &executedPath error: nil]);
-	if (!executedPathCanBeDefault)
-	{
-		self.lastExecutedProgramPath = nil;
-        self.lastExecutedProgramArguments = nil;
-	}
-	
 	//Check the running time of the program. If it was suspiciously short,
 	//then check for possible error conditions that we can inform the user about.
 	NSTimeInterval programRunningTime = [NSDate timeIntervalSinceReferenceDate] - _programStartTime; 
 	if (programRunningTime < BXWindowsOnlyProgramFailTimeThreshold)
 	{
-        NSString *programPath = [notification.userInfo objectForKey: @"localPath"];
-        if (programPath.length)
+        NSURL *programURL = [notification.userInfo objectForKey: BXEmulatorLocalURLKey];
+        if (programURL)
         {
-            BXExecutableType programType = [[NSWorkspace sharedWorkspace] executableTypeAtPath: programPath
-                                                                                         error: NULL];
+            //TODO: look up from drive filesystem instead
+            BXExecutableType programType = [BXFileTypes typeOfExecutableAtURL: programURL error: NULL];
             
             //If this was a windows-only program, explain further to the user why Boxer cannot run it.
             if (programType == BXExecutableTypeWindows)
             {
                 //If the user launched this program directly from Finder, then show
                 //a proper alert to the user and offer to close the DOS session.
-                if ([programPath isEqualToString: self.targetPath])
+                if ([programURL isEqual: self.targetURL])
                 {
-                    BXCloseAlert *alert = [BXCloseAlert closeAlertAfterWindowsOnlyProgramExited: programPath];
+                    BXCloseAlert *alert = [BXCloseAlert closeAlertAfterWindowsOnlyProgramExited: programURL.path];
                     [alert beginSheetModalForWindow: self.windowForSheet
                                       modalDelegate: self
                                      didEndSelector: @selector(_windowsOnlyProgramCloseAlertDidEnd:returnCode:contextInfo:)
@@ -1311,7 +1286,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                 else
                 {
                     NSString *warningFormat = NSLocalizedStringFromTable(@"Windows-only game warning", @"Shell", nil);
-                    NSString *programName = programPath.lastPathComponent.uppercaseString;
+                    NSString *programName = programURL.lastPathComponent.uppercaseString;
                     NSString *warningText = [NSString stringWithFormat: warningFormat, programName];
                     [self.emulator displayString: warningText];
                 }
@@ -1334,9 +1309,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     if (_executingLaunchedProgram)
 	{
         _executingLaunchedProgram = NO;
-        self.lastExecutedProgramPath = nil;
-        self.lastExecutedProgramArguments = nil;
-        self.lastLaunchedProgramPath = nil;
+        self.launchedProgramURL = nil;
         self.lastLaunchedProgramArguments = nil;
 	}
     
@@ -1512,7 +1485,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	if (!self.gamebox.closeOnExit) return NO;
 	
 	//Don't close if we launched a program other than the default program for the gamebox
-	if (![self.lastLaunchedProgramPath isEqualToString: self.gamebox.targetPath]) return NO;
+	if (![self.launchedProgramURL isEqual: [self.gamebox.defaultLauncher objectForKey: BXLauncherURLKey]])
+        return NO;
 	
 	//Don't close if there are drive imports in progress
 	if (self.isImportingDrives) return NO;
@@ -1535,12 +1509,14 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 //we can ask the user what they want to do with the program.
 - (BOOL) _shouldLeaveProgramPanelOpenAfterLaunch
 {
-    if (!self.gamebox.targetPath)
+    /* Deprecated API and this method isn't even used anymore soooo
+    if (!self.gamebox.default)
     {
-        NSString *activePath = [[self.activeProgramPath copy] autorelease];
+        NSString *activePath = self.launchedProgramURL.path;
         return [self.gamebox validateTargetPath: &activePath error: NULL];
     }
     else
+     */
         return NO;
 }
 
@@ -1582,13 +1558,14 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	//Set the emulator's current working directory relative to whatever we're opening
 	if (self.fileURL)
 	{
-		NSString *filePath = self.fileURL.path;
-		BOOL isFolder = NO;
-		if ([[NSFileManager defaultManager] fileExistsAtPath: filePath isDirectory: &isFolder])
+		if ([self.fileURL checkResourceIsReachableAndReturnError: NULL])
 		{
 			//If we're opening a folder/gamebox, use that as the base path; if we're opening
 			//a program or disc image, use its containing folder as the base path instead.
-			self.emulator.basePath = (isFolder) ? filePath : filePath.stringByDeletingLastPathComponent;
+            if (self.fileURL.isDirectory)
+                self.emulator.baseURL = self.fileURL;
+            else
+                self.emulator.baseURL = self.fileURL.URLByDeletingLastPathComponent;
 		}
 	}
 	
@@ -1725,8 +1702,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                 
                 //If our target was the gamebox itself, rewrite it to point to this C drive
                 //so that we'll start up at drive C.
-                if ([self.targetPath isEqualToString: self.gamebox.bundleURL.path])
-                    self.targetPath = volumeURL.path;
+                if ([self.targetURL isEqual: self.gamebox.bundleURL])
+                    self.targetURL = volumeURL;
             }
             
             [self mountDrive: bundledDrive
@@ -1792,7 +1769,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         //Check if we already have a drive queued that represents this drive.
         //If so, we'll ignore the previous drive and just remount the existing one
         //if the drive had been mounted before.
-        BXDrive *existingDrive = [self queuedDriveForPath: drive.sourceURL.path];
+        BXDrive *existingDrive = [self queuedDriveRepresentingURL: drive.sourceURL];
         
         if (existingDrive)
             drive = existingDrive;
@@ -1806,15 +1783,15 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	
 	//Once all regular drives are in place, check if our target program/folder
     //is now accessible in DOS: if not, add another drive allowing access to it.
-	if (self.targetPath && [self shouldMountNewDriveForPath: self.targetPath])
+	if (self.targetURL && [self shouldMountNewDriveForURL: self.targetURL])
 	{
         //Unlike the drives built into the gamebox, we do actually
         //want to show errors if something goes wrong here.
         NSError *mountError = nil;
-        [self mountDriveForPath: self.targetPath
-                       ifExists: BXDriveReplace
-                        options: BXTargetMountOptions
-                          error: &mountError];
+        [self mountDriveForURL: self.targetURL
+                      ifExists: BXDriveReplace
+                       options: BXTargetMountOptions
+                         error: &mountError];
         
         if (mountError)
         {
@@ -1827,17 +1804,19 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	}
 }
 
-- (void) _saveConfiguration: (BXEmulatorConfiguration *)configuration toFile: (NSString *)filePath
+- (void) _saveGameboxConfiguration: (BXEmulatorConfiguration *)configuration
 {
-    NSAssert(filePath != nil, @"No file path provided.");
+    NSAssert(self.hasGamebox, @"_saveGameboxConfiguration: called with no gamebox.");
     
-	NSFileManager *manager = [NSFileManager defaultManager];
-	BOOL fileExists = [manager fileExistsAtPath: filePath];
+    NSURL *configurationURL = self.gamebox.configurationFileURL;
+	BOOL fileExists = [configurationURL checkResourceIsReachableAndReturnError: NULL];
 	
-	//Save the configuration if any changes have been made, or if the file at that path does not exist.
-	if (!fileExists || !configuration.isEmpty)
+	//Write a new configuration file if the new configuration has any modified settings,
+    //or if the gamebox does not have a configuration file yet.
+    if (!fileExists || !configuration.isEmpty)
 	{
-		BXEmulatorConfiguration *gameboxConf = [BXEmulatorConfiguration configurationWithContentsOfFile: filePath error: nil];
+		BXEmulatorConfiguration *gameboxConf = [BXEmulatorConfiguration configurationWithContentsOfURL: configurationURL
+                                                                                                 error: NULL];
 		
 		//If a configuration file exists at that path already, then merge
 		//the changes with its existing settings.
@@ -1846,7 +1825,10 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 			[gameboxConf addSettingsFromConfiguration: configuration];
 		}
 		//Otherwise, use the runtime configuration as our basis
-		else gameboxConf = configuration;
+		else
+        {
+            gameboxConf = configuration;
+        }
 		
 		
 		//Add comment preambles to saved configuration
@@ -1859,42 +1841,45 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		//Compare against the combined configuration we'll inherit from Boxer's base settings plus
         //the profile-specific configurations (if any), and eliminate any duplicate configuration
         //parameters from the gamebox conf. This way, we don't persist settings we don't need to.
-        NSString *baseConfPath = [[NSBundle mainBundle] pathForResource: @"Preflight"
-                                                                 ofType: @"conf"
-                                                            inDirectory: @"Configurations"];
+        NSURL *baseConfURL = [[NSBundle mainBundle] URLForResource: @"Preflight"
+                                                     withExtension: @"conf"
+                                                      subdirectory: @"Configurations"];
         
-        NSAssert(baseConfPath != nil, @"Missing preflight conf file");
-        BXEmulatorConfiguration *baseConf = [BXEmulatorConfiguration configurationWithContentsOfFile: baseConfPath error: nil];
+        NSAssert(baseConfURL != nil, @"Missing preflight conf file");
+        BXEmulatorConfiguration *baseConf = [BXEmulatorConfiguration configurationWithContentsOfURL: baseConfURL
+                                                                                              error: NULL];
         
         [baseConf removeStartupCommands];
         
 		for (NSString *profileConfName in self.gameProfile.configurations)
         {
-			NSString *profileConfPath = [[NSBundle mainBundle] pathForResource: profileConfName
-																		ofType: @"conf"
-																   inDirectory: @"Configurations"];
+			NSURL *profileConfURL = [[NSBundle mainBundle] URLForResource: profileConfName
+                                                            withExtension: @"conf"
+                                                             subdirectory: @"Configurations"];
 			
-            NSAssert1(profileConfPath != nil, @"Missing configuration file: %@", profileConfName);
-            if (profileConfPath)
+            NSAssert1(profileConfURL != nil, @"Missing configuration file: %@", profileConfName);
+            if (profileConfURL)
             {
-                BXEmulatorConfiguration *profileConf = [BXEmulatorConfiguration configurationWithContentsOfFile: profileConfPath error: nil];
-                if (profileConf) [baseConf addSettingsFromConfiguration: profileConf];
+                BXEmulatorConfiguration *profileConf = [BXEmulatorConfiguration configurationWithContentsOfURL: profileConfURL
+                                                                                                         error: NULL];
+                if (profileConf)
+                    [baseConf addSettingsFromConfiguration: profileConf];
             }
 		}
         
         [gameboxConf excludeDuplicateSettingsFromConfiguration: baseConf];
-		
-		[gameboxConf writeToFile: filePath error: NULL];
+        
+		[gameboxConf writeToURL: configurationURL error: NULL];
 	}
 }
 
 - (void) _cleanup
 {
 	//Delete the temporary folder, if one was created
-	if (self.temporaryFolderPath)
+	if (self.temporaryFolderURL)
 	{
 		NSFileManager *manager = [NSFileManager defaultManager];
-		[manager removeItemAtPath: self.temporaryFolderPath error: NULL];
+		[manager removeItemAtURL: self.temporaryFolderURL error: NULL];
 	}
 	
 	//Cancel any in-progress operations specific to this session

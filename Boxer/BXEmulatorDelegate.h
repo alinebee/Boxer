@@ -43,6 +43,7 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 extern NSString * const BXEmulatorDOSPathKey;
 extern NSString * const BXEmulatorDriveKey;
 extern NSString * const BXEmulatorLocalPathKey;
+extern NSString * const BXEmulatorLocalURLKey;
 extern NSString * const BXEmulatorLaunchArgumentsKey;
 
 

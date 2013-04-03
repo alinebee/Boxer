@@ -172,12 +172,12 @@ nil];
 	
 	if (dosPath.length)
 	{
-        [self willChangeValueForKey: @"pathOfCurrentDirectory"];
+        [self willChangeValueForKey: @"currentDirectoryURL"];
         
 		const char *dir = [dosPath cStringUsingEncoding: BXDirectStringEncoding];
 		if (dir) changedPath = DOS_ChangeDir(dir) || changedPath;
         
-        [self didChangeValueForKey: @"pathOfCurrentDirectory"];
+        [self didChangeValueForKey: @"currentDirectoryURL"];
 	}
 	
     //DOCUMENT ME: why were we discarding any commands that were already typed?
@@ -191,7 +191,7 @@ nil];
 
 - (BOOL) changeToDriveLetter: (NSString *)driveLetter 
 {
-    [self willChangeValueForKey: @"pathOfCurrentDirectory"];
+    [self willChangeValueForKey: @"currentDirectoryURL"];
     
 	BOOL changedPath = DOS_SetDrive([self _indexOfDriveLetter: driveLetter]);
 	if (changedPath)
@@ -199,7 +199,7 @@ nil];
         [self discardShellInput];
     }
     
-    [self didChangeValueForKey: @"pathOfCurrentDirectory"];
+    [self didChangeValueForKey: @"currentDirectoryURL"];
     
 	return changedPath;
 }
@@ -668,7 +668,6 @@ nil];
 	if (localURL)
     {
         [processInfo setObject: localURL forKey: BXEmulatorLocalURLKey];
-        [processInfo setObject: localURL.path forKey: BXEmulatorLocalPathKey];
     }
     
     if (argumentString.length)
@@ -710,7 +709,6 @@ nil];
     if (localURL)
     {
         [processInfo setObject: localURL forKey: BXEmulatorLocalURLKey];
-        [processInfo setObject: localURL.path forKey: BXEmulatorLocalPathKey];
     }
     
     if (argumentString.length)
@@ -743,6 +741,10 @@ nil];
     //Fire off a manual update for the isInBatchScript flag, since we won't know about this change automatically.
     [self willChangeValueForKey: @"isInBatchScript"];
     [self didChangeValueForKey: @"isInBatchScript"];
+    
+    //Also flag that the current drive/directory may have changed.
+    [self willChangeValueForKey: @"currentDirectory"];
+    [self didChangeValueForKey: @"currentDirectory"];
     
     //Clear our autodetected MIDI music device now, so that we can redetect
     //it next time we run a program. (This lets users try out different

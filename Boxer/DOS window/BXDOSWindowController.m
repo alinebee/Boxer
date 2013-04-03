@@ -29,6 +29,8 @@
 #import "BXSession+BXDragDrop.h"
 #import "BXImportSession.h"
 
+#import "NSURL+ADBFilesystemHelpers.h"
+
 #import "NSWindow+ADBWindowDimensions.h"
 #import "ADBGeometry.h"
 
@@ -120,7 +122,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     //Why don't we just observe document directly, and do so in setDocument:, you ask?
     //Because AppKit sets a window controller's document in a fucked-up way and it's
     //not safe to attach observations to it directly.
-    [self addObserver: self forKeyPath: @"document.currentPath" options: 0 context: nil];
+    [self addObserver: self forKeyPath: @"document.currentURL" options: 0 context: nil];
     [self addObserver: self forKeyPath: @"document.paused" options: 0 context: nil];
     [self addObserver: self forKeyPath: @"document.autoPaused" options: 0 context: nil];
     
@@ -149,7 +151,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 - (void) _removeObservers
 {
-    [self removeObserver: self forKeyPath: @"document.currentPath"];
+    [self removeObserver: self forKeyPath: @"document.currentURL"];
     [self removeObserver: self forKeyPath: @"document.paused"];
     [self removeObserver: self forKeyPath: @"document.autoPaused"];
     
@@ -272,7 +274,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
                          change: (NSDictionary *)change
                         context: (void *)context
 {
-    if ([keyPath isEqualToString: @"document.currentPath"] ||
+    if ([keyPath isEqualToString: @"document.currentURL"] ||
         [keyPath isEqualToString: @"document.paused"] ||
         [keyPath isEqualToString: @"document.autoPaused"])
     {
@@ -303,12 +305,12 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 	else
 	{
 		//If the session isn't a gamebox, then use the current program/directory as the window title.
-		NSString *representedPath = self.document.currentPath;
+		NSURL *representedURL = self.document.currentURL;
 		
-		if (representedPath)
+		if (representedURL)
 		{
-			NSString *displayName = [[NSFileManager defaultManager] displayNameAtPath: representedPath];
-			self.window.representedURL = [NSURL fileURLWithPath: representedPath];
+			NSString *displayName = representedURL.localizedName;
+			self.window.representedURL = representedURL;
 			self.window.title = [self windowTitleForDocumentDisplayName: displayName];
 		}
 		else
@@ -1464,35 +1466,44 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
 {
-	NSPasteboard *pboard = sender.draggingPasteboard;	
-	if ([pboard.types containsObject: NSFilenamesPboardType])
-	{
-		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		return [self.document responseToDroppedFiles: filePaths];
-	}
-	else if ([pboard.types containsObject: NSStringPboardType])
-	{
-		NSString *droppedString = [pboard stringForType: NSStringPboardType];
-		return [self.document responseToDroppedString: droppedString];
+	NSPasteboard *pboard = sender.draggingPasteboard;
+	
+    //Check first for URLs on the pasteboard, falling back on strings otherwise.
+    //TODO: allow a combination of URLs and strings to be dragged.
+    NSArray *draggedURLs = [pboard readObjectsForClasses: @[[NSURL class]]
+                                                 options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];
+    if (draggedURLs.count)
+    {
+		return [self.document responseToDraggedURLs: draggedURLs];
     }
-	else return NSDragOperationNone;
+    
+    NSArray *draggedStrings = [pboard readObjectsForClasses: @[[NSString class]] options: nil];
+    if (draggedStrings.count)
+    {
+		return [self.document responseToDraggedStrings: draggedStrings];
+    }
+    
+    //If we got this far, no pasteboard content was applicable.
+	return NSDragOperationNone;
 }
 
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
 {
 	NSPasteboard *pboard = sender.draggingPasteboard;
- 
-    if ([pboard.types containsObject: NSFilenamesPboardType])
-	{
-        NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		return [self.document handleDroppedFiles: filePaths withLaunching: YES];
-	}
-	
-	else if ([pboard.types containsObject: NSStringPboardType])
-	{
-		NSString *droppedString = [pboard stringForType: NSStringPboardType];
-		return [self.document handleDroppedString: droppedString];
+    
+    NSArray *draggedURLs = [pboard readObjectsForClasses: @[[NSURL class]]
+                                                 options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];
+    if (draggedURLs.count)
+    {
+		return [self.document handleDraggedURLs: draggedURLs launchImmediately: YES];
     }
+    
+    NSArray *draggedStrings = [pboard readObjectsForClasses: @[[NSString class]] options: nil];
+    if (draggedStrings.count)
+    {
+		return [self.document handleDraggedStrings: draggedStrings];
+    }
+    
 	return NO;
 }
 

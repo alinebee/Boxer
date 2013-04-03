@@ -143,6 +143,32 @@
 
 @end
 
+@implementation NSURL (ADBResourceValues)
+
+- (id) resourceValueForKey: (NSString *)key
+{
+    id value;
+    BOOL retrieved = [self getResourceValue: &value forKey: key error: NULL];
+    if (retrieved)
+        return value;
+    else
+        return nil;
+}
+
+- (BOOL) isDirectory
+{
+    return [[self resourceValueForKey: NSURLIsDirectoryKey] boolValue];
+}
+
+
+- (NSString *) localizedName
+{
+    return [self resourceValueForKey: NSURLLocalizedNameKey];
+}
+
+@end
+
+
 @implementation NSURL (ADBFileTypes)
 
 + (NSString *) preferredExtensionForFileType: (NSString *)UTI

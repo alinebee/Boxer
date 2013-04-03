@@ -80,19 +80,18 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 	NSMutableDictionary *_gameSettings;
 	
 	NSMutableDictionary *_drives;
-	NSMutableDictionary *_executables;
+	NSMutableDictionary *_executableURLs;
     NSImage *_cachedIcon;
 	
 	BXDOSWindowController *_DOSWindowController;
 	
-	NSString *_targetPath;
+	NSURL *_targetURL;
     NSString *_targetArguments;
-	NSString *_lastExecutedProgramPath;
-    NSString *_lastExecutedProgramArguments;
-    NSString *_lastLaunchedProgramPath;
+    
+    NSURL *_lastLaunchedProgramURL;
     NSString *_lastLaunchedProgramArguments;
     
-	NSString *_temporaryFolderPath;
+	NSURL *_temporaryFolderURL;
 	
 	BOOL _hasStarted;
 	BOOL _hasConfigured;
@@ -155,38 +154,25 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 //(the settings for 'regular' sessions are not stored).
 @property (readonly, retain, nonatomic) NSMutableDictionary *gameSettings;
 
-//The OS X path of the executable to launch (or folder to switch to) when the emulator starts,
+//The logical URL of the executable to launch (or folder to switch to) when the emulator starts,
 //and any arguments to pass to that executable.
-@property (copy, nonatomic) NSString *targetPath;
+@property (copy, nonatomic) NSURL *targetURL;
 @property (copy, nonatomic) NSString *targetArguments;
 
-//The OS X path of the last DOS program or batch file that was last launched from the DOS prompt,
-//and any arguments it was launched with. Will be nil if the emulator is at the DOS prompt,
-//or if Boxer is unable to locate the program within the local filesystem.
-@property (readonly, copy, nonatomic) NSString *lastExecutedProgramPath;
-@property (readonly, copy, nonatomic) NSString *lastExecutedProgramArguments;
-
-//The OS X path of the last program the user launched through Boxer's program list,
-//and any arguments it was launched with. Will be nil when the emulator is at the DOS prompt
-//or if the user has launched a program manually from the DOS prompt.
-@property (readonly, copy, nonatomic) NSString *lastLaunchedProgramPath;
+//The logical URL of the last program that was launched through user interaction (i.e. from the
+//launcher panel or from the DOS prompt), along with any arguments it was launched with.
+@property (readonly, copy, nonatomic) NSURL *launchedProgramURL;
 @property (readonly, copy, nonatomic) NSString *lastLaunchedProgramArguments;
 
-//The OS X path of Boxer's 'best guess' at the currently active program.
-//This corresponds to lastExecutedProgramPath if available, falling back on lastLaunchedProgramPath.
-//Will be nil if the emulator is at the DOS prompt.
-@property (readonly, nonatomic) NSString *activeProgramPath;
-
-
-//The OS X path of the currently executing DOS program or batch file if one is running,
-//or else the current directory at the DOS prompt. Will be nil if Boxer has no idea where it is.
-@property (readonly, nonatomic) NSString *currentPath;
+//The logical URL of the currently executing DOS program or batch file if one is running,
+//or the current directory at the DOS prompt. This will  be nil if Boxer has no idea where it is.
+@property (readonly, nonatomic) NSURL *currentURL;
 
 //A lookup table of all mounted and queued drives, organised by drive letter.
 @property (readonly, retain, nonatomic) NSDictionary *drives;
 
-//A lookup table of all known executables on mounted drives, organised by drive letter.
-@property (readonly, retain, nonatomic) NSDictionary *executables;
+//A lookup table of logical URLs to all known executables on mounted drives, organised by drive letter.
+@property (readonly, retain, nonatomic) NSDictionary *executableURLs;
 
 //Whether the emulator is initialized and ready to receive instructions.
 @property (readonly, assign, getter=isEmulating) BOOL emulating;
@@ -202,7 +188,7 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 //(in which case the launcher panel is redundant.)
 @property (readonly, nonatomic) BOOL allowsLauncherPanel;
 
-//Whether this session is a game import. Returns NO by default.
+//Whether this session is a game import. Returns NO by default; overridden by BXImportSession to return YES.
 @property (readonly, nonatomic) BOOL isGameImport;
 
 //The display-ready title for the currently-executing DOS process.
@@ -226,9 +212,7 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 #pragma mark -
 #pragma mark Helper class methods
 
-//Autodetects and returns a profile for the specified path, using BXSession's rules
-//for autodetection (q.v. BXFileManagement gameDetectionPointForPath:shouldSearchSubfolders:)
-+ (BXGameProfile *) profileForPath: (NSString *)path;
++ (BXGameProfile *) profileForGameAtURL: (NSURL *)URL;
 
 //Generates and returns a new bootleg cover-art image for the specified package,
 //using the specified game era. If era is BXUnknownEra, a suitable era will be

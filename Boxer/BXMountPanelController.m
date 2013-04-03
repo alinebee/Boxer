@@ -107,7 +107,7 @@
     //Switch to the new mount after adding it
     if (drive)
     {
-        [session openFileAtPath: drive.sourceURL.path];
+        [session openURLInDOS: drive.sourceURL];
         return YES;
     }
     else
@@ -277,9 +277,7 @@
 
 - (BOOL) panel: (id)sender shouldEnableURL: (NSURL *)URL
 {
-    NSString *path = URL.path;
-
-	return [self.representedObject validateDrivePath: &path error: nil];
+	return [self.representedObject validateDriveURL: &URL error: nil];
 }
 
 @end

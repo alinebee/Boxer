@@ -16,6 +16,7 @@
 #import "BXGamebox.h"
 #import "BXFileTypes.h"
 #import "ADBPathEnumerator.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 #import "BXEmulatorConfiguration.h"
 #import "NSFileManager+ADBUniqueFilenames.h"
 
@@ -272,11 +273,13 @@
 	{
 		//This is an indication that the game is installed and playable;
 		//break out immediately and don’t use a subfolder 
-		if ([self isPlayableGameTelltaleAtPath: URL.path]) return NO;
+		if ([self isPlayableGameTelltaleAtPath: URL.path])
+            return NO;
 		
 		//Otherwise, if the folder contains executables, it probably does need a subfolder
 		//(but keep scanning in case we find a playable telltale.)
-		else if ([self isExecutable: URL.path]) hasExecutables = YES;
+		else if ([URL matchingFileType: [BXFileTypes executableTypes]] != nil)
+            hasExecutables = YES;
 	}
 	return hasExecutables;
 }

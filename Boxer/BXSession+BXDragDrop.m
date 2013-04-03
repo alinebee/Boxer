@@ -12,15 +12,16 @@
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXPaste.h"
 #import "BXEmulatorErrors.h"
-#import "NSWorkspace+ADBFileTypes.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 #import "NSWorkspace+ADBMountedVolumes.h"
 
 
 //Private methods
 @interface BXSession (BXDragDropPrivate)
 
-- (NSDragOperation) _responseToDroppedFile: (NSString *)filePath;
-- (BOOL) _handleDroppedFile: (NSString *)filePath withLaunching: (BOOL)launch;
+- (NSDragOperation) _responseToDraggedURL: (NSURL *)URL;
+- (BOOL) _handleDraggedURL: (NSURL *)URL
+         launchImmediately: (BOOL)launch;
 
 @end
 
@@ -32,51 +33,64 @@
 {
     if (!self.allowsDriveChanges)
         return [NSSet set];
-    
-	return [[BXFileTypes mountableTypes] setByAddingObjectsFromSet: [BXFileTypes executableTypes]];
+    else
+        return [[BXFileTypes mountableTypes] setByAddingObjectsFromSet: [BXFileTypes executableTypes]];
 }
 
-
-//Called by BXDOSWindowController draggingEntered: to figure out what we'd do with dropped files.
-- (NSDragOperation) responseToDroppedFiles: (NSArray *)filePaths
+- (NSDragOperation) responseToDraggedURLs: (NSArray *)draggedURLs
 {
 	NSDragOperation response = NSDragOperationNone;
-	for (NSString *filePath in filePaths)
+	for (NSURL *URL in draggedURLs)
 	{
 		//Decide what we'd do with this specific file
-		response = [self _responseToDroppedFile: filePath];
+		response = [self _responseToDraggedURL: URL];
 		//If any files in the pasteboard would be rejected then reject them all, as per the HIG
-		if (response == NSDragOperationNone) return response;
+		if (response == NSDragOperationNone)
+            return response;
 	}
 	//Otherwise, return whatever we'd do with the last item in the pasteboard
 	return response;
 }
 
-//Called by BXDOSWindowController draggingEntered: to figure out what we'd do with a dropped string.
-- (NSDragOperation) responseToDroppedString: (NSString *)droppedString
+- (NSDragOperation) responseToDraggedStrings: (NSArray *)draggedStrings
 {
-    //Only permit string drops if we're displaying the DOS view currently.
-    BOOL isShowingDOSView = (self.DOSWindowController.currentPanel == BXDOSWindowDOSView);
+	NSDragOperation response = NSDragOperationNone;
     
-	if (isShowingDOSView && [self.emulator canAcceptPastedString: droppedString])
-        return NSDragOperationCopy;
-	else
-        return NSDragOperationNone;
+    //Only permit string drops if we're displaying the DOS view at the moment.
+    BOOL isShowingDOSView = (self.DOSWindowController.currentPanel == BXDOSWindowDOSView);
+    if (isShowingDOSView)
+    {
+        for (NSString *draggedString in draggedStrings)
+        {
+            if ([self.emulator canAcceptPastedString: draggedString])
+            {
+                response = NSDragOperationCopy;
+            }
+            else
+            {
+                response = NSDragOperationNone;
+                break;
+            }
+        }
+    }
+    return response;
 }
 
 
 //Called by BXDOSWindowController performDragOperation: when files have been drag-dropped onto Boxer.
-- (BOOL) handleDroppedFiles: (NSArray *)filePaths withLaunching: (BOOL)launch
+- (BOOL) handleDraggedURLs: (NSArray *)draggedURLs launchImmediately: (BOOL)launch
 {
 	BOOL returnValue = NO;
 	
-	for (NSString *filePath in filePaths)
-		returnValue = [self _handleDroppedFile: filePath withLaunching: launch] || returnValue;
+	for (NSURL *URL in draggedURLs)
+		returnValue = [self _handleDraggedURL: URL launchImmediately: launch] || returnValue;
 	
 	//If any dropped files were successfully handled, reactivate Boxer and return focus to the DOS window
     //so that the user can get on with using them.
 	if (returnValue)
     {
+        [self resume: self];
+        
         [NSApp activateIgnoringOtherApps: YES];
         [self.DOSWindowController.window makeKeyAndOrderFront: self];
     }
@@ -84,14 +98,16 @@
 }
 
 //Called by BXDOSWindowController performDragOperation: when a string has been drag-dropped onto Boxer.
-- (BOOL) handleDroppedString: (NSString *)droppedString
+- (BOOL) handleDraggedStrings: (NSArray *)draggedStrings
 {
-	BOOL returnValue = [self.emulator handlePastedString: droppedString asCommand: YES];
+	BOOL returnValue = NO;
+    
+    for (NSString *draggedString in draggedStrings)
+        [self.emulator handlePastedString: draggedString asCommand: YES];
     
 	//If the dragged string was successfully handled, reactivate Boxer and return focus to the DOS window.
     if (returnValue)
     {
-        //Unpause when handling strings
         [self resume: self];
         
         [NSApp activateIgnoringOtherApps: YES];
@@ -105,20 +121,20 @@
 #pragma mark Private methods
 
 //This method indicates what we'll do with the dropped file, before we handle any actual drop.
-- (NSDragOperation) _responseToDroppedFile: (NSString *)filePath
+- (NSDragOperation) _responseToDraggedURL: (NSURL *)URL
 {
-	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	
 	BOOL isInProcess = self.emulator.isRunningProcess;
 	
 	//We wouldn't accept any files that aren't on our accepted formats list.
-	if (![workspace file: filePath matchesTypes: self.droppableFileTypes]) return NSDragOperationNone;
+	if ([URL matchingFileType: self.droppableFileTypes] == nil)
+        return NSDragOperationNone;
 	
 	//We wouldn't accept any executables if the emulator is running a process already.
-	if (isInProcess && [self.class isExecutable: filePath]) return NSDragOperationNone;
+	if (isInProcess && [URL matchingFileType: [BXFileTypes executableTypes]] != nil)
+        return NSDragOperationNone;
 	
 	//If the path is already accessible in DOS, and doesn't deserve its own mount point...
-	if (![self shouldMountNewDriveForPath: filePath])
+	if (![self shouldMountNewDriveForURL: URL])
 	{
 		//...then we'd change the working directory to it, if we're not already busy; otherwise we'd reject it.
 		return (isInProcess) ? NSDragOperationNone : NSDragOperationLink;
@@ -128,22 +144,23 @@
 }
 
 
-- (BOOL) _handleDroppedFile: (NSString *)filePath withLaunching: (BOOL)launch
+- (BOOL) _handleDraggedURL: (NSURL *)URL launchImmediately: (BOOL)launch
 {	
 	//First check if we ought to do anything with this file, to be safe
-	if ([self _responseToDroppedFile: filePath] == NSDragOperationNone) return NO;
+	if ([self _responseToDraggedURL: URL] == NSDragOperationNone) return NO;
 	
 	//Keep track of whether we've done anything with the dropped file yet
 	BOOL performedAction = NO;
 	
 	//Make a new mount for the path if we need
-	if ([self shouldMountNewDriveForPath: filePath])
+	if ([self shouldMountNewDriveForURL: URL])
 	{
         NSError *mountError = nil;
-		BXDrive *drive = [self mountDriveForPath: filePath
-                                        ifExists: BXDriveReplace
-                                         options: BXDefaultDriveMountOptions
-                                           error: &mountError];
+		BXDrive *drive = [self mountDriveForURL: URL
+                                       ifExists: BXDriveReplace
+                                        options: BXDefaultDriveMountOptions
+                                          error: &mountError];
+        
 		if (!drive)
         {
             if (mountError)
@@ -160,7 +177,8 @@
 	}
 	
 	//Launch the path in the emulator
-	if (launch) performedAction = [self openFileAtPath: filePath] || performedAction;
+	if (launch)
+        performedAction = [self openURLInDOS: URL] || performedAction;
 	
 	//Report whether or not anything actually happened as a result of the drop
 	return performedAction;

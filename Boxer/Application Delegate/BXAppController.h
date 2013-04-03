@@ -77,7 +77,7 @@ enum {
 - (IBAction) sendEmail:				(id)sender;	//Open a new email to Boxer's contact email address.
 - (IBAction) showUniversalAccessPrefsPane: (id)sender; //Open the Universal Access pane in OS X System Preferences.
 
-//Reveal the path of the current session in a new Finder window.
-- (IBAction) revealCurrentSessionPath: (id)sender;
+//Reveal the location of the current session in a new Finder window.
+- (IBAction) revealCurrentSession: (id)sender;
 
 @end

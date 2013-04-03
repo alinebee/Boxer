@@ -115,7 +115,8 @@ enum {
 - (IBAction) launchDefaultProgram: (id)sender
 {
 	NSString *filePath = self.programSelector.selectedItem.representedObject;
-	[self.session openFileAtPath: filePath];
+    if (filePath)
+        [self.session openURLInDOS: [NSURL fileURLWithPath: filePath]];
 }
 
 - (IBAction) revealGamebox: (id)sender
@@ -199,7 +200,7 @@ enum {
 	//Disable files that are outside the gamebox or that aren't accessible in DOS.
 	if (![URL isBasedInURL: session.gamebox.resourceURL]) return NO;
     
-	if (![session.emulator pathIsDOSAccessible: URL.path]) return NO;
+	if (![session.emulator URLIsAccessibleInDOS: URL]) return NO;
     
 	return YES;
 }
@@ -252,7 +253,7 @@ enum {
 
 - (NSArray *) _programMenuItems
 {	
-	NSDictionary *allPrograms	= self.session.executables;
+	NSDictionary *allPrograms	= [self.session.executableURLs valueForKey: @"path"];
     NSString *currentTarget     = self.session.gamebox.targetPath;
 	NSMutableArray *items		= [NSMutableArray arrayWithCapacity: allPrograms.count];
 	
@@ -294,13 +295,6 @@ enum {
             }
 			[pool release];
 		}
-        
-        if (!hasItemForTarget && currentTarget)
-        {
-            BXDrive *driveForTarget = [self.session queuedDriveForPath: currentTarget];
-            NSMenuItem *item = [self _programMenuItemForPath: currentTarget onDrive: driveForTarget];
-            [items addObject: item];
-        }
 	}
 	
 	return items;

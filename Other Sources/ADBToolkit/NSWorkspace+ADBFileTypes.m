@@ -66,7 +66,10 @@
 - (NSURL *) nearestAncestorOfURL: (NSURL *)URL matchingTypes: (NSSet *)acceptedTypes
 {
     NSString *path = [self parentOfFile: URL.path matchingTypes: acceptedTypes];
-    return [NSURL fileURLWithPath: path];
+    if (path)
+        return [NSURL fileURLWithPath: path];
+    else
+        return nil;
 }
 
 - (NSString *) parentOfFile: (NSString *)filePath matchingTypes: (NSSet *)acceptedTypes

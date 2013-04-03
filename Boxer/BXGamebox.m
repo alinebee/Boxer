@@ -1336,23 +1336,4 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	return YES;
 }
 
-- (NSString *) configurationFile
-{
-    //LAZY ASS FIX: this used to use pathForResource:ofType: but this was incorrectly returning nil
-    //in the case where a configuration file had just been written but NSBundle had checked before
-    //for a file and found it missing. This will be fixed once we migrate this wretched class away
-    //from NSBundle once and for all.
-    NSFileManager *manager = [NSFileManager defaultManager];
-    
-    NSString *configPath = self.configurationFilePath;
-    if ([manager fileExistsAtPath: configPath]) return configPath;
-    else return nil;
-}
-
-- (NSString *) configurationFilePath
-{
-	NSString *fileName = [BXConfigurationFileName stringByAppendingPathExtension: BXConfigurationFileExtension];
-	return [self.resourcePath stringByAppendingPathComponent: fileName];
-}
-
 @end

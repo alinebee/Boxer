@@ -3,12 +3,12 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
 		<string key="IBDocument.SystemVersion">12C60</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
+		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
 		<string key="IBDocument.AppKitVersion">1187.34</string>
 		<string key="IBDocument.HIToolboxVersion">625.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2844</string>
+			<string key="NS.object.0">3084</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1738,6 +1738,14 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSMenuItem" id="118784418">
 						<reference key="NSMenu" ref="881225046"/>
+						<string key="NSTitle">Browse Games</string>
+						<string key="NSKeyEquiv"/>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="569538535"/>
+						<reference key="NSMixedImage" ref="489554260"/>
+					</object>
+					<object class="NSMenuItem" id="713371972">
+						<reference key="NSMenu" ref="881225046"/>
 						<string key="NSTitle">Show Game in Finder</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
@@ -2838,20 +2846,28 @@
 					<int key="connectionID">2131</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">revealCurrentSessionPath:</string>
-						<reference key="source" ref="74086318"/>
-						<reference key="destination" ref="118784418"/>
-					</object>
-					<int key="connectionID">2137</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">joypadController</string>
 						<reference key="source" ref="74086318"/>
 						<reference key="destination" ref="96241277"/>
 					</object>
 					<int key="connectionID">2159</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">revealCurrentSession:</string>
+						<reference key="source" ref="74086318"/>
+						<reference key="destination" ref="713371972"/>
+					</object>
+					<int key="connectionID">2415</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">revealGamesFolder:</string>
+						<reference key="source" ref="74086318"/>
+						<reference key="destination" ref="118784418"/>
+					</object>
+					<int key="connectionID">2416</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -4070,6 +4086,7 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="118784418"/>
+							<reference ref="713371972"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Dock Menu</string>
@@ -4464,6 +4481,11 @@
 						<reference key="object" ref="274058088"/>
 						<reference key="parent" ref="6662534"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2414</int>
+						<reference key="object" ref="713371972"/>
+						<reference key="parent" ref="881225046"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -4672,6 +4694,7 @@
 					<string>2380.IBPluginDependency</string>
 					<string>2381.IBPluginDependency</string>
 					<string>2382.IBPluginDependency</string>
+					<string>2414.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>284.IBPluginDependency</string>
 					<string>285.IBPluginDependency</string>
@@ -4943,6 +4966,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -4957,7 +4981,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2410</int>
+			<int key="maxID">2416</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -5088,7 +5112,7 @@
 							<string>orderFrontPreferencesPanel:</string>
 							<string>orderFrontWelcomePanel:</string>
 							<string>orderFrontWelcomePanelWithTransition:</string>
-							<string>revealCurrentSessionPath:</string>
+							<string>revealCurrentSession:</string>
 							<string>revealGamesFolder:</string>
 							<string>sendEmail:</string>
 							<string>showBugReportPage:</string>
@@ -5141,7 +5165,7 @@
 							<string>orderFrontPreferencesPanel:</string>
 							<string>orderFrontWelcomePanel:</string>
 							<string>orderFrontWelcomePanelWithTransition:</string>
-							<string>revealCurrentSessionPath:</string>
+							<string>revealCurrentSession:</string>
 							<string>revealGamesFolder:</string>
 							<string>sendEmail:</string>
 							<string>showBugReportPage:</string>
@@ -5188,7 +5212,7 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">revealCurrentSessionPath:</string>
+								<string key="name">revealCurrentSession:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -6369,14 +6393,12 @@
 							<string>mergeShadowedChanges:</string>
 							<string>mountNextDrivesInQueues:</string>
 							<string>mountPreviousDrivesInQueues:</string>
-							<string>openInDOS:</string>
 							<string>orderFrontPrintStatusPanel:</string>
 							<string>paste:</string>
 							<string>pause:</string>
 							<string>performRestart:</string>
 							<string>performRestartAtLaunchPanel:</string>
 							<string>printDocument:</string>
-							<string>relaunchTargetProgram:</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
 							<string>revertShadowedChanges:</string>
@@ -6388,8 +6410,6 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -6436,14 +6456,12 @@
 							<string>mergeShadowedChanges:</string>
 							<string>mountNextDrivesInQueues:</string>
 							<string>mountPreviousDrivesInQueues:</string>
-							<string>openInDOS:</string>
 							<string>orderFrontPrintStatusPanel:</string>
 							<string>paste:</string>
 							<string>pause:</string>
 							<string>performRestart:</string>
 							<string>performRestartAtLaunchPanel:</string>
 							<string>printDocument:</string>
-							<string>relaunchTargetProgram:</string>
 							<string>releaseFastForward:</string>
 							<string>resume:</string>
 							<string>revertShadowedChanges:</string>
@@ -6508,10 +6526,6 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">openInDOS:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
 								<string key="name">orderFrontPrintStatusPanel:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -6533,10 +6547,6 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">printDocument:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">relaunchTargetProgram:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

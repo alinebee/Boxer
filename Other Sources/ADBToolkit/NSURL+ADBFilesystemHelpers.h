@@ -60,6 +60,24 @@
 
 @end
 
+
+@interface NSURL (ADBResourceValues)
+
+//Returns the value for the specified resource property.
+//Returns nil if the property cannot be retrieved for any reason.
+//This is just a simpler calling syntax for NSURL getResourceValue:forKey:error:
+//for when you don't care about failure reasons.
+- (id) resourceValueForKey: (NSString *)key;
+
+//Returns the localized display name of the file: i.e., the value of NSURLLocalizedNameKey.
+- (NSString *) localizedName;
+
+//Returns whether this URL represents a directory: i.e. the value of NSURLIsDirectoryKey.
+- (BOOL) isDirectory;
+
+@end
+
+
 @interface NSURL (ADBFileTypes)
 
 //Returns the UTI of the file at this URL, or nil if this could not be determined.

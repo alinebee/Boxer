@@ -206,26 +206,18 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 							 display: (BOOL)displayDocument
 							   error: (NSError **)outError
 {
-	NSString *path = absoluteURL.path;
-	
 	//First go through our existing sessions, checking if any can open the specified URL.
 	//(This will be possible if the URL is accessible to a session's emulated filesystem,
 	//and the session is not already running a program.)
 	
-	//TWEAK: if it’s a gamebox, then check if we have a session open for that gamebox.
-	//If so, ask that session to launch the default program in that gamebox (if there is any)
-	//or else focus it.
+	//TWEAK: if it’s a gamebox, then foreground any existing session for that gamebox.
 	NSString *type = [self typeForContentsOfURL: absoluteURL error: nil];
 	if ([type isEqualToString: BXGameboxType])
 	{
 		for (BXSession *session in self.sessions)
 		{
-			if ([session.gamebox.bundlePath isEqualToString: path])
+			if ([session.gamebox.bundleURL isEqual: absoluteURL])
 			{
-				NSString *defaultTarget = session.gamebox.targetPath;
-				if (defaultTarget)
-                    [session openFileAtPath: defaultTarget];
-				
 				[session showWindows];
 				return session;
 			}
@@ -236,9 +228,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	{
 		for (BXSession *session in self.sessions)
 		{
-			if ([session openFileAtPath: path])
+			if ([session openURLInDOS: absoluteURL])
 			{
-				if (displayDocument) [session showWindows];
+				if (displayDocument)
+                    [session showWindows];
 				return session;
 			}
 		}		
@@ -538,8 +531,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {	
 	SEL theAction = theItem.action;
 	
-	if (theAction == @selector(revealCurrentSessionPath:))
-		return (self.currentSession.hasGamebox || self.currentSession.currentPath != nil);
+	if (theAction == @selector(revealCurrentSession:))
+		return (self.currentSession.hasGamebox || self.currentSession.currentURL != nil);
 		
 	//Don't allow any of the following actions while a modal window is active.
 	if ([NSApp modalWindow]) return NO;
@@ -566,21 +559,24 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return [super validateUserInterfaceItem: theItem];
 }
 
-- (IBAction) revealCurrentSessionPath: (id)sender
+- (IBAction) revealCurrentSession: (id)sender
 {
-	NSString *path = nil;
+	NSURL *sessionURL = nil;
 	BXSession *session = self.currentSession;
 	if (session)
 	{
 		//When running a gamebox, offer up the gamebox itself
 		if (session.hasGamebox)
-            path = session.gamebox.bundlePath;
+            sessionURL = session.gamebox.bundleURL;
         
 		//Otherwise, offer up the current DOS program or directory
-		else path = session.currentPath;
+		else sessionURL = session.currentURL;
 	}
-	if (path)
-        [self revealPath: path];
+    
+	if (sessionURL)
+    {
+        [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: @[sessionURL]];
+    }
 }
 
 @end

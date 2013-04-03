@@ -36,24 +36,25 @@ extern NSString * const BXGameImportedNotificationType;
 //These have been overridden to make them internally writeable
 @property (readwrite, retain, nonatomic) NSMutableDictionary *gameSettings;
 
-@property (readwrite, copy, nonatomic) NSString *lastExecutedProgramPath;
-@property (readwrite, copy, nonatomic) NSString *lastExecutedProgramArguments;
-@property (readwrite, copy, nonatomic) NSString *lastLaunchedProgramPath;
+//The URL to the program that was last launched by user action (i.e. from the program panel or DOS prompt)
+//and the arguments it was launched with.
+@property (readwrite, copy, nonatomic) NSURL *launchedProgramURL;
 @property (readwrite, copy, nonatomic) NSString *lastLaunchedProgramArguments;
 
 @property (readwrite, retain, nonatomic) NSDictionary *drives;
-@property (readwrite, retain, nonatomic) NSDictionary *executables;
+@property (readwrite, retain, nonatomic) NSDictionary *executableURLs;
 
 @property (retain, nonatomic) NSOperationQueue *importQueue;
 @property (retain, nonatomic) NSOperationQueue *scanQueue;
 
 @property (retain, nonatomic) NSMutableSet *MT32MessagesReceived;
-@property (copy, nonatomic) NSString *temporaryFolderPath;
+@property (copy, nonatomic) NSURL *temporaryFolderURL;
 
 //A cached version of the represented icon for our gamebox. Used by @representedIcon.
 @property (retain, nonatomic) NSImage *cachedIcon;
 
 @property (readwrite, assign, getter=isEmulating)	BOOL emulating;
+
 @property (readwrite, nonatomic, assign, getter=isSuspended)	BOOL suspended;
 @property (readwrite, nonatomic, assign, getter=isAutoPaused)	BOOL autoPaused;
 @property (readwrite, nonatomic, assign, getter=isInterrupted)	BOOL interrupted;
@@ -89,7 +90,6 @@ extern NSString * const BXGameImportedNotificationType;
 //Whether the user can hold down Option to bypass the regular startup program.
 - (BOOL) _shouldAllowSkippingStartupProgram;
 
-
 //Create our BXEmulator instance and starts its main loop.
 //Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent
 //DOSBox blocking cleanup code.
@@ -106,15 +106,16 @@ extern NSString * const BXGameImportedNotificationType;
 //Populates the session's game settings with the settings stored for the specified gamebox.
 - (void) _loadGameSettingsForGamebox: (BXGamebox *)gamebox;
 
-//Called once the session has exited to save any DOSBox settings we have changed to the gamebox conf.
-- (void) _saveConfiguration: (BXEmulatorConfiguration *)configuration toFile: (NSString *)filePath;
-
-//Returns whether we should cache the specified game profile in our game settings, to avoid needing
-//to redetect it later. Base implementation returns YES in all cases.
+//Returns whether we should cache the specified game profile in our game settings,
+//to avoid needing to redetect it later.
 - (BOOL) _shouldPersistGameProfile: (BXGameProfile *)profile;
+
+//Called once the session has exited to save any DOSBox settings we have changed to the gamebox conf.
+- (void) _saveGameboxConfiguration: (BXEmulatorConfiguration *)configuration;
 
 //Cleans up temporary files after the session is closed.
 - (void) _cleanup;
+
 
 //Called if DOSBox encounters an unrecoverable error and throws an exception.
 - (void) _reportEmulatorException: (NSException *)exception;

@@ -223,7 +223,10 @@ enum {
 	//Only bother grabbing the last drive selected
 	BXDrive *drive = self.selectedDrives.lastObject;
 	if (drive)
-        [NSApp sendAction: @selector(openInDOS:) to: nil from: drive];
+    {
+        BXSession *currentSession = [[NSApp delegate] currentSession];
+        [currentSession openURLInDOS: drive.sourceURL];
+    }
 }
 
 - (IBAction) toggleSelectedDrives: (id)sender
@@ -548,34 +551,47 @@ enum {
 #pragma mark Drag-drop
 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
-{	
+{
+    BXSession *session = [[NSApp delegate] currentSession];
+    if (!session)
+        return NSDragOperationNone;
+    
 	//Ignore drags that originated from the drive list itself
 	id source = sender.draggingSource;
-	if ([[source window] isEqual: self.view.window])
+	if ([source respondsToSelector: @selector(window)] && [[source window] isEqual: self.view.window])
         return NSDragOperationNone;
 	
 	//Otherwise, ask the current session what it would like to do with the files
 	NSPasteboard *pboard = sender.draggingPasteboard;
-	if ([pboard.types containsObject: NSFilenamesPboardType])
-	{
-		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		BXSession *session = [[NSApp delegate] currentSession];
-		return [session responseToDroppedFiles: filePaths];
-	}
-	else return NSDragOperationNone;
+    
+    NSArray *draggedURLs = [pboard readObjectsForClasses: @[[NSURL class]]
+                                                 options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];
+    if (draggedURLs.count)
+    {
+		return [session responseToDraggedURLs: draggedURLs];
+    }
+    else
+    {
+        return NSDragOperationNone;
+    }
 }
 
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
 {	
 	NSPasteboard *pboard = sender.draggingPasteboard;
-	if ([pboard.types containsObject: NSFilenamesPboardType])
-	{
+    
+    NSArray *draggedURLs = [pboard readObjectsForClasses: @[[NSURL class]]
+                                                 options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];
+    
+    if (draggedURLs.count)
+    {
 		BXSession *session = [[NSApp delegate] currentSession];
-		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		
-		return [session handleDroppedFiles: filePaths withLaunching: NO];
-	}		
-	return NO;
+		return [session handleDraggedURLs: draggedURLs launchImmediately: NO];
+    }
+	else
+    {
+        return NO;
+    }
 }
 
 - (BOOL) collectionView: (NSCollectionView *)collectionView

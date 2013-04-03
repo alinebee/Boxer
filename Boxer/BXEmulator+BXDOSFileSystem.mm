@@ -599,6 +599,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 #pragma mark Resolving paths to OS X resources
 
++ (NSSet *) keyPathsForValuesAffectingCurrentDirectoryURL { return [NSSet setWithObject: @"currentDirectory"]; }
+
 - (NSURL *) currentDirectoryURL
 {
 	if (self.isExecuting)
@@ -1270,10 +1272,10 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
 	//Post a notification to whoever's listening
-	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-							  filePath, @"path",
-							  drive, @"drive",
-							  nil];
+	NSDictionary *userInfo = @{
+                            BXEmulatorDriveKey: drive,
+                            BXEmulatorLocalURLKey: [NSURL fileURLWithPath: filePath],
+                            };
 	
 	[self _postNotificationName: BXEmulatorDidCreateFileNotification
 			   delegateSelector: @selector(emulatorDidCreateFile:)
@@ -1284,10 +1286,10 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
 	//Post a notification to whoever's listening
-	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-							  filePath, @"path",
-							  drive, @"drive",
-							  nil];
+	NSDictionary *userInfo = @{
+                            BXEmulatorDriveKey: drive,
+                            BXEmulatorLocalURLKey: [NSURL fileURLWithPath: filePath],
+                            };
 	
 	[self _postNotificationName: BXEmulatorDidRemoveFileNotification
 			   delegateSelector: @selector(emulatorDidRemoveFile:)

@@ -128,8 +128,8 @@ typedef NSUInteger BXDriveMountOptions;
 //This is normally drive C, but otherwise is the first available drive letter with programs on it.
 @property (readonly, nonatomic) BXDrive *principalDrive;
 
-//An array of executable paths located on the 'principal' drive of the session (normally drive C).
-@property (readonly, nonatomic) NSArray *programPathsOnPrincipalDrive;
+//An array of executable URLs located on the 'principal' drive of the session (normally drive C).
+@property (readonly, nonatomic) NSArray *programURLsOnPrincipalDrive;
 
 //Return whether there are currently any imports/executable scans in progress.
 @property (readonly, nonatomic) BOOL isImportingDrives;
@@ -141,29 +141,27 @@ typedef NSUInteger BXDriveMountOptions;
 @property (readonly, nonatomic) NSArray *mountedDrives;
 
 
-#pragma mark -
-#pragma mark Helper class methods
-
-//Returns a set of filesnames that should be hidden from DOS directory listings.
-//Used by emulator:shouldShowDOSFile:.
-+ (NSSet *) hiddenFilenamePatterns;
+#pragma mark - Helper class methods
 
 //Returns the most appropriate base location for a drive to expose the specified path:
 //If path points to a disc image, that will be returned.
 //If path is inside a gamebox or Boxer mountable folder type, that container will be returned.
 //If path is on a CD or floppy volume, then the volume will be returned.
 //Otherwise, the parent folder of the item, or the item itself if it is a folder, will be returned. 
-+ (NSString *) preferredMountPointForPath: (NSString *)path;
++ (NSURL *) preferredMountPointForURL: (NSURL *)URL;
 
 //Given an arbitrary target path, returns the most appropriate base location from which to start searching for games:
 //If path is inside a gamebox or Boxer mountable folder type, that container will be returned (and shouldRecurse will be YES).
 //If path is on a CD or floppy volume, then the volume will be returned (and shouldRecurse will be YES).
 //Otherwise, the parent folder of the item, or the item itself if it is a folder, will be returned (and shouldRecurse will be NO). 
-+ (NSString *) gameDetectionPointForPath: (NSString *)path shouldSearchSubfolders: (BOOL *)shouldRecurse;
++ (NSURL *) gameDetectionPointForURL: (NSURL *)URL shouldSearchSubfolders: (BOOL *)shouldRecurse;
 
 
-#pragma mark -
-#pragma mark Filetype-related class methods
+#pragma mark - Filetype-related class methods
+
+//Returns a set of filesnames that should be hidden from DOS directory listings.
+//Used by emulator:shouldShowDOSFile:.
++ (NSSet *) hiddenFilenamePatterns;
 
 //UTI filetypes of folders that should be used as mount-points for files inside them: if we open a file
 //inside a folder matching one of these types, it will mount that folder as its drive.
@@ -179,32 +177,21 @@ typedef NSUInteger BXDriveMountOptions;
 //separate drives even when their containing gamebox is already mounted.
 + (NSSet *) separatelyMountedTypes;
 
-//Returns whether the specified OS X path represents a DOS/Windows executable.
-+ (BOOL) isExecutable: (NSString *)path;
+
+#pragma mark - Launching programs
+
+//Open the file at the specified logical URL in DOS with the (optional) specified arguments.
+//If the URL points to an executable, it will be launched with any specified arguments;
+//if it's a directory, we'll change the working directory to it.
+//If the URL is not currently accessible in DOS, a new drive will be mounted for it.
+- (BOOL) openURLInDOS: (NSURL *)URL
+        withArguments: (NSString *)arguments
+       clearingScreen: (BOOL)clearScreen;
+
+- (BOOL) openURLInDOS: (NSURL *)URL;
 
 
-#pragma mark -
-#pragma mark Launching programs
-
-//Open the represented object of the sender in DOS.
-- (IBAction) openInDOS: (id)sender;
-
-//Relaunch the target program for this session.
-- (IBAction) relaunchTargetProgram: (id)sender;
-
-//Open the file at the specified path in DOS with the (optional) specified arguments.
-//If path is an executable, it will be launched with any specified arguments;
-//otherwise, we'll just change the working directory to the path.
-- (BOOL) openFileAtPath: (NSString *)path
-          withArguments: (NSString *)arguments
-         clearingScreen: (BOOL)clearScreen;
-
-- (BOOL) openFileAtPath: (NSString *)path;
-
-
-
-#pragma mark -
-#pragma mark Managing drive shadowing
+#pragma mark - Managing drive shadowing
 
 //Returns the path to the bundle where we will store state data for the current gamebox.
 - (NSURL *) currentGameStateURL;
@@ -254,8 +241,7 @@ typedef NSUInteger BXDriveMountOptions;
 - (BOOL) hasShadowedChanges;
 
 
-#pragma mark -
-#pragma mark Mounting and queuing drives
+#pragma mark - Mounting and queuing drives
 
 //The window in which we should present drive-related sheets, such as errors and open dialogs.
 //This will be the Drive Inspector panel if it's visible, otherwise the main DOS window.
@@ -281,9 +267,9 @@ typedef NSUInteger BXDriveMountOptions;
 //Returns whether the specified drive is currently mounted in the emulator.
 - (BOOL) driveIsMounted: (BXDrive *)drive;
 
-//Returns the first queued drive that represents this path,
+//Returns the first queued drive that represents the specified logical URL,
 //or nil if no such drive is found.
-- (BXDrive *) queuedDriveForPath: (NSString *)path;
+- (BXDrive *) queuedDriveRepresentingURL: (NSURL *)URL;
 
 //Returns the most appropriate letter at which to mount/queue the specified drive,
 //based on the specified drive mount options. Used by mountDrive:ifExists:options:error
@@ -357,22 +343,22 @@ typedef NSUInteger BXDriveMountOptions;
                  error: (NSError **)outError;
 
 
-//Returns whether to allow the specified path to be mounted as a drive:
+//Returns whether to allow the specified URL to be mounted as a drive:
 //populating outError with the reason why not, if provided.
-- (BOOL) validateDrivePath: (NSString **)ioValue
-                     error: (NSError **)outError;
+- (BOOL) validateDriveURL: (NSURL **)ioValue
+                    error: (NSError **)outError;
 
-//Returns whether the specified path should be mounted as a new drive.
-//Returns YES if the path isn't already DOS-accessible or deserves its
+//Returns whether the specified URL should be mounted as a new drive.
+//Returns YES if the URL isn't already DOS-accessible or deserves its
 //own drive anyway, NO otherwise.
-- (BOOL) shouldMountNewDriveForPath: (NSString *)path;
+- (BOOL) shouldMountNewDriveForURL: (NSURL *)URL;
 
-//Adds a new drive to expose the specified path, using preferredMountPointForPath:
+//Adds a new drive to expose the specified URL, using preferredMountPointForURL:
 //to choose an appropriate base location for the drive.
-- (BXDrive *) mountDriveForPath: (NSString *)path
-                       ifExists: (BXDriveConflictBehaviour)conflictBehaviour
-                        options: (BXDriveMountOptions)options
-                          error: (NSError **)outError;
+- (BXDrive *) mountDriveForURL: (NSURL *)URL
+                      ifExists: (BXDriveConflictBehaviour)conflictBehaviour
+                       options: (BXDriveMountOptions)options
+                         error: (NSError **)outError;
 
 
 
@@ -429,13 +415,17 @@ typedef NSUInteger BXDriveMountOptions;
 //- the drive has already been or is currently being imported
 - (BOOL) canImportDrive: (BXDrive *)drive;
 
+
 //Returns an import operation that will import the specified drive to a bundled
-//drive folder in the gamebox. If start is YES, the operation will be added to
-//the queue immediately and begin importing asynchronously.
-//Will return nil if the drive cannot be imported (e.g. because a drive at
-//the destination already exists.)
+//drive folder in the gamebox. If start is YES, the operation will be started
+//immediately; otherwise it should be passed to startImportOperation: later
+//(which performs additional preparations for the import).
 - (ADBOperation <BXDriveImport> *) importOperationForDrive: (BXDrive *)drive
-										 startImmediately: (BOOL)start;
+                                          startImmediately: (BOOL)start;
+
+//Start an import operation previously created by importOperationForDrive:startImmediately:.
+//This will unmount any drive that will be unavailable during the operation.
+- (void) startImportOperation: (ADBOperation <BXDriveImport> *)operation;
 
 //Cancel the in-progress import of the specified drive. Returns YES if the import was cancelled,
 //NO if the import had already finished or the drive was not being imported.
@@ -443,4 +433,5 @@ typedef NSUInteger BXDriveMountOptions;
 
 //Called when a drive has finished importing. Replaces the source drive with the imported version.
 - (void) driveImportDidFinish: (NSNotification *)theNotification;
+
 @end

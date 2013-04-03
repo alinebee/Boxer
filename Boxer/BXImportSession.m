@@ -410,10 +410,9 @@
 
 - (BOOL) isRunningInstaller
 {
-	NSArray *installers = [[self.installerURLs valueForKey: @"path"] arrayByAddingObject: self.targetPath];
-	
-	if ([installers containsObject: self.activeProgramPath]) return YES;
-	if ([self.class isInstallerAtPath: self.activeProgramPath]) return YES;
+    if ([self.launchedProgramURL isEqual: self.targetURL])              return YES;
+	if ([self.installerURLs containsObject: self.launchedProgramURL])   return YES;
+	if ([self.class isInstallerAtPath: self.launchedProgramURL.path])   return YES;
 	
 	return NO;
 }
@@ -691,7 +690,7 @@
 	[self.importWindowController handOffToController: self.DOSWindowController];
 	
 	//Set the installer as the target executable for this session
-	self.targetPath = URL.path;
+	self.targetURL = URL;
     
     //Aaaand start emulating!
 	[self start];
@@ -699,7 +698,7 @@
 
 - (void) skipInstaller
 {
-	self.targetPath = nil;
+	self.targetURL = nil;
 	self.importStage = BXImportSessionReadyToFinalize;
     
     //Create a new gamebox for us to import into.
@@ -1208,9 +1207,8 @@
             //Strip out all the junk we don't care about from the original game configuration.
             BXEmulatorConfiguration *sanitizedConfig = [self.class sanitizedVersionOfConfiguration: self.configurationToImport];
             
-            //Save the sanitized configuration into the gamebox.
-            NSString *configPath = self.gamebox.configurationFilePath;
-            [self _saveConfiguration: sanitizedConfig toFile: configPath];
+            //Save the sanitized configuration into our new gamebox.
+            [self _saveGameboxConfiguration: sanitizedConfig];
         }
     }
     
@@ -1319,15 +1317,15 @@
 	//Don't set the active program if we already have one: this way, we keep
 	//track of which program the user manually launched, and won't glom onto
     //other programs spawned by the original program (e.g. if it was a batch file.)
-	if (!self.lastExecutedProgramPath)
+	if (!self.launchedProgramURL)
 	{
-		NSString *programPath = [notification.userInfo objectForKey: BXEmulatorLocalPathKey];
+		NSURL *programURL = [notification.userInfo objectForKey: BXEmulatorLocalURLKey];
         
-        if (programPath.length)
+        if (programURL)
         {
             NSString *arguments = [notification.userInfo objectForKey: BXEmulatorLaunchArgumentsKey];
-            self.lastExecutedProgramPath = programPath;
-            self.lastExecutedProgramArguments = arguments;
+            self.launchedProgramURL = programURL;
+            self.lastLaunchedProgramArguments = arguments;
 		}
 	}
 	
@@ -1343,10 +1341,7 @@
 - (void) emulatorDidReturnToShell: (NSNotification *)notification
 {
 	//Clear the active program
-	self.lastExecutedProgramPath = nil;
-    self.lastExecutedProgramArguments = nil;
-    
-    self.lastLaunchedProgramPath = nil;
+    self.launchedProgramURL = nil;
     self.lastLaunchedProgramArguments = nil;
 	
 	//Show the program chooser after returning to the DOS prompt

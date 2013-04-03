@@ -132,7 +132,7 @@ typedef NSUInteger BXGameIdentifierType;
 @property (readonly, nonatomic) NSArray *floppyVolumeURLs;
 
 //Returns the URL at which the configuration file is stored (which may not yet exist.)
-@property (readonly, nonatomic) NSString *configurationFileURL;
+@property (readonly, nonatomic) NSURL *configurationFileURL;
 
 //Returns the URL of the target program saved under Boxer 1.3.x and below.
 @property (readonly, nonatomic) NSURL *legacyTargetURL;
@@ -339,12 +339,6 @@ typedef enum {
 @property (readonly, nonatomic) NSArray *hddVolumes __deprecated;
 @property (readonly, nonatomic) NSArray *cdVolumes __deprecated;
 @property (readonly, nonatomic) NSArray *floppyVolumes __deprecated;
-
-//Returns the path at which the configuration file is located (or would be, if it doesn’t exist.)
-@property (readonly, nonatomic) NSString *configurationFilePath __deprecated;
-
-//The path to the DOSBox configuration file for this package. Will be nil if one does not exist.
-@property (readonly, nonatomic) NSString *configurationFile __deprecated;
 
 //The path to the default executable for this gamebox. Will be nil if the gamebox has no target executable.
 @property (copy, nonatomic) NSString *targetPath __deprecated;

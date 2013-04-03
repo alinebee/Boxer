@@ -31,7 +31,6 @@
 #import "NSString+ADBPaths.h"
 #import "NSURL+ADBFilesystemHelpers.h"
 #import "NSFileManager+ADBTemporaryFiles.h"
-#import "ADBPathEnumerator.h"
 #import "RegexKitLite.h"
 #import "BXBezelController.h"
 #import "ADBUserNotificationDispatcher.h"
@@ -64,111 +63,98 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 @implementation BXSession (BXFileManagement)
 
-#pragma mark -
-#pragma mark Helper class methods
+#pragma mark - Helper class methods
 
-+ (NSSet *) hiddenFilenamePatterns
-{
-	static NSSet *exclusions = nil;
-	if (!exclusions) exclusions = [[NSSet alloc] initWithObjects:
-								   [BXConfigurationFileName stringByAppendingPathExtension: BXConfigurationFileExtension],
-								   [BXGameInfoFileName stringByAppendingPathExtension: BXGameInfoFileExtension],
-								   BXTargetSymlinkName,
-								   @"Icon\r",
-								   nil];
-    
-	return exclusions;
-}
-
-+ (NSString *) preferredMountPointForPath: (NSString *)filePath
++ (NSURL *) preferredMountPointForURL: (NSURL *)URL
 {	
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
-	//If the path is a disc image, use that as the mount point.
-	if ([workspace file: filePath matchesTypes: [BXFileTypes mountableImageTypes]]) return filePath;
-	
-	//If the path is (itself or inside) a gamebox or mountable folder, use that as the mount point.
-	NSString *container = [workspace parentOfFile: filePath matchingTypes: [self.class preferredMountPointTypes]];
-    if (container) return container;
+	//If the URL points to a disk image, use that as the mount point.
+    if ([URL matchingFileType: [BXFileTypes mountableImageTypes]] != nil)
+        return URL;
+    
+	//If the URL is (itself or inside) a gamebox or mountable folder, use that as the mount point.
+	NSURL *mountableContainer = [workspace nearestAncestorOfURL: URL matchingTypes: [self.class preferredMountPointTypes]];
+    if (mountableContainer)
+        return mountableContainer;
 	
 	//Check what kind of volume the file is on
-	NSString *volumePath = [workspace volumeForPath: filePath];
-	NSString *volumeType = [workspace volumeTypeForPath: filePath];
+	NSURL *volumeURL = [URL resourceValueForKey: NSURLVolumeURLKey];
+	NSString *volumeType = [workspace typeOfVolumeAtURL: URL];
     
 	//If it's on a data CD volume or floppy volume, use the base folder of the volume as the mount point
-	if ([volumeType isEqualToString: ADBDataCDVolumeType] || [workspace isFloppyVolumeAtPath: volumePath])
+	if ([volumeType isEqualToString: ADBDataCDVolumeType] || [workspace isFloppyVolumeAtURL: URL])
 	{
-		return volumePath;
+		return volumeURL;
 	}
+    
 	//If it's on an audio CD, hunt around for a corresponding data CD volume and use that as the mount point if found
 	else if ([volumeType isEqualToString: ADBAudioCDVolumeType])
 	{
-		NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: volumePath];
-		if (dataVolumePath) return dataVolumePath;
+		NSURL *dataVolumeURL = [workspace dataVolumeOfAudioCDAtURL: volumeURL];
+		if (dataVolumeURL)
+            return dataVolumeURL;
 	}
 	
 	//If we get this far, then treat the path as a regular file or folder.
-	BOOL isFolder;
-	NSFileManager *manager = [NSFileManager defaultManager];
-	[manager fileExistsAtPath: filePath isDirectory: &isFolder];
-	
 	//If the path is a folder, use it directly as the mount point...
-	if (isFolder) return filePath;
+    if (URL.isDirectory)
+        return URL;
 	
 	//...otherwise use the path's parent folder.
-	else return [filePath stringByDeletingLastPathComponent]; 
+	else
+        return URL.URLByDeletingLastPathComponent;
 }
 
-+ (NSString *) gameDetectionPointForPath: (NSString *)path shouldSearchSubfolders: (BOOL *)shouldRecurse
++ (NSURL *) gameDetectionPointForURL: (NSURL *)URL
+              shouldSearchSubfolders: (BOOL *)shouldRecurse
 {
-	if (shouldRecurse) *shouldRecurse = YES;
+	if (shouldRecurse)
+        *shouldRecurse = YES;
+    
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	
-	NSArray *typeOrder = [NSArray arrayWithObjects: BXGameboxType, BXMountableFolderType, nil];
 	
 	//If the file is inside a gamebox (first in preferredMountPointTypes) then search from that;
 	//If the file is inside a mountable folder (second) then search from that.
-	for (NSString *type in typeOrder)
+	for (NSString *type in @[BXGameboxType, BXMountableFolderType])
 	{
-		NSString *parent = [workspace parentOfFile: path
-                                     matchingTypes: [NSSet setWithObject: type]];
-		if (parent) return parent;
+        NSURL *parentContainer = [workspace nearestAncestorOfURL: URL matchingTypes: [NSSet setWithObject: type]];
+		if (parentContainer)
+            return parentContainer;
 	}
 	
-	//Failing that, check what kind of volume the file is on
-	NSString *volumePath = [workspace volumeForPath: path];
-	NSString *volumeType = [workspace volumeTypeForPath: path];
+	//Failing that, check what kind of volume the file is on.
+	NSURL *volumeURL = [URL resourceValueForKey: NSURLVolumeURLKey];
+	NSString *volumeType = [workspace typeOfVolumeAtURL: URL];
 	
 	//If it's on a data CD volume or floppy volume, scan from the base folder of the volume
-	if ([volumeType isEqualToString: ADBDataCDVolumeType] || [workspace isFloppyVolumeAtPath: volumePath])
+	if ([volumeType isEqualToString: ADBDataCDVolumeType] || [workspace isFloppyVolumeAtURL: volumeURL])
 	{
-		return volumePath;
+		return volumeURL;
 	}
 	//If it's on an audio CD, hunt around for a corresponding data CD volume and use that if found
 	else if ([volumeType isEqualToString: ADBAudioCDVolumeType])
 	{
-		NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: volumePath];
-		if (dataVolumePath) return dataVolumePath;
+		NSURL *dataVolumeURL = [workspace dataVolumeOfAudioCDAtURL: volumeURL];
+		if (dataVolumeURL) return dataVolumeURL;
 	}
 	
 	//If we get this far, then treat the path as a regular file or folder and recommend against
 	//searching subfolders (since the file hierarchy could be potentially huge.)
-	if (shouldRecurse) *shouldRecurse = NO;
-	BOOL isFolder;
-	NSFileManager *manager = [NSFileManager defaultManager];
-	[manager fileExistsAtPath: path isDirectory: &isFolder];
-	
+	if (shouldRecurse)
+        *shouldRecurse = NO;
 	
 	//If the path is a folder, search it directly...
-	if (isFolder) return path;
+	if (URL.isDirectory)
+        return URL;
 	
 	//...otherwise search the path's parent folder.
-	else return [path stringByDeletingLastPathComponent]; 
+	else
+        return URL.URLByDeletingLastPathComponent;
 }
 
 
-#pragma mark -
-#pragma mark Filetype helper methods
+#pragma mark - Filetype helper methods
 
 + (NSSet *) preferredMountPointTypes
 {
@@ -209,42 +195,24 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	return formats;
 }
 
-+ (BOOL) isExecutable: (NSString *)path
++ (NSSet *) hiddenFilenamePatterns
 {
-	return [[NSWorkspace sharedWorkspace] file: path matchesTypes: [BXFileTypes executableTypes]];
+	static NSSet *exclusions = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        exclusions = [[NSSet alloc] initWithObjects:
+                      [BXConfigurationFileName stringByAppendingPathExtension: BXConfigurationFileExtension],
+                      [BXGameInfoFileName stringByAppendingPathExtension: BXGameInfoFileExtension],
+                      BXTargetSymlinkName,
+                      @"Icon\r",
+                      nil];
+    });
+    
+	return exclusions;
 }
 
 
-#pragma mark -
-#pragma mark Miscellaneous file and folder methods
-
-- (IBAction) relaunchTargetProgram: (id)sender
-{
-	if (self.targetPath)
-        [self openFileAtPath: self.targetPath];
-}
-
-- (IBAction) openInDOS: (id)sender
-{
-	if ([sender respondsToSelector: @selector(representedObject)])
-        sender = [sender representedObject];
-	
-	NSString *path = nil;
-	
-	//NSString paths
-	if ([sender isKindOfClass: [NSString class]])			path = sender;
-	//NSURLs and BXDrives
-	else if ([sender respondsToSelector: @selector(path)])	path = [sender path];
-	//NSDictionaries with paths
-	else if ([sender isKindOfClass: [NSDictionary class]])	path = [sender objectForKey: @"path"];	
-	
-	if (path)
-        [self openFileAtPath: path];
-}
-
-
-#pragma mark -
-#pragma mark Drive shadowing
+#pragma mark - Drive shadowing
 
 - (BOOL) _shouldShadowDrive: (BXDrive *)drive
 {
@@ -599,12 +567,11 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     }
 }
 
-- (BXDrive *) queuedDriveForPath: (NSString *)path
+- (BXDrive *) queuedDriveRepresentingURL: (NSURL *)URL
 {
-    NSURL *driveURL = [NSURL fileURLWithPath: path];
 	for (BXDrive *drive in self.allDrives)
 	{
-		if ([drive representsURL: driveURL])
+		if ([drive representsURL: URL])
             return drive;
 	}
 	return nil;
@@ -709,7 +676,10 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 		//Note that alert stays retained - it is released by the didEndSelector
 		BXDrivesInUseAlert *alert = [[BXDrivesInUseAlert alloc] initWithDrives: drivesInUse forSession: self];
 		
-        NSDictionary *contextInfo = @{ @"drives": selectedDrives, @"options": @(options) };
+        NSDictionary *contextInfo = @{
+                                      @"drives": selectedDrives,
+                                      @"options": @(options)
+                                      };
         
 		[alert beginSheetModalForWindow: self.windowForDriveSheet
 						  modalDelegate: self
@@ -753,98 +723,85 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	[contextInfo release];
 }
 
-- (BOOL) validateDrivePath: (NSString **)ioValue
-                     error: (NSError **)outError
+- (BOOL) validateDriveURL: (NSURL **)ioValue
+                    error: (NSError **)outError
 {
-    NSString *drivePath = *ioValue;
+    NSURL *driveURL = *ioValue;
+    NSAssert(driveURL != nil, @"No drive URL specified.");
     
-    //A nil path was specified for some reason, don't continue but don't populate an error.
-    //FIXME: should this be an assertion?
-    if (!drivePath) return NO;
+    //Resolve the path to eliminate any symlinks, tildes and backtracking
+    NSURL *resolvedURL = driveURL.URLByResolvingSymlinksInPath.URLByStandardizingPath;
     
-	NSFileManager *manager = [NSFileManager defaultManager];
-    
-    //Fully resolve the path to eliminate any symlinks, tildes and backtracking
-	NSString *resolvedPath = [drivePath stringByStandardizingPath];
-    
-    BOOL isDir, exists = [manager fileExistsAtPath: resolvedPath isDirectory: &isDir];
-    if (!exists)
+    if (![resolvedURL checkResourceIsReachableAndReturnError: outError])
     {
-        if (outError)
-        {
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject: resolvedPath
-                                                                 forKey: NSFilePathErrorKey];
-            
-            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
-                                            code: NSFileNoSuchFileError
-                                        userInfo: userInfo];
-        }
         return NO;
     }
                             
     //Check if the path represents any restricted folders.
     //(Only bother to do this for folders: we can assume disc images are not system folders.)
-    if (isDir)
+    if (resolvedURL.isDirectory)
     {
-        NSString *rootPath = NSOpenStepRootDirectory();
-        if ([resolvedPath isEqualToString: rootPath])
+        NSURL *rootURL = [NSURL fileURLWithPath: NSOpenStepRootDirectory()];
+        if ([resolvedURL isEqual: rootURL])
         {
             if (outError)
             {
-                *outError = [BXSessionCannotMountSystemFolderError errorWithPath: drivePath
+                *outError = [BXSessionCannotMountSystemFolderError errorWithPath: driveURL.path
                                                                         userInfo: nil];
             }
             return NO;
         }
         
         //Restrict all system library folders, but not the user's own library folder.
-        NSArray *restrictedPaths = NSSearchPathForDirectoriesInDomains(NSAllLibrariesDirectory, NSAllDomainsMask & ~NSUserDomainMask, YES);
-        for (NSString *testPath in restrictedPaths) if ([resolvedPath isRootedInPath: testPath])
-        {
-            if (outError)
+        NSArray *restrictedURLs = [[NSFileManager defaultManager] URLsForDirectory: NSAllLibrariesDirectory
+                                                                         inDomains: NSAllDomainsMask & ~NSUserDomainMask];
+        
+        for (NSURL *restrictedURL in restrictedURLs)
+        {   
+            if ([resolvedURL isBasedInURL: restrictedURL])
             {
-                *outError = [BXSessionCannotMountSystemFolderError errorWithPath: drivePath
-                                                                        userInfo: nil];
+                if (outError)
+                {
+                    *outError = [BXSessionCannotMountSystemFolderError errorWithPath: driveURL.path
+                                                                            userInfo: nil];
+                }
+                return NO;
             }
-            return NO;
         }
     }
     return YES;
 }
 
-- (BOOL) shouldMountNewDriveForPath: (NSString *)path
+- (BOOL) shouldMountNewDriveForURL: (NSURL *)URL
 {
 	//If the file isn't already accessible from DOS, we should mount it
-	BXEmulator *theEmulator = self.emulator;
-	if (![theEmulator pathIsDOSAccessible: path]) return YES;
+	if (![self.emulator URLIsAccessibleInDOS: URL])
+        return YES;
 	
-	//If it is accessible within another drive, but the path is of a type
+	//If the URL is accessible within an existing drive, but the file is of a type
 	//that should get its own drive, then mount it as a new drive of its own.
-	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	if ([workspace file: path matchesTypes: [self.class separatelyMountedTypes]]
-	&& ![theEmulator pathIsMountedAsDrive: path])
+	if (([URL matchingFileType: [self.class separatelyMountedTypes]] != nil) && ![self.emulator URLIsMountedInDOS: URL])
 		return YES;
 	
 	return NO;
 }
 
-- (BXDrive *) mountDriveForPath: (NSString *)path
-                       ifExists: (BXDriveConflictBehaviour)conflictBehaviour
-                        options: (BXDriveMountOptions)options
-                          error: (NSError **)outError
+- (BXDrive *) mountDriveForURL: (NSURL *)URL
+                      ifExists: (BXDriveConflictBehaviour)conflictBehaviour
+                       options: (BXDriveMountOptions)options
+                         error: (NSError **)outError
 {
-	NSAssert1(self.isEmulating, @"mountDriveForPath:ifExists:options:error: called for %@ while emulator is not running.", path);
+	NSAssert1(self.isEmulating, @"mountDriveForURL:ifExists:options:error: called for %@ while emulator is not running.", URL);
     
 	//Choose an appropriate mount point and create the new drive for it
-	NSString *mountPoint = [self.class preferredMountPointForPath: path];
+	NSURL *mountPointURL = [self.class preferredMountPointForURL: URL];
     
     //Make sure the mount point exists and is suitable to use
-    if (![self validateDrivePath: &mountPoint error: outError]) return nil;
-    
+    if (![self validateDriveURL: &mountPointURL error: outError]) return nil;
     
     //Check if there's already a drive in the queue that matches this mount point:
-    //if so, mount it if necessary and return that
-    BXDrive *existingDrive = [self queuedDriveForPath: mountPoint];
+    //if so, mount it if necessary and return that.
+    BXDrive *existingDrive = [self queuedDriveRepresentingURL: mountPointURL];
     if (existingDrive)
     {
         existingDrive = [self mountDrive: existingDrive
@@ -856,7 +813,6 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     //Otherwise, create a new drive for the mount
     else
     {
-        NSURL *mountPointURL = [NSURL fileURLWithPath: mountPoint];
         BXDrive *drive = [BXDrive driveWithContentsOfURL: mountPointURL
                                                   letter: nil
                                                     type: BXDriveAutodetect];
@@ -868,15 +824,17 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     }
 }
 
-- (BOOL) openFileAtPath: (NSString *)path
-          withArguments: (NSString *)arguments
-         clearingScreen: (BOOL)clearScreen
+- (BOOL) openURLInDOS: (NSURL *)URL
+        withArguments: (NSString *)arguments
+       clearingScreen: (BOOL)clearScreen
 {
-	if (!self.emulator.isInitialized || self.emulator.isRunningProcess) return NO;
+	if (!self.emulator.isInitialized || self.emulator.isRunningProcess)
+        return NO;
     
 	//Get the path to the file in the DOS filesystem
-	NSString *dosPath = [self.emulator DOSPathForPath: path];
-	if (!dosPath || ![self.emulator DOSPathExists: dosPath]) return NO;
+	NSString *dosPath = [self.emulator DOSPathForURL: URL];
+	if (!dosPath)
+        return NO;
 	
 	//Unpause the emulation if it's paused, and ensure we don't remain auto-paused.
     //TODO: we shouldn't force autopause to be off here, we should trigger a re-evaluation
@@ -884,31 +842,33 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     self.autoPaused = NO;
 	[self resume: self];
 	
-	if ([self.class isExecutable: path])
+    //If this was an executable, launch it now.
+	if ([URL matchingFileType: [BXFileTypes executableTypes]] != nil)
 	{
         self.emulator.clearsScreenBeforeCommandExecution = clearScreen;
         
-		//If an executable was specified, execute it
-        self.lastLaunchedProgramPath = path;
+		//If an executable was specified, execute it and record that it was launched.
+        self.launchedProgramURL = URL;
         self.lastLaunchedProgramArguments = arguments;
         
 		[self.emulator executeProgramAtDOSPath: dosPath
                                  withArguments: arguments
                              changingDirectory: YES];
 	}
+    //Otherwise, treat the specified path as a directory and switch to it.
 	else
 	{
-		//Otherwise, just switch to the specified path
 		[self.emulator changeWorkingDirectoryToDOSPath: dosPath];
 	}
+    
 	return YES;
 }
 
-- (BOOL) openFileAtPath: (NSString *)path
+- (BOOL) openURLInDOS:(NSURL *)URL
 {
-    return [self openFileAtPath: path
-                  withArguments: nil
-                 clearingScreen: NO];
+    return [self openURLInDOS: URL
+                withArguments: nil
+               clearingScreen: NO];
 }
 
 
@@ -1037,7 +997,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     NSURL *tempURL = [NSURL fileURLWithPath: tempDrivePath isDirectory: YES];
 	if (tempURL)
 	{
-		self.temporaryFolderPath = tempURL.path;
+        //Record the location of the temporary folder: we'll delete it when the session finishes.
+		self.temporaryFolderURL = tempURL;
 		
 		BXDrive *tempDrive = [BXDrive driveWithContentsOfURL: tempURL letter: tempDriveLetter type: BXDriveHardDisk];
         tempDrive.title = NSLocalizedString(@"Temporary Files", @"The display title for Boxer’s temp drive.");
@@ -1077,7 +1038,6 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     {
         if (drive.type == BXDriveCDROM) return drive;
     }
-    
     
     NSURL *dummyImageURL    = [[NSBundle mainBundle] URLForResource: @"DummyCD" withExtension: @"iso"];
 	BXDrive *dummyDrive     = [BXDrive driveWithContentsOfURL: dummyImageURL letter: nil type: BXDriveCDROM];
@@ -1180,7 +1140,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
             //alias to that existing drive, and mount that drive instead
             //(assuming it isn't already.)
             //TODO: should we handle this case upstairs in mountDriveForPath:?
-            BXDrive *existingDrive = [self queuedDriveForPath: sourceImageURL.path];
+            BXDrive *existingDrive = [self queuedDriveRepresentingURL: sourceImageURL];
             if (![existingDrive isEqual: drive] && [existingDrive.letter isEqual: drive.letter])
             {
                 [existingDrive addEquivalentURL: drive.sourceURL];
@@ -1225,8 +1185,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     //TODO: cache this information so we're not polling the filesystem.
     if (drive.isCDROM && drive.usesCDAudio)
     {
-		NSArray *audioVolumes = [[NSWorkspace sharedWorkspace] mountedVolumesOfType: ADBAudioCDVolumeType
-                                                                    includingHidden: YES];
+		NSArray *audioVolumes = [[NSWorkspace sharedWorkspace] mountedVolumeURLsOfType: ADBAudioCDVolumeType
+                                                                       includingHidden: YES];
         if (!audioVolumes.count)
             drive.usesCDAudio = NO;
     }
@@ -1472,33 +1432,34 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 + (NSSet *) keyPathsForValuesAffectingPrincipalDrive
 {
-	return [NSSet setWithObject: @"executables"];
+	return [NSSet setWithObject: @"executableURLs"];
 }
 
 - (BXDrive *) principalDrive
 {
 	//Prioritise drive C, if it's available and has executables on it
-	if ([[self.executables objectForKey: @"C"] count])
+	if ([[self.executableURLs objectForKey: @"C"] count])
         return [self.emulator driveAtLetter: @"C"];
     
 	//Otherwise through all the mounted drives and return the first one that we have programs for.
-    NSArray *sortedLetters = [self.executables.allKeys sortedArrayUsingSelector: @selector(compare:)];
+    NSArray *sortedLetters = [self.executableURLs.allKeys sortedArrayUsingSelector: @selector(compare:)];
 	for (NSString *letter in sortedLetters)
 	{
-		if ([[self.executables objectForKey: letter] count]) return [self.emulator driveAtLetter: letter];
+		if ([[self.executableURLs objectForKey: letter] count])
+            return [self.emulator driveAtLetter: letter];
 	}
 	return nil;
 }
 
-+ (NSSet *) keyPathsForValuesAffectingProgramPathsOnPrincipalDrive
++ (NSSet *) keyPathsForValuesAffectingProgramURLsOnPrincipalDrive
 {
-	return [NSSet setWithObjects: @"executables", nil];
+	return [NSSet setWithObjects: @"executableURLs", nil];
 }
 
-- (NSArray *) programPathsOnPrincipalDrive
+- (NSArray *) programURLsOnPrincipalDrive
 {
 	NSString *driveLetter = self.principalDrive.letter;
-	if (driveLetter) return [self.executables objectForKey: driveLetter];
+	if (driveLetter) return [self.executableURLs objectForKey: driveLetter];
 	else return nil;
 }
 
@@ -1588,15 +1549,15 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
         return;
 	
     
-	NSString *mountPoint = [self.class preferredMountPointForPath: volumeURL.path];
+	NSURL *mountPointURL = [self.class preferredMountPointForURL: volumeURL];
     
     //If the path is already mounted, don't mess around further.
-	if ([self.emulator pathIsMountedAsDrive: mountPoint])
+	if ([self.emulator URLIsMountedInDOS: mountPointURL])
         return;
 	
-    //If an existing queued drive corresponds to this volume already,
+    //If an existing queued drive corresponds to this volume,
     //then mount it if it's not already mounted.
-    BXDrive *existingDrive  = [self queuedDriveForPath: mountPoint];
+    BXDrive *existingDrive  = [self queuedDriveRepresentingURL: mountPointURL];
     if (existingDrive)
     {
         [self mountDrive: existingDrive
@@ -1607,8 +1568,9 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	//Alright, if we got this far then it's ok to mount a new drive for it
     else
     {
-        NSURL *mountPointURL = [NSURL fileURLWithPath: mountPoint];
-        BXDrive *drive = [BXDrive driveWithContentsOfURL: mountPointURL letter: nil type: BXDriveAutodetect];
+        BXDrive *drive = [BXDrive driveWithContentsOfURL: mountPointURL
+                                                  letter: nil
+                                                    type: BXDriveAutodetect];
         
         //Ignore errors when automounting volumes, since these
         //are not directly triggered by the user.
@@ -1701,32 +1663,30 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     [self cancelExecutableScanForDrive: drive];
 	
     //Remove the cached executable list when the drive is unmounted
-	if ([self.executables objectForKey: drive.letter])
+	if ([self.executableURLs objectForKey: drive.letter])
 	{
-		[self willChangeValueForKey: @"executables"];
-		[_executables removeObjectForKey: drive.letter];
-		[self didChangeValueForKey: @"executables"];
+		[self willChangeValueForKey: @"executableURLs"];
+		[_executableURLs removeObjectForKey: drive.letter];
+		[self didChangeValueForKey: @"executableURLs"];
 	}
 }
 
 //Pick up on the creation of new executables
 - (void) emulatorDidCreateFile: (NSNotification *)notification
 {
-	BXDrive *drive = [notification.userInfo objectForKey: @"drive"];
-	NSString *path = [notification.userInfo objectForKey: @"path"];
+	BXDrive *drive = [notification.userInfo objectForKey: BXEmulatorDriveKey];
+	NSURL *localURL = [notification.userInfo objectForKey: BXEmulatorLocalURLKey];
 	
-	//The drive is in our executables cache: check if the created file path was an executable
+	//The drive is in our executables cache: check if the created file was a DOS executable
 	//(If so, add it to the executables cache) 
-	NSMutableArray *driveExecutables = [self.executables mutableArrayValueForKey: drive.letter];
-	if (driveExecutables && ![driveExecutables containsObject: path])
+	NSMutableArray *driveExecutables = [self.executableURLs mutableArrayValueForKey: drive.letter];
+	if (driveExecutables && ![driveExecutables containsObject: localURL])
 	{
-		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-        
-		if ([workspace isCompatibleExecutableAtPath: path error: nil])
+		if ([BXFileTypes isCompatibleExecutableAtURL: localURL error: NULL])
 		{
-			[self willChangeValueForKey: @"executables"];
-			[driveExecutables addObject: path];
-			[self didChangeValueForKey: @"executables"];
+			[self willChangeValueForKey: @"executableURLs"];
+			[driveExecutables addObject: localURL];
+			[self didChangeValueForKey: @"executableURLs"];
 		}
 	}
 }
@@ -1734,23 +1694,24 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 //Pick up on the deletion of executables
 - (void) emulatorDidRemoveFile: (NSNotification *)notification
 {
-	BXDrive *drive = [notification.userInfo objectForKey: @"drive"];
-	NSString *path = [notification.userInfo objectForKey: @"path"];
+	BXDrive *drive = [notification.userInfo objectForKey: BXEmulatorDriveKey];
+	NSURL *localURL = [notification.userInfo objectForKey: BXEmulatorLocalURLKey];
 	
 	//The drive is in our executables cache: remove any reference to the deleted file
-	NSMutableArray *driveExecutables = [self.executables objectForKey: drive.letter];
-	if (driveExecutables && [driveExecutables containsObject: path])
+	NSMutableArray *driveExecutables = [self.executableURLs objectForKey: drive.letter];
+	if (driveExecutables && [driveExecutables containsObject: localURL])
 	{
-		[self willChangeValueForKey: @"executables"];
-		[driveExecutables removeObject: path];
-		[self didChangeValueForKey: @"executables"];
+		[self willChangeValueForKey: @"executableURLs"];
+		[driveExecutables removeObject: localURL];
+		[self didChangeValueForKey: @"executableURLs"];
 	}
 }
 
 - (BOOL) emulator: (BXEmulator *)emulator shouldShowFileWithName: (NSString *)fileName
 {
 	//Permit . and .. to be shown
-	if ([fileName isEqualToString: @"."] || [fileName isEqualToString: @".."]) return YES;
+	if ([fileName isEqualToString: @"."] || [fileName isEqualToString: @".."])
+        return YES;
 	
 	//Hide all hidden UNIX files
 	//CHECK: will this ever hide valid DOS files?
@@ -1790,7 +1751,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
         return NO;
     
     NSError *validationError = nil;
-    BOOL shouldMount = [self validateDrivePath: &drivePath error: &validationError];
+    NSURL *driveURL = [NSURL fileURLWithPath: drivePath];
+    BOOL shouldMount = [self validateDriveURL: &driveURL error: &validationError];
     
     if (validationError)
     {
@@ -1916,17 +1878,17 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     [self willChangeValueForKey: @"isScanningForExecutables"];
 	if (scan.succeeded && scan.matches.count)
 	{
-        //Construct absolute paths out of the relative ones returned by the scan.
-        NSArray *driveExecutables = [drive.sourceURL.path stringsByAppendingPaths: scan.matches];
+        //Construct logical URLs out of the relative paths returned by the scan.
+        NSArray *driveExecutables = [drive.sourceURL URLsByAppendingPaths: scan.matches];
         
         //Only send notifications if any executables were found, to prevent unnecessary redraws
         BOOL notify = (driveExecutables.count > 0);
         
         //TODO: is there a better notification method we could use here?
-        if (notify) [self willChangeValueForKey: @"executables"];
-        [_executables setObject: [NSMutableArray arrayWithArray: driveExecutables]
-                         forKey: drive.letter];
-        if (notify) [self didChangeValueForKey: @"executables"];
+        if (notify) [self willChangeValueForKey: @"executableURLs"];
+        [_executableURLs setObject: [NSMutableArray arrayWithArray: driveExecutables]
+                            forKey: drive.letter];
+        if (notify) [self didChangeValueForKey: @"executableURLs"];
 	}
     [self didChangeValueForKey: @"isScanningForExecutables"];
 }
@@ -1969,7 +1931,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 {
 	for (ADBOperation <BXDriveImport> *import in self.importQueue.operations)
 	{
-		if (import.isExecuting && [import.drive isEqual: drive]) return import; 
+		if (import.isExecuting && [import.drive isEqual: drive])
+            return import;
 	}
 	return nil;
 }
@@ -2005,23 +1968,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     	
 		if (start)
         {
-            //If we'll lose access to the drive during importing,
-            //eject it but leave it in the drive queue: and make
-            //a note to remount it afterwards.
-            if ([self driveIsMounted: drive] && [driveImport.class driveUnavailableDuringImport])
-            {
-                [self unmountDrive: drive
-                           options: BXDriveForceUnmounting | BXDriveReplaceWithSiblingFromQueue
-                             error: nil];
-                
-                NSDictionary *contextInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                             [NSNumber numberWithBool: YES], @"remountAfterImport",
-                                             nil];
-                
-                driveImport.contextInfo = contextInfo;
-            }
-            
-            [self.importQueue addOperation: driveImport];
+            [self startImportOperation: driveImport];
         }
         
 		return driveImport;
@@ -2030,6 +1977,23 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	{
 		return nil;
 	}
+}
+
+- (void) startImportOperation: (ADBOperation <BXDriveImport> *)operation
+{
+    //If we'll lose access to the drive during importing,
+    //eject it but leave it in the drive queue: and make
+    //a note to remount it afterwards.
+    if ([self driveIsMounted: operation.drive] && [operation.class driveUnavailableDuringImport])
+    {
+        [self unmountDrive: operation.drive
+                   options: BXDriveForceUnmounting | BXDriveReplaceWithSiblingFromQueue
+                     error: nil];
+        
+        operation.contextInfo = @{ @"remountAfterImport": @(YES) };
+    }
+    
+    [self.importQueue addOperation: operation];
 }
 
 - (BOOL) cancelImportForDrive: (BXDrive *)drive
@@ -2121,13 +2085,15 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
             notification.title = self.displayName;
             notification.subtitle = [NSString stringWithFormat: driveImportFormat, originalDrive.letter];
             
+            ADBUserNotificationActivationHandler activationHandler = ^(NSUserNotification *deliveredNotification) {
+                [[ADBUserNotificationDispatcher dispatcher] removeNotification: deliveredNotification];
+                [[BXInspectorController controller] showDrivesPanel: self];
+            };
+            
             [[ADBUserNotificationDispatcher dispatcher] scheduleNotification: notification
                                                                       ofType: BXDriveImportedNotificationType
                                                                   fromSender: self
-                                                                onActivation: ^(NSUserNotification *deliveredNotification) {
-                                                                    [[ADBUserNotificationDispatcher dispatcher] removeNotification: deliveredNotification];
-                                                                    [[BXInspectorController controller] showDrivesPanel: self];
-                                                                }];
+                                                                onActivation: activationHandler];
             
             [notification release];
         }

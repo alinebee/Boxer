@@ -39,7 +39,7 @@
         if (self.representedObject)
         {
             [self.representedObject removeObserver: self
-                                        forKeyPath: @"executables"];
+                                        forKeyPath: @"executableURLs"];
             
             [self.representedObject removeObserver: self
                                         forKeyPath: @"gamebox.launchers"];
@@ -50,7 +50,7 @@
         if (self.representedObject)
         {
             [self.representedObject addObserver: self
-                                     forKeyPath: @"executables"
+                                     forKeyPath: @"executableURLs"
                                         options: NSKeyValueObservingOptionInitial
                                         context: nil];
             
@@ -83,7 +83,7 @@
                          change: (NSDictionary *)change
                         context: (void *)context
 {
-    if ([keyPath isEqualToString: @"executables"])
+    if ([keyPath isEqualToString: @"executableURLs"])
     {
         [self _syncAllProgramRows];
     }
@@ -102,42 +102,43 @@
 
     BXSession *session = (BXSession *)self.representedObject;
     
-    NSDictionary *executablePathsByDrive = session.executables;
-    NSArray *sortedLetters = [executablePathsByDrive.allKeys sortedArrayUsingSelector: @selector(compare:)];
+    NSDictionary *executableURLsByDrive = session.executableURLs;
+    NSArray *sortedLetters = [executableURLsByDrive.allKeys sortedArrayUsingSelector: @selector(compare:)];
     
     NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
     
     for (NSString *driveLetter in sortedLetters)
     {
         BXDrive *drive = [session.emulator driveAtLetter: driveLetter];
-        NSArray *executablePathsOnDrive = [executablePathsByDrive objectForKey: driveLetter];
+        NSArray *executableURLsOnDrive = [executableURLsByDrive objectForKey: driveLetter];
         
-        if (drive && executablePathsOnDrive.count)
+        if (drive && executableURLsOnDrive.count)
         {
             //First, prepare a group row for this drive.
             NSString *groupRowFormat = NSLocalizedString(@"Drive %1$@ (%2$@)",
                                                    @"Format for grouping rows in All Programs list. %1$@ is the drive letter, and %2$@ is the drive's title.");
             
             NSString *driveTitle = [NSString stringWithFormat: groupRowFormat, drive.letter, drive.title];
-            NSDictionary *groupRow = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      [NSNumber numberWithBool: YES], @"isDriveRow",
-                                      driveTitle, @"title",
-                                      drive.sourceURL.path, @"path",
-                                      nil];
+            NSDictionary *groupRow = @{
+                                       @"isDriveRow": @(YES),
+                                       @"title": driveTitle,
+                                       @"URL": drive.sourceURL
+                                       };
             
             [mutableRows addObject: groupRow];
             
             //Now, add items for each program on that drive.
-            for (NSString *path in executablePathsOnDrive)
+            for (NSURL *URL in executableURLsOnDrive)
             {
-                NSString *dosPath   = [session.emulator DOSPathForPath: path onDrive: drive];
-                NSString *title     = [programNameFormatter transformedValue: path];
+                NSString *dosPath   = [session.emulator DOSPathForURL: URL onDrive: drive];
+                NSString *title     = [programNameFormatter transformedValue: URL.path];
                 
-                NSDictionary *programRow = [NSDictionary dictionaryWithObjectsAndKeys:
-                                            title, @"title",
-                                            path, @"path",
-                                            dosPath, @"dosPath",
-                                            nil];
+                NSDictionary *programRow = @{
+                                             @"title": title,
+                                             @"URL": URL,
+                                             @"dosPath": dosPath
+                                             };
+                
                 [mutableRows addObject: programRow];
             }
         }
@@ -169,7 +170,7 @@
         
         NSMutableDictionary *launcherRow = [NSMutableDictionary dictionary];
         
-        [launcherRow setObject: URL.path forKey: @"path"];
+        [launcherRow setObject: URL forKey: @"URL"];
         [launcherRow setObject: title forKey: @"title"];
         
         if (dosPath)
@@ -207,15 +208,16 @@
     //containing details of the program to launch.
     NSDictionary *programDetails = item.representedObject;
     
-    NSString *programPath = [programDetails objectForKey: @"path"];
-    NSString *arguments = [programDetails objectForKey: @"arguments"];
+    NSURL *programURL = [programDetails objectForKey: @"URL"];
     
-	if (programPath)
+	if (programURL)
     {
+        NSString *arguments = [programDetails objectForKey: @"arguments"];
+    
         BXSession *session = (BXSession *)self.representedObject;
-        [session openFileAtPath: programPath
-                  withArguments: arguments
-                 clearingScreen: YES];
+        [session openURLInDOS: programURL
+                withArguments: arguments
+               clearingScreen: YES];
     }
 }
 

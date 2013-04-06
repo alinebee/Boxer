@@ -785,26 +785,6 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 @implementation BXEmulator (BXDOSFilesystemLegacyPathAPI)
 
-- (NSString *) pathOfCurrentDirectory
-{
-    return self.currentDirectoryURL.path;
-}
-
-- (NSString *) pathForDOSPath: (NSString *)path
-{
-    return [self URLForDOSPath: path].path;
-}
-
-- (BOOL) pathIsMountedAsDrive: (NSString *)path
-{
-    return [self URLIsMountedInDOS: [NSURL fileURLWithPath: path]];
-}
-
-- (BOOL) pathIsDOSAccessible: (NSString *)path
-{
-    return [self URLIsAccessibleInDOS: [NSURL fileURLWithPath: path]];
-}
-
 - (BOOL) pathExistsInDOS: (NSString *)path
 {
     NSString *dosPath = [self DOSPathForPath: path];
@@ -821,21 +801,6 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 - (NSString *) DOSPathForPath: (NSString *)path onDrive: (BXDrive *)drive
 {
     return [self DOSPathForURL: [NSURL fileURLWithPath: path] onDrive: drive];
-}
-
-- (BXDrive *) driveForPath: (NSString *)path
-{
-    return [self driveContainingURL: [NSURL fileURLWithPath: path]];
-}
-
-+ (BXDrive *) driveFromMountCommand: (NSString *)mountCommand
-                           basePath: (NSString *)basePath
-                              error: (NSError **)outError
-{
-    NSURL *baseURL = (basePath != nil) ? [NSURL fileURLWithPath: basePath] : nil;
-    return [self driveFromMountCommand: mountCommand
-                         relativeToURL: baseURL
-                                 error: outError];
 }
 
 @end

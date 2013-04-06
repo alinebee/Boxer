@@ -776,8 +776,8 @@
 	//If there are already drives in the gamebox other than C,
     //it means the user did their own importing and we shouldn't
     //interfere with their work.
-	NSArray *alreadyBundledVolumes = [self.gamebox volumesOfTypes: bundleableTypes];
-	if ([alreadyBundledVolumes count] > 1) //There will always be a volume for the C drive
+	NSArray *alreadyBundledVolumes = [self.gamebox URLsOfVolumesMatchingTypes: bundleableTypes];
+	if (alreadyBundledVolumes.count > 1) //There will always be a volume for the C drive
 	{
 		//Skip straight to cleanup
 		[self finalizeGamebox];
@@ -840,9 +840,9 @@
                 {
                     if (![driveToImport.sourceURL checkResourceIsReachableAndReturnError: NULL])
                     {
-                        NSError *driveError = [BXImportDriveUnavailableError errorWithSourcePath: self.sourceURL.path
-                                                                                           drive: driveToImport
-                                                                                        userInfo: nil];
+                        NSError *driveError = [BXImportDriveUnavailableError errorWithSourceURL: self.sourceURL
+                                                                                          drive: driveToImport
+                                                                                       userInfo: nil];
                         
                         [self presentError: driveError
                             modalForWindow: self.windowForSheet

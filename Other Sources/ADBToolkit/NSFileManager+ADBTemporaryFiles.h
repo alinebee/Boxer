@@ -31,13 +31,11 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString * const ADBTemporaryFilesErrorDomain;
-
 @interface NSFileManager (ADBTemporaryFiles)
 
 //Creates a new temporary directory in the system temp directory with the specified prefix,
 //to which will be appended a path extension of 8 randomly generated digits (a la mkdtemp()).
-//Returns the full path to the new temporary directory, or nil and sets error if an error occurred.
-- (NSString *) createTemporaryDirectoryWithPrefix: (NSString *)namePrefix error: (NSError **)outError __deprecated;
+//Returns the URL to the new temporary directory, or nil and sets outError if an error occurred.
+- (NSURL *) createTemporaryURLWithPrefix: (NSString *)namePrefix error: (out NSError **)outError;
 
 @end

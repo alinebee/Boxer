@@ -332,24 +332,10 @@ typedef enum {
 
 @interface BXGamebox (BXGameboxLegacyPathAPI)
 
-//The path to the DOS game's base folder. Currently this is equal to [NSBundle bundlePath].
-@property (readonly, nonatomic) NSString *gamePath __deprecated;
-
-//Arrays of paths to additional DOS drives discovered within the package.
-@property (readonly, nonatomic) NSArray *hddVolumes __deprecated;
-@property (readonly, nonatomic) NSArray *cdVolumes __deprecated;
-@property (readonly, nonatomic) NSArray *floppyVolumes __deprecated;
-
 //The path to the default executable for this gamebox. Will be nil if the gamebox has no target executable.
 @property (copy, nonatomic) NSString *targetPath __deprecated;
 
-
 //Returns whether the specified path is valid to be the default target of this gamebox
 - (BOOL) validateTargetPath: (id *)ioValue error: (NSError **)outError;
-
-//Retrieve all volumes matching the specified filetypes.
-- (NSArray *) volumesOfTypes: (NSSet *)fileTypes;
-
-+ (BXGamebox *)bundleWithPath: (NSString *)path __deprecated;
 
 @end

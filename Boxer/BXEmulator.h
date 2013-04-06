@@ -293,20 +293,3 @@ extern NSString * const BXEmulatorLaunchArgumentsKey;
 - (BOOL) validateJoystick: (id <BXEmulatedJoystick> *)ioValue error: (NSError **)outError;
 
 @end
-
-
-#pragma mark - Legacy APIs
-
-@interface BXEmulator (BXEmulatorLegacyPathAPI)
-
-//The OS X filesystem path to which the emulator should resolve relative local filesystem paths.
-//This is used by DOSBox commands like MOUNT, IMGMOUNT and CONFIG, and is directly equivalent
-//to the current process's working directory: indeed, changing this will change the working
-//directory for the entire process.
-@property (copy, nonatomic) NSString *basePath __deprecated;
-
-//The local filesystem path of the currently-executing DOSBox process.
-//Will be nil if no process is running, or if the process is on an image or DOSBox-internal drive.
-@property (readonly) NSString *processLocalPath __deprecated;
-
-@end

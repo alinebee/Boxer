@@ -151,47 +151,12 @@
 
 @interface BXEmulator (BXDOSFilesystemLegacyPathAPI)
 
-//Generates a drive from the specified mount/imgmount command string,
-//with or without the mount/imgmount command name.
-//If basePath is specified, relative paths will be resolved relative to that.
-//Returns nil and populates outError, if mount command could not be parsed.
-+ (BXDrive *) driveFromMountCommand: (NSString *)mountCommand
-                           basePath: (NSString *)basePath
-                              error: (NSError **)outError __deprecated;
-
-
-
-//The local filesystem path to the current directory on the current drive.
-//Returns the drive's source path if Boxer cannot 'see into' the drive (e.g. the drive is on a disk image.)
-//Returns nil if the drive does not exist on the local filesystem (e.g. it is a DOSBox-internal drive.)
-@property (readonly, nonatomic) NSString *pathOfCurrentDirectory __deprecated;
-
-//Returns YES if the specified OS X path is explicitly mounted as its own DOS drive; NO otherwise.
-//Use pathIsDOSAccessible below if you want to know if a path is accessible on any DOS drive.
-- (BOOL) pathIsMountedAsDrive: (NSString *)path __deprecated;
-
-//Returns YES if the specified OS X path is accessible in DOS, NO otherwise.
-//Call DOSPathForPath: if you need the actual DOS path; this is just a quick
-//way of determining if a volume is mounted at all.
-- (BOOL) pathIsDOSAccessible: (NSString *)path __deprecated;
-
 //Returns whether the specified OS X path exists within the DOS filesystem.
 - (BOOL) pathExistsInDOS: (NSString *)path __deprecated;
-
-//Returns the 'best match' drive on which the specified OS X filesystem path is accessible.
-//(If a path is accessible on several drives, this will return the 'deepest-nested' drive,
-//to handle gameboxes that have additional drives inside them.)
-- (BXDrive *) driveForPath: (NSString *)path __deprecated;
 
 //Returns the standardized DOS path corresponding to the specified real path,
 //or nil if the path is not currently accessible from DOS.
 - (NSString *) DOSPathForPath: (NSString *)path __deprecated;
 - (NSString *) DOSPathForPath: (NSString *)path onDrive: (BXDrive *)drive __deprecated;
-
-//Returns the real filesystem path corresponding to the specified DOS path.
-//This may return the base path of the drive instead, if the specified DOS path
-//resides on an image or is otherwise inaccessible to the local filesystem.
-//Will return nil if the path could not be resolved.
-- (NSString *) pathForDOSPath: (NSString *)path __deprecated;
 
 @end

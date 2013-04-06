@@ -258,11 +258,12 @@
         //(e.g. GOG releases of Wing Commander 3 and Ultima Underworld 1 & 2.)
         
         else if (!self.DOSBoxConfigurations.count && !(self.isAlreadyInstalled && self.detectedProfile))
-        {   
+        {
+            NSURL *baseURL = [NSURL fileURLWithPath: self.basePath];
             //If there were windows executables present, this is probably a Windows-only game.
             if (self.windowsExecutables.count > 0)
             {
-                self.error = [BXImportWindowsOnlyError errorWithSourcePath: self.basePath userInfo: nil];
+                self.error = [BXImportWindowsOnlyError errorWithSourceURL: baseURL userInfo: nil];
             }
             
             //If there were classic Mac OS/OS X apps present, this is probably a Mac game.
@@ -274,15 +275,13 @@
                 BOOL isHybridCD = [_workspace isHybridCDAtURL: [NSURL fileURLWithPath: self.basePath]];
                 Class errorClass = isHybridCD ? [BXImportHybridCDError class] : [BXImportMacAppError class];
                 
-                self.error = [errorClass errorWithSourcePath: self.basePath
-                                                    userInfo: nil];   
+                self.error = [errorClass errorWithSourceURL: baseURL userInfo: nil];   
             }
             //Otherwise, the folder may be empty or contains something other than a DOS game.
             //TODO: additional logic to detect Classic Mac games.
             else
             {
-                self.error = [BXImportNoExecutablesError errorWithSourcePath: self.basePath
-                                                                    userInfo: nil];
+                self.error = [BXImportNoExecutablesError errorWithSourceURL: baseURL userInfo: nil];
             }
         }
     }

@@ -746,8 +746,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
         {
             if (outError)
             {
-                *outError = [BXSessionCannotMountSystemFolderError errorWithPath: driveURL.path
-                                                                        userInfo: nil];
+                *outError = [BXSessionCannotMountSystemFolderError errorWithFolderURL: driveURL
+                                                                             userInfo: nil];
             }
             return NO;
         }
@@ -762,8 +762,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
             {
                 if (outError)
                 {
-                    *outError = [BXSessionCannotMountSystemFolderError errorWithPath: driveURL.path
-                                                                            userInfo: nil];
+                    *outError = [BXSessionCannotMountSystemFolderError errorWithFolderURL: driveURL
+                                                                                 userInfo: nil];
                 }
                 return NO;
             }
@@ -992,9 +992,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	//Mount a temporary folder at the appropriate drive
 	NSFileManager *manager		= [NSFileManager defaultManager];
 	NSString *tempDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"temporaryDriveLetter"];
-	NSString *tempDrivePath		= [manager createTemporaryDirectoryWithPrefix: @"Boxer" error: outError];
+	NSURL *tempURL              = [manager createTemporaryURLWithPrefix: @"Boxer" error: outError];
 	
-    NSURL *tempURL = [NSURL fileURLWithPath: tempDrivePath isDirectory: YES];
 	if (tempURL)
 	{
         //Record the location of the temporary folder: we'll delete it when the session finishes.

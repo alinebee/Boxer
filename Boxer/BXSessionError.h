@@ -17,10 +17,10 @@ enum
 {
     BXSessionCannotMountSystemFolder,   //Returned when user attempts to mount an OS X system folder as a DOS drive.
 	
-    BXImportNoExecutablesInSourcePath,  //Returned when the import scanner can find no executables of any kind in the source folder.
-	BXImportSourcePathIsWindowsOnly,    //Returned when the import scanner can only find Windows executables in the source folder.
-	BXImportSourcePathIsMacOSApp,       //Returned when the import scanner can only find Mac applications in the source folder.
-	BXImportSourcePathIsHybridCD,       //Returned when the import scanner detects a hybrid Mac+PC CD.
+    BXImportNoExecutablesInSource,      //Returned when the import scanner can find no executables of any kind in the source folder.
+	BXImportSourceIsWindowsOnly,        //Returned when the import scanner can only find Windows executables in the source folder.
+	BXImportSourceIsMacOSApp,           //Returned when the import scanner can only find Mac applications in the source folder.
+	BXImportSourceIsHybridCD,           //Returned when the import scanner detects a hybrid Mac+PC CD.
     BXImportDriveUnavailable,           //Returned when a DOSBox configuration file was provided that defines drives with paths that cannot be found.
     
     BXGameStateUnsupported,     //Returned when the current session does not support game states. (e.g. no gamebox is present.)
@@ -36,29 +36,29 @@ enum
 @end
 
 @interface BXSessionCannotMountSystemFolderError : BXSessionError
-+ (id) errorWithPath: (NSString *)systemFolderPath userInfo: (NSDictionary *)userInfo __deprecated;
++ (id) errorWithFolderURL: (NSURL *)folderURL userInfo: (NSDictionary *)userInfo;
 @end
 
 @interface BXImportNoExecutablesError : BXImportError
-+ (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo __deprecated;
++ (id) errorWithSourceURL: (NSURL *)sourceURL userInfo: (NSDictionary *)userInfo;
 @end
 
 @interface BXImportWindowsOnlyError : BXImportError
-+ (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo __deprecated;
++ (id) errorWithSourceURL: (NSURL *)sourceURL userInfo: (NSDictionary *)userInfo;
 - (NSString *) helpAnchor;
 @end
 
 @interface BXImportHybridCDError : BXImportError
-+ (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo;
++ (id) errorWithSourceURL: (NSURL *)sourceURL userInfo: (NSDictionary *)userInfo;
 @end
 
 @interface BXImportMacAppError : BXImportError
-+ (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo;
++ (id) errorWithSourceURL: (NSURL *)sourceURL userInfo: (NSDictionary *)userInfo;
 @end
 
 @class BXDrive;
 @interface BXImportDriveUnavailableError : BXImportError
-+ (id) errorWithSourcePath: (NSString *)sourcePath drive: (BXDrive *)drive userInfo: (NSDictionary *)userInfo;
++ (id) errorWithSourceURL: (NSURL *)sourceURL drive: (BXDrive *)drive userInfo: (NSDictionary *)userInfo;
 @end
 
 @class BXGamebox;

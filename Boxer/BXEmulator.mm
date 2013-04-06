@@ -55,7 +55,6 @@ NSString * const BXEmulatorDidRemoveFileNotification				= @"BXEmulatorDidRemoveF
 
 NSString * const BXEmulatorDOSPathKey           = @"DOSPath";
 NSString * const BXEmulatorDriveKey             = @"drive";
-NSString * const BXEmulatorLocalPathKey         = @"localPath";
 NSString * const BXEmulatorLocalURLKey          = @"URL";
 NSString * const BXEmulatorLaunchArgumentsKey   = @"arguments";
 
@@ -1021,32 +1020,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
         self.printer.port = (BXEmulatedPrinterPort)(portNumber + 1);
         self.printer.delegate = self.delegate;
     }
-}
-
-@end
-
-
-
-@implementation BXEmulator (BXEmulatorLegacyPathAPI)
-
-- (NSString *) basePath
-{
-    return self.baseURL.path;
-}
-
-- (void) setBasePath: (NSString *)basePath
-{
-    [self setBaseURL: [NSURL fileURLWithPath: basePath]];
-}
-
-+ (NSSet *) keyPathsForValuesAffectingProcessLocalPath
-{
-    return [NSSet setWithObject: @"runningProcesses"];
-}
-
-- (NSString *) processLocalPath
-{
-    return self.processURL.path;
 }
 
 @end

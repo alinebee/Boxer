@@ -91,7 +91,7 @@
         return BXDriveFloppyDisk;
     
     if ([URL matchingFileType: [BXFileTypes hddVolumeTypes]] != nil)
-        return BXDriveFloppyDisk;
+        return BXDriveHardDisk;
     
     //Failing that, check the volume type of the underlying filesystem at that location.
     NSString *volumeType = [workspace typeOfVolumeAtURL: URL];

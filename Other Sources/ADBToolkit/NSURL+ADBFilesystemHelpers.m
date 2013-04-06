@@ -210,26 +210,54 @@
 }
 - (BOOL) conformsToFileType: (NSString *)comparisonUTI
 {
-    NSString *UTI = self.typeIdentifier;
-    return (UTI != nil && UTTypeConformsTo((CFStringRef)self.typeIdentifier, (CFStringRef)comparisonUTI));
-    //TODO: also check if the file extension is suitable for the given type,
-    //in case of conflicting UTI definitions.
+    NSString *reportedUTI = self.typeIdentifier;
+    if (reportedUTI != nil && UTTypeConformsTo((CFStringRef)reportedUTI, (CFStringRef)comparisonUTI))
+        return YES;
+    
+    //Also check if the file extension is suitable for the given type, in case an overly generic
+    //UTI definition was returned. This has been observed to happen with folder-derived UTIs in
+    //10.5-10.8, where NSURLTypeIdentifierKey reports public.folder as the UTI when the extension
+    //conforms to a more specific UTI.
+    NSString *extension = self.pathExtension;
+    if (extension.length)
+    {
+        NSString *UTIForExtension = [self.class fileTypeForExtension: extension];
+        if (UTIForExtension != nil &&
+            ![UTIForExtension isEqualToString: reportedUTI] &&
+            UTTypeConformsTo((CFStringRef)UTIForExtension, (CFStringRef)comparisonUTI))
+            return YES;
+    }
+    
+    return NO;
 }
 
 - (NSString *) matchingFileType: (NSSet *)UTIs
 {
-    NSString *UTI = self.typeIdentifier;
-    if (UTI != nil)
+    NSString *reportedUTI = self.typeIdentifier;
+    if (reportedUTI != nil)
     {
         for (NSString *comparisonUTI in UTIs)
         {
-            if (UTTypeConformsTo((CFStringRef)self.typeIdentifier, (CFStringRef)comparisonUTI))
+            if (UTTypeConformsTo((CFStringRef)reportedUTI, (CFStringRef)comparisonUTI))
                 return comparisonUTI;
         }
     }
     
-    //TODO: also check if the file extension is suitable for any of the given types,
-    //in case of conflicting UTI definitions.
+    //If we couldn't match against the URL's reported UTI, check again against the UTI for the URL's
+    //path extension. (See note under conformsToUTI: for details on when this is necessary.)
+    NSString *extension = self.pathExtension;
+    if (extension.length)
+    {
+        NSString *UTIForExtension = [self.class fileTypeForExtension: extension];
+        if (UTIForExtension != nil && ![UTIForExtension isEqualToString: reportedUTI])
+        {
+            for (NSString *comparisonUTI in UTIs)
+            {
+                if (UTTypeConformsTo((CFStringRef)UTIForExtension, (CFStringRef)comparisonUTI))
+                    return comparisonUTI;
+            }
+        }
+    }
     
     return nil;
 }

@@ -529,9 +529,12 @@
     //IMPLEMENTATION NOTE: NSWorkspace's activateFileViewerSelectingURLs:
     //refuses to open a window for files that are located *in the root directory
     //of a package*, even though it does properly handle files located deeper within
-    //the package. NSWorkspace's older selectFile:inFileViewerRootedAtPath: method
-    //will properly display such URLs, but only takes a single path at a time.
-    //So we fall back on the older API only when we need to.
+    //the package. We solve this in two ways:
+    //1. If the file in question is a directory, we grab the first file we can find
+    //   inside the directory and select that instead.
+    //2. If it's not a directory or it's empty, we reveal that URL using NSWorkspace's
+    //   older selectFile:inFileViewerRootedAtPath: method instead: this does a better
+    //   job with files inside packages, but only takes a single path at a time.
     NSMutableArray *safeURLs = [NSMutableArray arrayWithCapacity: URLs.count];
     for (NSURL *URL in URLs)
     {
@@ -541,14 +544,29 @@
             BOOL parentIsPackage = [[parentURL resourceValueForKey: NSURLIsPackageKey] boolValue];
             if (parentIsPackage)
             {
-                [ws selectFile: URL.path inFileViewerRootedAtPath: parentURL.path];
+                if (URL.isDirectory)
+                {
+                    NSDirectoryEnumerationOptions options = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants;
+                    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL: URL
+                                                                             includingPropertiesForKeys: nil
+                                                                                                options: options
+                                                                                           errorHandler: NULL];
+                    
+                    NSURL *childURL = enumerator.nextObject;
+                    if (childURL)
+                    {
+                        [safeURLs addObject: childURL];
+                        continue;
+                    }
+                }
+                
+                revealedAnyFiles = [ws selectFile: URL.path inFileViewerRootedAtPath: parentURL.path] || revealedAnyFiles;
             }
             else
             {
                 [safeURLs addObject: URL];
+                revealedAnyFiles = YES;
             }
-            
-            revealedAnyFiles = YES;
         }
     }
     

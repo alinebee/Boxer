@@ -24,12 +24,8 @@ enum {
 
 @interface BXInspectorController : ADBTabbedWindowController
 {
-	NSSegmentedControl *_panelSelector;
 	BOOL _isTemporarilyHidden;
 }
-
-//The segmented tab selector button at the top of the inspector.
-@property (retain, nonatomic) IBOutlet NSSegmentedControl *panelSelector;
 
 //Whether the inspector panel is currently visible.
 @property (assign, nonatomic, getter=isVisible) BOOL visible;

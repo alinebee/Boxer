@@ -182,6 +182,10 @@
 	{
 		NSTabViewItem *matchingTab = [self.tabView tabViewItemAtIndex: tag];
         matchingTab.identifier = item.itemIdentifier;
+        
+        //If this tab was selected, mark the toolbar item as selected also
+        if (self.tabView.selectedTabViewItem == matchingTab)
+            [self.toolbarForTabs setSelectedItemIdentifier: item.itemIdentifier];
 	}
 }
 

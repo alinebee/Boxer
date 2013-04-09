@@ -23,7 +23,6 @@
 #define BXMouseSensitivityRange 2.0f
 
 @implementation BXInspectorController
-@synthesize panelSelector = _panelSelector;
 
 + (void) initialize
 {
@@ -57,13 +56,6 @@
     return controller;
 }
 
-- (void) dealloc
-{
-    self.panelSelector = nil;
-    
-	[super dealloc];
-}
-
 - (void) awakeFromNib
 {
 	((NSPanel *)self.window).becomesKeyOnlyIfNeeded = YES;
@@ -77,7 +69,6 @@
 		selectedIndex = BXCPUInspectorPanelIndex;
 	
 	[self.tabView selectTabViewItemAtIndex: selectedIndex];
-	
 	
 	//Listen for changes to the current session
 	[[NSApp delegate] addObserver: self
@@ -97,17 +88,6 @@
 	{
 		if (session)
 		{
-			//Disable the gamebox tab if the current session is not a gamebox
-			
-			//Find the panel selector segment whose tag corresponds to the game inspector panel
-			//(This charade is necessary because NSSegmentedControl has an awful interface)
-			NSInteger segmentIndex, numSegments = self.panelSelector.segmentCount;
-			for (segmentIndex = 0; segmentIndex < numSegments; segmentIndex++)
-			{
-				if ([self.panelSelector.cell tagForSegment: segmentIndex] == BXGameInspectorPanelIndex)
-					[self.panelSelector setEnabled: session.hasGamebox forSegment: segmentIndex];
-			}
-            
 			//If the gamebox tab was already selected, then switch to the next tab
 			if (!session.hasGamebox && [self.tabView indexOfTabViewItem: self.tabView.selectedTabViewItem] == BXGameInspectorPanelIndex)
 			{
@@ -222,8 +202,6 @@
 	{
 		[[NSUserDefaults standardUserDefaults] setInteger: selectedIndex
 												   forKey: @"initialInspectorPanelIndex"];
-		
-		[self.panelSelector selectSegmentWithTag: selectedIndex];
 	}
 }
 

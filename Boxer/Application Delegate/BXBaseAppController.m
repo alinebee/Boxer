@@ -24,6 +24,7 @@
 #import "BXEmulator.h"
 #import "BXEmulatorErrors.h"
 #import "NSError+ADBErrorHelpers.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 
 #import "ADBUserNotificationDispatcher.h"
 
@@ -518,6 +519,43 @@
     [appIdentifiersAndURLs release];
     
     return openedAnyFiles;
+}
+
+- (BOOL) revealURLsInFinder: (NSArray *)URLs
+{
+    BOOL revealedAnyFiles = NO;
+    NSWorkspace *ws = [NSWorkspace sharedWorkspace];
+    
+    //IMPLEMENTATION NOTE: NSWorkspace's activateFileViewerSelectingURLs:
+    //refuses to open a window for files that are located *in the root directory
+    //of a package*, even though it does properly handle files located deeper within
+    //the package. NSWorkspace's older selectFile:inFileViewerRootedAtPath: method
+    //will properly display such URLs, but only takes a single path at a time.
+    //So we fall back on the older API only when we need to.
+    NSMutableArray *safeURLs = [NSMutableArray arrayWithCapacity: URLs.count];
+    for (NSURL *URL in URLs)
+    {
+        if ([URL checkResourceIsReachableAndReturnError: NULL])
+        {
+            NSURL *parentURL = [URL URLByDeletingLastPathComponent];
+            BOOL parentIsPackage = [[parentURL resourceValueForKey: NSURLIsPackageKey] boolValue];
+            if (parentIsPackage)
+            {
+                [ws selectFile: URL.path inFileViewerRootedAtPath: parentURL.path];
+            }
+            else
+            {
+                [safeURLs addObject: URL];
+            }
+            
+            revealedAnyFiles = YES;
+        }
+    }
+    
+    if (safeURLs.count)
+        [ws activateFileViewerSelectingURLs: safeURLs];
+    
+    return revealedAnyFiles;
 }
 
 - (BOOL) revealPath: (NSString *)filePath

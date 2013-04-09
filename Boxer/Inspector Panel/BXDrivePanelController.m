@@ -214,7 +214,8 @@ enum {
             [URLsToReveal addObject: drive.shadowURL];
     }
     
-    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: URLsToReveal];
+    if (URLsToReveal.count)
+        [[NSApp delegate] revealURLsInFinder: URLsToReveal];
 }
 
 

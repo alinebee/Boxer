@@ -354,9 +354,9 @@ enum {
             [resolvedURLs addObject: resolvedURL];
         }
         
-        [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: resolvedURLs];
+        BOOL revealedAnyURLs = [[NSApp delegate] revealURLsInFinder: resolvedURLs];
         
-        if ([self.delegate respondsToSelector: @selector(documentationBrowser:didRevealURLs:)])
+        if (revealedAnyURLs && [self.delegate respondsToSelector: @selector(documentationBrowser:didRevealURLs:)])
             [self.delegate documentationBrowser: self didRevealURLs: self.selectedDocumentationURLs];
     }
 }

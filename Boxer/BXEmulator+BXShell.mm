@@ -356,11 +356,11 @@ nil];
     }
     
     //If we got this far, we finally have a path we can reveal in OS X.
-    //FIXME: we shouldn't be dealing with NSWorkspace at this level.
-    //This should be handled upstream as a delegate callback.
+    //FIXME: we shouldn't be dealing with the app delegate at this level.
+    //This should be handled upstream as an emulator delegate callback.
     if ([localURL checkResourceIsReachableAndReturnError: NULL])
     {
-        [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: @[localURL]];
+        [[NSApp delegate] revealURLsInFinder: @[localURL]];
     }
     //The file did not exist in OS X so could not be revealed.
     else

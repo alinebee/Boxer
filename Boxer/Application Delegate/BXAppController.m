@@ -575,7 +575,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     
 	if (sessionURL)
     {
-        [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: @[sessionURL]];
+        [self revealURLsInFinder: @[sessionURL]];
     }
 }
 

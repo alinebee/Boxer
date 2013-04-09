@@ -296,12 +296,26 @@
 
 - (IBAction) showMT32ROMsInFinder: (id)sender
 {
-    NSURL *ROMsURL = [[NSApp delegate] MT32ROMURLCreatingIfMissing: YES error: NULL];
-    if (ROMsURL)
+    NSMutableArray *URLsToReveal = [NSMutableArray arrayWithCapacity: 2];
+    NSURL *controlROMURL = [[NSApp delegate] MT32ControlROMURL];
+    if (controlROMURL)
+        [URLsToReveal addObject: controlROMURL];
+    
+    NSURL *pcmROMURL = [[NSApp delegate] MT32PCMROMURL];
+    if (pcmROMURL)
+        [URLsToReveal addObject: pcmROMURL];
+    
+    //If the user has not yet added any ROMs, then create the empty directory and display that instead.
+    if (!URLsToReveal.count)
     {
-        NSWorkspace *ws = [NSWorkspace sharedWorkspace];
-        [ws activateFileViewerSelectingURLs: @[ROMsURL]];
+        NSURL *baseROMURL = [[NSApp delegate] MT32ROMURLCreatingIfMissing: YES error: NULL];
+        if (baseROMURL)
+            [URLsToReveal addObject: baseROMURL];
     }
+    
+    if (URLsToReveal.count)
+        [[NSApp delegate] revealURLsInFinder: URLsToReveal];
+
 }
 
 - (IBAction) showMT32ROMFileChooser: (id)sender

@@ -1066,7 +1066,7 @@
             BOOL exported = [self exportGameStateToURL: destinationURL error: &exportError];
             if (exported)
             {
-                [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: @[destinationURL]];
+                [[NSApp delegate] revealURLsInFinder: @[destinationURL]];
             }
             else if (exportError)
             {

@@ -15,38 +15,93 @@
 #import "BXSession+BXUIControls.h"
 
 
-#pragma mark -
-#pragma mark Private constants
+#pragma mark - Private constants
 
+//These device IDs were cribbed from Tattiebogle's 360 controller driver 0.1.2:
+//http://tattiebogle.net/index.php/ProjectRoot/Xbox360Controller/OsxDriver#toc1
 
-//The official Microsoft 360 controllers
-#define BX360ControllerVendorID         BXHIDVendorIDMicrosoft
-#define BX360ControllerProductID        0x028e
+static uint16_t _360ControllerDeviceIDs[][2] = {
+    {BXHIDVendorIDMicrosoft, 654},      //Microsoft wired 360 controller
+    {BXHIDVendorIDMicrosoft, 657},      //Microsoft wireless 360 controller
+    {BXHIDVendorIDMicrosoft, 1817},     //Microsoft wireless 360 controller (2)
+    
+    {BXHIDVendorIDLogitech, 49693},     //Logitech F310 in Xinput mode (q.v. BXDualActionControllerProfile)
+    {BXHIDVendorIDLogitech, 49694},     //Logitech F510 in Xinput mode (q.v. BXDualActionControllerProfile)
+    {BXHIDVendorIDLogitech, 49730},     //Logitech Chillstream
+    
+    {BXHIDVendorIDMadCatzAlternate, 64769},     //Mad Catz 360
+    {BXHIDVendorIDMadCatzAlternate, 61477},     //Mad Catz Call of Duty Gamepad
+    {BXHIDVendorIDMadCatzAlternate, 61473},     //Mad Catz Ghost Recon FS Gamepad
+    {BXHIDVendorIDMadCatz, 18230},              //Mad Catz Microcon Gamepad Pro
+    {BXHIDVendorIDMadCatzAlternate, 61494},     //Mad Catz Microcon Gamepad Pro (2)
+    
+    {BXHIDVendorIDMadCatz, 18216},              //Mad Catz Street Fighter IV FightPad
+    {BXHIDVendorIDMadCatz, 18200},              //Mad Catz Street Fighter IV FightStick SE
+    {BXHIDVendorIDMadCatz, 18232},              //Mad Catz Street Fighter IV FightStick TE
+    {BXHIDVendorIDMadCatz, 63288},              //Mad Catz Street Fighter IV FightStick TES
+    {BXHIDVendorIDMadCatzAlternate, 61480},     //Mad Catz Street Fighter IV FightPad (2)
+    
+    {BXHIDVendorIDMadCatzAlternate, 63750},     //Mad Catz Mortal Kombat FightStick
+    
+    {BXHIDVendorIDMadCatz, 18198},              //Mad Catz Xbox 360 Controller
+    {BXHIDVendorIDMadCatz, 18214},              //Mad Catz Xbox 360 Controller (2)
+    {BXHIDVendorIDMadCatz, 44879},              //Mad Catz Xbox 360 Controller (3)
+    {BXHIDVendorIDMadCatzAlternate, 61462},     //Mad Catz Xbox 360 Controller (4)
+    {BXHIDVendorIDMadCatz, 46886},              //Mad Catz Xbox Controller MW2
+    {BXHIDVendorIDMadCatz, 52009},              //Mad Catz Aviator
+    
+    {BXHIDVendorIDMadCatz, 62465},              //Mad Catz Unknown Controller
+    {BXHIDVendorIDMadCatzAlternate, 654},       //Mad Catz Unknown Controller (2)
+    {BXHIDVendorIDMadCatzAlternate, 64001},     //Mad Catz Unknown Controller (3)
+    {BXHIDVendorIDMadCatzAlternate, 63746},     //Mad Catz Unknown Controller (4)
+    {BXHIDVendorIDMadCatzAlternate, 21760},     //Mad Catz Unknown Controller (4)
+    
+    {BXHIDVendorIDMadCatzAlternate, 63745},     //Gamestop 360 Controller
+    {BXHIDVendorIDMadCatzAlternate, 63747},     //TRON 360 Controller
+    
+    {BXHIDVendorIDMadCatz, 51970},              //Saitek Cyborg Rumblepad
+    {BXHIDVendorIDMadCatz, 51971},              //Saitek Cyborg P3200 Rumblepad
+    
+    {BXHIDVendorIDMadCatzAlternate, 62721},     //Hori Pad EX2 Turbo
+    {BXHIDVendorIDHori, 10},                    //Hori DOA4 Fightstick
+    {BXHIDVendorIDHori, 13},                    //Hori Fighting Stick
+    {BXHIDVendorIDHori, 22},                    //Hori Real Arcade Pro EX
+    {BXHIDVendorIDMadCatzAlternate, 62724},     //Hori Real Arcade Pro EX (2)
+    {BXHIDVendorIDMadCatzAlternate, 62722},     //Hori Real Arcade Pro VX
+    
+    {BXHIDVendorIDHoriAlternate, 21761},        //Hori Real Arcade Pro VXSA
+    {BXHIDVendorIDHoriAlternate, 21766},        //Hori Soul Calibur V Stick
+    {BXHIDVendorIDHoriAlternate, 23296},        //Ferrari 458 Racing Wheel (TODO: check if this deserves a custom mapping)
+    
+    {BXHIDVendorIDRazer, 64768},                //Razer Onza
+    {BXHIDVendorIDRazer, 64769},                //Razer Onza Tournament Edition
+    
+    {BXHIDVendorIDMadCatzAlternate, 61485},     //JoyTek Neo SE
+    {BXHIDVendorIDJoyTek, 48879},               //JoyTek Neo SE Take2
+    
+    {BXHIDVendorIDBigBen, 1537},                //Big Ben 360 controller
+    
+    {BXHIDVendorIDPDP, 769},                    //PDP 360 gamepad
+    {BXHIDVendorIDPDP, 1025},                   //PDP 360 gamepad (2)
+    {BXHIDVendorIDPDP, 513},                    //PDP Pelican TSZ 360 gamepad
+    
+    {BXHIDVendorIDPDP, 287},                    //PDP Rock Candy Gamepad
+    {BXHIDVendorIDPDP, 275},                    //PDP Afterglow Gamepad for Xbox 360
+    {BXHIDVendorIDPDP, 531},                    //PDP Afterglow Gamepad for Xbox 360 (2)
+    {BXHIDVendorIDMadCatzAlternate, 63744},     //PDP Afterglow Gamepad for Xbox 360 (3)
+    {BXHIDVendorIDPDPAlternate, 769},           //PDP Afterglow AX.1
+    
+    {BXHIDVendorIDPDP, 62721},                  //Unknown PDP controller
+    {BXHIDVendorIDPDPAlternate, 770},           //Unknown PDP Controller (2)
+    
+    {BXHIDVendorIDPowerA, 16128},               //Power A Mini Pro Elite
+    {BXHIDVendorIDHoriAlternate, 21248},        //Power A Mini Pro Elite Glow
+    {BXHIDVendorIDPowerA, 16144},               //Batarang wired controller
+    {BXHIDVendorIDPowerA, 16138},               //Airflow wired controller
+    
+    {0,0} //End-of-list marker
+};
 
-#define BX360WirelessControllerVendorID BXHIDVendorIDMicrosoft
-#define BX360WirelessControllerProductID 0x028f
-
-//3rd-party 360 peripherals
-#define BXJoyTek360ControllerVendorID	BXHIDVendorIDJoyTek
-#define BXJoyTek360ControllerProductID  0xbeef //no seriously
-
-#define BXBigBen360ControllerVendorID   BXHIDVendorIDBigBen
-#define BXBigBen360ControllerProductID  0x0601
-
-#define BXPelican360ControllerVendorID  BXHIDVendorIDPelican
-#define BXPelican360ControllerProductID 0x0201
-
-#define BXMadCatzGamepadVendorID        BXHIDVendorIDMadCatz
-#define BXMadCatzGamepadProductID       0x4716
-
-#define BXMadCatzProGamepadVendorID     BXHIDVendorIDMadCatz
-#define BXMadCatzProGamepadProductID    0x4726
-
-#define BXMadCatzMicroConVendorID       BXHIDVendorIDMadCatz
-#define BXMadCatzMicroConProductID      0x4736
-
-#define BXDOA4StickVendorID             BXHIDVendorIDHori
-#define BXDOA4StickProductID            0x000a
 
 
 enum {
@@ -93,24 +148,25 @@ enum {
 	[BXHIDControllerProfile registerProfile: self];
 }
 
-+ (NSArray *) matchedIDs
++ (BOOL) matchesDevice: (DDHidJoystick *)device
 {
-    static NSArray *matches = nil;
-    if (!matches)
+    NSUInteger i = 0;
+    while (YES)
     {
-        matches = [[NSArray alloc] initWithObjects:
-                   [self matchForVendorID: BX360ControllerVendorID           productID: BX360ControllerProductID],
-                   [self matchForVendorID: BX360WirelessControllerVendorID   productID: BX360WirelessControllerProductID],
-                   [self matchForVendorID: BXJoyTek360ControllerVendorID     productID: BXJoyTek360ControllerProductID],
-                   [self matchForVendorID: BXBigBen360ControllerVendorID     productID: BXBigBen360ControllerProductID],
-                   [self matchForVendorID: BXPelican360ControllerVendorID    productID: BXPelican360ControllerProductID],
-                   [self matchForVendorID: BXMadCatzGamepadVendorID          productID: BXMadCatzGamepadProductID],
-                   [self matchForVendorID: BXMadCatzProGamepadVendorID       productID: BXMadCatzProGamepadProductID],
-                   [self matchForVendorID: BXMadCatzMicroConVendorID         productID: BXMadCatzMicroConProductID],
-                   [self matchForVendorID: BXDOA4StickVendorID               productID: BXDOA4StickProductID],
-                   nil];
-    }
-    return matches;
+        long vendorID   = _360ControllerDeviceIDs[i][0];
+        long productID  = _360ControllerDeviceIDs[i][1];
+        
+        //We've reached the end of the ID list
+        if (vendorID == 0)
+            break;
+        
+        if (device.vendorId == vendorID && device.productId == productID)
+            return YES;
+        
+        i++;
+    };
+    
+    return NO;
 }
 
 - (BXControllerStyle) controllerStyle { return BXControllerStyleGamepad; }

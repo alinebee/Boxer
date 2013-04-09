@@ -15,27 +15,35 @@
 #import "DDHidDevice+ADBDeviceExtensions.h"
 
 
-#pragma mark - Constants
+#pragma mark - HID vendor constants
+
+#define BXHIDVendorIDMicrosoft 1118
+#define BXHIDVendorIDSony 1356
+#define BXHIDVendorIDLogitech 1133
+#define BXHIDVendorIDThrustmaster 1103
+#define BXHIDVendorIDCH 1678
+
+#define BXHIDVendorIDMadCatz 1848
+#define BXHIDVendorIDMadCatzAlternate 7085
+
+#define BXHIDVendorIDHori 3853
+#define BXHIDVendorIDHoriAlternate 9414
+
+#define BXHIDVendorIDJoyTek 5678
+#define BXHIDVendorIDBigBen 5227
+#define BXHIDVendorIDPDP 3695
+#define BXHIDVendorIDPDPAlternate 4779
+#define BXHIDVendorIDPowerA 5604
+#define BXHIDVendorIDRazer 5769
+
+
+#pragma mark - API constants
 
 //Dictionary keys for BXDPadBinding methods
 extern NSString * const BXControllerProfileDPadLeft;
 extern NSString * const BXControllerProfileDPadRight;
 extern NSString * const BXControllerProfileDPadUp;
 extern NSString * const BXControllerProfileDPadDown;
-
-
-#define BXHIDVendorIDMicrosoft 0x045e
-#define BXHIDVendorIDSony 0x054c
-#define BXHIDVendorIDLogitech 0x046d
-#define BXHIDVendorIDThrustmaster 0x044f
-#define BXHIDVendorIDCH 0x068e
-
-#define BXHIDVendorIDMadCatz 0x0738
-#define BXHIDVendorIDHori 0x0f0d
-#define BXHIDVendorIDJoyTek 0x162e
-#define BXHIDVendorIDPelican 0x0e6f
-#define BXHIDVendorIDBigBen 0x146b
-
 
 #define BXHIDControllerProfileAdditiveThrottleRate 2.0
 #define BXHIDControllerProfileAdditiveThrottleSnapThreshold 0.05

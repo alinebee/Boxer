@@ -18,6 +18,7 @@
 #import "BXDriveList.h"
 #import "BXDriveItem.h"
 #import "NSWindow+ADBWindowDimensions.h"
+#import "ADBDelegatedView.h"
 
 
 #pragma mark -
@@ -77,7 +78,7 @@ enum {
     
     
 	//Register the entire drive panel as a drag-drop target.
-	[self.view registerForDraggedTypes: [NSArray arrayWithObject: NSFilenamesPboardType]];
+	[self.view registerForDraggedTypes: @[NSFilenamesPboardType]];
     
 	//Assign the appropriate menu to the drive-actions button segment.
 	[self.driveControls setMenu: self.driveActionsMenu forSegment: BXDriveActionsMenuSegment];
@@ -106,6 +107,8 @@ enum {
     self.driveList = nil;
     self.driveControls = nil;
     self.driveActionsMenu = nil;
+    
+    [_driveRemovalDropzone close], _driveRemovalDropzone = nil;
     
 	[super dealloc];
 }
@@ -557,23 +560,35 @@ enum {
     if (!session)
         return NSDragOperationNone;
     
-	//Ignore drags that originated from the drive list itself
-	id source = sender.draggingSource;
-	if ([source respondsToSelector: @selector(window)] && [[source window] isEqual: self.view.window])
-        return NSDragOperationNone;
-	
-	//Otherwise, ask the current session what it would like to do with the files
-	NSPasteboard *pboard = sender.draggingPasteboard;
-    
-    NSArray *draggedURLs = [pboard readObjectsForClasses: @[[NSURL class]]
-                                                 options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];
-    if (draggedURLs.count)
+    if (_driveRemovalDropzone && sender.draggingDestinationWindow == _driveRemovalDropzone)
     {
-		return [session responseToDraggedURLs: draggedURLs];
+        if (sender.draggingSource == self)
+        {
+            [[NSCursor disappearingItemCursor] set];
+            return NSDragOperationDelete;
+        }
+        else
+            return NSDragOperationNone;
     }
     else
     {
-        return NSDragOperationNone;
+        //Ignore drags that originated from the drive list itself
+        if (sender.draggingSource == self)
+            return NSDragOperationNone;
+        
+        //Otherwise, ask the current session what it would like to do with the files
+        NSPasteboard *pboard = sender.draggingPasteboard;
+        
+        NSArray *draggedURLs = [pboard readObjectsForClasses: @[[NSURL class]]
+                                                     options: @{ NSPasteboardURLReadingFileURLsOnlyKey : @(YES) }];
+        if (draggedURLs.count)
+        {
+            return [session responseToDraggedURLs: draggedURLs];
+        }
+        else
+        {
+            return NSDragOperationNone;
+        }
     }
 }
 
@@ -586,8 +601,35 @@ enum {
     
     if (draggedURLs.count)
     {
-		BXSession *session = [[NSApp delegate] currentSession];
-		return [session handleDraggedURLs: draggedURLs launchImmediately: NO];
+        if (_driveRemovalDropzone && sender.draggingDestinationWindow == _driveRemovalDropzone)
+        {
+            BOOL removed = [self _unmountDrives: self.selectedDrives
+                                        options: BXDefaultDriveUnmountOptions | BXDriveRemoveExistingFromQueue];
+            if (removed)
+            {
+                //Calculate the center-point of the image for displaying the poof icon
+                NSRect imageRect;
+                imageRect.size = sender.draggedImage.size;
+                imageRect.origin = sender.draggedImageLocation;
+                
+                NSPoint midPoint = NSMakePoint(NSMidX(imageRect), NSMidY(imageRect));
+                
+                //We make it square instead of fitting the width of the image,
+                //to avoid distorting the puff of smoke
+                NSSize poofSize = imageRect.size;
+                poofSize.width = poofSize.height;
+                
+                //Play the poof animation
+                NSShowAnimationEffect(NSAnimationEffectPoof, midPoint, poofSize, nil, nil, nil);
+            }
+            
+            return removed;
+        }
+        else
+        {
+            BXSession *session = [[NSApp delegate] currentSession];
+            return [session handleDraggedURLs: draggedURLs launchImmediately: NO];
+        }
     }
 	else
     {
@@ -612,7 +654,7 @@ enum {
 
 - (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal
 {
-	return (isLocal) ? NSDragOperationPrivate : NSDragOperationNone;
+	return (isLocal) ? NSDragOperationPrivate | NSDragOperationDelete : NSDragOperationNone;
 }
 
 //Required for us to work as a dragging source *rolls eyes all the way out of head*
@@ -621,11 +663,48 @@ enum {
     return self.view.window;
 }
 
+- (void) draggedImage: (NSImage *)image beganAt: (NSPoint)screenPoint
+{
+    //Create a transparent backing window the first time we need it
+    if (!_driveRemovalDropzone)
+    {
+        NSScreen *screen = self.view.window.screen;
+        _driveRemovalDropzone = [[NSWindow alloc] initWithContentRect: screen.frame
+                                                            styleMask: NSBorderlessWindowMask
+                                                              backing: NSBackingStoreBuffered
+                                                                defer: YES
+                                                               screen: screen];
+        
+        _driveRemovalDropzone.backgroundColor = [NSColor clearColor];
+        _driveRemovalDropzone.opaque = NO;
+        _driveRemovalDropzone.ignoresMouseEvents = NO; //Will default to YES for fully transparent windows
+        _driveRemovalDropzone.hidesOnDeactivate = YES;
+        _driveRemovalDropzone.releasedWhenClosed = YES;
+        _driveRemovalDropzone.level = NSNormalWindowLevel;
+        _driveRemovalDropzone.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces;
+        _driveRemovalDropzone.delegate = self;
+        
+        [_driveRemovalDropzone registerForDraggedTypes: @[NSFilenamesPboardType]];
+    }
+    
+    //Place the dropzone behind all of Boxer's windows, but on top of windows in other applications.
+    NSInteger furthestWindowNumber = -1;
+    for (NSWindow *window in [NSApp windows])
+    {
+        if (window != _driveRemovalDropzone &&
+            window.isVisible
+            && window.level == _driveRemovalDropzone.level
+            && window.windowNumber > furthestWindowNumber)
+            furthestWindowNumber = window.windowNumber;
+    }
+    
+    if (furthestWindowNumber > -1)
+        [_driveRemovalDropzone orderWindow: NSWindowBelow relativeTo: furthestWindowNumber];
+    else
+        [_driveRemovalDropzone orderWindow: NSWindowBelow relativeTo: self.view.window.windowNumber];
+}
 
-//While dragging, this checks for valid Boxer windows under the cursor; if there aren't any, it displays
-//a disappearing item cursor (poof) to indicate the action will discard the dragged drive(s).
-- (void) draggedImage: (NSImage *)draggedImage
-              movedTo: (NSPoint)screenPoint
+- (void) draggedImage: (NSImage *)image movedTo: (NSPoint)screenPoint
 {
     //Once the image is dragged away from its original location, hide the views represented by the image.
     for (BXDrive *drive in self.selectedDrives)
@@ -633,19 +712,6 @@ enum {
         NSView *itemView = [self.driveList viewForDrive: drive];
         itemView.hidden = YES;
     }
-    
-	NSPoint mousePoint = [NSEvent mouseLocation];
-	NSCursor *poof = [NSCursor disappearingItemCursor];
-	
-	//If there's no Boxer window under the mouse cursor,
-	//change the cursor to a poof to indicate we will discard the drive
-	if (![NSWindow windowAtPoint: mousePoint])
-        [poof set];
-	
-	//otherwise, revert any poof cursor (which may already have been changed
-    //by valid drag destinations anyway) 
-	else if ([[NSCursor currentCursor] isEqual: poof])
-        [[NSCursor arrowCursor] set];
 }
 
 //This is called when dragging completes, and discards the drive if it was not dropped onto a valid destination
@@ -654,15 +720,32 @@ enum {
 			  endedAt: (NSPoint)screenPoint
 		    operation: (NSDragOperation)operation
 {
-	NSPoint mousePoint = [NSEvent mouseLocation];
+    for (BXDrive *drive in self.selectedDrives)
+    {
+        NSView *itemView = [self.driveList viewForDrive: drive];
+        itemView.hidden = NO;
+    }
+    
+    [_driveRemovalDropzone orderOut: self];
+    
+    /*
+    NSEvent *triggeringEvent = [NSApp currentEvent];
+	NSPoint mousePointOnScreen = [NSEvent mouseLocation];
 	
+    
+    
     BOOL unhideSelection = YES;
     
     //If the user dropped these items outside the app, then remove them.
     //(The operation will only be NSDragOperationNone if the drag landed
     //on a window outside the app; it will be NSDragOperationPrivate if
     //the drag ended over a Boxer window.)
-	if (operation == NSDragOperationNone && ![NSWindow windowAtPoint: mousePoint])
+    //TWEAK: also check that the drag didn't end because the user pressed
+    //ESC to cancel it. (Unfortunately we have no way of detecting a cancel
+    //just from the drag operation.)
+	if (operation == NSDragOperationNone &&
+        ![NSWindow windowAtPoint: mousePointOnScreen] &&
+        !((triggeringEvent.type == NSKeyDown || triggeringEvent.type == NSKeyUp) && [triggeringEvent.charactersIgnoringModifiers isEqualToString: @"\e"]))
 	{
         BOOL drivesRemoved = [self _unmountDrives: self.selectedDrives
                                           options: BXDefaultDriveUnmountOptions | BXDriveRemoveExistingFromQueue];
@@ -706,6 +789,7 @@ enum {
     
     //Reset the cursor back to normal
     [[NSCursor arrowCursor] set];
+     */
 }
 
 @end

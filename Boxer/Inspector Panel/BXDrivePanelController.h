@@ -15,13 +15,15 @@
 
 @class BXDriveList;
 @class BXDrive;
-@interface BXDrivePanelController : NSViewController <ADBOperationDelegate>
+@interface BXDrivePanelController : NSViewController <ADBOperationDelegate, NSWindowDelegate>
 {
 	NSSegmentedControl *_driveControls;
 	NSMenu *_driveActionsMenu;
 	BXDriveList *_driveList;
     
     NSIndexSet *_selectedDriveIndexes;
+    
+    NSWindow *_driveRemovalDropzone;
 }
 
 #pragma mark -

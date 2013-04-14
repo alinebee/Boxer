@@ -266,9 +266,7 @@
 
 - (BOOL) mouseDownCanMoveWindow	{ return NO; }
 
-
-#pragma mark -
-#pragma mark Selection behaviour
+#pragma mark - Selection behaviour
 
 - (void) _selectItemAtPoint: (NSPoint)point
 {
@@ -315,10 +313,12 @@
             NSEvent *eventInDrag = [self.window nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask];
             switch (eventInDrag.type)
             {
-                case NSLeftMouseDragged: 
-                    return [self mouseDragged: eventInDrag];
+                case NSLeftMouseDragged:
+                    [self _beginDragOperationWithEvent: eventInDrag];
+                    return;
                 case NSLeftMouseUp:
-                    return [self mouseUp: eventInDrag];
+                    [self mouseUp: eventInDrag];
+                    return;
             }
         };
     }
@@ -394,11 +394,6 @@
 #pragma mark -
 #pragma mark Drag-dropping
 
-- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal
-{
-	return (isLocal) ? NSDragOperationPrivate : NSDragOperationNone;
-}
-
 - (NSImage *) draggingImageForItemsAtIndexes: (NSIndexSet *)indexes
                                    withEvent: (NSEvent *)event
                                       offset: (NSPointPointer)dragImageOffset
@@ -418,7 +413,7 @@
     else return nil;
 }
 
-- (void) mouseDragged: (NSEvent *)theEvent
+- (void) _beginDragOperationWithEvent: (NSEvent *)theEvent
 {
     //Ignore the drag if we have nothing selected.
     if (!self.selectionIndexes.count) return;
@@ -432,10 +427,10 @@
     
     if (continueDrag)
     {
-        //Choose one out of the selection to be the visible source of the drag
-        NSImage *draggedImage   = [self draggingImageForItemsAtIndexes: self.selectionIndexes
-                                                             withEvent: theEvent
-                                                                offset: nil];
+        //Choose one out of the selected items to be the visible source of the drag
+        NSImage *draggedImage = [self draggingImageForItemsAtIndexes: self.selectionIndexes
+                                                           withEvent: theEvent
+                                                              offset: nil];
     
         BXDrive *firstSelectedDrive = [self.content objectAtIndex: self.selectionIndexes.firstIndex];
         NSView *itemView = [self viewForDrive: firstSelectedDrive];

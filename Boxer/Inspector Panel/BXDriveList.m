@@ -285,7 +285,8 @@
         while (![clickedView isKindOfClass: [BXDriveItemView class]])
         {
             clickedView = clickedView.superview;
-            if ([clickedView isEqual: self]) return;
+            if ([clickedView isEqual: self])
+                return;
         }
         
 		[(BXDriveItemView *)clickedView delegate].selected = YES;
@@ -295,29 +296,39 @@
 //This amounts to a complete reimplementation of NSCollectionView's default mouseDown implementation,
 //just so that we can stick in our own drag functionality. Fuck. You.
 - (void) mouseDown: (NSEvent *)theEvent
-{	
-	NSPoint clickPoint = [self convertPoint: theEvent.locationInWindow fromView: nil];
-	[self _selectItemAtPoint: clickPoint];
-	
-	//If we have a selection, open a mouse tracking loop of our own here in mouseDown
-	//and break out of it for mouseUp and mouseDragged.
-    while (self.selectionIndexes.count)
-	{
-        NSEvent *eventInDrag = [self.window nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask];
-        switch (eventInDrag.type)
-		{
-            case NSLeftMouseDragged: 
-				return [self mouseDragged: eventInDrag];
-			case NSLeftMouseUp:
-				return [self mouseUp: eventInDrag];
-        }
-    };
+{
+    //Fall back on the standard show-menu behaviour if the user control-clicks.
+    if (theEvent.modifierFlags & NSControlKeyMask)
+    {
+        [self rightMouseDown: theEvent];
+    }
+    else
+    {
+        //Select the drive item that was clicked on.
+        NSPoint clickPoint = [self convertPoint: theEvent.locationInWindow fromView: nil];
+        [self _selectItemAtPoint: clickPoint];
+        
+        //Otherwise, if we have a selection, open a mouse tracking loop of our own
+        //here in mouseDown and break out of it for mouseUp and mouseDragged.
+        while (self.selectionIndexes.count)
+        {
+            NSEvent *eventInDrag = [self.window nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask];
+            switch (eventInDrag.type)
+            {
+                case NSLeftMouseDragged: 
+                    return [self mouseDragged: eventInDrag];
+                case NSLeftMouseUp:
+                    return [self mouseUp: eventInDrag];
+            }
+        };
+    }
 }
 
 //If the user Cmd-clicked, reveal the drive in Finder
 - (void) mouseUp: (NSEvent *)theEvent
 {
-    //If the user double-clicked, trigger a drive-mount action or a reveal action, depending on the Cmd key modifier
+    //If the user double-clicked: trigger a drive-mount action or a reveal action,
+    //depending on the Cmd key modifier
 	if (theEvent.clickCount > 1)
 	{
         SEL action;
@@ -332,10 +343,12 @@
 
 - (void) keyDown: (NSEvent *)theEvent
 {
-    //Mount/unmount the selected drive(s) when the user presses Space.
+    //Mount the selected drive(s) when the user presses Space.
+    //(TWEAK: this used to be a toggle, i.e. unmount the drive if it was already mounted,
+    //but that proved to feel weird and unexpected.)
     if ([theEvent.charactersIgnoringModifiers isEqualToString: @" "])
     {
-        [NSApp sendAction: @selector(toggleSelectedDrives:) to: self.delegate from: self];
+        [NSApp sendAction: @selector(mountSelectedDrives:) to: self.delegate from: self];
     }
     //Open the selected drive(s) in Finder when the user presses Return.
     else if ([theEvent.charactersIgnoringModifiers isEqualToString: @"\r"])

@@ -658,8 +658,10 @@ enum {
 	
     BOOL unhideSelection = YES;
     
-    //If the user dropped these items outside the app, then remove them
-    //(operation will be private if the drag landed on a window outside the app)
+    //If the user dropped these items outside the app, then remove them.
+    //(The operation will only be NSDragOperationNone if the drag landed
+    //on a window outside the app; it will be NSDragOperationPrivate if
+    //the drag ended over a Boxer window.)
 	if (operation == NSDragOperationNone && ![NSWindow windowAtPoint: mousePoint])
 	{
         BOOL drivesRemoved = [self _unmountDrives: self.selectedDrives

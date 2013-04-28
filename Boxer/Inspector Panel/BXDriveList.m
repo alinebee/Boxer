@@ -15,6 +15,7 @@
 #import "NSShadow+ADBShadowExtensions.h"
 #import "NSImage+ADBImageEffects.h"
 #import "BXThemes.h"
+#import "NSView+ADBDrawingHelpers.h"
 
 
 @implementation BXDriveItemView
@@ -367,18 +368,6 @@
     }
 }
 
-- (BXDriveItemView *) viewForDrive: (BXDrive *)drive
-{
-	for (BXDriveItemView *view in self.subviews)
-	{
-        BXDriveItem *item = (BXDriveItem *)view.delegate;
-		if ([item.drive isEqual: drive])
-            return view;
-	}
-	return nil;
-}
-
-
 - (BXDriveItem *) itemForDrive: (BXDrive *)drive
 {
 	for (BXDriveItemView *view in self.subviews)
@@ -399,18 +388,8 @@
                                       offset: (NSPointPointer)dragImageOffset
 {
     //TODO: render images for all selected drives, once we allow more than one
-    BXDrive *firstSelectedDrive = [self.content objectAtIndex: indexes.firstIndex];
-    BXDriveItemView *itemView = [self viewForDrive: firstSelectedDrive];
-    if (itemView)
-    {
-        NSBitmapImageRep *imageRep = [itemView bitmapImageRepForCachingDisplayInRect: itemView.bounds];
-        [itemView cacheDisplayInRect: itemView.bounds toBitmapImageRep: imageRep];
-        
-        NSImage *image = [[NSImage alloc] init];
-        [image addRepresentation: imageRep];
-        return [image autorelease];
-    }
-    else return nil;
+    NSView *selectedItemView = [self itemAtIndex: indexes.firstIndex].view;
+    return [selectedItemView imageWithContentsOfRect: selectedItemView.bounds];
 }
 
 - (void) _beginDragOperationWithEvent: (NSEvent *)theEvent
@@ -428,20 +407,34 @@
     if (continueDrag)
     {
         //Choose one out of the selected items to be the visible source of the drag
+        NSPoint dragImageOffset = NSZeroPoint;
         NSImage *draggedImage = [self draggingImageForItemsAtIndexes: self.selectionIndexes
                                                            withEvent: theEvent
-                                                              offset: nil];
+                                                              offset: &dragImageOffset];
     
-        BXDrive *firstSelectedDrive = [self.content objectAtIndex: self.selectionIndexes.firstIndex];
-        NSView *itemView = [self viewForDrive: firstSelectedDrive];
+        NSView *selectedItemView = [self itemAtIndex: self.selectionIndexes.firstIndex].view;
         
-        [itemView dragImage: draggedImage
-                         at: NSZeroPoint
-                     offset: NSZeroSize
-                      event: theEvent
-                 pasteboard: pasteboard
-                     source: self.delegate
-                  slideBack: NO];
+        //dragImage:at:etc takes a coordinate at which to place the *lower left* corner
+        //of the images.
+        NSPoint viewOffset;
+        if (self.isFlipped)
+        {
+            viewOffset = NSMakePoint(NSMinX(selectedItemView.frame),
+                                     NSMaxY(selectedItemView.frame));
+        }
+        else
+        {
+            viewOffset = NSMakePoint(NSMinX(selectedItemView.frame),
+                                     NSMinY(selectedItemView.frame));
+        }
+        
+        [self dragImage: draggedImage
+                     at: viewOffset
+                 offset: NSZeroSize
+                  event: theEvent
+             pasteboard: pasteboard
+                 source: self.delegate
+              slideBack: NO];
     }
 }
 

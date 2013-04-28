@@ -19,9 +19,6 @@
 
 @interface BXDriveList : NSCollectionView
 
-//Returns the view that represents the specified drive.
-- (BXDriveItemView *) viewForDrive: (BXDrive *)drive;
-
 //Returns the collection view item representing the specified drive.
 - (BXDriveItem *) itemForDrive: (BXDrive *)drive;
 

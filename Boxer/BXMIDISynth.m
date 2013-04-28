@@ -211,7 +211,7 @@
 - (BOOL) loadSoundFontWithContentsOfURL: (NSURL *)URL
                                   error: (NSError **)outError
 {
-    NSAssert(_synthUnit != NULL, @"loadSoundFontAtPath:error: called before successful initialization.");
+    NSAssert(_synthUnit != NULL, @"loadSoundFontWithContentsOfURL:error: called before successful initialization.");
     
     //If we're clearing the soundfont, reset it back to the default system soundfont.
     if (URL == nil)

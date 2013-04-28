@@ -18,7 +18,6 @@
 #import "BXDriveList.h"
 #import "BXDriveItem.h"
 #import "NSWindow+ADBWindowDimensions.h"
-#import "ADBDelegatedView.h"
 
 
 #pragma mark -
@@ -691,8 +690,7 @@ enum {
     NSInteger furthestWindowNumber = -1;
     for (NSWindow *window in [NSApp windows])
     {
-        if (window != _driveRemovalDropzone &&
-            window.isVisible
+        if (window != _driveRemovalDropzone && window.isVisible
             && window.level == _driveRemovalDropzone.level
             && window.windowNumber > furthestWindowNumber)
             furthestWindowNumber = window.windowNumber;
@@ -707,89 +705,22 @@ enum {
 - (void) draggedImage: (NSImage *)image movedTo: (NSPoint)screenPoint
 {
     //Once the image is dragged away from its original location, hide the views represented by the image.
-    for (BXDrive *drive in self.selectedDrives)
-    {
-        NSView *itemView = [self.driveList viewForDrive: drive];
-        itemView.hidden = YES;
-    }
+    [self.driveList.selectionIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        NSCollectionViewItem *item = [self.driveList itemAtIndex: idx];
+        item.view.hidden = YES;
+    }];
 }
 
-//This is called when dragging completes, and discards the drive if it was not dropped onto a valid destination
-//(or back onto the drive list).
 - (void) draggedImage: (NSImage *)draggedImage
 			  endedAt: (NSPoint)screenPoint
 		    operation: (NSDragOperation)operation
 {
-    for (BXDrive *drive in self.selectedDrives)
-    {
-        NSView *itemView = [self.driveList viewForDrive: drive];
-        itemView.hidden = NO;
-    }
+    [self.driveList.selectionIndexes enumerateIndexesUsingBlock: ^(NSUInteger idx, BOOL *stop) {
+        NSCollectionViewItem *item = [self.driveList itemAtIndex: idx];
+        item.view.hidden = NO;
+    }];
     
     [_driveRemovalDropzone orderOut: self];
-    
-    /*
-    NSEvent *triggeringEvent = [NSApp currentEvent];
-	NSPoint mousePointOnScreen = [NSEvent mouseLocation];
-	
-    
-    
-    BOOL unhideSelection = YES;
-    
-    //If the user dropped these items outside the app, then remove them.
-    //(The operation will only be NSDragOperationNone if the drag landed
-    //on a window outside the app; it will be NSDragOperationPrivate if
-    //the drag ended over a Boxer window.)
-    //TWEAK: also check that the drag didn't end because the user pressed
-    //ESC to cancel it. (Unfortunately we have no way of detecting a cancel
-    //just from the drag operation.)
-	if (operation == NSDragOperationNone &&
-        ![NSWindow windowAtPoint: mousePointOnScreen] &&
-        !((triggeringEvent.type == NSKeyDown || triggeringEvent.type == NSKeyUp) && [triggeringEvent.charactersIgnoringModifiers isEqualToString: @"\e"]))
-	{
-        BOOL drivesRemoved = [self _unmountDrives: self.selectedDrives
-                                          options: BXDefaultDriveUnmountOptions | BXDriveRemoveExistingFromQueue];
-        
-		//If the drives were successfully removed by the action,
-        //display the poof animation
-		if (drivesRemoved)
-		{
-            //Leave the selected drives hidden, so that their
-            //disappearing animation won't be visible.
-            unhideSelection = NO;
-            
-			//Calculate the center-point of the image for displaying the poof icon
-			NSRect imageRect;
-			imageRect.size = draggedImage.size;
-			imageRect.origin = screenPoint;	
-            
-			NSPoint midPoint = NSMakePoint(NSMidX(imageRect), NSMidY(imageRect));
-            
-			//We make it square instead of fitting the width of the image,
-            //to avoid distorting the puff of smoke
-			NSSize poofSize = imageRect.size;
-			poofSize.width = poofSize.height;
-			
-			//Play the poof animation
-			NSShowAnimationEffect(NSAnimationEffectPoof, midPoint, poofSize, nil, nil, nil);
-		}
-	}
-	
-	//Once the drag has finished, clean up by unhiding the dragged items
-    //(Unless all the dragged items were ejected and removed, in which case
-    //leave them hidden so that they don't reappear and then vanish again.)
-	if (unhideSelection)
-    {
-        for (BXDrive *drive in self.selectedDrives)
-        {
-            NSView *itemView = [self.driveList viewForDrive: drive];
-            itemView.hidden = NO;
-        }
-    }
-    
-    //Reset the cursor back to normal
-    [[NSCursor arrowCursor] set];
-     */
 }
 
 @end

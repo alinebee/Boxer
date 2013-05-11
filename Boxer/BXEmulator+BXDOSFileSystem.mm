@@ -709,7 +709,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	
 	NSString *subPath = [drive relativeLocationOfURL: URL];
 	
-	//The path is not be accessible on this drive; give up before we go any further.
+	//The path is not accessible on this drive; give up before we go any further.
 	if (!subPath) return nil;
 	
 	NSString *dosDrive = [NSString stringWithFormat: @"%@:", drive.letter];

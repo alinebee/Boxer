@@ -7,7 +7,7 @@
 //
 
 #import "BBAppDelegate+AppExporting.h"
-#import "NSURL+BXFilePaths.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 
 @implementation BBAppDelegate (AppExporting)
 

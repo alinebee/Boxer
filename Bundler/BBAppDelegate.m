@@ -9,7 +9,7 @@
 #import "BBAppDelegate+AppExporting.h"
 #import "BBURLTransformer.h"
 #import "BBIconDropzone.h"
-#import "NSURL+BXFilePaths.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 
 NSString * const kBBRowIndexSetDropType = @"BBRowIndexSetDropType";
 NSString * const kUTTypeGamebox = @"net.washboardabs.boxer-game-package";

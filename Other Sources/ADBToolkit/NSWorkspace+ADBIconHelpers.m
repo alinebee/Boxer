@@ -46,7 +46,7 @@
 	if (!gotFileRef) return NO;
 		
 	//Retrieve the Finder catalog info for the file
-    OSStatus result = FSGetCatalogInfo(	&fileRef,
+    OSStatus result = FSGetCatalogInfo(&fileRef,
 									   kFSCatInfoFinderInfo,
 									   &catInfo,
 									   NULL,

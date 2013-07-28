@@ -38,27 +38,27 @@ enum {
 @class BXGamebox;
 @interface BXBezelController : NSWindowController
 {
-    NSView *driveAddedBezel;
-    NSView *driveSwappedBezel;
-    NSView *driveRemovedBezel;
-    NSView *driveImportedBezel;
-    NSView *fullscreenBezel;
-    NSView *joystickIgnoredBezel;
-    NSView *CPUSpeedBezel;
-    NSView *throttleBezel;
-    NSView *volumeBezel;
-    NSView *pauseBezel;
-    NSView *playBezel;
-    NSView *fastForwardBezel;
-    NSView *screenshotBezel;
-    NSView *MT32MessageBezel;
-    NSView *MT32MissingBezel;
-    NSView *numpadActiveBezel;
-    NSView *numpadInactiveBezel;
-    NSView *numlockActiveBezel;
-    NSView *numlockInactiveBezel;
+    NSView *_driveAddedBezel;
+    NSView *_driveSwappedBezel;
+    NSView *_driveRemovedBezel;
+    NSView *_driveImportedBezel;
+    NSView *_fullscreenBezel;
+    NSView *_joystickIgnoredBezel;
+    NSView *_CPUSpeedBezel;
+    NSView *_throttleBezel;
+    NSView *_volumeBezel;
+    NSView *_pauseBezel;
+    NSView *_playBezel;
+    NSView *_fastForwardBezel;
+    NSView *_screenshotBezel;
+    NSView *_MT32MessageBezel;
+    NSView *_MT32MissingBezel;
+    NSView *_numpadActiveBezel;
+    NSView *_numpadInactiveBezel;
+    NSView *_numlockActiveBezel;
+    NSView *_numlockInactiveBezel;
     
-    BXBezelPriority currentPriority;
+    BXBezelPriority _currentPriority;
 }
 
 #pragma mark -

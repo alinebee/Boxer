@@ -8,6 +8,7 @@
 #import "BXBezelController.h"
 #import "BXBaseAppController.h"
 #import "NSWindow+ADBWindowEffects.h"
+#import "NSWindow+ADBWindowDimensions.h"
 #import "BXSession+BXUIControls.h"
 #import "BXDOSWindow.h"
 #import "BXDOSWindowController.h"
@@ -38,12 +39,32 @@
 
 
 @implementation BXBezelController
-@synthesize driveAddedBezel, driveSwappedBezel, driveRemovedBezel, driveImportedBezel;
-@synthesize pauseBezel, playBezel, fastForwardBezel, fullscreenBezel, screenshotBezel;
-@synthesize joystickIgnoredBezel, CPUSpeedBezel, throttleBezel, volumeBezel;
-@synthesize MT32MessageBezel, MT32MissingBezel;
-@synthesize numpadActiveBezel, numpadInactiveBezel;
-@synthesize numlockActiveBezel, numlockInactiveBezel;
+
+@synthesize driveAddedBezel = _driveAddedBezel;
+@synthesize driveRemovedBezel = _driveRemovedBezel;
+@synthesize driveSwappedBezel = _driveSwappedBezel;
+@synthesize driveImportedBezel = _driveImportedBezel;
+
+@synthesize pauseBezel = _pauseBezel;
+@synthesize playBezel = _playBezel;
+@synthesize fastForwardBezel = _fastForwardBezel;
+
+@synthesize fullscreenBezel = _fullscreenBezel;
+@synthesize screenshotBezel = _screenshotBezel;
+
+@synthesize CPUSpeedBezel = _CPUSpeedBezel;
+@synthesize volumeBezel = _volumeBezel;
+
+@synthesize throttleBezel = _throttleBezel;
+@synthesize joystickIgnoredBezel = _joystickIgnoredBezel;
+
+@synthesize MT32MessageBezel = _MT32MessageBezel;
+@synthesize MT32MissingBezel = _MT32MissingBezel;
+
+@synthesize numpadActiveBezel = _numpadActiveBezel;
+@synthesize numpadInactiveBezel = _numpadInactiveBezel;
+@synthesize numlockActiveBezel = _numlockActiveBezel;
+@synthesize numlockInactiveBezel = _numlockInactiveBezel;
 
 
 + (NSImage *) bezelIconForDrive: (BXDrive *)drive
@@ -135,22 +156,23 @@
 {   
     //Only display the new bezel if it's of equal or higher priority
     //than the one we’re currently displaying
-    if (priority >= currentPriority)
+    if (priority >= _currentPriority)
     {
-        currentPriority = priority;
+        _currentPriority = priority;
         
         //Swap the old bezel for the new one, and resize the bezel window to fit it
-        if (bezel != [self currentBezel])
+        if (bezel != self.currentBezel)
         {
             [self.currentBezel removeFromSuperviewWithoutNeedingDisplay];
             [self.window setContentSize: bezel.frame.size];
             [self.window.contentView addSubview: bezel];
-            
-            [self centerBezel];
         }
         
         //Fade in the bezel window if it isn't already visible
         [self.window fadeInWithDuration: BXBezelFadeDuration];
+        
+        //Reposition the bezel to match the location of the current DOS window
+        [self centerBezel];
         
         //Start counting down to hiding the bezel again
         [NSObject cancelPreviousPerformRequestsWithTarget: self
@@ -168,19 +190,38 @@
 
 - (void) hideBezel
 {
-    currentPriority = BXBezelPriorityLow;
-    [[self window] fadeOutWithDuration: BXBezelFadeDuration];
+    _currentPriority = BXBezelPriorityLow;
+    [self.window fadeOutWithDuration: BXBezelFadeDuration];
 }
 
 - (void) centerBezel
 {
-    //Position the bezel so that it's centered in the bottom third of the available screen area
-    NSRect screenFrame = [NSScreen mainScreen].visibleFrame;
-    NSRect windowFrame = self.window.frame;
+    NSPoint anchorPoint = NSMakePoint(0.5f, 0.15f);
+    NSScreen *relativeScreen;
+    NSRect relativeFrame;
     
-    NSRect centeredFrame = alignInRectWithAnchor(windowFrame, screenFrame, NSMakePoint(0.5f, 0.25f));
+    //TWEAK: if there's a DOS window visible, then anchor the bezel within that window's region.
+    //Otherwise, anchor it within the overall screen.
+    BXSession *currentSession = [[NSApp delegate] currentSession];
+    BXDOSWindow *currentDOSWindow = currentSession.DOSWindowController.window;
     
-    [self.window setFrameOrigin: centeredFrame.origin];
+    if (currentDOSWindow.isVisible)
+    {
+        relativeScreen = currentDOSWindow.screen;
+        relativeFrame = currentDOSWindow.frame;
+    }
+    else
+    {
+        relativeScreen = [NSScreen mainScreen];
+        relativeFrame = relativeScreen.visibleFrame;
+    }
+    
+    NSRect bezelFrame = self.window.frame;
+    NSRect centeredFrame = alignInRectWithAnchor(bezelFrame, relativeFrame, anchorPoint);
+    NSRect constrainedFrame = [self.window fullyConstrainFrameRect: centeredFrame
+                                                          toScreen: relativeScreen];
+    
+    [self.window setFrameOrigin: constrainedFrame.origin];
 }
 
 

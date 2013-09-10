@@ -64,23 +64,40 @@
 
 - (void) printerDidInitialize: (BXEmulatedPrinter *)printer
 {
+    //Apply OS X's preferred page size as the default emulated printer setup.
     NSSize sizeInPoints = self.printInfo.paperSize;
-    
-    //Apply our own page size as the default printer setup
     printer.pageSize = NSMakeSize(sizeInPoints.width / 72.0, sizeInPoints.height / 72.0);
     
-    //Ignore the OSX printer margins: it seems most DOS programs will try to apply their own margins on top of this.
+    //Ignore OSX's printer margins: many DOS programs will disregard the ESC/P margins and try
+    //to make their own margins using spacing/tabs, resulting in wide double margins and awkward
+    //text wrapping.
+    
     /*
     printer.topMargin = self.printInfo.topMargin / 72.0;
     printer.bottomMargin = (sizeInPoints.height - self.printInfo.bottomMargin) / 72.0;
     printer.leftMargin = self.printInfo.leftMargin / 72.0;
     printer.rightMargin = (sizeInPoints.width - self.printInfo.rightMargin) / 72.0;
      */
+    
+    //Rather, set the default margins to the maximum area of the page the printer actually can print into.
+    //This ensures that no content will be cut off, while still (hopefully) leaving room for the DOS program's
+    //own attempts at margins.
+    //IMPLEMENTATION NOTE: the maximum boundaries are specified with a bottom-left origin.
+    NSRect maxPrintBoundsInPoints = self.printInfo.imageablePageBounds;
+    printer.leftMargin      = NSMinX(maxPrintBoundsInPoints) / 72.0;
+    printer.rightMargin     = NSMaxX(maxPrintBoundsInPoints) / 72.0;
+    printer.bottomMargin    = (sizeInPoints.height - NSMinY(maxPrintBoundsInPoints)) / 72.0;
+    printer.topMargin       = (sizeInPoints.height - NSMaxY(maxPrintBoundsInPoints)) / 72.0;
 }
 
 - (void) printer: (BXEmulatedPrinter *)printer didPrintToPageInSession: (BXPrintSession *)session
 {
     BOOL wasInProgress = self.printStatusController.inProgress;
+    
+    //FIXME: sometimes the UI doesn't update fully if the main thread is blocked,
+    //e.g. if we print a big document by piping it to PRN. This results in the in-progress spinner
+    //appearing and animating (presumably because it's handled on a separate thread) while the status
+    //text keeps saying the printer is idle.
     
     self.printStatusController.numPages = session.numPages;
     self.printStatusController.inProgress = YES;

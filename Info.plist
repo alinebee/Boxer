@@ -139,11 +139,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0pre</string>
+	<string>2.0alpha</string>
 	<key>CFBundleSignature</key>
 	<string>Boxr</string>
 	<key>CFBundleVersion</key>
-	<string>20130409.1</string>
+	<string>20131012.1</string>
 	<key>ContactEmail</key>
 	<string>support@boxerapp.com</string>
 	<key>CoverArtSearchURL</key>

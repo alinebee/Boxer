@@ -93,7 +93,7 @@
         inGLContext: (CGLContextObj)context
               error: (NSError **)outError
 {
-    NSAssert(contentSize.width > 0 && contentSize.height > 0, @"Invalid content size provided.");
+    NSAssert(contentSize.width > 0 && contentSize.height > 0, @"Invalid content size provided: %@", NSStringFromCGSize(contentSize));
     
     self = [self init];
     if (self)

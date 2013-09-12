@@ -99,7 +99,7 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 //IMPLEMENTATION NOTE: sometimes the buffer size that DOSBox is using
 //is already a different aspect ratio from the original resolution,
 //e.g. if it is performing pixel pre-doubling to correct for wacky video modes.
-//This provides a corrected version of that resolution.
+//This provides an aspect-corrected version of that resolution.
 - (NSSize) effectiveResolution
 {
 	CGFloat bufferRatio		= aspectRatioOfSize(self.size);

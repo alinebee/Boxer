@@ -225,10 +225,10 @@
                 //(Re)create the buffer texture in the new dimensions
                 NSError *bufferError = nil;
                 self.supersamplingBufferTexture = [ADBTexture2D textureWithType: self.bufferTextureType
-                                                                   contentSize: supersamplingSize
-                                                                         bytes: NULL
-                                                                   inGLContext: _context
-                                                                         error: &bufferError];
+                                                                    contentSize: supersamplingSize
+                                                                          bytes: NULL
+                                                                    inGLContext: _context
+                                                                          error: &bufferError];
                 
                 NSAssert1(self.supersamplingBufferTexture != nil, @"Buffer texture creation failed: %@", bufferError);
                 
@@ -259,7 +259,7 @@
     BOOL isEvenScaling = CGPointEqualToPoint(scalingFactor, CGPointIntegral(scalingFactor));
 	if (usesSquarePixels && isEvenScaling) return CGSizeZero;
 	
-	//Our ideal supersampling buffer size is the smallest integer multiple
+	//Our ideal supersampled frame size is the smallest integer multiple
     //of the base resolution that fully covers the viewport. This is then scaled
     //down to the final viewport.
 	NSInteger nearestScale = ceilf(scalingFactor.y);

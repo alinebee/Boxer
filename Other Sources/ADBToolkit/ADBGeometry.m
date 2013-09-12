@@ -52,7 +52,7 @@ NSSize integralSize(NSSize size)
 
 NSSize sizeToMatchRatio(NSSize size, CGFloat aspectRatio, BOOL preserveHeight)
 {
-	//Calculation is impossible - perhaps we should assert here instead
+	//TODO: Calculation is impossible - perhaps we should assert here instead
 	if (aspectRatio == 0) return NSZeroSize;
 	
 	if (preserveHeight) return NSMakeSize(size.height * aspectRatio, size.height);
@@ -66,6 +66,10 @@ BOOL sizeFitsWithinSize(NSSize innerSize, NSSize outerSize)
 
 NSSize sizeToFitSize(NSSize innerSize, NSSize outerSize)
 {
+	//TODO: Calculation is impossible - perhaps we should assert here instead
+    if (innerSize.width <= 0 || innerSize.height <= 0)
+        return outerSize;
+    
 	NSSize finalSize = outerSize;
 	CGFloat ratioW = outerSize.width / innerSize.width;
 	CGFloat ratioH = outerSize.height / innerSize.height;
@@ -170,6 +174,10 @@ BOOL CGSizeFitsWithinSize(CGSize innerSize, CGSize outerSize)
 
 CGSize CGSizeToFitSize(CGSize innerSize, CGSize outerSize)
 {
+	//Calculation is impossible - perhaps we should assert here instead
+    if (innerSize.width <= 0 || innerSize.height <= 0)
+        return outerSize;
+    
 	CGSize finalSize = outerSize;
 	CGFloat ratioW = outerSize.width / innerSize.width;
 	CGFloat ratioH = outerSize.height / innerSize.height;

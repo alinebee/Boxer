@@ -220,11 +220,11 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 //Returns the rectangular region of the view into which the specified frame should be drawn.
 - (NSRect) viewportForFrame: (BXVideoFrame *)frame
 {
-    if (self.managesViewport)
+    if (frame != nil && self.managesViewport)
 	{
 		NSSize frameSize = frame.scaledSize;
 		NSRect frameRect = NSMakeRect(0.0f, 0.0f, frameSize.width, frameSize.height);
-		
+        
         NSRect canvasRect = self.bounds;
         NSRect maxViewportRect = canvasRect;
         
@@ -380,7 +380,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
             //Sync up the new renderer with our current state.
             if (NSIsEmptyRect(self.viewportRect))
             {
-                NSRect viewportRect = (self.currentFrame) ? [self viewportForFrame: self.currentFrame] : self.bounds;
+                NSRect viewportRect = [self viewportForFrame: self.currentFrame];
                 [self setViewportRect: viewportRect animated: NO];
             }
             else

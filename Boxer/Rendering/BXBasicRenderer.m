@@ -170,6 +170,7 @@ GLfloat viewportVerticesFlipped[8] = {
 
 - (void) setViewport: (CGRect)rect recalculate: (BOOL)recalculate
 {
+    //TODO: should we also run the viewport rect through CGRectIntegral?
     if (!CGRectEqualToRect(rect, _viewport))
     {
         _viewport = rect;

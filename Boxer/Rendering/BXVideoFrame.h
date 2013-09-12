@@ -50,20 +50,22 @@ extern const CGFloat BX4by3AspectRatio;
 @property (readonly) NSUInteger pitch;
 
 //The original game resolution represented by the frame.
+//This may not be the correspond to the pixel size, if DOSBox is applying its own scaling.
 @property (assign) NSSize baseResolution;
 
 //The scaling factor to apply to the frame to reach the desired aspect ratio.
 @property (assign) NSSize intendedScale;
 
-//The size of the frame when scaled to the intended scale.
+//The size of the frame with aspect ratio correction applied (i.e. scaled by intendedScale.)
 @property (readonly) NSSize scaledSize;
 
-//The base resolution corrected to the same aspect ratio as the intended size:
+//The base resolution corrected to the same aspect ratio as the pixel size:
 //e.g. a 640x200 frame is intended to be doubled vertically, for an effective
-//resolution of 640x400.
+//resolution of 640x400. (Note that this stretching is distinct from intendedScale,
+//which applies aspect ratio correction to e.g. stretch 640x400 to 640x480.)
 @property (readonly) NSSize effectiveResolution;
 
-//The effective resolution of the frame scaled to the intended scale.
+//The effective resolution of the frame with full aspect ratio correction applied.
 @property (readonly) NSSize scaledResolution;
 
 //Whether the framebuffer is a text-mode frame. Provided by the emulator as a

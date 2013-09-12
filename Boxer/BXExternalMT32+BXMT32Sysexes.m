@@ -33,7 +33,7 @@
         //Otherwise, check what address the sysex is targeting.
         else
         {
-            const UInt8 *contents = (const UInt8 *)[sysex bytes];
+            const UInt8 *contents = (const UInt8 *)sysex.bytes;
             UInt8 baseAddress = contents[5];
             
             //Some General MIDI drivers (used by Origin and Westwood among others)
@@ -45,9 +45,9 @@
                 *supportConfirmed = NO;
             }
             
-            //7th Guest menu music attempts to send short messages to patch memory
-            //even in General MIDI mode, so we catch these and treat them as inconclusive.
-            else if (baseAddress == BXMT32SysexAddressPatchMemory && sysex.length == 12)
+            //7th Guest menu music and Strike Commander eject music attempt to send short messages
+            //to patch memory even in General MIDI mode, so we catch these and treat them as inconclusive.
+            else if (baseAddress == BXMT32SysexAddressPatchMemory && (sysex.length == 11 || sysex.length == 12))
             {
                 *supportConfirmed = NO;
             }
@@ -62,6 +62,7 @@
                 NSArray *ignoredMessages = [NSArray arrayWithObjects:
                                             //Sent by Pacific Strike and Strike Commander in General MIDI mode
                                             @"SCSCSCFY!           ",
+                                            @"Bye.                ",
                                             nil];
                 
                 *supportConfirmed = (![ignoredMessages containsObject: LCDMessage]);

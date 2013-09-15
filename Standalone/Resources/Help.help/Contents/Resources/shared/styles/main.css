@@ -1,0 +1,432 @@
+html
+{
+	/* Apply a vignetted background */
+	background: fixed -webkit-gradient(radial, 50% 0, 0, 50% 50%, 700, from(#262626), to(#111), color-stop(40%, #222));
+	text-shadow: rgba(0, 0, 0, 0.25) 0 1px 1px;
+	color: #ccc;
+	font: 14px/1.5 "Helvetica Neue";
+	
+	/* Make the antialiasing less hefty */
+	-webkit-font-smoothing: antialiased;
+}
+body
+{
+	margin: 0;
+	padding: 0 2em 2em;
+}
+
+p, ul, ol, dl
+{
+	margin: 0 0 1em;
+}
+
+ul, ol
+{
+	padding: 0 0 0 2em;
+}
+
+ol.steps 
+{
+	counter-reset: steps;
+	list-style: none;
+	margin: 1em 0;
+}
+
+ol.steps>li
+{
+	margin-bottom: 0.75em;
+	counter-increment: steps;
+}
+
+ol.steps>li:after
+{
+	clear: left;
+}
+
+ol.steps>li:before
+{
+	content: counter(steps);
+	float: left;
+	
+	line-height: 1;
+	padding: 0.25em;
+	width: 1em;
+	margin-left: -2em;
+	
+	color: white;
+	font-size: 0.9em;
+	text-align: center;
+	background: #444;
+	border-radius: 5px;
+	text-shadow: none;
+}
+
+p + ul, p + ol	{ margin-top: -0.75em; }
+
+ol		{ list-style: decimal; }
+ol ol	{ list-style: lower-alpha; }
+ul		{ list-style: square -webkit-gradient(linear, 50% 100%, 50% 0, from(#444), to(#555)); }
+li		{ margin-bottom: 0.25em; }
+
+.unbulleted	{ padding-left: 0; list-style: none; }
+
+dt		{ font-weight: 500; color: #777; }
+dd		{ margin: 0 0 1em; padding: 0 0 0 2em; }
+
+h1, h2, h3, h4
+{
+	color: white;
+	margin: 0 0 0.5em;
+	font-weight: normal;
+	font-family: "Lucida Grande";
+	text-shadow: rgba(0, 0, 0, 0.5) 0 1px 3px;
+}
+
+h1	{ font-size: 30px; letter-spacing: -1px; }
+h2	{ font-size: 22px; letter-spacing: -1px; }
+h3	{ font-size: 18px; }
+h4	{ font-size: 16px; font-weight: 500; margin-bottom: 0.5em; }
+
+a:link,
+a:visited	{ color: #fb4; text-decoration: none; }
+a:hover,
+a:focus		{ color: white; text-decoration: underline; }
+
+:target + h2,
+:target + h3,
+:target + h4
+{
+	color: #fb4;
+}
+
+img	{ vertical-align: baseline; }
+
+blockquote
+{
+	color: #aaa;
+	background: #333;
+	font-style: italic;
+	margin: 1em 0;
+	padding: 1em 2em;
+}
+
+hr
+{
+	height: 0;
+	border: 0;
+	border-top: 3px solid #333;
+	margin: 0.5em 0;
+}
+
+code
+{
+	font-family: Menlo, Monaco, monospace;
+	font-size: 100%;
+}
+
+kbd
+{
+	font: normal 12px/1.5 "Lucida Grande";
+	word-spacing: -0.2em;
+	padding: 0 0.5em;
+	margin: 0.2em;
+	text-shadow: none;
+	white-space: nowrap;
+	display: inline-block;
+	
+	border-top: 1px solid #e9ecef;
+	background: #d9dcdf;
+	color: black;
+	
+	min-width: 1em;
+	text-align: center;
+	-webkit-box-shadow: rgba(0,0,0,0.5) 0 1px 2px;
+	border-radius: 4px;
+}
+
+kbd img
+{
+	vertical-align: middle;
+	padding-bottom: 0.3em;
+}
+
+var
+{
+	font-style: italic;
+}
+
+strong
+{
+	color: #ddd;
+	font-weight: 500;
+}
+
+
+/* Tables */
+
+table
+{
+	border-spacing: 0;
+	border-collapse: collapse;
+	margin: 0 0 1.5em;
+}
+table.wide
+{
+	width: 100%;
+}
+
+tr:first-child>:first-child	{ border-top-left-radius: 10px; }
+tr:first-child>:last-child	{ border-top-right-radius: 10px; }
+tr:last-child>:first-child	{ border-bottom-left-radius: 10px; }
+tr:last-child>:last-child	{ border-bottom-right-radius: 10px; }
+
+th, td
+{
+	text-align: left;
+	vertical-align: baseline;
+	padding: 0.5em 1em 0.5em;
+}
+
+td, tbody th
+{
+	background: #333;
+	border-bottom: 1px solid #222;
+}
+tr:last-child td	{ border-bottom: 0; }
+
+th
+{
+	color: #777;
+}
+
+/* General helper styles */
+/* --------------------- */
+
+.floated-left
+{
+	float: left;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+.floated-right
+{
+	float: right;
+	margin-left: 10px;
+	margin-bottom: 10px;
+}
+
+.centered
+{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.cleared
+{
+	clear: both;
+}
+
+.fit-to-width
+{
+	max-width: 100%;
+}
+
+
+/* Links to external websites */
+a[rel=external]
+{
+	padding-right: 17px;
+	background: url("../images/site-popout.png") 100% 75% no-repeat;
+}
+
+/* Links to additional topics */
+/*
+a[rel=topic]
+{
+	padding-right: 11px;
+	background: url("../images/topic-arrow.png") 100% 75% no-repeat;
+}
+*/
+
+/* Email links */
+a[rel=email]
+{
+	padding-right: 19px;
+	background: url("../images/email-popout.png") 100% 75% no-repeat;
+}
+
+/* Links to open a window of the application */
+/*
+a[rel=application-window],
+a[rel=other-application]
+{
+	padding-right: 18px;
+	margin-right: 2px;
+	background: url("../images/application-popout.png") 100% 75% no-repeat;
+}
+*/
+
+
+/* Links to reveal an image or file in quicklook */
+a[rel=quicklook]
+{
+	display: inline-block;
+}
+
+a[rel=quicklook]:hover
+{
+	background: url("../images/reveal.png") 50% 40% no-repeat;
+}
+
+a[rel=quicklook] img
+{
+	-webkit-transition: opacity 0.2s ease-out;
+	vertical-align: bottom;
+}
+
+a[rel=quicklook]:hover img
+{
+	opacity: 0.85;
+}
+
+
+/* Subtle text */
+
+.under-my-breath
+{
+	color: #777;
+}
+
+/* Expanded explanations */
+
+.note
+{
+	color: #777;
+	padding-left: 2em;
+	background: url("../images/info.png") 0.25em 0.25em no-repeat;
+}
+
+.note strong
+{
+	color: #888;
+}
+
+
+/* Additional information boxes */
+.tip
+{
+	background: #333;
+	padding: 0.5em 1em;
+	border-radius: 10px;
+}
+
+/* Example menu paths, imitating the appearance of the OS X application menu */
+.menu
+{
+	font-family: 12px "Lucida Grande";
+	padding: 0.2em 0.5em;
+	margin: 0 0.2em;
+	color: black;
+	font-weight: normal;
+	white-space: nowrap;
+	text-shadow: rgba(255, 255, 255, 0.66) 0 1px 1px;
+	background: -webkit-gradient(linear, 50% 100%, 50% 0, from(#cecece), to(#fafafa));
+	border-radius: 2px;
+}
+
+
+/* Sequence steps */
+
+.step
+{
+	background-color: #444;
+	display: inline-block;
+	text-align: center;
+	border-radius: 5px;
+	padding: 0 5px;
+	min-width: 1em;
+	color: white;
+	text-shadow: none;
+}
+
+:target + * .step
+{
+	background-color: #fb4;
+}
+
+/* Top headings */
+body > h1
+{
+	/* The topmost heading on the page is preceded by an anchor with which we refer to the page.
+	   If we use a margin to separate the heading from the top of the page, then the page will
+	   be scrolled down to the level of the heading when browsing to that anchor.
+	   Using padding here instead ensures the anchor is flush with the top of the page instead.
+	*/
+	padding-top: 0.5em;
+}
+
+h1:after
+{
+	clear: both;
+	content: " ";
+	display: block;
+}
+
+h1 .page-icon-32
+{
+	vertical-align: text-bottom;
+	width: 32px;
+	height: 32px;
+}
+
+h1 .page-icon-64
+{
+	vertical-align: middle;
+	margin: -8px 16px 0;
+	float: left;
+	width: 64px;
+	height: 64px;
+}
+
+
+/* Page subdivisions */
+section
+{
+	margin: 1em 0 1.5em;
+	border-top: 3px solid #333;
+	padding-top: 1em;
+	clear: both;
+}
+section:after
+{
+	clear: both;
+	display: block;
+	content: " ";
+}
+
+section section
+{
+	margin: 1em 0;
+	border-top: 1px solid #333;
+	padding-top: 0.5em;
+}
+
+section:first-child,
+section section:first-child,
+h1 + section,
+h2 + section,
+h3 + section,
+img + section,
+section.no-border
+{
+	border-top: 0;
+	padding-top: 0;
+}
+
+section.non-cleared,
+section.non-cleared:after
+{
+	clear: none !important;
+}

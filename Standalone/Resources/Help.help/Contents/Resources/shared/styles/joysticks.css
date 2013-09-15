@@ -1,0 +1,11 @@
+/* Styles for the joystick help page */
+
+.joystick-type
+{
+	padding-left: 144px;
+}
+
+.joystick-type .floated-left
+{
+	margin-left: -144px;
+}

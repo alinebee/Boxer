@@ -1,0 +1,17 @@
+/* Styles used by the credits and legalese pages. */
+
+.projects-list li
+{
+	margin-bottom: 0.5em;
+}
+
+.license-link
+{
+	margin-left: 0.5em;
+}
+
+section.license
+{
+	padding-top: 0;
+	border-top: 0;
+}

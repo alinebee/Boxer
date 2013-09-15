@@ -102,7 +102,6 @@
 		9F2D2FB515B8233800FAE848 /* BXThemes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F544A7F10AB44C40030FED5 /* BXThemes.m */; };
 		9F2D2FB615B8233800FAE848 /* NSBezierPath+MCAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DA1710AE22D8008DBBC1 /* NSBezierPath+MCAdditions.m */; };
 		9F2D2FB815B8233800FAE848 /* BXProgramPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DAD410AF1042008DBBC1 /* BXProgramPanel.m */; };
-		9F2D2FB915B8233800FAE848 /* BXProgramPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */; };
 		9F2D2FBD15B8233800FAE848 /* NSWorkspace+ADBFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D1B810CA9DFB00C3B081 /* NSWorkspace+ADBFileTypes.m */; };
 		9F2D2FBE15B8233800FAE848 /* BXSession+BXDragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */; };
 		9F2D2FBF15B8233800FAE848 /* BXEmulator+BXPaste.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */; };
@@ -292,7 +291,6 @@
 		9F2D30A515B8233800FAE848 /* ADBFullscreenCapableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD95D6913E2A45C005EF2C0 /* ADBFullscreenCapableWindow.m */; };
 		9F2D30A615B8233800FAE848 /* BXPrecisionProControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = B7900B3D13E47D9E00B37913 /* BXPrecisionProControllerProfile.m */; };
 		9F2D30A715B8233800FAE848 /* BXMOMORacingControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA1CF6713E5B43F00416D74 /* BXMOMORacingControllerProfile.m */; };
-		9F2D30A915B8233800FAE848 /* ADBImageAwareFileScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61F78213EC2D5100505436 /* ADBImageAwareFileScan.m */; };
 		9F2D30AA15B8233800FAE848 /* BXEmulatorErrors.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.mm */; };
 		9F2D30AB15B8233800FAE848 /* ADBISOImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F81CFB813EEA3F4008F0265 /* ADBISOImage.m */; };
 		9F2D30AC15B8233800FAE848 /* ADBBinCueImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98589613EF71F600E66877 /* ADBBinCueImage.m */; };
@@ -4329,7 +4327,6 @@
 				9F2D2FB515B8233800FAE848 /* BXThemes.m in Sources */,
 				9F2D2FB615B8233800FAE848 /* NSBezierPath+MCAdditions.m in Sources */,
 				9F2D2FB815B8233800FAE848 /* BXProgramPanel.m in Sources */,
-				9F2D2FB915B8233800FAE848 /* BXProgramPanelController.m in Sources */,
 				9F2D2FBD15B8233800FAE848 /* NSWorkspace+ADBFileTypes.m in Sources */,
 				9F2D2FBE15B8233800FAE848 /* BXSession+BXDragDrop.m in Sources */,
 				9F2D2FBF15B8233800FAE848 /* BXEmulator+BXPaste.mm in Sources */,
@@ -4519,7 +4516,6 @@
 				9F2D30A515B8233800FAE848 /* ADBFullscreenCapableWindow.m in Sources */,
 				9F2D30A615B8233800FAE848 /* BXPrecisionProControllerProfile.m in Sources */,
 				9F2D30A715B8233800FAE848 /* BXMOMORacingControllerProfile.m in Sources */,
-				9F2D30A915B8233800FAE848 /* ADBImageAwareFileScan.m in Sources */,
 				9F2D30AA15B8233800FAE848 /* BXEmulatorErrors.mm in Sources */,
 				9F2D30AB15B8233800FAE848 /* ADBISOImage.m in Sources */,
 				9F2D30AC15B8233800FAE848 /* ADBBinCueImage.m in Sources */,

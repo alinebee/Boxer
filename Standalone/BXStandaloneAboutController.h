@@ -17,6 +17,8 @@
 {
     WebView *_creditsView;
     NSTextField *_appNameField;
+    NSButton *_websiteButton;
+    NSButton *_acknowledgementsButton;
 }
 
 @property (readonly, nonatomic) NSString *appName;
@@ -24,8 +26,11 @@
 @property (readonly, nonatomic) NSString *shortVersionString;
 @property (readonly, nonatomic) NSString *buildNumber;
 
-@property (retain, nonatomic) IBOutlet WebView *creditsView;
-@property (retain, nonatomic) IBOutlet NSTextField *appNameField;
+@property (assign, nonatomic) IBOutlet WebView *creditsView;
+@property (assign, nonatomic) IBOutlet NSTextField *appNameField;
+
+@property (assign, nonatomic) IBOutlet NSButton *websiteButton;
+@property (assign, nonatomic) IBOutlet NSButton *acknowledgementsButton;
 
 @property (readonly, nonatomic) CGFloat appNameFontSize;
 

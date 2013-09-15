@@ -67,6 +67,15 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
     return [[NSBundle mainBundle] objectForInfoDictionaryKey: BXOrganizationNameInfoPlistKey];
 }
 
++ (NSURL *) organizationWebsiteURL
+{
+    NSString *URLAsString = [[NSBundle mainBundle] objectForInfoDictionaryKey: BXOrganizationWebsiteURLInfoPlistKey];
+    if (URLAsString.length)
+        return [NSURL URLWithString: URLAsString];
+    else
+        return nil;
+}
+
 - (void) _synchronizeTitlesForMainMenuItemWithTag: (NSInteger)tag
 {
     NSMenu *menu = [[NSApp mainMenu] itemWithTag: tag].submenu;
@@ -232,15 +241,7 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
 
 - (IBAction) orderFrontAboutPanel: (id)sender
 {
-    //Show the default OS X app about panel if this is an unbranded game app.
-    if (self.isUnbrandedGameBundle)
-    {
-        [NSApp orderFrontStandardAboutPanel: self];
-    }
-    else
-    {
-        [[BXStandaloneAboutController controller] showWindow: sender];
-    }
+    [[BXStandaloneAboutController controller] showWindow: sender];
 }
 
 - (IBAction) visitOrganizationWebsite: (id)sender

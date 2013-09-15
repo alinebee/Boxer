@@ -9,7 +9,8 @@
 #import "BXStandaloneAboutController.h"
 #import "BXThemes.h"
 #import "NSShadow+ADBShadowExtensions.h"
-#import "BXBaseAppController.h"
+#import "BXStandaloneAppController.h"
+#import "ADBGeometry.h"
 
 
 #define kAppNameDefaultFontSize 24
@@ -18,6 +19,8 @@
 @implementation BXStandaloneAboutController
 @synthesize creditsView = _creditsView;
 @synthesize appNameField = _appNameField;
+@synthesize acknowledgementsButton = _acknowledgementsButton;
+@synthesize websiteButton = _websiteButton;
 
 + (id) controller
 {
@@ -38,6 +41,18 @@
     self.creditsView.drawsBackground = NO;
     self.creditsView.shouldUpdateWhileOffscreen = NO;
     self.creditsView.shouldCloseWithWindow = YES;
+    
+    //Hide the website button and center the acknowledgements button if this app doesn't have a website URL
+    NSURL *websiteURL = [BXStandaloneAppController organizationWebsiteURL];
+    if (!websiteURL)
+    {
+        self.websiteButton.hidden = YES;
+        NSRect parentBounds = self.acknowledgementsButton.superview.bounds;
+        NSRect currentFrame = self.acknowledgementsButton.frame;
+        NSRect centeredFrame = alignInRectWithAnchor(currentFrame, parentBounds, NSMakePoint(0.5, 0.5));
+        
+        self.acknowledgementsButton.frame = centeredFrame;
+    }
 }
 
 - (void) webView: (WebView *)webView decidePolicyForNavigationAction: (NSDictionary *)actionInformation
@@ -55,13 +70,6 @@ decisionListener: (id < WebPolicyDecisionListener >)listener
     {
         [listener use];
     }
-}
-
-- (void) dealloc
-{
-    self.creditsView = nil;
-    self.appNameField = nil;
-    [super dealloc];
 }
 
 - (NSString *) copyrightText

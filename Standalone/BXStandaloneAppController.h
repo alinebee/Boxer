@@ -13,8 +13,9 @@
 
 @interface BXStandaloneAppController : BXBaseAppController
 
-//The name of the organization producing the standalone app bundles.
-+ (NSString *)organizationName;
+//The name and website address of the organization producing the standalone app bundles.
++ (NSString *) organizationName;
++ (NSURL *) organizationWebsiteURL;
 
 //Launches the gamebox bundled in the application and returns the resulting session.
 //Returns nil and populates outError if the bundled gamebox could not be launched.

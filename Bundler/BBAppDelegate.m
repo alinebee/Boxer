@@ -10,6 +10,7 @@
 #import "BBURLTransformer.h"
 #import "BBIconDropzone.h"
 #import "NSURL+ADBFilesystemHelpers.h"
+#import "NSWorkspace+ADBIconHelpers.h"
 
 NSString * const kBBRowIndexSetDropType = @"BBRowIndexSetDropType";
 NSString * const kUTTypeGamebox = @"net.washboardabs.boxer-game-package";
@@ -109,6 +110,7 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
                                                       error: NULL];
     }
     
+    /*
     NSData *appIconBookmark = [defaults dataForKey: @"appIconURLBookmark"];
     if (appIconBookmark)
     {
@@ -118,6 +120,7 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
                                         bookmarkDataIsStale: NULL
                                                       error: NULL];
     }
+     */
     
     //The help links array needs to be deeply mutable, so we need to do extra work when loading it in.
     NSArray *savedHelpLinks = [defaults arrayForKey: @"helpLinks"];
@@ -291,6 +294,15 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
             
             //Update the application name whenever the gamebox changes
             self.appName = URL.lastPathComponent.stringByDeletingPathExtension;
+            
+            //Update the icon to match the gamebox
+            NSWorkspace *ws = [NSWorkspace sharedWorkspace];
+            NSString *filePath = URL.path;
+            BOOL hasCustomIcon = [ws fileHasCustomIcon: filePath];
+            if (hasCustomIcon)
+            {
+                self.iconDropzone.image = [ws iconForFile: filePath];
+            }
         }
     }
 }

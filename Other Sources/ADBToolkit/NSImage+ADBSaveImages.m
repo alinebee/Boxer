@@ -52,4 +52,42 @@
 	return [data writeToURL: URL options: NSAtomicWrite error: outError];
 }
 
+- (BOOL) saveAsIconToURL: (NSURL *)URL
+                   error: (out NSError **)outError
+{
+    NSUInteger numImages = self.representations.count;
+    
+    if ([URL checkResourceIsReachableAndReturnError: NULL])
+    {
+        if (outError)
+        {
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                            code: NSFileWriteFileExistsError
+                                        userInfo: @{ NSURLErrorKey: URL }];
+        }
+        return NO;
+    }
+    
+    CGImageDestinationRef destination = CGImageDestinationCreateWithURL((__bridge CFURLRef)URL,
+                                                                        kUTTypeAppleICNS,
+                                                                        numImages,
+                                                                        NULL);
+    
+    for (NSImageRep *rep in self.representations)
+    {
+        CGImageRef image = [rep CGImageForProposedRect: NULL context: nil hints: nil];
+        NSDictionary* properties = @{(NSString *)kCGImagePropertyDPIWidth: @(rep.size.width),
+                                     (NSString *)kCGImagePropertyDPIHeight: @(rep.size.height),
+                                     (NSString *)kCGImagePropertyPixelWidth: @(rep.pixelsWide),
+                                     (NSString *)kCGImagePropertyPixelHeight: @(rep.pixelsHigh),
+                                     };
+        
+        CGImageDestinationAddImage(destination, image, (__bridge CFDictionaryRef)properties);
+    }
+    
+    BOOL success = CGImageDestinationFinalize(destination);
+    CFRelease(destination);
+    return success;
+}
+
 @end

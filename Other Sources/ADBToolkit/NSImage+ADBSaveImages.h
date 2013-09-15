@@ -37,4 +37,9 @@
         properties: (NSDictionary *)properties
              error: (out NSError **)outError;
 
+//Creates a .ICNS-format at the specified location. Returns YES on success, or NO and populates
+//outError if there was an error (including that a file at the specified destination already exists.)
+- (BOOL) saveAsIconToURL: (NSURL *)URL
+                   error: (out NSError **)outError;
+
 @end

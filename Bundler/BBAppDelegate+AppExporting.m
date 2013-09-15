@@ -8,6 +8,8 @@
 
 #import "BBAppDelegate+AppExporting.h"
 #import "NSURL+ADBFilesystemHelpers.h"
+#import "NSImage+ADBSaveImages.h"
+#import "BBIconDropzone.h"
 
 @implementation BBAppDelegate (AppExporting)
 
@@ -78,9 +80,13 @@
     appInfo[@"BXBundledGameboxName"] = importedGameboxURL.lastPathComponent;
     
     //Copy across the application icon.
-    if (self.appIconURL)
+    if (self.appIconURL || self.iconDropzone.image)
     {
-        NSURL *iconURL = [self _applyIconFromURL: self.appIconURL toAppAtURL: tempAppURL error: outError];
+        NSURL *iconURL;
+        if (self.appIconURL)
+            iconURL = [self _applyIconFromURL: self.appIconURL toAppAtURL: tempAppURL error: outError];
+        else
+            iconURL = [self _applyIcon: self.iconDropzone.image toAppAtURL: tempAppURL error: outError];
         if (iconURL == nil)
         {
             [manager removeItemAtURL: baseTempURL error: NULL];
@@ -334,8 +340,6 @@
                    toAppAtURL: (NSURL *)appURL
                         error: (NSError **)outError
 {
-    NSFileManager *manager = [[NSFileManager alloc] init];
-    
     NSBundle *application = [NSBundle bundleWithURL: appURL];
     
     NSString *iconName = [application objectForInfoDictionaryKey: @"CFBundleIconFile"];
@@ -351,9 +355,40 @@
     if (!iconDestinationURL) //Existing icon could not be found
         iconDestinationURL = [application.resourceURL URLByAppendingPathComponent: iconName];
     
+    NSFileManager *manager = [NSFileManager defaultManager];
     BOOL copiedIcon = [manager copyItemAtURL: iconURL toURL: iconDestinationURL error: outError];
     
     if (copiedIcon)
+    {
+        return iconDestinationURL;
+    }
+    else
+    {
+        return nil;
+    }
+}
+
+- (NSURL *) _applyIcon: (NSImage *)icon
+            toAppAtURL: (NSURL *)appURL
+                 error: (NSError **)outError
+{
+    NSBundle *application = [NSBundle bundleWithURL: appURL];
+    NSString *iconName = [application objectForInfoDictionaryKey: @"CFBundleIconFile"];
+    
+    if (iconName == nil)
+        iconName = appURL.lastPathComponent.stringByDeletingPathExtension;
+    
+    NSURL *iconDestinationURL = [application URLForResource: iconName withExtension: nil];
+    
+    if (!iconDestinationURL) //Existing icon could not be found
+        iconDestinationURL = [application.resourceURL URLByAppendingPathComponent: iconName];
+    
+    NSFileManager *manager = [NSFileManager defaultManager];
+    [manager removeItemAtURL: iconDestinationURL error: NULL];
+    
+    BOOL savedIcon = [icon saveAsIconToURL: iconDestinationURL error: outError];
+    
+    if (savedIcon)
     {
         return iconDestinationURL;
     }

@@ -432,6 +432,7 @@
 		9F4971BB108EF02F00282261 /* BXEmulator+BXDOSFileSystem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */; };
 		9F4B1AFA165C122F001AE063 /* BXDriveItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4B1AF9165C122F001AE063 /* BXDriveItem.m */; };
 		9F4B5284122591960055022A /* prompt.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F4B5283122591960055022A /* prompt.icns */; };
+		9F4BCC1A17E5CFF700140390 /* NSImage+ADBSaveImages.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2120FD1301597E002AB1B7 /* NSImage+ADBSaveImages.m */; };
 		9F4C10E11691E0D50092441A /* DiscSwapTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F4C10E01691E0D50092441A /* DiscSwapTemplate.pdf */; };
 		9F4E042C0F67E72300427D50 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4E042B0F67E72300427D50 /* AudioToolbox.framework */; };
 		9F4FC1151592508100319428 /* BXSupersamplingRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4FC1141592508100319428 /* BXSupersamplingRenderer.m */; };
@@ -4618,6 +4619,7 @@
 				9F5537F91644321500B9447D /* BBIconDropzone.m in Sources */,
 				9F5537FA1644321500B9447D /* BBURLTransformer.m in Sources */,
 				9FF91EB816CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */,
+				9F4BCC1A17E5CFF700140390 /* NSImage+ADBSaveImages.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

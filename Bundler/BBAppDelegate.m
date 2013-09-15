@@ -446,7 +446,6 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
     }
     else
     {
-        NSLog(@"VALIDATING BUNDLE IDENTIFIER");
         bundleIdentifier = bundleIdentifier.lowercaseString;
         bundleIdentifier = [bundleIdentifier stringByReplacingOccurrencesOfString: @" " withString: @"-"];
         bundleIdentifier = [bundleIdentifier stringByReplacingOccurrencesOfString: @"_" withString: @"-"];
@@ -793,17 +792,40 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
     NSMutableDictionary *gameInfo = [NSMutableDictionary dictionaryWithContentsOfURL: gameInfoURL];
     
     NSArray *launchers = gameInfo[@"BXLaunchers"];
-    NSMutableArray *resolvedLaunchers = [NSMutableArray arrayWithCapacity: launchers.count];
-    for (NSDictionary *launcher in launchers)
+    if (launchers.count)
     {
-        NSMutableDictionary *resolvedLauncher = launcher.mutableCopy;
-        //Paths are stored as relative to the gamebox
-        resolvedLauncher[@"BXLauncherURL"] = [gameboxURL URLByAppendingPathComponent: launcher[@"BXLauncherPath"]];
-        
-        [resolvedLaunchers addObject: resolvedLauncher];
-    }
+        NSMutableArray *resolvedLaunchers = [NSMutableArray arrayWithCapacity: launchers.count];
+        for (NSDictionary *launcher in launchers)
+        {
+            NSMutableDictionary *resolvedLauncher = launcher.mutableCopy;
+            //Paths are stored as relative to the gamebox
+            resolvedLauncher[@"BXLauncherURL"] = [gameboxURL URLByAppendingPathComponent: launcher[@"BXLauncherPath"]];
+            
+            [resolvedLaunchers addObject: resolvedLauncher];
+        }
 
-    return resolvedLaunchers;
+        return resolvedLaunchers;
+    }
+    //Check if there's a single launch target from a previous version of Boxer, and convert that into a launcher instead
+    else
+    {
+        NSString *defaultPath = gameInfo[@"BXDefaultProgramPath"];
+        if (defaultPath)
+        {
+            NSURL *resolvedURL = [gameboxURL URLByAppendingPathComponent: defaultPath];
+            NSString *gameName = gameboxURL.lastPathComponent.stringByDeletingPathExtension;
+            NSString *launcherName = [NSString stringWithFormat: @"Launch %@", gameName];
+            NSDictionary *launcher = @{@"BXLauncherPath": defaultPath,
+                                       @"BXLauncherURL": resolvedURL,
+                                       @"BXLauncherTitle": launcherName,
+                                       };
+            return @[launcher];
+        }
+        else
+        {
+            return nil;
+        }
+    }
 }
 
 @end

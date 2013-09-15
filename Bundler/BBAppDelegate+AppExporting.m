@@ -116,10 +116,10 @@
     else
     {
         substitutions = @{
-            @"{{ORGANIZATION_NAME}}":   self.organizationName,
+            @"{{ORGANIZATION_NAME}}":   self.organizationName ? self.organizationName : @"",
+            @"{{ORGANIZATION_URL}}":    self.organizationURL ? self.organizationURL : @"",
             @"{{BUNDLE_IDENTIFIER}}":   self.appBundleIdentifier,
             @"{{APPLICATION_NAME}}":    self.appName,
-            @"{{ORGANIZATION_URL}}":    self.organizationURL,
             @"{{APPLICATION_VERSION}}": self.appVersion,
             @"{{YEAR}}":                year
         };
@@ -159,12 +159,15 @@
         NSURL *helpbookSouceURL = [appResourceURL URLByAppendingPathComponent: helpbookName];
         
         //TWEAK: if this is a branding-less app, delete the help file on the presumption that it's brand-specific.
+        //Disabled for now because we finally have brandingless help files.
+        /*
         if (self.isUnbranded)
         {
             [appInfo removeObjectForKey: @"CFBundleHelpBookFolder"];
             [manager removeItemAtURL: helpbookSouceURL error: NULL];
         }
         else
+         */
         {
             //While we're at it, rename the help book to reflect the application name.
             NSString *destinationHelpbookName = [self.sanitisedAppName stringByAppendingPathExtension: @"help"];
@@ -216,8 +219,9 @@
         NSArray *brandedResources = @[
             @"StandaloneLogo.png",
             @"StandaloneLogo@2x.png",
-            @"English.lproj/Credits.html",
-            @"Help.help",
+            //These resources are now brand-neutral
+            //@"English.lproj/Credits.html",
+            //@"Help.help",
         ];
         
         for (NSString *resourceName in brandedResources)

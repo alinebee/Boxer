@@ -372,7 +372,8 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
             {
                 if (outError)
                     *outError = [self _validationErrorWithCode: kBBValidationInvalidValue
-                                                       message: @"Please supply a standard gamebox produced by Boxer."];
+                                                       message: @"Please supply a standard gamebox produced by Boxer."
+                                            recoverySuggestion: nil];
                 return NO;
             }
             
@@ -381,9 +382,12 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
             if (!launchers.count)
             {
                 if (outError)
+                {
+                    NSString *errorMessage = [NSString stringWithFormat: @"“%@” does not have any launch options yet.", gameboxURL.lastPathComponent];
                     *outError = [self _validationErrorWithCode: kBBValidationInvalidValue
-                                                       message: @"This gamebox does not have any launch options. Use Boxer 1.4 or higher to add one or more launch options to the gamebox."];
-                
+                                                       message: errorMessage
+                                            recoverySuggestion: @"Open this gamebox with Boxer to choose which program should run when this gamebox starts up."];
+                }
                 return NO;
             }
         }
@@ -407,7 +411,8 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
             {
                 if (outError)
                     *outError = [self _validationErrorWithCode: kBBValidationInvalidValue
-                                                       message: @"Application icons must be supplied in ICNS format."];
+                                                       message: @"Application icons must be supplied in ICNS format."
+                                            recoverySuggestion: nil];
                 
                 return NO;
             }
@@ -425,7 +430,8 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
         if (outError)
         {
             *outError = [self _validationErrorWithCode: kBBValidationValueMissing
-                                               message: @"Please specify a name for the application."];
+                                               message: @"Please specify a name for the application."
+                                    recoverySuggestion: nil];
         }
         return NO;
     }
@@ -452,7 +458,8 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
         if (outError)
         {
             *outError = [self _validationErrorWithCode: kBBValidationValueMissing
-                                               message: @"Please specify a bundle identifier for the application: e.g. 'com.companyname.game-name'."];
+                                               message: @"Please specify a bundle identifier for the application: e.g. 'com.companyname.game-name'."
+                                    recoverySuggestion: nil];
         }
         return NO;
     }
@@ -508,9 +515,21 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
 }
  */
 
-- (NSError *) _validationErrorWithCode: (NSInteger)errCode message: (NSString *)message
+- (NSError *) _validationErrorWithCode: (NSInteger)errCode
+                               message: (NSString *)message
+                    recoverySuggestion: (NSString *)recoverySuggestion
 {
-    NSDictionary *userInfo = @{NSLocalizedDescriptionKey: message};
+    NSDictionary *userInfo;
+    if (recoverySuggestion)
+    {
+        userInfo = @{NSLocalizedDescriptionKey: message,
+                     NSLocalizedRecoverySuggestionErrorKey: recoverySuggestion};
+    }
+    else
+    {
+        
+        userInfo = @{NSLocalizedDescriptionKey: message};
+    }
     return [NSError errorWithDomain: kBBValidationErrorDomain code: errCode userInfo: userInfo];
 }
 
@@ -751,8 +770,16 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
         //If this is a gamebox, simply apply it as our current gamebox.
         if (isGamebox)
         {
-            self.gameboxURL = fileURL;
-            opened = YES;
+            BOOL isValid = [self validateGameboxURL: &fileURL error: &openError];
+            if (isValid)
+            {
+                self.gameboxURL = fileURL;
+                opened = YES;
+            }
+            else
+            {
+                opened = NO;
+            }
         }
         //Otherwise, treat it as an application.
         else
@@ -780,7 +807,10 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
          didPresentSelector: NULL
                 contextInfo: NULL];
     }
-    return opened;
+    
+    //NOTE: we ought to return NO if we failed to open, but that would cause the application to display its own
+    //error message on top of our own. Which is, you know, stupid.
+    return YES;
 }
 
 
@@ -835,7 +865,7 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
         }
         else
         {
-            return nil;
+            return @[];
         }
     }
 }

@@ -3,9 +3,25 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20130915.1</string>
+	<string>20130915.2</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.microprose.return-of-the-phantom</string>
+			<key>BXProfileGameName</key>
+			<string>Return of the Phantom</string>
+			<key>BXProfileConfigurations</key>
+			<array>
+				<string>Dynamic</string>
+				<string>MPSFIX</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>phantom.res</string>
+			</array>
+		</dict>
+        
 		<dict>
 			<key>BXProfileIdentifier</key>
 			<string>com.bullfrog.magic-carpet</string>
@@ -1729,7 +1745,6 @@
 				<string>Stunt Island</string>
 				<string>Wolfenstein 3D</string>
 				<string>Geekwad: Games of the Galaxy</string>
-				<string>Return of the Phantom</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -1755,7 +1770,6 @@
 				<string>alcatraz.set</string>
 				<string>wolf3d.exe</string>
 				<string>geekwad.exe</string>
-				<string>phantom.res</string>
 			</array>
 		</dict>
 	</array>

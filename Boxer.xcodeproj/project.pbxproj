@@ -13,7 +13,6 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9F0102E01440543500942713 /* MT32ShelfHighlight.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0102DF1440543500942713 /* MT32ShelfHighlight.png */; };
 		9F0102E21440561E00942713 /* MT32Shelf.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F0102E11440561E00942713 /* MT32Shelf.jpg */; };
-		9F0102E5144078E300942713 /* BoxerHelp in Resources */ = {isa = PBXBuildFile; fileRef = 9F0102E3144078E300942713 /* BoxerHelp */; };
 		9F0497C01334C5970001FEE4 /* ADBForwardCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0497BF1334C5970001FEE4 /* ADBForwardCompatibility.m */; };
 		9F06C6D313992E1F00B19DF1 /* BXHIDControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F06C6D213992E1F00B19DF1 /* BXHIDControllerProfile.m */; };
 		9F06C6E113993FB100B19DF1 /* BXHIDInputBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F06C6E013993FB100B19DF1 /* BXHIDInputBinding.m */; };
@@ -431,6 +430,7 @@
 		9F4B1AFA165C122F001AE063 /* BXDriveItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4B1AF9165C122F001AE063 /* BXDriveItem.m */; };
 		9F4B5284122591960055022A /* prompt.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F4B5283122591960055022A /* prompt.icns */; };
 		9F4BCC1A17E5CFF700140390 /* NSImage+ADBSaveImages.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2120FD1301597E002AB1B7 /* NSImage+ADBSaveImages.m */; };
+		9F4BCCD817E6190A00140390 /* Boxer.help in Resources */ = {isa = PBXBuildFile; fileRef = 9F4BCCD717E6190A00140390 /* Boxer.help */; };
 		9F4C10E11691E0D50092441A /* DiscSwapTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F4C10E01691E0D50092441A /* DiscSwapTemplate.pdf */; };
 		9F4E042C0F67E72300427D50 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4E042B0F67E72300427D50 /* AudioToolbox.framework */; };
 		9F4FC1151592508100319428 /* BXSupersamplingRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4FC1141592508100319428 /* BXSupersamplingRenderer.m */; };
@@ -964,7 +964,6 @@
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F0102DF1440543500942713 /* MT32ShelfHighlight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MT32ShelfHighlight.png; sourceTree = "<group>"; };
 		9F0102E11440561E00942713 /* MT32Shelf.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = MT32Shelf.jpg; sourceTree = "<group>"; };
-		9F0102E4144078E300942713 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = English.lproj/BoxerHelp; sourceTree = "<group>"; };
 		9F0497BE1334C5970001FEE4 /* ADBForwardCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBForwardCompatibility.h; sourceTree = "<group>"; };
 		9F0497BF1334C5970001FEE4 /* ADBForwardCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBForwardCompatibility.m; sourceTree = "<group>"; };
 		9F06C6D113992E1F00B19DF1 /* BXHIDControllerProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHIDControllerProfile.h; sourceTree = "<group>"; };
@@ -1138,6 +1137,7 @@
 		9F4B1AF8165C122F001AE063 /* BXDriveItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveItem.h; sourceTree = "<group>"; };
 		9F4B1AF9165C122F001AE063 /* BXDriveItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDriveItem.m; sourceTree = "<group>"; };
 		9F4B5283122591960055022A /* prompt.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = prompt.icns; sourceTree = "<group>"; };
+		9F4BCCD717E6190A00140390 /* Boxer.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Boxer.help; sourceTree = "<group>"; };
 		9F4C10E01691E0D50092441A /* DiscSwapTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DiscSwapTemplate.pdf; sourceTree = "<group>"; };
 		9F4E042B0F67E72300427D50 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		9F4FC1131592508100319428 /* BXSupersamplingRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSupersamplingRenderer.h; sourceTree = "<group>"; };
@@ -2057,6 +2057,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9F4BCCD717E6190A00140390 /* Boxer.help */,
 				9FBC3CB10F56E32C001811F2 /* Info.plist */,
 				9F466AFB11A92C4B00C50965 /* UserDefaults.plist */,
 				9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */,
@@ -2069,7 +2070,6 @@
 				9F70C19B129036C900A3627F /* Boxer.sdef */,
 				9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */,
 				9F84C86D157800DD00CCBCA7 /* Shaders */,
-				9F0102E3144078E300942713 /* BoxerHelp */,
 				9F160BD91236952400F8768E /* Sample Games */,
 				9FFAFE2E10DE343F00728BAC /* Configurations */,
 				9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */,
@@ -3796,7 +3796,6 @@
 				9F1F00AB143F091300FF163A /* Audio.png in Resources */,
 				9F0102E01440543500942713 /* MT32ShelfHighlight.png in Resources */,
 				9F0102E21440561E00942713 /* MT32Shelf.jpg in Resources */,
-				9F0102E5144078E300942713 /* BoxerHelp in Resources */,
 				9F12F97C144875F400FC9645 /* DummyCD.iso in Resources */,
 				9FBA48C01450B73900F9BBDE /* Keyboard.png in Resources */,
 				9FD54A5B14DE96B800FE350F /* NumpadActiveTemplate.pdf in Resources */,
@@ -3856,6 +3855,7 @@
 				9F5E389716C85140009774A9 /* Game.png in Resources */,
 				9F486F6116F5E78800FE263E /* WelcomeFocusRing.png in Resources */,
 				9F486F6216F5E78800FE263E /* WelcomeFocusRing@2x.png in Resources */,
+				9F4BCCD817E6190A00140390 /* Boxer.help in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4630,14 +4630,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		9F0102E3144078E300942713 /* BoxerHelp */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9F0102E4144078E300942713 /* English */,
-			);
-			name = BoxerHelp;
-			sourceTree = "<group>";
-		};
 		9F125C42169842F4003B5B2B /* DocumentationPanel.xib */ = {
 			isa = PBXVariantGroup;
 			children = (

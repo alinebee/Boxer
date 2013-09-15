@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title>DOSBox configuration file parameters</title>
-		<meta name="description" content="Advanced emulation settings for DOSBox Preferences.conf.">
-		<meta name="keywords" content="dosbox.conf, conf">
+		<meta name="description" content="Advanced emulation settings for DOSBox Preferences.conf."/>
+		<meta name="keywords" content="dosbox.conf, conf"/>
 		
-		<link rel="stylesheet" type="text/css" href="../shared/styles/main.css">
-		<link rel="stylesheet" type="text/css" href="../shared/styles/configuration.css">
+		<link rel="stylesheet" type="text/css" href="../../shared/styles/main.css"/>
+		<link rel="stylesheet" type="text/css" href="../../shared/styles/configuration.css"/>
 	</head>
 	<body>
 		<a name="dosbox-configuration"></a>
@@ -29,56 +29,56 @@
 			
 			<section>
 				<a name="configuration-machine-type"></a>
-				<h3><code class="configuration">[dosbox]<br>machine=<var>(mode)</var></code></h3>
+				<h3><code class="configuration">[dosbox]<br/>machine=<var>(mode)</var></code></h3>
 				<p>The type of computer and video-card to emulate. Modes include:</p>
 				
 				<table class="wide configuration">
-					<tr class="default"><th><code class="configuration">[dosbox]<br>machine=svga_s3</code></th>
-						<td><strong>The default:</strong> S3 Trio64 SuperVGA card with 2MB of video memory.<br>
+					<tr class="default"><th><code class="configuration">[dosbox]<br/>machine=svga_s3</code></th>
+						<td><strong>The default:</strong> S3 Trio64 SuperVGA card with 2MB of video memory.<br/>
 	The most capable mode, and suitable for almost all games.</td>
 					</tr>
 					
-					<tr><th><code class="configuration">[dosbox]<br>machine=vgaonly</code></th>
+					<tr><th><code class="configuration">[dosbox]<br/>machine=vgaonly</code></th>
 						<td>VGA card without SuperVGA support. Needed for some games that are incompatible with SVGA or use VGA-specific tricks.</td>
 					</tr>
 					
-					<tr><th><code class="configuration">[dosbox]<br>machine=ega</code></th>
+					<tr><th><code class="configuration">[dosbox]<br/>machine=ega</code></th>
 						<td>16-colour EGA graphics adapter.</td>
 					</tr>
 					
-					<tr><th><code class="configuration">[dosbox]<br>machine=tandy</code></th>
-						<td><strong>Emulates a Tandy 1000 with 3-voice sound.</strong><br>
+					<tr><th><code class="configuration">[dosbox]<br/>machine=tandy</code></th>
+						<td><strong>Emulates a Tandy 1000 with 3-voice sound.</strong><br/>
 						Tandy sound emulation is only available in this mode.</td>
 					</tr>
 					
-					<tr><th><code class="configuration">[dosbox]<br>machine=pcjr</code></th>
+					<tr><th><code class="configuration">[dosbox]<br/>machine=pcjr</code></th>
 						<td>Emulates an IBM PCjr.</td>
 					</tr>
 					
-					<tr><th><code class="configuration">[dosbox]<br>machine=cga</code></th>
+					<tr><th><code class="configuration">[dosbox]<br/>machine=cga</code></th>
 						<td>4-colour CGA graphics adapter. Provides support for CGA-specific graphical tricks used by some games.</td>
 					</tr>
 					
-					<tr><th><code class="configuration">[dosbox]<br>machine=hercules</code></th>
+					<tr><th><code class="configuration">[dosbox]<br/>machine=hercules</code></th>
 						<td>Hercules monochrome graphics adapter.</td>
 					</tr>
 				</table>
 				
 				<p>The following alternate SVGA modes are also available:</p>
 				<table class="wide configuration">
-					<tr><th><code class="configuration">[dosbox]<br>machine=svga_et4000</code></th>
+					<tr><th><code class="configuration">[dosbox]<br/>machine=svga_et4000</code></th>
 						<td>Tseng ET-4000 SuperVGA card with 1MB of memory.</td>
 					</tr>
-					<tr><th><code class="configuration">[dosbox]<br>machine=svga_et3000</code></th>
+					<tr><th><code class="configuration">[dosbox]<br/>machine=svga_et3000</code></th>
 						<td>Tseng ET-3000 SuperVGA card with 512kB of memory.</td>
 					</tr>
-					<tr><th><code class="configuration">[dosbox]<br>machine=svga_paradise</code></th>
+					<tr><th><code class="configuration">[dosbox]<br/>machine=svga_paradise</code></th>
 						<td>Paradise PVGA1A SuperVGA card with 512kB of memory.</td>
 					</tr>
-					<tr><th><code class="configuration">[dosbox]<br>machine=vesa_oldvbe</code></th>
+					<tr><th><code class="configuration">[dosbox]<br/>machine=vesa_oldvbe</code></th>
 						<td>Same as <code class="configuration">machine=svga_s3</code>, with an older VESA 1.2 BIOS instead of VESA 2.0.</td>
 					</tr>
-					<tr><th><code class="configuration">[dosbox]<br>machine=vesa_nolfb</code></th>
+					<tr><th><code class="configuration">[dosbox]<br/>machine=vesa_nolfb</code></th>
 						<td>Same as <code class="configuration">machine=svga_s3</code>, with linear frame buffer modes disabled.</td>
 					</tr>
 				</table>
@@ -91,18 +91,18 @@
 			
 			<section>
 				<a name="configuration-memory-size"></a>
-				<h3><code class="configuration">[dosbox]<br>memsize=<var>(0–63)</var></code></h3>
+				<h3><code class="configuration">[dosbox]<br/>memsize=<var>(0–63)</var></code></h3>
 				<p>The amount of extended and expanded memory available, in MB. (This does not include the initial 1MB of conventional and upper memory.)</p>
 				<table class="wide configuration">
 					<tr class="default">
-						<th><code class="configuration">[dosbox]<br>memsize=16</code></th>
+						<th><code class="configuration">[dosbox]<br/>memsize=16</code></th>
 						<td><strong>The default:</strong> emulates 16MB of extended/expanded memory, for 17MB total. Recommended for all games: no DOS game needs more than this, and very few can take advantage of memory beyond 16MB.</td>
 					</tr>
 					<tr>
-						<th><code class="configuration">[dosbox]<br>memsize=31</code></th>
-						<td>Emulates 31MB of extended/expanded memory, for 32MB total.<br>May improve performance in very demanding late-era DOS games.</td>
+						<th><code class="configuration">[dosbox]<br/>memsize=31</code></th>
+						<td>Emulates 31MB of extended/expanded memory, for 32MB total.<br/>May improve performance in very demanding late-era DOS games.</td>
 					</tr>
-					<tr><th><code class="configuration">[dosbox]<br>memsize=63</code></th>
+					<tr><th><code class="configuration">[dosbox]<br/>memsize=63</code></th>
 						<td>The maximum supported amount of memory. Not recommended.</td>
 					</tr>
 				</table>
@@ -110,24 +110,24 @@
 			
 			<section>
 				<a name="configuration-memory-types"></a>
-				<h3><code class="configuration">[dos]<br>
-				ems=<var>(true/false)</var><br>
-				xms=<var>(true/false)</var><br>
+				<h3><code class="configuration">[dos]<br/>
+				ems=<var>(true/false)</var><br/>
+				xms=<var>(true/false)</var><br/>
 				umb=<var>(true/false)</var>
 				</code></h3>
 			
 				<p>Expanded memory (“EMS”), extended memory (“XMS”), and upper memory (“UMB”) are all emulated by default. These can be selectively disabled for games that don’t support them.</p>
 				<table class="wide configuration">
 					<tr>
-						<th><code class="configuration">[dos]<br>ems=false</code></th>
+						<th><code class="configuration">[dos]<br/>ems=false</code></th>
 						<td>Disables expanded memory emulation.</td>
 					</tr>
 					<tr>
-						<th><code class="configuration">[dos]<br>xms=false</code></th>
+						<th><code class="configuration">[dos]<br/>xms=false</code></th>
 						<td>Disables extended memory emulation.</td>
 					</tr>
 					<tr>
-						<th><code class="configuration">[dos]<br>upper=false</code></th>
+						<th><code class="configuration">[dos]<br/>upper=false</code></th>
 						<td>Disables upper memory emulation.</td>
 					</tr>
 				</table>
@@ -141,24 +141,24 @@
 			
 			<section>
 				<a name="configuration-coremode"></a>
-				<h3><code class="configuration">[cpu]<br>core=<var>(mode)</var></code></h3>
+				<h3><code class="configuration">[cpu]<br/>core=<var>(mode)</var></code></h3>
 				<p>Which CPU emulation technique to use. Modes include:</p>
 				
 				<table class="wide configuration">
-					<tr class="default"><th><code class="configuration">[cpu]<br>core=auto</code></th>
+					<tr class="default"><th><code class="configuration">[cpu]<br/>core=auto</code></th>
 						<td><strong>The default.</strong> Switches automatically between <code class="configuration">core=normal</code> for older real-mode games, and <code class="configuration">core=dynamic</code> for newer protected-mode games.</td>
 					</tr>
-					<tr><th><code class="configuration">[cpu]<br>core=dynamic</code></th>
-						<td>Provides the best performance, but is incompatible with some games and unavailable on PowerPC Macs.<br>
+					<tr><th><code class="configuration">[cpu]<br/>core=dynamic</code></th>
+						<td>Provides the best performance, but is incompatible with some games and unavailable on PowerPC Macs.<br/>
 						Equivalent to enabling <strong class="ui-label">“Optimize for newer games”</strong> in the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='CPU'" rel="application-window">CPU Inspector</a>.</td>
 					</tr>
 					
-					<tr><th><code class="configuration">[cpu]<br>core=normal</code></th>
-						<td>Runs slower than dynamic core, especially for more demanding games, but is more accurate and stable.<br>
+					<tr><th><code class="configuration">[cpu]<br/>core=normal</code></th>
+						<td>Runs slower than dynamic core, especially for more demanding games, but is more accurate and stable.<br/>
 						Equivalent to disabling <strong>“Optimize for newer games”</strong> in the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='CPU'" rel="application-window">CPU Inspector</a>.</td>
 					</tr>
 					
-					<tr><th><code class="configuration">[cpu]<br>core=simple</code></th>
+					<tr><th><code class="configuration">[cpu]<br/>core=simple</code></th>
 						<td>Similar to <code class="configuration">core=normal</code> but optimized for older real-mode games.</td>
 					</tr>
 				</table>
@@ -166,20 +166,20 @@
 			
 			<section>
 				<a name="configuration-cycles"></a>
-				<h3><code class="configuration">[cpu]<br>cycles=<var>(fixed 1-99999/max)</var></code></h3>
+				<h3><code class="configuration">[cpu]<br/>cycles=<var>(fixed 1-99999/max)</var></code></h3>
 				<p>The emulated CPU speed, expressed as “<dfn>cycles</dfn>” or CPU instructions per millisecond. Some examples:</p>
 				
 				<table class="wide configuration">
-					<tr><th><code class="configuration">[cpu]<br>cycles=fixed 1000</code></th>
+					<tr><th><code class="configuration">[cpu]<br/>cycles=fixed 1000</code></th>
 						<td>Emulates 1000 CPU instructions per millisecond, giving a similar speed to an 80286 AT.</td>
 					</tr>
-					<tr><th><code class="configuration">[cpu]<br>cycles=max</code></th>
+					<tr><th><code class="configuration">[cpu]<br/>cycles=max</code></th>
 						<td>Emulates the CPU as fast as your Mac can manage. Equivalent to dragging the speed slider to Max on Boxer’s <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='CPU'" rel="application-window">CPU Inspector Panel</a>.</td>
 					</tr>
-					<tr><th><code class="configuration">[cpu]<br>cycles=max limit 50000</code></th>
+					<tr><th><code class="configuration">[cpu]<br/>cycles=max limit 50000</code></th>
 						<td>Emulates the CPU as fast as your Mac can manage, <em>up to a maximum</em> of 50,000 instructions per millisecond.</td>
 					</tr>
-					<tr class="default"><th><code class="configuration">[cpu]<br>cycles=auto</code></th>
+					<tr class="default"><th><code class="configuration">[cpu]<br/>cycles=auto</code></th>
 						<td><strong>The default.</strong> Emulates at 3000 instructions per millisecond for older real-mode games, switching to maximum speed for newer protected-mode games.</td>
 					</tr>
 				</table>
@@ -189,30 +189,30 @@
 
 			<section>
 				<a name="configuration-cputype"></a>
-				<h3><code class="configuration">[cpu]<br>cputype=<var>(type)</var></code></h3>
+				<h3><code class="configuration">[cpu]<br/>cputype=<var>(type)</var></code></h3>
 				<p>The kind of CPU to emulate and identify as. Types include:</p>
 				
 				<table class="wide configuration">
-					<tr class="default"><th><code class="configuration">[cpu]<br>cputype=auto</code></th>
+					<tr class="default"><th><code class="configuration">[cpu]<br/>cputype=auto</code></th>
 						<td><strong>The default.</strong> Identifies as a 486DX CPU, with emulation behaviour optimized for compatibility and speed. <em>Always use this unless you know the game needs a different setting.</em></td>
 					</tr>
-					<tr><th><code class="configuration">[cpu]<br>cputype=386</code></th>
+					<tr><th><code class="configuration">[cpu]<br/>cputype=386</code></th>
 						<td>Supports 386 features only, with optimized page privilege checks.</td>
 					</tr>
-					<tr><th><code class="configuration">[cpu]<br>cputype=386_slow</code></th>
+					<tr><th><code class="configuration">[cpu]<br/>cputype=386_slow</code></th>
 						<td>Same as <code class="configuration">cputype=386</code>, but with slower strict page privilege checks.</td>
 					</tr>
-					<tr><th><code class="configuration">[cpu]<br>
-						cputype=386_prefetch<br>
+					<tr><th><code class="configuration">[cpu]<br/>
+						cputype=386_prefetch<br/>
 						core=normal</code></th>
-						<td>Same as <code class="configuration">cputype=386</code>, but with optimized prefetch queue emulation.<br>
+						<td>Same as <code class="configuration">cputype=386</code>, but with optimized prefetch queue emulation.<br/>
 						Requires <code class="configuration">core=normal</code>.</td>
 					</tr>
-					<tr><th><code class="configuration">[cpu]<br>cputype=486_slow</code></th>
+					<tr><th><code class="configuration">[cpu]<br/>cputype=486_slow</code></th>
 						<td>Identifies as a 486DX, with 486-specific behaviour and slower strict page privilege checks.</td>
 					</tr>
-					<tr><th><code class="configuration">[cpu]<br>cputype=pentium_slow</code></th>
-						<td>Identifies as a Pentium CPU with Pentium-specific behaviour.<br>
+					<tr><th><code class="configuration">[cpu]<br/>cputype=pentium_slow</code></th>
+						<td>Identifies as a Pentium CPU with Pentium-specific behaviour.<br/>
 						Needed for Windows 95, and for some games that run CPU performance checks.</td>
 					</tr>
 				</table>
@@ -225,25 +225,25 @@
 			
 			<section>
 				<a name="configuration-mididevice"></a>
-				<h3><code class="configuration">[midi]<br>
+				<h3><code class="configuration">[midi]<br/>
 				mididevice=<var>(device)</var></code></h3>
 				
 				<p>How Boxer will play back MIDI music. Devices include:</p>
 				
 				<table class="wide configuration">
-					<tr class="default"><th><code class="configuration">[midi]<br>mididevice=default</code></th>
+					<tr class="default"><th><code class="configuration">[midi]<br/>mididevice=default</code></th>
 						<td><strong>The default.</strong> Automatically selects the best device for the music being played: <code class="configuration">coreaudio</code> for General MIDI music, and <code class="configuration">mt32</code> for MT-32 music.</td>
 					</tr>
 					
-					<tr><th><code class="configuration">[midi]<br>mididevice=coreaudio</code></th>
+					<tr><th><code class="configuration">[midi]<br/>mididevice=coreaudio</code></th>
 						<td>Plays MIDI music through OS X’s built-in General MIDI synth.</td>
 					</tr>
 					
-					<tr><th><code class="configuration">[midi]<br>mididevice=mt32</code></th>
+					<tr><th><code class="configuration">[midi]<br/>mididevice=mt32</code></th>
 						<td>Plays MIDI music through a real MT-32 device (if one is connected to your Mac) or through Boxer’s MT-32 emulation (<a href="music-through-mt32.html">if MT-32 ROMs are available</a>.)</td>
 					</tr>
 					
-					<tr><th><code class="configuration">[midi]<br>mididevice=coremidi<br>midiconfig=0</code></th>
+					<tr><th><code class="configuration">[midi]<br/>mididevice=coremidi<br/>midiconfig=0</code></th>
 						<td><p>Sends MIDI music to a physical MIDI device connected to your Mac.</p>
 						
 						<p><code class="configuration">midiconfig</code> determines which MIDI device Boxer should talk to. This should be 0, unless you have multiple devices connected.</p></td>
@@ -253,27 +253,30 @@
 			
 			<section>
 				<a name="configuration-mpu401"></a>
-				<h3><code class="configuration">[midi]<br>
+				<h3><code class="configuration">[midi]<br/>
 				mpu401=<var>(mode)</var></code></h3>
 				
 				<p>The MIDI interface mode to emulate.</p>
 				<table class="wide configuration">
-					<tr class="default"><th><code class="configuration">[midi]<br>mpu401=intelligent</code></th>
+					<tr class="default"><th><code class="configuration">[midi]<br/>mpu401=intelligent</code></th>
 						<td><strong>The default.</strong> Emulates the <a href="http://en.wikipedia.org/wiki/MPU-401#Modes" rel="external">full MPU-401 MIDI interface</a>.</td>
 					</tr>
-					<tr><th><code class="configuration">[midi]<br>mpu401=uart</code></th>
-						<td>Handles only the MIDI signal relaying needed by games, disabling additional MPU-401 features.</tr>
+					
+					<tr><th><code class="configuration">[midi]<br/>mpu401=uart</code></th>
+						<td>Handles only the MIDI signal relaying needed by games, disabling additional MPU-401 features.</td>
+					</tr>
 						
-					<tr><th><code class="configuration">[midi]<br>mpu401=none</code></th>
-						<td>Disables MIDI emulation entirely.</tr>
+					<tr><th><code class="configuration">[midi]<br/>mpu401=none</code></th>
+						<td>Disables MIDI emulation entirely.</td>
+					</tr>
 				</table>
 			</section>
 			
 			<section>
 				<a name="configuration-sound-blaster"></a>
 				
-				<h3><code class="configuration">[sblaster]<br>
-				sbtype=<var>(type)</var><br>
+				<h3><code class="configuration">[sblaster]<br/>
+				sbtype=<var>(type)</var><br/>
 				irq=<var>(5/7)</var>
 				</code></h3>
 				
@@ -281,11 +284,11 @@
 				
 				<table class="wide configuration">
 					<tr class="default">
-						<th><code class="configuration">[sblaster]<br>
-							sbtype=sb16<br>
-							sbbase=220<br>
-							irq=7<br>
-							dma=1<br>
+						<th><code class="configuration">[sblaster]<br/>
+							sbtype=sb16<br/>
+							sbbase=220<br/>
+							irq=7<br/>
+							dma=1<br/>
 							hdma=5
 						</code></th>
 						<td>
@@ -293,32 +296,32 @@
 						
 							<p>You may need <code class="configuration">irq=5</code> instead, if the game has been pre-configured for a different IRQ. All other settings should be left at their defaults.</p></td>
 					</tr>
-					<tr><th><code class="configuration">[sblaster]<br>sbtype=sbpro2</code></th>
+					<tr><th><code class="configuration">[sblaster]<br/>sbtype=sbpro2</code></th>
 						<td>Sound Blaster Pro 2.0: stereo, 8-bit digital audio and OPL-3 synthesis.</td>
 					</tr>
-					<tr><th><code class="configuration">[sblaster]<br>sbtype=sbpro1</code></th>
+					<tr><th><code class="configuration">[sblaster]<br/>sbtype=sbpro1</code></th>
 						<td>Sound Blaster Pro 1.0: same as above but older OPL-2 synthesis.</td>
 					</tr>
-					<tr><th><code class="configuration">[sblaster]<br>sbtype=sb2</code></th>
+					<tr><th><code class="configuration">[sblaster]<br/>sbtype=sb2</code></th>
 						<td>Sound Blaster 2.0: mono, 8-bit digital audio and OPL-2 synthesis.</td>
 					</tr>
-					<tr><th><code class="configuration">[sblaster]<br>sbtype=sb1</code></th>
+					<tr><th><code class="configuration">[sblaster]<br/>sbtype=sb1</code></th>
 						<td>Sound Blaster 1.0: same as above, but worse sample rate and synthesis.</td>
 					</tr>
-					<tr><th><code class="configuration">[sblaster]<br>
+					<tr><th><code class="configuration">[sblaster]<br/>
 							sbtype=gb
 						</code></th>
 						<td>CMS Game Blaster: the precursor to the Sound Blaster, with worse sound and no AdLib compatibility.</td>
 					</tr>
-					<tr><th><code class="configuration">[sblaster]<br>sbtype=none</code></th>
+					<tr><th><code class="configuration">[sblaster]<br/>sbtype=none</code></th>
 						<td>Disables Sound Blaster emulation entirely.</td>
 					</tr>
 				</table>
 				
 				<p>Additional settings:</p>
 				<table class="wide configuration">
-					<tr><th><code class="configuration">[sblaster]<br>sbmixer=false</code></th>
-						<td>Prevents games from modifying the Sound Blaster’s volume.<br>
+					<tr><th><code class="configuration">[sblaster]<br/>sbmixer=false</code></th>
+						<td>Prevents games from modifying the Sound Blaster’s volume.<br/>
 						Useful for games that otherwise play digital sound too softly in relation to their MIDI music.</td>
 					</tr>
 				</table>
@@ -326,8 +329,8 @@
 			
 			<section>
 				<a name="configuration-ultrasound"></a>
-				<h3><code class="configuration">[gus]<br>
-				gus=<var>(true/false)</var><br>
+				<h3><code class="configuration">[gus]<br/>
+				gus=<var>(true/false)</var><br/>
 				ultradir=<var>(path)</var>
 				</code></h3>
 				
@@ -335,18 +338,18 @@
 				
 				<table class="wide configuration">
 					<tr class="default">
-						<th><code class="configuration">[gus]<br>
-							gus=true<br>
-							gusbase=240<br>
-							gusirq=5<br>
+						<th><code class="configuration">[gus]<br/>
+							gus=true<br/>
+							gusbase=240<br/>
+							gusirq=5<br/>
 							gusdma=3
 							</code></th>
 						<td>
 							<p><strong>The default.</strong> Emulates the Gravis Ultrasound with standard factory settings.</p>
 						</td>
 					</tr>
-					<tr><th><code class="configuration">[gus]<br>gus=false</code></th>
-						<td>Disables Gravis Ultrasound emulation.<br>
+					<tr><th><code class="configuration">[gus]<br/>gus=false</code></th>
+						<td>Disables Gravis Ultrasound emulation.<br/>
 						Needed for games that autodetect the Gravis Ultrasound but are incompatible with the emulation.</td>
 					</tr>
 				</table>
@@ -357,7 +360,7 @@
 				
 				<table class="wide configuration">
 					<tr>
-						<th><code class="configuration">[gus]<br>
+						<th><code class="configuration">[gus]<br/>
 							ultradir=C:\ULTRASND</code></th>
 						<td>
 							<p>Tells the Gravis Ultrasound to look in the <span class="filename">C:\ULTRASND</span> folder inside the gamebox for instrument samples.</p>
@@ -371,8 +374,8 @@
 			<section>
 				<a name="configuration-speaker"></a>
 				
-				<h3><code class="configuration">[speaker]<br>
-				pcspeaker=<var>(true/false)</var><br>
+				<h3><code class="configuration">[speaker]<br/>
+				pcspeaker=<var>(true/false)</var><br/>
 				disney=<var>(true/false)</var>
 				</code></h3>
 				
@@ -380,11 +383,11 @@
 				
 				<table class="wide configuration">
 					<tr>
-						<th><code class="configuration">[speaker]<br>pcspeaker=false</code></th>
+						<th><code class="configuration">[speaker]<br/>pcspeaker=false</code></th>
 						<td>Disables PC speaker sound.</td>
 					</tr>
 					<tr>
-						<th><code class="configuration">[speaker]<br>disney=false</code></th>
+						<th><code class="configuration">[speaker]<br/>disney=false</code></th>
 						<td>Disables Disney Sound Source emulation.</td>
 					</tr>
 				</table>
@@ -394,8 +397,8 @@
 		<section>
 			<a name="configuration-joystick"></a>
 				
-			<h3><code class="configuration">[joystick]<br>
-			joysticktype=<var>(auto/2axis)</var><br>
+			<h3><code class="configuration">[joystick]<br/>
+			joysticktype=<var>(auto/2axis)</var><br/>
 			timed=<var>(true/false)</var>
 			</code></h3>
 			
@@ -403,11 +406,11 @@
 			
 			<table class="wide configuration">
 				<tr>
-					<th><code class="configuration">[joystick]<br>joysticktype=2axis</code></th>
+					<th><code class="configuration">[joystick]<br/>joysticktype=2axis</code></th>
 					<td><strong>Forces Boxer to emulate joysticks with only 2 axes and 2 buttons.</strong> Needed for some older games that have problems with advanced 4-axis/4-button joysticks.</td>
 				</tr>
 				<tr>
-					<th><code class="configuration">[joystick]<br>timed=true</code></th>
+					<th><code class="configuration">[joystick]<br/>timed=true</code></th>
 					<td>Enables an alternative gameport timing method, useful if the joystick otherwise drifts or behaves erratically in-game. Equivalent to enabling <strong class="ui-label">“Use strict gameport timing”</strong> in the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='Joystick'" rel="application-window">Joystick Inspector</a>.</td>
 				</tr>
 			</table>
@@ -421,15 +424,15 @@
 			
 			<table class="wide configuration">
 				<tr>
-					<th><code class="configuration">[autoexec]<br>univbe</code></th>
+					<th><code class="configuration">[autoexec]<br/>univbe</code></th>
 					<td>Installs the UniVBE VESA driver. This helps some early SVGA games that have VESA incompatibilities.</td>
 				</tr>
 				<tr>
-					<th><code class="configuration">[autoexec]<br>loadfix -64</code></th>
+					<th><code class="configuration">[autoexec]<br/>loadfix -64</code></th>
 					<td>“Eats” 64kB of conventional memory, or however many kB you specify. Needed for games that fail to run if there is too much conventional memory.</td>
 				</tr>
 				<tr>
-					<th><code class="configuration">[autoexec]<br>network</code></th>
+					<th><code class="configuration">[autoexec]<br/>network</code></th>
 					<td>Opens the IPX network connection menu at startup for starting/joining multiplayer games.</td>
 				</tr>
 			</table>
@@ -457,8 +460,8 @@
 			<p class="tip">If you find a game that needs custom settings, <em>please</em> <a href="mailto:support@boxerapp.com?subject=Custom%20game%20settings" rel="email">send me the game’s details</a> so Boxer can configure that game automatically in future. That way, the next person won’t have to wade through all these miserable configuration parameters just to play the game they love.</p>
 		</section>
 		
-		<script type="text/javascript" src="../shared/scripts/zepto.min.js"></script>
-		<script type="text/javascript" src="../shared/scripts/linkhandlers.js"></script>
+		<script type="text/javascript" src="../../shared/scripts/zepto.min.js"></script>
+		<script type="text/javascript" src="../../shared/scripts/linkhandlers.js"></script>
 	</body>
 </html>
 

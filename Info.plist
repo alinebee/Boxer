@@ -125,9 +125,9 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleHelpBookFolder</key>
-	<string>BoxerHelp</string>
+	<string>Boxer.help</string>
 	<key>CFBundleHelpBookName</key>
-	<string>Boxer Help</string>
+	<string>net.washboardabs.boxer.help</string>
 	<key>CFBundleIconFile</key>
 	<string>boxer.icns</string>
 	<key>CFBundleIdentifier</key>

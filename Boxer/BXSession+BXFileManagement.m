@@ -489,6 +489,21 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     return self.emulator.mountedDrives;
 }
 
+- (BOOL) hasDriveQueues
+{
+    for (NSArray *queue in self.drives.objectEnumerator)
+    {
+        if (queue.count > 1)
+            return YES;
+    }
+    return NO;
+}
+
++ (NSSet *) keyPathsForValuesAffectingHasDriveQueues
+{
+    return [NSSet setWithObject: @"drives"];
+}
+
 + (NSSet *) keyPathsForValuesAffectingAllDrives
 {
     return [NSSet setWithObject: @"drives"];
@@ -596,7 +611,11 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     NSUInteger queueIndex = [queue indexOfObject: drive];
     if (queueIndex == NSNotFound) return nil;
     
-    NSUInteger siblingIndex = (queueIndex + offset) % queue.count;
+    //Wow, who knew C made it such a fucking ordeal to modulo-wrap negative numbers into positive
+    NSInteger siblingIndex = ((NSInteger)queueIndex + offset) % (NSInteger)queue.count;
+    if (siblingIndex < 0)
+        siblingIndex = queue.count + offset;
+    
     return [queue objectAtIndex: siblingIndex];
 }
 

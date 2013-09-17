@@ -500,6 +500,7 @@
 	SEL theAction = theItem.action;
 	
     BOOL isShowingDOSView = self.DOSWindowController.DOSViewShown;
+    BOOL isStandalone = [[NSApp delegate] isStandaloneGameBundle];
     
     NSString *title;
     //Pause menu item
@@ -549,7 +550,8 @@
                         title = NSLocalizedString(@"Next Disc", @"Menu item for cycling to the next queued CD-ROM.");
                     else
                         title = NSLocalizedString(@"Next Disk", @"Menu item for cycling to the next queued floppy or hard disk.");
-                                       
+                    
+                    theItem.hidden = NO;
                     theItem.attributedTitle = [self _menuItemLabelForDrive: nextDrive withBaseTitle: title];
                     return YES;
                 }
@@ -557,7 +559,13 @@
         }
         
         //If no next drive is found, or we're not emulating, then disable the menu item altogether and reset its title.
+        theItem.attributedTitle = nil;
         theItem.title = NSLocalizedString(@"Next Disc", @"Menu item for cycling to the next queued CD-ROM.");
+        
+        //For standalone game bundles, hide the menu item altogether
+        if (isStandalone)
+            theItem.hidden = YES;
+        
         return NO;
     }
     //Menu item to switch to previous disc in queue
@@ -577,6 +585,7 @@
                     else
                         title = NSLocalizedString(@"Previous Disk", @"Menu item for cycling to the previous queued floppy or hard disk.");
                     
+                    theItem.hidden = NO;
                     theItem.attributedTitle = [self _menuItemLabelForDrive: previousDrive
                                                              withBaseTitle: title];
                     return YES;
@@ -584,9 +593,14 @@
             }
         }
         
-        //If no previous drive is found, then disable the menu item altogether.
-        //If no next drive is found, then disable the menu item altogether and reset its title.
+        //If no previous drive is found, then disable the menu item altogether and reset its title.
+        theItem.attributedTitle = nil;
         theItem.title = NSLocalizedString(@"Previous Disc", @"Menu item for cycling to the previous queued CD-ROM.");
+        
+        //For standalone game bundles, hide the menu item altogether
+        if (isStandalone)
+            theItem.hidden = YES;
+        
         return NO;
     }
     //Fast-forward/resume menu item

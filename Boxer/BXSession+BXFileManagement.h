@@ -140,6 +140,9 @@ typedef NSUInteger BXDriveMountOptions;
 //An array of all mounted drives, ordered by drive letter.
 @property (readonly, nonatomic) NSArray *mountedDrives;
 
+//Whether this gamebox has more than one drive queued on a single drive letter, requiring UI for swapping drives.
+@property (readonly, nonatomic) BOOL hasDriveQueues;
+
 
 #pragma mark - Helper class methods
 

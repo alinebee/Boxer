@@ -30,6 +30,7 @@
 #define BXNumpadBezelDuration 2.0
 #define BXNumlockBezelDuration 2.0
 #define BXFullscreenBezelDuration 3.0
+#define BXBriefFullscreenBezelDuration 1.5
 #define BXJoystickIgnoredBezelDuration 3.0
 #define BXDriveBezelDuration 2.0
 #define BXCPUBezelDuration 0.75
@@ -37,6 +38,7 @@
 #define BXMT32MessageBezelDuration 4.0
 #define BXMT32MissingBezelDuration 3.0
 
+#define BXMouseLockedBezelDuration 1.5
 
 @implementation BXBezelController
 
@@ -65,6 +67,8 @@
 @synthesize numpadInactiveBezel = _numpadInactiveBezel;
 @synthesize numlockActiveBezel = _numlockActiveBezel;
 @synthesize numlockInactiveBezel = _numlockInactiveBezel;
+
+@synthesize mouseLockedBezel = _mouseLockedBezel;
 
 
 + (NSImage *) bezelIconForDrive: (BXDrive *)drive
@@ -99,30 +103,6 @@
 	return singleton;
 }
 
-- (void) dealloc
-{
-    self.driveAddedBezel = nil;
-    self.driveSwappedBezel = nil;
-    self.driveRemovedBezel = nil;
-    self.driveImportedBezel = nil;
-    self.fullscreenBezel = nil;
-    self.pauseBezel = nil;
-    self.playBezel = nil;
-    self.fastForwardBezel = nil;
-    self.CPUSpeedBezel = nil;
-    self.throttleBezel = nil;
-    self.volumeBezel = nil;
-    self.joystickIgnoredBezel = nil;
-    self.MT32MessageBezel = nil;
-    self.MT32MissingBezel = nil;
-    self.numpadActiveBezel = nil;
-    self.numpadInactiveBezel = nil;
-    self.numlockActiveBezel = nil;
-    self.numlockInactiveBezel = nil;
-    
-    [super dealloc];
-}
-
 - (NSView *) currentBezel
 {
     return [self.window.contentView subviews].lastObject;
@@ -150,7 +130,7 @@
     self.window = [bezelWindow autorelease];
 }
 
-- (void) showBezel: (NSView *)bezel
+- (BOOL) showBezel: (NSView *)bezel
        forDuration: (NSTimeInterval)duration
           priority: (BXBezelPriority)priority
 {   
@@ -185,6 +165,12 @@
                        withObject: nil
                        afterDelay: duration];
         }
+        
+        return YES;
+    }
+    else
+    {
+        return NO;
     }
 }
 
@@ -290,11 +276,14 @@
     BXSession *currentSession = [[NSApp delegate] currentSession];
     BOOL isInDOSView = (currentSession.DOSWindowController.currentPanel == BXDOSWindowDOSView);
     BOOL fullscreenMessageEnabled = [[NSUserDefaults standardUserDefaults] boolForKey: @"showFullscreenToggleMessage"];
+    
     if (fullscreenMessageEnabled && isInDOSView)
     {
-        [self showBezel: self.fullscreenBezel
-            forDuration: BXFullscreenBezelDuration
-               priority: BXBezelPriorityNormal];
+        //Make the fullscreen bezel briefer on subsequent showings
+        NSTimeInterval duration = (_hasShownFullscreenBezel) ? BXBriefFullscreenBezelDuration : BXFullscreenBezelDuration;
+        _hasShownFullscreenBezel = [self showBezel: self.fullscreenBezel
+                                       forDuration: duration
+                                          priority: BXBezelPriorityNormal];
     }
 }
 
@@ -302,6 +291,13 @@
 {
     [self showBezel: self.joystickIgnoredBezel
         forDuration: BXJoystickIgnoredBezelDuration
+           priority: BXBezelPriorityLow];
+}
+
+- (void) showMouseLockedBezel
+{
+    [self showBezel: self.mouseLockedBezel
+        forDuration: BXMouseLockedBezelDuration
            priority: BXBezelPriorityLow];
 }
 

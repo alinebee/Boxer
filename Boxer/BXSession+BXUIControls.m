@@ -1219,11 +1219,24 @@
         //To work around this, we wait until the popover's own dismissal should
         //have kicked in, before sending our own (now redundant) close request.
         [self.documentationPanelController performSelector: @selector(close) withObject: nil afterDelay: 0.1];
+        
+        //Display the mouse-locked notification if our window's statusbar is hidden
+        //(the statusbar will otherwise display a tip about the mouse state.)
+        
+        if (!self.DOSWindowController.statusBarShown || self.DOSWindowController.window.isFullScreen)
+        {
+            //TWEAK: delay this in case we've locked the mouse because we're *just about* to switch into fullscreen
+            [[BXBezelController controller] showMouseLockedBezel];
+        }
     }
     else
     {
         //If we were previously concealing the Inspector, then reveal it now.
         [[BXInspectorController controller] revealIfHidden];
+        
+        BXBezelController *bezel = [BXBezelController controller];
+        if (bezel.currentBezel == bezel.mouseLockedBezel)
+            [bezel hideBezel];
     }
     
     //Let everybody else know we've grabbed the mouse

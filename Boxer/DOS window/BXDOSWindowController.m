@@ -668,12 +668,12 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 + (NSSet *) keyPathsForValuesAffectingMaxViewportSizeUIBinding
 {
-    return [NSSet setWithObjects: @"window.fullScreen", @"window.inFullScreenTransition", @"minFullscreenViewportSize", @"maxFullscreenViewportSize", nil];
+    return [NSSet setWithObjects: @"window.fullScreen", /*@"window.inFullScreenTransition", */@"minFullscreenViewportSize", @"maxFullscreenViewportSize", nil];
 }
 
 - (NSSize) maxViewportSizeUIBinding
 {
-    if (self.window.isFullScreen && !self.window.isInFullScreenTransition && !self.fullscreenViewportFillsCanvas)
+    if (self.window.isFullScreen && /*!self.window.isInFullScreenTransition && */!self.fullscreenViewportFillsCanvas)
     {
         if (sizeFitsWithinSize(self.minFullscreenViewportSize, self.maxFullscreenViewportSize))
             return self.maxFullscreenViewportSize;

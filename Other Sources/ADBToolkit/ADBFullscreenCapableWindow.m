@@ -57,9 +57,11 @@
 - (void) _postFullScreenNotificationWithName: (NSString *)notificationName
                               delegateMethod: (SEL)delegateMethod;
 
-//Listen for Lion's yes-we're-finally-finished-exiting-fullscreen notification,
+//Listen for Lion's yes-we're-finally-finished-toggling-fullscreen notifications,
 //to perform any last cleanup
 - (void) _lionDidExitFullScreen: (NSNotification *)notification;
+- (void) _lionDidEnterFullScreen: (NSNotification *)notification;
+
 @end
 
 
@@ -166,23 +168,27 @@
     
     if (togglingFullScreen)
     {
-        //IMPLEMENTATION NOTE: Lion isn't anywhere near finished switching back to fullscreen
+        //IMPLEMENTATION NOTE: Lion isn't anywhere near finished switching to/from fullscreen
         //by this point. It does a lot of work after this that's only properly finished once 
-        //the NSWindowDidExitFullScreenNotification has been sent out.
+        //the NSWindowDidEnter/DidExitFullScreenNotification has been sent out.
         //Because we want to do some additional work at that point, and because the code buried
-        //behind a PRIVATE FUCKING API, we temporarily listen for that notification.
+        //behind a PRIVATE FUCKING API, we temporarily listen for those notifications.
         [[NSNotificationCenter defaultCenter] addObserver: self
                                                  selector: @selector(_lionDidExitFullScreen:)
                                                      name: NSWindowDidExitFullScreenNotification
                                                    object: self];
         
-        self.inFullScreenTransition = NO;
+        [[NSNotificationCenter defaultCenter] addObserver: self
+                                                 selector: @selector(_lionDidEnterFullScreen:)
+                                                     name: NSWindowDidEnterFullScreenNotification
+                                                   object: self];
     }
-    
 }
 
 - (void) _lionDidExitFullScreen: (NSNotification *)notification
 {
+    self.inFullScreenTransition = NO;
+    
     //Allow the window delegate to modify the final window size to which we return.
     //Unfortunately, we cannot do this any earlier in Lion's fullscreen transition
     //process because the very last FUCKING thing it does is unconditionally reset
@@ -201,6 +207,11 @@
                                                   object: self];
 }
 
+- (void) _lionDidEnterFullScreen: (NSNotification *)notification
+{
+    self.inFullScreenTransition = NO;
+}
+
 
 - (void) setFullScreen: (BOOL)flag animate: (BOOL)animate
 {
@@ -217,8 +228,8 @@
         NSRect fromFrame = self.frame;
         NSRect toFrame;
         
-        [self setInFullScreenTransition: YES];
-        [self setFullScreen: flag];
+        self.inFullScreenTransition = YES;
+        self.fullScreen = flag;
         
         //When entering fullscreen, save the current window frame and calculate final fullscreen frame
         if (flag)

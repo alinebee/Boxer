@@ -25,6 +25,9 @@
 //Synchronises the selection state of segments in the segmented button
 - (void) _syncSegmentedButtonStates;
 
+//Synchronises the mouse-lock indicator state and help message
+- (void) _syncMouseLockIndicator;
+
 //Set up/tear down the notification and KVC bindings we use to control the segmented button state
 - (void) _prepareBindings;
 - (void) _removeBindings;
@@ -35,6 +38,7 @@
 @synthesize notificationMessage = _notificationMessage;
 @synthesize statusBarControls = _statusBarControls;
 @synthesize volumeControls = _volumeControls;
+@synthesize mouseLockButton = _mouseLockButton;
 
 - (BXDOSWindowController *)controller
 {
@@ -50,18 +54,10 @@
 {
 	//Give statusbar text an indented appearance
 	[self.notificationMessage.cell setBackgroundStyle: NSBackgroundStyleRaised];
-
+    [self.mouseLockButton.cell setShowsBorderOnlyWhileMouseInside: YES];
+    
 	[self _prepareBindings];
 	[self _syncSegmentedButtonStates];
-}
-
-- (void) dealloc
-{
-    self.notificationMessage = nil;
-    self.statusBarControls = nil;
-    self.volumeControls = nil;
-    
-    [super dealloc];
 }
 
 - (IBAction) performSegmentedButtonAction: (id)sender
@@ -95,45 +91,54 @@
 {
 	[self _syncSegmentedButtonStates];
 	
-	NSArray *notificationTextModifiers = [NSArray arrayWithObjects:
-										  @"inputController.mouseActive",
-										  @"inputController.mouseLocked",
-										  @"inputController.mouseInView",
-										  nil];
+	NSArray *mouseLockModifiers = [NSArray arrayWithObjects:
+                                            @"DOSViewShown",
+                                            @"inputController.mouseActive",
+                                            @"inputController.mouseLocked",
+                                            @"inputController.trackMouseWhileUnlocked",
+                                            nil];
 	
-	if ([notificationTextModifiers containsObject: keyPath])
+	if ([mouseLockModifiers containsObject: keyPath])
 	{
-		[self willChangeValueForKey: @"notificationText"];
-		[self didChangeValueForKey: @"notificationText"];
+        [self _syncMouseLockIndicator];
 	}
 }
 
-- (NSString *) notificationText
+- (void) _syncMouseLockIndicator
 {
 	BXInputController *viewController = self.controller.inputController;
-	if (viewController.mouseActive)
+	if (viewController.mouseActive && self.controller.DOSViewShown)
 	{
+        self.mouseLockButton.hidden = NO;
+        
+        NSString *message;
 		if (viewController.mouseLocked)
 		{
-			return NSLocalizedString(@"Cmd+click to release the mouse.",
-									 @"Statusbar message when mouse is locked.");
+            self.mouseLockButton.state = NSOnState;
+			message = NSLocalizedString(@"Cmd+click to release the mouse pointer.",
+                                        @"Statusbar message when mouse is locked.");
 		}
-		else if (viewController.mouseInView)
-		{	
+		else
+		{
+            self.mouseLockButton.state = NSOffState;
 			if (viewController.trackMouseWhileUnlocked)
 			{
-				return NSLocalizedString(@"Cmd+click inside the window to lock the mouse.",
-										 @"Statusbar message when mouse is unlocked and over DOS viewport.");
+				message = NSLocalizedString(@"Cmd+click inside the window to lock the mouse pointer.",
+                                            @"Statusbar message when mouse is unlocked and over DOS viewport.");
 			}
 			else
 			{
-				return NSLocalizedString(@"Click inside the window to lock the mouse.",
-										 @"Statusbar message when mouse is unlocked and over DOS viewport and unlocked mouse-tracking is disabled.");
+				message = NSLocalizedString(@"Click inside the window to lock the mouse pointer.",
+                                            @"Statusbar message when mouse is unlocked and over DOS viewport and unlocked mouse-tracking is disabled.");
 			}
 		}
+        self.notificationMessage.stringValue = message;
 	}
-    
-    return @"";
+    else
+    {
+        self.mouseLockButton.hidden = YES;
+        self.notificationMessage.stringValue = @"";
+    }
 }
 
 - (void) _statusBarDidResize
@@ -150,7 +155,7 @@
 
 - (void) _syncSegmentedButtonStates
 {	
-	[self.statusBarControls setSelected: self.inspector.visible                      forSegment: BXStatusBarInspectorSegment];
+	[self.statusBarControls setSelected: self.inspector.visible                         forSegment: BXStatusBarInspectorSegment];
 	[self.statusBarControls setSelected: self.controller.programPanelShown              forSegment: BXStatusBarProgramPanelSegment];
 	[self.statusBarControls setSelected: self.controller.inputController.mouseLocked    forSegment: BXStatusBarMouseLockSegment];
 	
@@ -179,6 +184,11 @@
                       forKeyPath: @"programPanelShown"
                          options: 0
                          context: nil];
+    
+	[self.controller addObserver: self
+                      forKeyPath: @"DOSViewShown"
+                         options: 0
+                         context: nil];
 	
 	[self.controller addObserver: self
                       forKeyPath: @"document.hasGamebox"
@@ -192,11 +202,6 @@
 	
 	[self.controller addObserver: self
                       forKeyPath: @"inputController.mouseActive"
-                         options: 0
-                         context: nil];
-	
-	[self.controller addObserver: self
-                      forKeyPath: @"inputController.mouseInView"
                          options: 0
                          context: nil];
 	
@@ -230,8 +235,8 @@
 {
 	[self.controller removeObserver: self forKeyPath: @"inputController.mouseActive"];
 	[self.controller removeObserver: self forKeyPath: @"inputController.mouseLocked"];
-	[self.controller removeObserver: self forKeyPath: @"inputController.mouseInView"];
 	[self.controller removeObserver: self forKeyPath: @"inputController.trackMouseWhileUnlocked"];
+	[self.controller removeObserver: self forKeyPath: @"DOSViewShown"];
 	[self.controller removeObserver: self forKeyPath: @"document.hasGamebox"];
 	[self.controller removeObserver: self forKeyPath: @"programPanelShown"];
 	

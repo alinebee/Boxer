@@ -22,18 +22,17 @@ enum {
 {
 	NSSegmentedControl *_statusBarControls;
 	NSTextField *_notificationMessage;
+    NSButton *_mouseLockButton;
     NSView *_volumeControls;
 }
 
-@property (retain, nonatomic) IBOutlet NSSegmentedControl *statusBarControls;
-@property (retain, nonatomic) IBOutlet NSTextField *notificationMessage;
-@property (retain, nonatomic) IBOutlet NSView *volumeControls;
+@property (assign, nonatomic) IBOutlet NSSegmentedControl *statusBarControls;
+@property (assign, nonatomic) IBOutlet NSTextField *notificationMessage;
+@property (assign, nonatomic) IBOutlet NSButton *mouseLockButton;
+@property (assign, nonatomic) IBOutlet NSView *volumeControls;
 
 //The window controller for the window containing this statusbar
 @property (readonly, nonatomic) BXDOSWindowController *controller;
-
-//The text that will appear as the statusbar notification message
-@property (readonly, nonatomic) NSString *notificationText;
 
 //Processes the selection/deselection of segments in the segmented button.
 //Called via statusBarControl's action.

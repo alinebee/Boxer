@@ -111,18 +111,13 @@
 + (NSString *) preferredTitleForContentsOfURL: (NSURL *)URL
 {
     NSString *label = [self preferredVolumeLabelForContentsOfURL: URL];
-    if (label.length > 1)
+    if (label.length > 1) //Ignore labels that are just the letter of the drive
     {
         return label;
     }
 	else
     {
-        NSString *localizedName;
-        BOOL gotName = [URL getResourceValue: &localizedName forKey: NSURLLocalizedNameKey error: NULL];
-        if (gotName)
-            return localizedName;
-        else
-            return URL.lastPathComponent;
+        return URL.localizedName;
     }
 }
 

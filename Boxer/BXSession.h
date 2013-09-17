@@ -22,8 +22,7 @@
 #import "ADBUndoExtensions.h"
 
 
-#pragma mark -
-#pragma mark Notifications
+#pragma mark - Notifications
 
 //Notifications sent by DOS windows when certain custom UI events occur. The notification object
 //in these cases is BXSession and not the window controller, window or view responsible for the UI event.
@@ -41,7 +40,7 @@ extern NSString * const BXWillBeginInterruptionNotification;
 extern NSString * const BXDidFinishInterruptionNotification;
 
 
-#pragma mark Game settings .plist keys
+#pragma mark - Game settings .plist keys
 
 extern NSString * const BXGameboxSettingsKeyFormat;
 extern NSString * const BXGameboxSettingsNameKey;
@@ -63,8 +62,7 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 
 
-#pragma mark -
-#pragma mark Interface
+#pragma mark - Interface
 
 @class BXEmulator;
 @class BXGamebox;
@@ -126,8 +124,7 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 }
 
 
-#pragma mark -
-#pragma mark Properties
+#pragma mark - Properties
 
 //The main window controller, responsible for the BXDOSWindow that displays this session.
 @property (retain, nonatomic) BXDOSWindowController *DOSWindowController;
@@ -199,18 +196,17 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 @property (copy, nonatomic) NSImage *representedIcon;
 
 
-//Whether the user has manually paused the emulation.
+//Whether the emulator is currently suspended for any reason.
+@property (readonly, nonatomic, getter=isSuspended)     BOOL suspended;
+//Whether the emulator is currently suspended because the user has manually paused the emulation.
 @property (assign, nonatomic, getter=isPaused)			BOOL paused;
 //Whether the emulator is currently suspended because it has been interrupted by UI events.
 @property (readonly, nonatomic, getter=isInterrupted)	BOOL interrupted;
 //Whether the emulator is currently suspended because Boxer is in the background.
 @property (readonly, nonatomic, getter=isAutoPaused)	BOOL autoPaused;
-//Whether the emulator is currently suspended for any reason.
-@property (readonly, nonatomic, getter=isSuspended)     BOOL suspended;
 
 
-#pragma mark -
-#pragma mark Helper class methods
+#pragma mark - Helper class methods
 
 + (BXGameProfile *) profileForGameAtURL: (NSURL *)URL;
 

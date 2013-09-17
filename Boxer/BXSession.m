@@ -1675,75 +1675,48 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 }
 
 - (void) _mountDrivesForSession
-{   
+{
+    //If we're running a gamebox, first mount all the drives that are bundled inside it.
     if (self.gamebox)
 	{
-        //TODO: deal with any mounting errors that occurred. Since all this happens automatically
-        //during startup, we can't give errors straight to the user as they will seem cryptic.
-        		
-        //First, mount any bundled drives from the gamebox.
-		NSMutableArray *packageVolumes = [NSMutableArray arrayWithCapacity: 10];
-		[packageVolumes addObjectsFromArray: self.gamebox.floppyVolumeURLs];
-		[packageVolumes addObjectsFromArray: self.gamebox.hddVolumeURLs];
-		[packageVolumes addObjectsFromArray: self.gamebox.cdVolumeURLs];
-		
-		BOOL hasProperDriveC = NO;
-        NSString *titleForDriveC = NSLocalizedString(@"Game Drive", @"The display title for the gamebox’s C drive.");
+        NSArray *bundledDrives = self.gamebox.bundledDrives;
         
-        for (NSURL *volumeURL in packageVolumes)
-		{
-			BXDrive *bundledDrive = [BXDrive driveWithContentsOfURL: volumeURL letter: nil type: BXDriveAutodetect];
-            
-            //If this will be our C drive, give it a custom title.
-            if ([bundledDrive.letter isEqualToString: @"C"])
+        for (BXDrive *drive in bundledDrives)
+        {
+            if ([drive.letter isEqualToString: @"C"])
             {
-                hasProperDriveC = YES;
-                bundledDrive.title = titleForDriveC;
+                drive.title = NSLocalizedString(@"Game Drive", @"The display title for the gamebox’s C drive.");
                 
                 //If our target was the gamebox itself, rewrite it to point to this C drive
                 //so that we'll start up at drive C.
                 if ([self.targetURL isEqual: self.gamebox.bundleURL])
-                    self.targetURL = volumeURL;
+                    self.targetURL = drive.sourceURL;
             }
             
-            [self mountDrive: bundledDrive
+            NSError *mountError = nil;
+            [self mountDrive: drive
                     ifExists: BXDriveQueue
                      options: BXBundledDriveMountOptions
-                       error: nil];
-		}
-        
-        //If we don't have a drive C after mounting all of the gamebox's drives,
-        //that means it's an old-style gamebox without an explicit drive C of its own.
-        //In this case, mount the gamebox itself as drive C.
-        if (!hasProperDriveC)
-        {
-            BXDrive *packageDrive = [BXDrive driveWithContentsOfURL: self.gamebox.resourceURL
-                                                             letter: @"C"
-                                                               type: BXDriveHardDisk];
+                       error: &mountError];
             
-            packageDrive.title = titleForDriveC;
-            
-            [self mountDrive: packageDrive
-                    ifExists: BXDriveReplace
-                     options: BXBundledDriveMountOptions
-                       error: nil];
+            //TODO: deal with any mounting errors that occur. Since all this happens automatically
+            //during startup, we can't really give errors straight to the user as they will seem cryptic.
         }
-	}
+    }
 	
-	//Automount all currently mounted floppy and CD-ROM volumes if desired.
+	//Automount all currently mounted floppy and CD-ROM volumes if appropriate.
     if ([self _shouldAutoMountExternalVolumes])
     {
         [self mountFloppyVolumesWithError: nil];
         [self mountCDVolumesWithError: nil];
 	}
     
-	//Mount our internal DOS toolkit and temporary drives
+	//Mount our internal DOS toolkit and temporary drives.
 	[self mountToolkitDriveWithError: nil];
     if (!self.gameProfile || [self.gameProfile shouldMountTempDrive])
         [self mountTempDriveWithError: nil];
     
-    //If the game needs a CD-ROM to be present, then mount a dummy CD drive
-    //if necessary.
+    //If this game needs a CD-ROM to be present and we don't already have one, then mount a dummy CD drive.
     if (self.gameProfile.requiresCDROM)
         [self mountDummyCDROMWithError: nil];
     

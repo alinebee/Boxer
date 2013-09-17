@@ -6,16 +6,15 @@
  */
 
 #import "BXGamebox.h"
-#import "NSString+ADBPaths.h"
-#import "NSWorkspace+ADBFileTypes.h"
 #import "NSWorkspace+ADBIconHelpers.h"
 #import "BXFileTypes.h"
+#import "BXDrive.h"
 #import "RegexKitLite.h"
 #import "ADBDigest.h"
 #import "NSData+HexStrings.h"
-#import "ADBPathEnumerator.h"
 #import "NSURL+ADBFilesystemHelpers.h"
 #import "NSError+ADBErrorHelpers.h"
+
 
 #pragma mark - Constants
 
@@ -508,6 +507,44 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 - (NSArray *) floppyVolumeURLs
 {
     return [self URLsOfVolumesMatchingTypes: [BXFileTypes floppyVolumeTypes]];
+}
+
+- (NSArray *) bundledDrives
+{
+    NSMutableArray *bundledVolumes = [NSMutableArray arrayWithCapacity: 10];
+    [bundledVolumes addObjectsFromArray: self.floppyVolumeURLs];
+    [bundledVolumes addObjectsFromArray: self.hddVolumeURLs];
+    [bundledVolumes addObjectsFromArray: self.cdVolumeURLs];
+    
+    BOOL hasProperDriveC = NO;
+    NSMutableArray *drives = [NSMutableArray arrayWithCapacity: bundledVolumes.count];
+    
+    for (NSURL *volumeURL in bundledVolumes)
+    {
+        BXDrive *drive = [BXDrive driveWithContentsOfURL: volumeURL letter: nil type: BXDriveAutodetect];
+        [drives addObject: drive];
+        
+        if ([drive.letter isEqualToString: @"C"])
+            hasProperDriveC = YES;
+    }
+    
+    //If we don't contain an explicit drive C, that means we're an old-style gamebox:
+    //In this case, use the base folder of the gamebox itself as drive C.
+    if (!hasProperDriveC)
+    {
+        BXDrive *drive = [BXDrive driveWithContentsOfURL: self.resourceURL
+                                                  letter: @"C"
+                                                    type: BXDriveHardDisk];
+        
+        [drives addObject: drive];
+    }
+    
+    //Sort the drives first by letter and then by filename.
+    NSArray *descriptors = @[[NSSortDescriptor sortDescriptorWithKey: @"letter" ascending: YES],
+                             [NSSortDescriptor sortDescriptorWithKey: @"sourceURL.lastPathComponent" ascending: YES]];
+    [drives sortUsingDescriptors: descriptors];
+    
+    return drives;
 }
 
 - (NSURL *) configurationFileURL
@@ -1209,6 +1246,9 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 
 #pragma mark - Legacy API
+
+#import "NSString+ADBPaths.h"
+#import "ADBPathEnumerator.h"
 
 @implementation BXGamebox (BXGameboxLegacyPathAPI)
 

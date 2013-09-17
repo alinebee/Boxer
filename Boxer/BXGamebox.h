@@ -131,6 +131,9 @@ typedef NSUInteger BXGameIdentifierType;
 @property (readonly, nonatomic) NSArray *cdVolumeURLs;
 @property (readonly, nonatomic) NSArray *floppyVolumeURLs;
 
+//An array of drives bundled inside this gamebox, ordered by drive letter and filename.
+@property (readonly, nonatomic) NSArray *bundledDrives;
+
 //Returns the URL at which the configuration file is stored (which may not yet exist.)
 @property (readonly, nonatomic) NSURL *configurationFileURL;
 

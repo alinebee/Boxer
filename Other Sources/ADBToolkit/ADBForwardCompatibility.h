@@ -49,9 +49,9 @@
                    attributes: (NSDictionary *)attributes
                         error: (out NSError **)error;
 
-- (BOOL)createSymbolicLinkAtURL: (NSURL *)URL
-             withDestinationURL: (NSURL *)destURL
-                          error: (out NSError **)error;
+- (BOOL) createSymbolicLinkAtURL: (NSURL *)URL
+              withDestinationURL: (NSURL *)destURL
+                           error: (out NSError **)error;
 
 //Reimplementations for OS X 10.6 and 10.7
 - (BOOL) trashItemAtURL: (NSURL *)url

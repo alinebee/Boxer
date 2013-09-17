@@ -94,7 +94,7 @@
 - (NSUInteger) level;
 
 
-#pragma mark - Methods to implement in subclasses
+#pragma mark Methods to implement in subclasses
 
 //Returns whether the specified node should be returned by nextObject or should be skipped.
 //This check applies just to that node and not to its children.
@@ -111,7 +111,7 @@
 @end
 
 
-#pragma mark ADBScanningEnumerator
+#pragma mark - ADBScanningEnumerator
 
 //Used by ADBScanningEnumerator's nextObject method to scan forward through each object
 //of its inner enumerator. If this block returns an object, enumeration will pause and
@@ -140,3 +140,25 @@ typedef id (^ADBScanCallback)(id scannedObject, BOOL *stop);
 
 @end
 
+
+#pragma mark - ADBEnumeratorChain
+
+//An enumerator that chains several enumerators together, moving on to the next one once one is exhausted.
+//This retains the enumerators and releases each one as it is exhausted.
+//This can chain objects that conform to the ADBStepwiseEnumeration protocol themselves, or that respond
+//to an objectEnumerator message.
+
+@interface ADBEnumeratorChain : NSEnumerator
+{
+    NSMutableArray *_enumerators;
+}
+
+//Returns a chain of the specified enumerators.
++ (id) chainWithEnumerators: (NSArray *)enumerators;
+- (id) initWithEnumerators: (NSArray *)enumerators;
+
+//Adds another enumerator onto the end of the chain. This will raise an assertion if the specified object
+//neither conforms to the ADBStepwiseEnumeration protocol nor responds to an objectEnumerator message.
+- (void) addEnumerator: (id)enumerator;
+
+@end

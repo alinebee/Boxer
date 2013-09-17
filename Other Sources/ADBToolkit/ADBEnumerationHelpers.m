@@ -201,3 +201,84 @@
 }
 
 @end
+
+
+#pragma mark - ADBEnumeratorChain
+
+@interface ADBEnumeratorChain ()
+
+@property (retain, nonatomic) NSMutableArray *enumerators;
+
+@end
+
+
+@implementation ADBEnumeratorChain
+@synthesize enumerators = _enumerators;
+
++ (id) chainWithEnumerators: (NSArray *)enumerators
+{
+    return [[[self alloc] initWithEnumerators: enumerators] autorelease];
+}
+
+- (id) initWithEnumerators: (NSArray *)enumerators
+{
+    self = [self init];
+    if (self)
+    {
+        self.enumerators = [NSMutableArray arrayWithCapacity: enumerators.count];
+        for (id enumerator in enumerators)
+        {
+            [self addEnumerator: enumerator];
+        }
+    }
+    return self;
+}
+
+- (void) dealloc
+{
+    self.enumerators = nil;
+    [super dealloc];
+}
+
+- (id) nextObject
+{
+    while (self.enumerators.count > 0)
+    {
+        id innerObject = [[self.enumerators objectAtIndex: 0] nextObject];
+        if (innerObject != nil)
+        {
+            return innerObject;
+        }
+        else
+        {
+            //Proceed to the next enumerator in the chain
+            [self.enumerators removeObjectAtIndex: 0];
+        }
+    }
+    //If we get this far, all enumerators are exhausted.
+    return nil;
+}
+
+- (void) addEnumerator: (id)enumerator
+{
+    if ([enumerator respondsToSelector: @selector(nextObject)])
+    {
+        [self.enumerators addObject: enumerator];
+    }
+    //Special handling for NSArray, NSDictionary et. al.
+    else if ([enumerator respondsToSelector: @selector(objectEnumerator)])
+    {
+        id proxyEnumerator = [enumerator objectEnumerator];
+        
+        NSAssert1([proxyEnumerator respondsToSelector: @selector(nextObject)],
+                  @"%@'s objectEnumerator does not respond to nextObject.", enumerator);
+        
+        [self.enumerators addObject: proxyEnumerator];
+    }
+    else
+    {
+        NSAssert1(NO, @"%@ does not respond to nextObject or objectEnumerator.", enumerator);
+    }
+}
+
+@end

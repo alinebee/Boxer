@@ -1378,9 +1378,6 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     
     self.renderingView.managesViewport = YES;
     
-    if (self.currentPanel == BXDOSWindowDOSView)
-        [self.inputController setMouseLocked: YES force: YES];
-    
     _renderingViewSizeBeforeFullScreen = self.window.actualContentViewSize;
 }
 
@@ -1388,6 +1385,9 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center postNotificationName: BXSessionDidEnterFullScreenNotification object: self.document];
+    
+    if (self.currentPanel == BXDOSWindowDOSView)
+        [self.inputController setMouseLocked: YES force: YES];
 }
 
 - (void) windowDidFailToEnterFullScreen: (NSWindow *)window

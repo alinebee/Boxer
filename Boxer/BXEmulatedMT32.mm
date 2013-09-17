@@ -313,7 +313,7 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMType";
     return 1.0f;
 }
 
-- (BOOL) renderOutputToBuffer: (void *)buffer 
+- (BOOL) renderOutputToBuffer: (void *)buffer
                        frames: (NSUInteger)numFrames
                    sampleRate: (NSUInteger *)sampleRate
                        format: (BXAudioFormat *)format

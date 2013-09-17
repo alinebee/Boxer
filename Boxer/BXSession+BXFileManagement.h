@@ -404,7 +404,11 @@ typedef NSUInteger BXDriveMountOptions;
 - (BOOL) driveIsBundled: (BXDrive *)drive;
 
 //Returns whether a drive with the same destination name is located inside
-//the session's gamebox. (Which probably means the drive has been previously imported.)
+//the session's gamebox, which probably means the drive has been previously imported.
+//NOTE: we no longer use this check because of too many false positives.
+//Since it only checks label and not drive contents, it will erroneously report that
+//nonidentical CDs have already been imported if they have the same volume name as an existing CD.
+//(This was especially common with unlabelled CDs, which appear in Finder as "Untitled".)
 - (BOOL) equivalentDriveIsBundled: (BXDrive *)drive;
 
 //Returns any ongoing import operation for the specified drive,

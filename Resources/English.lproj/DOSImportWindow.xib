@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">12B19</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2549</string>
-		<string key="IBDocument.AppKitVersion">1187</string>
-		<string key="IBDocument.HIToolboxVersion">624.00</string>
+		<string key="IBDocument.SystemVersion">12E55</string>
+		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
+		<string key="IBDocument.AppKitVersion">1187.39</string>
+		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2549</string>
+			<string key="NS.object.0">3084</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>NSButton</string>
@@ -189,7 +189,6 @@
 											<string key="NSFrame">{{95, 4}, {27, 17}}</string>
 											<reference key="NSSuperview" ref="382941932"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView"/>
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<bool key="NSEnabled">YES</bool>
 											<object class="NSButtonCell" key="NSCell" id="483932984">
@@ -471,22 +470,6 @@
 						<reference key="destination" ref="89453087"/>
 					</object>
 					<int key="connectionID">984</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: notificationText</string>
-						<reference key="source" ref="912332772"/>
-						<reference key="destination" ref="819309219"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="912332772"/>
-							<reference key="NSDestination" ref="819309219"/>
-							<string key="NSLabel">value: notificationText</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">notificationText</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">949</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -815,6 +798,28 @@
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<object class="IBPartialClassDescription">
+					<string key="className">ADBFullscreenCapableWindow</string>
+					<string key="superclassName">NSWindow</string>
+					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="toggleFullScreen:">id</string>
+						<string key="toggleFullScreenWithoutAnimation:">id</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="toggleFullScreen:">
+							<string key="name">toggleFullScreen:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="toggleFullScreenWithoutAnimation:">
+							<string key="name">toggleFullScreenWithoutAnimation:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/ADBFullscreenCapableWindow.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">BGHUDSliderCell</string>
 					<string key="superclassName">NSSliderCell</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -901,7 +906,7 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXBlueprintProgressIndicator</string>
-					<string key="superclassName">YRKSpinningProgressIndicator</string>
+					<string key="superclassName">BXHUDSpinningProgressIndicator</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXBlueprintProgressIndicator.h</string>
@@ -917,7 +922,7 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXDOSWindow</string>
-					<string key="superclassName">BXFullScreenCapableWindow</string>
+					<string key="superclassName">ADBFullscreenCapableWindow</string>
 					<object class="NSMutableDictionary" key="outlets">
 						<string key="NS.key.0">actualContentView</string>
 						<string key="NS.object.0">NSView</string>
@@ -946,7 +951,9 @@
 					<string key="className">BXDOSWindowController</string>
 					<string key="superclassName">NSWindowController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="decrementFullscreenSize:">id</string>
 						<string key="hideProgramPanel:">id</string>
+						<string key="incrementFullscreenSize:">id</string>
 						<string key="performShowDOSView:">id</string>
 						<string key="performShowLaunchPanel:">id</string>
 						<string key="showProgramPanel:">id</string>
@@ -956,8 +963,16 @@
 						<string key="toggleStatusBarShown:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="decrementFullscreenSize:">
+							<string key="name">decrementFullscreenSize:</string>
+							<string key="candidateClassName">id</string>
+						</object>
 						<object class="IBActionInfo" key="hideProgramPanel:">
 							<string key="name">hideProgramPanel:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="incrementFullscreenSize:">
+							<string key="name">incrementFullscreenSize:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="performShowDOSView:">
@@ -990,6 +1005,7 @@
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="documentationButton">NSToolbarItem</string>
 						<string key="inputController">BXInputController</string>
 						<string key="inputView">BXInputView</string>
 						<string key="launchPanel">NSView</string>
@@ -1003,6 +1019,10 @@
 						<string key="statusBarController">BXStatusBarController</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="documentationButton">
+							<string key="name">documentationButton</string>
+							<string key="candidateClassName">NSToolbarItem</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="inputController">
 							<string key="name">inputController</string>
 							<string key="candidateClassName">BXInputController</string>
@@ -1054,33 +1074,19 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">BXFullScreenCapableWindow</string>
-					<string key="superclassName">NSWindow</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="toggleFullScreen:">id</string>
-						<string key="toggleFullScreenWithoutAnimation:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="toggleFullScreen:">
-							<string key="name">toggleFullScreen:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="toggleFullScreenWithoutAnimation:">
-							<string key="name">toggleFullScreenWithoutAnimation:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXFullScreenCapableWindow.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">BXGLRenderingView</string>
 					<string key="superclassName">NSOpenGLView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXGLRenderingView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXHUDSpinningProgressIndicator</string>
+					<string key="superclassName">YRKSpinningProgressIndicator</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXHUDSpinningProgressIndicator.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -1434,11 +1440,16 @@
 						</object>
 					</object>
 					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="mouseLockButton">NSButton</string>
 						<string key="notificationMessage">NSTextField</string>
 						<string key="statusBarControls">NSSegmentedControl</string>
 						<string key="volumeControls">NSView</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="mouseLockButton">
+							<string key="name">mouseLockButton</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="notificationMessage">
 							<string key="name">notificationMessage</string>
 							<string key="candidateClassName">NSTextField</string>

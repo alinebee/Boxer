@@ -23,7 +23,7 @@
 	<key>startUpInFullScreen</key>
 	<false/>
 	<key>statusBarShown</key>
-	<true/>
+	<false/>
 	<key>temporaryDriveLetter</key>
 	<string>X</string>
 	<key>toolkitDriveLetter</key>

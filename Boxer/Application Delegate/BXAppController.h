@@ -14,7 +14,8 @@
 enum {
 	BXStartUpWithNothing		= 0,
 	BXStartUpWithWelcomePanel	= 1,
-	BXStartUpWithGamesFolder	= 2
+	BXStartUpWithGamesFolder	= 2,
+    BXStartUpWithDOSPrompt      = 3
 };
 
 @class BXInspectorController;

@@ -160,6 +160,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 			case BXStartUpWithGamesFolder:
 				[self revealGamesFolder: self];
 				break;
+                
+			case BXStartUpWithDOSPrompt:
+                return YES;
+				break;
 			case BXStartUpWithNothing:
 			default:
 				break;

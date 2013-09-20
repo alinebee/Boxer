@@ -227,7 +227,7 @@
 }
 
 - (void) _applyAppearanceToFolderAtURL: (NSURL *)folderURL
-{	
+{
 	FinderFinderWindow *window = [self _finderWindowForFolderAtURL: folderURL];
 	FinderIconViewOptions *options = window.iconViewOptions;
 	

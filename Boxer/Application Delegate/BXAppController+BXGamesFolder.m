@@ -136,12 +136,9 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 - (NSSize) _maxArtworkSize
 {
 	//4000 appears to be the upper bound for Finder background images
-	//in Snow Leopard, regardless of OpenGL texture limits; backgrounds
+	//in 10.6 and above, regardless of OpenGL texture limits; backgrounds
 	//larger than this will be shrunk by Finder to fit within 4000x4000,
 	//with undesirable consequences.
-	
-	//(Leopard Finder doesn't seem to have this behaviour,
-	//but 4000x4000 is a reasonable size for us to stop at anyway.)
 	
 	return NSMakeSize(4000, 4000);
 }
@@ -194,9 +191,18 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 
 - (NSURL *) shelfArtworkURL
 {
+    BOOL useRetinaAssets = NO;
+    //10.7 and up
+    if ([[NSScreen mainScreen] respondsToSelector: @selector(convertRectToBacking:)])
+    {
+        NSRect backingPixel = [[NSScreen mainScreen] convertRectToBacking: NSMakeRect(0, 0, 1, 1)];
+        useRetinaAssets = (backingPixel.size.width >= 2.0);
+    }
+    
     NSURL *supportURL = [self supportURLCreatingIfMissing: NO error: NULL];
 	NSURL *artworkFolderURL = [supportURL URLByAppendingPathComponent: @"Shelf artwork"];
-	NSString *artworkName = @"Snow Leopard.jpg";
+    
+	NSString *artworkName = useRetinaAssets ? @"Shelves@2x.jpg" : @"Shelves.jpg";
 	NSURL *artworkURL = [artworkFolderURL URLByAppendingPathComponent: artworkName];
 	
 	//If there's no suitable artwork yet, then generate a new image
@@ -212,16 +218,16 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 		if (!folderCreated) return nil;
 		
 		//Now, generate new artwork appropriate for the current Finder version
-		NSSize artworkSize = self._shelfArtworkSize;
+		NSSize artworkPixelSize = self._shelfArtworkSize;
 		
 		//If an appropriate size could not be determined, bail out
-		if (NSEqualSizes(artworkSize, NSZeroSize)) return nil;
+		if (NSEqualSizes(artworkPixelSize, NSZeroSize)) return nil;
 		
-		NSString *shelfTemplate = @"ShelfTemplateSnowLeopard";
+        NSImage *shelfTemplate =[NSImage imageNamed: @"ShelfTemplate"];
 		
-		BXShelfArt *shelfArt = [[BXShelfArt alloc] initWithSourceImage: [NSImage imageNamed: shelfTemplate]];
+		BXShelfArt *shelfArt = [[BXShelfArt alloc] initWithSourceImage: shelfTemplate];
 		
-		NSImage *tiledShelf = [shelfArt tiledImageWithSize: artworkSize];
+		NSImage *tiledShelf = [shelfArt tiledImageWithPixelSize: artworkPixelSize];
 		
 		[shelfArt release];
 		
@@ -615,7 +621,7 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 - (void) applyShelfAppearanceToURL: (NSURL *)URL
                      andSubFolders: (BOOL)applyToSubFolders
                  switchToShelfMode: (BOOL)switchMode
-{	
+{
 	//NOTE: if no shelf artwork could be found or generated, then bail out early
 	NSURL *backgroundImageURL = self.shelfArtworkURL;
     if (!backgroundImageURL)
@@ -633,7 +639,7 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 	for (id operation in self.generalQueue.operations)
 	{
 		//Check for other operations that are currently being performed on this path
-		if ([operation respondsToSelector: @selector(targetURL)] && [[operation targetURL] isEqual: URL])
+		if ([operation respondsToSelector: @selector(targetURL)] && [[operation targetURL].filePathURL isEqual: URL])
 		{
 			//Cancel any currently-active shelf-appearance application or removal being applied to this path
 			if ([operation isKindOfClass: [BXShelfAppearanceOperation class]])

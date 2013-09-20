@@ -22,6 +22,7 @@
 
 //Returns the Finder window object corresponding to the specified folder path
 - (FinderFinderWindow *)_finderWindowForFolderAtURL: (NSURL *)folderURL;
+
 @end
 
 
@@ -55,7 +56,7 @@
 	//Furthermore, [FinderFinderWindow class] doesn't exist at compile time, so we need to retrieve
 	//THAT at runtime too.
 	//FFFFUUUUUUUUUCCCCCCCCKKKK AAAAAPPPPLLLLEEESSCCRRRIIPPPPTTTT.
-	
+    
 	FinderFolder *folder = [_finder.folders objectAtLocation: folderURL];
 	return (FinderFinderWindow *)[folder propertyWithClass: NSClassFromString(@"FinderFinderWindow")
 													  code: (AEKeyword)'cwnd'];
@@ -69,24 +70,27 @@
 
 - (void) main
 {
-	NSAssert(self.targetURL != nil, @"BXShelfAppearanceApplicator started without target path.");
+	NSAssert(self.targetURL != nil, @"BXShelfAppearanceApplicator started without target URL.");
 	
+    NSURL *initialURL = self.targetURL.filePathURL;
+    
 	//Bail out early if already cancelled
 	if (self.isCancelled) return;
 	
 	//Apply the icon mode appearance to the folder's Finder window
-	[self _applyAppearanceToFolderAtURL: self.targetURL];
+	[self _applyAppearanceToFolderAtURL: initialURL];
 	
 	//Scan subfolders for any gameboxes, and apply the appearance to their containing folders
+    //Note that we ensure that all URLs we deal with are POSIX paths and not file references,
+    //to avoid any potential problems with Finder's applescript API resolving file references.
 	if (self.appliesToSubFolders)
 	{
-		NSMutableSet *appliedURLs = [NSMutableSet setWithObject: self.targetURL];
-		
-        NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL: self.targetURL
+        NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL: initialURL
                                                                  includingPropertiesForKeys: nil
                                                                                     options: NSDirectoryEnumerationSkipsPackageDescendants
                                                                                errorHandler: NULL];
         
+		NSMutableSet *appliedURLs = [NSMutableSet setWithObject: initialURL];
 		for (NSURL *URL in enumerator)
 		{
 			if (self.isCancelled) return;
@@ -147,24 +151,24 @@
 	NSAssert(self.backgroundImageURL != nil, @"BXShelfAppearanceApplicator _applyAppearanceToFolder called without background image.");
     
 	//If the folder doesn't have a custom icon of its own, apply our shelf icon to the folder
-	if (self.icon && ![[NSWorkspace sharedWorkspace] fileHasCustomIcon: folderURL.path])
+	if (self.icon && ![[NSWorkspace sharedWorkspace] URLHasCustomIcon: folderURL])
     {
         [[NSWorkspace sharedWorkspace] setIcon: self.icon forFile: folderURL.path options: 0];
     }
-	
+    
 	FinderFinderWindow *window = [self _finderWindowForFolderAtURL: folderURL];
 	FinderIconViewOptions *options = window.iconViewOptions;
 	
-	//Retrieve a Finder reference to the blank background the first time we need it,
+	//Retrieve a Finder reference to the background the first time we need it,
 	//and store it so we don't need to retrieve it for every additional path we apply to.
 	if (!self.backgroundPicture)
 	{
-		self.backgroundPicture = [self.finder.files objectAtLocation: self.backgroundImageURL];
+		self.backgroundPicture = [self.finder.files objectAtLocation: self.backgroundImageURL.filePathURL];
 	}
 	
 	options.textSize			= 12;
 	options.iconSize			= 128;
-	options.backgroundPicture	= _backgroundPicture;
+	options.backgroundPicture	= self.backgroundPicture;
 	options.labelPosition		= FinderEposBottom;
 	options.showsItemInfo		= NO;
 	if (options.arrangement == FinderEarrNotArranged)
@@ -224,8 +228,6 @@
 
 - (void) _applyAppearanceToFolderAtURL: (NSURL *)folderURL
 {	
-	NSAssert(self.sourceURL != nil, @"BXShelfAppearanceRemover _applyAppearanceToFolder called without a source path set.");
-
 	FinderFinderWindow *window = [self _finderWindowForFolderAtURL: folderURL];
 	FinderIconViewOptions *options = window.iconViewOptions;
 	
@@ -233,7 +235,9 @@
 	//and store it so we don't need to retrieve it for every additional path we apply to.
 	if (!self.sourceOptions)
 	{
-		FinderFinderWindow *sourceWindow = [self _finderWindowForFolderAtURL: self.sourceURL];
+        NSAssert(self.sourceURL != nil, @"BXShelfAppearanceRemover _applyAppearanceToFolder called without a source URL set.");
+        
+		FinderFinderWindow *sourceWindow = [self _finderWindowForFolderAtURL: self.sourceURL.filePathURL];
 		self.sourceOptions = sourceWindow.iconViewOptions;
 	}
 	

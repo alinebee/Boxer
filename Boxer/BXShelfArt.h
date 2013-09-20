@@ -32,7 +32,10 @@
 //Draws the source image tiled into the specified frame in the current graphics context.
 - (void) drawInRect: (NSRect)frame;
 
-//Returns a new NSImage containing the source image tiled to fill the specified size.
-- (NSImage *)tiledImageWithSize: (NSSize)size;
+//Returns a new NSImage containing the source image tiled to fill the logical unit size.
+- (NSImage *) tiledImageWithSize: (NSSize)size;
+
+//Returns a new NSImage containing the source image tiled to fill the specific device pixel size.
+- (NSImage *) tiledImageWithPixelSize: (NSSize)pixelSize;
 
 @end

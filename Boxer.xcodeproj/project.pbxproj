@@ -63,8 +63,6 @@
 		9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F2120F813015653002AB1B7 /* BXShelfArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2120F713015653002AB1B7 /* BXShelfArt.m */; };
 		9F2120FE1301597E002AB1B7 /* NSImage+ADBSaveImages.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2120FD1301597E002AB1B7 /* NSImage+ADBSaveImages.m */; };
-		9F2121E7130187A9002AB1B7 /* ShelfTemplateLeopard.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F2121E5130187A9002AB1B7 /* ShelfTemplateLeopard.jpg */; };
-		9F2121E8130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F2121E6130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg */; };
 		9F2122EA1301BDE1002AB1B7 /* BXShelfAppearanceOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2122E91301BDE1002AB1B7 /* BXShelfAppearanceOperation.m */; };
 		9F2122EF1301BE6E002AB1B7 /* BXSampleGamesCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2122EE1301BE6E002AB1B7 /* BXSampleGamesCopy.m */; };
 		9F2140FF0F59F28000A5A183 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F2140FE0F59F28000A5A183 /* QuartzCore.framework */; };
@@ -650,7 +648,6 @@
 		9F902C2A142E199100843B01 /* BXExternalMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C29142E199100843B01 /* BXExternalMIDIDevice.m */; };
 		9F955B60141A05990068EF71 /* InsertFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */; };
 		9F955B61141A05990068EF71 /* EjectFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */; };
-		9F960C7F12AAAB2900568AFD /* BlankShelves.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F960C7E12AAAB2900568AFD /* BlankShelves.png */; };
 		9F96969813E59CA100FB51EC /* NoJoystickTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */; };
 		9F98410215BEE64400B50CDA /* ADBShadowedFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98410115BEE64400B50CDA /* ADBShadowedFilesystem.m */; };
 		9F98410315BEE64400B50CDA /* ADBShadowedFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98410115BEE64400B50CDA /* ADBShadowedFilesystem.m */; };
@@ -869,6 +866,8 @@
 		9FE3237E157A42B3004492E8 /* ADBShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE3237D157A42B3004492E8 /* ADBShader.m */; };
 		9FE32382157A7498004492E8 /* ADBBSNESShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE32381157A7498004492E8 /* ADBBSNESShader.m */; };
 		9FE32383157A9559004492E8 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = 9F84C86D157800DD00CCBCA7 /* Shaders */; };
+		9FE3BAE417EC763E00C9BB82 /* ShelfTemplate.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAE217EC763E00C9BB82 /* ShelfTemplate.jpg */; };
+		9FE3BAE517EC763E00C9BB82 /* ShelfTemplate@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAE317EC763E00C9BB82 /* ShelfTemplate@2x.jpg */; };
 		9FE50B591365845200495EBE /* BXInputController+BXJoystickInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */; };
 		9FE90BF711F8D1DC003CFFFF /* ADBDelegatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE90BF611F8D1DC003CFFFF /* ADBDelegatedView.m */; };
 		9FEAA3EC1204595B0085F008 /* ADBOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3EB1204595B0085F008 /* ADBOperation.m */; };
@@ -1041,8 +1040,6 @@
 		9F2120F713015653002AB1B7 /* BXShelfArt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXShelfArt.m; sourceTree = "<group>"; };
 		9F2120FC1301597E002AB1B7 /* NSImage+ADBSaveImages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+ADBSaveImages.h"; sourceTree = "<group>"; };
 		9F2120FD1301597E002AB1B7 /* NSImage+ADBSaveImages.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSImage+ADBSaveImages.m"; sourceTree = "<group>"; };
-		9F2121E5130187A9002AB1B7 /* ShelfTemplateLeopard.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ShelfTemplateLeopard.jpg; sourceTree = "<group>"; };
-		9F2121E6130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ShelfTemplateSnowLeopard.jpg; sourceTree = "<group>"; };
 		9F2122E81301BDE1002AB1B7 /* BXShelfAppearanceOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShelfAppearanceOperation.h; sourceTree = "<group>"; };
 		9F2122E91301BDE1002AB1B7 /* BXShelfAppearanceOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXShelfAppearanceOperation.m; sourceTree = "<group>"; };
 		9F2122ED1301BE6E002AB1B7 /* BXSampleGamesCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSampleGamesCopy.h; sourceTree = "<group>"; };
@@ -1533,7 +1530,6 @@
 		9F902C29142E199100843B01 /* BXExternalMIDIDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXExternalMIDIDevice.m; sourceTree = "<group>"; };
 		9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = InsertFreestandingTemplate.pdf; sourceTree = "<group>"; };
 		9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = EjectFreestandingTemplate.pdf; sourceTree = "<group>"; };
-		9F960C7E12AAAB2900568AFD /* BlankShelves.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BlankShelves.png; sourceTree = "<group>"; };
 		9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = NoJoystickTemplate.pdf; sourceTree = "<group>"; };
 		9F98410015BEE64400B50CDA /* ADBShadowedFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBShadowedFilesystem.h; sourceTree = "<group>"; };
 		9F98410115BEE64400B50CDA /* ADBShadowedFilesystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBShadowedFilesystem.m; sourceTree = "<group>"; };
@@ -1828,6 +1824,8 @@
 		9FE3237D157A42B3004492E8 /* ADBShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBShader.m; sourceTree = "<group>"; };
 		9FE32380157A7498004492E8 /* ADBBSNESShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBBSNESShader.h; sourceTree = "<group>"; };
 		9FE32381157A7498004492E8 /* ADBBSNESShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBBSNESShader.m; sourceTree = "<group>"; };
+		9FE3BAE217EC763E00C9BB82 /* ShelfTemplate.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ShelfTemplate.jpg; sourceTree = "<group>"; };
+		9FE3BAE317EC763E00C9BB82 /* ShelfTemplate@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "ShelfTemplate@2x.jpg"; sourceTree = "<group>"; };
 		9FE50B571365845200495EBE /* BXInputController+BXJoystickInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXInputController+BXJoystickInput.h"; sourceTree = "<group>"; };
 		9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXInputController+BXJoystickInput.m"; sourceTree = "<group>"; };
 		9FE90BF511F8D1DC003CFFFF /* ADBDelegatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBDelegatedView.h; sourceTree = "<group>"; };
@@ -3154,9 +3152,8 @@
 		9F9606EB14F65AF10072E90C /* Shelves */ = {
 			isa = PBXGroup;
 			children = (
-				9F2121E5130187A9002AB1B7 /* ShelfTemplateLeopard.jpg */,
-				9F2121E6130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg */,
-				9F960C7E12AAAB2900568AFD /* BlankShelves.png */,
+				9FE3BAE217EC763E00C9BB82 /* ShelfTemplate.jpg */,
+				9FE3BAE317EC763E00C9BB82 /* ShelfTemplate@2x.jpg */,
 			);
 			name = Shelves;
 			sourceTree = "<group>";
@@ -3762,10 +3759,7 @@
 				9F18127F12994A4C009BC4B2 /* CDCover.icns in Resources */,
 				9F18137C12999E39009BC4B2 /* GamesFolderPanelOptions.xib in Resources */,
 				9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */,
-				9F960C7F12AAAB2900568AFD /* BlankShelves.png in Resources */,
 				9FC5353512F489F8005E7670 /* 35DisketteShine.icns in Resources */,
-				9F2121E7130187A9002AB1B7 /* ShelfTemplateLeopard.jpg in Resources */,
-				9F2121E8130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg in Resources */,
 				9FF86678134DCA16001CE857 /* cdrdao in Resources */,
 				9FF86679134DCA16001CE857 /* toc2cue in Resources */,
 				9FDE34131351DCDB000DCE44 /* DOSImportWindow.xib in Resources */,
@@ -3791,6 +3785,7 @@
 				9FBEC4F4142CEB770016964A /* MT32LCDFontTemplate.png in Resources */,
 				9FBEC4F5142CEB770016964A /* MT32LCDGridTemplate.png in Resources */,
 				9F8A9CD2143E120B00C37A93 /* MT32ROMTypes.plist in Resources */,
+				9FE3BAE517EC763E00C9BB82 /* ShelfTemplate@2x.jpg in Resources */,
 				9F586CF1143E51DD00E840C8 /* CM32L.png in Resources */,
 				9F586CF2143E51DD00E840C8 /* MT32.png in Resources */,
 				9F1F00AB143F091300FF163A /* Audio.png in Resources */,
@@ -3821,6 +3816,7 @@
 				9FCA1584159729C400C42D10 /* ImportCoverArtTip@2x.png in Resources */,
 				9FCA1585159729C400C42D10 /* ImportRenameTip@2x.png in Resources */,
 				9FCA1587159732F300C42D10 /* import@2x.png in Resources */,
+				9FE3BAE417EC763E00C9BB82 /* ShelfTemplate.jpg in Resources */,
 				9FCA158A1597377B00C42D10 /* Audio@2x.png in Resources */,
 				9FCA158B1597377B00C42D10 /* Keyboard@2x.png in Resources */,
 				9FCA158D15973A6D00C42D10 /* Display@2x.png in Resources */,

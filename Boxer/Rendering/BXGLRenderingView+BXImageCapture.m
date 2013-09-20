@@ -6,6 +6,7 @@
  */
 
 #import "BXGLRenderingView+BXImageCapture.h"
+#import <OpenGL/CGLMacro.h>
 
 @interface NSBitmapImageRep (BXFlipper)
 

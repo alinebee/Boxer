@@ -2231,7 +2231,7 @@ enum {
         {
             BXESCPCharTable charTable = (BXESCPCharTable)params[2];
             uint8_t codepageIndex = params[3];
-            if (charTable < 4 && codepageIndex < 16)
+            if (charTable < BXESCPCharTableMax && codepageIndex < 16)
             {
                 [self _assignCodepage: codepages[codepageIndex]
                           toCharTable: charTable];

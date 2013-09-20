@@ -1008,7 +1008,8 @@ int extdate_to_int(uint8_t *digits, int length)
         NSString *pathForEntry = self.pathForCurrentNode;
         
         //Cache every entry that we traverse into our parent image's path cache to speed up path access later.
-        [self.parentImage.pathCache setObject: nextEntry forKey: pathForEntry];
+        if (pathForEntry != nil)
+            [self.parentImage.pathCache setObject: nextEntry forKey: pathForEntry];
         
         return pathForEntry;
     }

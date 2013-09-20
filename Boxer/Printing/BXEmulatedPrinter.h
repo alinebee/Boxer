@@ -84,6 +84,7 @@ typedef enum {
     BXESCPCharTable1,
     BXESCPCharTable2,
     BXESCPCharTable3,
+    BXESCPCharTableMax
 } BXESCPCharTable;
 
 typedef enum {

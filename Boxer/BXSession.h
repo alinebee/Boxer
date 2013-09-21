@@ -61,6 +61,15 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 //This flag will be cleared on the next startup.
 extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 
+//Used by openURLInDOS: to decide what to do after its program exits or the directory has been changed.
+typedef enum {
+    BXSessionExitBehaviorAuto,          //If the launcher was visible when the program was launched, return to the launcher; otherwise, stay at the DOS prompt
+    BXSessionShowDOSPrompt,             //Stay at the DOS prompt.
+    BXSessionShowDOSPromptIfDirectory,  //If the URL was a directory, show it at the DOS prompt; otherwise, behave like BXSessionExitBehaviorAuto.
+    BXSessionShowLauncher,              //Show the program launcher panel if available.
+    BXSessionClose,                     //Close the DOS session altogether. (Currently unused and unsupported.)
+} BXSessionProgramExitBehavior;
+
 
 #pragma mark - Interface
 
@@ -87,13 +96,14 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
     NSString *_targetArguments;
     
     NSURL *_lastLaunchedProgramURL;
-    NSString *_lastLaunchedProgramArguments;
+    NSString *_launchedProgramArguments;
     
 	NSURL *_temporaryFolderURL;
 	
 	BOOL _hasStarted;
 	BOOL _hasConfigured;
 	BOOL _hasLaunched;
+    BOOL _hasFinishedStartupProcess;
 	BOOL _isClosing;
 	BOOL _emulating;
     BOOL _executingLaunchedProgram;
@@ -106,12 +116,10 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 	BOOL _userSkippedDefaultProgram;
     BOOL _waitingForFastForwardRelease;
     
-    BOOL _userSwitchedToDOSPrompt;
+    BXSessionProgramExitBehavior _programExitBehaviour;
 	
 	NSOperationQueue *_importQueue;
     NSOperationQueue *_scanQueue;
-	
-	NSTimeInterval _programStartTime;
     
     IOPMAssertionID _displaySleepAssertionID;
     
@@ -159,7 +167,7 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 //The logical URL of the last program that was launched through user interaction (i.e. from the
 //launcher panel or from the DOS prompt), along with any arguments it was launched with.
 @property (readonly, copy, nonatomic) NSURL *launchedProgramURL;
-@property (readonly, copy, nonatomic) NSString *lastLaunchedProgramArguments;
+@property (readonly, copy, nonatomic) NSString *launchedProgramArguments;
 
 //The logical URL of the currently executing DOS program or batch file if one is running,
 //or the current directory at the DOS prompt. This will  be nil if Boxer has no idea where it is.

@@ -39,7 +39,7 @@ extern NSString * const BXGameImportedNotificationType;
 //The URL to the program that was last launched by user action (i.e. from the program panel or DOS prompt)
 //and the arguments it was launched with.
 @property (readwrite, copy, nonatomic) NSURL *launchedProgramURL;
-@property (readwrite, copy, nonatomic) NSString *lastLaunchedProgramArguments;
+@property (readwrite, copy, nonatomic) NSString *launchedProgramArguments;
 
 @property (readwrite, retain, nonatomic) NSDictionary *drives;
 @property (readwrite, retain, nonatomic) NSDictionary *executableURLs;
@@ -67,11 +67,13 @@ extern NSString * const BXGameImportedNotificationType;
 //Used by programWillStart and didStartGraphicalContext.
 - (BOOL) _shouldLeaveProgramPanelOpenAfterLaunch;
 
-//Whether to open the program panel when the user returns to the DOS prompt or bypasses the default program.
-- (BOOL) _shouldShowLaunchPanelAtPrompt;
+//Whether to switch to the launcher panel when the current program returns to the DOS prompt.
+- (BOOL) _shouldShowLaunchPanelOnProgramExit: (NSNotification *)exitNotification
+                            afterRunningTime: (NSTimeInterval)programRunningTime;
 
-//Whether we should close the session (and the application) after returning to the DOS prompt.
-- (BOOL) _shouldCloseOnProgramExit;
+//Whether we should close the session after returning to the DOS prompt.
+- (BOOL) _shouldCloseOnProgramExit: (NSNotification *)exitNotification
+                  afterRunningTime: (NSTimeInterval)programRunningTime;
 
 //Whether we should start the emulator as soon as the document is created.
 - (BOOL) _shouldStartImmediately;

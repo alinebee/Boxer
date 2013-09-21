@@ -1325,12 +1325,9 @@
         {
             NSString *arguments = [notification.userInfo objectForKey: BXEmulatorLaunchArgumentsKey];
             self.launchedProgramURL = programURL;
-            self.lastLaunchedProgramArguments = arguments;
+            self.launchedProgramArguments = arguments;
 		}
 	}
-	
-	//Track how long this program has run for
-	_programStartTime = [NSDate timeIntervalSinceReferenceDate];
     
     //Enable/disable display-sleep suppression
     [self _syncSuppressesDisplaySleep];
@@ -1342,7 +1339,7 @@
 {
 	//Clear the active program
     self.launchedProgramURL = nil;
-    self.lastLaunchedProgramArguments = nil;
+    self.launchedProgramArguments = nil;
 	
 	//Show the program chooser after returning to the DOS prompt
 	//(Show only after a delay, so that the window has time to resize after quitting the game)

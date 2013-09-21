@@ -14,6 +14,7 @@
 #import "BXCloseAlert.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
+#import "BXDOSWindowController.h"
 #import "BXEmulatorErrors.h"
 #import "BXEmulator+BXShell.h"
 #import "ADBShadowedFilesystem.h"
@@ -845,7 +846,9 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (BOOL) openURLInDOS: (NSURL *)URL
         withArguments: (NSString *)arguments
-       clearingScreen: (BOOL)clearScreen
+          clearScreen: (BOOL)clearScreen
+         onCompletion: (BXSessionProgramExitBehavior)exitBehavior
+                error: (out NSError **)outError
 {
 	if (!self.emulator.isInitialized || self.emulator.isRunningProcess)
         return NO;
@@ -853,8 +856,10 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	//Get the path to the file in the DOS filesystem
 	NSString *dosPath = [self.emulator DOSPathForURL: URL];
 	if (!dosPath)
+    {
         return NO;
-	
+	}
+    
 	//Unpause the emulation if it's paused, and ensure we don't remain auto-paused.
     //TODO: we shouldn't force autopause to be off here, we should trigger a re-evaluation
     //of the autopause criteria and handle this in _shouldAutoPause.
@@ -864,32 +869,50 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     //If this was an executable, launch it now.
 	if ([URL matchingFileType: [BXFileTypes executableTypes]] != nil)
 	{
+        if (exitBehavior == BXSessionExitBehaviorAuto || exitBehavior == BXSessionShowDOSPromptIfDirectory)
+            exitBehavior = (self.DOSWindowController.launchPanelShown) ? BXSessionShowLauncher : BXSessionShowDOSPrompt;
+        _programExitBehaviour = exitBehavior;
+        
         self.emulator.clearsScreenBeforeCommandExecution = clearScreen;
         
 		//If an executable was specified, execute it and record that it was launched.
         self.launchedProgramURL = URL;
-        self.lastLaunchedProgramArguments = arguments;
+        self.launchedProgramArguments = arguments;
         
 		[self.emulator executeProgramAtDOSPath: dosPath
                                  withArguments: arguments
                              changingDirectory: YES];
 	}
-    //Otherwise, treat the specified path as a directory and switch to it.
+    //Otherwise, treat the specified path as a directory and switch the working directory to it.
 	else
 	{
 		[self.emulator changeWorkingDirectoryToDOSPath: dosPath];
+        
+        //Because the directory change will happen instantaneously and emulatorDidReturnToShell: will never be called,
+        //handle the 'exit' behaviour immediately.
+        switch (exitBehavior)
+        {
+            case BXSessionShowDOSPrompt:
+            case BXSessionShowDOSPromptIfDirectory:
+                [self.DOSWindowController showDOSView];
+                break;
+            case BXSessionShowLauncher:
+                [self.DOSWindowController showLaunchPanel];
+                break;
+        }
 	}
     
 	return YES;
 }
 
-- (BOOL) openURLInDOS:(NSURL *)URL
+- (BOOL) openURLInDOS: (NSURL *)URL error: (out NSError **)outError
 {
     return [self openURLInDOS: URL
                 withArguments: nil
-               clearingScreen: NO];
+                  clearScreen: NO
+                 onCompletion: BXSessionExitBehaviorAuto
+                        error: outError];
 }
-
 
 //Mount drives for all CD-ROMs that are currently mounted in OS X
 //(as long as they're not already mounted in DOS, that is.)

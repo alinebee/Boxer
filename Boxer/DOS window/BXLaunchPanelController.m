@@ -433,36 +433,55 @@
     
         BXSession *session = self.representedObject;
         
+        BOOL canLaunch = YES;
+        NSError *launchError = nil;
+        
         //Check if we need to mount a drive first in order to run this program
         if ([session shouldMountNewDriveForURL: URL])
         {
-            NSError *mountError = nil;
             BXDrive *drive = [session mountDriveForURL: URL
                                               ifExists: BXDriveReplace
                                                options: BXDefaultDriveMountOptions
-                                                 error: &mountError];
+                                                 error: &launchError];
             
             //Display an error if a drive could not be mounted for the program.
             if (!drive)
             {
-                if (mountError)
-                {
-                    [self presentError: mountError
-                        modalForWindow: session.windowForSheet
-                              delegate: nil
-                    didPresentSelector: NULL
-                           contextInfo: NULL];
-                }
+                canLaunch = NO;
                 return; //mount failed, don't continue further
             }
         }
         
-        //NSLog(@"Opening URL %@ in DOS", URL);
+        if (canLaunch)
+        {
+            BXSessionProgramExitBehavior exitBehavior;
+            //If this is a drive, then show the DOS prompt so the user can get on with mucking around with it
+            if ([[itemDetails objectForKey: @"isDrive"] boolValue])
+            {
+                exitBehavior = BXSessionShowDOSPrompt;
+            }
+            //Otherwise, if we're launching a regular program, return to the launcher panel after it's finished
+            else
+            {
+                exitBehavior = BXSessionShowLauncher;
+            }
+            
+            [session openURLInDOS: URL
+                    withArguments: arguments
+                      clearScreen: YES
+                     onCompletion: exitBehavior
+                            error: &launchError];
+        }
         
-        //TODO: display an error if the program could not be launched for some reason.
-        [session openURLInDOS: URL
-                withArguments: arguments
-               clearingScreen: YES];
+        //Display any error that occurred when trying to launch
+        if (launchError)
+        {
+            [self presentError: launchError
+                modalForWindow: session.windowForSheet
+                      delegate: nil
+            didPresentSelector: NULL
+                   contextInfo: NULL];
+        }
     }
 }
 

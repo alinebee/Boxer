@@ -57,6 +57,8 @@ NSString * const BXEmulatorDOSPathKey           = @"DOSPath";
 NSString * const BXEmulatorDriveKey             = @"drive";
 NSString * const BXEmulatorLocalURLKey          = @"URL";
 NSString * const BXEmulatorLaunchArgumentsKey   = @"arguments";
+NSString * const BXEmulatorLaunchDateKey        = @"launchDate";
+NSString * const BXEmulatorExitDateKey          = @"exitDate";
 
 NSString * const BXDOSBoxErrorDomain = @"BXDOSBoxErrorDomain";
 

@@ -1214,7 +1214,7 @@
 
 - (void) userDidToggleLaunchPanel
 {
-    _userSwitchedToDOSPrompt = (self.DOSWindowController.currentPanel == BXDOSWindowDOSView);
+    //_userSwitchedToDOSPrompt = (self.DOSWindowController.currentPanel == BXDOSWindowDOSView);
 }
 
 - (void) didToggleMouseLocked

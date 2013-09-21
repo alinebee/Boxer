@@ -116,7 +116,7 @@ enum {
 {
 	NSString *filePath = self.programSelector.selectedItem.representedObject;
     if (filePath)
-        [self.session openURLInDOS: [NSURL fileURLWithPath: filePath]];
+        [self.session openURLInDOS: [NSURL fileURLWithPath: filePath] error: NULL];
 }
 
 - (IBAction) revealGamebox: (id)sender

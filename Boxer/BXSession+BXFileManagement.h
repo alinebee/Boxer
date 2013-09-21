@@ -25,7 +25,6 @@ typedef enum {
 } BXDriveConflictBehaviour;
 
 
-
 //Bitflag options for mountDrive:ifExists:options:error:.
 enum {
     BXDriveKeepWithSameType             = 1U << 0,  //Try to mount the drive at the same letter as an
@@ -185,14 +184,22 @@ typedef NSUInteger BXDriveMountOptions;
 
 //Open the file at the specified logical URL in DOS with the (optional) specified arguments.
 //If the URL points to an executable, it will be launched with any specified arguments;
-//if it's a directory, we'll change the working directory to it.
-//If the URL is not currently accessible in DOS, a new drive will be mounted for it.
+//if it's a directory, the current DOS working directory will be changed to it.
+//If clearScreen is YES, this method will clear any previous DOS prompt output before running the program.
+//This is primarily intended for launcher items, and only has an effect if the URL is a program.
+//BXSessionProgramExitBehavior determines what the session should do after the program exits:
+//See BXSessionProgramExitBehavior constant definition for details.
+//Returns YES on success, or NO and populates outError if the specified URL could not be launched
+//(e.g. if it was not accessible in DOS.)
 - (BOOL) openURLInDOS: (NSURL *)URL
         withArguments: (NSString *)arguments
-       clearingScreen: (BOOL)clearScreen;
+          clearScreen: (BOOL)clearScreen
+         onCompletion: (BXSessionProgramExitBehavior)exitBehavior
+                error: (out NSError **)outError;
 
-- (BOOL) openURLInDOS: (NSURL *)URL;
-
+//Calls the above with no arguments, without clearing the screen, and with automatic exit behavior.
+- (BOOL) openURLInDOS: (NSURL *)URL
+                error: (out NSError **)outError;
 
 #pragma mark - Managing drive shadowing
 

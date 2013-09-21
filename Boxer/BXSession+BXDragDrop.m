@@ -146,13 +146,13 @@
 
 - (BOOL) _handleDraggedURL: (NSURL *)URL launchImmediately: (BOOL)launch
 {	
-	//First check if we ought to do anything with this file, to be safe
+	//First check if we ought to do anything with this URL, to be safe
 	if ([self _responseToDraggedURL: URL] == NSDragOperationNone) return NO;
 	
-	//Keep track of whether we've done anything with the dropped file yet
+	//Keep track of whether we've done anything with the dropped URL yet
 	BOOL performedAction = NO;
 	
-	//Make a new mount for the path if we need
+	//Make a new mount for the URL if we need
 	if ([self shouldMountNewDriveForURL: URL])
 	{
         NSError *mountError = nil;
@@ -176,10 +176,28 @@
 		performedAction = YES;
 	}
 	
-	//Launch the path in the emulator
+	//Launch the URL in the emulator
 	if (launch)
-        performedAction = [self openURLInDOS: URL] || performedAction;
-	
+    {
+        NSError *launchError = nil;
+        BOOL launched = [self openURLInDOS: URL
+                             withArguments: nil
+                               clearScreen: NO
+                              onCompletion: BXSessionShowDOSPromptIfDirectory
+                                     error: &launchError];
+        
+        if (!launched && launchError)
+        {
+            [self presentError: launchError
+                modalForWindow: self.windowForSheet
+                      delegate: nil
+            didPresentSelector: NULL
+                   contextInfo: NULL];
+        }
+        
+        performedAction = launched || performedAction;
+	}
+    
 	//Report whether or not anything actually happened as a result of the drop
 	return performedAction;
 }

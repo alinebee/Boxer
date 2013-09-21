@@ -223,12 +223,23 @@ enum {
 
 - (IBAction) openSelectedDrivesInDOS: (id)sender
 {
-	//Only bother grabbing the last drive selected
 	BXDrive *drive = self.selectedDrives.lastObject;
 	if (drive)
     {
-        BXSession *currentSession = [[NSApp delegate] currentSession];
-        [currentSession openURLInDOS: drive.sourceURL];
+        BXSession *session = [[NSApp delegate] currentSession];
+        if (![session driveIsMounted: drive])
+        {
+            [session mountDrive: drive
+                       ifExists: BXDriveReplace
+                        options: BXDefaultDriveMountOptions
+                          error: NULL];
+        }
+        
+        [session openURLInDOS: drive.sourceURL
+                withArguments: nil
+                  clearScreen: NO
+                 onCompletion: BXSessionShowDOSPrompt
+                        error: NULL];
     }
 }
 

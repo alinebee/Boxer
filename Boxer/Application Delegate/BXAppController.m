@@ -232,7 +232,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	{
 		for (BXSession *session in self.sessions)
 		{
-			if ([session openURLInDOS: absoluteURL])
+			if ([session openURLInDOS: absoluteURL error: nil])
 			{
 				if (displayDocument)
                     [session showWindows];

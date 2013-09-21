@@ -107,8 +107,7 @@
     //Switch to the new mount after adding it
     if (drive)
     {
-        [session openURLInDOS: drive.sourceURL];
-        return YES;
+        return [session openURLInDOS: drive.sourceURL error: outError];
     }
     else
     {

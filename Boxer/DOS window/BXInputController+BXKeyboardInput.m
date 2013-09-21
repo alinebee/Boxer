@@ -94,6 +94,7 @@
             [self.windowController.window toggleFullScreen: self];
             return;
         }
+        //TODO: make pressing ESC at the DOS prompt return to the launcher panel
     }
 	
     //Otherwise, pass the keypress on to the emulated keyboard hardware.

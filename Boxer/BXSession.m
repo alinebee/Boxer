@@ -49,7 +49,7 @@
 //The length of time in seconds after which we count a program as having run successfully,
 //and allow it to auto-quit. If a program exits before this time, we count it as
 //a probable startup crash and leave the user at the DOS prompt to diagnose it.
-#define BXSuccessfulProgramRunningTimeThreshold 10
+#define BXSuccessfulProgramRunningTimeThreshold 3
 
 //How soon after the program starts to enter fullscreen, if the run-programs-in-fullscreen toggle
 //is enabled. The delay gives the program time to crash and our program panel time to hide.
@@ -119,7 +119,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 @synthesize targetURL = _targetURL;
 @synthesize targetArguments = _targetArguments;
 @synthesize launchedProgramURL = _lastLaunchedProgramURL;
-@synthesize lastLaunchedProgramArguments = _lastLaunchedProgramArguments;
+@synthesize launchedProgramArguments = _launchedProgramArguments;
 
 @synthesize gameProfile = _gameProfile;
 @synthesize gameSettings = _gameSettings;
@@ -253,7 +253,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     self.targetURL = nil;
     self.targetArguments = nil;
     self.launchedProgramURL = nil;
-    self.lastLaunchedProgramArguments = nil;
+    self.launchedProgramArguments = nil;
     
     self.drives = nil;
     self.executableURLs = nil;
@@ -823,8 +823,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                 [settingsToPersist setObject: pathToPersist
                                       forKey: BXGameboxSettingsLastProgramPathKey];
                 
-                if (self.lastLaunchedProgramArguments)
-                    [settingsToPersist setObject: self.lastLaunchedProgramArguments
+                if (self.launchedProgramArguments)
+                    [settingsToPersist setObject: self.launchedProgramArguments
                                           forKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
                 else
                     [settingsToPersist removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
@@ -1178,15 +1178,37 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             [self.DOSWindowController enterFullScreen];
         }
         
+        NSError *launchError = nil;
 		[self openURLInDOS: targetURL
              withArguments: arguments
-            clearingScreen: YES];
+               clearScreen: YES
+              onCompletion: BXSessionExitBehaviorAuto
+                     error: &launchError];
+        
+        //Display any error that occurred when trying to launch
+        if (launchError)
+        {
+            [self presentError: launchError
+                modalForWindow: self.windowForSheet
+                      delegate: nil
+            didPresentSelector: NULL
+                   contextInfo: NULL];
+        }
 	}
     
     //Clear the program-skipping flag for next launch.
     _userSkippedDefaultProgram = NO;
 }
 
+
+- (void) emulatorWillRunStartupCommands: (NSNotification *)notification
+{
+    //Display the launch panel once startup commands are finished
+    //FIXME: the logic behind this ("what should we show once AUTOEXEC.BAT is finished?")
+    //should be handled closer to emulatorDidFinishProgram:, which is where the decision needs to be made.
+    //Setting it here is necessary for ugly timing reasons but is far too brittle.
+    _programExitBehaviour = self.allowsLauncherPanel ? BXSessionShowLauncher : BXSessionShowDOSPrompt;
+}
 
 - (void) emulator: (BXEmulator *)theEmulator didFinishFrame: (BXVideoFrame *)frame
 {
@@ -1215,15 +1237,13 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 - (void) emulatorWillStartProgram: (NSNotification *)notification
 {
-    //Flag that the program the user launched is now executing.
-    _executingLaunchedProgram = YES;
-    
     //If we've finished the startup process, then show the DOS view at this point.
     //(We won't show the DOS view before then, because we don't want startup programs
     //to trigger a switch of view: we don't know at that point yet whether the user is
     //overriding the startup program to show the launch panel.)
     if (_hasLaunched)
     {
+        NSLog(@"Showing DOS view for program: %@", notification.userInfo);
         [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
                                                  selector: @selector(showLaunchPanel)
                                                    object: self];
@@ -1238,18 +1258,19 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     //other programs spawned by the original program (e.g. if it was a batch file.)
 	if (!self.launchedProgramURL)
 	{
+        //Flag that the program the user launched is now executing.
+        //This is checked downstairs in emulatorDidFinishProgram: and clears our launched program stuff again.
+        _executingLaunchedProgram = YES;
+        
 		NSURL *programURL = [notification.userInfo objectForKey: BXEmulatorLocalURLKey];
         
         if (programURL)
         {
             NSString *arguments = [notification.userInfo objectForKey: BXEmulatorLaunchArgumentsKey];
             self.launchedProgramURL = programURL;
-            self.lastLaunchedProgramArguments = arguments;
+            self.launchedProgramArguments = arguments;
 		}
 	}
-	
-	//Track how long this program has run for
-	_programStartTime = [NSDate timeIntervalSinceReferenceDate];
     
     //Enable/disable display-sleep suppression
     [self _syncSuppressesDisplaySleep];
@@ -1257,10 +1278,15 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 - (void) emulatorDidFinishProgram: (NSNotification *)notification
 {
+    BOOL wasLastProgram = (self.emulator.runningProcesses.count == 0);
+    
 	//Check the running time of the program. If it was suspiciously short,
 	//then check for possible error conditions that we can inform the user about.
-	NSTimeInterval programRunningTime = [NSDate timeIntervalSinceReferenceDate] - _programStartTime; 
-	if (programRunningTime < BXWindowsOnlyProgramFailTimeThreshold)
+    NSDate *launchDate = [notification.userInfo objectForKey: BXEmulatorLaunchDateKey];
+    NSDate *exitDate = [notification.userInfo objectForKey: BXEmulatorExitDateKey];
+    NSTimeInterval runningTime = [exitDate timeIntervalSinceDate: launchDate];
+    
+	if (runningTime < BXWindowsOnlyProgramFailTimeThreshold)
 	{
         NSURL *programURL = [notification.userInfo objectForKey: BXEmulatorLocalURLKey];
         if (programURL)
@@ -1273,7 +1299,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             {
                 //If the user launched this program directly from Finder, then show
                 //a proper alert to the user and offer to close the DOS session.
-                if ([programURL isEqual: self.targetURL])
+                if (wasLastProgram && [programURL isEqual: self.targetURL])
                 {
                     BXCloseAlert *alert = [BXCloseAlert closeAlertAfterWindowsOnlyProgramExited: programURL.path];
                     [alert beginSheetModalForWindow: self.windowForSheet
@@ -1293,54 +1319,59 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             }
         }
 	}
-}
-
-- (void) emulatorDidReturnToShell: (NSNotification *)notification
-{
-	//If we should close after exiting, then close down the application now
-	if ([self _shouldCloseOnProgramExit])
-	{
-		[self close];
-	}
-	
-	//If a program has been properly launched, clear the active program.
-    //(We don't want to clear it if we've nipped back to the DOS prompt
-    //while we're still in the process of launching the program.)
-    if (_executingLaunchedProgram)
-	{
-        _executingLaunchedProgram = NO;
-        self.launchedProgramURL = nil;
-        self.lastLaunchedProgramArguments = nil;
-	}
     
     //Clear our cache of sent MT-32 messages on behalf of BXAudioControls.
     [self.MT32MessagesReceived removeAllObjects];
     
-    //Explicitly disable numpad simulation upon returning to the DOS prompt.
-    //Disabled for now until we can record that the user has toggled the option while at the DOS prompt,
-    //and conditionally leave it on in that case, to prevent it switching off when executing commands. 
-    //self DOSWindowController.inputController.simulatedNumpadActive = NO;
-    
-        
-	//Show the program chooser after returning to the DOS prompt, if appropriate.
-	if ([self _shouldShowLaunchPanelAtPrompt])
-	{
-		[NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
-												 selector: @selector(showDOSView)
-												   object: self];
-		
-		//Switch to the launch panel only after a delay.
-		[self.DOSWindowController performSelector: @selector(showLaunchPanel)
-                                       withObject: self
-                                       afterDelay: BXSwitchToLaunchPanelDelay];
-	}
-    //Otherwise, ensure we're displaying the DOS view.
-    else
+    //If this was the last program in the stack, then clean up a bunch of our state.
+    if (wasLastProgram)
     {
-        [self.DOSWindowController showDOSView];
+        //If we should close after exiting the last program, then close down the application now
+        if ([self _shouldCloseOnProgramExit: notification afterRunningTime: runningTime])
+        {
+            [self close];
+        }
+        
+        //Show the program chooser after the program exits, if appropriate.
+        else if ([self _shouldShowLaunchPanelOnProgramExit: notification afterRunningTime: runningTime])
+        {
+            [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
+                                                     selector: @selector(showDOSView)
+                                                       object: self];
+            
+            //Switch to the launch panel only after a short delay.
+            [self.DOSWindowController performSelector: @selector(showLaunchPanel)
+                                           withObject: self
+                                           afterDelay: BXSwitchToLaunchPanelDelay];
+        }
+        
+        //Otherwise, ensure we're displaying the DOS view.
+        else
+        {
+            [self.DOSWindowController showDOSView];
+        }
+        
+        //Clear our exit behaviour so that it won't influence future programs launched straight from DOS
+        _programExitBehaviour = BXSessionExitBehaviorAuto;
+        
+        //If a program has been properly launched, clear the active program.
+        //(We don't want to clear it if we've nipped back to the DOS prompt
+        //while we're still in the process of launching the program.)
+        //DOCUMENTME: what the fuck are you even talking about?
+        if (_executingLaunchedProgram)
+        {
+            _executingLaunchedProgram = NO;
+            self.launchedProgramURL = nil;
+            self.launchedProgramArguments = nil;
+        }
+        
+        NSLog(@"%@: %@", NSStringFromSelector(_cmd), notification.userInfo);
     }
+}
 
-    //Enable/disable display-sleep suppression
+- (void) emulatorDidReturnToShell: (NSNotification *)notification
+{
+    //Let the display sleep while we're at the shell
     [self _syncSuppressesDisplaySleep];
 }
 
@@ -1472,7 +1503,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 - (BOOL) _shouldCloseOnEmulatorExit { return YES; }
 - (BOOL) _shouldStartImmediately { return YES; }
 
-- (BOOL) _shouldCloseOnProgramExit
+- (BOOL) _shouldCloseOnProgramExit: (NSNotification *)exitNotification afterRunningTime: (NSTimeInterval)programRunningTime
 {
     //If we're a standalone game app and the launcher panel is disabled,
     //then close down after exiting to DOS; otherwise, return to the launcher panel.
@@ -1492,8 +1523,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	if (self.isImportingDrives) return NO;
 	
 	//Don't close if the last program quit suspiciously early, since this may be a crash
-	NSTimeInterval executionTime = [NSDate timeIntervalSinceReferenceDate] - _programStartTime;
-	if (executionTime < BXSuccessfulProgramRunningTimeThreshold) return NO;
+	if (programRunningTime < BXSuccessfulProgramRunningTimeThreshold)
+        return NO;
 	
 	//Don't close if the user is currently holding down the Option key override
 	CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
@@ -1517,40 +1548,38 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     }
     else
      */
-        return NO;
+    return NO;
 }
 
-- (BOOL) _shouldShowLaunchPanelAtPrompt
+- (BOOL) _shouldShowLaunchPanelOnProgramExit: (NSNotification *)exitNotification afterRunningTime: (NSTimeInterval)programRunningTime
 {
+    //If this is a standalone game app, always show the launch panel
     if ([[NSApp delegate] isStandaloneGameBundle])
+    {
         return YES;
+    }
     
+    //If we're not running a gamebox, stay at the DOS prompt
     if (!self.gamebox)
     {
         return NO;
     }
-    else
+    
+    //If the last program ran suspiciously short, stay at the DOS prompt also: it could be a crash,
+    //in which case we want to display anything the program said when it quit.
+    else if (programRunningTime < BXSuccessfulProgramRunningTimeThreshold)
     {
-        /*
-        NSNumber *showProgramPanel = [self.gameSettings objectForKey: BXGameboxSettingsShowProgramPanelKey];
-        if (showProgramPanel != nil)
+        //FIXME: this is currently the only way we can tell whether the program that just exited was a program
+        //we launched, or just the AUTOEXEC.BAT finishing up. If it's the autoexec then it's bound to finish
+        //well under our minimum program time. We need a more robust and explicit check for this.
+        if (self.launchedProgramURL)
         {
-            return showProgramPanel.boolValue;
-        }
-        else
-        {
-            return YES;
-        }
-        */
-        
-        //Don't show the launch panel if the user had manually switched to the DOS prompt
-        //from the launch panel.
-        if (_userSwitchedToDOSPrompt)
+            NSLog(@"Suspiciously short running time on program %@, ignoring return to launch panel: %f", exitNotification, programRunningTime);
             return NO;
-        
-        //Otherwise, show the damn launch panel.
-        return YES;
+        }
     }
+    
+    return _programExitBehaviour == BXSessionShowLauncher;
 }
 
 - (void) _startEmulator

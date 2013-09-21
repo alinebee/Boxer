@@ -1977,7 +1977,13 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	//Don't auto-pause if the emulator hasn't finished starting up yet.
 	if (!self.isEmulating) return NO;
 	
-	//Only allow auto-pausing if the mode is enabled in the user's settings,
+    //Always autopause if the DOS window is showing the launcher panel.
+    if (self.DOSWindowController.currentPanel == BXDOSWindowLaunchPanel)
+    {
+        return YES;
+    }
+    
+	//Otherwise, only allow auto-pausing if the mode is enabled in the user's settings
     //or if the emulator is waiting at the DOS prompt.
 	if (self.emulator.isAtPrompt ||
         [[NSUserDefaults standardUserDefaults] boolForKey: @"pauseWhileInactive"])
@@ -1991,12 +1997,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         //was to appear.
         if (self.DOSWindowController.window.isMiniaturized)
             return YES;
-        
-        //Autopause if the DOS window is showing the launcher panel.
-        if (self.DOSWindowController.currentPanel == BXDOSWindowLaunchPanel)
-        {
-            return YES;
-        }
     }
 	
     return NO;
@@ -2068,7 +2068,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         [self _syncAutoPausedState];
     }
 }
-	 
+
 - (void) _deregisterForPauseNotifications
 {
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];

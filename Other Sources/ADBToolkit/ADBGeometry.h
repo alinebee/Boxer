@@ -32,7 +32,19 @@ extern "C" {
 #endif
 
 	#import <Foundation/Foundation.h>
-
+	
+	typedef NS_ENUM(NSUInteger, ADBRectAlignment) {
+		ADBRectAlignBottomLeft =	0,
+		ADBRectAlignBottomCenter =	1,
+		ADBRectAlignBottomRight =	2,
+		ADBRectAlignLeftCenter =	3,
+		ADBRectAlignCenter =		4,
+		ADBRectAlignRightCenter =	5,
+		ADBRectAlignTopLeft =		6,
+		ADBRectAlignTopCenter =		7,
+		ADBRectAlignTopRight =		8
+	};
+	
 	//Returns the nearest power of two that can accommodate the specified value
 	NSInteger fitToPowerOfTwo(NSInteger value);
 
@@ -70,6 +82,9 @@ extern "C" {
 	//Align innerRect within outerRect relative to the specified anchor point: 
 	//{0,0} is bottom left, {1,1} is top right, {0.5,0.5} is center.
 	NSRect alignInRectWithAnchor(NSRect innerRect, NSRect outerRect, NSPoint anchor);
+
+	//Align innerRect within outerRect based on the specified alignment: 
+	NSRect alignRectanglesWithAlignment(NSRect innerRect, NSRect outerRect, ADBRectAlignment alignment);
 
 	//Center innerRect within outerRect. Equivalent to alignRectInRectWithAnchor of {0.5, 0.5}.
 	NSRect centerInRect(NSRect innerRect, NSRect outerRect);

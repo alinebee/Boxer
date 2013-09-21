@@ -54,6 +54,7 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	NSView *_programPanel;
     NSView *_launchPanel;
     NSView *_loadingPanel;
+    NSView *_panelWrapper;
     NSSegmentedControl *_panelToggle;
     YRKSpinningProgressIndicator *_loadingSpinner;
 
@@ -79,35 +80,21 @@ extern NSString * const BXViewDidLiveResizeNotification;
     BXRenderingStyle _renderingStyle;
 }
 
-#pragma mark -
-#pragma mark Properties
+#pragma mark - Properties
 
-//Our subsidiary view controllers.
+#pragma mark Controllers
+
+//Our subsidiary view controllers, defined inside the XIB.
 @property (retain, nonatomic) IBOutlet BXProgramPanelController *programPanelController;
 @property (retain, nonatomic) IBOutlet BXInputController *inputController;
 @property (retain, nonatomic) IBOutlet BXStatusBarController *statusBarController;
 @property (retain, nonatomic) IBOutlet BXLaunchPanelController *launchPanelController;
 @property (retain, nonatomic) IBOutlet NSToolbarItem *documentationButton;
 
-//The current panel being displayed in the content area of the window.
-@property (readonly, nonatomic) BXDOSWindowPanel currentPanel;
+#pragma mark Views
 
-//Whether the launch panel/DOS view is currently being displayed.
-//Used by UI bindings for toggling between the program list and the DOS view.
-@property (assign, nonatomic) BOOL launchPanelShown;
-@property (assign, nonatomic) BOOL DOSViewShown;
-
-//The view which displays the emulator's graphical output.
-@property (retain, nonatomic) IBOutlet NSView <BXFrameRenderingView> *renderingView;
-
-//The rendering style with which to render.
-@property (assign, nonatomic) BXRenderingStyle renderingStyle;
-
-//The tint (white, amber, green) to use when running in Hercules emulation mode 
-@property (assign, nonatomic) BXHerculesTintMode herculesTintMode;
-
-//The view that tracks user input.
-@property (retain, nonatomic) IBOutlet BXInputView *inputView;
+//The view that wraps our main UI panels.
+@property (retain, nonatomic) IBOutlet NSView *panelWrapper;
 
 //The slide-out program picker panel.
 @property (retain, nonatomic) IBOutlet NSView *programPanel;
@@ -121,14 +108,33 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //The status bar at the bottom of the window.
 @property (retain, nonatomic) IBOutlet NSView *statusBar;
 
+//The view which displays the emulator's graphical output.
+@property (retain, nonatomic) IBOutlet NSView <BXFrameRenderingView> *renderingView;
+
+//The view that tracks user input.
+@property (retain, nonatomic) IBOutlet BXInputView *inputView;
+
 //Our loading indicator.
 @property (retain, nonatomic) IBOutlet YRKSpinningProgressIndicator *loadingSpinner;
+
+
+#pragma mark View options
+
+//The current panel being displayed in the content area of the window.
+@property (readonly, nonatomic) BXDOSWindowPanel currentPanel;
+
+//Whether the launch panel/DOS view is currently being displayed.
+//Used by UI bindings for toggling between the program list and the DOS view.
+@property (assign, nonatomic) BOOL launchPanelShown;
+@property (assign, nonatomic) BOOL DOSViewShown;
 
 //The maximum BXFrameBuffer size we can render.
 @property (readonly, nonatomic) NSSize maxFrameSize;
 
 //The current size of the DOS rendering viewport.
 @property (readonly, nonatomic) NSSize viewportSize;
+
+#pragma mark Rendering options
 
 //The maximum drawing area to use when in fullscreen.
 //Defaults to NSZeroSize, which means that it will fill the available fullscreen area.
@@ -137,6 +143,12 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //Whether we should force DOS frames to use a 4:3 aspect ratio.
 //Changing this will resize the DOS window/fullscreen viewport to suit.
 @property (assign, nonatomic, getter=isAspectCorrected) BOOL aspectCorrected;
+
+//The rendering style with which to render.
+@property (assign, nonatomic) BXRenderingStyle renderingStyle;
+
+//The tint (white, amber, green) to use when running in Hercules emulation mode
+@property (assign, nonatomic) BXHerculesTintMode herculesTintMode;
 
 #pragma mark -
 #pragma mark Inherited accessor overrides

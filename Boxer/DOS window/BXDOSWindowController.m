@@ -51,6 +51,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 @synthesize statusBar = _statusBar;
 @synthesize programPanel = _programPanel;
 @synthesize launchPanel = _launchPanel;
+@synthesize panelWrapper = _panelWrapper;
 @synthesize programPanelController = _programPanelController;
 @synthesize launchPanelController = _launchPanelController;
 @synthesize inputController = _inputController;
@@ -102,6 +103,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     self.inputController = nil;
     self.statusBarController = nil;
     self.launchPanelController = nil;
+    self.panelWrapper = nil;
     
     self.inputView = nil;
     self.renderingView = nil;
@@ -167,6 +169,10 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     NSArray *dragTypes = [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil];
 	[self.window registerForDraggedTypes: dragTypes];
 	
+    //The launch panel controller is responsible for loading its own view, which we add to the hierarchy ourselves.
+    self.launchPanel = self.launchPanelController.view;
+    [self.panelWrapper addSubview: self.launchPanel];
+    
 	[self _addObservers];
 	
 	//Set up the window UI components appropriately
@@ -1032,8 +1038,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
             [self.window disableFlushWindow];
             
             //We reveal the launcher by sliding the parent view along horizontally:
-            //So we resize the parent view to accommodate both views side-by-side.
-            NSView *wrapperView = self.launchPanel.superview;
+            //So we resize the wrapper to accommodate both views side-by-side.
+            NSView *wrapperView = self.panelWrapper;
             
             NSRect originalFrame = wrapperView.frame;
             NSRect originalBounds = wrapperView.bounds;

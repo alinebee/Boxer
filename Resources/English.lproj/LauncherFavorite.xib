@@ -17,7 +17,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
             <subviews>
                 <button id="gxe-JN-75p" customClass="BXLaunchPanelButton">
-                    <rect key="frame" x="64" y="11" width="512" height="48"/>
+                    <rect key="frame" x="64" y="0.0" width="512" height="48"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                     <buttonCell key="cell" type="square" title="Launch Program" bezelStyle="shadowlessSquare" image="NSFollowLinkFreestandingTemplate" imagePosition="right" alignment="left" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="qBy-5c-jpM" customClass="BXLaunchPanelButtonCell">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>

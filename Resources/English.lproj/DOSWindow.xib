@@ -10,10 +10,10 @@
                 <outlet property="documentationButton" destination="1348" id="1439"/>
                 <outlet property="inputController" destination="957" id="973"/>
                 <outlet property="inputView" destination="978" id="979"/>
-                <outlet property="launchPanel" destination="1010" id="1245"/>
                 <outlet property="launchPanelController" destination="1056" id="1246"/>
                 <outlet property="loadingPanel" destination="1251" id="1252"/>
                 <outlet property="loadingSpinner" destination="1253" id="1254"/>
+                <outlet property="panelWrapper" destination="1244" id="SKg-qj-KNn"/>
                 <outlet property="renderingView" destination="970" id="976"/>
                 <outlet property="statusBar" destination="3" id="918"/>
                 <outlet property="statusBarController" destination="926" id="983"/>
@@ -83,79 +83,6 @@
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                             </customView>
                                         </subviews>
-                                    </customView>
-                                    <customView hidden="YES" id="1010" userLabel="Launch Panel">
-                                        <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
-                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                        <subviews>
-                                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="7xr-Dg-kSo">
-                                                <rect key="frame" x="0.0" y="0.0" width="640" height="420"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="pjC-0W-gYy">
-                                                    <rect key="frame" x="0.0" y="0.0" width="640" height="420"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                    <subviews>
-                                                        <collectionView focusRingType="none" maxNumberOfColumns="1" id="qHP-kW-c1C" customClass="BXLauncherList">
-                                                            <rect key="frame" x="0.0" y="0.0" width="640" height="420"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                            <color key="primaryBackgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                            <connections>
-                                                                <binding destination="1056" name="content" keyPath="displayedRows" id="OmD-ql-CO3"/>
-                                                                <outlet property="delegate" destination="1056" id="ghj-Uq-piv"/>
-                                                                <outlet property="favoritePrototype" destination="1160" id="ulq-WN-FvQ"/>
-                                                                <outlet property="headingPrototype" destination="GGq-ui-Bs4" id="WmF-n1-7Nd"/>
-                                                                <outlet property="itemPrototype" destination="xUB-Oi-KKc" id="c6S-h2-EMs"/>
-                                                            </connections>
-                                                        </collectionView>
-                                                    </subviews>
-                                                    <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                </clipView>
-                                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" id="1Tv-qd-UuM">
-                                                    <rect key="frame" x="-100" y="-100" width="233" height="15"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                </scroller>
-                                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" id="yWt-6Z-IGp">
-                                                    <rect key="frame" x="234" y="1" width="15" height="143"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                </scroller>
-                                            </scrollView>
-                                            <customView id="JZf-Dk-bSs" customClass="BXLauncherNavigationHeader">
-                                                <rect key="frame" x="0.0" y="420" width="640" height="60"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                <subviews>
-                                                    <segmentedControl verticalHuggingPriority="750" id="bhn-eK-unM">
-                                                        <rect key="frame" x="20" y="17" width="231" height="25"/>
-                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <segmentedCell key="cell" alignment="left" style="texturedRounded" trackingMode="selectOne" id="IVF-3t-lOR">
-                                                            <font key="font" metaFont="system"/>
-                                                            <segments>
-                                                                <segment label="Favorites" image="FavoriteOutlineTemplate" width="112"/>
-                                                                <segment label="All Programs" image="NSListViewTemplate" width="112" selected="YES" tag="1"/>
-                                                            </segments>
-                                                        </segmentedCell>
-                                                        <connections>
-                                                            <action selector="performSegmentedButtonAction:" target="1056" id="mjj-rM-TPI"/>
-                                                        </connections>
-                                                    </segmentedControl>
-                                                    <searchField verticalHuggingPriority="750" id="leW-UQ-Piz">
-                                                        <rect key="frame" x="423" y="19" width="197" height="22"/>
-                                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                                                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="Search programs" usesSingleLineMode="YES" bezelStyle="round" sendsSearchStringImmediately="YES" recentsAutosaveName="launchPanelFilter" id="K0G-42-hZ1">
-                                                            <font key="font" metaFont="system"/>
-                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                        </searchFieldCell>
-                                                        <connections>
-                                                            <action selector="enterSearchText:" target="1056" id="LMh-nw-gST"/>
-                                                            <outlet property="delegate" destination="1056" id="mX6-pt-3mQ"/>
-                                                        </connections>
-                                                    </searchField>
-                                                </subviews>
-                                            </customView>
-                                        </subviews>
-                                        <connections>
-                                            <outlet property="nextKeyView" destination="leW-UQ-Piz" id="eNA-WE-yGh"/>
-                                        </connections>
                                     </customView>
                                 </subviews>
                             </customView>
@@ -309,8 +236,8 @@
                                             <binding destination="-2" name="enabled" keyPath="document.emulating" id="1429"/>
                                             <binding destination="-2" name="value" keyPath="document.sliderSpeed" id="1433">
                                                 <dictionary key="options">
-                                                    <real key="NSNoSelectionPlaceholder" value="1"/>
                                                     <bool key="NSValidatesImmediately" value="YES"/>
+                                                    <real key="NSNoSelectionPlaceholder" value="1"/>
                                                     <string key="NSValueTransformerName">BXSpeedSliderTransformer</string>
                                                 </dictionary>
                                             </binding>
@@ -431,18 +358,7 @@
                 <outlet property="view" destination="978" id="980"/>
             </connections>
         </viewController>
-        <viewController id="1056" userLabel="Launch Panel Controller" customClass="BXLaunchPanelController">
-            <connections>
-                <outlet property="filter" destination="leW-UQ-Piz" id="5My-vR-5sk"/>
-                <outlet property="launcherList" destination="qHP-kW-c1C" id="CVI-Cb-yhu"/>
-                <outlet property="launcherScrollView" destination="7xr-Dg-kSo" id="JlN-0t-Eb7"/>
-                <outlet property="tabSelector" destination="bhn-eK-unM" id="tcH-JB-tL9"/>
-                <outlet property="view" destination="1010" id="1060"/>
-            </connections>
-        </viewController>
-        <collectionViewItem nibName="LauncherHeading" id="GGq-ui-Bs4" userLabel="All Programs Heading" customClass="BXCollectionItem"/>
-        <collectionViewItem nibName="LauncherItem" id="xUB-Oi-KKc" userLabel="All Programs Item" customClass="BXCollectionItem"/>
-        <collectionViewItem nibName="LauncherFavorite" id="1160" userLabel="Favorites Item" customClass="BXCollectionItem"/>
+        <viewController nibName="LaunchPanel" id="1056" userLabel="Launch Panel Controller" customClass="BXLaunchPanelController"/>
         <menu id="1389">
             <items>
                 <menuItem title="Pause" id="1390">
@@ -471,7 +387,6 @@
         <image name="DiscSwapTemplate" width="24" height="16"/>
         <image name="DocumentationTemplate" width="16" height="16"/>
         <image name="FastForwardTemplate" width="19" height="13"/>
-        <image name="FavoriteOutlineTemplate" width="32" height="32"/>
         <image name="NSListViewTemplate" width="11" height="10"/>
         <image name="NSLockLockedTemplate" width="9" height="12"/>
         <image name="NSLockUnlockedTemplate" width="9" height="12"/>

@@ -879,6 +879,7 @@
 		9FEAA3EC1204595B0085F008 /* ADBOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3EB1204595B0085F008 /* ADBOperation.m */; };
 		9FECE19011A31B8B00E0EBB6 /* BXBasicRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXBasicRenderer.m */; };
 		9FECE1C211A3244500E0EBB6 /* BXGLRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */; };
+		9FED09FE17ED95CA009C4155 /* LaunchPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FED09FC17ED95CA009C4155 /* LaunchPanel.xib */; };
 		9FEF98011191E1EF002024DF /* BXEmulatedMouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXEmulatedMouse.mm */; };
 		9FF1562914506DBA00545317 /* BXThemedProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562814506DBA00545317 /* BXThemedProgressIndicator.m */; };
 		9FF1562D14506E7200545317 /* BXHUDLevelIndicatorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */; };
@@ -1850,6 +1851,7 @@
 		9FECE18F11A31B8B00E0EBB6 /* BXBasicRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBasicRenderer.m; sourceTree = "<group>"; };
 		9FECE1C011A3244500E0EBB6 /* BXGLRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGLRenderingView.h; sourceTree = "<group>"; };
 		9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGLRenderingView.m; sourceTree = "<group>"; };
+		9FED09FD17ED95CA009C4155 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/LaunchPanel.xib; sourceTree = "<group>"; };
 		9FEF97FF1191E1EF002024DF /* BXEmulatedMouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedMouse.h; sourceTree = "<group>"; };
 		9FEF98001191E1EF002024DF /* BXEmulatedMouse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulatedMouse.mm; sourceTree = "<group>"; };
 		9FF1562714506DBA00545317 /* BXThemedProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedProgressIndicator.h; sourceTree = "<group>"; };
@@ -2537,6 +2539,7 @@
 				9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */,
 				9F45A1CB109C3D3400593456 /* MainMenu.xib */,
 				9F45A1C7109C3D1100593456 /* DOSWindow.xib */,
+				9FED09FC17ED95CA009C4155 /* LaunchPanel.xib */,
 				9FE3BAE617EC9AA100C9BB82 /* LauncherItem.xib */,
 				9FE3BAE917ECA09500C9BB82 /* LauncherHeading.xib */,
 				9FE3BAF617ECE1E800C9BB82 /* LauncherFavorite.xib */,
@@ -3769,6 +3772,7 @@
 				9FE2172F121EED1E001452E3 /* ImportRenameTip.png in Resources */,
 				9FA9E256121FD5BA006E20C4 /* DropzoneTemplate.pdf in Resources */,
 				9FA9E281121FD874006E20C4 /* PanelExpandTemplate.pdf in Resources */,
+				9FED09FE17ED95CA009C4155 /* LaunchPanel.xib in Resources */,
 				9FA9E282121FD874006E20C4 /* PanelCollapseTemplate.pdf in Resources */,
 				9FDE34371351E0F5000DCE44 /* Welcome.xib in Resources */,
 				9F2292631225848000ABC0B3 /* WelcomeSpotlight.png in Resources */,
@@ -4955,6 +4959,14 @@
 				9FE3BAF717ECE1E800C9BB82 /* English */,
 			);
 			name = LauncherFavorite.xib;
+			sourceTree = "<group>";
+		};
+		9FED09FC17ED95CA009C4155 /* LaunchPanel.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FED09FD17ED95CA009C4155 /* English */,
+			);
+			name = LaunchPanel.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -6,13 +6,24 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import "BXCollectionItemView.h"
 
 typedef enum {
     BXLaunchPanelDisplayFavorites,
     BXLaunchPanelDisplayAllPrograms,
 } BXLaunchPanelDisplayMode;
 
-@interface BXLaunchPanelController : NSViewController <NSTextFieldDelegate>
+
+@class BXLauncherItem;
+@protocol BXLauncherItemDelegate
+
+- (void) launchItem: (BXLauncherItem *)item;
+- (void) revealItemInFinder: (BXLauncherItem *)item;
+- (BOOL) canLaunchPrograms; //Must conform to KVO
+
+@end
+
+@interface BXLaunchPanelController : NSViewController <NSCollectionViewDelegate, NSTextFieldDelegate, BXLauncherItemDelegate>
 {
     NSSegmentedControl *_tabSelector;
     NSCollectionView *_launcherList;
@@ -44,9 +55,7 @@ typedef enum {
 //An array of sanitised NSStrings derived from the contents of the search field. 
 @property (readonly, retain, nonatomic) NSMutableArray *filterKeywords;
 
-//Triggered by favorite buttons to launch the specified program.
-//sender is required to be one of our program-list collection view items.
-- (IBAction) launchFavoriteProgram: (NSButton *)sender;
+#pragma mark - Actions
 
 - (IBAction) showFavoritePrograms: (id)sender;
 - (IBAction) showAllPrograms: (id)sender;
@@ -58,15 +67,42 @@ typedef enum {
 
 
 //A custom collection view that uses a different prototype for drive 'headings'
+@class BXLauncherItem;
 @interface BXLauncherList : NSCollectionView
 {
-    NSCollectionViewItem *_headingPrototype;
-    NSCollectionViewItem *_favoritePrototype;
+    BXLauncherItem *_headingPrototype;
+    BXLauncherItem *_favoritePrototype;
 }
 
-@property (assign, nonatomic) IBOutlet NSCollectionViewItem *headingPrototype;
-@property (assign, nonatomic) IBOutlet NSCollectionViewItem *favoritePrototype;
+@property (assign, nonatomic) IBOutlet BXLauncherItem *headingPrototype;
+@property (assign, nonatomic) IBOutlet BXLauncherItem *favoritePrototype;
 
+@end
+
+
+@interface BXLauncherItem : BXCollectionItem
+{
+    id <BXLauncherItemDelegate> _delegate;
+}
+@property (assign, nonatomic) IBOutlet id <BXLauncherItemDelegate> delegate;
+@property (readonly, nonatomic, getter=isLaunchable) BOOL launchable;
+
+//Called by the item view to launch (or reveal) the URL corresponding to this item.
+- (IBAction) launchProgram: (id)sender;
+- (IBAction) revealItemInFinder: (id)sender;
+
+@end
+
+//Handles the custom appearance and input behaviour of regular program items.
+@interface BXLauncherItemView : BXCollectionItemView
+@end
+
+//Handles the custom appearance and input behaviour of favorites.
+@interface BXLauncherFavoriteView : BXLauncherItemView
+@end
+
+//Handles the behaviour of launcher heading rows.
+@interface BXLauncherHeadingView : BXCollectionItemView
 @end
 
 

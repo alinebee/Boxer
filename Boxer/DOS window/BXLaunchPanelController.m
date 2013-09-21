@@ -12,7 +12,7 @@
 #import "BXEmulator+BXDOSFilesystem.h"
 #import "BXValueTransformers.h"
 #import "BXCollectionItemView.h"
-#import "RegexKitLite.h"
+#import "BXBaseAppController.h"
 
 @interface BXLaunchPanelController ()
 
@@ -174,6 +174,7 @@
                                        @"isHeading": @(YES),
                                        @"title": driveTitle,
                                        @"URL": drive.sourceURL,
+                                       @"drive": drive,
                                        @"icon": driveIcon,
                                        };
             
@@ -185,9 +186,11 @@
                 NSString *dosPath   = [session.emulator DOSPathForURL: URL onDrive: drive];
                 NSString *title     = [programNameFormatter transformedValue: URL.path];
                 
-                NSMutableDictionary *programRow = [NSMutableDictionary dictionary];
-                [programRow setObject: title forKey: @"title"];
-                [programRow setObject: URL forKey: @"URL"];
+                NSMutableDictionary *programRow = [NSMutableDictionary dictionaryWithDictionary: @{
+                                                   @"title": title,
+                                                   @"URL": URL,
+                                                   @"drive": drive,
+                                                   }];
                 
                 //May be nil, if the drive cannot resolve the path
                 if (dosPath)
@@ -223,6 +226,7 @@
         NSString *title     = [launcher objectForKey: BXLauncherTitleKey];
         NSString *arguments = [launcher objectForKey: BXLauncherArgsKey]; //May be nil
         NSString *dosPath   = [session.emulator DOSPathForURL: URL]; //May be nil
+        BXDrive *drive      = [session queuedDriveRepresentingURL: URL]; //May be nil
         
         //If no title was provided, use the program's filename.
         if (!title.length)
@@ -238,6 +242,9 @@
             [launcherRow setObject: dosPath forKey: @"dosPath"];
         else
             NSLog(@"Could not resolve DOS path for %@", URL);
+        
+        if (drive)
+            [launcherRow setObject: drive forKey: @"drive"];
         
         if (arguments)
             [launcherRow setObject: arguments forKey: @"arguments"];
@@ -415,24 +422,67 @@
     return session.isEmulating && session.emulator.isAtPrompt;
 }
 
-- (IBAction) launchFavoriteProgram: (NSButton *)sender
+- (void) launchItem: (BXLauncherItem *)item
 {
-    NSCollectionViewItem *item = [(BXCollectionItemView *)sender.superview delegate];
+    NSDictionary *itemDetails = item.representedObject;
+    NSURL *URL = [itemDetails objectForKey: @"URL"];
     
-    //The collection view item's represented object is expected to be a dictionary
-    //containing details of the program to launch.
-    NSDictionary *programDetails = item.representedObject;
-    
-    NSURL *programURL = [programDetails objectForKey: @"URL"];
-    
-	if (programURL)
+	if (URL)
     {
-        NSString *arguments = [programDetails objectForKey: @"arguments"];
+        NSString *arguments = [itemDetails objectForKey: @"arguments"];
     
-        BXSession *session = (BXSession *)self.representedObject;
-        [session openURLInDOS: programURL
+        BXSession *session = self.representedObject;
+        
+        //Check if we need to mount a drive first in order to run this program
+        if ([session shouldMountNewDriveForURL: URL])
+        {
+            NSError *mountError = nil;
+            BXDrive *drive = [session mountDriveForURL: URL
+                                              ifExists: BXDriveReplace
+                                               options: BXDefaultDriveMountOptions
+                                                 error: &mountError];
+            
+            //Display an error if a drive could not be mounted for the program.
+            if (!drive)
+            {
+                if (mountError)
+                {
+                    [self presentError: mountError
+                        modalForWindow: session.windowForSheet
+                              delegate: nil
+                    didPresentSelector: NULL
+                           contextInfo: NULL];
+                }
+                return; //mount failed, don't continue further
+            }
+        }
+        
+        //NSLog(@"Opening URL %@ in DOS", URL);
+        
+        //TODO: display an error if the program could not be launched for some reason.
+        [session openURLInDOS: URL
                 withArguments: arguments
                clearingScreen: YES];
+    }
+}
+
+- (void) revealItemInFinder: (BXLauncherItem *)item
+{
+    NSDictionary *itemDetails = item.representedObject;
+    NSURL *URL = [itemDetails objectForKey: @"URL"];
+    
+    //If the URL is absent or doesn't physically exist, e.g. it's inside a disc image,
+    //then reveal the backing drive if available.
+    if (!URL || ![URL checkResourceIsReachableAndReturnError: NULL])
+    {
+        BXDrive *drive = [itemDetails objectForKey: @"drive"];
+        URL = drive.sourceURL;
+    }
+    
+    //NSLog(@"Revealing URL %@", URL);
+    if (URL)
+    {
+        [[NSApp delegate] revealURLsInFinder: @[URL]];
     }
 }
 
@@ -518,6 +568,84 @@
 
 @end
 
+
+@implementation BXLauncherItem
+@synthesize delegate = _delegate;
+
+- (id) copyWithZone: (NSZone *)zone
+{
+    BXLauncherItem *clone = [super copyWithZone: zone];
+    clone.delegate = self.delegate;
+    return clone;
+}
+
++ (NSSet *) keyPathsForValuesAffectingLaunchable
+{
+    return [NSSet setWithObjects: @"representedObject.URL", @"delegate.canLaunchPrograms", nil];
+}
+
+- (BOOL) isLaunchable
+{
+    return [self.representedObject objectForKey: @"URL"] != nil && [self.delegate canLaunchPrograms];
+}
+
+- (IBAction) launchProgram: (id)sender
+{
+    [self.delegate launchItem: self];
+}
+
+- (IBAction) revealItemInFinder: (id)sender
+{
+    [self.delegate revealItemInFinder: self];
+}
+
+- (BOOL) validateMenuItem: (NSMenuItem *)menuItem
+{
+    SEL action = menuItem.action;
+    
+    if (action == @selector(launchProgram:))
+    {
+        return self.isLaunchable;
+    }
+    else if (action == @selector(revealItemInFinder:))
+    {
+        return [self.representedObject objectForKey: @"URL"] != nil;
+    }
+    else
+    {
+        return YES;
+    }
+}
+
+@end
+
+@implementation BXLauncherItemView
+
+- (void) mouseDown: (NSEvent *)theEvent
+{
+    //Enter an event loop listening for the mouse-up event.
+    //If we don't do this, the collection view will swallow the mouse-up and we'll never see it.
+    NSEvent *eventInDrag = [self.window nextEventMatchingMask: NSLeftMouseUpMask];
+    switch (eventInDrag.type)
+    {
+        case NSLeftMouseUp:
+            [self mouseUp: eventInDrag];
+            return;
+    }
+}
+
+- (void) mouseUp: (NSEvent *)theEvent
+{
+    [NSApp sendAction: @selector(launchProgram:) to: self.delegate from: self];
+}
+
+@end
+
+@implementation BXLauncherFavoriteView
+@end
+
+@implementation BXLauncherHeadingView
+@end
 
 @implementation BXLauncherNavigationHeader
 

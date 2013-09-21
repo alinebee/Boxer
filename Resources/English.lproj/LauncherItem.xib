@@ -5,14 +5,14 @@
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="BXCollectionItem">
+        <customObject id="-2" userLabel="File's Owner" customClass="BXLauncherItem">
             <connections>
                 <outlet property="view" destination="s66-ZJ-EY2" id="bll-oE-Mlt"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application"/>
-        <view id="s66-ZJ-EY2" userLabel="Item View" customClass="BXCollectionItemView">
+        <view id="s66-ZJ-EY2" userLabel="Item View" customClass="BXLauncherItemView">
             <rect key="frame" x="0.0" y="0.0" width="640" height="44"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
             <subviews>
@@ -65,8 +65,25 @@
             </subviews>
             <connections>
                 <outlet property="delegate" destination="-2" id="zej-UT-myI"/>
+                <outlet property="menu" destination="Kou-cl-8eb" id="A4A-O8-Ohi"/>
             </connections>
         </view>
+        <menu id="Kou-cl-8eb">
+            <items>
+                <menuItem title="Launch" id="YDu-vB-8Q5">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="launchProgram:" target="-2" id="23C-hr-jT8"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Show in Finder" id="ANv-MZ-D7M">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="revealItemInFinder:" target="-2" id="5J5-Eh-eIG"/>
+                    </connections>
+                </menuItem>
+            </items>
+        </menu>
     </objects>
     <resources>
         <image name="FavoriteFilledTemplate" width="32" height="32"/>

@@ -33,6 +33,7 @@
                                 <color key="primaryBackgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <connections>
                                     <binding destination="-2" name="content" keyPath="displayedRows" id="vTt-vG-xaF"/>
+                                    <outlet property="delegate" destination="-2" id="GiT-Eh-GDM"/>
                                     <outlet property="favoritePrototype" destination="TgG-8i-sVt" id="8yn-8x-qry"/>
                                     <outlet property="headingPrototype" destination="m2W-Eu-3Sn" id="Kjg-bY-6yQ"/>
                                     <outlet property="itemPrototype" destination="W1Y-o0-Etd" id="pns-yF-bxW"/>
@@ -88,9 +89,21 @@
                 <outlet property="nextKeyView" destination="io9-xs-Bgz" id="9qh-ik-gNg"/>
             </connections>
         </customView>
-        <collectionViewItem nibName="LauncherHeading" id="m2W-Eu-3Sn" userLabel="Heading prototype" customClass="BXCollectionItem"/>
-        <collectionViewItem nibName="LauncherFavorite" id="TgG-8i-sVt" userLabel="Favorite prototype" customClass="BXCollectionItem"/>
-        <collectionViewItem nibName="LauncherItem" id="W1Y-o0-Etd" userLabel="Program prototype" customClass="BXCollectionItem"/>
+        <collectionViewItem nibName="LauncherHeading" id="m2W-Eu-3Sn" userLabel="Heading prototype" customClass="BXLauncherItem">
+            <connections>
+                <outlet property="delegate" destination="-2" id="6uH-B5-iJO"/>
+            </connections>
+        </collectionViewItem>
+        <collectionViewItem nibName="LauncherFavorite" id="TgG-8i-sVt" userLabel="Favorite prototype" customClass="BXLauncherItem">
+            <connections>
+                <outlet property="delegate" destination="-2" id="tyE-RK-Sjx"/>
+            </connections>
+        </collectionViewItem>
+        <collectionViewItem nibName="LauncherItem" id="W1Y-o0-Etd" userLabel="Program prototype" customClass="BXLauncherItem">
+            <connections>
+                <outlet property="delegate" destination="-2" id="xTP-8e-TtX"/>
+            </connections>
+        </collectionViewItem>
     </objects>
     <resources>
         <image name="FavoriteOutlineTemplate" width="32" height="32"/>

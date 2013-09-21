@@ -15,6 +15,7 @@
 
 - (void) _drawBackgroundInRect: (NSRect)dirtyRect
 {
+    /*
     NSImage *background = [NSImage imageNamed: @"DOSWindowBackground"];
 	NSColor *backgroundPattern = [NSColor colorWithPatternImage: background];
 	NSSize patternSize		= background.size;
@@ -27,6 +28,16 @@
         [NSGraphicsContext currentContext].patternPhase = patternPhase;
         [backgroundPattern set];
         [NSBezierPath fillRect: dirtyRect];
+	[NSGraphicsContext restoreGraphicsState];
+    */
+    NSColor *backgroundColor = [NSColor colorWithCalibratedRed: 97 / 255.0
+                                                         green: 98 / 255.0
+                                                          blue: 103 / 255.0
+                                                         alpha: 1.0];
+    
+	[NSGraphicsContext saveGraphicsState];
+        [backgroundColor setFill];
+        NSRectFill(dirtyRect);
 	[NSGraphicsContext restoreGraphicsState];
 }
 
@@ -86,11 +97,12 @@
 
 - (void) _drawLightingInRect: (NSRect)dirtyRect
 {
+	NSRect backgroundRect = self.bounds;
+   
     //Draw a vignetting effect from the top center of the window.
 	NSGradient *lighting = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f]
 														 endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.2f]];
 	
-	NSRect backgroundRect = self.bounds;
 	NSPoint startPoint	= NSMakePoint(NSMidX(backgroundRect), NSMaxY(backgroundRect));
 	NSPoint endPoint	= NSMakePoint(NSMidX(backgroundRect), NSMidY(backgroundRect));
 	CGFloat startRadius = NSWidth(backgroundRect) * 0.1f;
@@ -102,31 +114,47 @@
 	
 	[lighting release];
     
-    
     //Augment the main lighting with shadows at the top and bottom edge of the window.
     NSRect topShadowRect = backgroundRect, bottomShadowRect = backgroundRect;
-    topShadowRect.size.height = 20;
-    bottomShadowRect.size.height = 20;
+    topShadowRect.size.height = 6;
+    bottomShadowRect.size.height = 1;
     topShadowRect.origin.y = backgroundRect.size.height - topShadowRect.size.height;
     
     BOOL renderingToSnapshot = ([NSView focusView] == nil);
     BOOL topShadowDirty     = renderingToSnapshot || [self needsToDrawRect: topShadowRect];
     BOOL bottomShadowDirty  = renderingToSnapshot || [self needsToDrawRect: bottomShadowRect];
-    if (topShadowDirty || bottomShadowDirty)
+    if (topShadowDirty)
     {
-        NSGradient *edgeShadows = [[NSGradient alloc] initWithColorsAndLocations:
-                                   [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.3f], 0.0f,
-                                   [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.05f], 0.5f,
-                                   [NSColor clearColor], 1.0f,
-                                   nil];
+        NSGradient *topShadow = [[NSGradient alloc] initWithColorsAndLocations:
+                                 [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.3f], 0.0f,
+                                 [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.05f], 0.5f,
+                                 [NSColor clearColor], 1.0f,
+                                 nil];
         
-        if (topShadowDirty)
-            [edgeShadows drawInRect: topShadowRect angle: 270];
+        [topShadow drawInRect: topShadowRect angle: 270];
+    }
+    
+    if (NO && bottomShadowDirty)
+    {
+        NSColor *bottomBevel = [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.1];
         
-        if (bottomShadowDirty)
-            [edgeShadows drawInRect: bottomShadowRect angle: 90];
+        NSRect bevelRect = bottomShadowRect;
         
-        [edgeShadows release];
+        [NSGraphicsContext saveGraphicsState];
+            [bottomBevel setFill];
+            NSRectFillUsingOperation(bevelRect, NSCompositeSourceOver);
+        [NSGraphicsContext restoreGraphicsState];
+        
+        /*
+        NSGradient *bottomShadow = [[NSGradient alloc] initWithColorsAndLocations:
+                                    [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.1f], 0.0f,
+                                    [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.1f], 1.0f,
+                                    nil];
+        
+        [bottomShadow drawInRect: bottomShadowRect angle: 90];
+        
+        [bottomShadow release];
+         */
     }
 }
 
@@ -159,7 +187,7 @@
 {
     [self _drawBackgroundInRect: dirtyRect];
     [self _drawLightingInRect: dirtyRect];
-    [self _drawGrillesInRect: dirtyRect];
+    //[self _drawGrillesInRect: dirtyRect];
 }
 
 - (void) drawRect: (NSRect)dirtyRect
@@ -169,7 +197,7 @@
     //it gets dirty all the time: so we optimize for overdraw by rendering the background to an
     //bitmap and then rendering that bitmap in future.
     //(If the user is resizing the window, we say to hell with it and draw ourselves anew each time
-    //as the alternative would be too look blurry and gross.)
+    //as the alternative would be to look blurry and gross.)
     
     if (self.inLiveResize)
     {

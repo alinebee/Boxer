@@ -119,6 +119,16 @@
 @end
 
 
+@interface BXLauncherTheme : BXBaseTheme
+@end
+
+@interface BXLauncherHelpTextTheme : BXLauncherTheme
+@end
+
+@interface BXLauncherHeadingTheme : BXLauncherTheme
+@end
+
+
 //Lightly indented medium text for About panel.
 @interface BXAboutTheme : BXBaseTheme
 @end

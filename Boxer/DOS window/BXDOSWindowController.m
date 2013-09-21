@@ -1177,7 +1177,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
         
         if (newPanel == BXDOSWindowLaunchPanel)
         {
-            [self.window makeFirstResponder: self.launchPanel];
+            [self.window makeFirstResponder: self.launchPanel.nextValidKeyView];
         }
     }
     

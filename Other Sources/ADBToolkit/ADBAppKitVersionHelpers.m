@@ -51,6 +51,13 @@ BOOL isRunningOnMountainLion()
 	double appKitVersion = floor(NSAppKitVersionNumber);
 	return (appKitVersion <= NSAppKitVersionNumber10_8 && appKitVersion > NSAppKitVersionNumber10_7);
 }
+/*
+BOOL isRunningOnMavericks()
+{
+	double appKitVersion = floor(NSAppKitVersionNumber);
+	return (appKitVersion <= NSAppKitVersionNumber10_9 && appKitVersion > NSAppKitVersionNumber10_8);
+}
+*/
 
 BOOL isRunningOnSnowLeopardOrAbove()
 {
@@ -68,4 +75,10 @@ BOOL isRunningOnMountainLionOrAbove()
 {
 	double appKitVersion = floor(NSAppKitVersionNumber);
 	return (appKitVersion > NSAppKitVersionNumber10_7);
+}
+
+BOOL isRunningOnMavericksOrAbove()
+{
+	double appKitVersion = floor(NSAppKitVersionNumber);
+	return (appKitVersion > NSAppKitVersionNumber10_8);
 }

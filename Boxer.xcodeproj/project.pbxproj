@@ -868,6 +868,12 @@
 		9FE32383157A9559004492E8 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = 9F84C86D157800DD00CCBCA7 /* Shaders */; };
 		9FE3BAE417EC763E00C9BB82 /* ShelfTemplate.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAE217EC763E00C9BB82 /* ShelfTemplate.jpg */; };
 		9FE3BAE517EC763E00C9BB82 /* ShelfTemplate@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAE317EC763E00C9BB82 /* ShelfTemplate@2x.jpg */; };
+		9FE3BAE817EC9AA100C9BB82 /* LauncherItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAE617EC9AA100C9BB82 /* LauncherItem.xib */; };
+		9FE3BAEB17ECA09500C9BB82 /* LauncherHeading.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAE917ECA09500C9BB82 /* LauncherHeading.xib */; };
+		9FE3BAF217ECC16C00C9BB82 /* FavoriteFilledTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAF017ECC16C00C9BB82 /* FavoriteFilledTemplate.pdf */; };
+		9FE3BAF317ECC16C00C9BB82 /* FavoriteOutlineTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAF117ECC16C00C9BB82 /* FavoriteOutlineTemplate.pdf */; };
+		9FE3BAF517ECC37800C9BB82 /* LaunchPanelDivider.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAF417ECC37800C9BB82 /* LaunchPanelDivider.png */; };
+		9FE3BAF817ECE1E800C9BB82 /* LauncherFavorite.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAF617ECE1E800C9BB82 /* LauncherFavorite.xib */; };
 		9FE50B591365845200495EBE /* BXInputController+BXJoystickInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */; };
 		9FE90BF711F8D1DC003CFFFF /* ADBDelegatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE90BF611F8D1DC003CFFFF /* ADBDelegatedView.m */; };
 		9FEAA3EC1204595B0085F008 /* ADBOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3EB1204595B0085F008 /* ADBOperation.m */; };
@@ -1826,6 +1832,12 @@
 		9FE32381157A7498004492E8 /* ADBBSNESShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBBSNESShader.m; sourceTree = "<group>"; };
 		9FE3BAE217EC763E00C9BB82 /* ShelfTemplate.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ShelfTemplate.jpg; sourceTree = "<group>"; };
 		9FE3BAE317EC763E00C9BB82 /* ShelfTemplate@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "ShelfTemplate@2x.jpg"; sourceTree = "<group>"; };
+		9FE3BAE717EC9AA100C9BB82 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/LauncherItem.xib; sourceTree = "<group>"; };
+		9FE3BAEA17ECA09500C9BB82 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/LauncherHeading.xib; sourceTree = "<group>"; };
+		9FE3BAF017ECC16C00C9BB82 /* FavoriteFilledTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = FavoriteFilledTemplate.pdf; sourceTree = "<group>"; };
+		9FE3BAF117ECC16C00C9BB82 /* FavoriteOutlineTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = FavoriteOutlineTemplate.pdf; sourceTree = "<group>"; };
+		9FE3BAF417ECC37800C9BB82 /* LaunchPanelDivider.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LaunchPanelDivider.png; sourceTree = "<group>"; };
+		9FE3BAF717ECE1E800C9BB82 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/LauncherFavorite.xib; sourceTree = "<group>"; };
 		9FE50B571365845200495EBE /* BXInputController+BXJoystickInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXInputController+BXJoystickInput.h"; sourceTree = "<group>"; };
 		9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXInputController+BXJoystickInput.m"; sourceTree = "<group>"; };
 		9FE90BF511F8D1DC003CFFFF /* ADBDelegatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBDelegatedView.h; sourceTree = "<group>"; };
@@ -2525,6 +2537,9 @@
 				9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */,
 				9F45A1CB109C3D3400593456 /* MainMenu.xib */,
 				9F45A1C7109C3D1100593456 /* DOSWindow.xib */,
+				9FE3BAE617EC9AA100C9BB82 /* LauncherItem.xib */,
+				9FE3BAE917ECA09500C9BB82 /* LauncherHeading.xib */,
+				9FE3BAF617ECE1E800C9BB82 /* LauncherFavorite.xib */,
 				9FDE34111351DCDB000DCE44 /* DOSImportWindow.xib */,
 				9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */,
 				9F6BF48416592EA600D9D66E /* Inspector.xib */,
@@ -3338,6 +3353,9 @@
 				9FCA157E1597223C00C42D10 /* Grille@2x.png */,
 				9FBC31D10F56C370001811F2 /* AboutBackground.png */,
 				9FCA157A159721A300C42D10 /* AboutBackground@2x.png */,
+				9FE3BAF017ECC16C00C9BB82 /* FavoriteFilledTemplate.pdf */,
+				9FE3BAF117ECC16C00C9BB82 /* FavoriteOutlineTemplate.pdf */,
+				9FE3BAF417ECC37800C9BB82 /* LaunchPanelDivider.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -3728,8 +3746,11 @@
 				9FBD321710E5144C00031CB6 /* Brand.png in Resources */,
 				9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */,
 				9F9A4C9710F67A1F00E61965 /* GalleryHQx.png in Resources */,
+				9FE3BAF317ECC16C00C9BB82 /* FavoriteOutlineTemplate.pdf in Resources */,
+				9FE3BAEB17ECA09500C9BB82 /* LauncherHeading.xib in Resources */,
 				9F9A4C9810F67A1F00E61965 /* GalleryMAME.png in Resources */,
 				9F9A4C9910F67A1F00E61965 /* GallerySpotlight.png in Resources */,
+				9FE3BAF517ECC37800C9BB82 /* LaunchPanelDivider.png in Resources */,
 				9F9A4C9A10F67A1F00E61965 /* GalleryBkg.jpg in Resources */,
 				9F9A4C9B10F67A1F00E61965 /* GalleryTVScanlines.png in Resources */,
 				9F9A4CA610F67DD800E61965 /* Preferences.xib in Resources */,
@@ -3781,9 +3802,11 @@
 				9FFF636C140150C3007E8B47 /* DisketteTemplate.pdf in Resources */,
 				9F955B60141A05990068EF71 /* InsertFreestandingTemplate.pdf in Resources */,
 				9F955B61141A05990068EF71 /* EjectFreestandingTemplate.pdf in Resources */,
+				9FE3BAF817ECE1E800C9BB82 /* LauncherFavorite.xib in Resources */,
 				9FBDC591141A0E5D00171176 /* BundleFreestandingTemplate.pdf in Resources */,
 				9FBEC4F4142CEB770016964A /* MT32LCDFontTemplate.png in Resources */,
 				9FBEC4F5142CEB770016964A /* MT32LCDGridTemplate.png in Resources */,
+				9FE3BAF217ECC16C00C9BB82 /* FavoriteFilledTemplate.pdf in Resources */,
 				9F8A9CD2143E120B00C37A93 /* MT32ROMTypes.plist in Resources */,
 				9FE3BAE517EC763E00C9BB82 /* ShelfTemplate@2x.jpg in Resources */,
 				9F586CF1143E51DD00E840C8 /* CM32L.png in Resources */,
@@ -3848,6 +3871,7 @@
 				9FB6AE8B16C82F5300EB1D40 /* CPU@2x.png in Resources */,
 				9FB6AE8E16C8366D00EB1D40 /* Joystick@2x.png in Resources */,
 				9FB6AE8F16C8366D00EB1D40 /* Mouse@2x.png in Resources */,
+				9FE3BAE817EC9AA100C9BB82 /* LauncherItem.xib in Resources */,
 				9F5E389716C85140009774A9 /* Game.png in Resources */,
 				9F486F6116F5E78800FE263E /* WelcomeFocusRing.png in Resources */,
 				9F486F6216F5E78800FE263E /* WelcomeFocusRing@2x.png in Resources */,
@@ -4907,6 +4931,30 @@
 				9FE2172D121EED1E001452E3 /* English */,
 			);
 			name = ImportRenameTip.png;
+			sourceTree = "<group>";
+		};
+		9FE3BAE617EC9AA100C9BB82 /* LauncherItem.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FE3BAE717EC9AA100C9BB82 /* English */,
+			);
+			name = LauncherItem.xib;
+			sourceTree = "<group>";
+		};
+		9FE3BAE917ECA09500C9BB82 /* LauncherHeading.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FE3BAEA17ECA09500C9BB82 /* English */,
+			);
+			name = LauncherHeading.xib;
+			sourceTree = "<group>";
+		};
+		9FE3BAF617ECE1E800C9BB82 /* LauncherFavorite.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FE3BAF717ECE1E800C9BB82 /* English */,
+			);
+			name = LauncherFavorite.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

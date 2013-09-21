@@ -674,6 +674,78 @@
 @end
 
 
+
+@implementation BXLauncherTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+- (NSColor *) textColor
+{
+    return [NSColor whiteColor];
+}
+
+- (NSShadow *) dropShadow
+{
+    return [NSShadow shadowWithBlurRadius: 2.0f
+                                   offset: NSMakeSize(0, -1.0f)
+                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5f]];
+}
+
+- (NSShadow *) textShadow	{ return self.dropShadow; }
+
+@end
+
+
+@implementation BXLauncherHelpTextTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+- (NSColor *) textColor
+{
+    return [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.75];
+}
+
+@end
+
+@implementation BXLauncherHeadingTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+- (NSColor *) textColor
+{
+    return [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5];
+}
+
+- (NSShadow *) dropShadow
+{
+    return [NSShadow shadowWithBlurRadius: 1.0f
+                                   offset: NSMakeSize(0, -1.0f)
+                                    color: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.5f]];
+}
+
+- (NSGradient *) imageFill
+{
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5]] autorelease];
+}
+
+- (NSShadow *) imageDropShadow
+{
+    return self.dropShadow;
+}
+
+@end
+
+
 @implementation BXAboutTheme
 
 + (void) load

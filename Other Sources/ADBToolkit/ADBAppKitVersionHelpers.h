@@ -50,8 +50,10 @@ BOOL isRunningOnLeopard();
 BOOL isRunningOnSnowLeopard();
 BOOL isRunningOnLion();
 BOOL isRunningOnMountainLion();
+//BOOL isRunningOnMavericks();
 
 BOOL isRunningOnSnowLeopardOrAbove();
 BOOL isRunningOnLionOrAbove();
 BOOL isRunningOnMountainLionOrAbove();
+BOOL isRunningOnMavericksOrAbove();
 

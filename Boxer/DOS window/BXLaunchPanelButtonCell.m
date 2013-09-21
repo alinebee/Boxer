@@ -102,10 +102,9 @@
         NSMutableAttributedString *newTitle = [title mutableCopy];
         
         NSColor *textColor;
-        NSColor *shadowColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.75f];
-        NSShadow *textShadow = [NSShadow shadowWithBlurRadius: 1.0
-                                                       offset: NSMakeSize(0, 1.0f)
-                                                        color: shadowColor];
+        NSShadow *textShadow = [NSShadow shadowWithBlurRadius: 2.0
+                                                       offset: NSMakeSize(0, -1.0f)
+                                                        color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.25]];
         
         if (!self.isEnabled)
         {
@@ -123,7 +122,10 @@
         }
         else
         {
-            textColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.75f];
+            textColor = [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f];
+            textShadow = [NSShadow shadowWithBlurRadius: 1.0
+                                                 offset: NSMakeSize(0, -1.0f)
+                                                  color: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.5]];
         }
 		
         NSRange range = NSMakeRange(0, newTitle.length);
@@ -166,12 +168,12 @@
 
 - (void) drawBezelWithFrame: (NSRect)frame inView: (NSView *)controlView
 {
-    NSColor *borderColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.25f];
+    NSColor *borderColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f];
     
     NSColor *outerBevelColor = [NSColor colorWithCalibratedWhite: 0
-                                                           alpha: 0.75f];
+                                                           alpha: 0.25f];
     
-    NSShadow *outerBevel = [NSShadow shadowWithBlurRadius: 3.0f
+    NSShadow *outerBevel = [NSShadow shadowWithBlurRadius: 2.0f
                                                    offset: NSMakeSize(0, -1.0f)
                                                     color: outerBevelColor];
     
@@ -179,13 +181,13 @@
                                                 flipped: controlView.isFlipped];
     
     NSBezierPath *border = [NSBezierPath bezierPathWithRoundedRect: borderFrame
-                                                           xRadius: 8.0f
-                                                           yRadius: 8.0f];
+                                                           xRadius: 4.0f
+                                                           yRadius: 4.0f];
     
     NSRect bezelFrame   = NSInsetRect(borderFrame, 1.0f, 1.0f);
     NSBezierPath *bezel = [NSBezierPath bezierPathWithRoundedRect: bezelFrame
-                                                          xRadius: 7.0f
-                                                          yRadius: 7.0f];
+                                                          xRadius: 3.0f
+                                                          yRadius: 3.0f];
     
     NSGradient *bezelGradient;
     NSColor *bezelColor;
@@ -202,7 +204,7 @@
                          nil];
         
         NSColor *innerBevelColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.5f];
-        innerBevel = [NSShadow shadowWithBlurRadius: 3.0f
+        innerBevel = [NSShadow shadowWithBlurRadius: 2.0f
                                              offset: NSMakeSize(0, -1.0f)
                                               color: innerBevelColor];
         
@@ -220,26 +222,27 @@
     {
         bezelColor = [NSColor alternateSelectedControlColor];
         bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
-                         [NSColor colorWithCalibratedWhite: 0 alpha: 0.25f], 0.0f,
-                         [NSColor colorWithCalibratedWhite: 1 alpha: 0.25f], 1.0f,
+                         [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.1f], 0.0f,
+                         [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.1f], 1.0f,
                          nil];
         
         NSColor *innerBevelColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f];
         innerBevel = [NSShadow shadowWithBlurRadius: 1.0f
                                              offset: NSMakeSize(0, -1.0f)
                                               color: innerBevelColor];
+        innerBevel = nil;
         
-        NSColor *glowColor = [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.1f];
-        innerGlow = [NSShadow shadowWithBlurRadius: 3.0f
+        NSColor *glowColor = [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.66f];
+        innerGlow = [NSShadow shadowWithBlurRadius: 1.0f
                                             offset: NSZeroSize
                                              color: glowColor];
     }
     //Regular state
     else
     {
-        bezelColor  = [NSColor colorWithCalibratedRed: 0.21f
-                                                green: 0.21f
-                                                 blue: 0.23f
+        bezelColor  = [NSColor colorWithCalibratedRed: 0.6f
+                                                green: 0.65f
+                                                 blue: 0.7f
                                                 alpha: 1.0f];
         
         bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
@@ -251,9 +254,10 @@
         innerBevel = [NSShadow shadowWithBlurRadius: 1.0f
                                              offset: NSMakeSize(0, -1.0f)
                                               color: innerBevelColor];
+        innerBevel = nil;
         
-        NSColor *glowColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.1f];
-        innerGlow = [NSShadow shadowWithBlurRadius: 3.0f
+        NSColor *glowColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.33f];
+        innerGlow = [NSShadow shadowWithBlurRadius: 1.0f
                                             offset: NSZeroSize
                                              color: glowColor];
     }
@@ -273,7 +277,8 @@
     
         if (innerGlow)
             [bezel fillWithInnerShadow: innerGlow];
-        [bezel fillWithInnerShadow: innerBevel];
+        if (innerBevel)
+            [bezel fillWithInnerShadow: innerBevel];
     [NSGraphicsContext restoreGraphicsState];
     
     [bezelGradient release];

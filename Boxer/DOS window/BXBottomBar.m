@@ -7,22 +7,27 @@
 
 
 #import "BXBottomBar.h"
+#import "ADBAppKitVersionHelpers.h"
 
 @implementation BXBottomBar
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-	NSRect bezelRect = [self bounds];
-	bezelRect.origin.y += bezelRect.size.height - 1.0f;
-	bezelRect.size.height = 1.0f;
-	
-	if ([self needsToDrawRect: bezelRect])
-	{
-		NSColor *bezelColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
-		
-		[bezelColor set];
-		[NSBezierPath fillRect: bezelRect];		
-	}
+    //On 10.9 the appearance of bottom bevels changed such that we no longer need to apply our own bevel
+    if (!isRunningOnMavericksOrAbove())
+    {
+        NSRect bezelRect = self.bounds;
+        bezelRect.origin.y += bezelRect.size.height - 1.0f;
+        bezelRect.size.height = 1.0f;
+        
+        if ([self needsToDrawRect: bezelRect])
+        {
+            NSColor *bezelColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
+            
+            [bezelColor set];
+            [NSBezierPath fillRect: bezelRect];
+        }
+    }
 }
 
 @end

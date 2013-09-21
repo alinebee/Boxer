@@ -16,9 +16,9 @@
     self.color = [NSColor whiteColor];
     self.drawsBackground = NO;
     self.lineWidth = 2.0f;
-    self.dropShadow = [NSShadow shadowWithBlurRadius: 4.0f
+    self.dropShadow = [NSShadow shadowWithBlurRadius: 2.0f
                                               offset: NSMakeSize(0, -1.0f)
-                                               color: [NSColor blackColor]];
+                                               color: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5]];
 }
 
 - (void) dealloc

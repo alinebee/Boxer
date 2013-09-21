@@ -7,33 +7,69 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface BXLaunchPanelController : NSViewController
+typedef enum {
+    BXLaunchPanelDisplayFavorites,
+    BXLaunchPanelDisplayAllPrograms,
+} BXLaunchPanelDisplayMode;
+
+@interface BXLaunchPanelController : NSViewController <NSTextFieldDelegate>
 {
-    NSTabView *_tabView;
     NSSegmentedControl *_tabSelector;
-    NSCollectionView *_allProgramsList;
-    NSCollectionView *_favoriteProgramsList;
+    NSCollectionView *_launcherList;
+    NSScrollView *_launcherScrollView;
+    NSSearchField *_filter;
+    
+    NSMutableArray *_filterKeywords;
     
     NSMutableArray *_allProgramRows;
     NSMutableArray *_favoriteProgramRows;
+    NSMutableArray *_displayedRows;
+    
+    BXLaunchPanelDisplayMode _displayMode;
 }
 
-@property (retain, nonatomic) IBOutlet NSTabView *tabView;
-@property (retain, nonatomic) IBOutlet NSSegmentedControl *tabSelector;
-@property (retain, nonatomic) IBOutlet NSCollectionView *allProgramsList;
-@property (retain, nonatomic) IBOutlet NSCollectionView *favoriteProgramsList;
+@property (assign, nonatomic) IBOutlet NSSegmentedControl *tabSelector;
+@property (assign, nonatomic) IBOutlet NSCollectionView *launcherList;
+@property (assign, nonatomic) IBOutlet NSScrollView *launcherScrollView;
+@property (assign, nonatomic) IBOutlet NSSearchField *filter;
+@property (assign, nonatomic) BXLaunchPanelDisplayMode displayMode;
 
+@property (readonly, nonatomic) BOOL hasFavorites;
+@property (readonly, nonatomic) BOOL hasPrograms;
 @property (readonly, nonatomic) BOOL canLaunchPrograms;
 
-//An array of NSDictionaries for each item in the all-programs list.
-//This will include rows for each drive.
-@property (retain, nonatomic) NSMutableArray *allProgramRows;
+//An array of NSDictionaries for every item to display in the list.
+@property (readonly, retain, nonatomic) NSMutableArray *displayedRows;
 
-//An array of NSDictionaries for each item in the favorite-programs list.
-@property (retain, nonatomic) NSMutableArray *favoriteProgramRows;
+//An array of sanitised NSStrings derived from the contents of the search field. 
+@property (readonly, retain, nonatomic) NSMutableArray *filterKeywords;
 
-//Triggered by program-list buttons to launch the specified program.
+//Triggered by favorite buttons to launch the specified program.
 //sender is required to be one of our program-list collection view items.
 - (IBAction) launchFavoriteProgram: (NSButton *)sender;
 
+- (IBAction) showFavoritePrograms: (id)sender;
+- (IBAction) showAllPrograms: (id)sender;
+- (IBAction) performSegmentedButtonAction: (id)sender;
+
+- (IBAction) enterSearchText: (NSSearchField *)sender;
+
+@end
+
+
+//A custom collection view that uses a different prototype for drive 'headings'
+@interface BXLauncherList : NSCollectionView
+{
+    NSCollectionViewItem *_headingPrototype;
+    NSCollectionViewItem *_favoritePrototype;
+}
+
+@property (assign, nonatomic) IBOutlet NSCollectionViewItem *headingPrototype;
+@property (assign, nonatomic) IBOutlet NSCollectionViewItem *favoritePrototype;
+
+@end
+
+
+//Draws the background of the navigation strip at the top of the launch panel
+@interface BXLauncherNavigationHeader : NSView
 @end

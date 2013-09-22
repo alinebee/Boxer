@@ -637,24 +637,15 @@ nil];
 					   userInfo: nil];
 }
 
-- (void) _didRunStartupCommands
-{
-	[self _postNotificationName: BXEmulatorDidRunStartupCommandsNotification
-			   delegateSelector: @selector(emulatorDidRunStartupCommands:)
-					   userInfo: nil];
-}
-
 - (void) _willExecuteFileAtDOSPath: (const char *)dosPath
-                     onDOSBoxDrive: (DOS_Drive *)dosboxDrive
                      withArguments: (const char *)arguments
 {
+    char driveIndex = dosPath[0] - 'A';
+    DOS_Drive *dosboxDrive = Drives[driveIndex];
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-	NSUInteger driveIndex = [self _indexOfDOSBoxDrive: dosboxDrive];
-	NSURL *localURL	= [self _filesystemURLForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
     
-	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\\%@",
-							   [self _driveLetterForIndex: driveIndex],
-							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding]];
+    NSString *fullDOSPath = [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding];
+	NSURL *localURL	= [self _filesystemURLForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
     
     NSString *argumentString = [[NSString stringWithCString: arguments encoding: BXDirectStringEncoding] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 	
@@ -689,23 +680,14 @@ nil];
 }
 
 - (void) _didExecuteFileAtDOSPath: (const char *)dosPath
-                    onDOSBoxDrive: (DOS_Drive *)dosboxDrive
-                    withArguments: (const char *)arguments
 {
     //This will have been recorded by _willExecuteFileAtDOSPath:onDOSBoxDrive:withArguments:
     NSMutableDictionary *lastProcessInfo = [_runningProcesses lastObject];
     NSAssert(lastProcessInfo != nil, @"No existing process found: _didExecuteFileAtDOSPath:onDOSBoxDrive:withArguments: must always be paired with _willExecuteFileAtDOSPath:onDOSBoxDrive:withArguments:.");
     
-    //Re-use all previous process info but re-derive the local URL in case it has moved in the meantime
-	NSURL *localURL = [self _filesystemURLForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
-    
+    //Reuse all process data from when this program was launched
 	NSMutableDictionary *notificationInfo = [[lastProcessInfo mutableCopy] autorelease];
     [notificationInfo setObject: [NSDate date] forKey: BXEmulatorExitDateKey];
-    
-    if (localURL)
-    {
-        [notificationInfo setObject: localURL forKey: BXEmulatorLocalURLKey];
-    }
 	
     //Pop the last process off the stack
     [self willChangeValueForKey: @"runningProcesses"];
@@ -715,6 +697,16 @@ nil];
 	[self _postNotificationName: BXEmulatorDidFinishProgramNotification
 			   delegateSelector: @selector(emulatorDidFinishProgram:)
 					   userInfo: notificationInfo];
+}
+
+- (void) _willBeginBatchFileAtDOSPath: (const char *)dosPath withArguments: (const char *)args
+{
+    [self _willExecuteFileAtDOSPath: dosPath withArguments: args];
+}
+
+- (void) _didEndBatchFileAtDOSPath: (const char *)dosPath
+{
+    [self _didExecuteFileAtDOSPath: dosPath];
 }
 
 - (void) _didReturnToShell

@@ -24,6 +24,10 @@
 #include "shell.h"
 #include "support.h"
 
+//--Added 2013-09-22 by Alun Bestor to let Boxer track batch files
+#include "BXCoalface.h"
+//--End of modifications
+
 BatchFile::BatchFile(DOS_Shell * host,char const * const resolved_name,char const * const entered_name, char const * const cmd_line) {
 	location = 0;
 	prev=host->bf;
@@ -46,6 +50,10 @@ BatchFile::~BatchFile() {
 	delete cmd;
 	shell->bf=prev;
 	shell->echo=echo;
+    
+    //--Added 2013-09-22 by Alun Bestor to let Boxer track the lifecycle of the batch file
+    boxer_didEndBatchFile(filename.c_str());
+    //--End of modifications
 }
 
 bool BatchFile::ReadLine(char * line) {

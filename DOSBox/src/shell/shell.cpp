@@ -313,14 +313,12 @@ void DOS_Shell::Run(void) {
     
 	if (cmd->FindString("/INIT",line,true)) {
 		//--Added 2009-12-13 by Alun Bestor to let Boxer monitor the autoexec process
-		boxer_autoexecDidStart();
+		boxer_autoexecWillStart();
+		//--End of modifications
 		
 		strcpy(input_line,line.c_str());
 		line.erase();
 		ParseLine(input_line);
-		
-		boxer_autoexecDidFinish();
-		//--End of modifications
 	}
 	do {
         //--Added 2012-08-19 by Alun Bestor to let Boxer insert its own commands into batch processing.

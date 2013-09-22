@@ -342,18 +342,19 @@ enum {
 //Called by DOSBox just before AUTOEXEC.BAT is started. Sends a delegate notification.
 - (void) _willRunStartupCommands;
 
-//Called by DOSBox after AUTOEXEC.BAT has completed. Sends a delegate notification.
-- (void) _didRunStartupCommands;
-
 //Called by DOSBox just before a program will start. Sends a delegate notification.
 - (void) _willExecuteFileAtDOSPath: (const char *)dosPath
-                     onDOSBoxDrive: (DOS_Drive *)dosboxDrive
                      withArguments: (const char *)arguments;
 
 //Called by DOSBox just after a program finishes executing and exits. Sends a delegate notification.
-- (void) _didExecuteFileAtDOSPath: (const char *)dosPath
-                    onDOSBoxDrive: (DOS_Drive *)dosboxDrive
-                    withArguments: (const char *)arguments;
+- (void) _didExecuteFileAtDOSPath: (const char *)dosPath;
+
+//Called by DOSBox just before a batch file is loaded. Treated identically to _willExecuteFileAtDOSPath:.
+- (void) _willBeginBatchFileAtDOSPath: (const char *)dosPath
+                        withArguments: (const char *)arguments;
+
+//Called by DOSBox just after a batch file completes its last command. Sends a delegate notification.
+- (void) _didEndBatchFileAtDOSPath: (const char *)dosPath;
 
 @end
 

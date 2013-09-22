@@ -1133,6 +1133,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 - (void) runLaunchCommandsForEmulator: (BXEmulator *)theEmulator
 {
+    NSLog(@"%@ start", NSStringFromSelector(_cmd));
 	_hasLaunched = YES;
     
     //Do any just-in-time configuration, which should override all previous startup stuff.
@@ -1198,11 +1199,15 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     //Clear the program-skipping flag for next launch.
     _userSkippedDefaultProgram = NO;
+    
+    NSLog(@"%@ end", NSStringFromSelector(_cmd));
 }
 
 
 - (void) emulatorWillRunStartupCommands: (NSNotification *)notification
 {
+    NSLog(@"%@", NSStringFromSelector(_cmd));
+    
     //Display the launch panel once startup commands are finished
     //FIXME: the logic behind this ("what should we show once AUTOEXEC.BAT is finished?")
     //should be handled closer to emulatorDidFinishProgram:, which is where the decision needs to be made.
@@ -1237,10 +1242,18 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 - (void) emulatorWillStartProgram: (NSNotification *)notification
 {
+    NSLog(@"%@: %@", NSStringFromSelector(_cmd), notification.userInfo);
+    
+    //Flag that the program previously launched by openURLInDOS:error: is now executing.
+    //This is checked downstairs in emulatorDidFinishProgram: and clears our launched program stuff again.
+    _executingLaunchedProgram = YES;
+    
     //If we've finished the startup process, then show the DOS view at this point.
     //(We won't show the DOS view before then, because we don't want startup programs
     //to trigger a switch of view: we don't know at that point yet whether the user is
     //overriding the startup program to show the launch panel.)
+    //FIXME: this is absolutely the wrong way to handle it if the user has, for whatever reason,
+    //put commands to launch the game into the autoexec itself instead of using Boxer's launcher mechanism.
     if (_hasLaunched)
     {
         NSLog(@"Showing DOS view for program: %@", notification.userInfo);
@@ -1253,15 +1266,13 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                                        afterDelay: BXSwitchToDOSViewDelay];
     }
     
-	//Don't set the active program if we already have one: this way, we keep
-	//track of which program the user manually launched, and won't glom onto
-    //other programs spawned by the original program (e.g. if it was a batch file.)
-	if (!self.launchedProgramURL)
+	//Don't override our record of the launched program if we already recorded one
+    //back in openURLInDOS:error:. This way we maintain a record of which program
+    //Boxer itself launched for the purposes of our launch history, and we won't
+    //glom onto any subprocesses spawned by the original program. (Plus we'll still
+    //catch programs that were launched from the commandline.)
+	if (!self.launchedProgramURL && !self.emulator.processIsInternal)
 	{
-        //Flag that the program the user launched is now executing.
-        //This is checked downstairs in emulatorDidFinishProgram: and clears our launched program stuff again.
-        _executingLaunchedProgram = YES;
-        
 		NSURL *programURL = [notification.userInfo objectForKey: BXEmulatorLocalURLKey];
         
         if (programURL)
@@ -1323,7 +1334,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     //Clear our cache of sent MT-32 messages on behalf of BXAudioControls.
     [self.MT32MessagesReceived removeAllObjects];
     
-    //If this was the last program in the stack, then clean up a bunch of our state.
+    //If this was the last program in the stack, then clean up a bunch of our state
+    //and switch back to the launcher panel if appropriate.
     if (wasLastProgram)
     {
         //If we should close after exiting the last program, then close down the application now
@@ -1364,9 +1376,9 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             self.launchedProgramURL = nil;
             self.launchedProgramArguments = nil;
         }
-        
-        NSLog(@"%@: %@", NSStringFromSelector(_cmd), notification.userInfo);
     }
+    
+    NSLog(@"%@: %@", NSStringFromSelector(_cmd), notification.userInfo);
 }
 
 - (void) emulatorDidReturnToShell: (NSNotification *)notification

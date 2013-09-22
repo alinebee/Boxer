@@ -196,28 +196,34 @@ void boxer_didReturnToShell()
 	[emulator _didReturnToShell];
 }
 
-void boxer_autoexecDidStart()
+void boxer_autoexecWillStart()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _willRunStartupCommands];
 }
 
-void boxer_autoexecDidFinish()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _didRunStartupCommands];
-}
-
-void boxer_willExecuteFileAtDOSPath(const char *path, const char *arguments, DOS_Drive *dosboxDrive)
+void boxer_willExecuteFileAtDOSPath(const char *path, const char *arguments)
 {	
     BXEmulator *emulator = [BXEmulator currentEmulator];
-    [emulator _willExecuteFileAtDOSPath: path onDOSBoxDrive: dosboxDrive withArguments: arguments];
+    [emulator _willExecuteFileAtDOSPath: path withArguments: arguments];
 }
 
-void boxer_didExecuteFileAtDOSPath(const char *path, const char *arguments, DOS_Drive *dosboxDrive)
+void boxer_didExecuteFileAtDOSPath(const char *path)
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
-    [emulator _didExecuteFileAtDOSPath: path onDOSBoxDrive: dosboxDrive withArguments: arguments];
+    [emulator _didExecuteFileAtDOSPath: path];
+}
+
+void boxer_willBeginBatchFile(const char *path, const char *arguments)
+{
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    [emulator _willBeginBatchFileAtDOSPath: path withArguments: arguments];
+}
+
+void boxer_didEndBatchFile(const char *canonicalPath)
+{
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    [emulator _didEndBatchFileAtDOSPath: canonicalPath];
 }
 
 bool boxer_shouldDisplayStartupMessages()

@@ -53,10 +53,9 @@ extern "C" {
 	//Called from dos_programs.cpp: verifies that DOSBox is allowed to mount the specified folder.
 	bool boxer_shouldMountPath(const char *filePath);
 	
-	//Called from shell.cpp: notifies Boxer when autoexec.bat is run.
-	void boxer_autoexecDidStart();
-	void boxer_autoexecDidFinish();
-	
+    //Called from shell.cpp: notifies Boxer when the autoexec is about to be processed.
+    void boxer_autoexecWillStart();
+    
 	//Called from shell.cpp: notifies Boxer when control returns to the DOS prompt.
 	void boxer_didReturnToShell();
 	
@@ -107,8 +106,12 @@ extern "C" {
     bool boxer_getNextDirectoryEntry(void *handle, char *outName, bool &isDirectory);
     
 	//Called from shell_misc.cpp to notify Boxer when a program or batchfile is executed.
-	void boxer_willExecuteFileAtDOSPath(const char *dosPath, const char *arguments, DOS_Drive *dosboxDrive);
-	void boxer_didExecuteFileAtDOSPath(const char *dosPath, const char *arguments, DOS_Drive *dosboxDrive);
+	void boxer_willExecuteFileAtDOSPath(const char *canonicalPath, const char *arguments);
+	void boxer_didExecuteFileAtDOSPath(const char *canonicalPath);
+    
+    void boxer_willBeginBatchFile(const char *canonicalPath, const char *arguments);
+    //Note different signature: some information is not available when finishing a batchfile
+    void boxer_didEndBatchFile(const char *canonicalPath);
 	
 	void boxer_handleDOSBoxTitleChange(Bit32s cycles, Bits frameskip, bool paused);
 	

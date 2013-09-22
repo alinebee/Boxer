@@ -18,7 +18,6 @@
 extern NSString * const BXEmulatorWillStartNotification;
 extern NSString * const BXEmulatorDidInitializeNotification;
 extern NSString * const BXEmulatorWillRunStartupCommandsNotification;
-extern NSString * const BXEmulatorDidRunStartupCommandsNotification;
 extern NSString * const BXEmulatorDidFinishNotification;
 
 extern NSString * const BXEmulatorWillStartProgramNotification;
@@ -112,9 +111,6 @@ extern NSString * const BXEmulatorLaunchArgumentsKey;
 
 //Posted when the emulator is about to start processing AUTOEXEC.BAT.
 - (void) emulatorWillRunStartupCommands: (NSNotification *)notification;
-
-//Posted when the emulator has just finished processing AUTOEXEC.BAT.
-- (void) emulatorDidRunStartupCommands: (NSNotification *)notification;
 
 //Posted when the emulator shuts down.
 - (void) emulatorDidFinish:	(NSNotification *)notification;

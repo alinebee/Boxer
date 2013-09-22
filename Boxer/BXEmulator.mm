@@ -37,7 +37,6 @@ NSString * const shellProcessPath = @"Z:\\COMMAND.COM";
 NSString * const BXEmulatorWillStartNotification					= @"BXEmulatorWillStartNotification";
 NSString * const BXEmulatorDidInitializeNotification				= @"BXEmulatorDidInitializeNotification";
 NSString * const BXEmulatorWillRunStartupCommandsNotification		= @"BXEmulatorWillRunStartupCommandsNotification";
-NSString * const BXEmulatorDidRunStartupCommandsNotification		= @"BXEmulatorDidRunStartupCommandsNotification";
 NSString * const BXEmulatorDidFinishNotification					= @"BXEmulatorDidFinishNotification";
 
 NSString * const BXEmulatorWillStartProgramNotification				= @"BXEmulatorWillStartProgramNotification";
@@ -365,7 +364,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	if (self.isExecuting)
 	{
 		DOS_Shell *shell = self._currentShell;
-		return (shell && shell->bf);		
+		return (shell && shell->bf);
 	}
 	return NO;
 }

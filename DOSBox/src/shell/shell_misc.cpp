@@ -469,9 +469,8 @@ bool DOS_Shell::Execute(char * name,char * args) {
 	}
 	
 	//--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
-	char dosPath[DOS_PATHLENGTH];
-	Bit8u driveIndex;
-	DOS_MakeName(fullname,dosPath,&driveIndex);
+	char canonicalPath[DOS_PATHLENGTH+4];
+	DOS_Canonicalize(fullname, canonicalPath);
 	//--End of modifications
 	
 	if (strcasecmp(extension, ".bat") == 0) 
@@ -480,12 +479,14 @@ bool DOS_Shell::Execute(char * name,char * args) {
 		bool temp_echo=echo; /*keep the current echostate (as delete bf might change it )*/
 		if(bf && !call) delete bf;
 		
-		//--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
-		boxer_willExecuteFileAtDOSPath(dosPath, args, Drives[driveIndex]);
-		//--End of modifications
+		//--Added 2010-01-21 by Alun Bestor to let Boxer track the launched batch file
+		boxer_willBeginBatchFile(canonicalPath, args);
 		
 		bf=new BatchFile(this,fullname,name,line);
 		echo=temp_echo; //restore it.
+        
+        //--Note: boxer_didEndBatchFile will be called once the batch file completes much later, in the batch file's own destructor.
+		//--End of modifications
 	} 
 	else 
 	{	/* only .bat .exe .com extensions maybe be executed by the shell */
@@ -495,7 +496,7 @@ bool DOS_Shell::Execute(char * name,char * args) {
 		}
 		
 		//--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
-		boxer_willExecuteFileAtDOSPath(dosPath, args, Drives[driveIndex]);
+		boxer_willExecuteFileAtDOSPath(canonicalPath, args);
 		//--End of modifications
 		
 		/* Run the .exe or .com file from the shell */
@@ -554,11 +555,11 @@ bool DOS_Shell::Execute(char * name,char * args) {
 		reg_eip=oldeip;
 		SegSet16(cs,oldcs);
 #endif
+        
+        //--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
+        boxer_didExecuteFileAtDOSPath(canonicalPath);
+        //--End of modifications
 	}
-	
-	//--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
-	boxer_didExecuteFileAtDOSPath(dosPath, args, Drives[driveIndex]);
-	//--End of modifications
 	
 	return true; //Executable started
 }

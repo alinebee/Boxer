@@ -1269,7 +1269,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     //If we're at the DOS prompt, then any open file handles are leftovers
     //and can be safely ignored, so don't bother checking.
-    if ([self isAtPrompt]) return NO;
+    if (self.isAtPrompt) return NO;
 
 	int i;
 	for (i=0; i<DOS_FILES; i++)
@@ -1291,13 +1291,13 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 //we should instead populate an NSError with the error details and let the upstream context handle it
 - (BOOL) _shouldMountPath: (NSString *)filePath
 {
-	return [[self delegate] emulator: self shouldMountDriveFromShell: filePath];
+	return [self.delegate emulator: self shouldMountDriveFromShell: filePath];
 }
 
 //Todo: supplement this by getting entire OS X filepaths out of DOSBox, instead of just filenames
 - (BOOL) _shouldShowFileWithName: (NSString *)fileName
 {
-    return [[self delegate] emulator: self shouldShowFileWithName: fileName];
+    return [self.delegate emulator: self shouldShowFileWithName: fileName];
 }
 
 - (BOOL) _shouldAllowWriteAccessToPath: (NSString *)filePath onDOSBoxDrive: (DOS_Drive *)dosboxDrive

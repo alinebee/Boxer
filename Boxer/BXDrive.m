@@ -117,7 +117,11 @@
     }
 	else
     {
-        return URL.localizedName;
+        NSString *filename = URL.localizedName;
+        if (!filename)
+            filename = URL.lastPathComponent;
+        
+        return filename;
     }
 }
 

@@ -39,6 +39,8 @@
                    withArguments: (NSString *)arguments
                changingDirectory: (BOOL)changeDir;
 
+//Whether the emulator is currently able to print strings to stdout.
+- (BOOL) canDisplayStrings;
 
 //Prints the specified string to the DOS stdout, using DOS Latin-1 encoding.
 - (void) displayString: (NSString *)theString;

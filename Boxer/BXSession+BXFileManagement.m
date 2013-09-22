@@ -844,14 +844,30 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     }
 }
 
+- (BOOL) canOpenURLs
+{
+    if (!self.emulator.isInitialized || self.emulator.isRunningActiveProcess)
+        return NO;
+    else
+        return YES;
+}
+
++ (NSSet *) keyPathsForValuesAffectingCanOpenURLs
+{
+    return [NSSet setWithObjects: @"emulator.isInitialized", @"emulator.isRunningActiveProcess", nil];
+}
+
 - (BOOL) openURLInDOS: (NSURL *)URL
         withArguments: (NSString *)arguments
           clearScreen: (BOOL)clearScreen
          onCompletion: (BXSessionProgramExitBehavior)exitBehavior
                 error: (out NSError **)outError
 {
-	if (!self.emulator.isInitialized || self.emulator.isRunningProcess)
+	if (!self.canOpenURLs)
+    {
+        //TODO: populate outError
         return NO;
+    }
     
 	//Get the path to the file in the DOS filesystem
 	NSString *dosPath = [self.emulator DOSPathForURL: URL];
@@ -870,14 +886,20 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	if ([URL matchingFileType: [BXFileTypes executableTypes]] != nil)
 	{
         if (exitBehavior == BXSessionExitBehaviorAuto || exitBehavior == BXSessionShowDOSPromptIfDirectory)
-            exitBehavior = (self.DOSWindowController.launchPanelShown) ? BXSessionShowLauncher : BXSessionShowDOSPrompt;
-        _programExitBehaviour = exitBehavior;
+            exitBehavior = (self.DOSWindowController.DOSViewShown) ? BXSessionShowDOSPrompt : BXSessionShowLauncher;
+        _programExitBehavior = exitBehavior;
         
         self.emulator.clearsScreenBeforeCommandExecution = clearScreen;
         
-		//If an executable was specified, execute it and record that it was launched.
-        self.launchedProgramURL = URL;
-        self.launchedProgramArguments = arguments;
+        //If an executable was specified, execute it and record that it was launched.
+        //TWEAK: if we're launching the program from 'inside' another program
+        //(e.g. a previously-launched program dropped into a DOS shell) then
+        //maintain that as our 'official' program.
+        if (!self.launchedProgramURL)
+        {
+            self.launchedProgramURL = URL;
+            self.launchedProgramArguments = arguments;
+        }
         
 		[self.emulator executeProgramAtDOSPath: dosPath
                                  withArguments: arguments
@@ -888,8 +910,11 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	{
 		[self.emulator changeWorkingDirectoryToDOSPath: dosPath];
         
-        //Because the directory change will happen instantaneously and emulatorDidReturnToShell: will never be called,
-        //handle the 'exit' behaviour immediately.
+        if (exitBehavior == BXSessionExitBehaviorAuto)
+            exitBehavior = (self.DOSWindowController.DOSViewShown) ? BXSessionShowDOSPrompt : BXSessionShowLauncher;
+        
+        //Because the directory change will happen instantaneously and emulatorDidReturnToShell:
+        //will never be called, handle the 'exit' behaviour immediately.
         switch (exitBehavior)
         {
             case BXSessionShowDOSPrompt:

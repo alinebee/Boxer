@@ -262,19 +262,19 @@
 
 + (BOOL) HIDEventIsDeliberate: (ADBHIDEvent *)event
 {
-    if ([event type] == ADBHIDJoystickButtonDown) return YES;
-    if ([event POVDirection] != ADBHIDPOVCentered) return YES;
-    if (ABS([event axisPosition]) > BXDeliberateAxisInputThreshold) return YES;
+    if (event.type == ADBHIDJoystickButtonDown) return YES;
+    if (event.POVDirection != ADBHIDPOVCentered) return YES;
+    if (ABS(event.axisPosition) > BXDeliberateAxisInputThreshold) return YES;
     return NO;
 }
 
 
 - (BOOL) _activeProgramIsIgnoringJoystick
 {
-    BXEmulator *emulator = [[self representedObject] emulator];
+    BXEmulator *emulator = self.representedObject.emulator;
 
     //If the emulator isn't running anything, then no, the game isn't ignoring the joystick.
-    if (!emulator.isRunningProcess) return NO;
+    if (!emulator.isRunningActiveProcess) return NO;
     
     //If we've received gameport read signals, then the game isn't ignoring the joystick.
     if (emulator.joystickActive) return NO;

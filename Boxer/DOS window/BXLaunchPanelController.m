@@ -413,13 +413,12 @@
 
 + (NSSet *) keyPathsForValuesAffectingCanLaunchPrograms
 {
-    return [NSSet setWithObjects: @"representedObject.isEmulating", @"representedObject.emulator.isAtPrompt", nil];
+    return [NSSet setWithObjects: @"representedObject.canOpenURLs", nil];
 }
 
 - (BOOL) canLaunchPrograms
 {
-    BXSession *session = self.representedObject;
-    return session.isEmulating && session.emulator.isAtPrompt;
+    return [self.representedObject canOpenURLs];
 }
 
 - (void) launchItem: (BXLauncherItem *)item

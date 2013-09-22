@@ -794,7 +794,7 @@
 	//We confirm the close if a process is running and if we're not already shutting down
 	BOOL shouldConfirm = hasActiveImports ||
     (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"]
-     && self.emulator.isRunningProcess
+     && self.emulator.isRunningActiveProcess
      && !self.emulator.isCancelled);
     
     if (shouldConfirm)

@@ -201,6 +201,10 @@ typedef NSUInteger BXDriveMountOptions;
 - (BOOL) openURLInDOS: (NSURL *)URL
                 error: (out NSError **)outError;
 
+//Whether the session is in a state where it can open files or folders in DOS.
+@property (readonly, nonatomic) BOOL canOpenURLs;
+
+
 #pragma mark - Managing drive shadowing
 
 //Returns the path to the bundle where we will store state data for the current gamebox.

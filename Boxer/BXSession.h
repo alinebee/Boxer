@@ -63,11 +63,14 @@ extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 
 //Used by openURLInDOS: to decide what to do after its program exits or the directory has been changed.
 typedef enum {
-    BXSessionExitBehaviorAuto,          //If the launcher was visible when the program was launched, return to the launcher; otherwise, stay at the DOS prompt
-    BXSessionShowDOSPrompt,             //Stay at the DOS prompt.
-    BXSessionShowDOSPromptIfDirectory,  //If the URL was a directory, show it at the DOS prompt; otherwise, behave like BXSessionExitBehaviorAuto.
+    BXSessionExitBehaviorDoNothing,     //Do not change the currently displayed view at all.
+    BXSessionExitBehaviorAuto,          //If the DOS view was visible when the opening the URL, stay at the DOS prompt;
+                                        //Otherwise, show the program launcher.
+    BXSessionShowDOSPrompt,             //Show the DOS prompt once the operation completes.
+    BXSessionShowDOSPromptIfDirectory,  //If the URL was a directory, show it at the DOS prompt;
+                                        //Otherwise, behave like BXSessionExitBehaviorAuto.
     BXSessionShowLauncher,              //Show the program launcher panel if available.
-    BXSessionClose,                     //Close the DOS session altogether. (Currently unused and unsupported.)
+    BXSessionClose,                     //Close the DOS session altogether.
 } BXSessionProgramExitBehavior;
 
 
@@ -106,7 +109,6 @@ typedef enum {
     BOOL _hasFinishedStartupProcess;
 	BOOL _isClosing;
 	BOOL _emulating;
-    BOOL _executingLaunchedProgram;
 	
 	BOOL _paused;
 	BOOL _autoPaused;
@@ -116,7 +118,7 @@ typedef enum {
 	BOOL _userSkippedDefaultProgram;
     BOOL _waitingForFastForwardRelease;
     
-    BXSessionProgramExitBehavior _programExitBehaviour;
+    BXSessionProgramExitBehavior _programExitBehavior;
 	
 	NSOperationQueue *_importQueue;
     NSOperationQueue *_scanQueue;
@@ -190,7 +192,8 @@ typedef enum {
 @property (readonly, nonatomic) BOOL hasGamebox;
 
 //Returns NO if this is a standalone game bundle with only a single launcher
-//(in which case the launcher panel is redundant.)
+//(in which case the launcher panel is redundant) or if this is a gamebox
+//(in which case no launcher panel is appropriate.)
 @property (readonly, nonatomic) BOOL allowsLauncherPanel;
 
 //Whether this session is a game import. Returns NO by default; overridden by BXImportSession to return YES.

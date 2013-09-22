@@ -316,6 +316,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 		if (representedURL)
 		{
 			NSString *displayName = representedURL.localizedName;
+            if (!displayName)
+                displayName = representedURL.lastPathComponent;
 			self.window.representedURL = representedURL;
 			self.window.title = [self windowTitleForDocumentDisplayName: displayName];
 		}
@@ -792,7 +794,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 - (void) setCurrentPanelUIBinding: (BXDOSWindowPanel)currentPanelUIBinding
 {
-    if (self.document.emulator.isAtPrompt && self.currentPanel != BXDOSWindowLoadingPanel)
+    if (self.currentPanel != BXDOSWindowLoadingPanel)
     {
         [self switchToPanel: currentPanelUIBinding animate: self.window.isVisible];
         [self.document userDidToggleLaunchPanel];
@@ -801,19 +803,16 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 + (NSSet *) keyPathsForValuesAffectingCanToggleLaunchPanel
 {
-    return [NSSet setWithObjects: @"document.hasGamebox", @"currentPanel", @"document.emulator.isAtPrompt", nil];
+    return [NSSet setWithObjects: @"document.allowsLauncherPanel", @"currentPanel", nil];
 }
 
 - (BOOL) canToggleLaunchPanel
 {
-    if (!self.document.hasGamebox)
+    if (!self.document.allowsLauncherPanel)
         return NO;
     
     if (self.currentPanel == BXDOSWindowLoadingPanel)
         return NO;
-    
-    //if (!self.document.emulator.isAtPrompt)
-    //    return NO;
     
     return YES;
 }

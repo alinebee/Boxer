@@ -1295,16 +1295,11 @@
 }
 
 
-#pragma mark -
-#pragma mark Responses to BXEmulator events
-
+#pragma mark - Responses to BXEmulator events
 
 //Overridden so that the 'program panel' (i.e. installation tips panel) will always be shown when starting a program.
 - (void) emulatorWillStartProgram: (NSNotification *)notification
 {
-    //Flag that the program the user launched is now executing.
-    _executingLaunchedProgram = YES;
-    
     //If we've finished the startup process, then show the DOS view at this point.
     if (_hasLaunched)
     {

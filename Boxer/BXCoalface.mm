@@ -205,7 +205,7 @@ void boxer_autoexecWillStart()
 void boxer_willExecuteFileAtDOSPath(const char *path, const char *arguments)
 {	
     BXEmulator *emulator = [BXEmulator currentEmulator];
-    [emulator _willExecuteFileAtDOSPath: path withArguments: arguments];
+    [emulator _willExecuteFileAtDOSPath: path withArguments: arguments isBatchFile: NO];
 }
 
 void boxer_didExecuteFileAtDOSPath(const char *path)
@@ -217,13 +217,13 @@ void boxer_didExecuteFileAtDOSPath(const char *path)
 void boxer_willBeginBatchFile(const char *path, const char *arguments)
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
-    [emulator _willBeginBatchFileAtDOSPath: path withArguments: arguments];
+    [emulator _willExecuteFileAtDOSPath: path withArguments: arguments isBatchFile: YES];
 }
 
 void boxer_didEndBatchFile(const char *canonicalPath)
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
-    [emulator _didEndBatchFileAtDOSPath: canonicalPath];
+    [emulator _didExecuteFileAtDOSPath: canonicalPath];
 }
 
 bool boxer_shouldDisplayStartupMessages()

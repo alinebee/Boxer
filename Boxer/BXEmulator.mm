@@ -30,6 +30,7 @@ static BOOL _hasStartedEmulator = NO;
 //The name and path to the DOSBox shell. Used when determining the current process.
 NSString * const shellProcessName = @"DOSBOX";
 NSString * const shellProcessPath = @"Z:\\COMMAND.COM";
+NSString * const autoexecProcessPath = @"Z:\\AUTOEXEC.BAT";
 
 
 //BXEmulatorDelegate constants, defined here for want of somewhere better to put them.
@@ -53,6 +54,7 @@ NSString * const BXEmulatorDidRemoveFileNotification				= @"BXEmulatorDidRemoveF
 
 
 NSString * const BXEmulatorDOSPathKey           = @"DOSPath";
+NSString * const BXEmulatorIsBatchFileKey       = @"isBatchFile";
 NSString * const BXEmulatorDriveKey             = @"drive";
 NSString * const BXEmulatorLocalURLKey          = @"URL";
 NSString * const BXEmulatorLaunchArgumentsKey   = @"arguments";
@@ -94,6 +96,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 @implementation BXEmulator
 @synthesize processName = _processName;
+@synthesize lastProcess = _lastProcess;
 @synthesize runningProcesses = _runningProcesses;
 @synthesize delegate = _delegate;
 @synthesize videoHandler = _videoHandler;
@@ -117,8 +120,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @synthesize waitingForCommandInput = _waitingForCommandInput;
 
 
-#pragma mark -
-#pragma mark Class methods
+#pragma mark - Class methods
 
 //Returns the currently executing emulator instance, for DOSBox coalface functions to talk to.
 + (BXEmulator *) currentEmulator
@@ -162,8 +164,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 }
 
 
-#pragma mark -
-#pragma mark Key-value binding helper methods
+#pragma mark - Key-value binding helper methods
 
 //Every property depends on whether we're executing or not
 + (NSSet *) keyPathsForValuesAffectingValueForKey: (NSString *)key
@@ -173,17 +174,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	return keyPaths;
 }
 
-+ (NSSet *) keyPathsForValuesAffectingIsAtPrompt
-{
-    return [NSSet setWithObjects: @"isRunningProcess", @"isInBatchScript", @"isInitialized", nil];
-}
-
-+ (NSSet *) keyPathsForValuesAffectingIsRunningProcess	{ return [NSSet setWithObjects: @"processName", @"processPath", nil]; }
-+ (NSSet *) keyPathsForValuesAffectingProcessIsInternal	{ return [NSSet setWithObject: @"processName"]; }
 
 
-#pragma mark -
-#pragma mark Initialization and teardown
+#pragma mark - Initialization and teardown
 
 - (id) init
 {
@@ -212,6 +205,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     [self.printer unbind: @"delegate"];
     
     self.processName = nil;
+    self.lastProcess = nil;
     self.activeMIDIDevice = nil;
     self.requestedMIDIDeviceDescription = nil;
     
@@ -231,8 +225,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 }
 
 
-#pragma mark -
-#pragma mark Controlling emulation state
+#pragma mark - Controlling emulation state
 
 - (void) start
 {
@@ -316,15 +309,20 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 
 
-#pragma mark -
-#pragma mark Introspecting emulation state
+#pragma mark - Introspecting emulation state
 
-- (BOOL) isRunningProcess
+- (NSDictionary *) currentProcess
 {
-    return self.processPath && ![self.processPath isEqualToString: shellProcessPath];
+    NSDictionary *currentProcess;
+    
+    @synchronized(_runningProcesses)
+    {
+        currentProcess = [[_runningProcesses lastObject] retain];
+    }
+    return [currentProcess autorelease];
 }
 
-+ (NSSet *) keyPathsForValuesAffectingProcessPath
++ (NSSet *) keyPathsForValuesAffectingCurrentProcess
 {
     return [NSSet setWithObject: @"runningProcesses"];
 }
@@ -334,8 +332,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     NSString *processPath;
     @synchronized(_runningProcesses)
     {
-        NSDictionary *currentProcess = [_runningProcesses lastObject];
-        processPath = [[currentProcess objectForKey: BXEmulatorDOSPathKey] retain];
+        processPath = [[self.currentProcess objectForKey: BXEmulatorDOSPathKey] retain];
     }
     return [processPath autorelease];
 }
@@ -348,38 +345,71 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
         NSDictionary *currentProcess = [_runningProcesses lastObject];
         processURL = [[currentProcess objectForKey: BXEmulatorLocalURLKey] retain];
     }
+    
     return [processURL autorelease];
 }
 
-- (BOOL) processIsInternal
++ (NSSet *) keyPathsForValuesAffectingProcessPath
 {
-	if (!self.isRunningProcess) return NO;
-    
-    //Count any programs on drive Z as being internal
-	return [self.processPath characterAtIndex: 0] == 'Z';
+    return [NSSet setWithObject: @"currentProcess"];
 }
 
-- (BOOL) isInBatchScript
++ (NSSet *) keyPathsForValuesAffectingProcessURL
 {
-	if (self.isExecuting)
-	{
-		DOS_Shell *shell = self._currentShell;
-		return (shell && shell->bf);
-	}
-	return NO;
+    return [NSSet setWithObject: @"currentProcess"];
 }
 
 - (BOOL) isAtPrompt
 {
     if (!self.isExecuting) return NO;
-    
     if (!self.isInitialized) return NO;
-    if (self.isInBatchScript) return NO;
-    if (self.isRunningProcess) return NO;
     
-    return YES;
+    NSDictionary *currentProcess = self.currentProcess;
+    if (currentProcess && ![self processIsShell: currentProcess])
+        return NO;
+    
+    return self.isWaitingForCommandInput;
 }
 
++ (NSSet *) keyPathsForValuesAffectingIsAtPrompt
+{
+    return [NSSet setWithObjects: @"isInitialized", @"currentProcess", @"isWaitingForCommandInput", nil];
+}
+
+- (BOOL) isRunningActiveProcess
+{
+    NSDictionary *currentProcess = self.currentProcess;
+    return currentProcess && ![self processIsShell: currentProcess] && ![self processIsBatchFile: currentProcess];
+}
+
++ (NSSet *) keyPathsForValuesAffectingisRunningActiveProcess
+{
+    return [NSSet setWithObject: @"currentProcess"];
+}
+
+- (BOOL) processIsInternal: (NSDictionary *)processInfo
+{
+    NSString *dosPath = [processInfo objectForKey: BXEmulatorDOSPathKey];
+    //Count any programs on drive Z as being internal
+	return [dosPath characterAtIndex: 0] == 'Z';
+}
+
+- (BOOL) processIsAutoexec: (NSDictionary *)processInfo
+{
+    NSString *dosPath = [processInfo objectForKey: BXEmulatorDOSPathKey];
+    return [dosPath isEqualToString: autoexecProcessPath];
+}
+
+- (BOOL) processIsShell: (NSDictionary *)processInfo
+{
+    NSString *dosPath = [processInfo objectForKey: BXEmulatorDOSPathKey];
+    return [dosPath isEqualToString: shellProcessPath];
+}
+
+- (BOOL) processIsBatchFile: (NSDictionary *)processInfo
+{
+    return [[processInfo objectForKey: BXEmulatorIsBatchFileKey] boolValue];
+}
 
 #pragma mark -
 #pragma mark Controlling DOSBox CPU settings

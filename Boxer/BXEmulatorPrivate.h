@@ -104,10 +104,10 @@ enum {
 @property (readwrite, getter=isInitialized) BOOL initialized;
 @property (readwrite, getter=isPaused) BOOL paused;
 @property (readwrite, copy) NSString *processName;
+@property (readwrite, copy) NSDictionary *lastProcess;
 
 @property (readwrite) BOOL joystickActive;
 @property (readwrite, getter=isWaitingForCommandInput) BOOL waitingForCommandInput;
-
 
 @property (readwrite, retain) BXVideoHandler *videoHandler;
 @property (readwrite, retain) BXEmulatedKeyboard *keyboard;
@@ -344,17 +344,12 @@ enum {
 
 //Called by DOSBox just before a program will start. Sends a delegate notification.
 - (void) _willExecuteFileAtDOSPath: (const char *)dosPath
-                     withArguments: (const char *)arguments;
+                     withArguments: (const char *)arguments
+                       isBatchFile: (BOOL)isBatchFile;
 
-//Called by DOSBox just after a program finishes executing and exits. Sends a delegate notification.
+//Called by DOSBox just after the current program or batch file finishes executing and exits.
+//Sends a delegate notification.
 - (void) _didExecuteFileAtDOSPath: (const char *)dosPath;
-
-//Called by DOSBox just before a batch file is loaded. Treated identically to _willExecuteFileAtDOSPath:.
-- (void) _willBeginBatchFileAtDOSPath: (const char *)dosPath
-                        withArguments: (const char *)arguments;
-
-//Called by DOSBox just after a batch file completes its last command. Sends a delegate notification.
-- (void) _didEndBatchFileAtDOSPath: (const char *)dosPath;
 
 @end
 

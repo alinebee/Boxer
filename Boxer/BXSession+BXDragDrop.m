@@ -123,23 +123,27 @@
 //This method indicates what we'll do with the dropped file, before we handle any actual drop.
 - (NSDragOperation) _responseToDraggedURL: (NSURL *)URL
 {
-	BOOL isInProcess = self.emulator.isRunningProcess;
-	
 	//We wouldn't accept any files that aren't on our accepted formats list.
 	if ([URL matchingFileType: self.droppableFileTypes] == nil)
+    {
         return NSDragOperationNone;
-	
+	}
+    
+    BOOL canOpenURLs = self.canOpenURLs;
+    
 	//We wouldn't accept any executables if the emulator is running a process already.
-	if (isInProcess && [URL matchingFileType: [BXFileTypes executableTypes]] != nil)
+	if (!canOpenURLs && [URL matchingFileType: [BXFileTypes executableTypes]] != nil)
+    {
         return NSDragOperationNone;
-	
+	}
 	//If the path is already accessible in DOS, and doesn't deserve its own mount point...
 	if (![self shouldMountNewDriveForURL: URL])
 	{
 		//...then we'd change the working directory to it, if we're not already busy; otherwise we'd reject it.
-		return (isInProcess) ? NSDragOperationNone : NSDragOperationLink;
+		return (canOpenURLs) ? NSDragOperationLink : NSDragOperationNone;
 	}
-	//If we get this far, it means we'd mount the dropped file as a new drive.
+    
+	//If we get this far, it means we'd mount/launch the dropped file.
 	return NSDragOperationCopy;
 }
 

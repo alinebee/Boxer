@@ -63,17 +63,9 @@ extern NSString * const BXGameImportedNotificationType;
 #pragma mark -
 #pragma mark Protected methods
 
-//Whether to leave the program panel open after launching a program, so they can decide what to do with it.
-//Used by programWillStart and didStartGraphicalContext.
-- (BOOL) _shouldLeaveProgramPanelOpenAfterLaunch;
-
-//Whether to switch to the launcher panel when the current program returns to the DOS prompt.
-- (BOOL) _shouldShowLaunchPanelOnProgramExit: (NSNotification *)exitNotification
-                            afterRunningTime: (NSTimeInterval)programRunningTime;
-
-//Whether we should close the session after returning to the DOS prompt.
-- (BOOL) _shouldCloseOnProgramExit: (NSNotification *)exitNotification
-                  afterRunningTime: (NSTimeInterval)programRunningTime;
+//Determines what to do after exiting the specified process and returning to the DOS prompt.
+//Called by emulatorDidReturnToShell: once the last process has been shut down.
+- (BXSessionProgramExitBehavior) _behaviorAfterReturningToShellFromProcess: (NSDictionary *)processInfo;
 
 //Whether we should start the emulator as soon as the document is created.
 - (BOOL) _shouldStartImmediately;

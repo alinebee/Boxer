@@ -54,10 +54,12 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 extern NSString * const shellProcessName;
 extern NSString * const shellProcessPath;
 
+#pragma mark - Process dictionary keys
 //Keys used in dictionaries returned by -runningProcesses and in BXEmulatorDidStart/DidFinishProgramNotifications.
-extern NSString * const BXEmulatorDOSPathKey;   //The full DOS path to the file.
-extern NSString * const BXEmulatorDriveKey;     //The BXDrive on which the file is located.
-extern NSString * const BXEmulatorLocalURLKey;  //The OS X URL corresponding to the file.
+extern NSString * const BXEmulatorDOSPathKey;       //The full DOS path to the file.
+extern NSString * const BXEmulatorIsBatchFileKey;   //An NSNumber recording whether the process is a batch file.
+extern NSString * const BXEmulatorDriveKey;         //The BXDrive on which the file is located.
+extern NSString * const BXEmulatorLocalURLKey;      //The OS X URL corresponding to the file.
 extern NSString * const BXEmulatorLocalPathKey __deprecated;
 extern NSString * const BXEmulatorLaunchArgumentsKey;   //The commandline arguments with which the program was launched.
 extern NSString * const BXEmulatorLaunchDateKey;        //The NSDate on which the program was launched.
@@ -96,6 +98,7 @@ extern NSString * const BXEmulatorExitDateKey;          //The NSDate on which th
     NSMutableArray *_runningProcesses;
 	
 	NSMutableDictionary *_driveCache;
+    NSDictionary *_lastProcess;
 	
 	BOOL _cancelled;
 	BOOL _executing;
@@ -174,22 +177,14 @@ extern NSString * const BXEmulatorExitDateKey;          //The NSDate on which th
 //but before the DOS machine is started.
 @property (readonly, getter=isInitialized) BOOL initialized;
 
-//Whether DOSBox is currently running a process.
-@property (readonly) BOOL isRunningProcess;
-
-//Returns whether the current process (if any) is an internal process.
-@property (readonly) BOOL processIsInternal;
-
-//Returns whether DOSBox is currently inside a batch script.
-@property (readonly) BOOL isInBatchScript;
+//Whether DOSBox is currently running a process that is not a commandline or batch file.
+@property (readonly) BOOL isRunningActiveProcess;
 
 //Returns whether DOSBox is waiting patiently at the DOS prompt doing nothing.
 @property (readonly) BOOL isAtPrompt;
 
-//Returns whether DOSBox is actively waiting for command input at the DOS prompt.
-@property (readonly, getter=isWaitingForCommandInput) BOOL waitingForCommandInput;
-
-//The name of the currently-executing DOSBox process. Will be nil if no process is running.
+//The name of the currently-executing DOSBox process.
+//Will be nil if no process is running or the current process is a commandline.
 @property (readonly, copy) NSString *processName;
 
 //The DOS path of the currently-executing DOSBox process.
@@ -200,9 +195,18 @@ extern NSString * const BXEmulatorExitDateKey;          //The NSDate on which th
 //Will be nil if no process is running or no URL is applicable to that process.
 @property (readonly) NSURL *processURL;
 
-//An array of dictionaries of [processPath, processLocalURL] pairs representing
-//the stack of running processes.
+//An array of dictionaries of representing the stack of running processes.
+//Each dictionary contains the keys listed above under "Process dictionary keys".
 @property (readonly) NSArray *runningProcesses;
+
+//Returns a dictionary of info representing the current DOSBox process.
+//Returns nil if no process is running.
+@property (readonly, copy) NSDictionary *currentProcess;
+
+//Returns a dictionary of info representing either the current DOSBox process
+//(if one is still running) or the last process that was running.
+@property (readonly, copy) NSDictionary *lastProcess;
+
 
 
 #pragma mark -
@@ -258,8 +262,7 @@ extern NSString * const BXEmulatorExitDateKey;          //The NSDate on which th
 @property (assign) float masterVolume;
 
 
-#pragma mark -
-#pragma mark Class methods
+#pragma mark - Class methods
 
 //Returns the currently active DOS session.
 + (BXEmulator *) currentEmulator;
@@ -274,8 +277,7 @@ extern NSString * const BXEmulatorExitDateKey;          //The NSDate on which th
 + (NSString *) configStringForGameportTimingMode: (BXGameportTimingMode)mode;
 
 
-#pragma mark -
-#pragma mark Controlling emulation state
+#pragma mark - Controlling emulation state
 
 //Begin emulation.
 - (void) start;
@@ -287,9 +289,21 @@ extern NSString * const BXEmulatorExitDateKey;          //The NSDate on which th
 - (void) pause;
 - (void) resume;
 
+#pragma mark - Process management
 
-#pragma mark -
-#pragma mark Managing gameport devices
+//Returns whether the specified process represents an instance of DOSBox's COMMAND.COM
+- (BOOL) processIsShell: (NSDictionary *)process;
+
+//Returns whether the specified process represents an instance of DOSBox's AUTOEXEC.BAT
+- (BOOL) processIsAutoexec: (NSDictionary *)process;
+
+//Returns whether the specified process is one of DOSBox's internal programs.
+- (BOOL) processIsInternal: (NSDictionary *)process;
+
+//Returns whether the specified process is a batchfile or a regular program.
+- (BOOL) processIsBatchFile: (NSDictionary *)process;
+
+#pragma mark - Managing gameport devices
 
 //Validates whether the specified joystick is a valid joystick type and supported by the current session.
 - (BOOL) validateJoystick: (id <BXEmulatedJoystick> *)ioValue error: (NSError **)outError;

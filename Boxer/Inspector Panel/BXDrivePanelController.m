@@ -419,8 +419,8 @@ enum {
 		//Deep breath now: only enable option if...
 		//- only one drive is selected
 		//- the drive isn't already the current drive
-		//- the session is at the DOS prompt and thus able to safely switch drives
-		return !isCurrent && selectedDrives.count == 1 && theEmulator.isAtPrompt;
+		//- the session is able to switch drives
+		return !isCurrent && selectedDrives.count == 1 && session.canOpenURLs;
 	}
 	
 	if (action == @selector(importSelectedDrives:))

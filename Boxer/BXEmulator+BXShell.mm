@@ -125,10 +125,21 @@ nil];
 	}
 }
 
+- (BOOL) canDisplayStrings
+{
+    if (!self.isExecuting)
+        return NO;
+    
+    NSDictionary *currentProcess = self.currentProcess;
+    if (currentProcess && ![self processIsBatchFile: currentProcess] && ![self processIsShell: currentProcess])
+        return NO;
+    
+    return YES;
+}
 
 - (void) displayString: (NSString *)theString
 {
-	if (self.isExecuting && !self.isRunningProcess)
+	if (self.canDisplayStrings)
 	{
 		//Will be NULL if the string is not encodable
 		const char *encodedString = [theString cStringUsingEncoding: BXDisplayStringEncoding];
@@ -376,7 +387,7 @@ nil];
 
 - (void) clearScreen
 {
-    if (!self.isRunningProcess)
+    if (!self.isRunningActiveProcess)
     {
         //Copypasta from CMD_CLS.
         reg_ax=0x0003;
@@ -393,7 +404,7 @@ nil];
 
 - (BOOL) _canExecuteCommandsDirectly
 {
-    return self.isExecuting && !self.isRunningProcess && !self.isWaitingForCommandInput;
+    return self.isExecuting && !self.isRunningActiveProcess && !self.isWaitingForCommandInput;
 }
 
 - (BOOL) _executeNextPendingCommand
@@ -414,7 +425,7 @@ nil];
             
             //The printing behaviour below matches DOSBox's handling of batch file lines:
             //q.v. shell.cpp.
-            if (printCommand && (!self.isInBatchScript || [command characterAtIndex: 0] != '@'))
+            if (printCommand && (shell->bf == NULL || [command characterAtIndex: 0] != '@'))
             {
                 shell->ShowPrompt();
                 
@@ -639,6 +650,7 @@ nil];
 
 - (void) _willExecuteFileAtDOSPath: (const char *)dosPath
                      withArguments: (const char *)arguments
+                       isBatchFile: (BOOL)isBatchFile
 {
     char driveIndex = dosPath[0] - 'A';
     DOS_Drive *dosboxDrive = Drives[driveIndex];
@@ -655,6 +667,7 @@ nil];
                                         BXEmulatorDOSPathKey: fullDOSPath,
                                         BXEmulatorDriveKey: drive,
                                         BXEmulatorLaunchDateKey: [NSDate date],
+                                        BXEmulatorIsBatchFileKey: @(isBatchFile),
                                         }];
     
 	if (localURL)
@@ -668,6 +681,8 @@ nil];
     [self willChangeValueForKey: @"runningProcesses"];
     [_runningProcesses addObject: processInfo];
     [self didChangeValueForKey: @"runningProcesses"];
+    
+    self.lastProcess = processInfo;
     
 	[self _postNotificationName: BXEmulatorWillStartProgramNotification
 			   delegateSelector: @selector(emulatorWillStartProgram:)
@@ -686,27 +701,19 @@ nil];
     NSAssert(lastProcessInfo != nil, @"No existing process found: _didExecuteFileAtDOSPath:onDOSBoxDrive:withArguments: must always be paired with _willExecuteFileAtDOSPath:onDOSBoxDrive:withArguments:.");
     
     //Reuse all process data from when this program was launched
-	NSMutableDictionary *notificationInfo = [[lastProcessInfo mutableCopy] autorelease];
-    [notificationInfo setObject: [NSDate date] forKey: BXEmulatorExitDateKey];
+	NSMutableDictionary *updatedProcessInfo = [[lastProcessInfo mutableCopy] autorelease];
+    [updatedProcessInfo setObject: [NSDate date] forKey: BXEmulatorExitDateKey];
 	
     //Pop the last process off the stack
     [self willChangeValueForKey: @"runningProcesses"];
     [_runningProcesses removeLastObject];
     [self didChangeValueForKey: @"runningProcesses"];
     
+    self.lastProcess = updatedProcessInfo;
+    
 	[self _postNotificationName: BXEmulatorDidFinishProgramNotification
 			   delegateSelector: @selector(emulatorDidFinishProgram:)
-					   userInfo: notificationInfo];
-}
-
-- (void) _willBeginBatchFileAtDOSPath: (const char *)dosPath withArguments: (const char *)args
-{
-    [self _willExecuteFileAtDOSPath: dosPath withArguments: args];
-}
-
-- (void) _didEndBatchFileAtDOSPath: (const char *)dosPath
-{
-    [self _didExecuteFileAtDOSPath: dosPath];
+					   userInfo: updatedProcessInfo];
 }
 
 - (void) _didReturnToShell
@@ -723,10 +730,6 @@ nil];
 	self.mouse.active = NO;
     self.joystickActive = NO;
     
-    //Fire off a manual update for the isInBatchScript flag, since we won't know about this change automatically.
-    [self willChangeValueForKey: @"isInBatchScript"];
-    [self didChangeValueForKey: @"isInBatchScript"];
-    
     //Also flag that the current drive/directory may have changed.
     [self willChangeValueForKey: @"currentDirectory"];
     [self didChangeValueForKey: @"currentDirectory"];
@@ -737,8 +740,10 @@ nil];
     //to a particular MIDI mode.)
     [self _resetMIDIDevice];
     
+    //Include the details of the program that just exited.
+    NSDictionary *notificationInfo = self.lastProcess;
 	[self _postNotificationName: BXEmulatorDidReturnToShellNotification
 			   delegateSelector: @selector(emulatorDidReturnToShell:)
-					   userInfo: nil];
+					   userInfo: notificationInfo];
 }
 @end

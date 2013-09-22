@@ -99,9 +99,8 @@ enum {
 {
 	if (theItem.action == @selector(launchDefaultProgram:))
 	{
-		BXEmulator *emulator = self.session.emulator;
 		NSString *filePath = self.programSelector.selectedItem.representedObject;
-		return filePath && emulator.isExecuting && !emulator.isRunningProcess;
+		return filePath != nil && self.session.canOpenURLs;
 	}
 	return YES;
 }

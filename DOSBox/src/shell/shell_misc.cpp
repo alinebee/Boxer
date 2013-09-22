@@ -61,22 +61,22 @@ void DOS_Shell::InputCommand(char * line) {
 		
 		//--Modified 2012-08-19 by Alun Bestor to let Boxer inject its own input
         //and cancel keyboard input listening.
-        boxer_willReadCommandInputFromHandle(input_handle);
+        boxer_shellWillReadCommandInputFromHandle(this, input_handle);
 		while(boxer_continueListeningForKeyEvents() && !DOS_ReadFile(input_handle,&c,&n)) {
 			Bit16u dummy;
 			DOS_CloseFile(input_handle);
 			DOS_OpenFile("con",2,&dummy);
 			LOG(LOG_MISC,LOG_ERROR)("Reopening the input handle.This is a bug!");
 		}
-        boxer_didReadCommandInputFromHandle(input_handle);
+        boxer_shellDidReadCommandInputFromHandle(this, input_handle);
 		
-        if (!boxer_shellShouldContinue())
+        if (!boxer_shellShouldContinue(this))
         {
             return;
         }
         
 		bool executeImmediately = false;
-		if (boxer_handleCommandInput(line, &str_index, &executeImmediately))
+		if (boxer_handleShellCommandInput(this, line, &str_index, &executeImmediately))
 		{
 			if (executeImmediately)
 			{
@@ -480,7 +480,7 @@ bool DOS_Shell::Execute(char * name,char * args) {
 		if(bf && !call) delete bf;
 		
 		//--Added 2010-01-21 by Alun Bestor to let Boxer track the launched batch file
-		boxer_willBeginBatchFile(canonicalPath, args);
+		boxer_shellWillBeginBatchFile(this, canonicalPath, args);
 		
 		bf=new BatchFile(this,fullname,name,line);
 		echo=temp_echo; //restore it.
@@ -496,7 +496,7 @@ bool DOS_Shell::Execute(char * name,char * args) {
 		}
 		
 		//--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
-		boxer_willExecuteFileAtDOSPath(canonicalPath, args);
+		boxer_shellWillExecuteFileAtDOSPath(this, canonicalPath, args);
 		//--End of modifications
 		
 		/* Run the .exe or .com file from the shell */
@@ -557,7 +557,7 @@ bool DOS_Shell::Execute(char * name,char * args) {
 #endif
         
         //--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
-        boxer_didExecuteFileAtDOSPath(canonicalPath);
+        boxer_shellDidExecuteFileAtDOSPath(this, canonicalPath);
         //--End of modifications
 	}
 	

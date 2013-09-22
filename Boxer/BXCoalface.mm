@@ -14,8 +14,7 @@
 #import "shell.h"
 #import "ADBFilesystem.h"
 
-#pragma mark -
-#pragma mark Application state functions
+#pragma mark - Runloop state functions
 
 //This is called in place of DOSBox's GFX_Events to allow us to process events when the DOSBox
 //core runloop gives us time.
@@ -42,11 +41,6 @@ bool boxer_runLoopShouldContinue()
 	return [[BXEmulator currentEmulator] _runLoopShouldContinue];
 }
 
-bool boxer_shellShouldContinue()
-{
-	return ![BXEmulator currentEmulator].isCancelled;
-}
-
 //Notifies Boxer of changes to title and speed settings
 void boxer_handleDOSBoxTitleChange(Bit32s newCycles, Bits newFrameskip, bool newPaused)
 {
@@ -55,8 +49,7 @@ void boxer_handleDOSBoxTitleChange(Bit32s newCycles, Bits newFrameskip, bool new
 }
 
 
-#pragma mark -
-#pragma mark Rendering functions
+#pragma mark - Rendering functions
 
 void boxer_applyRenderingStrategy()
 {
@@ -111,37 +104,37 @@ void boxer_setPalette(Bitu start,Bitu count,GFX_PalEntry * entries)
 }
 
 
-#pragma mark -
-#pragma mark Shell-related functions
+#pragma mark - Shell-related functions
+
+void boxer_shellWillStart(DOS_Shell *shell)
+{
+	[[BXEmulator currentEmulator] _shellWillStart: shell];
+}
+
+void boxer_shellDidFinish(DOS_Shell *shell)
+{
+	[[BXEmulator currentEmulator] _shellDidFinish: shell];
+}
+
+bool boxer_shellShouldContinue(DOS_Shell *shell)
+{
+	return ![BXEmulator currentEmulator].isCancelled;
+}
 
 //Catch shell input and send it to our own shell controller - returns YES if we've handled the command,
 //NO if we want to let it go through
 //This is called by DOS_Shell::DoCommand in DOSBox's shell/shell_cmds.cpp, to allow us to hook into what
 //goes on in the shell
-bool boxer_shouldRunShellCommand(char* cmd, char* args)
+bool boxer_shellShouldRunCommand(DOS_Shell *shell, char* cmd, char* args)
 {
 	NSString *command			= [NSString stringWithCString: cmd	encoding: BXDirectStringEncoding];
 	NSString *argumentString	= [NSString stringWithCString: args	encoding: BXDirectStringEncoding];
 	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _handleCommand: command withArgumentString: argumentString];
+	return ![emulator _handleCommand: command withArgumentString: argumentString];
 }
 
-
-//Return a localized string for the given DOSBox translation key
-//This is called by MSG_Get in DOSBox's misc/messages.cpp, instead of retrieving strings from its own localisation system
-const char * boxer_localizedStringForKey(char const *keyStr)
-{
-	NSString *theKey			= [NSString stringWithCString: keyStr encoding: BXDirectStringEncoding];
-	NSString *localizedString	= [[NSBundle mainBundle]
-								   localizedStringForKey: theKey
-								   value: @"" //If the key isn't found, display nothing
-								   table: @"DOSBox"];
-	
-	return [localizedString cStringUsingEncoding: BXDisplayStringEncoding];
-}
-
-bool boxer_handleCommandInput(char *cmd, Bitu *cursorPosition, bool *executeImmediately)
+bool boxer_handleShellCommandInput(DOS_Shell *shell, char *cmd, Bitu *cursorPosition, bool *executeImmediately)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
     NSString *inOutCommand = [NSString stringWithCString: cmd encoding: BXDirectStringEncoding];
@@ -161,19 +154,19 @@ bool boxer_handleCommandInput(char *cmd, Bitu *cursorPosition, bool *executeImme
 	return false;
 }
 
-bool boxer_executeNextPendingCommand()
+bool boxer_executeNextPendingCommandForShell(DOS_Shell *shell)
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
 	return [emulator _executeNextPendingCommand];
 }
 
-bool boxer_hasPendingCommands()
+bool boxer_hasPendingCommandsForShell(DOS_Shell *shell)
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
 	return emulator.commandQueue.count > 0;
 }
 
-void boxer_willReadCommandInputFromHandle(Bit16u handle)
+void boxer_shellWillReadCommandInputFromHandle(DOS_Shell *shell, Bit16u handle)
 {
     if (handle == STDIN)
     {
@@ -181,7 +174,7 @@ void boxer_willReadCommandInputFromHandle(Bit16u handle)
         emulator.waitingForCommandInput = YES;
     }
 }
-void boxer_didReadCommandInputFromHandle(Bit16u handle)
+void boxer_shellDidReadCommandInputFromHandle(DOS_Shell *shell, Bit16u handle)
 {
     if (handle == STDIN)
     {
@@ -190,51 +183,50 @@ void boxer_didReadCommandInputFromHandle(Bit16u handle)
     }
 }
 
-void boxer_didReturnToShell()
+void boxer_didReturnToShell(DOS_Shell *shell)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _didReturnToShell];
 }
 
-void boxer_autoexecWillStart()
+void boxer_shellWillStartAutoexec(DOS_Shell *shell)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _willRunStartupCommands];
 }
 
-void boxer_willExecuteFileAtDOSPath(const char *path, const char *arguments)
+void boxer_shellWillExecuteFileAtDOSPath(DOS_Shell *shell, const char *path, const char *arguments)
 {	
     BXEmulator *emulator = [BXEmulator currentEmulator];
     [emulator _willExecuteFileAtDOSPath: path withArguments: arguments isBatchFile: NO];
 }
 
-void boxer_didExecuteFileAtDOSPath(const char *path)
+void boxer_shellDidExecuteFileAtDOSPath(DOS_Shell *shell, const char *path)
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
     [emulator _didExecuteFileAtDOSPath: path];
 }
 
-void boxer_willBeginBatchFile(const char *path, const char *arguments)
+void boxer_shellWillBeginBatchFile(DOS_Shell *shell, const char *path, const char *arguments)
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
     [emulator _willExecuteFileAtDOSPath: path withArguments: arguments isBatchFile: YES];
 }
 
-void boxer_didEndBatchFile(const char *canonicalPath)
+void boxer_shellDidEndBatchFile(DOS_Shell *shell, const char *canonicalPath)
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
     [emulator _didExecuteFileAtDOSPath: canonicalPath];
 }
 
-bool boxer_shouldDisplayStartupMessages()
+bool boxer_shellShouldDisplayStartupMessages(DOS_Shell *shell)
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
-    return [emulator _shouldDisplayStartupMessagesForShell: emulator._currentShell];
+    return [emulator _shouldDisplayStartupMessagesForShell: shell];
 }
 
 
-#pragma mark -
-#pragma mark Filesystem functions
+#pragma mark - Filesystem functions
 
 #define boxer_pathFromCPath(path) ([[NSFileManager defaultManager] stringWithFileSystemRepresentation: path length: strlen(path)])
 
@@ -344,7 +336,6 @@ bool boxer_localFileExists(const char *path, DOS_Drive *drive)
     return [emulator _localFileExists: path onDOSBoxDrive: drive];
 }
 
-#pragma mark -
 #pragma mark Directory enumeration
 
 void *boxer_openLocalDirectory(const char *path, DOS_Drive *drive)
@@ -409,8 +400,7 @@ bool boxer_getNextDirectoryEntry(void *handle, char *outName, bool &isDirectory)
 }
 
 
-#pragma mark -
-#pragma mark Input-related functions
+#pragma mark - Input functions
 
 const char * boxer_preferredKeyboardLayout()
 {
@@ -491,8 +481,7 @@ void boxer_setScrollLockActive(bool active)
 }
 
 
-#pragma mark -
-#pragma mark Printer-related functions
+#pragma mark - Printer functions
 
 Bitu boxer_PRINTER_readdata(Bitu port,Bitu iolen)
 {
@@ -532,8 +521,20 @@ bool boxer_PRINTER_isInited(Bitu port)
     return emulator.printer != nil;
 }
 
-#pragma mark -
-#pragma mark Helper functions
+#pragma mark - Helper functions
+
+//Return a localized string for the given DOSBox translation key
+//This is called by MSG_Get in DOSBox's misc/messages.cpp, instead of retrieving strings from its own localisation system
+const char * boxer_localizedStringForKey(char const *keyStr)
+{
+	NSString *theKey			= [NSString stringWithCString: keyStr encoding: BXDirectStringEncoding];
+	NSString *localizedString	= [[NSBundle mainBundle]
+								   localizedStringForKey: theKey
+								   value: @"" //If the key isn't found, display nothing
+								   table: @"DOSBox"];
+	
+	return [localizedString cStringUsingEncoding: BXDisplayStringEncoding];
+}
 
 void boxer_log(char const* format,...)
 {
@@ -561,8 +562,7 @@ void boxer_die(const char *functionName, const char *fileName, int lineNumber, c
 }
 
 
-#pragma mark -
-#pragma mark No-ops
+#pragma mark - No-ops
 
 //These used to be defined in sdl_mapper.cpp, which we no longer include in Boxer.
 void MAPPER_AddHandler(MAPPER_Handler * handler,MapKeys key,Bitu mods,char const * const eventname,char const * const buttonname) {}

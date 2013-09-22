@@ -144,7 +144,8 @@ void DOS_Shell::DoCommand(char * line) {
 	
 	//--Added 2009-02-20 by Alun Bestor to hook into DOS shell for our own nefarious purposes
 	//We do this here to preempt whatever DOSBox would like to do
-	if (boxer_shouldRunShellCommand(cmd_buffer, line)) return;
+	if (!boxer_shellShouldRunCommand(this, cmd_buffer, line))
+        return;
 	//--End of modifications
 	
 /* Check the internal list */

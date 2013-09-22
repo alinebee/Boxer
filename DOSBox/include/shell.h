@@ -40,7 +40,12 @@ extern Bitu call_shellstop;
  * by "external" programs. (config) */
 extern Program * first_shell;
 
+
 class DOS_Shell;
+
+//--Added 2013-09-22 by Alun Bestor to let Boxer talk to the currently active shell
+extern DOS_Shell * currentShell;
+//--End of modifications
 
 class BatchFile {
 public:
@@ -66,7 +71,7 @@ private:
 
 	char *completion_start;
 	Bit16u completion_index;
-	
+    
 public:
 
 	DOS_Shell();

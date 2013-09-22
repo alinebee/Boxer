@@ -52,7 +52,7 @@ BatchFile::~BatchFile() {
 	shell->echo=echo;
     
     //--Added 2013-09-22 by Alun Bestor to let Boxer track the lifecycle of the batch file
-    boxer_didEndBatchFile(filename.c_str());
+    boxer_shellDidEndBatchFile(shell, filename.c_str());
     //--End of modifications
 }
 

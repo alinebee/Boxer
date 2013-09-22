@@ -781,7 +781,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (DOS_Shell *) _currentShell
 {
-	return (DOS_Shell *)first_shell;
+	return currentShell;
 }
 
 - (void) _postNotificationName: (NSString *)name

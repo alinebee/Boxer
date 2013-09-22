@@ -339,6 +339,10 @@ enum {
 //Called by DOSBox whenever control returns to the DOS prompt. Sends a delegate notification.
 - (void) _didReturnToShell;
 
+//Called by DOSBox whenever a new shell starts up or completes.
+- (void) _shellWillStart: (DOS_Shell *)shell;
+- (void) _shellDidFinish: (DOS_Shell *)shell;
+
 //Called by DOSBox just before AUTOEXEC.BAT is started. Sends a delegate notification.
 - (void) _willRunStartupCommands;
 

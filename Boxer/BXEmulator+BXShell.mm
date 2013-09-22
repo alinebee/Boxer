@@ -419,7 +419,7 @@ nil];
         
         if (command.length)
         {
-            DOS_Shell *shell = [self _currentShell];
+            DOS_Shell *shell = self._currentShell;
             
             BOOL printCommand = shell->echo;
             
@@ -718,13 +718,6 @@ nil];
 
 - (void) _didReturnToShell
 {
-    //We receive _didReturnToShell messages while executing our own commands,
-    //as we repeatedly kill and restart the shell runloop to execute each command.
-    //These events should be ignored: instead, we only treat it as an actual return
-    //to the command prompt once we have run out of our own commands.
-    if (self.commandQueue.count)
-        return;
-        
     //Indicate the session has stopped listening for mouse and joystick
     //input now that it has returned to the DOS prompt.
 	self.mouse.active = NO;
@@ -745,5 +738,15 @@ nil];
 	[self _postNotificationName: BXEmulatorDidReturnToShellNotification
 			   delegateSelector: @selector(emulatorDidReturnToShell:)
 					   userInfo: notificationInfo];
+}
+
+- (void) _shellWillStart: (DOS_Shell *)shell
+{
+
+}
+
+- (void) _shellDidFinish: (DOS_Shell *)shell
+{
+    
 }
 @end

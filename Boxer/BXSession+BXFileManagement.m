@@ -865,7 +865,10 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 {
 	if (!self.canOpenURLs)
     {
-        //TODO: populate outError
+        if (outError)
+        {
+            *outError = [BXSessionNotReadyError errorWithUserInfo: nil];
+        }
         return NO;
     }
     
@@ -873,6 +876,10 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	NSString *dosPath = [self.emulator DOSPathForURL: URL];
 	if (!dosPath)
     {
+        if (outError)
+        {
+            *outError = [BXSessionURLNotReachableError errorWithURL: URL userInfo: nil];
+        }
         return NO;
 	}
     

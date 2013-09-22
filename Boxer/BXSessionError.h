@@ -25,6 +25,9 @@ enum
     
     BXGameStateUnsupported,     //Returned when the current session does not support game states. (e.g. no gamebox is present.)
     BXGameStateGameboxMismatch, //Returned when validating a boxerstate file, if it is for a different game than the current game.
+    
+    BXSessionNotReady,          //Returned when openURLInDOS:error: is not ready to open a program.
+    BXURLNotReachableInDOS,     //Returned when openURLInDOS:error: is passed a URL that cannot be mapped to a DOS path.
 };
 
 //General base class for all session errors
@@ -64,4 +67,14 @@ enum
 @class BXGamebox;
 @interface BXGameStateGameboxMismatchError : BXSessionError
 + (id) errorWithStateURL: (NSURL *)stateURL gamebox: (BXGamebox *)gamebox userInfo: (NSDictionary *)userInfo;
+@end
+
+@interface BXSessionNotReadyError : BXSessionError
+
++ (id) errorWithUserInfo: (NSDictionary *)userInfo;
+
+@end
+
+@interface BXSessionURLNotReachableError : BXSessionError
++ (id) errorWithURL: (NSURL *)URL userInfo: (NSDictionary *)userInfo;
 @end

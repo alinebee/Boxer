@@ -240,3 +240,30 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 						userInfo: defaultInfo];
 }
 @end
+
+
+@implementation BXSessionNotReadyError
+
++ (id) errorWithUserInfo: (NSDictionary *)userInfo
+{
+    return [self errorWithDomain: BXSessionErrorDomain code: BXSessionNotReady userInfo: userInfo];
+}
+
+@end
+
+
+@implementation BXSessionURLNotReachableError
+
++ (id) errorWithURL: (NSURL *)URL userInfo: (NSDictionary *)userInfo
+{
+    NSMutableDictionary *defaultInfo = [NSMutableDictionary dictionaryWithDictionary: @{
+                                         NSURLErrorKey: URL,
+                                         }];
+	
+	if (userInfo)
+        [defaultInfo addEntriesFromDictionary: userInfo];
+	
+    return [self errorWithDomain: BXSessionErrorDomain code: BXURLNotReachableInDOS userInfo: defaultInfo];
+}
+
+@end

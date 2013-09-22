@@ -8,7 +8,6 @@
 
 #import "BXGLRenderingView.h"
 #import "BXBuiltinShaderRenderers.h"
-#import "BXRippleShader.h"
 #import "ADBTexture2D.h"
 #import "BXVideoFrame.h"
 #import "ADBGeometry.h"
@@ -23,14 +22,7 @@
 
 @property (retain) BXVideoFrame *currentFrame;
 
-@property (retain) BXRippleShader *rippleEffect2D;
-@property (retain) BXRippleShader *rippleEffectRectangle;
-
 @property (assign, nonatomic) NSRect viewportRect;
-
-@property (assign, nonatomic) CGPoint rippleOrigin;
-@property (assign, nonatomic) CGFloat rippleProgress;
-@property (assign, nonatomic) BOOL rippleReversed;
 
 //Whether we should redraw in the next display-link cycle.
 //Set to YES upon receiving a new frame, then back to NO after rendering it.
@@ -69,19 +61,10 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @synthesize renderingStyle = _renderingStyle;
 @synthesize inViewAnimation = _inViewAnimation;
 
-@synthesize rippleEffect2D = _rippleEffect2D;
-@synthesize rippleEffectRectangle = _rippleEffectRectangle;
-
-@synthesize rippleProgress = _rippleProgress;
-@synthesize rippleOrigin = _rippleOrigin;
-@synthesize rippleReversed = _rippleReversed;
-
 - (void) dealloc
 {
     self.currentFrame = nil;
     self.renderer = nil;
-    self.rippleEffect2D = nil;
-    self.rippleEffectRectangle = nil;
 	[super dealloc];
 }
 
@@ -190,12 +173,6 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         animation.duration = 0.2;
         animation.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionEaseIn];
         animation.delegate = self;
-        return animation;
-    }
-    else if ([key isEqualToString: @"rippleProgress"])
-    {
-        CABasicAnimation *animation = [CABasicAnimation animation];
-        animation.duration = 0.5;
         return animation;
     }
     else
@@ -416,27 +393,6 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     self.renderer = [self rendererForStyle: self.renderingStyle
                                  inContext: cgl_ctx];
     
-    //Load in our ripple effects
-    //Disabled for now because they suck
-    /*
-    NSError *rippleLoadingError = nil;
-    self.rippleEffect2D = [BXRippleShader shaderNamed: @"ripple2D"
-                                       inSubdirectory: @"Shaders"
-                                            inContext: cgl_ctx
-                                                error: &rippleLoadingError];
-    
-    if (rippleLoadingError)
-        NSLog(@"%@", rippleLoadingError);
-    
-    self.rippleEffectRectangle = [BXRippleShader shaderNamed: @"rippleRect"
-                                              inSubdirectory: @"Shaders"
-                                                   inContext: cgl_ctx
-                                                       error: &rippleLoadingError];
-    
-    if (rippleLoadingError)
-        NSLog(@"%@", rippleLoadingError);
-    */
-    
     //Set up the CV display link if desired
     BOOL useCVDisplayLink = [[NSUserDefaults standardUserDefaults] boolForKey: @"useCVDisplayLink"];
     if (useCVDisplayLink)
@@ -465,12 +421,6 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 {
     //Get rid of our entire renderer when the context changes.
     self.renderer = nil;
-    
-    [self.rippleEffect2D deleteShaderProgram];
-    self.rippleEffect2D = nil;
-    
-    [self.rippleEffectRectangle deleteShaderProgram];
-    self.rippleEffectRectangle = nil;
     
 	if (_displayLink)
 	{
@@ -571,60 +521,14 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     }
 }
 
-- (void) showRippleAtPoint: (NSPoint)point reverse: (BOOL)reverse
-{
-    NSPoint relativeOrigin = pointRelativeToRect(point, self.viewportRect);
-    self.rippleOrigin = CGPointMake(relativeOrigin.x, 1.0f - relativeOrigin.y);
-    self.rippleReversed = reverse;
-    self.rippleProgress = 0.0f;
-    [self.animator setRippleProgress: 1.0f];
-}
-
-- (void) setRippleProgress: (CGFloat)progress
-{
-    _rippleProgress = progress;
-    
-    if (_displayLink)
-        self.needsCVLinkDisplay = YES;
-    else
-        self.needsDisplay = YES;
-}
-
 - (void) renderer: (BXBasicRenderer *)renderer willRenderTextureToDestinationContext: (ADBTexture2D *)texture
 {
-    if (_rippleProgress > 0.0f && _rippleProgress < 1.0f)
-    {
-        //We need to switch which shader we use based on texture type: one shader version is written
-        //for 2D textures, the other for rectangle textures.
-        BXRippleShader *effect = (texture.type == GL_TEXTURE_RECTANGLE_ARB) ? self.rippleEffectRectangle : self.rippleEffect2D;
-        
-        if (effect)
-        {
-            CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
-            if (self.rippleReversed) currentTime = -currentTime;
-            
-            //Translate our 0->1 progress to 0->1->0, where the ripples are strongest midway through the animation.
-            CGFloat baseHeight = 0.5f;
-            CGFloat mirroredProgress = ABS(_rippleProgress - 0.5f) * 2.0f;
-            GLfloat height = baseHeight - (mirroredProgress * baseHeight);
-            
-            CGLContextObj cgl_ctx = effect.context;
-            glUseProgramObjectARB(effect.shaderProgram);
-            
-            effect.textureIndex = 0;
-            effect.textureSize = texture.textureSize;
-            effect.frameTime = currentTime;
-            effect.rippleHeight = height;
-            effect.rippleOrigin = self.rippleOrigin;
-        }
-    }
+    
 }
 
 - (void) renderer: (BXBasicRenderer *)renderer didRenderTextureToDestinationContext: (ADBTexture2D *)texture
 {
-    CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
     
-    glUseProgramObjectARB(0);
 }
 
 CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,

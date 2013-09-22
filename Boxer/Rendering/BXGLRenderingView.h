@@ -15,7 +15,6 @@
 #import "BXBasicRenderer.h"
 
 @class BXBasicRenderer;
-@class BXRippleShader;
 @class ADBTexture2D;
 @interface BXGLRenderingView : NSOpenGLView <BXFrameRenderingView, BXRendererDelegate, NSAnimationDelegate>
 {
@@ -34,13 +33,6 @@
     BOOL _inViewportAnimation;
     BOOL _inViewAnimation;
     BOOL _usesTransparentSurface;
-    
-    BXRippleShader *_rippleEffect2D;
-    BXRippleShader *_rippleEffectRectangle;
-    
-    CGPoint _rippleOrigin;
-    CGFloat _rippleProgress;
-    BOOL _rippleReversed;
     
     BOOL _isLowSpecGPU;
 }
@@ -63,9 +55,6 @@
 //Returns a fully-configured renderer set up for the specified context.
 - (BXBasicRenderer *) rendererForStyle: (BXRenderingStyle)style
                              inContext: (CGLContextObj)context;
-
-- (void) showRippleAtPoint: (NSPoint)point
-                   reverse: (BOOL)reverse;
 
 //Set the viewport (the area of the view in which the frame is rendered) to the specified rectangle.
 //If animated is YES, the viewport will be smoothly animated to the new size; otherwise the viewport

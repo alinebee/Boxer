@@ -527,18 +527,6 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	{
 		NSString *lockSoundName	= (wasLocked) ? @"LockOpening" : @"LockClosing";
 		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: BXMouseLockSoundVolume];
-        
-        //Also do a little ripple animation where the mouse cursor was.
-        //Disabled for now because it's kinda sucky.
-        /*
-        if (mouseWasInside)
-        {
-            NSPoint previousMouseLocation = self.view.window.mouseLocationOutsideOfEventStream;
-            BXGLRenderingView *renderView = (BXGLRenderingView *)self.windowController.renderingView;
-            NSPoint rippleLocation = [renderView convertPoint: previousMouseLocation fromView: nil];
-            [renderView showRippleAtPoint: rippleLocation reverse: wasLocked];
-        }
-         */
 	}
 }
 

@@ -466,8 +466,6 @@
 		9F59DEDA10B0159A008DBBC1 /* BXProgramPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */; };
 		9F59DEDF10B01743008DBBC1 /* ProgramPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */; };
 		9F5B6B7213C3529500E9CA18 /* BXInputController+BXJoypadInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6380C13C0A10E004478A3 /* BXInputController+BXJoypadInput.m */; };
-		9F5DD13715E544710096D0E8 /* BXRippleShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DD13615E544710096D0E8 /* BXRippleShader.m */; };
-		9F5DD13815E544710096D0E8 /* BXRippleShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DD13615E544710096D0E8 /* BXRippleShader.m */; };
 		9F5E389716C85140009774A9 /* Game.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F5E389616C85140009774A9 /* Game.png */; };
 		9F5F12C615ADCE74007A070F /* NSKeyedArchiver+ADBArchivingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5F12C515ADCE74007A070F /* NSKeyedArchiver+ADBArchivingAdditions.m */; };
 		9F60B0DC13AA418300F06BB1 /* BXCollectionItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F60B0DB13AA418300F06BB1 /* BXCollectionItemView.m */; };
@@ -1193,8 +1191,6 @@
 		9F59DED810B0159A008DBBC1 /* BXProgramPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXProgramPanelController.h; sourceTree = "<group>"; };
 		9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXProgramPanelController.m; sourceTree = "<group>"; };
 		9F59DEDE10B01743008DBBC1 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/ProgramPanel.xib; sourceTree = "<group>"; };
-		9F5DD13515E544710096D0E8 /* BXRippleShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRippleShader.h; sourceTree = "<group>"; };
-		9F5DD13615E544710096D0E8 /* BXRippleShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRippleShader.m; sourceTree = "<group>"; };
 		9F5E389616C85140009774A9 /* Game.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Game.png; sourceTree = "<group>"; };
 		9F5F12C415ADCE74007A070F /* NSKeyedArchiver+ADBArchivingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSKeyedArchiver+ADBArchivingAdditions.h"; sourceTree = "<group>"; };
 		9F5F12C515ADCE74007A070F /* NSKeyedArchiver+ADBArchivingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSKeyedArchiver+ADBArchivingAdditions.m"; sourceTree = "<group>"; };
@@ -2308,8 +2304,6 @@
 				9F4FC1141592508100319428 /* BXSupersamplingRenderer.m */,
 				9F4FC116159253DA00319428 /* BXShaderRenderer.h */,
 				9F4FC117159253DA00319428 /* BXShaderRenderer.m */,
-				9F5DD13515E544710096D0E8 /* BXRippleShader.h */,
-				9F5DD13615E544710096D0E8 /* BXRippleShader.m */,
 				9F87247F160F7DF200400D8C /* BXSteppedShaderRenderer.h */,
 				9F872480160F7DF200400D8C /* BXSteppedShaderRenderer.m */,
 				9F872484160F89C600400D8C /* BXGLRenderingView+BXImageCapture.h */,
@@ -4178,7 +4172,6 @@
 				9FAEBE4F15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m in Sources */,
 				9F57684915DA27A300B50500 /* BXHUDSpinningProgressIndicator.m in Sources */,
 				9F2C458715DB7E77009F4477 /* ADBGLHelpers.m in Sources */,
-				9F5DD13715E544710096D0E8 /* BXRippleShader.m in Sources */,
 				9F3DD6CC15EE8047003C9A25 /* BXCHFlightstickProUSB.m in Sources */,
 				9F872481160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */,
 				9F872486160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */,
@@ -4598,7 +4591,6 @@
 				9F57684A15DA27A300B50500 /* BXHUDSpinningProgressIndicator.m in Sources */,
 				9FDFB46E15DBA38F004EA615 /* BXStandaloneAboutController.m in Sources */,
 				9FDFB48015DBC32D004EA615 /* ADBGLHelpers.m in Sources */,
-				9F5DD13815E544710096D0E8 /* BXRippleShader.m in Sources */,
 				9F872482160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */,
 				9F872487160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */,
 				501F283C161303DA00B1ED53 /* BXBuiltinShaderRenderers.m in Sources */,

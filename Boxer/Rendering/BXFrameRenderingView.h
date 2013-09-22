@@ -25,12 +25,6 @@ typedef enum {
 
 @protocol BXFrameRenderingView
 
-//Called to indicate to the rendering view that a view animation will be/has been
-//applied to it. This permits the view to adjust its rendering context to suit
-//the animation.
-- (void) viewAnimationWillStart: (NSViewAnimation *)animation;
-- (void) viewAnimationDidEnd: (NSViewAnimation *)animation;
-
 //Set/get the current rendering style of the view.
 - (void) setRenderingStyle: (BXRenderingStyle)style;
 - (BXRenderingStyle) renderingStyle;
@@ -65,6 +59,13 @@ typedef enum {
 //This may be a portion of the total view size, when in fullscreen mode.
 - (NSRect) viewportRect;
 
+
+@optional
+//Called to indicate to the rendering view that a view animation will be/has been
+//applied to it. This permits the view to adjust its rendering context to suit
+//the animation.
+- (void) viewAnimationWillStart: (NSViewAnimation *)animation;
+- (void) viewAnimationDidEnd: (NSViewAnimation *)animation;
 
 //Called whenever the window changes color space or scaling factor.
 - (void) windowDidChangeBackingProperties: (NSNotification *)notification;

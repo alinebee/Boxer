@@ -1089,12 +1089,12 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
             animation.animationBlockingMode = NSAnimationBlocking;
             animation.animationCurve = NSAnimationEaseInOut;
             
-            if (involvesRenderingView)
+            if (involvesRenderingView && [self.renderingView respondsToSelector: @selector(viewAnimationWillStart:)])
                 [self.renderingView viewAnimationWillStart: animation];
             
             [animation startAnimation];
             
-            if (involvesRenderingView)
+            if (involvesRenderingView && [self.renderingView respondsToSelector: @selector(viewAnimationDidEnd:)])
                 [self.renderingView viewAnimationDidEnd: animation];
             
             [animation release];
@@ -1142,12 +1142,12 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
             animation.animationBlockingMode = NSAnimationBlocking;
             animation.animationCurve = NSAnimationEaseIn;
             
-            if (involvesRenderingView)
+            if (involvesRenderingView && [self.renderingView respondsToSelector: @selector(viewAnimationWillStart:)])
                 [self.renderingView viewAnimationWillStart: animation];
             
             [animation startAnimation];
             
-            if (involvesRenderingView)
+            if (involvesRenderingView && [self.renderingView respondsToSelector: @selector(viewAnimationDidEnd:)])
                 [self.renderingView viewAnimationDidEnd: animation];
             
             [animation release];
@@ -1338,7 +1338,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 //Respond to the window changing color-space or scaling factor by updating views that need to know about it.
 - (void) windowDidChangeBackingProperties: (NSNotification *)notification
 {
-    [self.renderingView windowDidChangeBackingProperties: notification];
+    if ([self.renderingView respondsToSelector: _cmd])
+        [self.renderingView performSelector: _cmd withObject: notification];
 }
 
 //Return an appropriate "standard" (zoomed) frame for the window given the currently available screen space.

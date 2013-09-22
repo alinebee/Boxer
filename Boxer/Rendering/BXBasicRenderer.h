@@ -64,7 +64,7 @@ extern NSString * const BXRendererErrorDomain;
 //Renderers cannot be moved between contexts.
 @property (readonly) CGLContextObj context;
 
-//The current frame that will be rendered when render is called. Set using updateWithFrame:inGLContext:.
+//The current frame that will be rendered when render is called. Set using updateWithFrame:.
 @property (retain, readonly) BXVideoFrame *currentFrame;
 
 //The viewport in the current context into which we'll render the frame.

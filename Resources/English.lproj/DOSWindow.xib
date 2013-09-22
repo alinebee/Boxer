@@ -14,7 +14,7 @@
                 <outlet property="loadingPanel" destination="1251" id="1252"/>
                 <outlet property="loadingSpinner" destination="1253" id="1254"/>
                 <outlet property="panelWrapper" destination="1244" id="SKg-qj-KNn"/>
-                <outlet property="renderingView" destination="970" id="976"/>
+                <outlet property="renderingView" destination="ajl-fU-kAi" id="hWO-wZ-cSc"/>
                 <outlet property="statusBar" destination="3" id="918"/>
                 <outlet property="statusBarController" destination="926" id="983"/>
                 <outlet property="window" destination="1" id="169"/>
@@ -68,10 +68,10 @@
                                         <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
-                                            <openGLView focusRingType="none" rendererType="accelerated" useAuxiliaryDepthBufferStencil="NO" useDoubleBufferingEnabled="YES" useRecovery="YES" wantsBestResolutionOpenGLSurface="YES" id="970" customClass="BXGLRenderingView">
+                                            <customView id="ajl-fU-kAi" customClass="BXLayerBackedRenderingView">
                                                 <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            </openGLView>
+                                            </customView>
                                         </subviews>
                                     </customView>
                                     <customView id="1251" userLabel="Loading view">
@@ -236,8 +236,8 @@
                                             <binding destination="-2" name="enabled" keyPath="document.emulating" id="1429"/>
                                             <binding destination="-2" name="value" keyPath="document.sliderSpeed" id="1433">
                                                 <dictionary key="options">
-                                                    <bool key="NSValidatesImmediately" value="YES"/>
                                                     <real key="NSNoSelectionPlaceholder" value="1"/>
+                                                    <bool key="NSValidatesImmediately" value="YES"/>
                                                     <string key="NSValueTransformerName">BXSpeedSliderTransformer</string>
                                                 </dictionary>
                                             </binding>
@@ -381,6 +381,10 @@
                 </menuItem>
             </items>
         </menu>
+        <openGLView focusRingType="none" rendererType="accelerated" useAuxiliaryDepthBufferStencil="NO" useDoubleBufferingEnabled="YES" useRecovery="YES" wantsBestResolutionOpenGLSurface="YES" id="970" customClass="BXGLRenderingView">
+            <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+        </openGLView>
     </objects>
     <resources>
         <image name="BunnyTemplate" width="13" height="14"/>

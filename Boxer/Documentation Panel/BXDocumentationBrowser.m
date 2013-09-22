@@ -255,7 +255,10 @@ enum {
 
 - (NSArray *) selectedDocumentationURLs
 {
-    return [self.documentationURLs objectsAtIndexes: self.documentationSelectionIndexes];
+    if (self.documentationSelectionIndexes.count)
+        return [self.documentationURLs objectsAtIndexes: self.documentationSelectionIndexes];
+    else
+        return @[];
 }
 
 - (NSArray *) sortCriteria

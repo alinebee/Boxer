@@ -55,11 +55,13 @@
 //is enabled. The delay gives the program time to crash and our program panel time to hide.
 #define BXAutoSwitchToFullScreenDelay 0.5
 
-//How soon after launching a program to hide the launch panel.
-//This gives the program time to start up/fail miserably.
-#define BXSwitchToDOSViewDelay 0.25
+//If a program is launched during the startup process, wait this many seconds before switching to the DOS view.
+//If the program terminates in that time, the switch is cancelled. This lets us keep the loading panel
+//visible while startup programs are executing, while still switching to DOS when a proper program starts up.
+#define BXSwitchToDOSViewDelay 0.5
 
 //How soon after returning to the DOS prompt to display the launch panel.
+//This delay is intended to give the player enough time to see any quit message.
 #define BXSwitchToLaunchPanelDelay 0.5
 
 
@@ -1225,26 +1227,36 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 - (void) emulatorWillStartRunLoop: (BXEmulator *)theEmulator {}
 - (void) emulatorDidFinishRunLoop: (BXEmulator *)theEmulator {}
 
+
+- (void) _showDOSViewAfterProgramStart
+{
+    [self _cancelDOSViewAfterProgramStart];
+    
+    [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
+                                             selector: @selector(showLaunchPanel)
+                                               object: self];
+    
+    [self.DOSWindowController performSelector: @selector(showDOSView)
+                                   withObject: self
+                                   afterDelay: BXSwitchToDOSViewDelay];
+}
+
+- (void) _cancelDOSViewAfterProgramStart
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
+                                             selector: @selector(showDOSView)
+                                               object: self];
+}
+
 - (void) emulatorWillStartProgram: (NSNotification *)notification
 {
     NSDictionary *processInfo = notification.userInfo;
     
-    //If we've finished the startup process, then show the DOS view at this point.
-    //(We won't show the DOS view before then, because we don't want startup programs
-    //to trigger a switch of view: we don't know at that point yet whether the user is
-    //overriding the startup program to show the launch panel.)
-    //FIXME: this is absolutely the wrong way to handle it if the user has, for whatever reason,
-    //put commands to launch the game into the autoexec itself instead of using Boxer's launcher mechanism.
-    if (_hasLaunched)
-    {
-        [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
-                                                 selector: @selector(showLaunchPanel)
-                                                   object: self];
-        
-        [self.DOSWindowController performSelector: @selector(showDOSView)
-                                       withObject: self
-                                       afterDelay: BXSwitchToDOSViewDelay];
-    }
+    //Show the DOS view after a short delay: if the program finishes executing before this,
+    //it'll be cancelled and we'll remain at the current view.
+    //This lets us keep the autoexec programs covered with a discreet loading-screen veil,
+    //while still switching into the DOS view if a 'real' program starts up in earnest.
+    [self _showDOSViewAfterProgramStart];
     
 	//Don't override our record of the launched program if we already recorded one
     //back in openURLInDOS:error:. This way we maintain a record of which program
@@ -1263,12 +1275,15 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		}
 	}
     
-    //Enable/disable display-sleep suppression
+    //Disable display-sleeping while a program is running.
     [self _syncSuppressesDisplaySleep];
 }
 
 - (void) emulatorDidFinishProgram: (NSNotification *)notification
 {
+    //Cancel any pending switch to the DOS view that was started in emulatorWillStartProgram:.
+    [self _cancelDOSViewAfterProgramStart];
+    
     NSDictionary *processInfo = notification.userInfo;
     BOOL wasUserExecutable = ![self.emulator processIsBatchFile: processInfo] &&![self.emulator processIsInternal: processInfo];
     
@@ -1345,26 +1360,24 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         }
         else if (exitBehavior == BXSessionShowLauncher)
         {
-            [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
-                                                     selector: @selector(showDOSView)
-                                                       object: self];
+            [self.DOSWindowController showLaunchPanel];
             
             //Switch to the launch panel only after a short delay.
-            //DOCUMENTME: why the short delay? Why not straight away?
+            //Disabled for now: a delay here seems needless.
+            /*
             [self.DOSWindowController performSelector: @selector(showLaunchPanel)
                                            withObject: self
                                            afterDelay: BXSwitchToLaunchPanelDelay];
+             */
         }
-        //If we're still showing the loading panel at this point, switch to the DOS view.
-        //(Fixes).
-        //TODO: make this more explicit.
         else if (exitBehavior == BXSessionShowDOSPrompt)
         {
             [self.DOSWindowController showDOSView];
         }
-        //Otherwise, don't change the current view at all.
         
-        //In any case, clear our exit behaviour so that it won't influence future programs launched straight from DOS
+        
+        //Clear our exit behaviour so that the previous value won't influence future programs
+        //launched straight from DOS.
         _programExitBehavior = BXSessionExitBehaviorDoNothing;
         
         //Make sure we've cleared our record of the launched program altogether.

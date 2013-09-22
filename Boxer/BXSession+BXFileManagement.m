@@ -908,9 +908,13 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
             self.launchedProgramArguments = arguments;
         }
         
+        //Switch to the DOS view as soon as we execute.
+        [self.DOSWindowController showDOSView];
+        
 		[self.emulator executeProgramAtDOSPath: dosPath
                                  withArguments: arguments
                              changingDirectory: YES];
+        
 	}
     //Otherwise, treat the specified path as a directory and switch the working directory to it.
 	else

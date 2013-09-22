@@ -1232,13 +1232,16 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 {
     [self _cancelDOSViewAfterProgramStart];
     
-    [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
-                                             selector: @selector(showLaunchPanel)
-                                               object: self];
-    
-    [self.DOSWindowController performSelector: @selector(showDOSView)
-                                   withObject: self
-                                   afterDelay: BXSwitchToDOSViewDelay];
+    if (!self.DOSWindowController.DOSViewShown)
+    {
+        [NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
+                                                 selector: @selector(showLaunchPanel)
+                                                   object: self];
+        
+        [self.DOSWindowController performSelector: @selector(showDOSView)
+                                       withObject: self
+                                       afterDelay: BXSwitchToDOSViewDelay];
+    }
 }
 
 - (void) _cancelDOSViewAfterProgramStart

@@ -23,7 +23,11 @@ typedef enum {
 
 @class BXVideoFrame;
 
-@protocol BXFrameRenderingView
+@protocol BXFrameRenderingView <NSObject>
+
+//Return the current frame being rendered - i.e. the last frame that was passed
+//to the view via updateWithFrame:. This property must be KVO-compliant.
+@property (readonly, nonatomic) BXVideoFrame *currentFrame;
 
 //Set/get the current rendering style of the view.
 - (void) setRenderingStyle: (BXRenderingStyle)style;
@@ -44,12 +48,8 @@ typedef enum {
 - (void) setMaxViewportSize: (NSSize)size;
 
 //Tells the view to render the specified frame next time it is redrawn.
-//Will usually mark the view as needing display.
+//Typically the view should mark itself as needing display.
 - (void) updateWithFrame: (BXVideoFrame *)frame;
-
-//Returns the current frame being rendered - i.e. the last frame that was passed
-//to the view via updateWithFrame:.
-- (BXVideoFrame *) currentFrame;
 
 //Reports the maximum displayable frame size (which may be limited by e.g. OpenGL
 //maximum texture dimensions.) Frames larger than this will not be passed to updateWithFrame:.

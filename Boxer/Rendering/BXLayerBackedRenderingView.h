@@ -14,12 +14,10 @@
 @interface BXLayerBackedRenderingView : NSView <BXFrameRenderingView>
 {
     BOOL _managesViewport;
-    NSRect _viewportRect;
     NSSize _maxViewportSize;
 }
 
 @property (assign, nonatomic) BOOL managesViewport;
 @property (assign, nonatomic) NSSize maxViewportSize;
-@property (readonly, nonatomic) NSRect viewportRect;
 
 @end

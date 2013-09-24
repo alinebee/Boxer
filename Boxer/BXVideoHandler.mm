@@ -308,6 +308,7 @@
             i++;
         }
         
+        self.currentFrame.timestamp = CFAbsoluteTimeGetCurrent();
         [self.emulator _didFinishFrame: self.currentFrame];
 	}
 	_frameInProgress = NO;

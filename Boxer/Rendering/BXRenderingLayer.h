@@ -12,14 +12,16 @@
 #import "BXFrameRenderingView.h"
 
 @class BXVideoFrame;
+@class BXBasicRenderer;
 @interface BXRenderingLayer : CAOpenGLLayer
 {
     BXVideoFrame *_currentFrame;
     BXRenderingStyle _renderingStyle;
     NSMutableArray *_renderers;
     
-    CFTimeInterval _lastFrameUpdateTime;
+    BXBasicRenderer *_lastRenderer;
     CFTimeInterval _lastRenderTime;
+    
 }
 
 @property (assign, nonatomic) BXRenderingStyle renderingStyle;
@@ -27,5 +29,6 @@
 
 - (void) updateWithFrame: (BXVideoFrame *)currentFrame;
 - (BOOL) supportsRenderingStyle: (BXRenderingStyle)style;
+- (NSSize) maxFrameSize;
 
 @end

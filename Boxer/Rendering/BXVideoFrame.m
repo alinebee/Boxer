@@ -23,6 +23,7 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 @synthesize intendedScale = _intendedScale;
 @synthesize numDirtyRegions = _numDirtyRegions;
 @synthesize containsText = _containsText;
+@synthesize timestamp = _timestamp;
 
 
 + (NSSize) scalingFactorForSize: (NSSize)frameSize toAspectRatio: (CGFloat)aspectRatio

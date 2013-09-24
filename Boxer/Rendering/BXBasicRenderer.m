@@ -36,6 +36,8 @@ GLfloat viewportVerticesFlipped[8] = {
 @synthesize renderingTime = _renderingTime;
 @synthesize viewport = _viewport;
 @synthesize delegate = _delegate;
+@synthesize tag = _tag;
+@synthesize latestFrameTimestamp = _latestFrameTimestamp;
 
 #pragma mark -
 #pragma mark Helper methods
@@ -135,6 +137,7 @@ GLfloat viewportVerticesFlipped[8] = {
 
 - (void) updateWithFrame: (BXVideoFrame *)frame
 {
+    BOOL needsUpdate = NO;
     if (frame != self.currentFrame)
     {   
         //If the current texture isn't large enough to fit the new frame,
@@ -145,17 +148,25 @@ GLfloat viewportVerticesFlipped[8] = {
         }
         
         self.currentFrame = frame;
+        needsUpdate = YES;
+    }
+    else
+    {
+        needsUpdate = frame.timestamp != self.latestFrameTimestamp;
     }
     
-    //Even if the frame hasn't changed, it may contain new data:
-    //flag that we're dirty and need re-rendering.
-    _needsFrameTextureUpdate = YES;
-    
-    //TWEAK: update our frame texture immediately with the new frame, while we know
-    //we have a complete frame in the buffer. (If we defer the update until it's time
-    //to render to the screen, then we may do it while DOS is in the middle of writing
-    //to the framebuffer: resulting in a 'torn' frame.)
-    [self _prepareFrameTextureForFrame: frame];
+    if (needsUpdate)
+    {
+        //Even if the frame hasn't changed, it may contain new data:
+        //flag that we're dirty and need re-rendering.
+        _needsFrameTextureUpdate = YES;
+        
+        //TWEAK: update our frame texture immediately with the new frame, while we know
+        //we have a complete frame in the buffer. (If we defer the update until it's time
+        //to render to the screen, then we may do it while DOS is in the middle of writing
+        //to the framebuffer: resulting in a 'torn' frame.)
+        [self _prepareFrameTextureForFrame: frame];
+    }
 }
 
 - (CGSize) maxFrameSize
@@ -215,14 +226,14 @@ GLfloat viewportVerticesFlipped[8] = {
     //and how long it's been since we completed the last frame (to determine overall frame rate).
     self.renderingTime = endTime - startTime;
     
-    if (_lastFrameTime)
+    if (_previousFrameTime)
     {
-        CFTimeInterval timeSinceEndOfLastFrame = endTime - _lastFrameTime;
-        if (timeSinceEndOfLastFrame > 0)
-            self.frameRate = (CGFloat)(1.0 / timeSinceEndOfLastFrame);
+        CFTimeInterval timeSinceEndOfPreviousFrame = endTime - _previousFrameTime;
+        if (timeSinceEndOfPreviousFrame > 0)
+            self.frameRate = (CGFloat)(1.0 / timeSinceEndOfPreviousFrame);
     }
     
-    _lastFrameTime = endTime;
+    _previousFrameTime = endTime;
 }
 
 - (void) _prepareForRenderingFrame: (BXVideoFrame *)frame
@@ -291,9 +302,9 @@ GLfloat viewportVerticesFlipped[8] = {
         
         NSError *textureError = nil;
         self.frameTexture = [ADBTexture2D textureWithType: self.frameTextureType
-                                              videoFrame: frame
-                                             inGLContext: _context
-                                                   error: &textureError];
+                                               videoFrame: frame
+                                              inGLContext: _context
+                                                    error: &textureError];
         
         NSAssert1(self.frameTexture != nil, @"Texture creation failed: %@", textureError);
         
@@ -309,6 +320,9 @@ GLfloat viewportVerticesFlipped[8] = {
         [self.frameTexture fillWithVideoFrame: frame error: NULL];
         _needsFrameTextureUpdate = NO;
     }
+    
+    //Record the timestamp of the frame that's currently in our texture
+    self.latestFrameTimestamp = frame.timestamp;
 }
 
 @end

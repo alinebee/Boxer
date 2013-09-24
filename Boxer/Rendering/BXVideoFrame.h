@@ -33,6 +33,8 @@ extern const CGFloat BX4by3AspectRatio;
     
     NSRange _dirtyRegions[MAX_DIRTY_REGIONS];
     NSUInteger _numDirtyRegions;
+    
+    NSTimeInterval _timestamp;
 }
 
 #pragma mark -
@@ -71,6 +73,9 @@ extern const CGFloat BX4by3AspectRatio;
 //Whether the framebuffer is a text-mode frame. Provided by the emulator as a
 //scaling/aspect-ratio hint for downstream consumers. 
 @property (assign) BOOL containsText;
+
+//The absolute time which this frame represents. Updated each time a frame update is completed by the emulator.
+@property (assign) CFAbsoluteTime timestamp;
 
 //Read-only/mutable pointers to the frame's data.
 @property (readonly) NSMutableData *frameData;

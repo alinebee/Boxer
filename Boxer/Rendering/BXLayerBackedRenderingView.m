@@ -29,7 +29,6 @@
 @implementation BXLayerBackedRenderingView
 @synthesize managesViewport = _managesViewport;
 @synthesize maxViewportSize = _maxViewportSize;
-@synthesize viewportRect = _viewportRect;
 
 - (void) awakeFromNib
 {
@@ -74,14 +73,14 @@
     [self.layer updateWithFrame: frame];
 }
 
-+ (NSSet *) keyPathsForValuesAffectingCurrentFrame
-{
-    return [NSSet setWithObject: @"layer.currentFrame"];
-}
-
 - (BXVideoFrame *) currentFrame
 {
     return self.layer.currentFrame;
+}
+
+- (NSRect) viewportRect
+{
+    return NSRectFromCGRect(self.layer.frame);
 }
 
 - (NSSize) maxFrameSize
@@ -94,6 +93,16 @@
 - (BOOL) layer: (CALayer *)layer shouldInheritContentsScale: (CGFloat)newScale fromWindow: (NSWindow *)window
 {
     return YES;
+}
+
++ (NSSet *) keyPathsForValuesAffectingRenderingStyle
+{
+    return [NSSet setWithObject: @"layer.renderingStyle"];
+}
+
++ (NSSet *) keyPathsForValuesAffectingCurrentFrame
+{
+    return [NSSet setWithObject: @"layer.currentFrame"];
 }
 
 @end

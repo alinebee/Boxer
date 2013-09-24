@@ -46,11 +46,14 @@ extern NSString * const BXRendererErrorDomain;
 	BOOL _needsNewFrameTexture;
 	BOOL _needsFrameTextureUpdate;
 	
-	CFAbsoluteTime _lastFrameTime;
+	CFAbsoluteTime _previousFrameTime;
+    CFAbsoluteTime _latestFrameTimestamp;
 	CFTimeInterval _renderingTime;
 	CGFloat _frameRate;
     
     BOOL _needsTeardown;
+    
+    NSInteger _tag;
 }
 
 
@@ -79,12 +82,21 @@ extern NSString * const BXRendererErrorDomain;
 //the time when renderToGLContext: finished. This measures the efficiency of the rendering pipeline.
 @property (assign) CFTimeInterval renderingTime;
 
+//The timestamp of the last frame that was processed (not necessarily rendered) by this renderer.
+//This indicates what frame has been uploaded as a texture and is ready for rendering.
+@property (assign) CFAbsoluteTime latestFrameTimestamp;
+
+//A general-purpose tag for this renderer, for the upstream context to distinguish it from other renderers.
+//Defaults to 0.
+@property (assign) NSInteger tag;
+
 
 #pragma mark -
 #pragma mark Helper class methods
 
-//Returns the maximum supported texture size for the specified type in the specified context.
-+ (CGSize) maxTextureSizeForType: (GLenum)textureType inContext: (CGLContextObj)glContext; 
+//Returns the maximum supported texture size for the specified type of texture in the specified context.
++ (CGSize) maxTextureSizeForType: (GLenum)textureType
+                       inContext: (CGLContextObj)glContext;
 
 //Returns whether the specified context supports the specified extension.
 + (BOOL) context: (CGLContextObj)glContext supportsExtension: (const char *)featureName;

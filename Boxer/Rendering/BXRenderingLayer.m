@@ -165,7 +165,6 @@
     {
         if (renderer.context == ctx)
         {
-            NSLog(@"Destroying renderer: %@", renderer);
             [renderer tearDownContext];
             [self.renderers removeObject: renderer];
             
@@ -186,14 +185,6 @@
     [self setNeedsDisplay];
 }
 
-- (BOOL) canDrawInCGLContext: (CGLContextObj)glContext
-                 pixelFormat: (CGLPixelFormatObj)pixelFormat
-                forLayerTime: (CFTimeInterval)timeInterval
-                 displayTime: (const CVTimeStamp *)timeStamp
-{
-    return self.currentFrame.timestamp > _lastRenderTime;
-}
-
 - (void) drawInCGLContext: (CGLContextObj)ctx
               pixelFormat: (CGLPixelFormatObj)pf
              forLayerTime: (CFTimeInterval)t
@@ -201,9 +192,7 @@
 {
     BXBasicRenderer *renderer = [self rendererForStyle: self.renderingStyle inContext: ctx];
     
-    BOOL recalculateViewport = ![(NSView *)self.delegate inLiveResize];
-    
-    [renderer setViewport: self.bounds recalculate: recalculateViewport];
+    [renderer setViewport: self.bounds recalculate: YES];
     [renderer updateWithFrame: self.currentFrame];
     [renderer render];
     

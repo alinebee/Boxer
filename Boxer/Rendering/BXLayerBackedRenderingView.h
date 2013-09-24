@@ -5,7 +5,13 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXGLLayerBackedRenderingView
+//BXGLLayerBackedRenderingView is an alternative BXFrameRenderingView implementation that uses
+//a CAOpenGLLayer to render frames. This has a few advantages over BXGLRenderingView:
+//- Other views can overlap with it
+//- View animations involving it perform smoothly
+//Aaand some disadvantages:
+//- All rendering occurs on the main thread, causing lag instead of dropped frames during heavy computation
+//- It slows down whenever notification bezels appear over it
 
 #import <Cocoa/Cocoa.h>
 #import "BXFrameRenderingView.h"

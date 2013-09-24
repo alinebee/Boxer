@@ -12,11 +12,6 @@
 
 @property (retain, nonatomic) BXRenderingLayer *layer;
 
-//Set the viewport (the area of the view in which the frame is rendered) to the specified rectangle.
-//If animated is YES, the viewport will be smoothly animated to the new size; otherwise the viewport
-//will be changed immediately (cancelling any in-progress animation.)
-//- (void) setViewportRect: (NSRect)viewportRect animated: (BOOL)animated;
-
 //Returns the rectangular region of the view into which the specified frame will be drawn.
 //This will be equal to the view bounds if managesAspectRatio is NO; otherwise, it will
 //be a rectangle of the same aspect ratio as the frame fitted to within the current or maximum
@@ -33,7 +28,7 @@
 - (void) awakeFromNib
 {
     self.layer = [BXRenderingLayer layer];
-    self.layer.asynchronous = YES;
+    self.layer.asynchronous = NO;
     self.layer.delegate = self;
     self.layer.frame = NSRectToCGRect(self.bounds);
     self.layer.needsDisplayOnBoundsChange = YES;

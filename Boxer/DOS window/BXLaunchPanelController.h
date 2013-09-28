@@ -8,12 +8,6 @@
 #import <Cocoa/Cocoa.h>
 #import "BXCollectionItemView.h"
 
-typedef enum {
-    BXLaunchPanelDisplayFavorites,
-    BXLaunchPanelDisplayAllPrograms,
-} BXLaunchPanelDisplayMode;
-
-
 @class BXLauncherItem;
 @protocol BXLauncherItemDelegate
 
@@ -25,7 +19,6 @@ typedef enum {
 
 @interface BXLaunchPanelController : NSViewController <NSCollectionViewDelegate, NSTextFieldDelegate, BXLauncherItemDelegate>
 {
-    NSSegmentedControl *_tabSelector;
     NSCollectionView *_launcherList;
     NSScrollView *_launcherScrollView;
     NSSearchField *_filter;
@@ -35,15 +28,11 @@ typedef enum {
     NSMutableArray *_allProgramRows;
     NSMutableArray *_favoriteProgramRows;
     NSMutableArray *_displayedRows;
-    
-    BXLaunchPanelDisplayMode _displayMode;
 }
 
-@property (assign, nonatomic) IBOutlet NSSegmentedControl *tabSelector;
 @property (assign, nonatomic) IBOutlet NSCollectionView *launcherList;
 @property (assign, nonatomic) IBOutlet NSScrollView *launcherScrollView;
 @property (assign, nonatomic) IBOutlet NSSearchField *filter;
-@property (assign, nonatomic) BXLaunchPanelDisplayMode displayMode;
 
 @property (readonly, nonatomic) BOOL hasFavorites;
 @property (readonly, nonatomic) BOOL hasPrograms;
@@ -56,10 +45,6 @@ typedef enum {
 @property (readonly, retain, nonatomic) NSMutableArray *filterKeywords;
 
 #pragma mark - Actions
-
-- (IBAction) showFavoritePrograms: (id)sender;
-- (IBAction) showAllPrograms: (id)sender;
-- (IBAction) performSegmentedButtonAction: (id)sender;
 
 - (IBAction) enterSearchText: (NSSearchField *)sender;
 

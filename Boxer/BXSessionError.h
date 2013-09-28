@@ -9,7 +9,7 @@
 //BXImportError defines custom import-related errors.
 
 #import <Foundation/Foundation.h>
-
+#import "NSError+ADBErrorHelpers.h"
 
 //Error domains and codes
 extern NSString * const BXSessionErrorDomain;

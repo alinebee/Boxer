@@ -13,6 +13,7 @@
 #import "BXValueTransformers.h"
 #import "BXCollectionItemView.h"
 #import "BXBaseAppController.h"
+#import "BXSessionError.h"
 
 @interface BXLaunchPanelController ()
 
@@ -25,13 +26,11 @@
 @end
 
 @implementation BXLaunchPanelController
-@synthesize tabSelector = _tabSelector;
 @synthesize launcherList = _launcherList;
 @synthesize launcherScrollView = _launcherScrollView;
 @synthesize allProgramRows = _allProgramRows;
 @synthesize favoriteProgramRows = _favoriteProgramRows;
 @synthesize displayedRows = _displayedRows;
-@synthesize displayMode = _displayMode;
 @synthesize filter = _filter;
 @synthesize filterKeywords = _filterKeywords;
 
@@ -51,8 +50,6 @@
     
     if ([self.launcherScrollView respondsToSelector: @selector(setHorizontalScrollElasticity:)])
         self.launcherScrollView.horizontalScrollElasticity = NSScrollElasticityNone;
-    
-    [self _syncTabSelector];
 }
 
 - (void) setRepresentedObject: (id)representedObject
@@ -346,49 +343,48 @@
 {
     NSMutableArray *displayedRows = [NSMutableArray arrayWithCapacity: 10];
     
+    NSArray *matchingFavorites, *matchingPrograms;
+    
+    BOOL needsFavoritesHeading, needsAllProgramsHeading;
     if (self.filterKeywords.count)
     {
-        NSLog(@"Keywords: %@", self.filterKeywords);
-        NSArray *matchingFavorites   = [self _rowsMatchingKeywords: self.filterKeywords inRows: self.favoriteProgramRows];
-        NSArray *matchingPrograms    = [self _rowsMatchingKeywords: self.filterKeywords inRows: self.allProgramRows];
-        
-        BOOL needsHeadings = (matchingFavorites.count && matchingPrograms.count);
-        if (needsHeadings)
-        {
-            NSDictionary *favoritesHeading = @{@"icon": [NSImage imageNamed: @"FavoriteOutlineTemplate"],
-                                               @"title": NSLocalizedString(@"Favorites", @"Heading for favorite search results in launcher panel."),
-                                               @"isHeading": @(YES),
-                                               };
-            [displayedRows addObject: favoritesHeading];
-        }
-        [displayedRows addObjectsFromArray: matchingFavorites];
-        
-        if (needsHeadings)
-        {
-            NSDictionary *allProgramsHeading = @{
-                                               @"icon": [NSImage imageNamed: @"NSListViewTemplate"],
-                                               @"title": NSLocalizedString(@"All Programs", @"Heading for rest of search results in launcher panel."),
-                                               @"isHeading": @(YES),
-                                               };
-            [displayedRows addObject: allProgramsHeading];
-        }
-        [displayedRows addObjectsFromArray: matchingPrograms];
-    }
-    else if (self.displayMode == BXLaunchPanelDisplayFavorites)
-    {
-        [displayedRows addObjectsFromArray: self.favoriteProgramRows];
+        matchingFavorites   = [self _rowsMatchingKeywords: self.filterKeywords inRows: self.favoriteProgramRows];
+        matchingPrograms    = [self _rowsMatchingKeywords: self.filterKeywords inRows: self.allProgramRows];
+        needsFavoritesHeading = matchingFavorites.count && matchingPrograms.count;
+        needsAllProgramsHeading = needsFavoritesHeading;
     }
     else
     {
-        [displayedRows addObjectsFromArray: self.allProgramRows];
+        matchingFavorites = self.favoriteProgramRows;
+        matchingPrograms = self.allProgramRows;
+        needsFavoritesHeading = matchingFavorites.count && matchingPrograms.count;
+        needsAllProgramsHeading = NO;
     }
+    
+    if (needsFavoritesHeading)
+    {
+        NSDictionary *heading = @{@"icon": [NSImage imageNamed: @"FavoriteOutlineTemplate"],
+                                  @"title": NSLocalizedString(@"Favorites", @"Heading for favorites in launcher panel."),
+                                  @"isHeading": @(YES),
+                                  };
+        [displayedRows addObject: heading];
+    }
+    [displayedRows addObjectsFromArray: matchingFavorites];
+    
+    if (needsAllProgramsHeading)
+    {
+        NSDictionary *heading = @{@"icon": [NSImage imageNamed: @"NSListViewTemplate"],
+                                  @"title": NSLocalizedString(@"All Programs", @"Heading for all programs search results in launcher panel."),
+                                  @"isHeading": @(YES),
+                                  };
+        [displayedRows addObject: heading];
+    }
+    [displayedRows addObjectsFromArray: matchingPrograms];
     
     //IMPLEMENTATION NOTE: replacing the whole array at once, rather than emptying and refilling it,
     //allows the collection view to correctly persist previously-existing rows: animating them into their new location
     //rather than fading them out and back in again.
     self.displayedRows = displayedRows;
-    
-    [self _syncTabSelector];
 }
 
 - (void) _syncFilterKeywords
@@ -447,7 +443,6 @@
             if (!drive)
             {
                 canLaunch = NO;
-                return; //mount failed, don't continue further
             }
         }
         
@@ -472,8 +467,8 @@
                             error: &launchError];
         }
         
-        //Display any error that occurred when trying to launch
-        if (launchError)
+        //Display any error that occurred when trying to launch (apart from "hey, we're not ready yet!")
+        if (launchError && ![launchError matchesDomain: BXSessionErrorDomain code: BXSessionNotReady])
         {
             [self presentError: launchError
                 modalForWindow: session.windowForSheet
@@ -504,42 +499,6 @@
     }
 }
 
-- (IBAction) showFavoritePrograms: (id)sender
-{
-    self.displayMode = BXLaunchPanelDisplayFavorites;
-}
-
-- (IBAction) showAllPrograms: (id)sender
-{
-    self.displayMode = BXLaunchPanelDisplayAllPrograms;
-}
-
-#pragma mark - Display mode handling
-
-- (void) setDisplayMode: (BXLaunchPanelDisplayMode)mode
-{
-    if (mode != self.displayMode)
-    {
-        _displayMode = mode;
-        [self _syncDisplayedRows];
-    }
-}
-
-- (void) _syncTabSelector
-{
-    if (self.filterKeywords.count)
-        self.tabSelector.selectedSegment = -1;
-    else
-        self.tabSelector.selectedSegment = self.displayMode;
-}
-
-- (void) performSegmentedButtonAction: (NSSegmentedControl *)sender
-{
-    self.displayMode = (BXLaunchPanelDisplayMode)sender.selectedSegment;
-    self.filter.stringValue = @"";
-    [self _syncFilterKeywords];
-}
-
 #pragma mark - Filtering
 
 - (IBAction) enterSearchText: (NSSearchField *)sender
@@ -550,6 +509,12 @@
 - (BOOL) control: (NSControl *)control textView: (NSTextView *)textView doCommandBySelector: (SEL)command
 {
     NSLog(@"Search command: %@", NSStringFromSelector(command));
+    if (command == @selector(insertNewline:))
+    {
+        //TODO: launch the first search result
+    }
+    
+    //TODO: correctly support tabbing away from the text view
     return NO;
 }
 

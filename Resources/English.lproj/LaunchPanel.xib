@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="13A524d" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="13A584" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment defaultVersion="1060" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
@@ -10,7 +10,6 @@
                 <outlet property="filter" destination="io9-xs-Bgz" id="C9S-q1-1Q7"/>
                 <outlet property="launcherList" destination="LLn-Sc-jzs" id="Qaq-1l-7BJ"/>
                 <outlet property="launcherScrollView" destination="lh9-jV-VfB" id="oNY-57-yIC"/>
-                <outlet property="tabSelector" destination="dnw-49-vJF" id="nDQ-Iv-yxf"/>
                 <outlet property="view" destination="dPh-eK-mFK" id="xjb-x6-DEU"/>
             </connections>
         </customObject>
@@ -27,7 +26,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="640" height="420"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <collectionView focusRingType="none" maxNumberOfColumns="1" id="LLn-Sc-jzs" customClass="BXLauncherList">
+                            <collectionView focusRingType="none" selectable="YES" maxNumberOfColumns="1" id="LLn-Sc-jzs" customClass="BXLauncherList">
                                 <rect key="frame" x="0.0" y="0.0" width="640" height="420"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="primaryBackgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -37,6 +36,7 @@
                                     <outlet property="favoritePrototype" destination="TgG-8i-sVt" id="8yn-8x-qry"/>
                                     <outlet property="headingPrototype" destination="m2W-Eu-3Sn" id="Kjg-bY-6yQ"/>
                                     <outlet property="itemPrototype" destination="W1Y-o0-Etd" id="pns-yF-bxW"/>
+                                    <outlet property="nextKeyView" destination="io9-xs-Bgz" id="EMR-WE-Zd0"/>
                                 </connections>
                             </collectionView>
                         </subviews>
@@ -55,22 +55,8 @@
                     <rect key="frame" x="0.0" y="420" width="640" height="60"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <subviews>
-                        <segmentedControl verticalHuggingPriority="750" id="dnw-49-vJF">
-                            <rect key="frame" x="20" y="17" width="231" height="25"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <segmentedCell key="cell" alignment="left" style="texturedRounded" trackingMode="selectOne" id="7Rk-51-mnv">
-                                <font key="font" metaFont="system"/>
-                                <segments>
-                                    <segment label="Favorites" image="FavoriteOutlineTemplate" width="112"/>
-                                    <segment label="All Programs" image="NSListViewTemplate" width="112" selected="YES" tag="1"/>
-                                </segments>
-                            </segmentedCell>
-                            <connections>
-                                <action selector="performSegmentedButtonAction:" target="-2" id="sNO-9j-kbv"/>
-                            </connections>
-                        </segmentedControl>
                         <searchField verticalHuggingPriority="750" id="io9-xs-Bgz">
-                            <rect key="frame" x="423" y="19" width="197" height="22"/>
+                            <rect key="frame" x="128" y="19" width="360" height="22"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                             <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="Search programs" usesSingleLineMode="YES" bezelStyle="round" sendsSearchStringImmediately="YES" recentsAutosaveName="launchPanelFilter" id="Bdg-Sv-vHc">
                                 <font key="font" metaFont="system"/>
@@ -80,6 +66,7 @@
                             <connections>
                                 <action selector="enterSearchText:" target="-2" id="1ax-jh-Kgb"/>
                                 <outlet property="delegate" destination="-2" id="KuG-L4-f4Q"/>
+                                <outlet property="nextKeyView" destination="LLn-Sc-jzs" id="p1H-hm-Hl0"/>
                             </connections>
                         </searchField>
                     </subviews>
@@ -105,8 +92,4 @@
             </connections>
         </collectionViewItem>
     </objects>
-    <resources>
-        <image name="FavoriteOutlineTemplate" width="32" height="32"/>
-        <image name="NSListViewTemplate" width="11" height="10"/>
-    </resources>
 </document>

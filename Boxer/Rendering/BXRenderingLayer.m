@@ -185,6 +185,14 @@
     [self setNeedsDisplay];
 }
 
+- (BOOL) canDrawInCGLContext: (CGLContextObj)glContext
+                 pixelFormat: (CGLPixelFormatObj)pixelFormat
+                forLayerTime: (CFTimeInterval)timeInterval
+                 displayTime: (const CVTimeStamp *)timeStamp
+{
+    return self.currentFrame.timestamp > _lastRenderTime;
+}
+
 - (void) drawInCGLContext: (CGLContextObj)ctx
               pixelFormat: (CGLPixelFormatObj)pf
              forLayerTime: (CFTimeInterval)t

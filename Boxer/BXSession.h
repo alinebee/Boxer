@@ -114,6 +114,8 @@ typedef enum {
 	BOOL _autoPaused;
 	BOOL _interrupted;
 	BOOL _suspended;
+    
+    BOOL _canOpenURLs;
 	
 	BOOL _userSkippedDefaultProgram;
     BOOL _waitingForFastForwardRelease;
@@ -187,6 +189,10 @@ typedef enum {
 //Whether this session is actively running a program. Will be NO if the emulator
 //is suspended, at the DOS prompt, or not currently emulating at all.
 @property (readonly, assign) BOOL programIsActive;
+
+//Whether this session is currently able to open any URLs via openURLInDOS:error:.
+//Will only be YES while the session is idling at the DOS prompt.
+@property (readonly, assign) BOOL canOpenURLs;
 
 //Whether this session represents a gamebox.
 @property (readonly, nonatomic) BOOL hasGamebox;

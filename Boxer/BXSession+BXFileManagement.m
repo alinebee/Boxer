@@ -844,19 +844,6 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     }
 }
 
-- (BOOL) canOpenURLs
-{
-    if (!self.emulator.isInitialized || self.emulator.isRunningActiveProcess)
-        return NO;
-    else
-        return YES;
-}
-
-+ (NSSet *) keyPathsForValuesAffectingCanOpenURLs
-{
-    return [NSSet setWithObjects: @"emulator.isInitialized", @"emulator.isRunningActiveProcess", nil];
-}
-
 - (BOOL) openURLInDOS: (NSURL *)URL
         withArguments: (NSString *)arguments
           clearScreen: (BOOL)clearScreen

@@ -133,6 +133,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 @synthesize interrupted = _interrupted;
 @synthesize suspended = _suspended;
 @synthesize cachedIcon = _cachedIcon;
+@synthesize canOpenURLs = _canOpenURLs;
 
 @synthesize importQueue = _importQueue;
 @synthesize scanQueue = _scanQueue;
@@ -1280,6 +1281,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     //Disable display-sleeping while a program is running.
     [self _syncSuppressesDisplaySleep];
+    
+    self.canOpenURLs = !self.emulator.isRunningActiveProcess;
 }
 
 - (void) emulatorDidFinishProgram: (NSNotification *)notification
@@ -1339,6 +1342,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         self.launchedProgramURL = nil;
         self.launchedProgramArguments = nil;
     }
+    
+    self.canOpenURLs = !self.emulator.isRunningActiveProcess;
 }
 
 - (void) emulatorDidReturnToShell: (NSNotification *)notification

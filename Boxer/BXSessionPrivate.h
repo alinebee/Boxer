@@ -54,6 +54,7 @@ extern NSString * const BXGameImportedNotificationType;
 @property (retain, nonatomic) NSImage *cachedIcon;
 
 @property (readwrite, assign, getter=isEmulating)	BOOL emulating;
+@property (readwrite, nonatomic, assign)            BOOL canOpenURLs;
 
 @property (readwrite, nonatomic, assign, getter=isSuspended)	BOOL suspended;
 @property (readwrite, nonatomic, assign, getter=isAutoPaused)	BOOL autoPaused;

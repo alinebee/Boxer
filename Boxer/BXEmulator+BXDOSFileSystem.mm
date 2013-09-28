@@ -707,57 +707,54 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
 	if (!self.isExecuting) return nil;
 	
+	NSUInteger driveIndex	= [self _indexOfDriveLetter: drive.letter];
+	DOS_Drive *DOSBoxDrive	= Drives[driveIndex];
+    //The drive is not mounted in DOS: give up
+	if (!DOSBoxDrive) return nil;
+    
 	NSString *subPath = [drive relativeLocationOfURL: URL];
-	
 	//The path is not accessible on this drive; give up before we go any further.
 	if (!subPath) return nil;
 	
-	NSString *dosDrive = [NSString stringWithFormat: @"%@:", drive.letter];
-	
-	//If the path is at the root of the drive, bail out now.
-	if (!subPath.length)
-        return dosDrive;
-    
-	NSString *basePath = drive.mountPointURL.path;
-	NSArray *components = subPath.pathComponents;
-	
-	NSUInteger driveIndex	= [self _indexOfDriveLetter: drive.letter];
-	DOS_Drive *DOSBoxDrive	= Drives[driveIndex];
-	if (!DOSBoxDrive) return nil;
-	
-	//To be sure we get this right, flush the drive cache before we look anything up
+	//To be sure we get this right, flush the drive cache before we look anything up.
 	DOSBoxDrive->EmptyCache();
     
-	NSMutableString *dosPath = [NSMutableString stringWithCapacity: CROSS_LEN];
+	NSMutableString *dosPath = [NSMutableString stringWithFormat: @"%@:\\", drive.letter];
+	NSMutableString *frankenDirPath = [NSMutableString stringWithString: drive.mountPointURL.path];
+    //Sanity check: normalize the drive's base path to strip any trailing slashes.
+    if ([frankenDirPath hasSuffix: @"/"])
+        [frankenDirPath deleteCharactersInRange: NSMakeRange(frankenDirPath.length - 1, 1)];
 	
-	for (NSString *fileName in components)
+    //Now go through every component of the relative path, converting it from its OS X filename
+    //into its DOS 8.3 equivalent.
+    NSUInteger subpathsAdded = 0;
+	for (NSString *fileName in subPath.pathComponents)
 	{
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		
-        //We use DOSBox's own file lookup API to convert a real file path into its
-        //corresponding DOS 8.3 name: starting with the base path of the drive,
-        //and converting each component into its DOS 8.3 equivalent as we go.
+        //We use DOSBox's own cache API to convert a real file path into its
+        //corresponding DOS 8.3 name: starting at the base path of the drive,
+        //and converting each component of the desired path into its DOS 8.3
+        //equivalent as we go.
         
         //One peculiarity of this API is that to look up successive paths we need
-        //to weld the DOS 8.3 relative path onto the drive's real filesystem path
-        //to create "frankenPath", and provide this as a reference point when we
-        //look up the DOS name of the next component in the path.
+        //to weld DOS 8.3 relative paths onto the drive's real filesystem path
+        //to create a kind of "frankenPath", and provide this as the reference point
+        //when we look up the DOS name of the next component in the path.
         
-		NSString *frankenPath = [basePath stringByAppendingString: dosPath];
 		NSString *dosName = nil;
 		
 		char buffer[CROSS_LEN] = {0};
-		const char *cFrankenPath	= [frankenPath cStringUsingEncoding: BXDirectStringEncoding];
-		const char *cFileName		= [fileName cStringUsingEncoding: BXDirectStringEncoding];
+		const char *cDirPath    = [frankenDirPath cStringUsingEncoding: BXDirectStringEncoding];
+		const char *cFileName   = [fileName cStringUsingEncoding: BXDirectStringEncoding];
 		
 		BOOL hasShortName = NO;
-		//If the file paths could not be encoded to acceptable C strings,
-		//don't feed them to DOSBox's functions
-		if (cFrankenPath && cFileName)
+		if (cDirPath && cFileName)
 		{
-			hasShortName = DOSBoxDrive->getShortName([frankenPath cStringUsingEncoding: BXDirectStringEncoding],
-													 [fileName cStringUsingEncoding: BXDirectStringEncoding],
-													 buffer);
+            //FIXME: getShortName will always fail for ISO9660 images, which do not (cannot) track long
+            //filenames but instead use the ISO filesystem's names. To correctly resolve the paths that
+            //OS X sees, we would need to be able to compare ISO vs Joliet names in the image's filesystem.
+			hasShortName = DOSBoxDrive->getShortName(cDirPath, cFileName, buffer);
 		}
         
 		if (hasShortName)
@@ -770,11 +767,27 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 			dosName = fileName.uppercaseString;
 		}
 		
-		[dosPath appendFormat: @"\\%@", dosName, nil];
+        if (subpathsAdded == 0)
+        {
+            //If this is the first component, we don't need to prepend a separator
+            //as the dos path already starts with one (i.e. "[driveletter]:\")
+            [dosPath appendString: dosName];
+        }
+        else
+        {
+            //Build up the path using DOS-style path separators.
+            [dosPath appendFormat: @"\\%@", dosName];
+        }
+        
+        //IMPLEMENTATION NOTE: DOSBox's FindDirInfo (used by getShortName) requires us to format directory
+        //paths using OSX-style slashes but DOS filenames: all welded onto the front of the drive's OS X-relative
+        //base path.
+		[frankenDirPath appendFormat: @"/%@", dosName];
 		
 		[pool release];
+        subpathsAdded++;
 	}
-	return [dosDrive stringByAppendingString: dosPath];
+	return dosPath;
 }
 
 

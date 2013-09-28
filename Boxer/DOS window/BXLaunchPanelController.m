@@ -363,7 +363,7 @@
     
     if (needsFavoritesHeading)
     {
-        NSDictionary *heading = @{@"icon": [NSImage imageNamed: @"FavoriteOutlineTemplate"],
+        NSDictionary *heading = @{@"icon": [NSImage imageNamed: @"FavoriteFilledTemplate"],
                                   @"title": NSLocalizedString(@"Favorites", @"Heading for favorites in launcher panel."),
                                   @"isHeading": @(YES),
                                   };
@@ -533,6 +533,7 @@
     {
         NSCollectionViewItem *clone = [self.favoritePrototype copy];
         clone.representedObject = object;
+        [clone.view setFrameSize: NSMakeSize(640, 100)];
         return clone;
     }
     

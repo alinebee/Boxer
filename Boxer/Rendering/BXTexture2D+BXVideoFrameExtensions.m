@@ -8,7 +8,6 @@
 #import "BXTexture2D+BXVideoFrameExtensions.h"
 #import "BXVideoFrame.h"
 #import "ADBGeometry.h"
-#import <OpenGL/gl.h>
 #import <OpenGL/CGLMacro.h>
 
 @implementation ADBTexture2D (BXVideoFrameExtensions)
@@ -46,48 +45,50 @@
     {
         self.contentRegion = newContentRegion;
         CGRect textureRegion = CGRectMake(0, 0, _textureSize.width, _textureSize.height);
-        [self fillRegion: textureRegion withRed: 0 green: 0 blue: 0 alpha: 0 error: nil];
+        [self fillRegion: textureRegion withRed: 0 green: 0 blue: 0 alpha: 0 error: NULL];
         return [self fillRegion: newContentRegion withBytes: frame.bytes error: outError];
     }
-    
-    //Optimisation: only upload the changed regions to the texture.
-    //TODO: profile this and see if it's quicker under some circumstances
-    //to just upload the whole texture at once, e.g. if there's lots of small
-    //changed regions.
-    
-    NSUInteger pitch = frame.pitch;
-    GLsizei frameWidth = (GLsizei)frame.size.width;
-    NSUInteger i, numRegions = frame.numDirtyRegions;
-    
-    CGLContextObj cgl_ctx = _context;
-    
-	glBindTexture(_type, _texture);
-    
-    for (i=0; i < numRegions; i++)
+    else
     {
-        NSRange dirtyRegion = [frame dirtyRegionAtIndex: i];
-        NSUInteger regionOffset = dirtyRegion.location * pitch;
+        //Optimisation: only upload the changed regions to the texture.
+        //TODO: profile this and see if it's quicker under some circumstances
+        //to just upload the whole texture at once, e.g. if there's lots of small
+        //changed regions.
         
-        NSAssert2(regionOffset < frame.frameData.length,
-                  @"Dirty region offset exceeded frame size: %lu (limit %lu)", (unsigned long)regionOffset, (unsigned long)frame.frameData.length);
+        NSUInteger pitch = frame.pitch;
+        GLsizei frameWidth = (GLsizei)frame.size.width;
+        NSUInteger i, numRegions = frame.numDirtyRegions;
         
-        //Uggghhhh, pointer arithmetic
-        const void *regionBytes = frame.bytes + regionOffset;
+        CGLContextObj cgl_ctx = _context;
         
-        glTexSubImage2D(_type,
-                        0,                      //Mipmap level
-                        0,                      //X offset
-                        dirtyRegion.location,	//Y offset
-                        frameWidth,             //Width
-                        dirtyRegion.length,     //Height
-                        GL_BGRA,                //Byte ordering
-                        GL_UNSIGNED_INT_8_8_8_8_REV,    //Byte packing
-                        regionBytes);                   //Texture data
+        glBindTexture(_type, _texture);
+        
+        for (i=0; i < numRegions; i++)
+        {
+            NSRange dirtyRegion = [frame dirtyRegionAtIndex: i];
+            NSUInteger regionOffset = dirtyRegion.location * pitch;
+            
+            NSAssert2(regionOffset < frame.frameData.length,
+                      @"Dirty region offset exceeded frame size: %lu (limit %lu)", (unsigned long)regionOffset, (unsigned long)frame.frameData.length);
+            
+            //Uggghhhh, pointer arithmetic
+            const void *regionBytes = frame.bytes + regionOffset;
+            
+            glTexSubImage2D(_type,
+                            0,                      //Mipmap level
+                            0,                      //X offset
+                            dirtyRegion.location,	//Y offset
+                            frameWidth,             //Width
+                            dirtyRegion.length,     //Height
+                            GL_BGRA,                //Byte ordering
+                            GL_UNSIGNED_INT_8_8_8_8_REV,    //Byte packing
+                            regionBytes);                   //Texture data
+        }
+        
+        BOOL succeeded = [self _checkForGLError: outError];
+            
+        return succeeded;
     }
-	
-    BOOL succeeded = [self _checkForGLError: outError];
-        
-    return succeeded;
 }
 
 - (BOOL) canAccomodateVideoFrame: (BXVideoFrame *)frame

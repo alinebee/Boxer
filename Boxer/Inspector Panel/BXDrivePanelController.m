@@ -238,7 +238,7 @@ enum {
         [session openURLInDOS: drive.sourceURL
                 withArguments: nil
                   clearScreen: NO
-                 onCompletion: BXSessionShowDOSPrompt
+                 onCompletion: BXSessionShowDOSPromptOnCompletion
                         error: NULL];
     }
 }

@@ -187,7 +187,7 @@
         BOOL launched = [self openURLInDOS: URL
                              withArguments: nil
                                clearScreen: NO
-                              onCompletion: BXSessionShowDOSPromptIfDirectory
+                              onCompletion: BXSessionShowDOSPromptOnCompletionIfDirectory
                                      error: &launchError];
         
         if (!launched && launchError)

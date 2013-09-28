@@ -860,7 +860,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 - (BOOL) openURLInDOS: (NSURL *)URL
         withArguments: (NSString *)arguments
           clearScreen: (BOOL)clearScreen
-         onCompletion: (BXSessionProgramExitBehavior)exitBehavior
+         onCompletion: (BXSessionProgramCompletionBehavior)completionBehavior
                 error: (out NSError **)outError
 {
 	if (!self.canOpenURLs)
@@ -892,9 +892,14 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     //If this was an executable, launch it now.
 	if ([URL matchingFileType: [BXFileTypes executableTypes]] != nil)
 	{
-        if (exitBehavior == BXSessionExitBehaviorAuto || exitBehavior == BXSessionShowDOSPromptIfDirectory)
-            exitBehavior = (self.DOSWindowController.DOSViewShown) ? BXSessionShowDOSPrompt : BXSessionShowLauncher;
-        _programExitBehavior = exitBehavior;
+        if (completionBehavior == BXSessionProgramCompletionBehaviorAuto || completionBehavior == BXSessionShowDOSPromptOnCompletionIfDirectory)
+        {
+            if (self.DOSWindowController.DOSViewShown || !self.allowsLauncherPanel)
+                completionBehavior = BXSessionShowDOSPromptOnCompletion;
+            else
+                completionBehavior = BXSessionShowLauncherOnCompletion;
+        }
+        _programCompletionBehavior = completionBehavior;
         
         self.emulator.clearsScreenBeforeCommandExecution = clearScreen;
         
@@ -921,18 +926,23 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	{
 		[self.emulator changeWorkingDirectoryToDOSPath: dosPath];
         
-        if (exitBehavior == BXSessionExitBehaviorAuto)
-            exitBehavior = (self.DOSWindowController.DOSViewShown) ? BXSessionShowDOSPrompt : BXSessionShowLauncher;
+        if (completionBehavior == BXSessionProgramCompletionBehaviorAuto)
+        {
+            if (self.DOSWindowController.DOSViewShown || !self.allowsLauncherPanel)
+                completionBehavior = BXSessionShowDOSPromptOnCompletion;
+            else
+                completionBehavior = BXSessionShowLauncherOnCompletion;
+        }
         
         //Because the directory change will happen instantaneously and emulatorDidReturnToShell:
         //will never be called, handle the 'exit' behaviour immediately.
-        switch (exitBehavior)
+        switch (completionBehavior)
         {
-            case BXSessionShowDOSPrompt:
-            case BXSessionShowDOSPromptIfDirectory:
+            case BXSessionShowDOSPromptOnCompletion:
+            case BXSessionShowDOSPromptOnCompletionIfDirectory:
                 [self.DOSWindowController showDOSView];
                 break;
-            case BXSessionShowLauncher:
+            case BXSessionShowLauncherOnCompletion:
                 [self.DOSWindowController showLaunchPanel];
                 break;
         }
@@ -946,7 +956,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     return [self openURLInDOS: URL
                 withArguments: nil
                   clearScreen: NO
-                 onCompletion: BXSessionExitBehaviorAuto
+                 onCompletion: BXSessionProgramCompletionBehaviorAuto
                         error: outError];
 }
 

@@ -1184,7 +1184,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		[self openURLInDOS: targetURL
              withArguments: arguments
                clearScreen: YES
-              onCompletion: BXSessionExitBehaviorAuto
+              onCompletion: BXSessionProgramCompletionBehaviorAuto
                      error: &launchError];
         
         //Display any error that occurred when trying to launch
@@ -1355,14 +1355,15 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     if (wasLastProcess)
     {
         NSDictionary *processInfo = notification.userInfo;
-        BXSessionProgramExitBehavior exitBehavior = [self _behaviorAfterReturningToShellFromProcess: processInfo];
+        BXSessionProgramCompletionBehavior completionBehavior = [self _behaviorAfterReturningToShellFromProcess: processInfo];
         
-        if (exitBehavior == BXSessionClose)
+        if (completionBehavior == BXSessionCloseOnCompletion)
         {
             [self close];
         }
-        else if (exitBehavior == BXSessionShowLauncher)
+        else if (completionBehavior == BXSessionShowLauncherOnCompletion)
         {
+            NSAssert(self.allowsLauncherPanel, @"BXSessionShowLauncherOnCompletion specified for a session that has no launcher panel.");
             [self.DOSWindowController showLaunchPanel];
             
             //Switch to the launch panel only after a short delay.
@@ -1373,15 +1374,14 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                                            afterDelay: BXSwitchToLaunchPanelDelay];
              */
         }
-        else if (exitBehavior == BXSessionShowDOSPrompt)
+        else if (completionBehavior == BXSessionShowDOSPromptOnCompletion)
         {
             [self.DOSWindowController showDOSView];
         }
         
-        
-        //Clear our exit behaviour so that the previous value won't influence future programs
-        //launched straight from DOS.
-        _programExitBehavior = BXSessionExitBehaviorDoNothing;
+        //Clear our completion behaviour so that the previous value won't influence
+        //future programs launched straight from DOS.
+        _programCompletionBehavior = BXSessionProgramCompletionBehaviorDoNothing;
         
         //Make sure we've cleared our record of the launched program altogether.
         self.launchedProgramURL = nil;
@@ -1518,7 +1518,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 - (BOOL) _shouldStartImmediately { return YES; }
 
 
-- (BXSessionProgramExitBehavior) _behaviorAfterReturningToShellFromProcess: (NSDictionary *)processInfo
+- (BXSessionProgramCompletionBehavior) _behaviorAfterReturningToShellFromProcess: (NSDictionary *)processInfo
 {
     //Standalone-specific behaviour:
     //- if the game has launchers, then always return to the launcher panel;
@@ -1526,25 +1526,25 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     if ([[NSApp delegate] isStandaloneGameBundle])
     {
         if (self.allowsLauncherPanel)
-            return BXSessionShowLauncher;
+            return BXSessionShowLauncherOnCompletion;
         else
-            return BXSessionClose;
+            return BXSessionCloseOnCompletion;
     }
-    else if (_programExitBehavior == BXSessionClose)
+    else if (_programCompletionBehavior == BXSessionCloseOnCompletion)
     {
-        return BXSessionClose;
+        return BXSessionCloseOnCompletion;
     }
-    else if (_programExitBehavior == BXSessionShowDOSPrompt)
+    else if (_programCompletionBehavior == BXSessionShowDOSPromptOnCompletion)
     {
         NSLog(@"DOS prompt specifically requested, showing it now");
-        return BXSessionShowDOSPrompt;
+        return BXSessionShowDOSPromptOnCompletion;
     }
-    else if (_programExitBehavior == BXSessionShowLauncher)
+    else if (_programCompletionBehavior == BXSessionShowLauncherOnCompletion)
     {
         if (!self.allowsLauncherPanel)
         {
             NSLog(@"Launcher requested but unavailable, showing DOS prompt");
-            return BXSessionShowDOSPrompt;
+            return BXSessionShowDOSPromptOnCompletion;
         }
         
         //If this program took suspiciously little time to run, stay at the DOS prompt
@@ -1558,25 +1558,25 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             if (runningTime < BXSuccessfulProgramRunningTimeThreshold)
             {
                 NSLog(@"Suspiciously short running time: %f, overriding return to launcher.", runningTime);
-                return BXSessionShowDOSPrompt;
+                return BXSessionShowDOSPromptOnCompletion;
             }
         }
         
         //Otherwise, go ahead and show the launcher
-        return BXSessionShowLauncher;
+        return BXSessionShowLauncherOnCompletion;
     }
     //If the loading panel is still displaying by the time we return to the shell,
     //then we have to do *something*: switch to the most appropriate panel for the session.
     else if (self.DOSWindowController.currentPanel == BXDOSWindowLoadingPanel)
     {
         if (self.allowsLauncherPanel)
-            return BXSessionShowLauncher;
+            return BXSessionShowLauncherOnCompletion;
         else
-            return BXSessionShowDOSPrompt;
+            return BXSessionShowDOSPromptOnCompletion;
     }
     else
     {
-        return BXSessionExitBehaviorDoNothing;
+        return BXSessionProgramCompletionBehaviorDoNothing;
     }
 }
 

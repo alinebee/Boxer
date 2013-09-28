@@ -61,17 +61,17 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 //This flag will be cleared on the next startup.
 extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 
-//Used by openURLInDOS: to decide what to do after its program exits or the directory has been changed.
+//Used by openURLInDOS: to decide what to do after the requested program exits or the directory has been changed.
 typedef enum {
-    BXSessionExitBehaviorDoNothing,     //Do not change the currently displayed view at all.
-    BXSessionExitBehaviorAuto,          //If the DOS view was visible when the opening the URL, stay at the DOS prompt;
-                                        //Otherwise, show the program launcher.
-    BXSessionShowDOSPrompt,             //Show the DOS prompt once the operation completes.
-    BXSessionShowDOSPromptIfDirectory,  //If the URL was a directory, show it at the DOS prompt;
-                                        //Otherwise, behave like BXSessionExitBehaviorAuto.
-    BXSessionShowLauncher,              //Show the program launcher panel if available.
-    BXSessionClose,                     //Close the DOS session altogether.
-} BXSessionProgramExitBehavior;
+    BXSessionProgramCompletionBehaviorDoNothing,    //Do not change the currently displayed view at all.
+    BXSessionProgramCompletionBehaviorAuto,         //If the DOS view was visible when the opening the URL, stay at the DOS prompt;
+                                                    //Otherwise, show the program launcher.
+    BXSessionShowDOSPromptOnCompletion,             //Show the DOS prompt once the operation completes.
+    BXSessionShowDOSPromptOnCompletionIfDirectory,  //If the URL was a directory, show it at the DOS prompt;
+                                                    //Otherwise, behave like BXSessionProgramCompletionBehaviorAuto.
+    BXSessionShowLauncherOnCompletion,              //Show the program launcher panel if available.
+    BXSessionCloseOnCompletion,                     //Close the DOS session altogether.
+} BXSessionProgramCompletionBehavior;
 
 
 #pragma mark - Interface
@@ -118,7 +118,7 @@ typedef enum {
 	BOOL _userSkippedDefaultProgram;
     BOOL _waitingForFastForwardRelease;
     
-    BXSessionProgramExitBehavior _programExitBehavior;
+    BXSessionProgramCompletionBehavior _programCompletionBehavior;
 	
 	NSOperationQueue *_importQueue;
     NSOperationQueue *_scanQueue;

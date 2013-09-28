@@ -187,14 +187,14 @@ typedef NSUInteger BXDriveMountOptions;
 //if it's a directory, the current DOS working directory will be changed to it.
 //If clearScreen is YES, this method will clear any previous DOS prompt output before running the program.
 //This is primarily intended for launcher items, and only has an effect if the URL is a program.
-//BXSessionProgramExitBehavior determines what the session should do after the program exits:
-//See BXSessionProgramExitBehavior constant definition for details.
+//BXSessionProgramCompletionBehavior determines what the session should do after the program exits:
+//See BXSessionProgramCompletionBehavior constant definition for details.
 //Returns YES on success, or NO and populates outError if the specified URL could not be launched
 //(e.g. if it was not accessible in DOS.)
 - (BOOL) openURLInDOS: (NSURL *)URL
         withArguments: (NSString *)arguments
           clearScreen: (BOOL)clearScreen
-         onCompletion: (BXSessionProgramExitBehavior)exitBehavior
+         onCompletion: (BXSessionProgramCompletionBehavior)completionBehavior
                 error: (out NSError **)outError;
 
 //Calls the above with no arguments, without clearing the screen, and with automatic exit behavior.

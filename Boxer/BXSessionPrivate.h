@@ -65,7 +65,7 @@ extern NSString * const BXGameImportedNotificationType;
 
 //Determines what to do after exiting the specified process and returning to the DOS prompt.
 //Called by emulatorDidReturnToShell: once the last process has been shut down.
-- (BXSessionProgramExitBehavior) _behaviorAfterReturningToShellFromProcess: (NSDictionary *)processInfo;
+- (BXSessionProgramCompletionBehavior) _behaviorAfterReturningToShellFromProcess: (NSDictionary *)processInfo;
 
 //Whether we should start the emulator as soon as the document is created.
 - (BOOL) _shouldStartImmediately;

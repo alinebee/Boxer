@@ -453,22 +453,22 @@
         
         if (canLaunch)
         {
-            BXSessionProgramExitBehavior exitBehavior;
+            BXSessionProgramCompletionBehavior completionBehavior;
             //If this is a drive, then show the DOS prompt so the user can get on with mucking around with it
             if ([[itemDetails objectForKey: @"isDrive"] boolValue])
             {
-                exitBehavior = BXSessionShowDOSPrompt;
+                completionBehavior = BXSessionShowDOSPromptOnCompletion;
             }
             //Otherwise, if we're launching a regular program, return to the launcher panel after it's finished
             else
             {
-                exitBehavior = BXSessionShowLauncher;
+                completionBehavior = BXSessionShowLauncherOnCompletion;
             }
             
             [session openURLInDOS: URL
                     withArguments: arguments
                       clearScreen: YES
-                     onCompletion: exitBehavior
+                     onCompletion: completionBehavior
                             error: &launchError];
         }
         

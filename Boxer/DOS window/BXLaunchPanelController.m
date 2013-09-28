@@ -619,7 +619,10 @@
 
 - (void) mouseUp: (NSEvent *)theEvent
 {
-    [NSApp sendAction: @selector(launchProgram:) to: self.delegate from: self];
+    NSPoint locationInWindow = self.window.mouseLocationOutsideOfEventStream;
+    NSPoint locationInView = [self convertPoint: locationInWindow fromView: nil];
+    if ([self mouse: locationInView inRect: self.bounds])
+        [NSApp sendAction: @selector(launchProgram:) to: self.delegate from: self];
 }
 
 @end

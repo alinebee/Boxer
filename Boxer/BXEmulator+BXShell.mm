@@ -668,6 +668,7 @@ nil];
                                         BXEmulatorDriveKey: drive,
                                         BXEmulatorLaunchDateKey: [NSDate date],
                                         BXEmulatorIsBatchFileKey: @(isBatchFile),
+                                        BXEmulatorIsShellKey: @(isShell),
                                         }];
     
 	if (localURL)

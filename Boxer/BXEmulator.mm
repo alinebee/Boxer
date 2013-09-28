@@ -55,6 +55,7 @@ NSString * const BXEmulatorDidRemoveFileNotification				= @"BXEmulatorDidRemoveF
 
 NSString * const BXEmulatorDOSPathKey           = @"DOSPath";
 NSString * const BXEmulatorIsBatchFileKey       = @"isBatchFile";
+NSString * const BXEmulatorIsShellKey           = @"isShell";
 NSString * const BXEmulatorDriveKey             = @"drive";
 NSString * const BXEmulatorLocalURLKey          = @"URL";
 NSString * const BXEmulatorLaunchArgumentsKey   = @"arguments";
@@ -402,8 +403,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (BOOL) processIsShell: (NSDictionary *)processInfo
 {
-    NSString *dosPath = [processInfo objectForKey: BXEmulatorDOSPathKey];
-    return [dosPath isEqualToString: shellProcessPath];
+    return [[processInfo objectForKey: BXEmulatorIsShellKey] boolValue];
 }
 
 - (BOOL) processIsBatchFile: (NSDictionary *)processInfo

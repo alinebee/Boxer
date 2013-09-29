@@ -14,12 +14,18 @@
 #import "BXCollectionItemView.h"
 #import "BXBaseAppController.h"
 #import "BXSessionError.h"
+#import "BXEmulator.h" //For recentPrograms keys
 
 @interface BXLaunchPanelController ()
 
 @property (retain, nonatomic) NSMutableArray *allProgramRows;
 @property (retain, nonatomic) NSMutableArray *favoriteProgramRows;
+@property (retain, nonatomic) NSMutableArray *recentProgramRows;
 @property (retain, nonatomic) NSMutableArray *displayedRows;
+
+@property (retain, nonatomic) NSDictionary *favoritesHeading;
+@property (retain, nonatomic) NSDictionary *recentProgramsHeading;
+@property (retain, nonatomic) NSDictionary *allProgramsHeading;
 
 @property (retain, nonatomic) NSMutableArray *filterKeywords;
 
@@ -30,6 +36,10 @@
 @synthesize launcherScrollView = _launcherScrollView;
 @synthesize allProgramRows = _allProgramRows;
 @synthesize favoriteProgramRows = _favoriteProgramRows;
+@synthesize recentProgramRows = _recentProgramRows;
+@synthesize favoritesHeading = _favoritesHeading;
+@synthesize recentProgramsHeading = _recentProgramsHeading;
+@synthesize allProgramsHeading = _allProgramsHeading;
 @synthesize displayedRows = _displayedRows;
 @synthesize filter = _filter;
 @synthesize filterKeywords = _filterKeywords;
@@ -38,6 +48,7 @@
 {
     self.allProgramRows = [NSMutableArray array];
     self.favoriteProgramRows = [NSMutableArray array];
+    self.recentProgramRows = [NSMutableArray array];
     self.displayedRows = [NSMutableArray array];
     self.filterKeywords = [NSMutableArray array];
 
@@ -62,7 +73,11 @@
                                         forKeyPath: @"executableURLs"];
             
             [self.representedObject removeObserver: self
+                                        forKeyPath: @"recentPrograms"];
+            
+            [self.representedObject removeObserver: self
                                         forKeyPath: @"gamebox.launchers"];
+            
         }
         
         [super setRepresentedObject: representedObject];
@@ -75,9 +90,15 @@
                                         context: nil];
             
             [self.representedObject addObserver: self
+                                     forKeyPath: @"recentPrograms"
+                                        options: NSKeyValueObservingOptionInitial
+                                        context: nil];
+            
+            [self.representedObject addObserver: self
                                      forKeyPath: @"gamebox.launchers"
                                         options: NSKeyValueObservingOptionInitial
                                         context: nil];
+            
         }
     }
 }
@@ -86,15 +107,20 @@
 {
     self.allProgramRows = nil;
     self.favoriteProgramRows = nil;
+    self.recentProgramRows = nil;
     self.displayedRows = nil;
+    
+    self.favoritesHeading = nil;
+    self.recentProgramsHeading = nil;
+    self.allProgramsHeading = nil;
+    
     self.filterKeywords = nil;
     
     [super dealloc];
 }
 
 
-#pragma mark -
-#pragma mark Populating the launcher list
+#pragma mark - Populating the launcher list
 
 - (void) observeValueForKeyPath: (NSString *)keyPath
                        ofObject: (id)object
@@ -103,23 +129,280 @@
 {
     if ([keyPath isEqualToString: @"executableURLs"])
     {
-        [self _syncAllProgramRows];
+        _allProgramRowsDirty = YES;
+        _recentProgramRowsDirty = YES;
+        _favoriteProgramRowsDirty = YES;
+        if (_shouldUpdateImmediately)
+        {
+            [self _syncAllProgramRows];
+            //Also resync the favorites and recents, since more accurate path info may have become available for them
+            [self _syncFavoriteProgramRows];
+            [self _syncRecentProgramRows];
+        }
+    }
+    
+    else if ([keyPath isEqualToString: @"recentPrograms"])
+    {
+        _recentProgramRowsDirty = YES;
+        if (_shouldUpdateImmediately)
+            [self _syncRecentProgramRows];
     }
     
     else if ([keyPath isEqualToString: @"gamebox.launchers"])
     {
-        [self _syncFavoriteProgramRows];
+        _favoriteProgramRowsDirty = YES;
+        if (_shouldUpdateImmediately)
+            [self _syncFavoriteProgramRows];
     }
 }
 
-- (BOOL) hasFavorites
+- (void) viewWillAppear
 {
-    return self.favoriteProgramRows.count;
+    _shouldUpdateImmediately = YES;
+    
+    if (_allProgramRowsDirty)
+        [self _syncAllProgramRows];
+    
+    if (_recentProgramRowsDirty)
+        [self _syncRecentProgramRows];
+    
+    if (_favoriteProgramRowsDirty)
+        [self _syncFavoriteProgramRows];
 }
 
-- (BOOL) hasPrograms
+- (void) viewDidDisappear
 {
-    return self.allProgramRows.count;
+    _shouldUpdateImmediately = NO;
+}
+
+- (void) _syncAllProgramRows
+{
+    [self.allProgramRows removeAllObjects];
+    
+    BXSession *session = (BXSession *)self.representedObject;
+    
+    NSDictionary *executableURLsByDrive = session.executableURLs;
+    NSArray *sortedLetters = [executableURLsByDrive.allKeys sortedArrayUsingSelector: @selector(compare:)];
+    
+    for (NSString *driveLetter in sortedLetters)
+    {
+        //FIXME: ultimately this should list programs for queued drives as well as mounted drives,
+        //but we currently don't scan drives until they're mounted.
+        BXDrive *drive = [session.emulator driveAtLetter: driveLetter];
+        if (!drive || drive.isHidden)
+            continue;
+        
+        NSArray *executableURLsOnDrive = [executableURLsByDrive objectForKey: driveLetter];
+        if (executableURLsOnDrive.count)
+        {
+            NSDictionary *driveItem = [self _listItemForDrive: drive];
+            [self.allProgramRows addObject: driveItem];
+            
+            //Now, add items for each program on that drive.
+            for (NSURL *URL in executableURLsOnDrive)
+            {
+                NSDictionary *programItem = [self _listItemForProgramAtURL: URL
+                                                                   onDrive: drive
+                                                             withArguments: nil
+                                                                     title: nil];
+                [self.allProgramRows addObject: programItem];
+            }
+        }
+    }
+    _allProgramRowsDirty = NO;
+    [self _syncDisplayedRows];
+}
+
+- (void) _syncRecentProgramRows
+{
+    [self.recentProgramRows removeAllObjects];
+    
+    BXSession *session = (BXSession *)self.representedObject;
+    
+    for (NSDictionary *programDetails in session.recentPrograms)
+    {
+        NSURL *URL          = [programDetails objectForKey: BXEmulatorLogicalURLKey];
+        BXDrive *drive      = [programDetails objectForKey: BXEmulatorDriveKey];
+        NSString *arguments = [programDetails objectForKey: BXEmulatorLaunchArgumentsKey];
+        
+        //Filter the recent programs to eliminate:
+        //- Programs that aren't reachable in DOS right now
+        //- Programs that already match one of our favorites (should we really do this?)
+        if (![session.emulator logicalURLIsAccessibleInDOS: URL])
+            continue;
+        
+        BOOL matchesLauncher = NO;
+        for (NSDictionary *launcher in session.gamebox.launchers)
+        {
+            NSURL *launcherURL      = [launcher objectForKey: BXLauncherURLKey];
+            NSString *launcherArgs  = [launcher objectForKey: BXLauncherArgsKey];
+            if ([launcherURL isEqual: URL] &&
+                ((!launcherArgs && !arguments) || [launcherArgs isEqual: arguments]))
+            {
+                matchesLauncher = YES;
+                break;
+            }
+        }
+        if (matchesLauncher)
+            continue;
+        
+        NSDictionary *item = [self _listItemForProgramAtURL: URL
+                                                    onDrive: drive
+                                              withArguments: arguments
+                                                      title: nil];
+        
+        [self.recentProgramRows addObject: item];
+    }
+    
+    _recentProgramRowsDirty = NO;
+    [self _syncDisplayedRows];
+}
+
+- (void) _syncFavoriteProgramRows
+{
+    [self.favoriteProgramRows removeAllObjects];
+    
+    BXSession *session = (BXSession *)self.representedObject;
+    
+    for (NSDictionary *launcher in session.gamebox.launchers)
+    {
+        NSDictionary *item = [self _listItemForLauncher: launcher];
+        [self.favoriteProgramRows addObject: item];
+    }
+    
+    _favoriteProgramRowsDirty = NO;
+    [self _syncDisplayedRows];
+}
+
+- (void) _syncDisplayedRows
+{
+    NSMutableArray *displayedRows = [NSMutableArray arrayWithCapacity: 10];
+    
+    NSArray *matchingFavorites, *matchingRecents, *matchingPrograms;
+    
+    BOOL needsFavoritesHeading, needsAllProgramsHeading, needsRecentProgramsHeading;
+    if (self.filterKeywords.count)
+    {
+        matchingFavorites   = [self _rowsMatchingKeywords: self.filterKeywords inRows: self.favoriteProgramRows];
+        matchingRecents     = [self _rowsMatchingKeywords: self.filterKeywords inRows: self.recentProgramRows];
+        matchingPrograms    = [self _rowsMatchingKeywords: self.filterKeywords inRows: self.allProgramRows];
+        needsFavoritesHeading       = matchingFavorites.count && (matchingRecents.count || matchingPrograms.count);
+        needsRecentProgramsHeading  = matchingRecents.count && (matchingFavorites.count || matchingPrograms.count);
+        needsAllProgramsHeading     = matchingPrograms.count && (matchingFavorites.count || matchingRecents.count);
+    }
+    else
+    {
+        matchingFavorites   = self.favoriteProgramRows;
+        matchingRecents     = self.recentProgramRows;
+        matchingPrograms    = self.allProgramRows;
+        needsFavoritesHeading = matchingFavorites.count;
+        needsRecentProgramsHeading = matchingRecents.count;
+        needsAllProgramsHeading = NO;
+    }
+    
+    if (needsFavoritesHeading)
+    {
+        [displayedRows addObject: self.favoritesHeading];
+    }
+    [displayedRows addObjectsFromArray: matchingFavorites];
+    
+    if (needsRecentProgramsHeading)
+    {
+        [displayedRows addObject: self.recentProgramsHeading];
+    }
+    [displayedRows addObjectsFromArray: matchingRecents];
+    
+    if (needsAllProgramsHeading)
+    {
+        [displayedRows addObject: self.allProgramsHeading];
+    }
+    [displayedRows addObjectsFromArray: matchingPrograms];
+    
+    //IMPLEMENTATION NOTE: replacing the whole array at once, rather than emptying and refilling it,
+    //allows the collection view to correctly persist previously-existing rows: animating them into their new location
+    //rather than fading them out and back in again.
+    self.displayedRows = displayedRows;
+}
+
+- (NSDictionary *) favoritesHeading
+{
+    //Create the heading the first time we need it. By using a persistent object rather than regenerating it,
+    //we ensure that the collection view will keep using the same view for it.
+    if (!_favoritesHeading)
+    {
+        self.favoritesHeading = @{@"icon": [NSImage imageNamed: @"FavoriteFilledTemplate"],
+                                  @"title": NSLocalizedString(@"Favorites", @"Heading for favorites in launcher panel."),
+                                  @"isHeading": @(YES),
+                                  };
+    }
+    return [[_favoritesHeading retain] autorelease];
+}
+
+- (NSDictionary *) recentProgramsHeading
+{
+    //Create the heading the first time we need it. By using a persistent object rather than regenerating it,
+    //we ensure that the collection view will keep using the same view for it.
+    if (!_recentProgramsHeading)
+    {
+        self.recentProgramsHeading = @{@"icon": [NSImage imageNamed: @"FavoriteFilledTemplate"],
+                                       @"title": NSLocalizedString(@"Recently launched", @"Heading for recent programs list in launcher panel."),
+                                       @"isHeading": @(YES),
+                                       };
+    }
+    return [[_recentProgramsHeading retain] autorelease];
+}
+
+- (NSDictionary *) allProgramsHeading
+{
+    //Create the heading the first time we need it. By using a persistent object rather than regenerating it,
+    //we ensure that the collection view will keep using the same view for it.
+    if (!_allProgramsHeading)
+    {
+        self.allProgramsHeading = @{@"icon": [NSImage imageNamed: @"NSListViewTemplate"],
+                                    @"title": NSLocalizedString(@"All Programs", @"Heading for all programs search results in launcher panel."),
+                                    @"isHeading": @(YES),
+                                    };
+    }
+    return [[_allProgramsHeading retain] autorelease];
+}
+
+- (NSDictionary *) _listItemForProgramAtURL: (NSURL *)URL
+                                    onDrive: (BXDrive *)drive
+                              withArguments: (NSString *)arguments
+                                      title: (NSString *)title
+{
+    BXSession *session = (BXSession *)self.representedObject;
+    
+    if (!drive)
+    {
+        drive = [session queuedDriveRepresentingURL: URL]; //May return nil
+    }
+    
+    NSString *dosPath = [session.emulator DOSPathForLogicalURL: URL]; //May also return nil
+    
+    if (!title)
+    {
+        NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
+        title = [programNameFormatter transformedValue: URL.path];
+        [programNameFormatter release];
+    }
+    NSMutableDictionary *item = [NSMutableDictionary dictionaryWithDictionary: @{@"title": title,
+                                                                                 @"URL": URL,
+                                                                                }];
+    
+    if (drive)
+        [item setObject: drive forKey: @"drive"];
+    
+    if (arguments)
+        [item setObject: arguments forKey: @"arguments"];
+    
+    //May be nil, if the drive cannot resolve the path or was not mounted.
+    if (dosPath)
+        [item setObject: dosPath forKey: @"dosPath"];
+    else
+        NSLog(@"Could not resolve DOS path for %@", URL);
+    
+    return item;
 }
 
 + (NSImage *) _headingIconForDriveType: (BXDriveType)type
@@ -140,121 +423,66 @@
     return [NSImage imageNamed: iconName];
 }
 
-- (void) _syncAllProgramRows
+- (NSDictionary *) _listItemForDrive: (BXDrive *)drive
 {
-    [self willChangeValueForKey: @"hasPrograms"];
+    NSString *titleFormat = NSLocalizedString(@"Drive %1$@ (%2$@)",
+                                              @"Format for drive headings in the launcher list. %1$@ is the drive letter, and %2$@ is the drive's title.");
     
-    [self.allProgramRows removeAllObjects];
+    NSString *driveTitle = [NSString stringWithFormat: titleFormat, drive.letter, drive.title];
+    NSImage *driveIcon = [self.class _headingIconForDriveType: drive.type];
+    NSDictionary *item = @{
+                           @"isDrive": @(YES),
+                           @"isHeading": @(YES),
+                           @"title": driveTitle,
+                           @"URL": drive.sourceURL,
+                           @"drive": drive,
+                           @"icon": driveIcon,
+                           };
     
-    BXSession *session = (BXSession *)self.representedObject;
-    
-    NSDictionary *executableURLsByDrive = session.executableURLs;
-    NSArray *sortedLetters = [executableURLsByDrive.allKeys sortedArrayUsingSelector: @selector(compare:)];
-    
-    NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
-    
-    for (NSString *driveLetter in sortedLetters)
-    {
-        BXDrive *drive = [session.emulator driveAtLetter: driveLetter];
-        NSArray *executableURLsOnDrive = [executableURLsByDrive objectForKey: driveLetter];
-        
-        if (drive && executableURLsOnDrive.count)
-        {
-            //First, prepare a group row for this drive.
-            NSString *groupRowFormat = NSLocalizedString(@"Drive %1$@ (%2$@)",
-                                                   @"Format for grouping rows in All Programs list. %1$@ is the drive letter, and %2$@ is the drive's title.");
-            
-            NSString *driveTitle = [NSString stringWithFormat: groupRowFormat, drive.letter, drive.title];
-            NSImage *driveIcon = [self.class _headingIconForDriveType: drive.type];
-            NSDictionary *groupRow = @{
-                                       @"isDrive": @(YES),
-                                       @"isHeading": @(YES),
-                                       @"title": driveTitle,
-                                       @"URL": drive.sourceURL,
-                                       @"drive": drive,
-                                       @"icon": driveIcon,
-                                       };
-            
-            [self.allProgramRows addObject: groupRow];
-            
-            //Now, add items for each program on that drive.
-            for (NSURL *URL in executableURLsOnDrive)
-            {
-                NSString *dosPath   = [session.emulator DOSPathForURL: URL onDrive: drive];
-                NSString *title     = [programNameFormatter transformedValue: URL.path];
-                
-                NSMutableDictionary *programRow = [NSMutableDictionary dictionaryWithDictionary: @{
-                                                   @"title": title,
-                                                   @"URL": URL,
-                                                   @"drive": drive,
-                                                   }];
-                
-                //May be nil, if the drive cannot resolve the path
-                if (dosPath)
-                    [programRow setObject: dosPath forKey: @"dosPath"];
-                else
-                    NSLog(@"Could not resolve DOS path for %@", URL);
-                
-                [self.allProgramRows addObject: programRow];
-            }
-        }
-    }
-    
-    [programNameFormatter release];
-    
-    [self didChangeValueForKey: @"hasPrograms"];
-    
-    [self _syncDisplayedRows];
+    return item;
 }
 
-- (void) _syncFavoriteProgramRows
+- (NSDictionary *) _listItemForLauncher: (NSDictionary *)launcher
 {
-    [self willChangeValueForKey: @"hasFavorites"];
-    
-    [self.favoriteProgramRows removeAllObjects];
-    
     BXSession *session = (BXSession *)self.representedObject;
     
-    NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
+    NSURL *URL          = [launcher objectForKey: BXLauncherURLKey];
+    NSString *title     = [launcher objectForKey: BXLauncherTitleKey];
+    NSString *arguments = [launcher objectForKey: BXLauncherArgsKey]; //May be nil
     
-    for (NSDictionary *launcher in session.gamebox.launchers)
+    BXDrive *drive      = [session queuedDriveRepresentingURL: URL]; //May be nil
+    NSString *dosPath   = [session.emulator DOSPathForLogicalURL: URL]; //May be nil
+    
+    //If no title was provided, use the program's filename.
+    if (!title.length)
     {
-        NSURL *URL          = [launcher objectForKey: BXLauncherURLKey];
-        NSString *title     = [launcher objectForKey: BXLauncherTitleKey];
-        NSString *arguments = [launcher objectForKey: BXLauncherArgsKey]; //May be nil
-        NSString *dosPath   = [session.emulator DOSPathForURL: URL]; //May be nil
-        BXDrive *drive      = [session queuedDriveRepresentingURL: URL]; //May be nil
-        
-        //If no title was provided, use the program's filename.
-        if (!title.length)
-            title = [programNameFormatter transformedValue: URL.path];
-        
-        NSMutableDictionary *launcherRow = [NSMutableDictionary dictionaryWithDictionary: @{
-                                            @"isFavorite": @(YES),
-                                            @"URL": URL,
-                                            @"title": title,
-                                           }];
-        
-        if (dosPath)
-            [launcherRow setObject: dosPath forKey: @"dosPath"];
-        else
-            NSLog(@"Could not resolve DOS path for %@", URL);
-        
-        if (drive)
-            [launcherRow setObject: drive forKey: @"drive"];
-        
-        if (arguments)
-            [launcherRow setObject: arguments forKey: @"arguments"];
-        
-        [self.favoriteProgramRows addObject: launcherRow];
+        NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
+        title = [programNameFormatter transformedValue: URL.path];
+        [programNameFormatter release];
     }
     
-    [programNameFormatter release];
+    NSMutableDictionary *item = [NSMutableDictionary dictionaryWithDictionary: @{
+                                                                                 @"isFavorite": @(YES),
+                                                                                 @"URL": URL,
+                                                                                 @"title": title,
+                                                                                 }];
     
-    [self didChangeValueForKey: @"hasFavorites"];
+    if (dosPath)
+        [item setObject: dosPath forKey: @"dosPath"];
+    else
+        NSLog(@"Could not resolve DOS path for %@", URL);
     
-    [self _syncDisplayedRows];
+    if (drive)
+        [item setObject: drive forKey: @"drive"];
+    
+    if (arguments)
+        [item setObject: arguments forKey: @"arguments"];
+    
+    return item;
 }
+
+
+#pragma mark - Filtering programs
 
 - (NSUInteger) _relevanceOfRow: (NSDictionary *)row forKeywords: (NSArray *)keywords
 {
@@ -339,54 +567,6 @@
     return matches;
 }
 
-- (void) _syncDisplayedRows
-{
-    NSMutableArray *displayedRows = [NSMutableArray arrayWithCapacity: 10];
-    
-    NSArray *matchingFavorites, *matchingPrograms;
-    
-    BOOL needsFavoritesHeading, needsAllProgramsHeading;
-    if (self.filterKeywords.count)
-    {
-        matchingFavorites   = [self _rowsMatchingKeywords: self.filterKeywords inRows: self.favoriteProgramRows];
-        matchingPrograms    = [self _rowsMatchingKeywords: self.filterKeywords inRows: self.allProgramRows];
-        needsFavoritesHeading = matchingFavorites.count && matchingPrograms.count;
-        needsAllProgramsHeading = needsFavoritesHeading;
-    }
-    else
-    {
-        matchingFavorites = self.favoriteProgramRows;
-        matchingPrograms = self.allProgramRows;
-        needsFavoritesHeading = matchingFavorites.count && matchingPrograms.count;
-        needsAllProgramsHeading = NO;
-    }
-    
-    if (needsFavoritesHeading)
-    {
-        NSDictionary *heading = @{@"icon": [NSImage imageNamed: @"FavoriteFilledTemplate"],
-                                  @"title": NSLocalizedString(@"Favorites", @"Heading for favorites in launcher panel."),
-                                  @"isHeading": @(YES),
-                                  };
-        [displayedRows addObject: heading];
-    }
-    [displayedRows addObjectsFromArray: matchingFavorites];
-    
-    if (needsAllProgramsHeading)
-    {
-        NSDictionary *heading = @{@"icon": [NSImage imageNamed: @"NSListViewTemplate"],
-                                  @"title": NSLocalizedString(@"All Programs", @"Heading for all programs search results in launcher panel."),
-                                  @"isHeading": @(YES),
-                                  };
-        [displayedRows addObject: heading];
-    }
-    [displayedRows addObjectsFromArray: matchingPrograms];
-    
-    //IMPLEMENTATION NOTE: replacing the whole array at once, rather than emptying and refilling it,
-    //allows the collection view to correctly persist previously-existing rows: animating them into their new location
-    //rather than fading them out and back in again.
-    self.displayedRows = displayedRows;
-}
-
 - (void) _syncFilterKeywords
 {
     [self.filterKeywords removeAllObjects];
@@ -404,8 +584,8 @@
     [self _syncDisplayedRows];
 }
 
-#pragma mark -
-#pragma mark Launching programs
+
+#pragma mark - Launching programs
 
 + (NSSet *) keyPathsForValuesAffectingCanLaunchPrograms
 {
@@ -492,7 +672,6 @@
         URL = drive.sourceURL;
     }
     
-    //NSLog(@"Revealing URL %@", URL);
     if (URL)
     {
         [[NSApp delegate] revealURLsInFinder: @[URL]];
@@ -513,8 +692,6 @@
     {
         //TODO: launch the first search result
     }
-    
-    //TODO: correctly support tabbing away from the text view
     return NO;
 }
 
@@ -561,6 +738,12 @@
     BXLauncherItem *clone = [super copyWithZone: zone];
     clone.delegate = self.delegate;
     return clone;
+}
+
+- (void) dealloc
+{
+    self.delegate = nil;
+    [super dealloc];
 }
 
 + (NSSet *) keyPathsForValuesAffectingLaunchable

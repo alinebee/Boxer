@@ -27,15 +27,24 @@
     
     NSMutableArray *_allProgramRows;
     NSMutableArray *_favoriteProgramRows;
+    NSMutableArray *_recentProgramRows;
     NSMutableArray *_displayedRows;
+    
+    NSDictionary *_favoritesHeading;
+    NSDictionary *_recentProgramsHeading;
+    NSDictionary *_allProgramsHeading;
+    
+    BOOL _allProgramRowsDirty;
+    BOOL _favoriteProgramRowsDirty;
+    BOOL _recentProgramRowsDirty;
+    
+    BOOL _shouldUpdateImmediately;
 }
 
 @property (assign, nonatomic) IBOutlet NSCollectionView *launcherList;
 @property (assign, nonatomic) IBOutlet NSScrollView *launcherScrollView;
 @property (assign, nonatomic) IBOutlet NSSearchField *filter;
 
-@property (readonly, nonatomic) BOOL hasFavorites;
-@property (readonly, nonatomic) BOOL hasPrograms;
 @property (readonly, nonatomic) BOOL canLaunchPrograms;
 
 //An array of NSDictionaries for every item to display in the list.
@@ -47,6 +56,11 @@
 #pragma mark - Actions
 
 - (IBAction) enterSearchText: (NSSearchField *)sender;
+
+//Called by BXDOSWindowController when it is about to switch to/away from the launcher panel.
+//Causes it to (re-)populate its program list.
+- (void) viewWillAppear;
+- (void) viewDidDisappear;
 
 @end
 

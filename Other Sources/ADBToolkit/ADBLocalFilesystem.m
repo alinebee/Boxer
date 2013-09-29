@@ -107,7 +107,7 @@
 {
     //Ensure that paths such as "../path/outside/filesystem/" won't work
     path = path.stringByStandardizingPath;
-    return [self.baseURL URLByAppendingPathComponent: path];
+    return [self.baseURL URLByAppendingPathComponent: path].URLByStandardizingPath;
 }
 
 - (ADBLocalDirectoryEnumerator *) enumeratorAtFileURL: (NSURL *)URL

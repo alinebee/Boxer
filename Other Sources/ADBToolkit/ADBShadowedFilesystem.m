@@ -191,11 +191,11 @@ includingPropertiesForKeys: (NSArray *)keys
         //return the shadow URL.
         if ([shadowURL checkResourceIsReachableAndReturnError: NULL] &&
             ![deletionMarkerURL checkResourceIsReachableAndReturnError: NULL])
-            return shadowURL;
+            return shadowURL.URLByStandardizingPath;
         
         //Otherwise, use the original source URL to resolve the path.
         NSURL *localURL = [self.baseURL URLByAppendingPathComponent: path];
-        return localURL;
+        return localURL.URLByStandardizingPath;
     }
     else
     {
@@ -212,13 +212,13 @@ includingPropertiesForKeys: (NSArray *)keys
 - (NSURL *) _shadowedURLForLogicalPath: (NSString *)path
 {
     NSAssert(path != nil, @"No path provided!");
-    return [self.shadowURL URLByAppendingPathComponent: path.stringByStandardizingPath];
+    return [self.shadowURL URLByAppendingPathComponent: path.stringByStandardizingPath].URLByStandardizingPath;
 }
 
 - (NSURL *) _sourceURLForLogicalPath: (NSString *)path
 {
     NSAssert(path != nil, @"No path provided!");
-    return [self.baseURL URLByAppendingPathComponent: path.stringByStandardizingPath];
+    return [self.baseURL URLByAppendingPathComponent: path.stringByStandardizingPath].URLByStandardizingPath;
 }
 
 - (NSURL *) _shadowedURLForSourceURL: (NSURL *)URL
@@ -230,7 +230,7 @@ includingPropertiesForKeys: (NSArray *)keys
     
     NSString *relativePath = [URL pathRelativeToURL: self.baseURL];
     
-    return [self.shadowURL URLByAppendingPathComponent: relativePath];
+    return [self.shadowURL URLByAppendingPathComponent: relativePath].URLByStandardizingPath;
 }
 
 - (NSURL *) _sourceURLForShadowedURL: (NSURL *)URL
@@ -246,7 +246,7 @@ includingPropertiesForKeys: (NSArray *)keys
     if ([relativePath.pathExtension isEqualToString: ADBShadowedDeletionMarkerExtension])
         relativePath = relativePath.stringByDeletingPathExtension;
     
-    return [self.baseURL URLByAppendingPathComponent: relativePath];
+    return [self.baseURL URLByAppendingPathComponent: relativePath].URLByStandardizingPath;
 }
 
 

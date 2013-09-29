@@ -679,7 +679,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
         //Then, ask the Boxer drive itself to hand over a logical URL that will correspond to that resource.
 		if (resolved)
 		{
-            BXDrive *drive  = [self _driveFromDOSBoxDriveAtIndex: driveIndex];
+            BXDrive *drive = [self _driveFromDOSBoxDriveAtIndex: driveIndex];
             NSString *fullPath = [NSString stringWithCString: fullCPath encoding: BXDirectStringEncoding];
             return [drive logicalURLForDOSPath: fullPath];
 		}
@@ -1382,7 +1382,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 		char filePath[CROSS_LEN];
 		localDOSBoxDrive->GetSystemFilename(filePath, driveRelativePath);
         
-        NSURL *localURL = [NSURL URLFromFileSystemRepresentation: filePath];
+        NSURL *localURL = [NSURL URLFromFileSystemRepresentation: filePath].URLByStandardizingPath;
         
         //Roundtrip the URL through the filesystem, in case it remaps it to another location.
         NSString *logicalPath = [filesystem pathForFileURL: localURL];
@@ -1402,6 +1402,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     NSString *dosPath = [NSString stringWithCString: dosCPath encoding: BXDirectStringEncoding];
+    //FIXME: this will leave short filenames intact instead of resolving them back to the filesystem's own long filenames.
     return [drive logicalURLForDOSPath: dosPath];
 }
 

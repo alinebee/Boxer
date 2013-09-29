@@ -329,38 +329,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     return [NSSet setWithObject: @"runningProcesses"];
 }
 
-- (NSString *) processPath
-{
-    NSString *processPath;
-    @synchronized(_runningProcesses)
-    {
-        processPath = [[self.currentProcess objectForKey: BXEmulatorDOSPathKey] retain];
-    }
-    return [processPath autorelease];
-}
-
-- (NSURL *) processURL
-{
-    NSURL *processURL;
-    @synchronized(_runningProcesses)
-    {
-        NSDictionary *currentProcess = [_runningProcesses lastObject];
-        processURL = [[currentProcess objectForKey: BXEmulatorLogicalURLKey] retain];
-    }
-    
-    return [processURL autorelease];
-}
-
-+ (NSSet *) keyPathsForValuesAffectingProcessPath
-{
-    return [NSSet setWithObject: @"currentProcess"];
-}
-
-+ (NSSet *) keyPathsForValuesAffectingProcessURL
-{
-    return [NSSet setWithObject: @"currentProcess"];
-}
-
 - (BOOL) isAtPrompt
 {
     if (!self.isExecuting) return NO;
@@ -378,13 +346,28 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     return [NSSet setWithObjects: @"isInitialized", @"currentProcess", @"isWaitingForCommandInput", nil];
 }
 
+- (BOOL) isRunningAutoexec
+{
+    for (NSDictionary *processInfo in self.runningProcesses)
+    {
+        if ([self processIsAutoexec: processInfo])
+            return YES;
+    }
+    return NO;
+}
+
++ (NSSet *) keyPathsForValuesAffectingIsRunningAutoexec
+{
+    return [NSSet setWithObject: @"runningProcesses"];
+}
+
 - (BOOL) isRunningActiveProcess
 {
     NSDictionary *currentProcess = self.currentProcess;
     return currentProcess && ![self processIsShell: currentProcess] && ![self processIsBatchFile: currentProcess];
 }
 
-+ (NSSet *) keyPathsForValuesAffectingisRunningActiveProcess
++ (NSSet *) keyPathsForValuesAffectingIsRunningActiveProcess
 {
     return [NSSet setWithObject: @"currentProcess"];
 }

@@ -169,20 +169,15 @@ extern NSString * const shellProcessPath;
 //Whether DOSBox is currently running a process that is not a commandline or batch file.
 @property (readonly) BOOL isRunningActiveProcess;
 
-//Returns whether DOSBox is waiting patiently at the DOS prompt doing nothing.
+//Whether DOSBox is waiting patiently at the DOS prompt doing nothing.
 @property (readonly) BOOL isAtPrompt;
+
+//Whether DOSBox is currently executing its AUTOEXEC.BAT startup script.
+@property (readonly) BOOL isRunningAutoexec;
 
 //The name of the currently-executing DOSBox process.
 //Will be nil if no process is running or the current process is a commandline.
 @property (readonly, copy) NSString *processName;
-
-//The DOS path of the currently-executing DOSBox process.
-//Will be nil if no process is running.
-@property (readonly) NSString *processPath;
-
-//The local filesystem URL of the currently-executing DOSBox process.
-//Will be nil if no process is running or no URL is applicable to that process.
-@property (readonly) NSURL *processURL;
 
 //An array of dictionaries of representing the stack of running processes.
 //Each dictionary contains the keys listed above under "Process dictionary keys".

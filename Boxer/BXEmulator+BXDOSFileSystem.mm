@@ -487,11 +487,15 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (BOOL) driveInUseAtLetter: (NSString *)driveLetter
 {
-	if (self.processPath)
-	{
-		NSString *processDriveLetter = [self.processPath substringToIndex: 1];
+    //First check if any of our active processes live on that drive.
+    for (NSDictionary *processInfo in self.runningProcesses)
+    {
+        NSString *dosPath = [processInfo objectForKey: BXEmulatorDOSPathKey];
+		NSString *processDriveLetter = [dosPath substringToIndex: 1];
 		if ([driveLetter isEqualToString: processDriveLetter]) return YES;
-	}
+    }
+    
+    //If that check passes, now check if any files are still open on that drive.
 	return [self _DOSBoxDriveInUseAtIndex: [self _indexOfDriveLetter: driveLetter]];
 }
 

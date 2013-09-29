@@ -377,7 +377,7 @@
     //we ensure that the collection view will keep using the same view for it.
     if (!_favoritesHeading)
     {
-        self.favoritesHeading = @{@"icon": [NSImage imageNamed: @"FavoriteFilledTemplate"],
+        self.favoritesHeading = @{@"icon": [NSImage imageNamed: @"FavoriteOutlineTemplate"],
                                   @"title": NSLocalizedString(@"Favorites", @"Heading for favorites in launcher panel."),
                                   @"isHeading": @(YES),
                                   };
@@ -391,7 +391,7 @@
     //we ensure that the collection view will keep using the same view for it.
     if (!_recentProgramsHeading)
     {
-        self.recentProgramsHeading = @{@"icon": [NSImage imageNamed: @"FavoriteFilledTemplate"],
+        self.recentProgramsHeading = @{@"icon": [NSImage imageNamed: @"RecentItemsTemplate"],
                                        @"title": NSLocalizedString(@"Recently launched", @"Heading for recent programs list in launcher panel."),
                                        @"isHeading": @(YES),
                                        };
@@ -405,7 +405,7 @@
     //we ensure that the collection view will keep using the same view for it.
     if (!_allProgramsHeading)
     {
-        self.allProgramsHeading = @{@"icon": [NSImage imageNamed: @"NSListViewTemplate"],
+        self.allProgramsHeading = @{@"icon": [NSImage imageNamed: @"LauncherListTemplate"],
                                     @"title": NSLocalizedString(@"All Programs", @"Heading for all programs search results in launcher panel."),
                                     @"isHeading": @(YES),
                                     };
@@ -862,7 +862,8 @@
     }
     else if (action == @selector(removeItem:))
     {
-        return [self.delegate canRemoveItem: self];
+        menuItem.hidden = ![self.delegate canRemoveItem: self];
+        return !menuItem.isHidden;
     }
     else
     {

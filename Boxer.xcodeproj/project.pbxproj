@@ -498,6 +498,8 @@
 		9F731B1D13630B6D005E564F /* DDHidLib.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
 		9F731B2E136323D2005E564F /* ADBHIDMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F731B2D136323D2005E564F /* ADBHIDMonitor.m */; };
 		9F731B52136331A9005E564F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731B51136331A9005E564F /* IOKit.framework */; };
+		9F73446217F8A6E90059A0CF /* LauncherListTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F73446017F8A6E90059A0CF /* LauncherListTemplate.pdf */; };
+		9F73446317F8A6E90059A0CF /* RecentItemsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F73446117F8A6E90059A0CF /* RecentItemsTemplate.pdf */; };
 		9F740BDE142A24A400BA66B4 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F740BDD142A24A400BA66B4 /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9F765649119403520082A06A /* BXInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F765648119403520082A06A /* BXInputController.m */; };
 		9F76D1B910CA9DFB00C3B081 /* NSWorkspace+ADBFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D1B810CA9DFB00C3B081 /* NSWorkspace+ADBFileTypes.m */; };
@@ -1241,6 +1243,8 @@
 		9F731B2C136323D2005E564F /* ADBHIDMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBHIDMonitor.h; sourceTree = "<group>"; };
 		9F731B2D136323D2005E564F /* ADBHIDMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBHIDMonitor.m; sourceTree = "<group>"; };
 		9F731B51136331A9005E564F /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		9F73446017F8A6E90059A0CF /* LauncherListTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = LauncherListTemplate.pdf; sourceTree = "<group>"; };
+		9F73446117F8A6E90059A0CF /* RecentItemsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = RecentItemsTemplate.pdf; sourceTree = "<group>"; };
 		9F740BDC142A24A400BA66B4 /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		9F740BDD142A24A400BA66B4 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		9F765647119403520082A06A /* BXInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputController.h; sourceTree = "<group>"; };
@@ -2606,6 +2610,18 @@
 			path = MCAdditions;
 			sourceTree = "<group>";
 		};
+		9F73445F17F8A6B50059A0CF /* Launcher */ = {
+			isa = PBXGroup;
+			children = (
+				9F73446017F8A6E90059A0CF /* LauncherListTemplate.pdf */,
+				9F73446117F8A6E90059A0CF /* RecentItemsTemplate.pdf */,
+				9FE3BAF017ECC16C00C9BB82 /* FavoriteFilledTemplate.pdf */,
+				9FE3BAF117ECC16C00C9BB82 /* FavoriteOutlineTemplate.pdf */,
+				9FE3BAF417ECC37800C9BB82 /* LaunchPanelDivider.png */,
+			);
+			name = Launcher;
+			sourceTree = "<group>";
+		};
 		9F77207312B38C4400072AE8 /* include */ = {
 			isa = PBXGroup;
 			children = (
@@ -3339,6 +3355,7 @@
 				9F9606E514F65A0B0072E90C /* Bezels */,
 				9F9606EC14F65B030072E90C /* Importing */,
 				9F9606ED14F65B1A0072E90C /* Cover art */,
+				9F73445F17F8A6B50059A0CF /* Launcher */,
 				9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */,
 				9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */,
 				9FCA157C1597222D00C42D10 /* WelcomeSpotlight@2x.png */,
@@ -3358,9 +3375,6 @@
 				9FCA157E1597223C00C42D10 /* Grille@2x.png */,
 				9FBC31D10F56C370001811F2 /* AboutBackground.png */,
 				9FCA157A159721A300C42D10 /* AboutBackground@2x.png */,
-				9FE3BAF017ECC16C00C9BB82 /* FavoriteFilledTemplate.pdf */,
-				9FE3BAF117ECC16C00C9BB82 /* FavoriteOutlineTemplate.pdf */,
-				9FE3BAF417ECC37800C9BB82 /* LaunchPanelDivider.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -3766,6 +3780,7 @@
 				9F6A79041203547800D2097D /* gamefolder.icns in Resources */,
 				9F1CBB5E120CABBB00C5E926 /* ImportWindow.xib in Resources */,
 				9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */,
+				9F73446317F8A6E90059A0CF /* RecentItemsTemplate.pdf in Resources */,
 				9F25C4E212130B5E0025CB2C /* BrandWatermark.png in Resources */,
 				9F550667121B057C0042614A /* 35Diskette.icns in Resources */,
 				9F550668121B057C0042614A /* CDCase.icns in Resources */,
@@ -3831,6 +3846,7 @@
 				9F27BD1914FAA4F5008EB0A1 /* Volume66PercentTemplate.pdf in Resources */,
 				9F27BD1A14FAA4F5008EB0A1 /* Volume100PercentTemplate.pdf in Resources */,
 				9F27BD1B14FAA4F5008EB0A1 /* Volume0PercentCroppedTemplate.pdf in Resources */,
+				9F73446217F8A6E90059A0CF /* LauncherListTemplate.pdf in Resources */,
 				9F27BD1C14FAA4F5008EB0A1 /* Volume0PercentTemplate.pdf in Resources */,
 				9F839FB5150B81EF00337DD6 /* ScreenshotTemplate.pdf in Resources */,
 				9FE32383157A9559004492E8 /* Shaders in Resources */,

@@ -20,14 +20,14 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="lh9-jV-VfB">
-                    <rect key="frame" x="0.0" y="0.0" width="640" height="420"/>
+                    <rect key="frame" x="0.0" y="0.0" width="640" height="440"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="rpa-h0-GOQ">
-                        <rect key="frame" x="0.0" y="0.0" width="640" height="420"/>
+                        <rect key="frame" x="0.0" y="0.0" width="640" height="440"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView focusRingType="none" selectable="YES" maxNumberOfColumns="1" id="LLn-Sc-jzs" customClass="BXLauncherList">
-                                <rect key="frame" x="0.0" y="0.0" width="640" height="420"/>
+                                <rect key="frame" x="0.0" y="0.0" width="640" height="440"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="primaryBackgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <connections>
@@ -51,13 +51,13 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                 </scrollView>
-                <customView id="jBg-Dd-C8j" customClass="BXLauncherNavigationHeader">
-                    <rect key="frame" x="0.0" y="420" width="640" height="60"/>
+                <customView id="jBg-Dd-C8j">
+                    <rect key="frame" x="0.0" y="440" width="640" height="40"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <subviews>
                         <searchField verticalHuggingPriority="750" id="io9-xs-Bgz">
-                            <rect key="frame" x="128" y="19" width="360" height="22"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <rect key="frame" x="128" y="9" width="384" height="22"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                             <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="Search programs" usesSingleLineMode="YES" bezelStyle="round" sendsSearchStringImmediately="YES" recentsAutosaveName="launchPanelFilter" id="Bdg-Sv-vHc">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>

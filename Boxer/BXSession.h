@@ -254,4 +254,19 @@ typedef enum {
 //the application is quit.
 - (void) synchronizeSettings;
 
+
+#pragma mark - Recent programs
+
+///Returns an array of dictionaries recording recently launched DOS programs.
+@property (readonly, nonatomic) NSArray *recentPrograms;
+
+//Adds a new program to the recent programs list, specified as a dictionary of keys corresponding
+//to BXEmulator's process info dictionaries. See BXEmulator.h for available keys.
+//Changes to the recent program list will be persisted into the game info for this session,
+//if available.
+- (void) noteRecentProgram: (NSDictionary *)programDetails;
+
+//Empty the recent programs list.
+- (void) clearRecentPrograms;
+
 @end

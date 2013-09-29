@@ -1382,7 +1382,6 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 		char filePath[CROSS_LEN];
 		localDOSBoxDrive->GetSystemFilename(filePath, driveRelativePath);
         
-        NSLog(@"System filename: %s", filePath);
         NSURL *localURL = [NSURL URLFromFileSystemRepresentation: filePath];
         
         //Roundtrip the URL through the filesystem, in case it remaps it to another location.

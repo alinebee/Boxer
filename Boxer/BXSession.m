@@ -33,6 +33,7 @@
 #import "ADBUserNotificationDispatcher.h"
 #import "NSError+ADBErrorHelpers.h"
 #import "NSObject+ADBPerformExtensions.h"
+#import "ADBFilesystem.h"
 
 #import "ADBAppKitVersionHelpers.h"
 
@@ -65,6 +66,9 @@
 #define BXSwitchToLaunchPanelDelay 0.5
 
 
+//How many recently-launched programs the session should track before it discards older ones.
+#define BXRecentProgramsLimit 10
+
 #pragma mark -
 #pragma mark Gamebox settings keys
 
@@ -75,6 +79,7 @@ NSString * const BXGameboxSettingsNameKey       = @"BXGameName";
 NSString * const BXGameboxSettingsProfileKey    = @"BXGameProfile";
 NSString * const BXGameboxSettingsProfileVersionKey = @"BXGameProfileVersion";
 NSString * const BXGameboxSettingsLastLocationKey = @"BXGameLastLocation";
+NSString * const BXGameboxSettingsRecentProgramsKey = @"BXGameRecentPrograms";
 
 NSString * const BXGameboxSettingsShowProgramPanelKey = @"showProgramPanel";
 NSString * const BXGameboxSettingsStartUpInFullScreenKey = @"startUpInFullScreen";
@@ -85,6 +90,11 @@ NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
 
 NSString * const BXGameboxSettingsLastProgramPathKey = @"BXLastProgramPath";
 NSString * const BXGameboxSettingsLastProgramLaunchArgumentsKey = @"BXLastProgramLaunchArguments";
+
+//Keys inside BXGameRecentPrograms dictionaries
+NSString * const BXGameboxSettingsProgramPathKey = @"path";
+NSString * const BXGameboxSettingsProgramLaunchArgumentsKey = @"arguments";
+
 
 
 #pragma mark -
@@ -407,12 +417,42 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     }
     
     //UPDATE: transition the startUpInFullScreen flag from out of the application-wide
-    //user defaults and into the user-specific game settings. (v1.3->v1.4)
+    //user defaults and into the user-specific game settings. (v1.3->v2.x)
     NSNumber *startUpInFullScreenFlag = [[NSUserDefaults standardUserDefaults] objectForKey: @"startUpInFullScreen"];
     if (startUpInFullScreenFlag && ![gameSettings objectForKey: BXGameboxSettingsStartUpInFullScreenKey])
     {
         [self.gameSettings setObject: startUpInFullScreenFlag
                               forKey: BXGameboxSettingsStartUpInFullScreenKey];
+    }
+    
+    //Deserialize recent programs, resolving from (potentially relative) paths into logical URLs
+    NSArray *recentPrograms = [gameSettings objectForKey: BXGameboxSettingsRecentProgramsKey];
+    if (recentPrograms)
+    {
+        [self willChangeValueForKey: @"recentPrograms"];
+        NSMutableArray *resolvedPrograms = [NSMutableArray arrayWithCapacity: recentPrograms.count];
+        NSURL *baseURL = self.gamebox.resourceURL;
+        for (NSDictionary *programDetails in recentPrograms)
+        {
+            NSString *storedPath = [programDetails objectForKey: BXGameboxSettingsProgramPathKey];
+            NSString *storedArgs = [programDetails objectForKey: BXGameboxSettingsProgramLaunchArgumentsKey];
+            NSURL *resolvedURL;
+            if (storedPath.isAbsolutePath)
+                resolvedURL = [NSURL fileURLWithPath: storedPath];
+            else
+                resolvedURL = [baseURL URLByAppendingPathComponent: storedPath];
+            
+            NSDictionary *resolvedDetails;
+            if (storedArgs.length)
+                resolvedDetails = @{BXEmulatorLogicalURLKey: resolvedURL, BXEmulatorLaunchArgumentsKey: storedArgs};
+            else
+                resolvedDetails = @{BXEmulatorLogicalURLKey: resolvedURL};
+            
+            [resolvedPrograms addObject: resolvedDetails];
+        }
+        
+        [self.gameSettings setObject: resolvedPrograms forKey: BXGameboxSettingsRecentProgramsKey];
+        [self didChangeValueForKey: @"recentPrograms"];
     }
     
     //If we don't already have a game profile assigned,
@@ -740,12 +780,15 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 			[runtimeConf setValue: cyclesString forKey: @"cycles" inSection: @"cpu"];
 		}
 		
-		//Strip out these settings once we're done, so we won't preserve them in user defaults.
+		//Strip out these settings once we're done, so we won't preserve them in user defaults and won't re-record them
+        //if they haven't changed by the next time the settings are synchronized.
 		NSArray *confSettings = [NSArray arrayWithObjects: @"CPUSpeed", @"coreMode", @"strictGameportTiming", nil];
 		[self.gameSettings removeObjectsForKeys: confSettings];
 
 		//Persist these gamebox-specific configuration into the gamebox's configuration file.
 		[self _saveGameboxConfiguration: runtimeConf];
+        
+        
 		
         //Now that we've saved those settings to the gamebox conf,
         //persist the rest of the game state to user defaults.
@@ -776,6 +819,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         [settingsToPersist setObject: self.gamebox.bundleURL.path
                               forKey: BXGameboxSettingsLastLocationKey];
         
+        
         //Record the state of the drive queues for next time we launch this gamebox.
         if ([self _shouldPersistQueuedDrives])
         {
@@ -800,10 +844,53 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             [settingsToPersist removeObjectForKey: BXGameboxSettingsDrivesKey];
         }
         
-        //Record the last-launched program for next time we launch this gamebox.
-        if ([self _shouldPersistPreviousProgram])
+        //Clean up the recent programs list, deleting any transient data and making URLs gamebox-relative
+        //before persisting them.
+        NSArray *recentPrograms = [settingsToPersist objectForKey: BXGameboxSettingsRecentProgramsKey];
+        if (recentPrograms.count)
         {
             NSURL *baseURL = self.gamebox.resourceURL;
+            
+            NSMutableArray *recentProgramsToPersist = [NSMutableArray arrayWithCapacity: recentPrograms.count];
+            for (NSDictionary *programDetails in recentPrograms)
+            {
+                NSURL *URL = [programDetails objectForKey: BXEmulatorLogicalURLKey];
+                if (!URL)
+                    continue;
+                
+                NSMutableDictionary *detailsToPersist = [NSMutableDictionary dictionaryWithCapacity: 2];
+                
+                if ([URL isBasedInURL: baseURL])
+                {
+                    NSString *relativePath = [URL pathRelativeToURL: baseURL];
+                    [detailsToPersist setObject: relativePath forKey: BXGameboxSettingsProgramPathKey];
+                }
+                else
+                {
+                    [detailsToPersist setObject: URL.path
+                                         forKey: BXGameboxSettingsProgramPathKey];
+                }
+                
+                NSString *arguments = [programDetails objectForKey: BXEmulatorLaunchArgumentsKey];
+                if (arguments.length)
+                {
+                    [detailsToPersist setObject: arguments
+                                         forKey: BXGameboxSettingsProgramLaunchArgumentsKey];
+                }
+                
+                [recentProgramsToPersist addObject: detailsToPersist];
+            }
+            
+            [settingsToPersist setObject: recentProgramsToPersist forKey: BXGameboxSettingsRecentProgramsKey];
+        }
+        else
+        {
+            [settingsToPersist removeObjectForKey: BXGameboxSettingsRecentProgramsKey];
+        }
+        
+        //Record the current program in order to resume it next time we launch this gamebox.
+        if ([self _shouldPersistPreviousProgram])
+        {
             NSURL *currentURL = self.currentURL;
             
             //If we were running a program when we were shut down, then record that;
@@ -811,8 +898,11 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             //TODO: resolve paths to shadowed locations into paths to virtual gamebox resources.
             if (currentURL)
             {
+                NSURL *baseURL = self.gamebox.resourceURL;
+                
                 //Make the program path relative to the root of the gamebox, if it was located within the gamebox itself.
-                //TODO: if the program was located outside the gamebox, record it as a bookmark instead of an absolute path.
+                //TODO: if the program was located outside the gamebox, and is reachable in the OS X filesystem,
+                //record it as a bookmark instead of an absolute path.
                 NSString *pathToPersist;
                 if ([currentURL isBasedInURL: baseURL])
                 {
@@ -839,14 +929,14 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                 [settingsToPersist removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
             }
         }
-        //Clear any previous data if we're not overwriting it
+        //Clear any previous record of the last launched program if we're not overwriting it.
         else
         {
             [settingsToPersist removeObjectForKey: BXGameboxSettingsLastProgramPathKey];
             [settingsToPersist removeObjectForKey: BXGameboxSettingsLastProgramLaunchArgumentsKey];
         }
         
-        //Store the game settings back into the main user defaults
+        //Store the game settings back into the main user defaults.
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, self.gamebox.gameIdentifier];
         [defaults setObject: settingsToPersist forKey: defaultsKey];
@@ -977,9 +1067,66 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 + (NSSet *) keyPathsForValuesAffectingRepresentedIcon	{ return [NSSet setWithObjects: @"gamebox", @"gamebox.coverArt", nil]; }
 + (NSSet *) keyPathsForValuesAffectingCurrentURL        { return [NSSet setWithObjects: @"launchedProgramURL", @"emulator.currentDirectoryURL", nil]; }
 
+- (NSArray *) recentPrograms
+{
+    return [self.gameSettings objectForKey: BXGameboxSettingsRecentProgramsKey];
+}
 
-#pragma mark -
-#pragma mark Emulator delegate methods and notifications
+- (void) noteRecentProgram: (NSDictionary *)programDetails
+{
+    [self willChangeValueForKey: @"recentPrograms"];
+    
+    NSArray *recentPrograms;
+    NSArray *existingRecentPrograms = self.recentPrograms;
+    if (existingRecentPrograms)
+    {
+        NSMutableArray *revisedPrograms = [[existingRecentPrograms mutableCopy] autorelease];
+        
+        //Check if this program is already present in some form in the recent programs:
+        //If so, remove the old one as we'll be re-adding it to the start of the list.
+        for (NSDictionary *existingDetails in existingRecentPrograms)
+        {
+            NSURL *programURL = [programDetails objectForKey: BXEmulatorLogicalURLKey];
+            NSURL *existingURL = [existingDetails objectForKey: BXEmulatorLogicalURLKey];
+            if ([programURL isEqual: existingURL])
+            {
+                NSString *programArgs = [programDetails objectForKey: BXEmulatorLaunchArgumentsKey];
+                NSString *existingArgs = [existingDetails objectForKey: BXEmulatorLaunchArgumentsKey];
+                
+                if ((!existingArgs && !programArgs) || [existingArgs isEqualToString: programArgs])
+                {
+                    [revisedPrograms removeObject: existingDetails];
+                }
+            }
+        }
+        [revisedPrograms insertObject: programDetails atIndex: 0];
+        
+        //If we're over our limit, get rid of older ones.
+        while (revisedPrograms.count > BXRecentProgramsLimit)
+            [revisedPrograms removeLastObject];
+        
+        recentPrograms = revisedPrograms;
+    }
+    else
+    {
+        recentPrograms = @[programDetails];
+    }
+    
+    [self.gameSettings setObject: recentPrograms
+                          forKey: BXGameboxSettingsRecentProgramsKey];
+    
+    [self didChangeValueForKey: @"recentPrograms"];
+}
+
+- (void) clearRecentPrograms
+{
+    [self willChangeValueForKey: @"recentPrograms"];
+    [self.gameSettings removeObjectForKey: BXGameboxSettingsRecentProgramsKey];
+    [self didChangeValueForKey: @"recentPrograms"];
+}
+
+
+#pragma mark - Emulator delegate methods and notifications
 
 - (BOOL) emulatorShouldDisplayStartupMessages: (BXEmulator *)emulator
 {
@@ -1276,6 +1423,9 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             NSString *arguments = [processInfo objectForKey: BXEmulatorLaunchArgumentsKey];
             self.launchedProgramURL = programURL;
             self.launchedProgramArguments = arguments;
+            
+            if ([self _shouldNoteRecentProgram: processInfo])
+                [self noteRecentProgram: processInfo];
 		}
 	}
     
@@ -1584,6 +1734,22 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     {
         return BXSessionProgramCompletionBehaviorDoNothing;
     }
+}
+
+- (BOOL) _shouldNoteRecentProgram: (NSDictionary *)processInfo
+{
+    if ([self.emulator processIsInternal: processInfo])
+        return NO;
+    
+    //Do not record any programs launched during the startup process...
+    //except for the program we ourselves intended to launch.
+    if (self.emulator.isRunningAutoexec)
+    {
+        NSURL *programURL = [processInfo objectForKey: BXEmulatorLogicalURLKey];
+        if (![programURL isEqual: self.targetURL])
+            return NO;
+    }
+    return YES;
 }
 
 - (void) _startEmulator

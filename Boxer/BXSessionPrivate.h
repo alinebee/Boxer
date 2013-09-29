@@ -68,6 +68,9 @@ extern NSString * const BXGameImportedNotificationType;
 //Called by emulatorDidReturnToShell: once the last process has been shut down.
 - (BXSessionProgramCompletionBehavior) _behaviorAfterReturningToShellFromProcess: (NSDictionary *)processInfo;
 
+//Whether the specified launched program should be recorded in the recent programs list.
+- (BOOL) _shouldNoteRecentProgram: (NSDictionary *)processInfo;
+
 //Whether we should start the emulator as soon as the document is created.
 - (BOOL) _shouldStartImmediately;
 
@@ -84,6 +87,7 @@ extern NSString * const BXGameImportedNotificationType;
 
 //Whether the user can hold down Option to bypass the regular startup program.
 - (BOOL) _shouldAllowSkippingStartupProgram;
+
 
 //Create our BXEmulator instance and starts its main loop.
 //Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent

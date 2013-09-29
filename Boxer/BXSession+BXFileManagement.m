@@ -890,16 +890,6 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
         
         self.emulator.clearsScreenBeforeCommandExecution = clearScreen;
         
-        //If an executable was specified, execute it and record that it was launched.
-        //TWEAK: if we're launching the program from 'inside' another program
-        //(e.g. a previously-launched program dropped into a DOS shell) then
-        //maintain that as our 'official' program.
-        if (!self.launchedProgramURL)
-        {
-            self.launchedProgramURL = URL;
-            self.launchedProgramArguments = arguments;
-        }
-        
         //Switch to the DOS view as soon as we execute.
         [self.DOSWindowController showDOSView];
         

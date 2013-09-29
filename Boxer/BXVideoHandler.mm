@@ -287,30 +287,34 @@
 
 - (void) finishFrameWithChanges: (const uint16_t *)dirtyBlocks
 {
-	if (self.currentFrame && dirtyBlocks)
+	if (self.currentFrame)
 	{
-        //Convert DOSBox's array of dirty blocks into a set of ranges
-        NSUInteger i=0, currentOffset = 0, maxOffset = self.currentFrame.size.height;
-        while (currentOffset < maxOffset)
+        if (dirtyBlocks)
         {
-            NSUInteger regionLength = dirtyBlocks[i];
-            
-            //Odd-numbered indices represent blocks of lines that are dirty;
-            //Even-numbered indices represent clean regions that should be skipped.
-            BOOL isDirtyBlock = (i % 2 != 0);
-            
-            if (isDirtyBlock)
+            //Convert DOSBox's array of dirty blocks into a set of ranges
+            NSUInteger i=0, currentOffset = 0, maxOffset = self.currentFrame.size.height;
+            while (currentOffset < maxOffset)
             {
-                [self.currentFrame setNeedsDisplayInRegion: NSMakeRange(currentOffset, regionLength)];
+                NSUInteger regionLength = dirtyBlocks[i];
+                
+                //Odd-numbered indices represent blocks of lines that are dirty;
+                //Even-numbered indices represent clean regions that should be skipped.
+                BOOL isDirtyBlock = (i % 2 != 0);
+                
+                if (isDirtyBlock)
+                {
+                    [self.currentFrame setNeedsDisplayInRegion: NSMakeRange(currentOffset, regionLength)];
+                }
+                
+                currentOffset += regionLength;
+                i++;
             }
-            
-            currentOffset += regionLength;
-            i++;
         }
         
         self.currentFrame.timestamp = CFAbsoluteTimeGetCurrent();
         [self.emulator _didFinishFrame: self.currentFrame];
 	}
+    
 	_frameInProgress = NO;
 }
 

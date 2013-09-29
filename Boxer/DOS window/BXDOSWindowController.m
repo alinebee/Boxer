@@ -1029,6 +1029,11 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
         [self.loadingSpinner stopAnimation: self];
     }
     
+    if (newPanel == BXDOSWindowDOSView)
+    {
+        [self.document.emulator.videoHandler reset];
+    }
+    
     if (animate)
     {
         BOOL involvesRenderingView = ([self.renderingView isDescendantOf: viewForNewPanel] || [self.renderingView isDescendantOf: viewForOldPanel]);

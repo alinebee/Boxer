@@ -729,18 +729,25 @@
 {
     return [NSShadow shadowWithBlurRadius: 1.0f
                                    offset: NSMakeSize(0, -1.0f)
-                                    color: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.5f]];
+                                    color: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.25f]];
 }
 
 - (NSGradient *) imageFill
 {
-    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5]
-                                          endingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5]] autorelease];
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.25]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.33]] autorelease];
 }
 
 - (NSShadow *) imageDropShadow
 {
     return self.dropShadow;
+}
+
+- (NSShadow *) imageInnerShadow
+{
+    return [NSShadow shadowWithBlurRadius: 1.0
+                                   offset: NSMakeSize(0, -1)
+                                    color: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5]];
 }
 
 @end

@@ -16,6 +16,10 @@
 #import "BXSessionError.h"
 #import "BXEmulator.h" //For recentPrograms keys
 
+
+//Display the 3 most recently launched programs.
+#define BXLaunchPanelMaxRecentRows 3
+
 @interface BXLaunchPanelController ()
 
 @property (retain, nonatomic) NSMutableArray *allProgramRows;
@@ -237,6 +241,10 @@
     
     for (NSDictionary *programDetails in session.recentPrograms)
     {
+        //Stop filling them up when we get to our maximum number
+        if (self.recentProgramRows.count >= BXLaunchPanelMaxRecentRows)
+            break;
+        
         NSURL *URL          = [programDetails objectForKey: BXEmulatorLogicalURLKey];
         BXDrive *drive      = [programDetails objectForKey: BXEmulatorDriveKey];
         NSString *arguments = [programDetails objectForKey: BXEmulatorLaunchArgumentsKey];
@@ -435,9 +443,14 @@
     
     //May be nil, if the drive cannot resolve the path or was not mounted.
     if (dosPath)
+    {
+        
         [item setObject: dosPath forKey: @"dosPath"];
+    }
     else
+    {
         NSLog(@"Could not resolve DOS path for %@", URL);
+    }
     
     return item;
 }

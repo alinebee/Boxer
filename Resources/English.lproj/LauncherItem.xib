@@ -38,7 +38,7 @@
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="wWo-9F-MKV" customClass="BXThemedLabel">
                             <rect key="frame" x="128" y="2" width="494" height="17"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="C:\PATH\TO\PROGRAM.EXE" id="PAV-T6-VGS">
+                            <textFieldCell key="cell" lineBreakMode="truncatingHead" sendsActionOnEndEditing="YES" title="C:\PATH\TO\PROGRAM.EXE" id="PAV-T6-VGS">
                                 <font key="font" size="11" name="LucidaGrande"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -47,7 +47,16 @@
                                 <userDefinedRuntimeAttribute type="string" keyPath="themeKey" value="BXLauncherHelpTextTheme"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
-                                <binding destination="-2" name="value" keyPath="representedObject.dosPath" id="OCu-TD-L8z"/>
+                                <binding destination="-2" name="displayPatternValue1" keyPath="representedObject.dosPath" id="kjW-Q9-CnI">
+                                    <dictionary key="options">
+                                        <string key="NSDisplayPattern">%{value1}@ %{value2}@</string>
+                                    </dictionary>
+                                </binding>
+                                <binding destination="-2" name="displayPatternValue2" keyPath="representedObject.arguments" previousBinding="kjW-Q9-CnI" id="JWZ-Xu-1s2">
+                                    <dictionary key="options">
+                                        <string key="NSDisplayPattern">%{value1}@ %{value2}@</string>
+                                    </dictionary>
+                                </binding>
                             </connections>
                         </textField>
                         <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="zkC-Pf-FKI">

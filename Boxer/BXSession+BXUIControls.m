@@ -446,7 +446,7 @@
 	if (theAction == @selector(incrementFrameSkip:))	return isShowingDOSView && !self.frameskipAtMaximum;
 	if (theAction == @selector(decrementFrameSkip:))	return isShowingDOSView && !self.frameskipAtMinimum;
     
-	if (theAction == @selector(saveScreenshot:))		return isShowingDOSView;
+	if (theAction == @selector(saveScreenshot:))        return isShowingDOSView;
     
 	if (theAction == @selector(revertShadowedChanges:)) return self.hasShadowedChanges;
 	if (theAction == @selector(mergeShadowedChanges:))  return self.hasShadowedChanges;
@@ -534,6 +534,10 @@
         return self.isEmulating && isShowingDOSView;
     }
     
+	if (theAction == @selector(saveScreenshot:))
+    {
+        return isShowingDOSView;
+    }
     //Menu item to switch to next disc in queue
     else if (theAction == @selector(mountNextDrivesInQueues:))
     {

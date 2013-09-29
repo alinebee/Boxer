@@ -57,6 +57,11 @@
 //Implement in subclasses
 - (void) collectionViewItemDidChangeSelection {}
 
+- (void) dealloc
+{
+    self.delegate = nil;
+    [super dealloc];
+}
 @end
 
 @implementation BXHUDCollectionItemView

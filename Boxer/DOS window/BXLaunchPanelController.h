@@ -13,7 +13,6 @@
 
 - (void) launchItem: (BXLauncherItem *)item;
 - (void) revealItemInFinder: (BXLauncherItem *)item;
-- (BOOL) canLaunchPrograms; //Must conform to KVO
 
 @end
 
@@ -44,8 +43,6 @@
 @property (assign, nonatomic) IBOutlet NSCollectionView *launcherList;
 @property (assign, nonatomic) IBOutlet NSScrollView *launcherScrollView;
 @property (assign, nonatomic) IBOutlet NSSearchField *filter;
-
-@property (readonly, nonatomic) BOOL canLaunchPrograms;
 
 //An array of NSDictionaries for every item to display in the list.
 @property (readonly, retain, nonatomic) NSMutableArray *displayedRows;
@@ -82,9 +79,10 @@
 @interface BXLauncherItem : BXCollectionItem
 {
     id <BXLauncherItemDelegate> _delegate;
+    BOOL _launchable;
 }
 @property (assign, nonatomic) IBOutlet id <BXLauncherItemDelegate> delegate;
-@property (readonly, nonatomic, getter=isLaunchable) BOOL launchable;
+@property (assign, nonatomic, getter=isLaunchable) BOOL launchable;
 
 //Called by the item view to launch (or reveal) the URL corresponding to this item.
 - (IBAction) launchProgram: (id)sender;

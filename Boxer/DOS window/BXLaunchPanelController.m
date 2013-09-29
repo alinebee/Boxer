@@ -73,6 +73,9 @@
                                         forKeyPath: @"executableURLs"];
             
             [self.representedObject removeObserver: self
+                                        forKeyPath: @"canOpenURLs"];
+            
+            [self.representedObject removeObserver: self
                                         forKeyPath: @"recentPrograms"];
             
             [self.representedObject removeObserver: self
@@ -86,6 +89,11 @@
         {
             [self.representedObject addObserver: self
                                      forKeyPath: @"executableURLs"
+                                        options: NSKeyValueObservingOptionInitial
+                                        context: nil];
+            
+            [self.representedObject addObserver: self
+                                     forKeyPath: @"canOpenURLs"
                                         options: NSKeyValueObservingOptionInitial
                                         context: nil];
             
@@ -154,6 +162,12 @@
         if (_shouldUpdateImmediately)
             [self _syncFavoriteProgramRows];
     }
+    
+    else if ([keyPath isEqualToString: @"canOpenURLs"])
+    {
+        if (_shouldUpdateImmediately)
+            [self _syncLaunchableState];
+    }
 }
 
 - (void) viewWillAppear
@@ -168,6 +182,8 @@
     
     if (_favoriteProgramRowsDirty)
         [self _syncFavoriteProgramRows];
+    
+    [self _syncLaunchableState];
 }
 
 - (void) viewDidDisappear
@@ -322,6 +338,27 @@
     //allows the collection view to correctly persist previously-existing rows: animating them into their new location
     //rather than fading them out and back in again.
     self.displayedRows = displayedRows;
+}
+
+- (void) _syncLaunchableState
+{
+    NSUInteger numItems = self.displayedRows.count;
+    
+    //IMPLEMENTATION NOTE: we have to walk through every collection view item telling it whether or
+    //not it's able to launch its program right now. We used to handle this by exposing a "canLaunchPrograms"
+    //property on the panel controller and having individual items listen for changes to that: but this resulted
+    //in KVO deallocation exceptions. (These may have indicated a leak, but it seemed rather like the views were
+    //getting cleaned up in the wrong order because of our complex XIB structure. This bears further investigation.)
+    BXSession *session = self.representedObject;
+    BOOL canOpenURLs = session.canOpenURLs;
+    if (numItems > 0)
+    {
+        for (NSUInteger i=0; i<numItems; i++)
+        {
+            BXLauncherItem *item = (BXLauncherItem *)[self.launcherList itemAtIndex: i];
+            item.launchable = canOpenURLs && ([item.representedObject objectForKey: @"URL"] != nil);
+        }
+    }
 }
 
 - (NSDictionary *) favoritesHeading
@@ -587,16 +624,6 @@
 
 #pragma mark - Launching programs
 
-+ (NSSet *) keyPathsForValuesAffectingCanLaunchPrograms
-{
-    return [NSSet setWithObjects: @"representedObject.canOpenURLs", nil];
-}
-
-- (BOOL) canLaunchPrograms
-{
-    return [self.representedObject canOpenURLs];
-}
-
 - (void) launchItem: (BXLauncherItem *)item
 {
     NSDictionary *itemDetails = item.representedObject;
@@ -732,11 +759,14 @@
 
 @implementation BXLauncherItem
 @synthesize delegate = _delegate;
+@synthesize launchable = _launchable;
+
 
 - (id) copyWithZone: (NSZone *)zone
 {
     BXLauncherItem *clone = [super copyWithZone: zone];
     clone.delegate = self.delegate;
+    clone.launchable = self.isLaunchable;
     return clone;
 }
 
@@ -744,16 +774,6 @@
 {
     self.delegate = nil;
     [super dealloc];
-}
-
-+ (NSSet *) keyPathsForValuesAffectingLaunchable
-{
-    return [NSSet setWithObjects: @"representedObject.URL", @"delegate.canLaunchPrograms", nil];
-}
-
-- (BOOL) isLaunchable
-{
-    return [self.representedObject objectForKey: @"URL"] != nil && [self.delegate canLaunchPrograms];
 }
 
 - (IBAction) launchProgram: (id)sender

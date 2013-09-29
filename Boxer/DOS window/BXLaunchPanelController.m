@@ -821,6 +821,11 @@
     }
 }
 
+- (BOOL) acceptsFirstMouse: (NSEvent *)theEvent
+{
+    return NO;
+}
+
 - (void) mouseUp: (NSEvent *)theEvent
 {
     NSPoint locationInWindow = self.window.mouseLocationOutsideOfEventStream;

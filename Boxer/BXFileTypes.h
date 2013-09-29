@@ -111,12 +111,13 @@ typedef enum {
 #pragma mark - Filesystems
 
 @protocol ADBFilesystemPathAccess;
+@protocol ADBFilesystemLogicalURLAccess;
 @interface BXFileTypes (BXFilesystemDetection)
 
 //Returns a filesystem suitable for traversing the specified URL. This will return an
 //image-based filesystem if it detects that the file at the target URL is a readable
 //or mountable image.
-+ (id <ADBFilesystemPathAccess>) filesystemWithContentsOfURL: (NSURL *)URL
-                                                       error: (out NSError **)outError;
++ (id <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess>) filesystemWithContentsOfURL: (NSURL *)URL
+                                                                                      error: (out NSError **)outError;
 
 @end

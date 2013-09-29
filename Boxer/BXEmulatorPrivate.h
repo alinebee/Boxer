@@ -265,8 +265,14 @@ enum {
 
 //Returns the local filesystem location corresponding to the specified DOS path on the specified drive.
 //Returns nil if there is no corresponding local file (e.g. if the drive is a disk image or DOSBox-internal drive.)
-//Used internally by many methods; the public-facing version of this is URLForDOSPath:.
+//Used internally by many methods; the public-facing version of this is fileURLForDOSPath:.
 - (NSURL *) _filesystemURLForDOSPath: (const char *)dosPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+
+//Returns the logical location corresponding to the specified DOS path on the specified drive.
+//Returns nil if there is no corresponding logical location.
+//Used internally by many methods; the public-facing version of this is logicalURLForDOSPath:.
+- (NSURL *) _logicalURLForDOSPath: (const char *)dosPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+
 
 - (FILE *) _openFileAtLocalPath: (const char *)path
                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive

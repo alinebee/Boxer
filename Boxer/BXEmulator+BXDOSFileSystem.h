@@ -113,20 +113,26 @@
 //Returns the 'best match' drive on which the specified OS X filesystem path is accessible,
 //or nil if no drive contains the specified URL. This is slower than URLIsAccessibleInDOS:
 //so use that if you don't need to know which drive.
-- (BXDrive *) driveContainingURL: (NSURL *)URL;
+- (BXDrive *) driveContainingLogicalURL: (NSURL *)URL;
 
 //Returns whether the specified OS X filesystem resource is exposed by any DOS drive.
-- (BOOL) URLIsAccessibleInDOS: (NSURL *)URL;
+- (BOOL) logicalURLIsAccessibleInDOS: (NSURL *)URL;
 
 //Returns whether any mounted drive uses the specified URL directly as its source.
-- (BOOL) URLIsMountedInDOS: (NSURL *)URL;
+- (BOOL) logicalURLIsMountedInDOS: (NSURL *)URL;
 
 //Returns the standardized DOS path corresponding to the specified OS X filesystem resource,
 //or nil if that resource is not currently accessible from DOS.
-- (NSString *) DOSPathForURL: (NSURL *)URL;
-- (NSString *) DOSPathForURL: (NSURL *)URL onDrive: (BXDrive *)drive;
+- (NSString *) DOSPathForLogicalURL: (NSURL *)URL;
+- (NSString *) DOSPathForLogicalURL: (NSURL *)URL onDrive: (BXDrive *)drive;
 
-- (NSURL *) URLForDOSPath: (NSString *)dosPath;
+//Returns the actual OS X filesystem URL corresponding to the specified DOS path.
+//Returns nil if the file does not exist or is not accessible via the OS X filesystem.
+- (NSURL *) fileURLForDOSPath: (NSString *)dosPath;
+
+//Returns the logical URL representing the specified DOS path.
+- (NSURL *) logicalURLForDOSPath: (NSString *)dosPath;
+
 
 #pragma mark Resolving DOS paths
 

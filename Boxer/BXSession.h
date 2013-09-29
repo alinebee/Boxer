@@ -98,7 +98,7 @@ typedef enum {
 	NSURL *_targetURL;
     NSString *_targetArguments;
     
-    NSURL *_lastLaunchedProgramURL;
+    NSURL *_launchedProgramURL;
     NSString *_launchedProgramArguments;
     
 	NSURL *_temporaryFolderURL;
@@ -234,8 +234,7 @@ typedef enum {
                              withMedium: (BXReleaseMedium)medium;
 
 
-#pragma mark -
-#pragma mark Lifecycle control methods
+#pragma mark - Lifecycle control methods
 
 //Start up the DOS emulator.
 //This is currently called automatically by showWindow, meaning that emulation starts

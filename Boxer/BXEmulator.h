@@ -54,18 +54,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 extern NSString * const shellProcessName;
 extern NSString * const shellProcessPath;
 
-#pragma mark - Process dictionary keys
-//Keys used in dictionaries returned by -runningProcesses and in BXEmulatorDidStart/DidFinishProgramNotifications.
-extern NSString * const BXEmulatorDOSPathKey;       //The full DOS path to the file.
-extern NSString * const BXEmulatorIsBatchFileKey;   //An NSNumber recording whether the process is a batch file.
-extern NSString * const BXEmulatorIsShellKey;       //An NSNumber recording whether the process is an instance of DOSBox's COMMAND.COM.
-extern NSString * const BXEmulatorDriveKey;         //The BXDrive on which the file is located.
-extern NSString * const BXEmulatorLocalURLKey;      //The OS X URL corresponding to the file.
-extern NSString * const BXEmulatorLocalPathKey __deprecated;
-extern NSString * const BXEmulatorLaunchArgumentsKey;   //The commandline arguments with which the program was launched.
-extern NSString * const BXEmulatorLaunchDateKey;        //The NSDate on which the program was launched.
-extern NSString * const BXEmulatorExitDateKey;          //The NSDate on which the program finished (only present in BXEmulatorDidFinishProgramNotifications.)
-
 
 @class BXVideoHandler;
 @class BXEmulatedKeyboard;

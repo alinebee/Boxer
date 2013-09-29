@@ -475,8 +475,8 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
 
 @implementation BXFileTypes (BXFilesystemDetection)
 
-+ (id <ADBFilesystemPathAccess>) filesystemWithContentsOfURL: (NSURL *)URL
-                                                       error: (out NSError **)outError
++ (id <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess>) filesystemWithContentsOfURL: (NSURL *)URL
+                                                                                      error: (out NSError **)outError
 {
     if ([URL conformsToFileType: BXCuesheetImageType])
     {

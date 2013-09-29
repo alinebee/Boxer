@@ -35,14 +35,40 @@ extern NSString * const BXEmulatorDidRemoveFileNotification;
 extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 
 
-#pragma mark -
-#pragma mark Notification userinfo dictionary keys
+#pragma mark - Notification userinfo dictionary keys
 
 //Keys provided in the userinfo dictionary for program execution notifications.
+
+
+#pragma mark - Process dictionary keys
+//Keys used in dictionaries returned by -runningProcesses and in BXEmulatorDidStart/DidFinishProgramNotifications.
+
+//The full DOS path to the file.
 extern NSString * const BXEmulatorDOSPathKey;
-extern NSString * const BXEmulatorDriveKey;
-extern NSString * const BXEmulatorLocalURLKey;
+
+//The commandline arguments with which the program was launched.
 extern NSString * const BXEmulatorLaunchArgumentsKey;
+
+//An NSNumber recording whether the process is a batch file.
+extern NSString * const BXEmulatorIsBatchFileKey;
+
+//An NSNumber recording whether the process is an instance of DOSBox's COMMAND.COM.
+extern NSString * const BXEmulatorIsShellKey;
+
+//The BXDrive on which the file is located.
+extern NSString * const BXEmulatorDriveKey;
+
+//The actual OSX URL corresponding to the file. Will not be present if the file is located in a disk image or virtual drive.
+extern NSString * const BXEmulatorFileURLKey;
+
+//A logical OS X URL corresponding to the file. Will not be present if the file is located on a virtual drive.
+extern NSString * const BXEmulatorLogicalURLKey;
+
+//The NSDate on which the program was launched.
+extern NSString * const BXEmulatorLaunchDateKey;
+
+//The NSDate on which the program finished (only present in BXEmulatorDidFinishProgramNotifications.)
+extern NSString * const BXEmulatorExitDateKey;
 
 
 #pragma mark -

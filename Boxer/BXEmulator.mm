@@ -57,7 +57,8 @@ NSString * const BXEmulatorDOSPathKey           = @"DOSPath";
 NSString * const BXEmulatorIsBatchFileKey       = @"isBatchFile";
 NSString * const BXEmulatorIsShellKey           = @"isShell";
 NSString * const BXEmulatorDriveKey             = @"drive";
-NSString * const BXEmulatorLocalURLKey          = @"URL";
+NSString * const BXEmulatorFileURLKey           = @"fileURL";
+NSString * const BXEmulatorLogicalURLKey        = @"URL";
 NSString * const BXEmulatorLaunchArgumentsKey   = @"arguments";
 NSString * const BXEmulatorLaunchDateKey        = @"launchDate";
 NSString * const BXEmulatorExitDateKey          = @"exitDate";
@@ -344,7 +345,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     @synchronized(_runningProcesses)
     {
         NSDictionary *currentProcess = [_runningProcesses lastObject];
-        processURL = [[currentProcess objectForKey: BXEmulatorLocalURLKey] retain];
+        processURL = [[currentProcess objectForKey: BXEmulatorLogicalURLKey] retain];
     }
     
     return [processURL autorelease];

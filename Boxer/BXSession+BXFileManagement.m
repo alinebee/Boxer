@@ -587,7 +587,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 {
 	for (BXDrive *drive in self.allDrives)
 	{
-		if ([drive representsURL: URL])
+		if ([drive representsLogicalURL: URL])
             return drive;
 	}
 	return nil;
@@ -795,12 +795,12 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 - (BOOL) shouldMountNewDriveForURL: (NSURL *)URL
 {
 	//If the file isn't already accessible from DOS, we should mount it
-	if (![self.emulator URLIsAccessibleInDOS: URL])
+	if (![self.emulator logicalURLIsAccessibleInDOS: URL])
         return YES;
 	
 	//If the URL is accessible within an existing drive, but the file is of a type
 	//that should get its own drive, then mount it as a new drive of its own.
-	if (([URL matchingFileType: [self.class separatelyMountedTypes]] != nil) && ![self.emulator URLIsMountedInDOS: URL])
+	if (([URL matchingFileType: [self.class separatelyMountedTypes]] != nil) && ![self.emulator logicalURLIsMountedInDOS: URL])
 		return YES;
 	
 	return NO;
@@ -860,7 +860,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     }
     
 	//Get the path to the file in the DOS filesystem
-	NSString *dosPath = [self.emulator DOSPathForURL: URL];
+	NSString *dosPath = [self.emulator DOSPathForLogicalURL: URL];
 	if (!dosPath)
     {
         if (outError)
@@ -965,7 +965,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     NSMutableArray *mountedDrives = [NSMutableArray arrayWithCapacity: 10];
 	for (NSURL *volumeURL in volumeURLs)
 	{
-		if (![theEmulator URLIsMountedInDOS: volumeURL])
+		if (![theEmulator logicalURLIsMountedInDOS: volumeURL])
 		{
 			BXDrive *drive = [BXDrive driveWithContentsOfURL: volumeURL letter: nil type: BXDriveCDROM];
             
@@ -998,7 +998,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     NSMutableArray *mountedDrives = [NSMutableArray arrayWithCapacity: 10];
 	for (NSURL *volumeURL in volumeURLs)
 	{
-		if (![theEmulator URLIsMountedInDOS: volumeURL] && [workspace isFloppyVolumeAtURL: volumeURL])
+		if (![theEmulator logicalURLIsMountedInDOS: volumeURL] && [workspace isFloppyVolumeAtURL: volumeURL])
 		{
 			BXDrive *drive = [BXDrive driveWithContentsOfURL: volumeURL letter: nil type: BXDriveFloppyDisk];
             
@@ -1626,7 +1626,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	NSURL *mountPointURL = [self.class preferredMountPointForURL: volumeURL];
     
     //If the path is already mounted, don't mess around further.
-	if ([self.emulator URLIsMountedInDOS: mountPointURL])
+	if ([self.emulator logicalURLIsMountedInDOS: mountPointURL])
         return;
 	
     //If an existing queued drive corresponds to this volume,
@@ -1749,17 +1749,18 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 - (void) emulatorDidCreateFile: (NSNotification *)notification
 {
 	BXDrive *drive = [notification.userInfo objectForKey: BXEmulatorDriveKey];
-	NSURL *localURL = [notification.userInfo objectForKey: BXEmulatorLocalURLKey];
+	NSURL *URL = [notification.userInfo objectForKey: BXEmulatorLogicalURLKey];
 	
 	//The drive is in our executables cache: check if the created file was a DOS executable
 	//(If so, add it to the executables cache) 
 	NSMutableArray *driveExecutables = [self.executableURLs mutableArrayValueForKey: drive.letter];
-	if (driveExecutables && ![driveExecutables containsObject: localURL])
+	if (driveExecutables && ![driveExecutables containsObject: URL])
 	{
-		if ([BXFileTypes isCompatibleExecutableAtURL: localURL error: NULL])
+        NSString *drivePath = [drive.filesystem pathForLogicalURL: URL];
+		if (drivePath && [BXFileTypes isCompatibleExecutableAtPath: drivePath filesystem: drive.filesystem error: NULL])
 		{
 			[self willChangeValueForKey: @"executableURLs"];
-			[driveExecutables addObject: localURL];
+			[driveExecutables addObject: URL];
 			[self didChangeValueForKey: @"executableURLs"];
 		}
 	}
@@ -1769,14 +1770,14 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 - (void) emulatorDidRemoveFile: (NSNotification *)notification
 {
 	BXDrive *drive = [notification.userInfo objectForKey: BXEmulatorDriveKey];
-	NSURL *localURL = [notification.userInfo objectForKey: BXEmulatorLocalURLKey];
+	NSURL *URL = [notification.userInfo objectForKey: BXEmulatorLogicalURLKey];
 	
 	//The drive is in our executables cache: remove any reference to the deleted file
 	NSMutableArray *driveExecutables = [self.executableURLs objectForKey: drive.letter];
-	if (driveExecutables && [driveExecutables containsObject: localURL])
+	if (driveExecutables && [driveExecutables containsObject: URL])
 	{
 		[self willChangeValueForKey: @"executableURLs"];
-		[driveExecutables removeObject: localURL];
+		[driveExecutables removeObject: URL];
 		[self didChangeValueForKey: @"executableURLs"];
 	}
 }
@@ -1952,8 +1953,16 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     [self willChangeValueForKey: @"isScanningForExecutables"];
 	if (scan.succeeded && scan.matches.count)
 	{
-        //Construct logical URLs out of the relative paths returned by the scan.
-        NSArray *driveExecutables = [drive.sourceURL URLsByAppendingPaths: scan.matches];
+        //Construct logical URLs out of the filesystem-relative paths returned by the scan.
+        NSMutableArray *driveExecutables = [NSMutableArray arrayWithCapacity: scan.matches.count];
+        for (NSString *matchedPath in scan.matches)
+        {
+            NSURL *logicalURL = [drive.filesystem logicalURLForPath: matchedPath];
+            if (logicalURL)
+                [driveExecutables addObject: logicalURL];
+            else
+                NSLog(@"Filesystem %@ on drive %@ could not resolve executable path %@ to logical URL", drive.filesystem, drive, matchedPath);
+        }
         
         //Only send notifications if any executables were found, to prevent unnecessary redraws
         BOOL notify = (driveExecutables.count > 0);

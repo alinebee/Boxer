@@ -8,6 +8,7 @@
 #import "BXDrive+BXDriveArchiving.h"
 #import "BXDrivePrivate.h"
 #import "NSURL+ADBAliasHelpers.h"
+#import "ADBFilesystem.h"
 
 
 //Used when decoding drive records from previous Boxer versions,
@@ -80,7 +81,7 @@
                 {
                     NSURL *equivalentURL = URL_FROM_BOOKMARK(bookmarkData);
                     if (equivalentURL)
-                        [self.equivalentURLs addObject: equivalentURL];
+                        [self.filesystem addRepresentedURL: equivalentURL];
                 }
             }
         }
@@ -122,7 +123,7 @@
             {
                 NSURL *equivalentURL = URL_FROM_ALIAS(aliasData);
                 if (equivalentURL)
-                    [self.equivalentURLs addObject: equivalentURL];
+                    [self.filesystem addRepresentedURL: equivalentURL];
             }
         }
         
@@ -189,11 +190,12 @@
     if (self.volumeLabel && !_hasAutodetectedVolumeLabel)
         [aCoder encodeObject: self.volumeLabel forKey: @"volumeLabel"];
     
-    if (self.equivalentURLs.count)
+    if (self.filesystem.representedURLs.count)
     {
-        NSMutableSet *equivalentURLBookmarks = [[NSMutableSet alloc] initWithCapacity: self.equivalentURLs.count];
+        //TODO: filter out URLs that are already represented by the mount point et. al.
+        NSMutableSet *equivalentURLBookmarks = [[NSMutableSet alloc] initWithCapacity: self.filesystem.representedURLs.count];
         
-        for (NSURL *equivalentURL in self.equivalentURLs)
+        for (NSURL *equivalentURL in self.filesystem.representedURLs)
         {
             NSData *bookmarkData = BOOKMARK_FROM_URL(equivalentURL);
             [equivalentURLBookmarks addObject: bookmarkData];

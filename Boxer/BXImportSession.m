@@ -1314,7 +1314,7 @@
     //other programs spawned by the original program (e.g. if it was a batch file.)
 	if (!self.launchedProgramURL)
 	{
-		NSURL *programURL = [notification.userInfo objectForKey: BXEmulatorLocalURLKey];
+		NSURL *programURL = [notification.userInfo objectForKey: BXEmulatorLogicalURLKey];
         
         if (programURL)
         {

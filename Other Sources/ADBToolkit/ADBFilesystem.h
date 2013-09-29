@@ -123,6 +123,7 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 
 //Return the filesystem-relative path for the specified logical URL.
 //Return nil if the specified URL is not resolvable within this filesystem.
+//TODO: clarify implementation requirements re: leading and trailing slashes.
 - (NSString *) pathForLogicalURL: (NSURL *)URL;
 
 

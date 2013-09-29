@@ -199,7 +199,7 @@ enum {
 	//Disable files that are outside the gamebox or that aren't accessible in DOS.
 	if (![URL isBasedInURL: session.gamebox.resourceURL]) return NO;
     
-	if (![session.emulator URLIsAccessibleInDOS: URL]) return NO;
+	if (![session.emulator logicalURLIsAccessibleInDOS: URL]) return NO;
     
 	return YES;
 }

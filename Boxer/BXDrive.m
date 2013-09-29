@@ -22,7 +22,6 @@
 @synthesize sourceURL = _sourceURL;
 @synthesize shadowURL = _shadowURL;
 @synthesize mountPointURL = _mountPointURL;
-@synthesize equivalentURLs = _equivalentURLs;
 @synthesize letter = _letter;
 @synthesize title = _title;
 @synthesize volumeLabel = _volumeLabel;
@@ -187,8 +186,6 @@
         self.type = BXDriveHardDisk;
         self.freeSpace = BXDefaultFreeSpace;
         self.usesCDAudio = YES;
-        
-        self.equivalentURLs = [NSMutableSet setWithCapacity: 1];
 	}
     
 	return self;
@@ -389,6 +386,10 @@
         }
         
         NSAssert1(self.filesystem != nil, @"No suitable filesystem could be found for mount point %@", self.mountPointURL);
+        
+        if (![self.sourceURL isEqual: self.mountPointURL])
+            [self.filesystem addRepresentedURL: self.sourceURL];
+        
     }
     return [[_filesystem retain] autorelease];
 }
@@ -415,99 +416,52 @@
 
 #pragma mark - File location lookups
 
-- (BOOL) representsURL: (NSURL *)URL
+- (BOOL) representsLogicalURL: (NSURL *)URL
 {
 	if (self.isVirtual) return NO;
     
     URL = URL.URLByStandardizingPath;
-
-	if ([self.sourceURL isEqual: URL])
-        return YES;
-    
-	if ([self.mountPointURL isEqual: URL])
-        return YES;
-    
-	if ([self.shadowURL isEqual: URL])
-        return YES;
-    
-	if ([self.equivalentURLs containsObject: URL])
-        return YES;
-	
-	return NO;
+    return [self.filesystem representsLogicalURL: URL];
 }
 
-- (BOOL) containsURL: (NSURL *)URL
+- (BOOL) exposesLogicalURL: (NSURL *)URL
 {
 	if (self.isVirtual) return NO;
     
     URL = URL.URLByStandardizingPath;
-    
-	if ([URL isEqual: self.sourceURL])
-        return YES;
-    
-	if ([URL isBasedInURL: self.mountPointURL])
-        return YES;
-	
-	if ([URL isBasedInURL: self.shadowURL])
-        return YES;
-    
-	for (NSURL *equivalentURL in self.equivalentURLs)
-	{
-		if ([URL isBasedInURL: equivalentURL])
-            return YES;
-	}
-	
-	return NO;
+    return [self.filesystem exposesLogicalURL: URL];
 }
 
-- (NSString *) relativeLocationOfURL: (NSURL *)URL
+- (NSURL *) logicalURLForDOSPath: (NSString *)dosPath
 {
-    //TODO: let the drive's filesystem do this work for us.
+    NSString *posixPath = [dosPath stringByReplacingOccurrencesOfString: @"\\" withString: @"/"];
     
+    //Strip off any leading drive letter
+    if (posixPath.length >= 2 && [posixPath characterAtIndex: 1] == (unichar)':')
+    {
+        posixPath = [posixPath substringFromIndex: 2];
+    }
+    
+    return [self.filesystem logicalURLForPath: posixPath];
+}
+
+- (NSString *) relativeLocationOfLogicalURL: (NSURL *)URL
+{
 	if (self.isVirtual)
         return nil;
-	
-	NSString *relativePath = nil;
+    
     URL = URL.URLByStandardizingPath;
-    
-	if ([URL isEqual: self.sourceURL])
-	{
-		relativePath = @"";
-	}
-	
-	else if ([URL isBasedInURL: self.mountPointURL])
-	{
-		relativePath = [URL pathRelativeToURL: self.mountPointURL];
-	}
-	
-	else if (self.shadowURL && [URL isBasedInURL: self.shadowURL])
-	{
-		relativePath = [URL pathRelativeToURL: self.shadowURL];
-	}
-    
-	else
-	{
-		for (NSURL *equivalentURL in self.equivalentURLs)
-		{
-			if ([URL isBasedInURL: equivalentURL])
-			{
-				relativePath = [URL pathRelativeToURL: equivalentURL];
-				break;
-			}
-		}
-	}
-	
-	return relativePath;
+    return [self.filesystem pathForLogicalURL: URL];
 }
 
 - (void) addEquivalentURL: (NSURL *)URL
 {
-    [self.equivalentURLs addObject: URL];
+    [self.filesystem addRepresentedURL: URL];
 }
 
 - (void) removeEquivalentURL: (NSURL *)URL
 {
-    [self.equivalentURLs removeObject: URL];
+    [self.filesystem removeRepresentedURL: URL];
 }
 
 

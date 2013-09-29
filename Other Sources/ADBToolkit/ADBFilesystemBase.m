@@ -140,7 +140,9 @@
         //If this URL is shorter, insert the new URL in front of it.
         if (existingPath.length < pathLength)
         {
+            [self willChangeValueForKey: @"representedURLs"];
             [self.mutableRepresentedURLs insertObject: URL atIndex: i];
+            [self didChangeValueForKey: @"representedURLs"];
             return;
         }
         
@@ -153,13 +155,17 @@
     
     //If we got this far, we couldn't find a suitable place to insert the URL:
     //just tack it on the end instead.
+    [self willChangeValueForKey: @"representedURLs"];
     [self.mutableRepresentedURLs addObject: URL];
+    [self didChangeValueForKey: @"representedURLs"];
 }
 
 - (void) removeRepresentedURL: (NSURL *)URL
 {
     NSAssert(URL != nil, @"No URL provided!");
+    [self willChangeValueForKey: @"representedURLs"];
     [self.mutableRepresentedURLs removeObject: URL.URLByStandardizingPath];
+    [self didChangeValueForKey: @"representedURLs"];
 }
 
 @end

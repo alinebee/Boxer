@@ -12,7 +12,6 @@
 @interface BXDrive ()
 
 @property (readwrite, assign, nonatomic) BXDriveType type;
-@property (readwrite, retain, nonatomic) NSMutableSet *equivalentURLs;
-@property (readwrite, retain, nonatomic) id <ADBFilesystemPathAccess> filesystem;
+@property (readwrite, retain, nonatomic) id <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess> filesystem;
 
 @end

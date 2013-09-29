@@ -625,18 +625,18 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	else return nil;
 }
 
-- (NSURL *) URLForDOSPath: (NSString *)path
+- (NSURL *) fileURLForDOSPath: (NSString *)dosPath
 {
 	if (self.isExecuting)
 	{
-		const char *dosPath = [path cStringUsingEncoding: BXDirectStringEncoding];
+		const char *dosCPath = [dosPath cStringUsingEncoding: BXDirectStringEncoding];
 		//If the path couldn't be encoded successfully, don't do further lookups
-		if (!dosPath)
+		if (!dosCPath)
             return nil;
 		
 		char fullPath[DOS_PATHLENGTH];
 		Bit8u driveIndex;
-		BOOL resolved = DOS_MakeName(dosPath, fullPath, &driveIndex);
+		BOOL resolved = DOS_MakeName(dosCPath, fullPath, &driveIndex);
         
 		if (resolved)
 		{
@@ -658,17 +658,43 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	else return nil;
 }
 
-- (BOOL) URLIsMountedInDOS: (NSURL *)URL
+- (NSURL *) logicalURLForDOSPath: (NSString *)dosPath
+{
+	if (self.isExecuting)
+	{
+        const char *dosCPath = [dosPath cStringUsingEncoding: BXDirectStringEncoding];
+		//If the path couldn't be encoded successfully, don't do further lookups
+		if (!dosCPath)
+            return nil;
+		
+        //First resolve what could be a relative path to an absolute one and determine which drive it's located on.
+		char fullCPath[DOS_PATHLENGTH];
+		Bit8u driveIndex;
+		BOOL resolved = DOS_MakeName(dosCPath, fullCPath, &driveIndex);
+        
+        //Then, ask the Boxer drive itself to hand over a logical URL that will correspond to that resource.
+		if (resolved)
+		{
+            BXDrive *drive  = [self _driveFromDOSBoxDriveAtIndex: driveIndex];
+            NSString *fullPath = [NSString stringWithCString: fullCPath encoding: BXDirectStringEncoding];
+            return [drive logicalURLForDOSPath: fullPath];
+		}
+		else return nil;
+    }
+    else return nil;
+}
+
+- (BOOL) logicalURLIsMountedInDOS: (NSURL *)URL
 {
 	for (BXDrive *drive in _driveCache.objectEnumerator)
 	{
-		if ([drive representsURL: URL])
+		if ([drive representsLogicalURL: URL])
             return YES;
 	}
 	return NO;
 }
 
-- (BXDrive *) driveContainingURL: (NSURL *)URL
+- (BXDrive *) driveContainingLogicalURL: (NSURL *)URL
 {
 	//Sort the drives by path depth, so that deeper mounts are picked over 'shallower' ones.
 	//e.g. when MyGame.boxer and MyGame.boxer/MyCD.cdrom are both mounted, it should pick the latter.
@@ -677,33 +703,33 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	
 	for (BXDrive *drive in sortedDrives.reverseObjectEnumerator)
 	{
-		if ([drive containsURL: URL])
+		if ([drive exposesLogicalURL: URL])
             return drive;
 	}
 	return nil;
 }
 
-- (BOOL) URLIsAccessibleInDOS: (NSURL *)URL
+- (BOOL) logicalURLIsAccessibleInDOS: (NSURL *)URL
 {
 	for (BXDrive *drive in _driveCache.objectEnumerator)
 	{
-		if ([drive containsURL: URL])
+		if ([drive exposesLogicalURL: URL])
             return YES;
 	}
 	return NO;
 }
 
-- (NSString *) DOSPathForURL: (NSURL *)URL
+- (NSString *) DOSPathForLogicalURL: (NSURL *)URL
 {
-	BXDrive *drive = [self driveContainingURL: URL];
+	BXDrive *drive = [self driveContainingLogicalURL: URL];
     
 	if (drive)
-        return [self DOSPathForURL: URL onDrive: drive];
+        return [self DOSPathForLogicalURL: URL onDrive: drive];
 	else
         return nil;
 }
 
-- (NSString *) DOSPathForURL: (NSURL *)URL onDrive: (BXDrive *)drive
+- (NSString *) DOSPathForLogicalURL: (NSURL *)URL onDrive: (BXDrive *)drive
 {
 	if (!self.isExecuting) return nil;
 	
@@ -712,7 +738,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     //The drive is not mounted in DOS: give up
 	if (!DOSBoxDrive) return nil;
     
-	NSString *subPath = [drive relativeLocationOfURL: URL];
+	NSString *subPath = [drive relativeLocationOfLogicalURL: URL];
 	//The path is not accessible on this drive; give up before we go any further.
 	if (!subPath) return nil;
 	
@@ -808,12 +834,12 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (NSString *) DOSPathForPath: (NSString *)path
 {
-    return [self DOSPathForURL: [NSURL fileURLWithPath: path]];
+    return [self DOSPathForLogicalURL: [NSURL fileURLWithPath: path]];
 }
 
 - (NSString *) DOSPathForPath: (NSString *)path onDrive: (BXDrive *)drive
 {
-    return [self DOSPathForURL: [NSURL fileURLWithPath: path] onDrive: drive];
+    return [self DOSPathForLogicalURL: [NSURL fileURLWithPath: path] onDrive: drive];
 }
 
 @end
@@ -1246,13 +1272,17 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	[self didChangeValueForKey: @"mountedDrives"];
 }
 
-- (void) _didCreateFileAtPath: (NSString *)filePath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+- (void) _didCreateFileAtPath: (NSString *)filesystemPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
+    //TODO: make this receive DOS paths and manually resolve them to logical and filesystem URLs ourselves.
+    //This way it can be deployed across all drive types.
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+    NSURL *fileURL = [NSURL fileURLWithPath: filesystemPath];
 	//Post a notification to whoever's listening
 	NSDictionary *userInfo = @{
                             BXEmulatorDriveKey: drive,
-                            BXEmulatorLocalURLKey: [NSURL fileURLWithPath: filePath],
+                            BXEmulatorFileURLKey: fileURL,
+                            BXEmulatorLogicalURLKey: fileURL,
                             };
 	
 	[self _postNotificationName: BXEmulatorDidCreateFileNotification
@@ -1260,13 +1290,17 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 					   userInfo: userInfo];	
 }
 
-- (void) _didRemoveFileAtPath: (NSString *)filePath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+- (void) _didRemoveFileAtPath: (NSString *)filesystemPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
+    //TODO: make this receive DOS paths and manually resolve them to logical and filesystem URLs ourselves.
+    //This way it can be deployed across all drive types.
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+    NSURL *fileURL = [NSURL fileURLWithPath: filesystemPath];
 	//Post a notification to whoever's listening
 	NSDictionary *userInfo = @{
-                            BXEmulatorDriveKey: drive,
-                            BXEmulatorLocalURLKey: [NSURL fileURLWithPath: filePath],
+                               BXEmulatorDriveKey: drive,
+                               BXEmulatorFileURLKey: fileURL,
+                               BXEmulatorLogicalURLKey: fileURL,
                             };
 	
 	[self _postNotificationName: BXEmulatorDidRemoveFileNotification
@@ -1321,8 +1355,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 }
 
 
-#pragma mark -
-#pragma mark Mapping local filesystem access
+#pragma mark - Mapping local filesystem access
 
 - (NSURL *) _filesystemURLForDOSPath: (const char *)dosPath
                        onDOSBoxDrive: (DOS_Drive *)dosboxDrive
@@ -1351,6 +1384,14 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     {
         return nil;
     }
+}
+
+- (NSURL *) _logicalURLForDOSPath: (const char *)dosCPath
+                    onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+{
+    BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+    NSString *dosPath = [NSString stringWithCString: dosCPath encoding: BXDirectStringEncoding];
+    return [drive logicalURLForDOSPath: dosPath];
 }
 
 - (FILE *) _openFileAtLocalPath: (const char *)path

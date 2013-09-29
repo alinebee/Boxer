@@ -144,7 +144,7 @@ typedef enum {
 @property (readonly, nonatomic) BOOL isHardDisk;
 
 //A filesystem instance appropriate for the backing medium of this drive.
-@property (readonly, retain, nonatomic) id <ADBFilesystemPathAccess> filesystem;
+@property (readonly, retain, nonatomic) id <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess> filesystem;
 
 //A localized human-readable title for the drive's type, for display in the UI.
 @property (readonly, nonatomic) NSString *localizedTypeDescription;
@@ -203,21 +203,24 @@ typedef enum {
 
 #pragma mark - Path lookups
 
-//Returns whether the specified filesystem location is equivalent to this drive.
+//Returns whether the specified filesystem URL is equivalent to this drive.
 //This is mostly used for determining whether a location is already mounted as a DOS drive.
-- (BOOL) representsURL: (NSURL *)URL;
+- (BOOL) representsLogicalURL: (NSURL *)URL;
 
-//Returns whether the specified filesystem location would be accessible in DOS from this drive.
-- (BOOL) containsURL: (NSURL *)URL;
+//Returns whether the specified logical URL would be accessible in DOS from this drive.
+- (BOOL) exposesLogicalURL: (NSURL *)URL;
 
-//Returns the location of the specified path relative to the root of the drive:
+//Returns the location of the specified logical URL relative to the filesystem of the drive:
 //or nil if the specified location is not contained on this drive.
 //Used by BXDOSFileSystem for matching OS X filesystem paths with DOS filesystem paths.
-- (NSString *) relativeLocationOfURL: (NSURL *)URL;
+- (NSString *) relativeLocationOfLogicalURL: (NSURL *)URL;
+
+//Returns a logical URL representing the specified DOS path, as constructed by the drive's filesystem.
+//Note that this is not the same as a local filesystem path.
+- (NSURL *) logicalURLForDOSPath: (NSString *)dosPath;
 
 //Indicates that the specified URL represents the same resource as the contents of this drive.
-//This is used by representsURL:, containsURL: and relativeLocationOfURL: to correctly resolve
-//URLs to resources in different apparent locations.
+//This is used by the drive's filesystem to correctly resolve URLs to resources in different apparent locations.
 //Mainly this is of use for drives representing disk images: so that if the image is mounted
 //as a folder in OS X, the drive will treat locations within the mounted folder as being contained
 //within the drive.

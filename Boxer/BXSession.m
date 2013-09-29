@@ -120,7 +120,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 @synthesize targetURL = _targetURL;
 @synthesize targetArguments = _targetArguments;
-@synthesize launchedProgramURL = _lastLaunchedProgramURL;
+@synthesize launchedProgramURL = _launchedProgramURL;
 @synthesize launchedProgramArguments = _launchedProgramArguments;
 
 @synthesize gameProfile = _gameProfile;
@@ -1269,7 +1269,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     //catch programs that were launched from the commandline.)
 	if (!self.launchedProgramURL && ![self.emulator processIsInternal: processInfo])
 	{
-		NSURL *programURL = [processInfo objectForKey: BXEmulatorLocalURLKey];
+		NSURL *programURL = [processInfo objectForKey: BXEmulatorLogicalURLKey];
         
         if (programURL)
         {
@@ -1303,11 +1303,12 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         
         if (runningTime < BXWindowsOnlyProgramFailTimeThreshold)
         {
-            NSURL *programURL = [notification.userInfo objectForKey: BXEmulatorLocalURLKey];
-            if (programURL)
+            NSURL *programURL = [notification.userInfo objectForKey: BXEmulatorLogicalURLKey];
+            BXDrive *drive = [notification.userInfo objectForKey: BXEmulatorDriveKey];
+            if (programURL && drive.filesystem)
             {
-                //TODO: look up from drive filesystem instead
-                BXExecutableType programType = [BXFileTypes typeOfExecutableAtURL: programURL error: NULL];
+                NSString *path = [drive.filesystem pathForLogicalURL: programURL];
+                BXExecutableType programType = [BXFileTypes typeOfExecutableAtPath: path filesystem: drive.filesystem error: NULL];
                 
                 //If this was a windows-only program, explain further to the user why Boxer cannot run it.
                 if (programType == BXExecutableTypeWindows)
@@ -1337,7 +1338,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     }
     
     //Clear our record of the most recently launched program once it exits
-    if ([self.launchedProgramURL isEqual: [processInfo objectForKey: BXEmulatorLocalURLKey]])
+    if ([self.launchedProgramURL isEqual: [processInfo objectForKey: BXEmulatorLogicalURLKey]])
     {
         self.launchedProgramURL = nil;
         self.launchedProgramArguments = nil;

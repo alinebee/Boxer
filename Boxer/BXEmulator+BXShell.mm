@@ -342,10 +342,10 @@ nil];
     
 	
     //Now, look up where the path lies in the OS X filesystem.
-	NSURL *localURL = [self URLForDOSPath: cleanedPath];
+	NSURL *fileURL = [self fileURLForDOSPath: cleanedPath];
     
     //Path is not resolvable to an OS X filesystem location, so we cannot continue.
-	if (!localURL)
+	if (!fileURL)
     {
         BXDrive *drive = [self driveForDOSPath: cleanedPath];
         
@@ -369,9 +369,9 @@ nil];
     //If we got this far, we finally have a path we can reveal in OS X.
     //FIXME: we shouldn't be dealing with the app delegate at this level.
     //This should be handled upstream as an emulator delegate callback.
-    if ([localURL checkResourceIsReachableAndReturnError: NULL])
+    if ([fileURL checkResourceIsReachableAndReturnError: NULL])
     {
-        [[NSApp delegate] revealURLsInFinder: @[localURL]];
+        [[NSApp delegate] revealURLsInFinder: @[fileURL]];
     }
     //The file did not exist in OS X so could not be revealed.
     else
@@ -658,6 +658,7 @@ nil];
     
     NSString *fullDOSPath = [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding];
 	NSURL *localURL	= [self _filesystemURLForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
+    NSURL *logicalURL = [self _logicalURLForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
     
     NSString *argumentString = [[NSString stringWithCString: arguments encoding: BXDirectStringEncoding] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 	
@@ -673,7 +674,12 @@ nil];
     
 	if (localURL)
     {
-        [processInfo setObject: localURL forKey: BXEmulatorLocalURLKey];
+        [processInfo setObject: localURL forKey: BXEmulatorFileURLKey];
+    }
+    
+	if (logicalURL)
+    {
+        [processInfo setObject: logicalURL forKey: BXEmulatorLogicalURLKey];
     }
     
     if (argumentString.length)

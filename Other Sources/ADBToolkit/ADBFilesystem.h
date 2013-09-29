@@ -116,14 +116,16 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 //These URLs do not necessarily exist in the real OS X filesystem and may not be usable by
 //standard NSURL introspection methods or AppKit loading methods. They are intended mainly
 //for storing filesystem-unique paths and simplifying lookups across multiple filesystems.
+//IMPLEMENTATION REQUIREMENTS:
+//- URLs converted to logical filesystem paths must be absolute, i.e. begin with @"/".
 @protocol ADBFilesystemLogicalURLAccess <NSObject>
 
-//Return the canonical logical URL for the specified filesystem-relative path.
+//Return the canonical logical URL for the specified logical filesystem path.
 - (NSURL *) logicalURLForPath: (NSString *)path;
 
-//Return the filesystem-relative path for the specified logical URL.
+//Return the logical filesystem path for the specified logical URL.
 //Return nil if the specified URL is not resolvable within this filesystem.
-//TODO: clarify implementation requirements re: leading and trailing slashes.
+//Returned paths must be absolute, i.e. with a leading /.
 - (NSString *) pathForLogicalURL: (NSURL *)URL;
 
 
@@ -171,6 +173,7 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 
 //Return the logical filesystem path corresponding to the specified OS X filesystem URL.
 //Return nil if the specified URL is not accessible within this filesystem.
+//Returned paths must be absolute, i.e. with a leading /.
 - (NSString *) pathForFileURL: (NSURL *)URL;
 
 //Whether the specified file URL is accessible under this filesystem.

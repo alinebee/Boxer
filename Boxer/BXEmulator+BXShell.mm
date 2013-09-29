@@ -656,9 +656,11 @@ nil];
     DOS_Drive *dosboxDrive = Drives[driveIndex];
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    NSString *fullDOSPath = [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding];
-	NSURL *localURL	= [self _filesystemURLForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
-    NSURL *logicalURL = [self _logicalURLForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
+    //IMPLEMENTATION NOTE: these lookups are a little messy because the DOS path we receive comes with the drive letter
+    //stuck on the front, which we then end up trimming back off in the lookup functions.
+    NSString *fullDOSPath   = [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding];
+	NSURL *fileURL          = [self _filesystemURLForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
+    NSURL *logicalURL       = [self _logicalURLForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
     
     NSString *argumentString = [[NSString stringWithCString: arguments encoding: BXDirectStringEncoding] stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 	
@@ -672,9 +674,9 @@ nil];
                                         BXEmulatorIsShellKey: @(isShell),
                                         }];
     
-	if (localURL)
+	if (fileURL)
     {
-        [processInfo setObject: localURL forKey: BXEmulatorFileURLKey];
+        [processInfo setObject: fileURL forKey: BXEmulatorFileURLKey];
     }
     
 	if (logicalURL)

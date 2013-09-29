@@ -1372,9 +1372,17 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
         NSAssert2([filesystem conformsToProtocol: @protocol(ADBFilesystemFileURLAccess)],
                   @"Filesystem %@ for drive %@ does not support local URL file access.", filesystem, drive);
         
-		char filePath[CROSS_LEN];
-		localDOSBoxDrive->GetSystemFilename(filePath, (char const * const)dosPath);
+        //If the DOS path starts with a drive letter, snip this off
+        const char *driveRelativePath;
+        if (strlen(dosPath) >= 2 && dosPath[1] == ':')
+            driveRelativePath = dosPath+2;
+        else
+            driveRelativePath = dosPath;
         
+		char filePath[CROSS_LEN];
+		localDOSBoxDrive->GetSystemFilename(filePath, driveRelativePath);
+        
+        NSLog(@"System filename: %s", filePath);
         NSURL *localURL = [NSURL URLFromFileSystemRepresentation: filePath];
         
         //Roundtrip the URL through the filesystem, in case it remaps it to another location.

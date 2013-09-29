@@ -451,7 +451,13 @@
         return nil;
     
     URL = URL.URLByStandardizingPath;
-    return [self.filesystem pathForLogicalURL: URL];
+    NSString *path = [self.filesystem pathForLogicalURL: URL];
+    
+    //Normalize path to be relative by trimming off leading suffix.
+    if ([path hasPrefix: @"/"])
+        path = [path substringFromIndex: 1];
+    
+    return path;
 }
 
 - (void) addEquivalentURL: (NSURL *)URL

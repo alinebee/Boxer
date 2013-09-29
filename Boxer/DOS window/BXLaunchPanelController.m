@@ -275,7 +275,11 @@
                                               withArguments: arguments
                                                       title: nil];
         
-        [self.recentProgramRows addObject: item];
+        NSMutableDictionary *annotatedItem = [item mutableCopy];
+        [annotatedItem setObject: programDetails forKey: @"recentProgram"];
+        
+        [self.recentProgramRows addObject: annotatedItem];
+        [annotatedItem release];
     }
     
     _recentProgramRowsDirty = NO;
@@ -357,14 +361,12 @@
     //property on the panel controller and having individual items listen for changes to that: but this resulted
     //in KVO deallocation exceptions. (These may have indicated a leak, but it seemed rather like the views were
     //getting cleaned up in the wrong order because of our complex XIB structure. This bears further investigation.)
-    BXSession *session = self.representedObject;
-    BOOL canOpenURLs = session.canOpenURLs;
     if (numItems > 0)
     {
         for (NSUInteger i=0; i<numItems; i++)
         {
             BXLauncherItem *item = (BXLauncherItem *)[self.launcherList itemAtIndex: i];
-            item.launchable = canOpenURLs && ([item.representedObject objectForKey: @"URL"] != nil);
+            item.launchable = [self canLaunchItem: item];
         }
     }
 }
@@ -515,6 +517,7 @@
                                                                                  @"isFavorite": @(YES),
                                                                                  @"URL": URL,
                                                                                  @"title": title,
+                                                                                 @"launcher": launcher,
                                                                                  }];
     
     if (dosPath)
@@ -635,7 +638,7 @@
 }
 
 
-#pragma mark - Launching programs
+#pragma mark - Program actions
 
 - (void) launchItem: (BXLauncherItem *)item
 {
@@ -699,6 +702,17 @@
     }
 }
 
+- (BOOL) canLaunchItem: (BXLauncherItem *)item
+{
+    BXSession *session = self.representedObject;
+    if (!session.canOpenURLs)
+        return NO;
+    
+    //TODO: check if the specified URL can actually be opened in DOS
+    //(This requires us to check if we can mount a drive for the URL if it's not already accessible, etc.)
+    return ([item.representedObject objectForKey: @"URL"] != nil);
+}
+
 - (void) revealItemInFinder: (BXLauncherItem *)item
 {
     NSDictionary *itemDetails = item.representedObject;
@@ -717,6 +731,36 @@
         [[NSApp delegate] revealURLsInFinder: @[URL]];
     }
 }
+
+- (BOOL) canRevealItemInFinder: (BXLauncherItem *)item
+{
+    NSURL *URL = [item.representedObject objectForKey: @"URL"];
+    return [URL checkResourceIsReachableAndReturnError: NULL];
+}
+
+- (void) removeItem: (BXLauncherItem *)item
+{
+    BXSession *session = self.representedObject;
+    NSDictionary *launcher = [item.representedObject objectForKey: @"launcher"];
+    if (launcher)
+    {
+        //This should trigger a re-evaluation of our favorites list
+        [session.gamebox removeLauncher: launcher];
+    }
+    else
+    {
+        NSDictionary *recentProgram = [item.representedObject objectForKey: @"recentProgram"];
+        
+        //This should trigger a re-evaluation of our recent programs list
+        [session removeRecentProgram: recentProgram];
+    }
+}
+
+- (BOOL) canRemoveItem: (BXLauncherItem *)item
+{
+    return ([item.representedObject objectForKey: @"launcher"] != nil) || ([item.representedObject objectForKey: @"recentProgram"] != nil);
+}
+
 
 #pragma mark - Filtering
 
@@ -799,17 +843,26 @@
     [self.delegate revealItemInFinder: self];
 }
 
+- (IBAction) removeItem: (id)sender
+{
+    [self.delegate removeItem: self];
+}
+
 - (BOOL) validateMenuItem: (NSMenuItem *)menuItem
 {
     SEL action = menuItem.action;
     
     if (action == @selector(launchProgram:))
     {
-        return self.isLaunchable;
+        return [self.delegate canLaunchItem: self];
     }
     else if (action == @selector(revealItemInFinder:))
     {
-        return [self.representedObject objectForKey: @"URL"] != nil;
+        return [self.delegate canRevealItemInFinder: self];
+    }
+    else if (action == @selector(removeItem:))
+    {
+        return [self.delegate canRemoveItem: self];
     }
     else
     {

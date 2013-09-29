@@ -97,6 +97,12 @@
                         <action selector="revealItemInFinder:" target="-2" id="5J5-Eh-eIG"/>
                     </connections>
                 </menuItem>
+                <menuItem title="Remove From List" id="G8T-Oq-M2i">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="removeItem:" target="-2" id="7ex-n6-9Xm"/>
+                    </connections>
+                </menuItem>
             </items>
         </menu>
     </objects>

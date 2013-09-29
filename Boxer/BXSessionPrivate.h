@@ -36,6 +36,8 @@ extern NSString * const BXGameImportedNotificationType;
 //These have been overridden to make them internally writeable
 @property (readwrite, retain, nonatomic) NSMutableDictionary *gameSettings;
 
+@property (retain, nonatomic) NSMutableArray *mutableRecentPrograms;
+
 //The URL to the program that was last launched by user action (i.e. from the program panel or DOS prompt)
 //and the arguments it was launched with.
 @property (readwrite, copy, nonatomic) NSURL *launchedProgramURL;

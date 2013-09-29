@@ -88,9 +88,11 @@ typedef enum {
 	BXGamebox *_gamebox;
 	BXGameProfile *_gameProfile;
 	NSMutableDictionary *_gameSettings;
+    NSMutableArray *_mutableRecentPrograms;
 	
 	NSMutableDictionary *_drives;
 	NSMutableDictionary *_executableURLs;
+    
     NSImage *_cachedIcon;
 	
 	BXDOSWindowController *_DOSWindowController;
@@ -265,6 +267,10 @@ typedef enum {
 //Changes to the recent program list will be persisted into the game info for this session,
 //if available.
 - (void) noteRecentProgram: (NSDictionary *)programDetails;
+
+//Remove the recent program corresponding to the specified program details.
+//(This will match on URL and arguments and ignore other fields.)
+- (void) removeRecentProgram: (NSDictionary *)programDetails;
 
 //Empty the recent programs list.
 - (void) clearRecentPrograms;

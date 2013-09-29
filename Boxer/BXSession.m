@@ -150,6 +150,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 @synthesize temporaryFolderURL = _temporaryFolderURL;
 @synthesize MT32MessagesReceived = _MT32MessagesReceived;
 
+@synthesize mutableRecentPrograms = _mutableRecentPrograms;
+
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -262,6 +264,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     self.gamebox = nil;
     self.gameProfile = nil;
     self.gameSettings = nil;
+    self.mutableRecentPrograms = nil;
     
     self.targetURL = nil;
     self.targetArguments = nil;
@@ -430,7 +433,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     if (recentPrograms)
     {
         [self willChangeValueForKey: @"recentPrograms"];
-        NSMutableArray *resolvedPrograms = [NSMutableArray arrayWithCapacity: recentPrograms.count];
+        
+        self.mutableRecentPrograms = [NSMutableArray arrayWithCapacity: recentPrograms.count];
         NSURL *baseURL = self.gamebox.resourceURL;
         for (NSDictionary *programDetails in recentPrograms)
         {
@@ -448,11 +452,13 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             else
                 resolvedDetails = @{BXEmulatorLogicalURLKey: resolvedURL};
             
-            [resolvedPrograms addObject: resolvedDetails];
+            [self.mutableRecentPrograms addObject: resolvedDetails];
         }
         
-        [self.gameSettings setObject: resolvedPrograms forKey: BXGameboxSettingsRecentProgramsKey];
         [self didChangeValueForKey: @"recentPrograms"];
+        
+        //Remove the leftover value from the game settings as it won't be used
+        [self.gameSettings removeObjectForKey: BXGameboxSettingsRecentProgramsKey];
     }
     
     //If we don't already have a game profile assigned,
@@ -846,13 +852,12 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         
         //Clean up the recent programs list, deleting any transient data and making URLs gamebox-relative
         //before persisting them.
-        NSArray *recentPrograms = [settingsToPersist objectForKey: BXGameboxSettingsRecentProgramsKey];
-        if (recentPrograms.count)
+        if (self.mutableRecentPrograms.count)
         {
             NSURL *baseURL = self.gamebox.resourceURL;
             
-            NSMutableArray *recentProgramsToPersist = [NSMutableArray arrayWithCapacity: recentPrograms.count];
-            for (NSDictionary *programDetails in recentPrograms)
+            NSMutableArray *recentProgramsToPersist = [NSMutableArray arrayWithCapacity: self.mutableRecentPrograms.count];
+            for (NSDictionary *programDetails in self.mutableRecentPrograms)
             {
                 NSURL *URL = [programDetails objectForKey: BXEmulatorLogicalURLKey];
                 if (!URL)
@@ -1069,51 +1074,54 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 - (NSArray *) recentPrograms
 {
-    return [self.gameSettings objectForKey: BXGameboxSettingsRecentProgramsKey];
+    return self.mutableRecentPrograms;
 }
 
 - (void) noteRecentProgram: (NSDictionary *)programDetails
 {
     [self willChangeValueForKey: @"recentPrograms"];
     
-    NSArray *recentPrograms;
-    NSArray *existingRecentPrograms = self.recentPrograms;
-    if (existingRecentPrograms)
+    if (!self.mutableRecentPrograms)
+        self.mutableRecentPrograms = [NSMutableArray arrayWithCapacity: 1];
+    
+    if (self.mutableRecentPrograms.count)
     {
-        NSMutableArray *revisedPrograms = [[existingRecentPrograms mutableCopy] autorelease];
-        
-        //Check if this program is already present in some form in the recent programs:
-        //If so, remove the old one as we'll be re-adding it to the start of the list.
-        for (NSDictionary *existingDetails in existingRecentPrograms)
-        {
-            NSURL *programURL = [programDetails objectForKey: BXEmulatorLogicalURLKey];
-            NSURL *existingURL = [existingDetails objectForKey: BXEmulatorLogicalURLKey];
-            if ([programURL isEqual: existingURL])
-            {
-                NSString *programArgs = [programDetails objectForKey: BXEmulatorLaunchArgumentsKey];
-                NSString *existingArgs = [existingDetails objectForKey: BXEmulatorLaunchArgumentsKey];
-                
-                if ((!existingArgs && !programArgs) || [existingArgs isEqualToString: programArgs])
-                {
-                    [revisedPrograms removeObject: existingDetails];
-                }
-            }
-        }
-        [revisedPrograms insertObject: programDetails atIndex: 0];
-        
-        //If we're over our limit, get rid of older ones.
-        while (revisedPrograms.count > BXRecentProgramsLimit)
-            [revisedPrograms removeLastObject];
-        
-        recentPrograms = revisedPrograms;
+        //Remove any existing record of this program, since we'll be bumping it up to the front of the list.
+        [self removeRecentProgram: programDetails];
+        [self.mutableRecentPrograms insertObject: programDetails atIndex: 0];
     }
     else
     {
-        recentPrograms = @[programDetails];
+        [self.mutableRecentPrograms addObject: programDetails];
     }
     
-    [self.gameSettings setObject: recentPrograms
-                          forKey: BXGameboxSettingsRecentProgramsKey];
+    //If we're over our limit, get rid of older ones.
+    while (self.mutableRecentPrograms.count > BXRecentProgramsLimit)
+        [self.mutableRecentPrograms removeLastObject];
+    
+    [self didChangeValueForKey: @"recentPrograms"];
+}
+
+- (void) removeRecentProgram: (NSDictionary *)programDetails
+{
+    [self willChangeValueForKey: @"recentPrograms"];
+    
+    NSURL *programURL = [programDetails objectForKey: BXEmulatorLogicalURLKey];
+    NSString *programArgs = [programDetails objectForKey: BXEmulatorLaunchArgumentsKey];
+    
+    for (NSDictionary *existingDetails in [NSArray arrayWithArray: self.mutableRecentPrograms])
+    {
+        NSURL *existingURL = [existingDetails objectForKey: BXEmulatorLogicalURLKey];
+        if ([programURL isEqual: existingURL])
+        {
+            NSString *existingArgs = [existingDetails objectForKey: BXEmulatorLaunchArgumentsKey];
+            
+            if ((!existingArgs && !programArgs) || [existingArgs isEqualToString: programArgs])
+            {
+                [self.mutableRecentPrograms removeObject: existingDetails];
+            }
+        }
+    }
     
     [self didChangeValueForKey: @"recentPrograms"];
 }
@@ -1121,7 +1129,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 - (void) clearRecentPrograms
 {
     [self willChangeValueForKey: @"recentPrograms"];
-    [self.gameSettings removeObjectForKey: BXGameboxSettingsRecentProgramsKey];
+    [self.mutableRecentPrograms removeAllObjects];
     [self didChangeValueForKey: @"recentPrograms"];
 }
 

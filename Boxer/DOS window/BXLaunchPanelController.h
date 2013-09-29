@@ -13,6 +13,11 @@
 
 - (void) launchItem: (BXLauncherItem *)item;
 - (void) revealItemInFinder: (BXLauncherItem *)item;
+- (void) removeItem: (BXLauncherItem *)item;
+
+- (BOOL) canLaunchItem: (BXLauncherItem *)item;
+- (BOOL) canRevealItemInFinder: (BXLauncherItem *)item;
+- (BOOL) canRemoveItem: (BXLauncherItem *)item;
 
 @end
 
@@ -84,9 +89,9 @@
 @property (assign, nonatomic) IBOutlet id <BXLauncherItemDelegate> delegate;
 @property (assign, nonatomic, getter=isLaunchable) BOOL launchable;
 
-//Called by the item view to launch (or reveal) the URL corresponding to this item.
 - (IBAction) launchProgram: (id)sender;
 - (IBAction) revealItemInFinder: (id)sender;
+- (IBAction) removeItem: (id)sender;
 
 @end
 

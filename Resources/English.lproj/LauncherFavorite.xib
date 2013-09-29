@@ -55,6 +55,12 @@
                         <action selector="revealItemInFinder:" target="-2" id="FDh-aX-gC2"/>
                     </connections>
                 </menuItem>
+                <menuItem title="Remove From List" id="MMw-2h-bxr">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="removeItem:" target="-2" id="dd1-eD-qca"/>
+                    </connections>
+                </menuItem>
             </items>
         </menu>
     </objects>

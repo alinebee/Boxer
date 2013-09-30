@@ -94,13 +94,13 @@
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="1358"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="1272"/>
-                    <toolbarItem implicitItemIdentifier="540E2882-15E5-4FCD-8C52-8FA004C0A9D6" label="Programs" paletteLabel="Programs" toolTip="Show or hide the game’s launch options" image="FavoriteFilledTemplate" id="1285">
+                    <toolbarItem implicitItemIdentifier="540E2882-15E5-4FCD-8C52-8FA004C0A9D6" label="Programs" paletteLabel="Programs" toolTip="Show or hide the game’s launch options" image="LauncherListTemplate" id="1285">
                         <size key="minSize" width="40" height="25"/>
                         <size key="maxSize" width="40" height="25"/>
                         <button key="view" verticalHuggingPriority="750" id="1283">
                             <rect key="frame" x="9" y="14" width="40" height="25"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="FavoriteFilledTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1284">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="LauncherListTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1284">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -387,7 +387,7 @@
         <image name="DiscSwapTemplate" width="24" height="16"/>
         <image name="DocumentationTemplate" width="16" height="16"/>
         <image name="FastForwardTemplate" width="19" height="13"/>
-        <image name="FavoriteFilledTemplate" width="32" height="32"/>
+        <image name="LauncherListTemplate" width="16" height="16"/>
         <image name="NSLockLockedTemplate" width="9" height="12"/>
         <image name="NSLockUnlockedTemplate" width="9" height="12"/>
         <image name="NSRefreshTemplate" width="10" height="12"/>

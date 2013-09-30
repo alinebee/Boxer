@@ -112,7 +112,13 @@
                                                     alignment: self.imageAlignment
                                                       scaling: self.imageScaling];
         
-        imageRect = NSIntegralRect(imageRect);
+        //IMPLEMENTATION NOTE: we used to use NSIntegralRect for this, but that would always
+        //expand the rectangle rather than rounding down where appropriate. That was occasionally
+        //causing images to get stretched if they used NSImageScaleProportionallyDown.
+        imageRect = NSMakeRect(round(imageRect.origin.x),
+                               round(imageRect.origin.y),
+                               round(imageRect.size.width),
+                               round(imageRect.size.height));
         
         [NSGraphicsContext saveGraphicsState];
             [self.image drawInRect: imageRect

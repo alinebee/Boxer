@@ -95,16 +95,33 @@
 
 @end
 
-//Handles the custom appearance and input behaviour of regular program items.
+//A base class for launcher items that registers mouse-hover events.
 @interface BXLauncherItemView : BXCollectionItemView
+{
+    BOOL _mouseInside;
+    BOOL _active;
+    BOOL _enabled;
+}
+//Whether the mouse cursor is currently inside the view.
+@property (assign, nonatomic, getter=isMouseInside) BOOL mouseInside;
+
+//Whether the item is in the process of being clicked on or otherwise triggered.
+@property (assign, nonatomic, getter=isActive) BOOL active;
+
+//Whether the item is able to be activated.
+@property (assign, nonatomic, getter=isEnabled) BOOL enabled;
+@end
+
+//Handles the custom appearance and input behaviour of regular program items.
+@interface BXLauncherRegularItemView : BXLauncherItemView
 @end
 
 //Handles the custom appearance and input behaviour of favorites.
-@interface BXLauncherFavoriteView : BXLauncherItemView
+@interface BXLauncherFavoriteView : BXLauncherRegularItemView
 @end
 
 //Handles the behaviour of launcher heading rows.
-@interface BXLauncherHeadingView : BXCollectionItemView
+@interface BXLauncherHeadingView : BXLauncherItemView
 @end
 
 

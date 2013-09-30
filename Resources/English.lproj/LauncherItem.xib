@@ -12,7 +12,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application"/>
-        <view id="s66-ZJ-EY2" userLabel="Item View" customClass="BXLauncherItemView">
+        <view id="s66-ZJ-EY2" userLabel="Item View" customClass="BXLauncherRegularItemView">
             <rect key="frame" x="0.0" y="0.0" width="640" height="44"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
             <subviews>
@@ -47,12 +47,12 @@
                                 <userDefinedRuntimeAttribute type="string" keyPath="themeKey" value="BXLauncherHelpTextTheme"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
-                                <binding destination="-2" name="displayPatternValue1" keyPath="representedObject.dosPath" id="kjW-Q9-CnI">
+                                <binding destination="-2" name="displayPatternValue2" keyPath="representedObject.arguments" previousBinding="kjW-Q9-CnI" id="JWZ-Xu-1s2">
                                     <dictionary key="options">
                                         <string key="NSDisplayPattern">%{value1}@ %{value2}@</string>
                                     </dictionary>
                                 </binding>
-                                <binding destination="-2" name="displayPatternValue2" keyPath="representedObject.arguments" previousBinding="kjW-Q9-CnI" id="JWZ-Xu-1s2">
+                                <binding destination="-2" name="displayPatternValue1" keyPath="representedObject.dosPath" id="kjW-Q9-CnI">
                                     <dictionary key="options">
                                         <string key="NSDisplayPattern">%{value1}@ %{value2}@</string>
                                     </dictionary>

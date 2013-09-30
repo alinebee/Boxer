@@ -15,6 +15,8 @@
 #import "BXBaseAppController.h"
 #import "BXSessionError.h"
 #import "BXEmulator.h" //For recentPrograms keys
+#import "NSShadow+ADBShadowExtensions.h"
+#import "NSBezierPath+MCAdditions.h"
 
 
 //Display the 3 most recently launched programs.
@@ -871,12 +873,75 @@
     }
 }
 
+- (void) setLaunchable: (BOOL)launchable
+{
+    _launchable = launchable;
+    if ([self.view respondsToSelector: @selector(setEnabled:)])
+    {
+        [(id)self.view setEnabled: launchable];
+    }
+}
+
 @end
 
 @implementation BXLauncherItemView
+@synthesize mouseInside = _mouseInside;
+@synthesize active = _active;
+@synthesize enabled = _enabled;
+
+- (void) awakeFromNib
+{
+    NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect: NSZeroRect
+                                                                options: NSTrackingMouseEnteredAndExited | NSTrackingEnabledDuringMouseDrag | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect
+                                                                  owner: self
+                                                               userInfo: nil];
+    
+    //Set up a tracking rect so that we receive mouseEntered/exited events
+    [self addTrackingArea: trackingArea];
+    [trackingArea release];
+}
+
+- (void) mouseEntered: (NSEvent *)theEvent
+{
+    self.mouseInside = YES;
+}
+
+- (void) mouseExited: (NSEvent *)theEvent
+{
+    self.mouseInside = NO;
+}
+
+- (void) setMouseInside: (BOOL)mouseInside
+{
+    if (_mouseInside != mouseInside)
+    {
+        _mouseInside = mouseInside;
+        [self setNeedsDisplay: YES];
+    }
+}
+
+- (void) setActive: (BOOL)active
+{
+    if (_active != active)
+    {
+        _active = active;
+        [self setNeedsDisplay: YES];
+    }
+}
+
+- (void) setEnabled: (BOOL)enabled
+{
+    if (_enabled != enabled)
+    {
+        _enabled = enabled;
+        [self setNeedsDisplay: YES];
+    }
+}
 
 - (void) mouseDown: (NSEvent *)theEvent
 {
+    self.active = YES;
+    
     //Enter an event loop listening for the mouse-up event.
     //If we don't do this, the collection view will swallow the mouse-up and we'll never see it.
     NSEvent *eventInDrag = [self.window nextEventMatchingMask: NSLeftMouseUpMask];
@@ -888,17 +953,76 @@
     }
 }
 
+- (void) mouseUp: (NSEvent *)theEvent
+{
+    self.active = NO;
+    
+    NSPoint locationInWindow = self.window.mouseLocationOutsideOfEventStream;
+    NSPoint locationInView = [self convertPoint: locationInWindow fromView: nil];
+    if ([self mouse: locationInView inRect: self.bounds])
+        [NSApp sendAction: @selector(launchProgram:) to: self.delegate from: self];
+}
+
 - (BOOL) acceptsFirstMouse: (NSEvent *)theEvent
 {
     return NO;
 }
 
-- (void) mouseUp: (NSEvent *)theEvent
+- (BOOL) acceptsFirstResponder
 {
-    NSPoint locationInWindow = self.window.mouseLocationOutsideOfEventStream;
-    NSPoint locationInView = [self convertPoint: locationInWindow fromView: nil];
-    if ([self mouse: locationInView inRect: self.bounds])
-        [NSApp sendAction: @selector(launchProgram:) to: self.delegate from: self];
+    return self.isEnabled;
+}
+
+@end
+
+@implementation BXLauncherRegularItemView
+
+- (void) drawRect: (NSRect)dirtyRect
+{
+    if (self.isEnabled)
+    {
+        if (self.isActive)
+        {
+            NSColor *fillColor = [[NSColor alternateSelectedControlColor] colorWithAlphaComponent: 0.25];
+            NSColor *borderColor = [[NSColor whiteColor] colorWithAlphaComponent: 0.1];
+            NSShadow *innerShadow = [NSShadow shadowWithBlurRadius: 4.0
+                                                            offset: NSMakeSize(0, -1.0)
+                                                             color: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.15]];
+            
+            NSRect fillRect = NSInsetRect(self.bounds, 0, 1);
+            NSBezierPath *fillPath = [NSBezierPath bezierPathWithRect: fillRect];
+            
+            NSRect topBorderRect = NSMakeRect(self.bounds.origin.x, self.bounds.size.height - 1, self.bounds.size.width, 1);
+            NSRect bottomBorderRect = NSMakeRect(self.bounds.origin.x, 0, self.bounds.size.width, 1);
+            
+            [NSGraphicsContext saveGraphicsState];
+                [fillColor set];
+                [[NSGraphicsContext currentContext] setCompositingOperation: NSCompositePlusDarker];
+                [fillPath fill];
+                [fillPath fillWithInnerShadow: innerShadow];
+            [NSGraphicsContext restoreGraphicsState];
+            
+            [NSGraphicsContext saveGraphicsState];
+                [borderColor set];
+                [NSBezierPath fillRect: topBorderRect];
+                [NSBezierPath fillRect: bottomBorderRect];
+            [NSGraphicsContext restoreGraphicsState];
+        }
+        else if (self.isMouseInside)
+        {
+            NSGradient *gradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.1]
+                                                                 endingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.0]];
+            
+            NSPoint centerPoint = NSMakePoint(NSMidX(self.bounds), NSMidY(self.bounds));
+            [gradient drawFromCenter: centerPoint
+                              radius: self.bounds.size.width * 0.25
+                            toCenter: centerPoint
+                              radius: self.bounds.size.width * 0.5
+                             options: NSGradientDrawsBeforeStartingLocation | NSGradientDrawsAfterEndingLocation];
+            
+            [gradient release];
+        }
+    }
 }
 
 @end

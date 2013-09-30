@@ -392,7 +392,7 @@
     if (!_recentProgramsHeading)
     {
         self.recentProgramsHeading = @{@"icon": [NSImage imageNamed: @"RecentItemsTemplate"],
-                                       @"title": NSLocalizedString(@"Recently launched", @"Heading for recent programs list in launcher panel."),
+                                       @"title": NSLocalizedString(@"Recent", @"Heading for recent programs list in launcher panel."),
                                        @"isHeading": @(YES),
                                        };
     }

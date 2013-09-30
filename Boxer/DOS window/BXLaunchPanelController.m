@@ -712,7 +712,7 @@
     
     //TODO: check if the specified URL can actually be opened in DOS
     //(This requires us to check if we can mount a drive for the URL if it's not already accessible, etc.)
-    return ([item.representedObject objectForKey: @"URL"] != nil);
+    return ([item.representedObject objectForKey: @"URL"] != nil && ![[item.representedObject objectForKey: @"isHeading"] boolValue]);
 }
 
 - (void) revealItemInFinder: (BXLauncherItem *)item
@@ -938,18 +938,42 @@
     }
 }
 
+- (BOOL) acceptsFirstMouse: (NSEvent *)theEvent
+{
+    return NO;
+}
+
+/* Keyboard navigation not yet implemented.
+- (BOOL) acceptsFirstResponder
+{
+    return self.isEnabled;
+}
+*/
+
+@end
+
+@implementation BXLauncherRegularItemView
+
 - (void) mouseDown: (NSEvent *)theEvent
 {
-    self.active = YES;
-    
-    //Enter an event loop listening for the mouse-up event.
-    //If we don't do this, the collection view will swallow the mouse-up and we'll never see it.
-    NSEvent *eventInDrag = [self.window nextEventMatchingMask: NSLeftMouseUpMask];
-    switch (eventInDrag.type)
+    if (self.enabled)
     {
-        case NSLeftMouseUp:
-            [self mouseUp: eventInDrag];
-            return;
+        self.active = YES;
+        
+        //Enter an event loop listening for the mouse-up event.
+        //If we don't do this, the collection view will swallow the mouse-up and we'll never see it.
+        NSEvent *eventInDrag = [self.window nextEventMatchingMask: NSLeftMouseUpMask];
+        switch (eventInDrag.type)
+        {
+            case NSLeftMouseUp:
+                [self mouseUp: eventInDrag];
+                return;
+        }
+    }
+    else
+    {
+        [super mouseDown: theEvent];
+        return;
     }
 }
 
@@ -962,20 +986,6 @@
     if ([self mouse: locationInView inRect: self.bounds])
         [NSApp sendAction: @selector(launchProgram:) to: self.delegate from: self];
 }
-
-- (BOOL) acceptsFirstMouse: (NSEvent *)theEvent
-{
-    return NO;
-}
-
-- (BOOL) acceptsFirstResponder
-{
-    return self.isEnabled;
-}
-
-@end
-
-@implementation BXLauncherRegularItemView
 
 - (void) drawRect: (NSRect)dirtyRect
 {
@@ -1031,6 +1041,7 @@
 @end
 
 @implementation BXLauncherHeadingView
+
 @end
 
 @implementation BXLauncherNavigationHeader

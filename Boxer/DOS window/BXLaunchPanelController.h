@@ -11,11 +11,11 @@
 @class BXLauncherItem;
 @protocol BXLauncherItemDelegate
 
-- (void) launchItem: (BXLauncherItem *)item;
+- (void) openItemInDOS: (BXLauncherItem *)item;
 - (void) revealItemInFinder: (BXLauncherItem *)item;
 - (void) removeItem: (BXLauncherItem *)item;
 
-- (BOOL) canLaunchItem: (BXLauncherItem *)item;
+- (BOOL) canOpenItemInDOS: (BXLauncherItem *)item;
 - (BOOL) canRevealItemInFinder: (BXLauncherItem *)item;
 - (BOOL) canRemoveItem: (BXLauncherItem *)item;
 
@@ -80,19 +80,24 @@
 
 @end
 
-
+@class BXLauncherItemView;
 @interface BXLauncherItem : BXCollectionItem
 {
     id <BXLauncherItemDelegate> _delegate;
     BOOL _launchable;
+    NSMenu *_menu;
 }
 @property (assign, nonatomic) IBOutlet id <BXLauncherItemDelegate> delegate;
 @property (assign, nonatomic, getter=isLaunchable) BOOL launchable;
+@property (retain, nonatomic) IBOutlet NSMenu *menu; //The context menu to display for this item.
 
-- (IBAction) launchProgram: (id)sender;
+- (IBAction) openItemInDOS: (id)sender;
 - (IBAction) revealItemInFinder: (id)sender;
 - (IBAction) removeItem: (id)sender;
 
+//Returns the menu which the specified view should display when right-clicked.
+//Allows the launcher item to customise the menu based on the contents of its represented object.
+- (NSMenu *) menuForView: (BXLauncherItemView *)view;
 @end
 
 //A base class for launcher items that registers mouse-hover events.
@@ -102,6 +107,10 @@
     BOOL _active;
     BOOL _enabled;
 }
+
+//Typecast to indicate the type of delegate this view expects.
+@property (assign, nonatomic) BXLauncherItem *delegate;
+
 //Whether the mouse cursor is currently inside the view.
 @property (assign, nonatomic, getter=isMouseInside) BOOL mouseInside;
 

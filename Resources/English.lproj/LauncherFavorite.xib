@@ -7,6 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BXLauncherItem">
             <connections>
+                <outlet property="menu" destination="4B6-tN-sOE" id="Lkz-09-VUL"/>
                 <outlet property="view" destination="4aV-Or-oyE" id="zz8-S4-X1i"/>
             </connections>
         </customObject>
@@ -47,12 +48,12 @@
                                 <userDefinedRuntimeAttribute type="string" keyPath="themeKey" value="BXLauncherHelpTextTheme"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
-                                <binding destination="-2" name="displayPatternValue1" keyPath="representedObject.dosPath" id="EJG-CK-zBh">
+                                <binding destination="-2" name="displayPatternValue2" keyPath="representedObject.arguments" previousBinding="EJG-CK-zBh" id="7zw-z3-vbZ">
                                     <dictionary key="options">
                                         <string key="NSDisplayPattern">%{value1}@ %{value2}@</string>
                                     </dictionary>
                                 </binding>
-                                <binding destination="-2" name="displayPatternValue2" keyPath="representedObject.arguments" previousBinding="EJG-CK-zBh" id="7zw-z3-vbZ">
+                                <binding destination="-2" name="displayPatternValue1" keyPath="representedObject.dosPath" id="EJG-CK-zBh">
                                     <dictionary key="options">
                                         <string key="NSDisplayPattern">%{value1}@ %{value2}@</string>
                                     </dictionary>
@@ -64,7 +65,6 @@
             </subviews>
             <connections>
                 <outlet property="delegate" destination="-2" id="cdP-Mv-TdP"/>
-                <outlet property="menu" destination="4B6-tN-sOE" id="yjT-SY-KfW"/>
             </connections>
         </view>
         <menu id="4B6-tN-sOE">
@@ -72,7 +72,7 @@
                 <menuItem title="Launch" id="pQy-80-Czj">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="launchProgram:" target="-2" id="9Ll-w1-mFk"/>
+                        <action selector="openItemInDOS:" target="-2" id="I8D-Ou-cyy"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Show in Finder" id="2UC-FJ-HGt">

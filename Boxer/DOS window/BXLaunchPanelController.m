@@ -368,7 +368,7 @@
         for (NSUInteger i=0; i<numItems; i++)
         {
             BXLauncherItem *item = (BXLauncherItem *)[self.launcherList itemAtIndex: i];
-            item.launchable = [self canLaunchItem: item];
+            item.launchable = [self canOpenItemInDOS: item];
         }
     }
 }
@@ -434,6 +434,10 @@
         NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
         title = [programNameFormatter transformedValue: URL.path];
         [programNameFormatter release];
+        
+        //Also append the arguments to the title, if available
+        if (arguments.length > 0)
+            title = [NSString stringWithFormat: @"%@ %@", title, arguments];
     }
     NSMutableDictionary *item = [NSMutableDictionary dictionaryWithDictionary: @{@"title": title,
                                                                                  @"URL": URL,
@@ -642,7 +646,7 @@
 
 #pragma mark - Program actions
 
-- (void) launchItem: (BXLauncherItem *)item
+- (void) openItemInDOS: (BXLauncherItem *)item
 {
     NSDictionary *itemDetails = item.representedObject;
     NSURL *URL = [itemDetails objectForKey: @"URL"];
@@ -704,15 +708,15 @@
     }
 }
 
-- (BOOL) canLaunchItem: (BXLauncherItem *)item
+- (BOOL) canOpenItemInDOS: (BXLauncherItem *)item
 {
     BXSession *session = self.representedObject;
     if (!session.canOpenURLs)
         return NO;
     
-    //TODO: check if the specified URL can actually be opened in DOS
+    //TODO: check if the specified URL really can actually be opened in DOS
     //(This requires us to check if we can mount a drive for the URL if it's not already accessible, etc.)
-    return ([item.representedObject objectForKey: @"URL"] != nil && ![[item.representedObject objectForKey: @"isHeading"] boolValue]);
+    return ([item.representedObject objectForKey: @"URL"] != nil);
 }
 
 - (void) revealItemInFinder: (BXLauncherItem *)item
@@ -819,7 +823,7 @@
 @implementation BXLauncherItem
 @synthesize delegate = _delegate;
 @synthesize launchable = _launchable;
-
+@synthesize menu = _menu;
 
 - (id) copyWithZone: (NSZone *)zone
 {
@@ -832,12 +836,13 @@
 - (void) dealloc
 {
     self.delegate = nil;
+    self.menu = nil;
     [super dealloc];
 }
 
-- (IBAction) launchProgram: (id)sender
+- (IBAction) openItemInDOS: (id)sender
 {
-    [self.delegate launchItem: self];
+    [self.delegate openItemInDOS: self];
 }
 
 - (IBAction) revealItemInFinder: (id)sender
@@ -850,13 +855,22 @@
     [self.delegate removeItem: self];
 }
 
+- (NSMenu *) menuForView: (BXLauncherItemView *)view
+{
+    //Don't show right-click menus
+    if ([self.representedObject objectForKey: @"URL"] == nil)
+        return nil;
+    else
+        return self.menu;
+}
+
 - (BOOL) validateMenuItem: (NSMenuItem *)menuItem
 {
     SEL action = menuItem.action;
     
-    if (action == @selector(launchProgram:))
+    if (action == @selector(openItemInDOS:))
     {
-        return [self.delegate canLaunchItem: self];
+        return [self.delegate canOpenItemInDOS: self];
     }
     else if (action == @selector(revealItemInFinder:))
     {
@@ -901,6 +915,16 @@
     [trackingArea release];
 }
 
+- (void) setDelegate: (BXLauncherItem *)delegate
+{
+    super.delegate = delegate;
+}
+
+- (BXLauncherItem *) delegate
+{
+    return (BXLauncherItem *)super.delegate;
+}
+
 - (void) mouseEntered: (NSEvent *)theEvent
 {
     self.mouseInside = YES;
@@ -941,6 +965,11 @@
 - (BOOL) acceptsFirstMouse: (NSEvent *)theEvent
 {
     return NO;
+}
+
+- (NSMenu *) menuForEvent: (NSEvent *)event
+{
+    return [self.delegate menuForView: self];
 }
 
 /* Keyboard navigation not yet implemented.
@@ -984,7 +1013,7 @@
     NSPoint locationInWindow = self.window.mouseLocationOutsideOfEventStream;
     NSPoint locationInView = [self convertPoint: locationInWindow fromView: nil];
     if ([self mouse: locationInView inRect: self.bounds])
-        [NSApp sendAction: @selector(launchProgram:) to: self.delegate from: self];
+        [NSApp sendAction: @selector(openItemInDOS:) to: self.delegate from: self];
 }
 
 - (void) drawRect: (NSRect)dirtyRect

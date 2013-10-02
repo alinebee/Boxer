@@ -7,6 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BXLauncherItem">
             <connections>
+                <outlet property="menu" destination="Kou-cl-8eb" id="eqH-Ao-oqh"/>
                 <outlet property="view" destination="s66-ZJ-EY2" id="bll-oE-Mlt"/>
             </connections>
         </customObject>
@@ -80,7 +81,6 @@
             </subviews>
             <connections>
                 <outlet property="delegate" destination="-2" id="zej-UT-myI"/>
-                <outlet property="menu" destination="Kou-cl-8eb" id="A4A-O8-Ohi"/>
             </connections>
         </view>
         <menu id="Kou-cl-8eb">
@@ -88,7 +88,7 @@
                 <menuItem title="Launch" id="YDu-vB-8Q5">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="launchProgram:" target="-2" id="23C-hr-jT8"/>
+                        <action selector="openItemInDOS:" target="-2" id="DY7-7I-f7G"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Show in Finder" id="ANv-MZ-D7M">

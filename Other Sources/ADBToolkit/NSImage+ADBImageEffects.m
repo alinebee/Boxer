@@ -195,7 +195,7 @@
                                                      8,
                                                      maskPixelSize.width * 4,
                                                      colorSpace,
-                                                     kCGImageAlphaPremultipliedLast);
+                                                     (CGBitmapInfo)kCGImageAlphaPremultipliedLast);
     CGColorSpaceRelease(colorSpace);
     
     CGRect relativeMaskRect = CGRectMake((imageRect.origin.x - maskRect.origin.x) * pointSize.width,

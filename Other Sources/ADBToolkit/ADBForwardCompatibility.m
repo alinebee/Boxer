@@ -116,3 +116,23 @@ NSString * const NSWindowDidExitFullScreenNotification = @"NSWindowDidExitFullSc
     }
 }
 @end
+
+
+@implementation NSURLProxyCategory
+
++ (void) load
+{
+    Class proxiedClass = [NSURL class];
+    
+    SEL filesystemRepresentation = @selector(fileSystemRepresentation);
+    [self addInstanceMethod: filesystemRepresentation toClass: proxiedClass];
+}
+
+
+- (const char *) fileSystemRepresentation
+{
+    NSURL *url = (NSURL *)self;
+    return url.path.fileSystemRepresentation;
+}
+
+@end

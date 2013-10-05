@@ -25,6 +25,7 @@
  */
 
 #import "NSURL+ADBFilesystemHelpers.h"
+#import "ADBForwardCompatibility.h"
 
 @implementation NSURL (ADBFilePaths)
 
@@ -70,11 +71,6 @@
         
         return [NSString pathWithComponents: relativeComponents];
     }
-}
-
-- (const char *) fileSystemRepresentation
-{
-    return self.path.fileSystemRepresentation;
 }
 
 + (NSURL *) URLFromFileSystemRepresentation: (const char *)representation

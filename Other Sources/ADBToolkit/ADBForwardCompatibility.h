@@ -58,3 +58,11 @@
        resultingItemURL: (out NSURL **)outResultingURL
                   error: (out NSError **)error;
 @end
+
+
+@interface NSURLProxyCategory: ADBFallbackProxyCategory
+
+//Reimplementation for 10.8 and below
+- (const char *) fileSystemRepresentation;
+
+@end

@@ -28,6 +28,7 @@
 //with file URLs and Uniform Type Identifiers.
 
 #import <Foundation/Foundation.h>
+#import "ADBForwardCompatibility.h" //For NSURL -fileSystemRepresentation
 
 @interface NSURL (ADBFilePaths)
 
@@ -45,7 +46,6 @@
 - (NSString *) pathRelativeToURL: (NSURL *)baseURL;
 
 //Convert a URL to/from a local filesystem path representation.
-- (const char *) fileSystemRepresentation;
 + (NSURL *) URLFromFileSystemRepresentation: (const char *)representation;
 
 //Whether this URL has the specified file URL as an ancestor.

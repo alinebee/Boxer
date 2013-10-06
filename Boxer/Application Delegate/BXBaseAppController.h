@@ -16,7 +16,7 @@
 @class BXMIDIDeviceMonitor;
 @class BXKeyboardEventTap;
 
-@interface BXBaseAppController : NSDocumentController <NSApplicationDelegate>
+@interface BXBaseAppController : NSDocumentController <NSApplicationDelegate, NSAlertDelegate>
 {
 	BXSession *_currentSession;
 	NSOperationQueue *_generalQueue;

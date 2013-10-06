@@ -230,6 +230,8 @@
         
         [hotkeyWarning addButtonWithTitle: defaultButtonLabel];
         [hotkeyWarning addButtonWithTitle: cancelLabel].keyEquivalent = @"\e";
+        
+        hotkeyWarning.delegate = self;
         hotkeyWarning.showsHelp = YES;
         hotkeyWarning.helpAnchor = @"spaces-shortcuts";
         
@@ -298,6 +300,8 @@
  
         [hotkeyWarning addButtonWithTitle: defaultButtonLabel];
         [hotkeyWarning addButtonWithTitle: cancelLabel].keyEquivalent = @"\e";
+        
+        hotkeyWarning.delegate = self;
         hotkeyWarning.showsHelp = YES;
         hotkeyWarning.helpAnchor = @"spaces-shortcuts";
         

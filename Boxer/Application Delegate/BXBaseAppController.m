@@ -394,6 +394,20 @@
 #pragma mark -
 #pragma mark Misc UI actions
 
+- (BOOL) alertShowHelp: (NSAlert *)alert
+{
+    NSString *helpAnchor = alert.helpAnchor;
+    if (helpAnchor)
+    {
+        [self showHelpAnchor: helpAnchor];
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
+}
+
 - (void) showHelpAnchor: (NSString *)anchor
 {
 	NSString *bookID = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleHelpBookName"];

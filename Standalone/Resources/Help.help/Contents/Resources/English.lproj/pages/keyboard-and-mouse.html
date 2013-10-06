@@ -89,7 +89,7 @@
 		
 		<section>
 			<a name="function-keys"></a>
-			<h3>Accessing the function keys on a Mac keyboard</h3>
+			<h2>Using the function keys on a Mac keyboard</h2>
 			
 			<p>Mac keyboards adopt the <kbd>F1</kbd>–<kbd>F12</kbd> keys as hotkeys to control volume, screen brightness and other system functions. To send those keys to the game instead, <strong>hold down <kbd>fn</kbd> when you press the function key.</strong></p>
 			
@@ -98,18 +98,38 @@
 		
 		<section>
 			<a name="spaces-shortcuts"></a>
-			<h3>Avoiding OS&#160;X’s own hotkeys</h3>
+			<h2>Preventing OS&#160;X hotkeys from conflicting with game controls</h2>
 			
-			<p>Some OS&#160;X system hotkeys (like the <kbd>Ctrl ⌃</kbd>+<kbd>⇠</kbd>/<kbd>⇢</kbd> shortcuts to switch Spaces) may overlap with the game’s control scheme and get in the way when playing.</p>
+			<p>Some OS&#160;X system hotkeys (like <kbd>Ctrl ⌃</kbd>+<kbd>⇠</kbd>/<kbd>⇢</kbd> to switch Spaces) may overlap with the game’s control scheme and get in the way when playing.</p>
 			
-			<p>To avoid such problems, turn on <strong class="ui-label">“Enable access for assistive devices”</strong> in OS&#160;X’s Universal Access preferences. When this option is enabled, the game will disable any conflicting hotkeys while you’re playing.</p>
+			<p>To avoid such problems, the game will try to disable any conflicting hotkeys while you’re playing. To do this, it needs some extra accessibility permissions:</p>
+
+				<section class="no-border">
+					<a name="hotkey-override-10.9"></a>
+					<h3>To disable conflicting hotkeys on OS&#160;X 10.9 and up:</h3>
+					<ol class="steps">
+						<li>Open the <span class="ui-label">“Security and Privacy”</span> pane of System Preferences.</li>
+						<li>Select the <span class="ui-label">“Privacy”</span> tab and scroll down to the <span class="ui-label">“Accessibility”</span> heading.</li>
+						<li>Click the lock icon to make changes to privacy settings.</li>
+						<li><strong>Click the checkbox next to the game’s name</strong> under <span class="ui-label">“Allow the apps below to control your computer.”</span></li>
+					</ol>
+				</section>
+						
+				<section class="no-border">
+					<a name="hotkey-override-10.8"></a>
+					<h3>To disable conflicting hotkeys on OS&#160;X 10.8 and below:</h3>
+					<ol class="steps">
+						<li>Open the <span class="ui-label">“Accessibility”</span> pane of System Preferences.</li>
+						<li>Turn on <strong class="ui-label">“Enable access for assistive devices”</strong>.</li>
+					</ol>
+				</section>
 		</section>
 		
 		<section>
 			<a name="keyboard-layout"></a>
-			<h3>Can’t find a key?</h3>
+			<h2>Can’t find a key?</h2>
 
-			<p>DOS games were designed for PC keyboards, and sometimes require special keys (such as <kbd>Scroll Lock</kbd> or <kbd>Num Lock</kbd>) that aren’t present on your Mac’s keyboard.</p>
+			<p>DOS games were designed for PC keyboards, and may use special keys (such as <kbd>Scroll Lock</kbd> or <kbd>Num Lock</kbd>) that aren’t present on your Mac’s keyboard.</p>
 		
 			<p>If the game needs you to press a key that’s not on your Mac’s keyboard, you can send it from the <span class="menu">Emulation ▸ Send Key</span> menu instead.</p>
 		</section>

@@ -1237,7 +1237,6 @@
 		9F70277A13D706CC00606B4C /* BXBezelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBezelController.m; sourceTree = "<group>"; };
 		9F70278213D72D8100606B4C /* BXThemedControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedControls.h; sourceTree = "<group>"; };
 		9F70278313D72D8100606B4C /* BXThemedControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedControls.m; sourceTree = "<group>"; };
-		9F70A02212F731A800D144D2 /* SystemEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemEvents.h; sourceTree = "<group>"; };
 		9F70C19B129036C900A3627F /* Boxer.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Boxer.sdef; sourceTree = "<group>"; };
 		9F731AF413630820005E564F /* DDHidLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DDHidLib.framework; sourceTree = "<group>"; };
 		9F731B2C136323D2005E564F /* ADBHIDMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBHIDMonitor.h; sourceTree = "<group>"; };
@@ -1546,6 +1545,7 @@
 		9F98589513EF71F600E66877 /* ADBBinCueImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBBinCueImage.h; sourceTree = "<group>"; };
 		9F98589613EF71F600E66877 /* ADBBinCueImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBBinCueImage.m; sourceTree = "<group>"; };
 		9F98EF5814E80A0900095248 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
+		9F991BDF1800396700E2C0FE /* SystemPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemPreferences.h; sourceTree = "<group>"; };
 		9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryOriginal.png; sourceTree = "<group>"; };
 		9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryHQx.png; sourceTree = "<group>"; };
 		9F9A4C9210F67A1F00E61965 /* GalleryMAME.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryMAME.png; sourceTree = "<group>"; };
@@ -3275,6 +3275,15 @@
 			name = Filesystem;
 			sourceTree = "<group>";
 		};
+		9F991BDE1800395900E2C0FE /* Scripting Bridge */ = {
+			isa = PBXGroup;
+			children = (
+				9F991BDF1800396700E2C0FE /* SystemPreferences.h */,
+				9F80BC81123556AD00EBAB23 /* Finder.h */,
+			);
+			name = "Scripting Bridge";
+			sourceTree = "<group>";
+		};
 		9F9A4C9E10F67CEA00E61965 /* Preferences panel */ = {
 			isa = PBXGroup;
 			children = (
@@ -3628,8 +3637,7 @@
 		9FFF978412327D58009B5EE5 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				9F70A02212F731A800D144D2 /* SystemEvents.h */,
-				9F80BC81123556AD00EBAB23 /* Finder.h */,
+				9F991BDE1800395900E2C0FE /* Scripting Bridge */,
 				9FDD4CB411E619D50035BA9E /* CGSPrivate.h */,
 				9FADFE9511EC932800990E91 /* NSData+HexStrings.h */,
 				9FADFE9611EC932800990E91 /* NSData+HexStrings.m */,

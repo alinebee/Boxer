@@ -10,6 +10,9 @@
 
 @class ADBContinuousThread;
 @protocol BXKeyboardEventTapDelegate;
+
+/// Manages a low-level event tap that captures keyboard events, giving Boxer the ability to respond to them
+/// (and potentially swallow them) before they reach the system and trigger system-wide hotkey functions.
 @interface BXKeyboardEventTap : NSObject
 {
     ADBContinuousThread *_tapThread;
@@ -20,39 +23,51 @@
     __unsafe_unretained id <BXKeyboardEventTapDelegate> _delegate;
 }
 
-//The delegate whom we will ask for event-capture decisions.
+/// The delegate whom we will ask for event-capture decisions.
 @property (assign) id <BXKeyboardEventTapDelegate> delegate;
 
-//Whether the event tap should suppress system hotkeys.
-//Toggling this will attach/detach the event tap.
-//Enabling this will have no effect if canTapEvents is NO.
+/// Whether the event tap should capture system hotkeys and media keys.
+/// Toggling this will attach/detach the event tap.
 @property (assign, nonatomic, getter=isEnabled) BOOL enabled;
 
-//Whether our tap is in place and listening for system hotkeys.
+/// Whether our tap is in place and listening for key events.
 @property (readonly, getter=isTapping) BOOL tapping;
 
-//Will be YES if the accessibility API is available
-//(i.e. "Enable access for assistive devices" is turned on),
-//NO otherwise. If NO, then setEnabled will have no effect.
-@property (readonly, nonatomic) BOOL canTapEvents;
+/// Whether our tap is able to capture keyup/keydown events, which require special accessibiity privileges.
+/// In OS X 10.8 and below, this will be YES if the accessibility API is enabled: i.e. "Enable access for assistive devices" is turned on.
+/// In OS X 10.9 and above, this will be YES if Boxer has been given accessibility control in the Security & Privacy preferences pane.
+/// @note Even if this returns NO, the event tap may still be able to attach: in which case it will only catch media key events
+/// and not all keyboard events.
+@property (readonly, nonatomic) BOOL canCaptureKeyEvents;
 
-//Whether the event tap will run on a separate thread or the main thread.
-//A separate thread prevents input lag in other apps when the main thread
-//is busy, but also seems to result in missed key events.
-//Changing this while a tap is in progress will stop and restart the tap.
+/// Whether the event tap should run on a separate thread or the main thread.
+/// A separate thread prevents input lag in other apps when the main thread is busy.
+/// Changing this while a tap is in progress will stop and restart the tap.
 @property (assign, nonatomic) BOOL usesDedicatedThread;
 
 @end
 
 
+/// A protocol for responding to delegate messages sent by a BXKeyboardEventTap instance.
 @protocol BXKeyboardEventTapDelegate <NSObject>
 
-//Delegate methods may be called on a thread other than the main thread.
-
-//Called when a keyup or keydown event is received. 
+/// Called when a BXKeyboardEventTap instance receives a keyup or keydown event,
+/// before the event reaches the default OS X handler for dispatch.
+/// @param tap      The BXKeyboardEventTap instance that received the key event.
+/// @param event    The NSKeyUp/NSKeyDown event received by the tap.
+/// @return YES if the event tap should swallow the without passing it on to the system.
+/// @return NO if the event tap should let the event reach the system unmolested.
+/// @note This may be called on a thread other than the main thread.
 - (BOOL) eventTap: (BXKeyboardEventTap *)tap shouldCaptureKeyEvent: (NSEvent *)event;
 
-//Called when a media key event or other system-defined event is received.
+/// Called when a BXKeyboardEventTap instance receives a system-defined event,
+/// before the event reaches the default OS X handler for dispatch.
+/// @param tap      The BXKeyboardEventTap instance that received the system-defined event.
+/// @param event    The event received by the tap. The event will be of type NX_SYSDEFINED,
+///                 and it is the responsibility of the delegate to parse the event's data.
+/// @return YES if the event tap should swallow the without passing it on to the system.
+/// @return NO if the event tap should let the event reach the system unmolested.
+/// @note This may be called on a thread other than the main thread.
 - (BOOL) eventTap: (BXKeyboardEventTap *)tap shouldCaptureSystemDefinedEvent: (NSEvent *)event;
 
 @end

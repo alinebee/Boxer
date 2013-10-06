@@ -7,6 +7,7 @@
 
 
 #import "BXBaseAppController+BXSupportFiles.h"
+#import "BXBaseAppController+BXHotKeys.h"
 #import "BXAppController+BXGamesFolder.h"
 
 #import "BXAboutController.h"
@@ -21,7 +22,6 @@
 #import "BXImportSession.h"
 #import "BXEmulator.h"
 #import "BXMIDIDeviceMonitor.h"
-#import "BXKeyboardEventTap.h"
 
 #import "NSString+ADBPaths.h"
 
@@ -130,6 +130,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 			[self openImportSessionWithContentsOfURL: [NSURL fileURLWithPath: importPath] display: YES error: nil];
 		}
 	}
+    
+    [self showHotkeyWarningIfUnavailable];
 }
 
 //If no other window was opened during startup, show our startup window.
@@ -515,11 +517,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) showBugReportPage:		(id)sender	{ [self openURLFromKey: @"BugReportURL"]; }
 - (IBAction) showPerianDownloadPage:(id)sender	{ [self openURLFromKey: @"PerianURL"]; }
 - (IBAction) showJoypadDownloadPage:(id)sender	{ [self openURLFromKey: @"JoypadURL"]; }
-- (IBAction) showUniversalAccessPrefsPane: (id)sender
+- (IBAction) showSystemAccessibilityControls: (id)sender
 {
-    NSString *systemLibraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, NO) objectAtIndex: 0];
-    NSString *prefsPanePath = [systemLibraryPath stringByAppendingPathComponent: @"PreferencePanes/UniversalAccessPref.prefPane"];
-    [[NSWorkspace sharedWorkspace] openFile: prefsPanePath];
+    [self showSystemAccessibilityControls];
 }
 
 - (IBAction) sendEmail: (id)sender

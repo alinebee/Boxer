@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="13A524d" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4511" systemVersion="13A584" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" defaultVersion="1060" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4511"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BXPreferencesController">
@@ -11,7 +11,10 @@
                 <outlet property="MT32ROMOptions" destination="289" id="328"/>
                 <outlet property="currentGamesFolderItem" destination="145" id="253"/>
                 <outlet property="filterGallery" destination="71" id="98"/>
+                <outlet property="functionKeyHelp" destination="427" id="lj9-xP-QoW"/>
                 <outlet property="gamesFolderSelector" destination="142" id="231"/>
+                <outlet property="hotkeyCaptureHelp" destination="372" id="ycv-rI-4fH"/>
+                <outlet property="hotkeyCapturePreferencesButton" destination="376" id="Jl4-TD-QPZ"/>
                 <outlet property="missingMT32ROMHelp" destination="287" id="329"/>
                 <outlet property="realMT32Help" destination="330" id="335"/>
                 <outlet property="tabView" destination="174" id="438"/>
@@ -58,7 +61,7 @@
                                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                     <popUpButtonCell key="cell" type="push" title="(No folder specified)" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="145" id="143">
                                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                        <font key="font" metaFont="system"/>
+                                                        <font key="font" metaFont="menu"/>
                                                         <menu key="menu" title="OtherViews" id="144">
                                                             <items>
                                                                 <menuItem title="(No folder specified)" state="on" id="145"/>
@@ -84,12 +87,12 @@
                                                     </buttonCell>
                                                     <connections>
                                                         <action selector="toggleShelfAppearance:" target="-2" id="260"/>
+                                                        <binding destination="-3" name="value" keyPath="delegate.appliesShelfAppearanceToGamesFolder" id="239"/>
                                                         <binding destination="-3" name="enabled" keyPath="delegate.gamesFolderURL" id="437">
                                                             <dictionary key="options">
                                                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                                                             </dictionary>
                                                         </binding>
-                                                        <binding destination="-3" name="value" keyPath="delegate.appliesShelfAppearanceToGamesFolder" id="239"/>
                                                     </connections>
                                                 </button>
                                                 <button id="222">
@@ -128,7 +131,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <popUpButtonCell key="cell" type="push" title="Show welcome panel" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="1" imageScaling="proportionallyDown" inset="2" selectedItem="355" id="352">
                                                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" metaFont="menu"/>
                                                                     <menu key="menu" title="OtherViews" id="353">
                                                                         <items>
                                                                             <menuItem title="Do nothing" id="356"/>
@@ -285,7 +288,7 @@
                             <tabViewItem label="Audio Preferences" identifier="" id="268" userLabel="Audio Preferences">
                                 <view key="view" id="269" customClass="ADBDelegatedView">
                                     <rect key="frame" x="0.0" y="0.0" width="532" height="396"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView id="270" userLabel="View">
                                             <rect key="frame" x="0.0" y="0.0" width="532" height="320"/>
@@ -401,7 +404,7 @@ MT-32 music, as these are not legal to distribute.</string>
                             <tabViewItem label="Keyboard Preferences" identifier="" id="363" userLabel="Keyboard Preferences">
                                 <view key="view" id="364">
                                     <rect key="frame" x="0.0" y="0.0" width="532" height="396"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView id="365">
                                             <rect key="frame" x="0.0" y="0.0" width="532" height="192"/>
@@ -410,25 +413,25 @@ MT-32 music, as these are not legal to distribute.</string>
                                                 <button id="366">
                                                     <rect key="frame" x="96" y="142" width="343" height="18"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                    <buttonCell key="cell" type="check" title="Reserve function keys and arrow keys for games" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="367">
+                                                    <buttonCell key="cell" type="check" title="Capture function keys and arrow keys for games" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="367">
                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                         <font key="font" metaFont="system"/>
                                                     </buttonCell>
                                                     <connections>
-                                                        <binding destination="-3" name="enabled" keyPath="delegate.hotkeySuppressionTap.canTapEvents" id="415"/>
+                                                        <binding destination="-3" name="enabled" keyPath="delegate.canCaptureHotkeys" id="6pQ-14-imv"/>
                                                         <binding destination="62" name="value" keyPath="values.suppressSystemHotkeys" id="403"/>
                                                     </connections>
                                                 </button>
                                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="368">
                                                     <rect key="frame" x="114" y="105" width="303" height="28"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" title="Turn this on if OS X’s hotkeys are interfering with the keyboard controls in your DOS games." id="369">
+                                                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" title="Prevents OS X system hotkeys from interfering with the keyboard controls in your DOS games." id="369">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                     <connections>
-                                                        <binding destination="-3" name="enabled" keyPath="delegate.hotkeySuppressionTap.canTapEvents" id="416"/>
+                                                        <binding destination="-3" name="enabled" keyPath="delegate.canCaptureHotkeys" id="UWR-96-h1O"/>
                                                     </connections>
                                                 </textField>
                                                 <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="370">
@@ -452,32 +455,16 @@ be enabled in the Universal Access preferences.</string>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
-                                                    <connections>
-                                                        <binding destination="-3" name="hidden" keyPath="delegate.hotkeySuppressionTap.canTapEvents" id="385">
-                                                            <dictionary key="options">
-                                                                <integer key="NSNotApplicablePlaceholder" value="1"/>
-                                                                <integer key="NSNoSelectionPlaceholder" value="1"/>
-                                                                <integer key="NSNullPlaceholder" value="1"/>
-                                                            </dictionary>
-                                                        </binding>
-                                                    </connections>
                                                 </textField>
                                                 <button verticalHuggingPriority="750" id="376">
                                                     <rect key="frame" x="111" y="33" width="310" height="32"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                    <buttonCell key="cell" type="push" title="Open Universal Access Preferences" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="377">
+                                                    <buttonCell key="cell" type="push" title="Open System Preferences" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="377">
                                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                         <font key="font" metaFont="system"/>
                                                     </buttonCell>
                                                     <connections>
-                                                        <action selector="showUniversalAccessPrefsPane:" target="-1" id="399"/>
-                                                        <binding destination="-3" name="hidden" keyPath="delegate.hotkeySuppressionTap.canTapEvents" id="390">
-                                                            <dictionary key="options">
-                                                                <integer key="NSNotApplicablePlaceholder" value="1"/>
-                                                                <integer key="NSNoSelectionPlaceholder" value="1"/>
-                                                                <integer key="NSNullPlaceholder" value="1"/>
-                                                            </dictionary>
-                                                        </binding>
+                                                        <action selector="showSystemAccessibilityControls:" target="-1" id="2eI-2V-JBN"/>
                                                     </connections>
                                                 </button>
                                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="427">
@@ -488,16 +475,6 @@ be enabled in the Universal Access preferences.</string>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
-                                                    <connections>
-                                                        <binding destination="-3" name="hidden" keyPath="delegate.hotkeySuppressionTap.canTapEvents" id="432">
-                                                            <dictionary key="options">
-                                                                <integer key="NSNotApplicablePlaceholder" value="1"/>
-                                                                <integer key="NSNoSelectionPlaceholder" value="1"/>
-                                                                <integer key="NSNullPlaceholder" value="1"/>
-                                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                                            </dictionary>
-                                                        </binding>
-                                                    </connections>
                                                 </textField>
                                             </subviews>
                                         </customView>

@@ -76,7 +76,7 @@ enum {
 - (IBAction) showJoypadDownloadPage:(id)sender;	//Open the Joypad website in the default browser.
 - (IBAction) showBugReportPage:		(id)sender;	//Open Boxer's issue reporting page in the default browser. 
 - (IBAction) sendEmail:				(id)sender;	//Open a new email to Boxer's contact email address.
-- (IBAction) showUniversalAccessPrefsPane: (id)sender; //Open the Universal Access pane in OS X System Preferences.
+- (IBAction) showSystemAccessibilityControls: (id)sender; //Open the appropriate pane in OS X System Preferences to grant Boxer accessibility access.
 
 //Reveal the location of the current session in a new Finder window.
 - (IBAction) revealCurrentSession: (id)sender;

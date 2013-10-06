@@ -48,7 +48,8 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 
 - (id) init
 {
-    if ((self = [super init]))
+    self = [super init];
+    if (self)
     {
         self.usesDedicatedThread = NO;
         
@@ -68,12 +69,12 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     //If the API is available, attempt to reestablish a tap if we're
     //enabled and don't already have one (which means it failed when
     //we tried it the last time.)
-    [self willChangeValueForKey: @"canTapEvents"];
-    if (!self.isTapping && self.isEnabled && self.canTapEvents)
+    [self willChangeValueForKey: @"canCaptureKeyEvents"];
+    if (!self.isTapping && self.isEnabled && self.canCaptureKeyEvents)
     {
         [self _startTapping];
     }
-    [self didChangeValueForKey: @"canTapEvents"];
+    [self didChangeValueForKey: @"canCaptureKeyEvents"];
 }
 
 - (void) dealloc
@@ -116,7 +117,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     }
 }
 
-- (BOOL) canTapEvents
+- (BOOL) canCaptureKeyEvents
 {
     return (AXAPIEnabled() || AXIsProcessTrusted());
 }

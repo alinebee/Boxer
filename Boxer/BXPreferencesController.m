@@ -11,7 +11,9 @@
 #import "BXValueTransformers.h"
 #import "BXGamesFolderPanelController.h"
 #import "BXAppController+BXGamesFolder.h"
+#import "BXBaseAppController+BXHotKeys.h"
 #import "BXBaseAppController+BXSupportFiles.h"
+
 #import "BXMT32ROMDropzone.h"
 #import "BXEmulatedMT32.h"
 #import "BXMIDIDeviceMonitor.h"
@@ -21,17 +23,59 @@
 #pragma mark -
 #pragma mark Implementation
 
+//Constants for preferences panel tab indexes
+enum {
+	BXGeneralPreferencesPanelIndex,
+	BXDisplayPreferencesPanelIndex,
+	BXAudioPreferencesPanelIndex
+};
+
+#pragma mark - Private API declarations
+@interface BXPreferencesController ()
+
+/// Called when drag-dropping ROMs onto the MT-32 ROM dropzone or choosing them from the file picker.
+/// Does the work of importing ROMs from the specified file URLs.  Will display an error sheet in the
+/// Preferences window if importing failed.
+- (BOOL) handleROMImportFromURLs: (NSArray *)URLs;
+
+/// Synchronises the MT-32 ROM dropzone to display the currently-installed ROM and to update instructions
+/// whenever is plugged in.
+/// This is called whenever ROMs are imported or a real MT-32 is plugged in, and also whenever Boxer becomes
+/// the active application: in case the user has manually added or removed ROMs in Finder.
+- (void) syncMT32ROMState;
+
+/// Synchonises the filter gallery to highlight the current rendering style.
+/// This is called through KVO whenever the rendering style preference changes.
+- (void) syncFilterControls;
+
+/// Synchronises the visibility and content of the Keyboard hotkey help instructions.
+/// This is called at window creation time, and whenever Boxer becomes the active application
+/// (in case the user has changed OS X's application accessibility controls.
+- (void) syncKeyboardInstructions;
+
+@end
+
+
+#pragma mark - Implementation
+
 @implementation BXPreferencesController
-@synthesize filterGallery = _filterGallery;
+
 @synthesize gamesFolderSelector = _gamesFolderSelector;
 @synthesize currentGamesFolderItem = _currentGamesFolderItem;
+
+@synthesize filterGallery = _filterGallery;
+
 @synthesize MT32ROMDropzone = _MT32ROMDropzone;
 @synthesize missingMT32ROMHelp = _missingMT32ROMHelp;
 @synthesize realMT32Help = _realMT32Help;
 @synthesize MT32ROMOptions = _MT32ROMOptions;
 
-#pragma mark -
-#pragma mark Initialization and deallocation
+@synthesize hotkeyCaptureHelp = _hotkeyCaptureHelp;
+@synthesize hotkeyCapturePreferencesButton = _hotkeyCapturePreferencesButton;
+@synthesize functionKeyHelp = _functionKeyHelp;
+
+
+#pragma mark - Initialization and deallocation
 
 + (BXPreferencesController *) controller
 {
@@ -75,16 +119,23 @@
                           context: nil];
     
     
-    //Rerun the MT-32 ROM syncing each time Boxer regains the application focus,
+    //Resync the MT-32 ROM panel whenever Boxer regains the application focus,
     //to cover the user manually adding them in Finder.
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(syncMT32ROMState)
                                                  name: NSApplicationDidBecomeActiveNotification
                                                object: NSApp];
     
+    //Resync the Keyboard panel also whenever Boxer regains the application focus,
+    //To check if OS X's accessibility controls have changed.
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(syncKeyboardInstructions)
+                                                 name: NSApplicationDidBecomeActiveNotification
+                                               object: NSApp];
+    
     
     //Set up the audio preferences panel as a drag target for file drops.
-    NSView *audioPrefsView = [self.tabView tabViewItemAtIndex: BXAudioPreferencesPanel].view;
+    NSView *audioPrefsView = [self.tabView tabViewItemAtIndex: BXAudioPreferencesPanelIndex].view;
 	[audioPrefsView registerForDraggedTypes: [NSArray arrayWithObject: NSFilenamesPboardType]];
 	
     
@@ -96,8 +147,11 @@
 		[self.tabView selectTabViewItemAtIndex: selectedIndex];
 	}
     
-    //Finally, sync the MT-32 dropzone state.
+    //Update the MT-32 dropzone state.
     [self syncMT32ROMState];
+    
+    //Update the keyboard panel instructions.
+    [self syncKeyboardInstructions];
 }
 
 - (void) dealloc
@@ -112,13 +166,19 @@
     
 	[self.currentGamesFolderItem unbind: @"attributedTitle"];
 	
+    self.gamesFolderSelector = nil;
+    self.currentGamesFolderItem = nil;
+    
     self.missingMT32ROMHelp = nil;
     self.realMT32Help = nil;
     self.MT32ROMOptions = nil;
     self.MT32ROMDropzone = nil;
+    
     self.filterGallery = nil;
-    self.gamesFolderSelector = nil;
-    self.currentGamesFolderItem = nil;
+    
+    self.hotkeyCaptureHelp = nil;
+    self.hotkeyCapturePreferencesButton = nil;
+    self.functionKeyHelp = nil;
     
 	[super dealloc];
 }
@@ -166,8 +226,7 @@
 }
 
 
-#pragma mark -
-#pragma mark Managing MT-32 ROMs
+#pragma mark - Managing MT-32 ROMs
 
 - (void) syncMT32ROMState
 {
@@ -349,12 +408,6 @@
                       }];
 }
 
-//Display help for the Display Preferences panel.
-- (IBAction) showAudioPreferencesHelp: (id)sender
-{
-	[[NSApp delegate] showHelpAnchor: @"mt32-music"];
-}
-
 
 //Customise the menu item titles in the MT-32 shelf's right-click menu,
 //depending on whether ROMs are present yet or not.
@@ -392,8 +445,7 @@
 }
 
 
-#pragma mark -
-#pragma mark Managing filter gallery state
+#pragma mark - Managing filter gallery state
 
 - (IBAction) toggleShelfAppearance: (NSButton *)sender
 {
@@ -447,21 +499,65 @@
 	[self.gamesFolderSelector selectItemAtIndex: 0];
 }
 
-//Display help for the Display Preferences panel.
+
+#pragma mark - Managing hotkey instructions
+
+- (void) syncKeyboardInstructions
+{
+    BOOL canCaptureHotkeys = [[NSApp delegate] canCaptureHotkeys];
+    if (canCaptureHotkeys)
+    {
+        self.functionKeyHelp.hidden = NO;
+        self.hotkeyCaptureHelp.hidden = YES;
+        self.hotkeyCapturePreferencesButton.hidden = YES;
+    }
+    else
+    {
+        self.functionKeyHelp.hidden = YES;
+        self.hotkeyCaptureHelp.hidden = NO;
+        self.hotkeyCapturePreferencesButton.hidden = NO;
+        
+        //Rephrase the hotkey capture help based on what version of OS X we're running on,
+        //as the global accessibility controls changed to per-app controls in 10.9.
+        NSString *accessibilityPrefsName = [BXAppController localizedSystemAccessibilityPreferencesName];
+        NSString *hotkeyButtonLabelFormat = NSLocalizedString(@"Open %1$@ Preferences", @"Title of button in Keyboard Preferences pane to open OS X's accessibility controls. %1$@ is the localized name of the appropriate System Preferences pane.");
+        
+        NSString *helpFormat;
+        if ([BXAppController hasPerAppAccessibilityControls])
+        {
+            helpFormat = NSLocalizedString(@"To enable this, Boxer needs to be given extra control in OS X’s %1$@ preferences.", @"Explanatory message shown in Keyboard Preferences if Boxer is not able to install its hotkey capture event tap on OS X 10.9 and up. %1$@ is the localized name of the Security & Privacy preferences pane.");
+        }
+        else
+        {
+            helpFormat = NSLocalizedString(@"“Enable access for assistive devices” must also\n be enabled in OS X’s %1$@ preferences.", @"Explanatory message shown in Keyboard Preferences if Boxer is not able to install its hotkey capture event tap on OS X 10.8 and below. %1$@ is the localized name of the Accessibility preferences pane.");
+        }
+        
+        self.hotkeyCaptureHelp.stringValue = [NSString stringWithFormat: helpFormat, accessibilityPrefsName];
+        self.hotkeyCapturePreferencesButton.title = [NSString stringWithFormat: hotkeyButtonLabelFormat, accessibilityPrefsName];
+    }
+}
+
+
+#pragma mark - Help
+
 - (IBAction) showDisplayPreferencesHelp: (id)sender
 {
 	[[NSApp delegate] showHelpAnchor: @"display"];
 }
 
 
-//Display help for the Keyboard Preferences panel.
 - (IBAction) showKeyboardPreferencesHelp: (id)sender
 {
 	[[NSApp delegate] showHelpAnchor: @"keyboard"];
 }
 
-#pragma mark -
-#pragma mark Drag-drop events for MT-32 ROM adding
+- (IBAction) showAudioPreferencesHelp: (id)sender
+{
+	[[NSApp delegate] showHelpAnchor: @"mt32-music"];
+}
+
+
+#pragma mark - Drag-drop events for MT-32 ROM dropzone
 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
 {

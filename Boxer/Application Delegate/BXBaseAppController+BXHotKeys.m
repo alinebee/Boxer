@@ -8,6 +8,8 @@
 #import "BXBaseAppController+BXHotKeys.h"
 #import "BXKeyboardEventTap.h"
 #import "BXSession+BXUIControls.h"
+#import "SystemPreferences.h"
+#import "ADBAppKitVersionHelpers.h"
 
 //For various keycode definitions
 #import <IOKit/hidsystem/ev_keymap.h>
@@ -17,6 +19,8 @@
 //http://joshua.nozzi.name/2010/10/catching-media-key-events/
 
 @implementation BXBaseAppController (BXHotKeys)
+
+#pragma mark - Media key handling
 
 + (NSUInteger) _mediaKeyCode: (NSEvent *)theEvent
 {
@@ -133,7 +137,19 @@
     }
 }
 
-- (NSURL *) _accessibilityPreferencesURL
+
+#pragma mark - Hotkey capturing
+
++ (BOOL) hasPerAppAccessibilityControls
+{
+    //IMPLEMENTATION NOTE: a tidier way of doing this would be to check for the existence
+    //of the AXIsProcessTrustedWithOptions() function, which was introduced in 10.9. However,
+    //referencing that function at all would require the 10.9 SDK, which would prevent people
+    //compiling Boxer on older OS X versions.
+    return isRunningOnMavericksOrAbove();
+}
+
++ (NSURL *) _accessibilityPreferencesURL
 {
     NSURL *libraryURL = [[[NSFileManager defaultManager] URLsForDirectory: NSLibraryDirectory inDomains:NSSystemDomainMask] objectAtIndex: 0];
     NSURL *prefsURL = [libraryURL URLByAppendingPathComponent: @"PreferencePanes/UniversalAccessPref.prefPane"];
@@ -141,36 +157,81 @@
     return prefsURL;
 }
 
++ (NSURL *) _securityPreferencesURL
+{
+    NSURL *libraryURL = [[[NSFileManager defaultManager] URLsForDirectory: NSLibraryDirectory inDomains:NSSystemDomainMask] objectAtIndex: 0];
+    NSURL *prefsURL = [libraryURL URLByAppendingPathComponent: @"PreferencePanes/Security.prefPane"];
+    
+    return prefsURL;
+}
+
++ (NSString *) localizedSystemAccessibilityPreferencesName
+{
+    NSURL *prefsURL = [self hasPerAppAccessibilityControls] ? self._securityPreferencesURL : self._accessibilityPreferencesURL;
+    
+    NSBundle *prefs = [NSBundle bundleWithURL: prefsURL];
+    NSString *prefsName = [prefs objectForInfoDictionaryKey: @"CFBundleName"];
+    
+    return prefsName;
+}
+
++ (NSSet *) keyPathsForValuesAffectingCanCaptureHotkeys
+{
+    return [NSSet setWithObject: @"hotkeySuppressionTap.canCaptureKeyEvents"];
+}
+
+- (BOOL) canCaptureHotkeys
+{
+    return self.hotkeySuppressionTap.canCaptureKeyEvents;
+}
+
 - (void) showHotkeyWarningIfUnavailable
+{
+    if ([self.class hasPerAppAccessibilityControls])
+        [self _showPerAppHotkeyWarningIfUnavailable];
+    else
+        [self _showLegacyHotkeyWarningIfUnavailable];
+}
+
+- (void) showSystemAccessibilityControls
+{
+    if ([self.class hasPerAppAccessibilityControls])
+        [self _showPerAppAccessibilityControls];
+    else
+        [self _showLegacyAccessibilityControls];
+}
+
+- (void) _showLegacyHotkeyWarningIfUnavailable
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     BOOL showHotkeyWarning = [defaults boolForKey: @"showHotkeyWarning"];
     BOOL hasSeenHotkeyWarning = [defaults boolForKey: @"hasDismissedHotkeyWarning"];
     
-    if (showHotkeyWarning && !hasSeenHotkeyWarning && !self.hotkeySuppressionTap.canTapEvents)
+    if (showHotkeyWarning && !hasSeenHotkeyWarning && !self.canCaptureHotkeys)
     {
-        NSBundle *accessibilityPrefs = [NSBundle bundleWithURL: self._accessibilityPreferencesURL];
-        NSString *accessibilityPrefsName = [accessibilityPrefs objectForInfoDictionaryKey: @"CFBundleName"];
-        
         NSAlert *hotkeyWarning = [[NSAlert alloc] init];
-        NSString *messageFormat = NSLocalizedString(@"For the best experience, turn on “Enable access for assistive devices” in OS X’s %1$@ preferences.",
-                                                    @"Bold text of alert shown if the user does not have 'Allow access for assistive devices' enabled. %1$@ is the localized name of the Accessibility preferences pane.");
+        NSString *messageFormat = NSLocalizedString(@"%1$@ works best if you turn on “Enable access for assistive devices” in OS X’s %2$@ preferences.",
+                                                    @"Bold text of alert shown if the user does not have 'Allow access for assistive devices' enabled in OS X 10.8 and below. %1$@ is the title of the application; %2$@ is the localized name of the Accessibility preferences pane.");
         
-        NSString *informativeTextFormat = NSLocalizedString(@"This will ensure that OS X hotkeys do not interfere with %@’s controls.",
-                                                      @"Informative text of alert shown if the user does not have 'Allow access for assistive devices' enabled. %1$@ is the name of the application.");
+        NSString *informativeTextFormat = NSLocalizedString(@"This ensures that OS X hotkeys won’t interfere with %1$@’s game controls.",
+                                                            @"Informative text of alert shown if the user does not have 'Allow access for assistive devices' enabled in OS X 10.8 or below. %1$@ is the name of the application.");
         
-        hotkeyWarning.messageText = [NSString stringWithFormat: messageFormat, accessibilityPrefsName];
-        hotkeyWarning.informativeText = [NSString stringWithFormat: informativeTextFormat, [self.class appName]];
+        NSString *appName = [self.class appName];
+        NSString *prefsName = [self.class localizedSystemAccessibilityPreferencesName];
         
-        NSString *defaultButtonFormat = NSLocalizedString(@"Show %@ Preferences", @"Label of default button in alert shown if the user does not have 'Allow access for assistive devices' enabled. %@ is the localized name of the Accessibility preferences pane.");
-        NSString *defaultButtonLabel = [NSString stringWithFormat: defaultButtonFormat, accessibilityPrefsName];
+        hotkeyWarning.messageText = [NSString stringWithFormat: messageFormat, appName, prefsName];
+        hotkeyWarning.informativeText = [NSString stringWithFormat: informativeTextFormat, appName];
+        
+        NSString *defaultButtonFormat = NSLocalizedString(@"Open %@ Preferences", @"Label of default button in alert shown if the user does not have 'Allow access for assistive devices' enabled in OS X 10.8 or below. %@ is the localized name of the Accessibility preferences pane.");
+        NSString *defaultButtonLabel = [NSString stringWithFormat: defaultButtonFormat, prefsName];
         
 		NSString *cancelLabel = NSLocalizedString(@"Cancel",
                                                   @"Cancel the current action and return to what the user was doing");
- 
-        [hotkeyWarning addButtonWithTitle: defaultButtonLabel];
         
+        [hotkeyWarning addButtonWithTitle: defaultButtonLabel];
         [hotkeyWarning addButtonWithTitle: cancelLabel].keyEquivalent = @"\e";
+        hotkeyWarning.showsHelp = YES;
+        hotkeyWarning.helpAnchor = @"spaces-shortcuts";
         
         if (self.currentSession)
         {
@@ -195,7 +256,7 @@
 {
     if (returnCode == NSAlertFirstButtonReturn)
     {
-        [[NSWorkspace sharedWorkspace] openURL: self._accessibilityPreferencesURL];
+        [self _showLegacyAccessibilityControls];
     }
     else
     {
@@ -204,5 +265,100 @@
     }
 }
 
+- (void) _showPerAppHotkeyWarningIfUnavailable
+{
+    //TODO: have some kind of fallback so that if our Applescript attempt to open the appropriate System Preferences pane
+    //will fail (sandboxing, renamed system preferences anchors etc.), we'll use AXIsProcessTrustedWithOptions to present
+    //the system default alert to the user.
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL showHotkeyWarning = [defaults boolForKey: @"showHotkeyWarning"];
+    BOOL hasSeenHotkeyWarning = [defaults boolForKey: @"hasDismissedPerAppHotkeyWarning"];
+    
+    if (showHotkeyWarning && !hasSeenHotkeyWarning && !self.canCaptureHotkeys)
+    {
+        NSAlert *hotkeyWarning = [[NSAlert alloc] init];
+        NSString *messageFormat = NSLocalizedString(@"%1$@ works best if you give it extra control in OS X’s %2$@ preferences.",
+                                                    @"Bold text of alert shown if the application is not yet trusted for accessibility access on 10.9 and above. %1$@ is the name of the application; %2$@ is the localized title of the Security & Privacy preferences pane.");
+        
+        NSString *informativeTextFormat = NSLocalizedString(@"This ensures that OS X hotkeys won’t interfere with %1$@’s game controls.",
+                                                            @"Informative text of alert shown if the application is not yet trusted for accessibility access on 10.9 and above. %1$@ is the name of the application.");
+        
+        NSString *appName = [self.class appName];
+        NSString *prefsName = [self.class localizedSystemAccessibilityPreferencesName];
+        
+        hotkeyWarning.messageText = [NSString stringWithFormat: messageFormat, appName, prefsName];
+        hotkeyWarning.informativeText = [NSString stringWithFormat: informativeTextFormat, appName];
+        
+        NSString *defaultButtonFormat = NSLocalizedString(@"Open %@ Preferences", @"Label of default button in alert shown if the application is not yet trusted for accessibility access on 10.9 and above. %@ is the localized name of the Security & Privacy preferences pane.");
+        NSString *defaultButtonLabel = [NSString stringWithFormat: defaultButtonFormat, prefsName];
+
+		NSString *cancelLabel = NSLocalizedString(@"Cancel",
+                                                  @"Cancel the current action and return to what the user was doing");
+ 
+        [hotkeyWarning addButtonWithTitle: defaultButtonLabel];
+        [hotkeyWarning addButtonWithTitle: cancelLabel].keyEquivalent = @"\e";
+        hotkeyWarning.showsHelp = YES;
+        hotkeyWarning.helpAnchor = @"spaces-shortcuts";
+        
+        if (self.currentSession)
+        {
+            [hotkeyWarning beginSheetModalForWindow: self.currentSession.windowForSheet
+                                      modalDelegate: self
+                                     didEndSelector: @selector(_perAppHotkeyAlertDidEnd:returnCode:contextInfo:)
+                                        contextInfo: NULL];
+        }
+        else
+        {
+            NSInteger returnCode = [hotkeyWarning runModal];
+            [self _perAppHotkeyAlertDidEnd: hotkeyWarning returnCode: returnCode contextInfo: NULL];
+        }
+        
+        [hotkeyWarning release];
+    }
+}
+
+- (void) _perAppHotkeyAlertDidEnd: (NSAlert *)alert
+                       returnCode: (NSInteger)returnCode
+                      contextInfo: (void *)contextInfo
+{
+    if (returnCode == NSAlertFirstButtonReturn)
+    {
+        [self _showPerAppAccessibilityControls];
+    }
+    else
+    {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setBool: YES forKey: @"hasDismissedPerAppHotkeyWarning"];
+    }
+}
+
+- (void) _showLegacyAccessibilityControls
+{
+    [[NSWorkspace sharedWorkspace] openURL: [self.class _accessibilityPreferencesURL]];
+}
+
+- (void) _showPerAppAccessibilityControls
+{
+    //Get a reference we can use to send scripting messages to the System Preferences application.
+    //This will not launch the application or establish a connection to it until we start sending it commands.
+    SystemPreferencesApplication *prefsApp = [SBApplication applicationWithBundleIdentifier: @"com.apple.systempreferences"];
+    
+    //Tell the scripting bridge wrapper not to block this thread while waiting for replies from the other process.
+    //(The commands we'll be sending it don't have return values that we care about.)
+    prefsApp.sendMode = kAENoReply;
+    
+    //Get a reference to the accessibility anchor within the Security & Privacy pane.
+    //Note that even if the pane or the anchor don't exist (e.g. they've been renamed in a later OS X version),
+    //we'll still get objects for them: but any attempts to talk to those objects will silently fail.
+    SystemPreferencesPane *securityPane = [prefsApp.panes objectWithID: @"com.apple.preference.security"];
+    SystemPreferencesAnchor *accessibilityAnchor = [securityPane.anchors objectWithName: @"Privacy_Accessibility"];
+    
+    //Open the System Preferences application and bring its window to the foreground.
+    [prefsApp activate];
+    
+    //Show the accessibility settings, if they exist.
+    [accessibilityAnchor reveal];
+}
 
 @end

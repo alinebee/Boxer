@@ -8,6 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    BXKeyboardEventTapNotTapping,
+    BXKeyboardEventTapTappingSystemEventsOnly,
+    BXKeyboardEventTapTappingAllKeyboardEvents,
+} BXKeyboardEventTapStatus;
+
 @class ADBContinuousThread;
 @protocol BXKeyboardEventTapDelegate;
 
@@ -20,6 +26,8 @@
     CFRunLoopSourceRef _source;
     BOOL _enabled;
     BOOL _usesDedicatedThread;
+    BXKeyboardEventTapStatus _status;
+    
     __unsafe_unretained id <BXKeyboardEventTapDelegate> _delegate;
 }
 
@@ -30,8 +38,8 @@
 /// Toggling this will attach/detach the event tap.
 @property (assign, nonatomic, getter=isEnabled) BOOL enabled;
 
-/// Whether our tap is in place and listening for key events.
-@property (readonly, getter=isTapping) BOOL tapping;
+/// The current status of the event tap. See BXKeyboardEventTapStatus constants.
+@property (readonly) BXKeyboardEventTapStatus status;
 
 /// Whether our tap is able to capture keyup/keydown events, which require special accessibiity privileges.
 /// In OS X 10.8 and below, this will be YES if the accessibility API is enabled: i.e. "Enable access for assistive devices" is turned on.

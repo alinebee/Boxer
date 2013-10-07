@@ -39,7 +39,7 @@
 {   
     //Only respond to media keys if we have an active session, if we're active ourselves,
     //and if we can be sure other applications (like iTunes) won't also respond to them.
-    if (![NSApp isActive] || !self.currentSession || !self.hotkeySuppressionTap.isTapping)
+    if (![NSApp isActive] || !self.currentSession || self.hotkeySuppressionTap.status == BXKeyboardEventTapNotTapping)
         return;
     
     //Decipher information from the event and decide what to do with the key.

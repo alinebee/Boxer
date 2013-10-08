@@ -23,9 +23,11 @@
     NSView *_realMT32Help;
     NSView *_MT32ROMOptions;
     
-    NSView *_functionKeyHelp;
+    NSButton *_hotkeyCaptureToggle;
     NSTextField *_hotkeyCaptureHelp;
-    NSButton *_hotkeyCapturePreferencesButton;
+    NSTextField *_functionKeyHelp;
+    NSTextField *_hotkeyCaptureDisabledHelp;
+    NSButton *_hotkeyCaptureDisabledPreferencesButton;
 }
 
 /// The filter gallery view from which the user can choose the active rendering style.
@@ -50,15 +52,21 @@
 /// The preferences for MT-32 emulation. Only shown when ROMs are installed.
 @property (retain, nonatomic) IBOutlet NSView *MT32ROMOptions;
 
-/// Additional instructions shown on Keyboard panel for activating function keys with the Fn modifier.
-/// This is hidden if Boxer is not allowed to activate its hotkey capture event tap, to leave room for more urgent instructions.
-@property (retain, nonatomic) IBOutlet NSView *functionKeyHelp;
+/// The checkbox for enabling/disabling hotkey capture on the Keyboard panel.
+@property (retain, nonatomic) IBOutlet NSButton *hotkeyCaptureToggle;
 
-/// The help message shown in the Keyboard panel when Boxer is not allowed to activate its hotkey capture event tap.
+/// The explanation shown beneath the hotkey capture toggle on the Keyboard panel.
 @property (retain, nonatomic) IBOutlet NSTextField *hotkeyCaptureHelp;
 
+/// Additional instructions shown on Keyboard panel for activating function keys with the Fn modifier.
+/// This is hidden if Boxer is not allowed to activate its hotkey capture event tap, to leave room for more urgent instructions.
+@property (retain, nonatomic) IBOutlet NSTextField *functionKeyHelp;
+
+/// The help message shown in the Keyboard panel when Boxer is not allowed to activate its hotkey capture event tap.
+@property (retain, nonatomic) IBOutlet NSTextField *hotkeyCaptureDisabledHelp;
+
 /// The button to open the System Preferences shown in the Keyboard panel when Boxer is not allowed to activate its hotkey capture event tap.
-@property (retain, nonatomic) IBOutlet NSButton *hotkeyCapturePreferencesButton;
+@property (retain, nonatomic) IBOutlet NSButton *hotkeyCaptureDisabledPreferencesButton;
 
 
 /// Provides a singleton instance of the window controller which stays retained for the lifetime

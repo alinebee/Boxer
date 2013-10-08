@@ -70,9 +70,11 @@ enum {
 @synthesize realMT32Help = _realMT32Help;
 @synthesize MT32ROMOptions = _MT32ROMOptions;
 
+@synthesize hotkeyCaptureToggle = _hotkeyCaptureToggle;
 @synthesize hotkeyCaptureHelp = _hotkeyCaptureHelp;
-@synthesize hotkeyCapturePreferencesButton = _hotkeyCapturePreferencesButton;
 @synthesize functionKeyHelp = _functionKeyHelp;
+@synthesize hotkeyCaptureDisabledHelp = _hotkeyCaptureDisabledHelp;
+@synthesize hotkeyCaptureDisabledPreferencesButton = _hotkeyCaptureDisabledPreferencesButton;
 
 
 #pragma mark - Initialization and deallocation
@@ -176,9 +178,11 @@ enum {
     
     self.filterGallery = nil;
     
+    self.hotkeyCaptureToggle = nil;
     self.hotkeyCaptureHelp = nil;
-    self.hotkeyCapturePreferencesButton = nil;
     self.functionKeyHelp = nil;
+    self.hotkeyCaptureDisabledHelp = nil;
+    self.hotkeyCaptureDisabledPreferencesButton = nil;
     
 	[super dealloc];
 }
@@ -507,15 +511,21 @@ enum {
     BOOL canCaptureHotkeys = [[NSApp delegate] canCaptureHotkeys];
     if (canCaptureHotkeys)
     {
+        self.hotkeyCaptureToggle.enabled = YES;
+        self.hotkeyCaptureHelp.textColor = [NSColor controlTextColor];
+        
         self.functionKeyHelp.hidden = NO;
-        self.hotkeyCaptureHelp.hidden = YES;
-        self.hotkeyCapturePreferencesButton.hidden = YES;
+        self.hotkeyCaptureDisabledHelp.hidden = YES;
+        self.hotkeyCaptureDisabledPreferencesButton.hidden = YES;
     }
     else
     {
+        self.hotkeyCaptureToggle.enabled = NO;
+        self.hotkeyCaptureHelp.textColor = [NSColor disabledControlTextColor];
+        
         self.functionKeyHelp.hidden = YES;
-        self.hotkeyCaptureHelp.hidden = NO;
-        self.hotkeyCapturePreferencesButton.hidden = NO;
+        self.hotkeyCaptureDisabledHelp.hidden = NO;
+        self.hotkeyCaptureDisabledPreferencesButton.hidden = NO;
         
         //Rephrase the hotkey capture help based on what version of OS X we're running on,
         //as the global accessibility controls changed to per-app controls in 10.9.
@@ -532,8 +542,8 @@ enum {
             helpFormat = NSLocalizedString(@"“Enable access for assistive devices” must also\n be enabled in OS X’s %1$@ preferences.", @"Explanatory message shown in Keyboard Preferences if Boxer is not able to install its hotkey capture event tap on OS X 10.8 and below. %1$@ is the localized name of the Accessibility preferences pane.");
         }
         
-        self.hotkeyCaptureHelp.stringValue = [NSString stringWithFormat: helpFormat, accessibilityPrefsName];
-        self.hotkeyCapturePreferencesButton.title = [NSString stringWithFormat: hotkeyButtonLabelFormat, accessibilityPrefsName];
+        self.hotkeyCaptureDisabledHelp.stringValue = [NSString stringWithFormat: helpFormat, accessibilityPrefsName];
+        self.hotkeyCaptureDisabledPreferencesButton.title = [NSString stringWithFormat: hotkeyButtonLabelFormat, accessibilityPrefsName];
     }
 }
 

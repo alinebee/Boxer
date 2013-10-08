@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4511" systemVersion="13A584" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4511" systemVersion="13A598" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" defaultVersion="1060" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4511"/>
@@ -13,8 +13,10 @@
                 <outlet property="filterGallery" destination="71" id="98"/>
                 <outlet property="functionKeyHelp" destination="427" id="lj9-xP-QoW"/>
                 <outlet property="gamesFolderSelector" destination="142" id="231"/>
-                <outlet property="hotkeyCaptureHelp" destination="372" id="ycv-rI-4fH"/>
-                <outlet property="hotkeyCapturePreferencesButton" destination="376" id="Jl4-TD-QPZ"/>
+                <outlet property="hotkeyCaptureDisabledHelp" destination="372" id="SHp-Pu-0Ge"/>
+                <outlet property="hotkeyCaptureDisabledPreferencesButton" destination="376" id="Tne-7d-w7F"/>
+                <outlet property="hotkeyCaptureHelp" destination="368" id="Haj-8K-x1W"/>
+                <outlet property="hotkeyCaptureToggle" destination="366" id="Xvg-Sk-grj"/>
                 <outlet property="missingMT32ROMHelp" destination="287" id="329"/>
                 <outlet property="realMT32Help" destination="330" id="335"/>
                 <outlet property="tabView" destination="174" id="438"/>
@@ -418,7 +420,6 @@ MT-32 music, as these are not legal to distribute.</string>
                                                         <font key="font" metaFont="system"/>
                                                     </buttonCell>
                                                     <connections>
-                                                        <binding destination="-3" name="enabled" keyPath="delegate.canCaptureHotkeys" id="6pQ-14-imv"/>
                                                         <binding destination="62" name="value" keyPath="values.suppressSystemHotkeys" id="403"/>
                                                     </connections>
                                                 </button>
@@ -428,11 +429,8 @@ MT-32 music, as these are not legal to distribute.</string>
                                                     <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" title="Prevents OS X system hotkeys from interfering with the keyboard controls in your DOS games." id="369">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
-                                                    <connections>
-                                                        <binding destination="-3" name="enabled" keyPath="delegate.canCaptureHotkeys" id="UWR-96-h1O"/>
-                                                    </connections>
                                                 </textField>
                                                 <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="370">
                                                     <rect key="frame" x="489" y="17" width="25" height="25"/>

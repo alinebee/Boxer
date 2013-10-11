@@ -22,6 +22,8 @@ enum {
 @interface BXAppController : BXBaseAppController
 {
 	NSURL *_gamesFolderURL;
+    void (^_closeAllDocumentsHandler)(BOOL);
+    void (^_postTerminationHandler)();
 }
 
 //Returns YES if there are other Boxer processes currently running, no otherwise.

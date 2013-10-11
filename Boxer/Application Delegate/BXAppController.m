@@ -9,6 +9,7 @@
 #import "BXBaseAppController+BXSupportFiles.h"
 #import "BXBaseAppController+BXHotKeys.h"
 #import "BXAppController+BXGamesFolder.h"
+#import "NSObject+ADBPerformExtensions.h"
 
 #import "BXAboutController.h"
 #import "BXInspectorController.h"
@@ -32,18 +33,23 @@
 
 NSString * const BXNewSessionParam = @"--openNewSession";
 NSString * const BXShowImportPanelParam = @"--showImportPanel";
+NSString * const BXShowPreferencesParam = @"--showPreferences";
 NSString * const BXImportURLParam = @"--importURL ";
 NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 @interface BXAppController ()
 
+@property (copy, nonatomic) void(^closeAllDocumentsHandler)(BOOL didCloseAll);
+@property (copy, nonatomic) void(^postTerminationHandler)();
+
 //Because we can only run one emulation session at a time, we need to launch a second
 //Boxer process for opening additional/subsequent documents
-- (void) _launchProcessWithDocumentAtURL: (NSURL *)URL;
-- (void) _launchProcessWithImportSessionAtURL: (NSURL *)URL;
-- (void) _launchProcessWithUntitledDocument;
-- (void) _launchProcessWithImportPanel;
+- (void) _launchProcessWithDocumentAtURL: (NSURL *)URL extraArguments: (NSArray *)extraArgs;
+- (void) _launchProcessWithImportSessionAtURL: (NSURL *)URL extraArguments: (NSArray *)extraArgs;
+- (void) _launchProcessWithUntitledDocumentAndExtraArguments: (NSArray *)extraArgs;
+- (void) _launchProcessWithImportPanelAndExtraArguments: (NSArray *)extraArgs;
+- (void) _launchProcessWithExtraArguments: (NSArray *)extraArgs;
 
 //Whether it's safe to open a new session
 - (BOOL) _canOpenDocumentOfClass: (Class)documentClass;
@@ -56,6 +62,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 @implementation BXAppController
+@synthesize postTerminationHandler = _postTerminationHandler;
+@synthesize closeAllDocumentsHandler = _closeAllDocumentsHandler;
 
 + (BOOL) otherBoxersActive
 {
@@ -72,7 +80,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) dealloc
 {
-    [_gamesFolderURL release], _gamesFolderURL = nil;
+    self.gamesFolderURL = nil;
+    self.postTerminationHandler = nil;
+    self.closeAllDocumentsHandler = nil;
 	
 	[super dealloc];
 }
@@ -120,6 +130,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		
 		else if ([argument isEqualToString: BXShowImportPanelParam])
 			[self openImportSessionAndDisplay: YES error: nil];
+        
+		else if ([argument isEqualToString: BXShowPreferencesParam])
+			[self orderFrontPreferencesPanel: self];
 		
 		else if ([argument isEqualToString: BXActivateOnLaunchParam]) 
 			[NSApp activateIgnoringOtherApps: YES];
@@ -185,8 +198,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 }
 
 
-#pragma mark -
-#pragma mark Document handling
+#pragma mark - Document handling
 
 //Customise the open panel
 - (NSInteger) runModalOpenPanel: (NSOpenPanel *)openPanel
@@ -256,7 +268,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     else
     {
 		//Launch another instance of Boxer to open the new session
-		[self _launchProcessWithUntitledDocument];
+		[self _launchProcessWithUntitledDocumentAndExtraArguments: nil];
 		NSError *cancelError = [self _cancelOpening];
         if (outError) *outError = cancelError;
 		return nil;
@@ -277,7 +289,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     else
     {
 		//Launch another instance of Boxer to open the specified document
-		[self _launchProcessWithDocumentAtURL: absoluteURL];
+		[self _launchProcessWithDocumentAtURL: absoluteURL extraArguments: nil];
 		NSError *cancelError = [self _cancelOpening];
         if (outError) *outError = cancelError;
 		return nil;
@@ -300,7 +312,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     else
     {
 		//Launch another instance of Boxer to open the specified document
-		[self _launchProcessWithDocumentAtURL: absoluteDocumentContentsURL];
+		[self _launchProcessWithDocumentAtURL: absoluteDocumentContentsURL extraArguments: nil];
 		
         NSError *cancelError = [self _cancelOpening];
         if (outError)
@@ -331,7 +343,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     //If it's too late for us to open an import session, launch a new Boxer process to do it
 	else
     {
-		[self _launchProcessWithImportPanel];
+		[self _launchProcessWithImportPanelAndExtraArguments: nil];
         
 		NSError *cancelError = [self _cancelOpening];
         if (outError)
@@ -365,7 +377,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
     else
     {
-		[self _launchProcessWithImportSessionAtURL: url];
+		[self _launchProcessWithImportSessionAtURL: url extraArguments: nil];
         
 		NSError *cancelError = [self _cancelOpening];
         if (outError)
@@ -402,75 +414,125 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 }
 
 
-#pragma mark -
-#pragma mark Spawning document processes
+#pragma mark - Spawning document processes
 
 - (IBAction) relaunch: (id)sender
 {
     [self _relaunchWithPreviousState];
-    
 }
 
 - (void) _relaunchWithPreviousState
 {
-    //TODO: reopen any previously open utility windows
-    
-    if (self.currentSession.isGameImport)
-    {
-        if (self.currentSession.fileURL)
-            [self _launchProcessWithImportSessionAtURL: self.currentSession.fileURL];
+    BXSession *currentSession = self.currentSession;
+    BOOL prefsVisible = [BXPreferencesController controller].window.isVisible;
+
+    self.postTerminationHandler = ^{
+        NSArray *extraArgs = nil;
+        if (prefsVisible)
+            extraArgs = @[ BXShowPreferencesParam ];
+        
+        if (currentSession.isGameImport)
+        {
+            if (currentSession.fileURL)
+                [self _launchProcessWithImportSessionAtURL: currentSession.fileURL extraArguments: extraArgs];
+            else
+                [self _launchProcessWithImportPanelAndExtraArguments: extraArgs];
+        }
+        else if (currentSession)
+        {
+            if (currentSession.fileURL)
+                [self _launchProcessWithDocumentAtURL: currentSession.fileURL extraArguments: extraArgs];
+            else
+                [self _launchProcessWithUntitledDocumentAndExtraArguments: extraArgs];
+        }
         else
-            [self _launchProcessWithImportPanel];
-    }
-    else if (self.currentSession)
-    {
-        if (self.currentSession.fileURL)
-            [self _launchProcessWithDocumentAtURL: self.currentSession.fileURL];
-        else
-            [self _launchProcessWithUntitledDocument];
-    }
-    else
-    {
-        [self _launchProcessWithDefaultStartupBehaviour];
-    }
+        {
+            [self _launchProcessWithExtraArguments: extraArgs];
+        }
+    };
     
+    //IMPLEMENTATION NOTE: terminate: will first ask us to close all documents,
+    //and it will cancel termination if the user cancels from closing any document.
+    //- If the user allows all documents to be closed, we'll call our post-termination handler
+    //  in applicationWillTerminate: below.
+    //- If the user cancels from closing all documents, then we clear the post-termination handler
+    //  so that it won't be accidentally used if the user later tries to quit normally.
+    //  This is done in documentController:didCloseAll:contextInfo: below.
     [NSApp terminate: self];
 }
 
-- (void) _launchProcessWithDocumentAtURL: (NSURL *)URL
+- (void) applicationWillTerminate: (NSNotification *)notification
+{
+    [super applicationWillTerminate: notification];
+    
+    if (self.postTerminationHandler)
+    {
+        self.postTerminationHandler();
+        self.postTerminationHandler = nil;
+    }
+}
+
+- (void) closeAllDocumentsWithDelegate: (id)delegate
+                   didCloseAllSelector: (SEL)didCloseAllSelector
+                           contextInfo: (void *)contextInfo
+{
+    id __block blockSelf = self;
+    self.closeAllDocumentsHandler = ^(BOOL didCloseAll) {
+        [delegate performSelector: didCloseAllSelector withValues: &blockSelf, &didCloseAll, &contextInfo];
+    };
+    
+    [super closeAllDocumentsWithDelegate: self
+                     didCloseAllSelector: @selector(documentController:didCloseAll:contextInfo:)
+                             contextInfo: contextInfo];
+}
+
+- (void) documentController: (NSDocumentController *)docController
+                didCloseAll: (BOOL)didCloseAll
+                contextInfo: (void *)contextInfo
+{
+    //If the user refused to close one or more documents, clear any post-termination callback we had lined up.
+    if (!didCloseAll)
+        self.postTerminationHandler = nil;
+    
+    self.closeAllDocumentsHandler(didCloseAll);
+    self.closeAllDocumentsHandler = nil;
+}
+
+
+- (void) _launchProcessWithDocumentAtURL: (NSURL *)URL extraArguments: (NSArray *)extraArgs
 {
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
 	NSArray *params				= @[ URL.path, BXActivateOnLaunchParam ];
-	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];
+	[NSTask launchedTaskWithLaunchPath: executablePath arguments: [params arrayByAddingObjectsFromArray: extraArgs]];
 }
 
-- (void) _launchProcessWithUntitledDocument
+- (void) _launchProcessWithUntitledDocumentAndExtraArguments: (NSArray *)extraArgs
 {
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
 	NSArray *params				= @[ BXNewSessionParam, BXActivateOnLaunchParam ];
-	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
+	[NSTask launchedTaskWithLaunchPath: executablePath arguments: [params arrayByAddingObjectsFromArray: extraArgs]];
 }
 
-- (void) _launchProcessWithImportPanel
+- (void) _launchProcessWithImportPanelAndExtraArguments: (NSArray *)extraArgs
 {
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
 	NSArray *params				= @[ BXShowImportPanelParam, BXActivateOnLaunchParam ];
-	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
+	[NSTask launchedTaskWithLaunchPath: executablePath arguments: [params arrayByAddingObjectsFromArray: extraArgs]];
 }
 
-- (void) _launchProcessWithImportSessionAtURL: (NSURL *)URL
+- (void) _launchProcessWithImportSessionAtURL: (NSURL *)URL extraArguments: (NSArray *)extraArgs
 {
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
 	NSString *URLParam			= [BXImportURLParam stringByAppendingString: URL.path];
-	NSArray *params				= @[ BXActivateOnLaunchParam, URLParam ];
-	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
+	NSArray *params				= @[ URLParam, BXActivateOnLaunchParam ];
+	[NSTask launchedTaskWithLaunchPath: executablePath arguments: [params arrayByAddingObjectsFromArray: extraArgs]];
 }
 
-- (void) _launchProcessWithDefaultStartupBehaviour
+- (void) _launchProcessWithExtraArguments: (NSArray *)extraArgs
 {
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
 	NSArray *params				= @[ BXActivateOnLaunchParam ];
-	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];
+	[NSTask launchedTaskWithLaunchPath: executablePath arguments: [params arrayByAddingObjectsFromArray: extraArgs]];
 }
 
 - (NSError *) _cancelOpening

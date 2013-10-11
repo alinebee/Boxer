@@ -522,7 +522,7 @@ enum {
         self.hotkeyCapturePermissionsButton.hidden = NO;
         
         self.hotkeyCaptureExtraHelp.font = [NSFont boldSystemFontOfSize: extraHelpSize];
-        self.hotkeyCaptureExtraHelp.stringValue = NSLocalizedString(@"Boxer’s new accessibility permissions will take effect next time Boxer is launched.", @"Help message shown on Keyboard Preferences panel when Boxer has been given extra accessibility permission but must restart for it to take effect.");
+        self.hotkeyCaptureExtraHelp.stringValue = NSLocalizedString(@"Your changes to accessibility permissions will take effect next time Boxer is launched.", @"Help message shown on Keyboard Preferences panel when Boxer has been given extra accessibility permission but must restart for it to take effect.");
         
         self.hotkeyCapturePermissionsButton.title = NSLocalizedString(@"Relaunch Boxer Now", @"Label of button displayed in Keyboard Preferences when Boxer needs to restart in order for extra accessibility permissions to take effect.");
         self.hotkeyCapturePermissionsButton.target = [NSApp delegate];
@@ -536,7 +536,6 @@ enum {
         
         self.hotkeyCaptureExtraHelp.font = [NSFont systemFontOfSize: extraHelpSize];
         self.hotkeyCaptureExtraHelp.stringValue = NSLocalizedString(@"(If an F1, F2 etc. key still behaves as an OS X hotkey, then hold down Fn while pressing the key.)", @"Additional help displayed below hotkey capture toggle on Keyboard Preferences pane.");
-        
     }
     else
     {

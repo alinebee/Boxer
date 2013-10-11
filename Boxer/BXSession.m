@@ -1806,7 +1806,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 - (void) _reportEmulatorException: (NSException *)exception
 {
     //Ensure it gets logged to the console, if nothing else
-    NSLog(@"Uncaught emulation exception: %@ (%@)", exception.debugDescription, exception.callStackSymbols);
+    [NSApp reportException: exception];
+    //NSLog(@"Uncaught emulation exception: %@ (%@)", exception.debugDescription, exception.callStackSymbols);
     
     NSString *errorMessage;
     NSString *currentProcessName = self.processDisplayName;

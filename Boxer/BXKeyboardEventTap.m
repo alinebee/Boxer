@@ -19,7 +19,8 @@
 @property (retain) ADBContinuousThread *tapThread;
 
 //Overridden to be read-write.
-@property (assign, getter=isTapping) BXKeyboardEventTapStatus status;
+@property (readwrite, getter=isTapping) BXKeyboardEventTapStatus status;
+@property (readwrite) BOOL restartNeeded;
 
 ///Our CGEventTap callback. Receives the BXKeyboardEventTap instance as the userInfo parameter, and passes handling directly on to it.
 static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *userInfo);
@@ -52,6 +53,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 @synthesize tapThread = _tapThread;
 @synthesize delegate = _delegate;
 @synthesize status = _status;
+@synthesize restartNeeded = _restartNeeded;
 
 - (id) init
 {
@@ -204,14 +206,18 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
                 case BXKeyboardEventTapTappingAllKeyboardEvents:
                     NSLog(@"Event tap created and tapping all keyboard events.");
                     self.status = reportedStatus;
+                    self.restartNeeded = NO;
                     return YES;
                 case BXKeyboardEventTapTappingSystemEventsOnly:
                     NSLog(@"Event tap created but tapping system events only.");
                     self.status = reportedStatus;
+                    self.restartNeeded = [self canCaptureKeyEvents];
                     return YES;
                 case BXKeyboardEventTapNotTapping:
                     NSLog(@"Event tap created but could not capture any relevant events: discarding.");
                     [self _removeEventTapFromCurrentThread];
+                    self.status = reportedStatus;
+                    self.restartNeeded = [self canCaptureKeyEvents];
                     return NO;
             }
         }
@@ -219,6 +225,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
         {
             NSLog(@"Event tap could not be created");
             self.status = BXKeyboardEventTapNotTapping;
+            self.restartNeeded = [self canCaptureKeyEvents];
             
             return NO;
         }
@@ -229,16 +236,19 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 {
     @synchronized(self)
     {
-        CFRunLoopRemoveSource(CFRunLoopGetCurrent(), _source, kCFRunLoopCommonModes);
-            
-        CFMachPortInvalidate(_tap);
-        CFRunLoopSourceInvalidate(_source);
-            
-        CFRelease(_source);
-        CFRelease(_tap);
-            
-        _tap = NULL;
-        _source = NULL;
+        if (_source)
+        {
+            CFRunLoopSourceInvalidate(_source);
+            CFRelease(_source);
+            _source = NULL;
+        }
+        
+        if (_tap)
+        {
+            CFMachPortInvalidate(_tap);
+            CFRelease(_tap);
+            _tap = NULL;
+        }
         
         self.status = BXKeyboardEventTapNotTapping;
     }

@@ -24,10 +24,10 @@
     NSView *_MT32ROMOptions;
     
     NSButton *_hotkeyCaptureToggle;
-    NSTextField *_hotkeyCaptureHelp;
-    NSTextField *_functionKeyHelp;
+    NSTextField *_hotkeyCaptureDescription;
+    NSTextField *_hotkeyCaptureExtraHelp;
     NSTextField *_hotkeyCaptureDisabledHelp;
-    NSButton *_hotkeyCaptureDisabledPreferencesButton;
+    NSButton *_hotkeyCapturePermissionsButton;
 }
 
 /// The filter gallery view from which the user can choose the active rendering style.
@@ -56,17 +56,17 @@
 @property (retain, nonatomic) IBOutlet NSButton *hotkeyCaptureToggle;
 
 /// The explanation shown beneath the hotkey capture toggle on the Keyboard panel.
-@property (retain, nonatomic) IBOutlet NSTextField *hotkeyCaptureHelp;
+@property (retain, nonatomic) IBOutlet NSTextField *hotkeyCaptureDescription;
 
-/// Additional instructions shown on Keyboard panel for activating function keys with the Fn modifier.
-/// This is hidden if Boxer is not allowed to activate its hotkey capture event tap, to leave room for more urgent instructions.
-@property (retain, nonatomic) IBOutlet NSTextField *functionKeyHelp;
+/// Additional instructions shown on Keyboard panel. If the hotkey capture is available,
+/// this shows instructions for activating function keys with the Fn modifier;
+/// if the hotkey capture is unavailable, this shows instructions on giving Boxer
+/// permission to capture hotkeys.
+@property (retain, nonatomic) IBOutlet NSTextField *hotkeyCaptureExtraHelp;
 
-/// The help message shown in the Keyboard panel when Boxer is not allowed to activate its hotkey capture event tap.
-@property (retain, nonatomic) IBOutlet NSTextField *hotkeyCaptureDisabledHelp;
-
-/// The button to open the System Preferences shown in the Keyboard panel when Boxer is not allowed to activate its hotkey capture event tap.
-@property (retain, nonatomic) IBOutlet NSButton *hotkeyCaptureDisabledPreferencesButton;
+/// The button to open the Accessibility Preferences, shown in the Keyboard panel when Boxer
+/// is not allowed to activate its hotkey capture event tap.
+@property (retain, nonatomic) IBOutlet NSButton *hotkeyCapturePermissionsButton;
 
 
 /// Provides a singleton instance of the window controller which stays retained for the lifetime

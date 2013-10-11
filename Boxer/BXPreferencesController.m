@@ -71,10 +71,9 @@ enum {
 @synthesize MT32ROMOptions = _MT32ROMOptions;
 
 @synthesize hotkeyCaptureToggle = _hotkeyCaptureToggle;
-@synthesize hotkeyCaptureHelp = _hotkeyCaptureHelp;
-@synthesize functionKeyHelp = _functionKeyHelp;
-@synthesize hotkeyCaptureDisabledHelp = _hotkeyCaptureDisabledHelp;
-@synthesize hotkeyCaptureDisabledPreferencesButton = _hotkeyCaptureDisabledPreferencesButton;
+@synthesize hotkeyCaptureDescription = _hotkeyCaptureDescription;
+@synthesize hotkeyCaptureExtraHelp = _hotkeyCaptureExtraHelp;
+@synthesize hotkeyCapturePermissionsButton = _hotkeyCapturePermissionsButton;
 
 
 #pragma mark - Initialization and deallocation
@@ -120,18 +119,20 @@ enum {
                           options: 0
                           context: nil];
     
+    [[NSApp delegate] addObserver: self
+                       forKeyPath: @"canCaptureKeyEvents"
+                          options: 0
+                          context: nil];
+    
+    [[NSApp delegate] addObserver: self
+                       forKeyPath: @"needsRestartForHotkeyCapture"
+                          options: 0
+                          context: nil];
     
     //Resync the MT-32 ROM panel whenever Boxer regains the application focus,
     //to cover the user manually adding them in Finder.
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(syncMT32ROMState)
-                                                 name: NSApplicationDidBecomeActiveNotification
-                                               object: NSApp];
-    
-    //Resync the Keyboard panel also whenever Boxer regains the application focus,
-    //To check if OS X's accessibility controls have changed.
-    [[NSNotificationCenter defaultCenter] addObserver: self
-                                             selector: @selector(syncKeyboardInstructions)
                                                  name: NSApplicationDidBecomeActiveNotification
                                                object: NSApp];
     
@@ -165,6 +166,8 @@ enum {
     [[NSApp delegate] removeObserver: self forKeyPath: @"MIDIDeviceMonitor.discoveredMT32s"];
     [[NSApp delegate] removeObserver: self forKeyPath: @"MT32ControlROMURL"];
     [[NSApp delegate] removeObserver: self forKeyPath: @"MT32PCMROMURL"];
+    [[NSApp delegate] removeObserver: self forKeyPath: @"canCaptureKeyEvents"];
+    [[NSApp delegate] removeObserver: self forKeyPath: @"needsRestartForHotkeyCapture"];
     
 	[self.currentGamesFolderItem unbind: @"attributedTitle"];
 	
@@ -179,10 +182,9 @@ enum {
     self.filterGallery = nil;
     
     self.hotkeyCaptureToggle = nil;
-    self.hotkeyCaptureHelp = nil;
-    self.functionKeyHelp = nil;
-    self.hotkeyCaptureDisabledHelp = nil;
-    self.hotkeyCaptureDisabledPreferencesButton = nil;
+    self.hotkeyCaptureDescription = nil;
+    self.hotkeyCaptureExtraHelp = nil;
+    self.hotkeyCapturePermissionsButton = nil;
     
 	[super dealloc];
 }
@@ -198,6 +200,10 @@ enum {
 	{
 		[self syncFilterControls];
 	}
+    else if ([keyPath isEqualToString: @"canCaptureKeyEvents"] || [keyPath isEqualToString: @"needsRestartForHotkeyCapture"])
+    {
+        [self syncKeyboardInstructions];
+    }
     else if ([keyPath isEqualToString: @"MT32ControlROMURL"] || [keyPath isEqualToString: @"MT32PCMROMURL"] || [keyPath isEqualToString: @"MIDIDeviceMonitor.discoveredMT32s"])
     {
         //Ensure the syncing is done on the main thread: notifications from BXMIDIMonitor
@@ -508,24 +514,38 @@ enum {
 
 - (void) syncKeyboardInstructions
 {
-    BOOL canCaptureHotkeys = [[NSApp delegate] canCaptureHotkeys];
-    if (canCaptureHotkeys)
+    CGFloat extraHelpSize = [NSFont systemFontSizeForControlSize: NSSmallControlSize];
+    if ([[NSApp delegate] needsRestartForHotkeyCapture])
+    {
+        self.hotkeyCaptureToggle.enabled = NO;
+        self.hotkeyCaptureDescription.textColor = [NSColor disabledControlTextColor];
+        self.hotkeyCapturePermissionsButton.hidden = NO;
+        
+        self.hotkeyCaptureExtraHelp.font = [NSFont boldSystemFontOfSize: extraHelpSize];
+        self.hotkeyCaptureExtraHelp.stringValue = NSLocalizedString(@"Boxer’s new accessibility permissions will take effect next time Boxer is launched.", @"Help message shown on Keyboard Preferences panel when Boxer has been given extra accessibility permission but must restart for it to take effect.");
+        
+        self.hotkeyCapturePermissionsButton.title = NSLocalizedString(@"Relaunch Boxer Now", @"Label of button displayed in Keyboard Preferences when Boxer needs to restart in order for extra accessibility permissions to take effect.");
+        self.hotkeyCapturePermissionsButton.target = [NSApp delegate];
+        self.hotkeyCapturePermissionsButton.action = @selector(relaunch:);
+    }
+    else if ([[NSApp delegate] canCaptureHotkeys])
     {
         self.hotkeyCaptureToggle.enabled = YES;
-        self.hotkeyCaptureHelp.textColor = [NSColor controlTextColor];
+        self.hotkeyCaptureDescription.textColor = [NSColor controlTextColor];
+        self.hotkeyCapturePermissionsButton.hidden = YES;
         
-        self.functionKeyHelp.hidden = NO;
-        self.hotkeyCaptureDisabledHelp.hidden = YES;
-        self.hotkeyCaptureDisabledPreferencesButton.hidden = YES;
+        self.hotkeyCaptureExtraHelp.font = [NSFont systemFontOfSize: extraHelpSize];
+        self.hotkeyCaptureExtraHelp.stringValue = NSLocalizedString(@"(If an F1, F2 etc. key still behaves as an OS X hotkey, then hold down Fn while pressing the key.)", @"Additional help displayed below hotkey capture toggle on Keyboard Preferences pane.");
+        
     }
     else
     {
         self.hotkeyCaptureToggle.enabled = NO;
-        self.hotkeyCaptureHelp.textColor = [NSColor disabledControlTextColor];
+        self.hotkeyCaptureDescription.textColor = [NSColor disabledControlTextColor];
         
-        self.functionKeyHelp.hidden = YES;
-        self.hotkeyCaptureDisabledHelp.hidden = NO;
-        self.hotkeyCaptureDisabledPreferencesButton.hidden = NO;
+        self.hotkeyCapturePermissionsButton.hidden = NO;
+        self.hotkeyCapturePermissionsButton.target = [NSApp delegate];
+        self.hotkeyCapturePermissionsButton.action = @selector(showSystemAccessibilityControls:);
         
         //Rephrase the hotkey capture help based on what version of OS X we're running on,
         //as the global accessibility controls changed to per-app controls in 10.9.
@@ -535,15 +555,17 @@ enum {
         NSString *helpFormat;
         if ([BXAppController hasPerAppAccessibilityControls])
         {
-            helpFormat = NSLocalizedString(@"To enable this, Boxer needs to be given extra control in OS X’s %1$@ preferences.", @"Explanatory message shown in Keyboard Preferences if Boxer is not able to install its hotkey capture event tap on OS X 10.9 and up. %1$@ is the localized name of the Security & Privacy preferences pane.");
+            helpFormat = NSLocalizedString(@"This feature requires Boxer to be given accessibility control in %1$@ Preferences.", @"Explanatory message shown in Keyboard Preferences if Boxer is not able to install its hotkey capture event tap on OS X 10.9 and up. %1$@ is the localized name of the Security & Privacy preferences pane.");
         }
         else
         {
             helpFormat = NSLocalizedString(@"“Enable access for assistive devices” must also\n be enabled in OS X’s %1$@ preferences.", @"Explanatory message shown in Keyboard Preferences if Boxer is not able to install its hotkey capture event tap on OS X 10.8 and below. %1$@ is the localized name of the Accessibility preferences pane.");
         }
         
-        self.hotkeyCaptureDisabledHelp.stringValue = [NSString stringWithFormat: helpFormat, accessibilityPrefsName];
-        self.hotkeyCaptureDisabledPreferencesButton.title = [NSString stringWithFormat: hotkeyButtonLabelFormat, accessibilityPrefsName];
+        self.hotkeyCaptureExtraHelp.font = [NSFont boldSystemFontOfSize: extraHelpSize];
+        self.hotkeyCaptureExtraHelp.stringValue = [NSString stringWithFormat: helpFormat, accessibilityPrefsName];
+        
+        self.hotkeyCapturePermissionsButton.title = [NSString stringWithFormat: hotkeyButtonLabelFormat, accessibilityPrefsName];
     }
 }
 

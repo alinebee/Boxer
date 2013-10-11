@@ -185,7 +185,17 @@
     return self.hotkeySuppressionTap.canCaptureKeyEvents;
 }
 
-- (void) showHotkeyWarningIfUnavailable
++ (NSSet *) keyPathsForValuesAffectingNeedsRestartForHotkeyCapture
+{
+    return [NSSet setWithObject: @"hotkeySuppressionTap.restartNeeded"];
+}
+
+- (BOOL) needsRestartForHotkeyCapture
+{
+    return self.hotkeySuppressionTap.restartNeeded;
+}
+
+- (IBAction) showHotkeyWarningIfUnavailable: (id)sender
 {
     if ([self.class hasPerAppAccessibilityControls])
         [self _showPerAppHotkeyWarningIfUnavailable];
@@ -193,7 +203,7 @@
         [self _showLegacyHotkeyWarningIfUnavailable];
 }
 
-- (void) showSystemAccessibilityControls
+- (IBAction) showSystemAccessibilityControls: (id)sender
 {
     if ([self.class hasPerAppAccessibilityControls])
         [self _showPerAppAccessibilityControls];

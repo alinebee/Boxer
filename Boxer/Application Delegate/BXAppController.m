@@ -130,8 +130,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 			[self openImportSessionWithContentsOfURL: [NSURL fileURLWithPath: importPath] display: YES error: nil];
 		}
 	}
-    
-    [self showHotkeyWarningIfUnavailable];
 }
 
 //If no other window was opened during startup, show our startup window.
@@ -251,15 +249,18 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (id) makeUntitledDocumentOfType: (NSString *)typeName error: (NSError **)outError
 {
 	[self hideWelcomePanel: self];
-	if (![self _canOpenDocumentOfClass: [self documentClassForType: typeName]])
+	if ([self _canOpenDocumentOfClass: [self documentClassForType: typeName]])
 	{
+        return [super makeUntitledDocumentOfType: typeName error: outError];
+    }
+    else
+    {
 		//Launch another instance of Boxer to open the new session
 		[self _launchProcessWithUntitledDocument];
 		NSError *cancelError = [self _cancelOpening];
         if (outError) *outError = cancelError;
 		return nil;
 	}
-	else return [super makeUntitledDocumentOfType: typeName error: outError];
 }
 
 - (id) makeDocumentWithContentsOfURL: (NSURL *)absoluteURL
@@ -267,17 +268,20 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 							   error: (NSError **)outError
 {
 	[self hideWelcomePanel: self];
-	if (![self _canOpenDocumentOfClass: [self documentClassForType: typeName]])
+	if ([self _canOpenDocumentOfClass: [self documentClassForType: typeName]])
 	{
+        return [super makeDocumentWithContentsOfURL: absoluteURL
+                                             ofType: typeName
+                                              error: outError];
+    }
+    else
+    {
 		//Launch another instance of Boxer to open the specified document
 		[self _launchProcessWithDocumentAtURL: absoluteURL];
 		NSError *cancelError = [self _cancelOpening];
         if (outError) *outError = cancelError;
 		return nil;
 	}
-	else return [super makeDocumentWithContentsOfURL: absoluteURL
-											  ofType: typeName
-											   error: outError];
 }
 
 - (id) makeDocumentForURL: (NSURL *)absoluteDocumentURL
@@ -286,32 +290,31 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 					error: (NSError **)outError
 {
 	[self hideWelcomePanel: self];
-	if (![self _canOpenDocumentOfClass: [self documentClassForType: typeName]])
+	if ([self _canOpenDocumentOfClass: [self documentClassForType: typeName]])
 	{
+        return [super makeDocumentForURL: absoluteDocumentURL
+                       withContentsOfURL: absoluteDocumentContentsURL
+                                  ofType: typeName
+                                   error: outError];
+    }
+    else
+    {
 		//Launch another instance of Boxer to open the specified document
 		[self _launchProcessWithDocumentAtURL: absoluteDocumentContentsURL];
-		NSError *cancelError = [self _cancelOpening];
-        if (outError) *outError = cancelError;
+		
+        NSError *cancelError = [self _cancelOpening];
+        if (outError)
+            *outError = cancelError;
+        
 		return nil;
 	}
-	else return [super makeDocumentForURL: absoluteDocumentURL
-						withContentsOfURL: absoluteDocumentContentsURL
-								   ofType: typeName
-									error: outError];
 }
 
 - (id) openImportSessionAndDisplay: (BOOL)displayDocument error: (NSError **)outError
 {
 	[self hideWelcomePanel: self];
-	//If it's too late for us to open an import session, launch a new Boxer process to do it
-	if (![self _canOpenDocumentOfClass: [BXImportSession class]])
-	{
-		[self _launchProcessWithImportPanel];
-		NSError *cancelError = [self _cancelOpening];
-        if (outError) *outError = cancelError;
-		return nil;
-	}
-	else
+    
+	if ([self _canOpenDocumentOfClass: [BXImportSession class]])
 	{
 		BXImportSession *importer = [[BXImportSession alloc] initWithType: nil error: outError];
 		if (importer)
@@ -325,6 +328,17 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		}
 		return [importer autorelease];
 	}
+    //If it's too late for us to open an import session, launch a new Boxer process to do it
+	else
+    {
+		[self _launchProcessWithImportPanel];
+        
+		NSError *cancelError = [self _cancelOpening];
+        if (outError)
+            *outError = cancelError;
+		
+        return nil;
+	}
 }
 
 - (id) openImportSessionWithContentsOfURL: (NSURL *)url
@@ -333,14 +347,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	[self hideWelcomePanel: self];
 	//If it's too late for us to open an import session, launch a new Boxer process to do it
-	if (![self _canOpenDocumentOfClass: [BXImportSession class]])
-	{
-		[self _launchProcessWithImportSessionAtURL: url];
-		NSError *cancelError = [self _cancelOpening];
-        if (outError) *outError = cancelError;
-		return nil;
-	}
-	else
+	if ([self _canOpenDocumentOfClass: [BXImportSession class]])
 	{
 		BXImportSession *importer = [[BXImportSession alloc] initWithContentsOfURL: url
                                                                             ofType: nil
@@ -356,11 +363,23 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		}
 		return [importer autorelease];
 	}
+    else
+    {
+		[self _launchProcessWithImportSessionAtURL: url];
+        
+		NSError *cancelError = [self _cancelOpening];
+        if (outError)
+            *outError = cancelError;
+        
+		return nil;
+	}
+	
 }
 
 - (void) noteNewRecentDocument: (NSDocument *)theDocument
 {
 	//Don't add incomplete game imports to the Recent Documents list.
+    //TODO: move this logic off to the session itself, so we don't have to know about its internal state.
 	if ([theDocument respondsToSelector: @selector(importStage)] &&
 		[(id)theDocument importStage] != BXImportSessionFinished)
 	{
@@ -386,24 +405,56 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 #pragma mark -
 #pragma mark Spawning document processes
 
+- (IBAction) relaunch: (id)sender
+{
+    [self _relaunchWithPreviousState];
+    
+}
+
+- (void) _relaunchWithPreviousState
+{
+    //TODO: reopen any previously open utility windows
+    
+    if (self.currentSession.isGameImport)
+    {
+        if (self.currentSession.fileURL)
+            [self _launchProcessWithImportSessionAtURL: self.currentSession.fileURL];
+        else
+            [self _launchProcessWithImportPanel];
+    }
+    else if (self.currentSession)
+    {
+        if (self.currentSession.fileURL)
+            [self _launchProcessWithDocumentAtURL: self.currentSession.fileURL];
+        else
+            [self _launchProcessWithUntitledDocument];
+    }
+    else
+    {
+        [self _launchProcessWithDefaultStartupBehaviour];
+    }
+    
+    [NSApp terminate: self];
+}
+
 - (void) _launchProcessWithDocumentAtURL: (NSURL *)URL
-{	
+{
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
-	NSArray *params				= [NSArray arrayWithObjects: URL.path, BXActivateOnLaunchParam, nil]; 
+	NSArray *params				= @[ URL.path, BXActivateOnLaunchParam ];
 	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];
 }
 
 - (void) _launchProcessWithUntitledDocument
 {
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
-	NSArray *params				= [NSArray arrayWithObjects: BXNewSessionParam, BXActivateOnLaunchParam, nil]; 
+	NSArray *params				= @[ BXNewSessionParam, BXActivateOnLaunchParam ];
 	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
 }
 
 - (void) _launchProcessWithImportPanel
 {
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
-	NSArray *params				= [NSArray arrayWithObjects: BXShowImportPanelParam, BXActivateOnLaunchParam, nil]; 
+	NSArray *params				= @[ BXShowImportPanelParam, BXActivateOnLaunchParam ];
 	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
 }
 
@@ -411,14 +462,22 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
 	NSString *URLParam			= [BXImportURLParam stringByAppendingString: URL.path];
-	NSArray *params				= [NSArray arrayWithObjects: BXActivateOnLaunchParam, URLParam, nil]; 
+	NSArray *params				= @[ BXActivateOnLaunchParam, URLParam ];
 	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
+}
+
+- (void) _launchProcessWithDefaultStartupBehaviour
+{
+	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
+	NSArray *params				= @[ BXActivateOnLaunchParam ];
+	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];
 }
 
 - (NSError *) _cancelOpening
 {
 	//If we don't have a current session going, exit after cancelling
-	if (!self.currentSession) [NSApp terminate: self];
+	if (!self.currentSession)
+        [NSApp terminate: self];
 	
 	//Otherwise, cancel the existing open request without generating an error message,
 	//and we'll leave the current session going
@@ -517,10 +576,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) showBugReportPage:		(id)sender	{ [self openURLFromKey: @"BugReportURL"]; }
 - (IBAction) showPerianDownloadPage:(id)sender	{ [self openURLFromKey: @"PerianURL"]; }
 - (IBAction) showJoypadDownloadPage:(id)sender	{ [self openURLFromKey: @"JoypadURL"]; }
-- (IBAction) showSystemAccessibilityControls: (id)sender
-{
-    [self showSystemAccessibilityControls];
-}
 
 - (IBAction) sendEmail: (id)sender
 {

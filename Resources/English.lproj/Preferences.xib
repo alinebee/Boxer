@@ -11,11 +11,10 @@
                 <outlet property="MT32ROMOptions" destination="289" id="328"/>
                 <outlet property="currentGamesFolderItem" destination="145" id="253"/>
                 <outlet property="filterGallery" destination="71" id="98"/>
-                <outlet property="functionKeyHelp" destination="427" id="lj9-xP-QoW"/>
                 <outlet property="gamesFolderSelector" destination="142" id="231"/>
-                <outlet property="hotkeyCaptureDisabledHelp" destination="372" id="SHp-Pu-0Ge"/>
-                <outlet property="hotkeyCaptureDisabledPreferencesButton" destination="376" id="Tne-7d-w7F"/>
-                <outlet property="hotkeyCaptureHelp" destination="368" id="Haj-8K-x1W"/>
+                <outlet property="hotkeyCaptureDescription" destination="368" id="HeE-iz-5DJ"/>
+                <outlet property="hotkeyCaptureExtraHelp" destination="372" id="CNp-40-tpI"/>
+                <outlet property="hotkeyCapturePermissionsButton" destination="376" id="Xmg-0Z-NYo"/>
                 <outlet property="hotkeyCaptureToggle" destination="366" id="Xvg-Sk-grj"/>
                 <outlet property="missingMT32ROMHelp" destination="287" id="329"/>
                 <outlet property="realMT32Help" destination="330" id="335"/>
@@ -465,15 +464,6 @@ be enabled in the Universal Access preferences.</string>
                                                         <action selector="showSystemAccessibilityControls:" target="-1" id="2eI-2V-JBN"/>
                                                     </connections>
                                                 </button>
-                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="427">
-                                                    <rect key="frame" x="114" y="69" width="304" height="28"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="(If an F1, F2 etc. key still behaves as an OS X hotkey, then hold down Fn while pressing the key.)" id="428">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                </textField>
                                             </subviews>
                                         </customView>
                                     </subviews>

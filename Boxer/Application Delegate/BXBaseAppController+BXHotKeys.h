@@ -19,6 +19,10 @@
 /// @note This property is KVO-observable and will update whenever Boxer becomes the active application.
 @property (readonly, nonatomic) BOOL canCaptureHotkeys;
 
+/// This will be YES if Boxer needs to be restarted in order for expanded accessibility permissions to take effect.
+/// @note This property is KVO-observable and will update whenever Boxer attempts to establish an event tap.
+@property (readonly, nonatomic) BOOL needsRestartForHotkeyCapture;
+
 /// Whether this OS X version uses global accessibility controls (10.8 and below) or per-app accessibility controls
 /// (10.9 and above.) This is used for varying the accessibility instructions we give to the user to enable our hotkey capture.
 + (BOOL) hasPerAppAccessibilityControls;
@@ -32,10 +36,10 @@
 
 /// If Boxer is prevented from installing its keyboard event tap, this will displays an alert
 /// asking the user to give Boxer permission to do so with a button to open the appropriate System Preferences pane.
-- (void) showHotkeyWarningIfUnavailable;
+- (IBAction) showHotkeyWarningIfUnavailable: (id)sender;
 
 /// Opens the appropriate System Preferences pane from which the user can give Boxer permission to install its hotkey event tap.
 /// @note In OS X 10.8 and below, this is the Accessibility preferences; in 10.9 this moved to the Security & Privacy preferences.
-- (void) showSystemAccessibilityControls;
+- (IBAction) showSystemAccessibilityControls: (id)sender;
 
 @end

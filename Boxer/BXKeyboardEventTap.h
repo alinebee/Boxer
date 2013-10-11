@@ -26,6 +26,7 @@ typedef enum {
     CFRunLoopSourceRef _source;
     BOOL _enabled;
     BOOL _usesDedicatedThread;
+    BOOL _restartNeeded;
     BXKeyboardEventTapStatus _status;
     
     __unsafe_unretained id <BXKeyboardEventTapDelegate> _delegate;
@@ -47,6 +48,11 @@ typedef enum {
 /// @note Even if this returns NO, the event tap may still be able to attach: in which case it will only catch media key events
 /// and not all keyboard events.
 @property (readonly, nonatomic) BOOL canCaptureKeyEvents;
+
+/// Whether an application restart is needed to provide full event tap functionality.
+/// This will be set to YES when Boxer is unable to establish a full event tap despite canCaptureKeyEvents
+/// returning YES: This indicates that Boxer has been given permission but it has not yet taken effect.
+@property (readonly, nonatomic) BOOL restartNeeded;
 
 /// Whether the event tap should run on a separate thread or the main thread.
 /// A separate thread prevents input lag in other apps when the main thread is busy.

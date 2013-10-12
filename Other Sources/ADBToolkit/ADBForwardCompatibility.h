@@ -41,28 +41,36 @@
 @end
 
 
-@interface NSFileManagerProxyCategory: ADBFallbackProxyCategory
+@interface NSFileManager (ADBForwardCompatibility)
 
-//Reimplementations for OS X 10.6
+//Declared in OS X 10.7
 - (BOOL) createDirectoryAtURL: (NSURL *)URL
   withIntermediateDirectories: (BOOL)createIntermediates
                    attributes: (NSDictionary *)attributes
                         error: (out NSError **)error;
 
+//Declared in OS X 10.7
 - (BOOL) createSymbolicLinkAtURL: (NSURL *)URL
               withDestinationURL: (NSURL *)destURL
                            error: (out NSError **)error;
 
-//Reimplementations for OS X 10.6 and 10.7
+//Declared in OS X 10.8
 - (BOOL) trashItemAtURL: (NSURL *)url
        resultingItemURL: (out NSURL **)outResultingURL
                   error: (out NSError **)error;
+
+@end
+
+@interface NSFileManagerProxyCategory: ADBFallbackProxyCategory
 @end
 
 
+@interface NSURL (ADBForwardCompatibility)
+
+//Available natively in OS X 10.9; redefined for OS X 10.8 and below
+- (const char *) filesystemRepresentation;
+
+@end
+
 @interface NSURLProxyCategory: ADBFallbackProxyCategory
-
-//Reimplementation for 10.8 and below
-- (const char *) fileSystemRepresentation;
-
 @end

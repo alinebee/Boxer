@@ -579,7 +579,8 @@ enum {
 
 - (IBAction) showKeyboardPreferencesHelp: (id)sender
 {
-	[[NSApp delegate] showHelpAnchor: @"keyboard"];
+    //Was @"keyboard", but that was too general for the contents of the keyboard panel.
+	[[NSApp delegate] showHelpAnchor: @"spaces-shortcuts"];
 }
 
 - (IBAction) showAudioPreferencesHelp: (id)sender

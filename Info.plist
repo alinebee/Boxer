@@ -143,7 +143,7 @@
 	<key>CFBundleSignature</key>
 	<string>Boxr</string>
 	<key>CFBundleVersion</key>
-	<string>20130915.1</string>
+	<string>20131012.2</string>
 	<key>ContactEmail</key>
 	<string>support@boxerapp.com</string>
 	<key>CoverArtSearchURL</key>
@@ -168,8 +168,6 @@
 	<string>BXApplication</string>
 	<key>OSAScriptingDefinition</key>
 	<string>Boxer.sdef</string>
-	<key>PerianURL</key>
-	<string>http://perian.org/</string>
 	<key>ReplacementDocsSearchURL</key>
 	<string>http://www.replacementdocs.com/search.php?r=0&amp;t=downloads&amp;q=%@</string>
 	<key>ReplacementDocsURL</key>

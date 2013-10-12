@@ -25,18 +25,33 @@
 #import "BXEmulatorErrors.h"
 #import "NSError+ADBErrorHelpers.h"
 #import "NSURL+ADBFilesystemHelpers.h"
+#import "NSObject+ADBPerformExtensions.h"
 
 #import "ADBUserNotificationDispatcher.h"
 
-
+/// The number of increments from minimum volume to full volume.
+/// Used by @c -incrementMasterVolume: and @c -decrementMasterVolume:
 #define BXMasterVolumeNumIncrements 12.0f
+
+/// The amount by which to increase/decrease the volume when it is incremented/decremented.
+/// Used by @c -incrementMasterVolume: and @c -decrementMasterVolume:.
 #define BXMasterVolumeIncrement (1.0f / BXMasterVolumeNumIncrements)
 
 
+#pragma mark - Private API
+
 @interface BXBaseAppController ()
+
+//Overridden to be read-write
 @property (readwrite, retain) NSOperationQueue *generalQueue;
+
+/// A block to run once the application has finished terminating. Used by @c -terminateWithHandler:.
+@property (copy, nonatomic) void(^postTerminationHandler)();
+
 @end
 
+
+#pragma mark - Implementation
 
 @implementation BXBaseAppController
 
@@ -47,9 +62,10 @@
 @synthesize MIDIDeviceMonitor = _MIDIDeviceMonitor;
 @synthesize hotkeySuppressionTap = _hotkeySuppressionTap;
 
+@synthesize postTerminationHandler = _postTerminationHandler;
 
-#pragma mark -
-#pragma mark Helper class methods
+
+#pragma mark - Helper class methods
 
 + (NSString *) localizedVersion
 {
@@ -153,13 +169,14 @@
     self.MIDIDeviceMonitor = nil;
     self.hotkeySuppressionTap = nil;
     self.generalQueue = nil;
+    
+    self.postTerminationHandler = nil;
 	
 	[super dealloc];
 }
 
 
-#pragma mark -
-#pragma mark Application lifecycle
+#pragma mark - Application lifecycle
 
 - (void) applicationWillFinishLaunching: (NSNotification *)notification
 {
@@ -178,6 +195,33 @@
     //Start scanning for MIDI devices now
     self.MIDIDeviceMonitor = [[[BXMIDIDeviceMonitor alloc] init] autorelease];
     [self.MIDIDeviceMonitor start];
+}
+
+- (void) closeAllDocumentsWithDelegate: (id)delegate
+                   didCloseAllSelector: (SEL)didCloseAllSelector
+                           contextInfo: (void *)contextInfo
+{
+    id __block blockSelf = self;
+    
+    void (^closeHandler)(BOOL) = [^(BOOL didCloseAll) {
+        [delegate performSelector: didCloseAllSelector withValues: &blockSelf, &didCloseAll, &contextInfo];
+    } copy];
+    
+    [super closeAllDocumentsWithDelegate: self
+                     didCloseAllSelector: @selector(documentController:didCloseAll:contextInfo:)
+                             contextInfo: closeHandler];
+}
+
+- (void) documentController: (NSDocumentController *)docController
+                didCloseAll: (BOOL)didCloseAll
+                contextInfo: (void (^)(BOOL))handler
+{
+    //If the user refused to close one or more documents, clear any post-termination callback we had lined up.
+    if (!didCloseAll)
+        self.postTerminationHandler = nil;
+    
+    handler(didCloseAll);
+    [handler release];
 }
 
 - (void) applicationWillTerminate: (NSNotification *)notification
@@ -204,11 +248,36 @@
     
     //Remove any lingering notifications that were created by the app.
     [[ADBUserNotificationDispatcher dispatcher] removeAllNotifications];
+    
+    //Finally, run any post-termination block we've been given.
+    if (self.postTerminationHandler)
+    {
+        self.postTerminationHandler();
+        self.postTerminationHandler = nil;
+    }
+}
+
+- (void) terminateWithHandler: (void (^)())postTerminationHandler
+{
+    self.postTerminationHandler = postTerminationHandler;
+    
+    //IMPLEMENTATION NOTE: terminate: will first ask the document controller (i.e. us) to close all documents
+    //and will cancel termination if the user cancels from closing any document.
+    //- If the user allows all documents to be closed, we'll call the post-termination handler
+    //  in applicationWillTerminate:.
+    //- If the user cancels from closing all documents, then we clear the post-termination handler
+    //  so that it won't be accidentally used if the user later tries to quit normally.
+    //  This is done in -documentController:didCloseAll:contextInfo:.
+    [NSApp terminate: self];
+}
+
+- (IBAction) relaunch: (id)sender
+{
+    [self doesNotRecognizeSelector: _cmd];
 }
 
 
-#pragma mark -
-#pragma mark Responding to application mode changes
+#pragma mark - Responding to application mode changes
 
 - (void) registerApplicationModeObservers
 {
@@ -444,42 +513,6 @@
 	}
 }
 
-- (IBAction) revealInFinder: (id)sender
-{
-	if ([sender respondsToSelector: @selector(representedObject)]) sender = [sender representedObject];
-	NSString *path = nil;
-	
-	//NSString paths
-	if ([sender isKindOfClass: [NSString class]])			path = sender;
-	//NSURLs and BXDrives
-	else if ([sender respondsToSelector: @selector(path)])	path = [sender path];
-	//NSDictionaries with paths
-	else if ([sender isKindOfClass: [NSDictionary class]])	path = [sender objectForKey: @"path"];	
-	
-	if (path) [self revealPath: path];	
-}
-
-- (IBAction) openInDefaultApplication: (id)sender
-{
-	if ([sender respondsToSelector: @selector(representedObject)])
-        sender = [sender representedObject];
-    
-	NSString *path = nil;
-	
-	//NSString paths
-	if ([sender isKindOfClass: [NSString class]])			path = sender;
-	//NSURLs and BXDrives
-	else if ([sender respondsToSelector: @selector(path)])	path = [sender path];
-	//NSDictionaries with paths
-	else if ([sender isKindOfClass: [NSDictionary class]])	path = [sender objectForKey: @"path"];	
-	
-	if (path)
-    {
-        NSURL *URL = [NSURL fileURLWithPath: path];
-        [self openURLsInPreferredApplications: @[URL] options: NSWorkspaceLaunchDefault];
-    }
-}
-
 - (BOOL) openURLsInPreferredApplications: (NSArray *)URLs
                                  options: (NSWorkspaceLaunchOptions)launchOptions
 {
@@ -590,28 +623,8 @@
     return revealedAnyFiles;
 }
 
-- (BOOL) revealPath: (NSString *)filePath
-{
-	NSWorkspace *ws = [NSWorkspace sharedWorkspace];
-	NSFileManager *manager = [NSFileManager defaultManager];
-	
-	BOOL isFolder = NO;
-	if (![manager fileExistsAtPath: filePath isDirectory: &isFolder]) return NO;
-	
-	if (isFolder && ![ws isFilePackageAtPath: filePath])
-	{
-		return [ws selectFile: nil inFileViewerRootedAtPath: filePath];
-	}
-	else
-	{
-		return [ws selectFile: filePath inFileViewerRootedAtPath: [filePath stringByDeletingLastPathComponent]];
-	}
-}
 
-
-
-#pragma mark -
-#pragma mark Managing application audio
+#pragma mark - Managing application audio
 
 //We retrieve OS X's own UI sound setting from their domain
 //(hoping this is future-proof - if we can't find it though, we assume it's yes)

@@ -71,8 +71,9 @@
 
 - (IBAction) revealGamebox: (id)sender
 {
-	NSString *gameboxPath = self.controller.document.gamebox.bundlePath;
-	[[NSApp delegate] revealInFinder: gameboxPath];
+    NSURL *gameboxURL = self.controller.document.gamebox.bundleURL;
+    if (gameboxURL)
+        [[NSApp delegate] revealURLsInFinder: @[gameboxURL]];
 }
 
 - (IBAction) launchGamebox: (id)sender

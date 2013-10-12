@@ -201,7 +201,7 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
     else
     {
         NSString *executablePath = [[NSBundle mainBundle] executablePath];
-        [NSTask launchedTaskWithLaunchPath: executablePath arguments: [NSArray array]];
+        [NSTask launchedTaskWithLaunchPath: executablePath arguments: @[]];
         
         if (outError)
             *outError = [NSError errorWithDomain: NSCocoaErrorDomain
@@ -210,6 +210,15 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
         return nil;
     }
 }
+
+- (IBAction) relaunch: (id)sender
+{
+    [self terminateWithHandler: ^{
+        NSString *executablePath = [[NSBundle mainBundle] executablePath];
+        [NSTask launchedTaskWithLaunchPath: executablePath arguments: @[]];
+    }]
+}
+
 
 - (id) makeDocumentWithContentsOfURL: (NSURL *)absoluteURL
                               ofType: (NSString *)typeName

@@ -9,7 +9,6 @@
 #import "BXBaseAppController+BXSupportFiles.h"
 #import "BXBaseAppController+BXHotKeys.h"
 #import "BXAppController+BXGamesFolder.h"
-#import "NSObject+ADBPerformExtensions.h"
 
 #import "BXAboutController.h"
 #import "BXInspectorController.h"
@@ -40,8 +39,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 @interface BXAppController ()
 
-@property (copy, nonatomic) void(^closeAllDocumentsHandler)(BOOL didCloseAll);
-@property (copy, nonatomic) void(^postTerminationHandler)();
 
 //Because we can only run one emulation session at a time, we need to launch a second
 //Boxer process for opening additional/subsequent documents
@@ -62,8 +59,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 @implementation BXAppController
-@synthesize postTerminationHandler = _postTerminationHandler;
-@synthesize closeAllDocumentsHandler = _closeAllDocumentsHandler;
 
 + (BOOL) otherBoxersActive
 {
@@ -81,8 +76,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (void) dealloc
 {
     self.gamesFolderURL = nil;
-    self.postTerminationHandler = nil;
-    self.closeAllDocumentsHandler = nil;
 	
 	[super dealloc];
 }
@@ -426,7 +419,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     BXSession *currentSession = self.currentSession;
     BOOL prefsVisible = [BXPreferencesController controller].window.isVisible;
 
-    self.postTerminationHandler = ^{
+    [self terminateWithHandler: ^{
         NSArray *extraArgs = nil;
         if (prefsVisible)
             extraArgs = @[ BXShowPreferencesParam ];
@@ -449,55 +442,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
         {
             [self _launchProcessWithExtraArguments: extraArgs];
         }
-    };
-    
-    //IMPLEMENTATION NOTE: terminate: will first ask us to close all documents,
-    //and it will cancel termination if the user cancels from closing any document.
-    //- If the user allows all documents to be closed, we'll call our post-termination handler
-    //  in applicationWillTerminate: below.
-    //- If the user cancels from closing all documents, then we clear the post-termination handler
-    //  so that it won't be accidentally used if the user later tries to quit normally.
-    //  This is done in documentController:didCloseAll:contextInfo: below.
-    [NSApp terminate: self];
+    }];
 }
-
-- (void) applicationWillTerminate: (NSNotification *)notification
-{
-    [super applicationWillTerminate: notification];
-    
-    if (self.postTerminationHandler)
-    {
-        self.postTerminationHandler();
-        self.postTerminationHandler = nil;
-    }
-}
-
-- (void) closeAllDocumentsWithDelegate: (id)delegate
-                   didCloseAllSelector: (SEL)didCloseAllSelector
-                           contextInfo: (void *)contextInfo
-{
-    id __block blockSelf = self;
-    self.closeAllDocumentsHandler = ^(BOOL didCloseAll) {
-        [delegate performSelector: didCloseAllSelector withValues: &blockSelf, &didCloseAll, &contextInfo];
-    };
-    
-    [super closeAllDocumentsWithDelegate: self
-                     didCloseAllSelector: @selector(documentController:didCloseAll:contextInfo:)
-                             contextInfo: contextInfo];
-}
-
-- (void) documentController: (NSDocumentController *)docController
-                didCloseAll: (BOOL)didCloseAll
-                contextInfo: (void *)contextInfo
-{
-    //If the user refused to close one or more documents, clear any post-termination callback we had lined up.
-    if (!didCloseAll)
-        self.postTerminationHandler = nil;
-    
-    self.closeAllDocumentsHandler(didCloseAll);
-    self.closeAllDocumentsHandler = nil;
-}
-
 
 - (void) _launchProcessWithDocumentAtURL: (NSURL *)URL extraArguments: (NSArray *)extraArgs
 {
@@ -636,7 +582,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) showWebsite:			(id)sender	{ [self openURLFromKey: @"WebsiteURL"]; }
 - (IBAction) showDonationPage:		(id)sender	{ [self openURLFromKey: @"DonationURL"]; }
 - (IBAction) showBugReportPage:		(id)sender	{ [self openURLFromKey: @"BugReportURL"]; }
-- (IBAction) showPerianDownloadPage:(id)sender	{ [self openURLFromKey: @"PerianURL"]; }
 - (IBAction) showJoypadDownloadPage:(id)sender	{ [self openURLFromKey: @"JoypadURL"]; }
 
 - (IBAction) sendEmail: (id)sender

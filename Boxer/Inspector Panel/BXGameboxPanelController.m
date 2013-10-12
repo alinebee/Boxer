@@ -120,7 +120,8 @@ enum {
 
 - (IBAction) revealGamebox: (id)sender
 {
-	[[NSApp delegate] revealPath: self.session.gamebox.bundlePath];
+    NSURL *gameboxURL = self.session.gamebox.bundleURL;
+    [[NSApp delegate] revealURLsInFinder: @[gameboxURL]];
 }
 
 - (IBAction) searchForCoverArt: (id)sender

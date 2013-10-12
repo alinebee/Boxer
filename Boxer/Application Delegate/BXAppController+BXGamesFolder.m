@@ -781,7 +781,7 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 	BOOL revealed = NO;
 	
 	if (URL)
-        revealed = [self revealPath: URL.path];
+        revealed = [self revealURLsInFinder: @[URL]];
 	
 	if (revealed)
 	{

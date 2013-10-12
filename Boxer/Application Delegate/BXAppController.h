@@ -22,8 +22,6 @@ enum {
 @interface BXAppController : BXBaseAppController
 {
 	NSURL *_gamesFolderURL;
-    void (^_closeAllDocumentsHandler)(BOOL);
-    void (^_postTerminationHandler)();
 }
 
 //Returns YES if there are other Boxer processes currently running, no otherwise.
@@ -36,53 +34,85 @@ enum {
 #pragma mark Opening documents
 
 //A special method for creating a new untitled import session.
-//Mirrors the behaviour of openUntitledDocumentAndDisplay:error:
+//This follows the same method signature as @c NSDocument @c -openUntitledDocumentAndDisplay:error:.
 - (id) openImportSessionAndDisplay: (BOOL)displayDocument error: (NSError **)outError;
 
-//Open an import session to import the specified URL.
-- (id) openImportSessionWithContentsOfURL: (NSURL *)url
+/// Opens an import window to import the specified URL.
+/// This follows the same method signature as @c NSDocument @c -openDocumentWithContentsOfURL:display:error:.
+- (id) openImportSessionWithContentsOfURL: (NSURL *)URL
 								  display: (BOOL)display
 									error: (NSError **)outError;
 
 
-#pragma mark -
-#pragma mark UI actions
+#pragma mark - UI actions
 
-//Relaunch Boxer, restoring any previous session after relaunching.
+/// Relaunches the application, restoring any previous session after relaunching.
 - (IBAction) relaunch: (id)sender;
 
-//Display Boxer's About panel.
+/// Displays the About panel.
 - (IBAction) orderFrontAboutPanel: (id)sender;
 
-- (IBAction) orderFrontWelcomePanel: (id)sender;		//Display the welcome panel.
+/// Displays the welcome panel.
+- (IBAction) orderFrontWelcomePanel: (id)sender;
+
+/// Display the welcome panel with a spin transition.
+/// @note Spin transitions are unsupported on OS X 10.7 and above,
+/// and this method will behave identically to @c orderFrontWelcomePanel:.
 - (IBAction) orderFrontWelcomePanelWithTransition: (id)sender;
 
-- (IBAction) hideWelcomePanel: (id)sender;				//Close the welcome panel.
-- (IBAction) orderFrontImportGamePanel: (id)sender;		//Display the game import panel.
+/// Dismisses the welcome panel if it is visible.
+- (IBAction) hideWelcomePanel: (id)sender;
 
-- (IBAction) orderFrontPreferencesPanel: (id)sender;	//Display Boxer's preferences panel.
-- (IBAction) orderFrontInspectorPanel: (id)sender;		//Display Boxer's inspector HUD panel.
-- (IBAction) toggleInspectorPanel: (id)sender;			//Display/hide Boxer's inspector HUD panel.
+/// Displays the game import window.
+- (IBAction) orderFrontImportGamePanel: (id)sender;
 
-//Display the relevant panels of the Inspector.
+/// Displays the preferences window.
+- (IBAction) orderFrontPreferencesPanel: (id)sender;
+
+/// Displays the session inspector panel.
+/// @note Has no effect if no session is active.
+- (IBAction) orderFrontInspectorPanel: (id)sender;
+
+/// Shows the inspector panel if it is hidden, or hides the inspector panel if it was visible.
+/// @note Has no effect if no session is active.
+- (IBAction) toggleInspectorPanel: (id)sender;
+
+/// Displays the session inspector panel and shows the gamebox tab.
+/// @note Has no effect if no session is active.
 - (IBAction) showGamePanel:		(id)sender;
+
+/// Displays the session inspector panel and shows the CPU tab.
+/// @note Has no effect if no session is active.
 - (IBAction) showCPUPanel:		(id)sender;
+
+/// Displays the session inspector panel and shows the Drives tab.
+/// @note Has no effect if no session is active.
 - (IBAction) showDrivesPanel:	(id)sender;
+
+/// Displays the session inspector panel and shows the Mouse tab.
+/// @note Has no effect if no session is active.
 - (IBAction) showMousePanel:	(id)sender;
 
 //Display the add-a-new-drive panel for the current session.
 - (IBAction) showMountPanel: (id)sender;
 
-//The URLs and email addresses for the following actions are configured in the Info.plist file.
 
-- (IBAction) showWebsite:			(id)sender;	//Open the Boxer website in the default browser. 
-- (IBAction) showDonationPage:		(id)sender;	//Open the Boxer donations page in the default browser.
-- (IBAction) showPerianDownloadPage:(id)sender;	//Open the Perian website in the default browser.
-- (IBAction) showJoypadDownloadPage:(id)sender;	//Open the Joypad website in the default browser.
-- (IBAction) showBugReportPage:		(id)sender;	//Open Boxer's issue reporting page in the default browser. 
-- (IBAction) sendEmail:				(id)sender;	//Open a new email to Boxer's contact email address.
+/// Opens the Boxer website in the default browser.
+- (IBAction) showWebsite:			(id)sender;
 
-//Reveal the location of the current session in a new Finder window.
+/// Opens Boxer's donations page in the default browser.
+- (IBAction) showDonationPage:		(id)sender;
+
+/// Opens the Joypad website in the default browser.
+- (IBAction) showJoypadDownloadPage:(id)sender;
+
+/// Opens Boxer's issue tracker in the default browser, ready to create a new issue.
+- (IBAction) showBugReportPage:		(id)sender;
+
+/// Opens a new email to Boxer's contact email address in the default email client.
+- (IBAction) sendEmail:				(id)sender;
+
+/// Reveals the location of the current session in a new Finder window.
 - (IBAction) revealCurrentSession: (id)sender;
 
 @end

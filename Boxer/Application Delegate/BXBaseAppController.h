@@ -27,141 +27,190 @@
 	
     BXMIDIDeviceMonitor *_MIDIDeviceMonitor;
     
-    BOOL _relaunching;
+    void (^_postTerminationHandler)();
 }
 
-#pragma mark -
-#pragma mark Properties
+#pragma mark - Properties
 
-//The currently-active DOS session. Changes whenever a new session opens.
+/// The currently-active DOS session. Changes whenever a new session opens.
 @property (retain) BXSession *currentSession;
 
 //App-wide controllers for HID joystick input and JoyPad app input.
+
+/// Responds to incoming HID controller events from gamepads and joysticks, and dispatches them the current DOS session.
 @property (retain, nonatomic) IBOutlet BXJoystickController *joystickController;
+
+/// Responds to incoming JoyPad controller events and dispatches them to the current DOS session.
 @property (retain, nonatomic) IBOutlet BXJoypadController *joypadController;
+
+/// Monitors the connected MIDI devices, and scans newly-connected devices to see if they're MT-32 units.
 @property (retain, nonatomic) BXMIDIDeviceMonitor *MIDIDeviceMonitor;
+
+/// Captures incoming hotkey and media key events, to allow Boxer to make use of play/pause/fast-forward keys
+/// and to prevent conflicting OS X hotkeys from interfering with DOS games.
 @property (retain, nonatomic) BXKeyboardEventTap *hotkeySuppressionTap;
 
-//A general operation queue for non-session-specific operations.
+/// A general operation queue for non-session-specific operations.
 @property (retain, readonly) NSOperationQueue *generalQueue;
 
-//An array of open BXSession documents.
-//This is [NSDocumentController documents] filtered to just BXSession subclasses.
+/// An array of open BXSession documents.
+/// This is equivalent to [NSDocumentController documents] filtered to contain just BXSession instances.
 @property (readonly, nonatomic) NSArray *sessions;
 
 
-//Whether emulated audio is muted. Persisted across all sessions in user defaults.
+/// Whether emulated audio is muted. Persisted across all sessions in user defaults.
 @property (assign, nonatomic) BOOL muted;
-//The master volume for emulated audio. Persisted across all sessions in user defaults.
+
+/// The master volume for emulated audio. Persisted across all sessions in user defaults.
 @property (assign, nonatomic) float masterVolume; 
 
-//The master volume as it will affect played sounds and appear in volume indicators.
-//Will be 0 while muted, regardless of the master volume currently set.
-//Changing this will change the master volume and mute/unmute sound.
+/// The master volume as it will affect played sounds and appear in volume indicators.
+/// Will be 0 while @c muted is YES, regardless of the @c masterVolume currently set.
+/// Changing this will change the @c masterVolume and @c muted.
 @property (assign, nonatomic) float effectiveVolume;
 
 
-#pragma mark -
-#pragma mark Class helper methods
+#pragma mark - Class helper methods
 
-//The application version, internal build number and application title.
+/// A human-readable representation of the application version. This is only used for display to the user.
 + (NSString *) localizedVersion;
+
+/// The internal build number. This is the version number actually used for version comparison checks and the like.
 + (NSString *) buildNumber;
+
+/// The localized name of the application.
 + (NSString *) appName;
+
+/// The bundle identifier of the application.
 + (NSString *) appIdentifier;
 
-//Whether this is a standalone app bundled with a game.
-//Returns NO by default; overridden by BXStandaloneAppController.
+/// Whether this is a standalone app bundled with a gamebox.
+/// Returns NO by default; overridden by @c BXStandaloneAppController.
 - (BOOL) isStandaloneGameBundle;
 
-//Whether the app should hide all potential branding.
-//Returns NO by default; overridden by BXStandaloneAppController.
+/// Whether the app should hide all potential branding.
+/// Returns NO by default; overridden by @c BXStandaloneAppController.
 - (BOOL) isUnbrandedGameBundle;
 
-#pragma mark -
-#pragma mark Initialization
 
-//Load/create the user defaults for the application. Called from +initialize.
+#pragma mark - Initialization
+
+/// Load/create the user defaults for the application. Called from +initialize.
 + (void) prepareUserDefaults;
 
-//Create common value transformers used throughout the application. Called from +initialize.
+/// Create common value transformers used throughout the application. Called from +initialize.
 + (void) prepareValueTransformers;
 
 
-#pragma mark -
-#pragma mark Responding to changes in application mode
+#pragma mark - Responding to changes in application mode
 
-//Set the application UI to the appropriate mode for the current session's
-//fullscreen and mouse-locked status.
+/// Set the application UI to the appropriate mode for the current session's
+/// fullscreen and mouse-locked status. Called in response to relevant changes in application state.
 - (void) syncApplicationPresentationMode;
 
-//Register for notifications about the mode changes below.
+/// Registers the application delegate to receive notifications about application mode changes.
 - (void) registerApplicationModeObservers;
 
+/// Called whenever a Boxer session releases the mouse.
 - (void) sessionDidUnlockMouse: (NSNotification *)notification;
+
+/// Called whenever a Boxer session locks the mouse to its window.
 - (void) sessionDidLockMouse: (NSNotification *)notification;
 
+/// Called when a Boxer session is about to enter fullscreen mode.
 - (void) sessionWillEnterFullScreenMode: (NSNotification *)notification;
+
+/// Called when a Boxer session has finished entering fullscreen mode.
 - (void) sessionDidEnterFullScreenMode: (NSNotification *)notification;
+
+/// Called when a Boxer session is about to exit fullscreen mode.
 - (void) sessionWillExitFullScreenMode: (NSNotification *)notification;
+
+/// Called when a Boxer session has finished exiting fullscreen mode.
 - (void) sessionDidExitFullScreenMode: (NSNotification *)notification;
 
 
-#pragma mark -
-#pragma mark Managing application audio
+#pragma mark - Managing application audio
 
-//Returns whether we should play sounds for UI events.
-//(Currently this is based on OS X's system settings, rather than our own preference.)
+/// Returns whether we should play sounds for UI events. This checks OS X's own user defaults
+/// for whether the user has enabled "Play user interface sound effects" in OS X's Sound Preferences.
 - (BOOL) shouldPlayUISounds;
 
-//If UI sounds are enabled, play the sound matching the specified name
-//at the specified volume, with the specified optional delay.
-- (void) playUISoundWithName: (NSString *)soundName atVolume: (float)volume;
-- (void) playUISoundWithName: (NSString *)soundName atVolume: (float)volume afterDelay: (NSTimeInterval)delay;
+/// If UI sounds are enabled, play the sound matching the specified name  at the specified volume.
+/// @param soundName    The resource name of the sound effect to play.
+/// @param volume       The relative volume at which to play the sound,
+///                     where 0.0 is silent and 1.0 is full volume.
+- (void) playUISoundWithName: (NSString *)soundName
+                    atVolume: (float)volume;
 
-//Toggle mute on/off.
+/// If UI sounds are enabled, play the sound matching the specified name  at the specified volume at the specified delay.
+/// @param soundName    The resource name of the sound effect to play.
+/// @param volume       The relative volume at which to play the sound,
+///                     where 0.0 is silent and 1.0 is full volume.
+/// @param delay        The delay in seconds before playing the sound.
+- (void) playUISoundWithName: (NSString *)soundName
+                    atVolume: (float)volume
+                  afterDelay: (NSTimeInterval)delay;
+
+/// Toggles mute on/off.
 - (IBAction) toggleMuted: (id)sender;
 
-//Increment/decrement the master volume. These will also unmute the sound.
+/// Increments the master volume until it reaches maximum. This will also unmute the sound.
 - (IBAction) incrementVolume: (id)sender;
+
+/// Decrements the master volume until it reaches minimum. This will also unmute the sound.
 - (IBAction) decrementVolume: (id)sender;
 
-//Set the volume to minimum/maximum.
+/// Sets the volume to its minimum level. This will also unmute the sound.
 - (IBAction) minimizeVolume: (id)sender;
+
+/// Sets the volume to its maximum level. This will also unmute the sound.
 - (IBAction) maximizeVolume: (id)sender;
 
 
-#pragma mark -
-#pragma mark Misc UI actions
+#pragma mark - Misc UI actions
 
-//Reveal the sender's represented object in a new Finder window.
-- (IBAction) revealInFinder: (id)sender;
+/// Relaunch the application, restoring its previous state if possible.
+/// @note This must be implemented by subclasses: the default implementation will raise a not-implemented exception.
+- (IBAction) relaunch: (id)sender;
 
-//Open the sender's represented object with its default app.
-- (IBAction) openInDefaultApplication: (id)sender;
+/// Attempts to terminate the application, calling the specified termination handler if termination is successful.
+/// This is intended for use by @c BXBaseAppController subclasses in order to restart the app or launch a secondary Boxer process.
+/// @param postTerminationHandler   The block to execute once the app is ready to terminate.
+///                                 This will only be executed if the app really will terminate;
+///                                 if the user cancels termination, the handler will be discarded unused.
+- (void) terminateWithHandler: (void (^)())postTerminationHandler;
 
-//Open the specified URLs in Boxer's preferred application(s) for each.
+/// Open the specified URLs in Boxer's preferred application(s) for each.
+/// @param URLs     An array of URLs to open. Boxer will open each one in Boxer's preferred application,
+///                 which will usually be the OS X default application for that filetype.
+/// @param launchOptions    The options which NSWorkspace should use when opening the URLs.
+/// @see BXFileTypes  @c -bundleIdentifierForApplicationToOpenURL:
 - (BOOL) openURLsInPreferredApplications: (NSArray *)URLs
                                  options: (NSWorkspaceLaunchOptions)launchOptions;
 
-//Reveal the specified URLs in Finder window(s).
+/// Reveal and select the specified URLs in Finder.
+/// @param URLs The URLs to reveal in Finder. URLs located in the same folder will be shown in the same Finder window.
 - (BOOL) revealURLsInFinder: (NSArray *)URLs;
 
-//Reveal the specified path (or its parent folder, in the case of files) in a new Finder window.
-//Returns NO if the file at the path did not exist or could not be opened, YES otherwise.
-- (BOOL) revealPath: (NSString *)filePath;
-
-//Open the specified help anchor in the Boxer help.
+/// Open the specified help anchor in Boxer's help.
+/// @param anchor   The name of the help anchor to open. This is assumed to be in Boxer's own helpbook.
 - (void) showHelpAnchor: (NSString *)anchor;
 
-//Open the specified URL from the specified Info.plist key. Used internally by UI actions.
+/// Open the URL contained in the specified @c Info.plist key. Used internally by UI actions.
+/// @param infoKey  The Info.plist key containing the URL to open.
 - (void) openURLFromKey: (NSString *)infoKey;
 
-//Open the specified search-engine URL from the specified Info.plist key, using the specified search parameters.
+/// Open the URL contained in the specified @c Info.plist key, substituting the specified search parameters for its placeholders.
+/// @param infoKey  The Info.plist key containing the search URL to open.
+///                 This URL is expected to contain a single string substitution placeholder.
+/// @param search   The search string to search for. This will be URL-encoded automatically and substituted into the URL.
 - (void) searchURLFromKey: (NSString *)infoKey
          withSearchString: (NSString *)search;
 
-//Open a new email to the address given by the specified Info.plist key, with the specified subject line.
+/// Open a new email addressed to the email address in a specified @c Info.plist key.
+/// @param infoKey  The Info.plist key containing the email address to send to.
+/// @param subject  The subject line for the email. This will be encoded automatically.
 - (void) sendEmailFromKey: (NSString *)infoKey
               withSubject: (NSString *)subject;
 
@@ -170,11 +219,15 @@
 
 @interface BXBaseAppController (BXErrorReporting)
 
-//Opens an issue tracker page for a new issue, prefilling the issue with the specified title and body text (if provided).
+/// Opens an issue tracker page for a new issue, prefilling with optional issue data.
+/// @param title    If provided, the title field of the issue form will be prefilled with this string.
+/// @param body     If provided, the content field of the issue form will be prefilled with this string.
 - (void) reportIssueWithTitle: (NSString *)title
                          body: (NSString *)body;
 
-//Opens an issue tracker page prefilled with the details of the specified error.
+/// Opens an issue tracker page prefilled with the details of the specified error.
+/// @param error    The error whose details should be prefilled into the issue form.
+/// @param session  The session that triggered the error. Details of the session will be included in the issue text.
 - (void) reportIssueForError: (NSError *)error
                    inSession: (BXSession *)session;
 

@@ -128,7 +128,6 @@ NSString * const NSWindowDidExitFullScreenNotification = @"NSWindowDidExitFullSc
     [self addInstanceMethod: filesystemRepresentation toClass: proxiedClass];
 }
 
-
 - (const char *) fileSystemRepresentation
 {
     NSURL *url = (NSURL *)self;

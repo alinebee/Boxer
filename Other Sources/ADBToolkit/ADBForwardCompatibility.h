@@ -24,18 +24,23 @@
  *	POSSIBILITY OF SUCH DAMAGE.
  */
 
-//This library contains backported implementations for APIs and constants that are not available
-//in earlier versions of Cocoa.
 
 #import <Cocoa/Cocoa.h>
 
-#pragma mark -
-#pragma mark Runtime voodoo for applying fallback methods to other classes in a category-like manner.
-
+/// A base class for 'category-like' classes that copy their own methods onto another class when loaded.
+/// This behaves much like a category: except that if the other class already has an implementation
+/// of the method being copied, it will not be replaced. (Regular Objective-C categories will collide
+/// in that case, issuing a compiler warning and providing undefined behaviour.)
+///
+/// This system is mostly intended for 'backporting' implementations of methods that have been
+/// added in later OS X versions.
 @interface ADBFallbackProxyCategory: NSObject
 
-//Copies the specified instance method from the proxy class onto the target class,
-//if the target class does not already respond to that selector.
+/// Copies the specified instance method from the proxy class onto the target class,
+/// if the target class does not already respond to that selector.
+/// Typically this is called from the proxy category's @c +load method.
+/// @param selector     The selector of the instance method to copy from this class.
+/// @param targetClass  The class onto which to add the instance method.
 + (void) addInstanceMethod: (SEL)selector toClass: (Class)targetClass;
 
 @end
@@ -67,8 +72,8 @@
 
 @interface NSURL (ADBForwardCompatibility)
 
-//Available natively in OS X 10.9; redefined for OS X 10.8 and below
-- (const char *) filesystemRepresentation;
+//Declared in OS X 10.9
+- (const char *) fileSystemRepresentation;
 
 @end
 

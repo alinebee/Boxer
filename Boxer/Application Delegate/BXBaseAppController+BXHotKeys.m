@@ -138,7 +138,74 @@
 }
 
 
-#pragma mark - Hotkey capturing
+#pragma mark - Hotkey capture lifecycle
+
+- (void) prepareHotkeyTap
+{
+    //Set up our keyboard event tap
+    self.hotkeySuppressionTap = [[[BXKeyboardEventTap alloc] init] autorelease];
+    self.hotkeySuppressionTap.delegate = self;
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    //Event-tap threading is a hidden preference, so don't bother binding it.
+    self.hotkeySuppressionTap.usesDedicatedThread = [defaults boolForKey: @"useMultithreadedEventTap"];
+    
+    [self.hotkeySuppressionTap bind: @"enabled"
+                           toObject: defaults
+                        withKeyPath: @"suppressSystemHotkeys"
+                            options: nil];
+}
+
+- (void) checkHotkeyCaptureAvailability
+{
+    [self willChangeValueForKey: @"canCaptureHotkeys"];
+    [self didChangeValueForKey: @"canCaptureHotkeys"];
+    
+    //If we now have permission to capture hotkeys, dismiss any hotkey warning we were displaying.
+    //Note that we do this regardless of whether the tap gets installed properly or not, because
+    //one we have permission then there's nothing further that the user can do with that alert.
+    //(If the application needs a restart in order for the new permissions to take effect,
+    //then we'll do that below in eventTapDidFinishAttaching:.)
+    if (self.canCaptureHotkeys && self.activeHotkeyAlert)
+    {
+        if ([NSApp modalWindow] == self.activeHotkeyAlert.window)
+            [NSApp abortModal];
+    }
+    
+    [self.hotkeySuppressionTap retryEventTapIfNeeded];
+}
+
+- (BOOL) canCaptureHotkeys
+{
+    return self.hotkeySuppressionTap.canCaptureKeyEvents;
+}
+
+- (BOOL) needsRestartForHotkeyCapture
+{
+    return self.hotkeySuppressionTap.restartNeeded;
+}
+
+- (void) eventTapDidFinishAttaching: (BXKeyboardEventTap *)tap
+{
+    //Ensure we respond on the main thread, since this may be called from the tap's dedicated thread.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //Post a KVO notification so that interested parties (namely the preferences window)
+        //can pick up on whether we need a restart or not.
+        [self willChangeValueForKey: @"needsRestartForHotkeyCapture"];
+        [self didChangeValueForKey: @"needsRestartForHotkeyCapture"];
+        
+        //If the tap needs an application restart before it can provide full tapping capability,
+        //and if we're not in the middle of running a game right now, then relaunch immediately.
+        if (tap.restartNeeded && (self.currentSession == nil || [self.currentSession canCloseSafely]))
+        {
+            [self relaunch: self];
+        }
+    });
+}
+
+
+#pragma mark - Hotkey capture availability warnings
 
 + (BOOL) hasPerAppAccessibilityControls
 {
@@ -175,33 +242,104 @@
     return prefsName;
 }
 
-+ (NSSet *) keyPathsForValuesAffectingCanCaptureHotkeys
-{
-    return [NSSet setWithObject: @"hotkeySuppressionTap.canCaptureKeyEvents"];
-}
-
-- (BOOL) canCaptureHotkeys
-{
-    return self.hotkeySuppressionTap.canCaptureKeyEvents;
-}
-
-+ (NSSet *) keyPathsForValuesAffectingNeedsRestartForHotkeyCapture
-{
-    return [NSSet setWithObject: @"hotkeySuppressionTap.restartNeeded"];
-}
-
-- (BOOL) needsRestartForHotkeyCapture
-{
-    return self.hotkeySuppressionTap.restartNeeded;
-}
-
 - (IBAction) showHotkeyWarningIfUnavailable: (id)sender
 {
-    if ([self.class hasPerAppAccessibilityControls])
-        [self _showPerAppHotkeyWarningIfUnavailable];
-    else
-        [self _showLegacyHotkeyWarningIfUnavailable];
+    if (self.shouldShowHotkeyWarning)
+    {
+        NSAlert *hotkeyWarning = [self hotkeyWarningAlert];
+        
+        self.activeHotkeyAlert = hotkeyWarning;
+        NSInteger returnCode = [hotkeyWarning runModal];
+        self.activeHotkeyAlert = nil;
+        
+        if (returnCode == NSAlertFirstButtonReturn) //Show accessibility preferences button
+        {
+            //NOTE: this if branch will not normally be triggered, because the relevant alert button
+            //will have been rewired to trigger the action directly without ending the alert.
+            [self showSystemAccessibilityControls: self];
+        }
+        else if (returnCode == NSAlertSecondButtonReturn) //Skip button
+        {
+            self.hotkeyWarningSuppressed = YES;
+        }
+    }
 }
+
+- (BOOL) shouldShowHotkeyWarning
+{
+    if (self.canCaptureHotkeys)
+        return NO;
+    
+    BOOL showHotkeyWarning = [[NSUserDefaults standardUserDefaults] boolForKey: @"showHotkeyWarning"];
+    if (showHotkeyWarning == NO)
+        return NO;
+    
+    if (self.hotkeyWarningSuppressed)
+        return NO;
+    
+    return YES;
+}
+
+- (BOOL) hotkeyWarningSuppressed
+{
+    NSString *suppressionKey = ([self.class hasPerAppAccessibilityControls]) ? @"hasDismissedPerAppHotkeyWarning" : @"hasDismissedHotkeyWarning";
+    return [[NSUserDefaults standardUserDefaults] boolForKey: suppressionKey];
+}
+
+- (void) setHotkeyWarningSuppressed: (BOOL)suppress
+{
+    NSString *suppressionKey = ([self.class hasPerAppAccessibilityControls]) ? @"hasDismissedPerAppHotkeyWarning" : @"hasDismissedHotkeyWarning";
+    [[NSUserDefaults standardUserDefaults] setBool: suppress forKey: suppressionKey];
+}
+
+- (NSAlert *) hotkeyWarningAlert
+{
+    NSAlert *hotkeyWarning = [[NSAlert alloc] init];
+    
+    NSString *appName = [self.class appName];
+    NSString *prefsName = [self.class localizedSystemAccessibilityPreferencesName];
+    
+    if ([self.class hasPerAppAccessibilityControls])
+    {
+        NSString *messageFormat = NSLocalizedString(@"For the best experience, %1$@ needs accessibility control in OS X’s %2$@ preferences.",
+                                                    @"Bold text of alert shown if the application is not yet trusted for accessibility access on 10.9 and above. %1$@ is the name of the application; %2$@ is the localized title of the Security & Privacy preferences pane.");
+        
+        hotkeyWarning.messageText = [NSString stringWithFormat: messageFormat, appName, prefsName];
+    }
+    else
+    {
+        NSString *messageFormat = NSLocalizedString(@"For the best experience, turn on “Enable access for assistive devices” in OS X’s %1$@ preferences.",
+                                          @"Bold text of alert shown if the user does not have 'Allow access for assistive devices' enabled in OS X 10.8 and below. %1$@ is the localized name of the Accessibility preferences pane.");
+        
+        hotkeyWarning.messageText = [NSString stringWithFormat: messageFormat, prefsName];
+    }
+    
+    NSString *informativeTextFormat = NSLocalizedString(@"This ensures that OS X hotkeys won’t interfere with %1$@’s game controls.",
+                                                        @"Informative text of alert shown if the application is not yet trusted for accessibility access on 10.9 and above. %1$@ is the name of the application.");
+    
+    hotkeyWarning.informativeText = [NSString stringWithFormat: informativeTextFormat, appName];
+    
+    NSString *openPrefsButtonFormat = NSLocalizedString(@"Open %@ Preferences", @"Label of default button in hotkey warning alert. %@ is the localized name of the preferences pane that contains the relevant accessibility controls.");
+    
+    NSString *openPrefsButtonLabel = [NSString stringWithFormat: openPrefsButtonFormat, prefsName];
+    NSString *skipLabel = NSLocalizedString(@"Skip", @"Label of button in hotkey warning alert to dismiss the alert without showing accessibility preferences.");
+    
+    NSButton *openPrefsButton = [hotkeyWarning addButtonWithTitle: openPrefsButtonLabel];
+    //IMPLEMENTATION NOTE: we rewire the button so that it will show the preferences without dismissing the alert.
+    openPrefsButton.target = self;
+    openPrefsButton.action = @selector(showSystemAccessibilityControls:);
+    
+    
+    NSButton *skipButton = [hotkeyWarning addButtonWithTitle: skipLabel];
+    skipButton.keyEquivalent = @"\e";
+    
+    hotkeyWarning.delegate = self;
+    hotkeyWarning.showsHelp = YES;
+    hotkeyWarning.helpAnchor = @"spaces-shortcuts";
+    
+    return [hotkeyWarning autorelease];
+}
+
 
 - (IBAction) showSystemAccessibilityControls: (id)sender
 {
@@ -209,142 +347,6 @@
         [self _showPerAppAccessibilityControls];
     else
         [self _showLegacyAccessibilityControls];
-}
-
-- (void) _showLegacyHotkeyWarningIfUnavailable
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    BOOL showHotkeyWarning = [defaults boolForKey: @"showHotkeyWarning"];
-    BOOL hasSeenHotkeyWarning = [defaults boolForKey: @"hasDismissedHotkeyWarning"];
-    
-    if (showHotkeyWarning && !hasSeenHotkeyWarning && !self.canCaptureHotkeys)
-    {
-        NSAlert *hotkeyWarning = [[NSAlert alloc] init];
-        NSString *messageFormat = NSLocalizedString(@"%1$@ works best if you turn on “Enable access for assistive devices” in OS X’s %2$@ preferences.",
-                                                    @"Bold text of alert shown if the user does not have 'Allow access for assistive devices' enabled in OS X 10.8 and below. %1$@ is the title of the application; %2$@ is the localized name of the Accessibility preferences pane.");
-        
-        NSString *informativeTextFormat = NSLocalizedString(@"This ensures that OS X hotkeys won’t interfere with %1$@’s game controls.",
-                                                            @"Informative text of alert shown if the user does not have 'Allow access for assistive devices' enabled in OS X 10.8 or below. %1$@ is the name of the application.");
-        
-        NSString *appName = [self.class appName];
-        NSString *prefsName = [self.class localizedSystemAccessibilityPreferencesName];
-        
-        hotkeyWarning.messageText = [NSString stringWithFormat: messageFormat, appName, prefsName];
-        hotkeyWarning.informativeText = [NSString stringWithFormat: informativeTextFormat, appName];
-        
-        NSString *defaultButtonFormat = NSLocalizedString(@"Open %@ Preferences", @"Label of default button in alert shown if the user does not have 'Allow access for assistive devices' enabled in OS X 10.8 or below. %@ is the localized name of the Accessibility preferences pane.");
-        NSString *defaultButtonLabel = [NSString stringWithFormat: defaultButtonFormat, prefsName];
-        
-		NSString *cancelLabel = NSLocalizedString(@"Cancel",
-                                                  @"Cancel the current action and return to what the user was doing");
-        
-        [hotkeyWarning addButtonWithTitle: defaultButtonLabel];
-        [hotkeyWarning addButtonWithTitle: cancelLabel].keyEquivalent = @"\e";
-        
-        hotkeyWarning.delegate = self;
-        hotkeyWarning.showsHelp = YES;
-        hotkeyWarning.helpAnchor = @"spaces-shortcuts";
-        
-        if (self.currentSession)
-        {
-            [hotkeyWarning beginSheetModalForWindow: self.currentSession.windowForSheet
-                                      modalDelegate: self
-                                     didEndSelector: @selector(_hotkeyAlertDidEnd:returnCode:contextInfo:)
-                                        contextInfo: NULL];
-        }
-        else
-        {
-            NSInteger returnCode = [hotkeyWarning runModal];
-            [self _hotkeyAlertDidEnd: hotkeyWarning returnCode: returnCode contextInfo: NULL];
-        }
-        
-        [hotkeyWarning release];
-    }
-}
-
-- (void) _hotkeyAlertDidEnd: (NSAlert *)alert
-                 returnCode: (NSInteger)returnCode
-                contextInfo: (void *)contextInfo
-{
-    if (returnCode == NSAlertFirstButtonReturn)
-    {
-        [self _showLegacyAccessibilityControls];
-    }
-    else
-    {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setBool: YES forKey: @"hasDismissedHotkeyWarning"];
-    }
-}
-
-- (void) _showPerAppHotkeyWarningIfUnavailable
-{
-    //TODO: have some kind of fallback so that if our Applescript attempt to open the appropriate System Preferences pane
-    //will fail (sandboxing, renamed system preferences anchors etc.), we'll use AXIsProcessTrustedWithOptions to present
-    //the system default alert to the user.
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    BOOL showHotkeyWarning = [defaults boolForKey: @"showHotkeyWarning"];
-    BOOL hasSeenHotkeyWarning = [defaults boolForKey: @"hasDismissedPerAppHotkeyWarning"];
-    
-    if (showHotkeyWarning && !hasSeenHotkeyWarning && !self.canCaptureHotkeys)
-    {
-        NSAlert *hotkeyWarning = [[NSAlert alloc] init];
-        NSString *messageFormat = NSLocalizedString(@"%1$@ works best if you give it extra control in OS X’s %2$@ preferences.",
-                                                    @"Bold text of alert shown if the application is not yet trusted for accessibility access on 10.9 and above. %1$@ is the name of the application; %2$@ is the localized title of the Security & Privacy preferences pane.");
-        
-        NSString *informativeTextFormat = NSLocalizedString(@"This ensures that OS X hotkeys won’t interfere with %1$@’s game controls.",
-                                                            @"Informative text of alert shown if the application is not yet trusted for accessibility access on 10.9 and above. %1$@ is the name of the application.");
-        
-        NSString *appName = [self.class appName];
-        NSString *prefsName = [self.class localizedSystemAccessibilityPreferencesName];
-        
-        hotkeyWarning.messageText = [NSString stringWithFormat: messageFormat, appName, prefsName];
-        hotkeyWarning.informativeText = [NSString stringWithFormat: informativeTextFormat, appName];
-        
-        NSString *defaultButtonFormat = NSLocalizedString(@"Open %@ Preferences", @"Label of default button in alert shown if the application is not yet trusted for accessibility access on 10.9 and above. %@ is the localized name of the Security & Privacy preferences pane.");
-        NSString *defaultButtonLabel = [NSString stringWithFormat: defaultButtonFormat, prefsName];
-
-		NSString *cancelLabel = NSLocalizedString(@"Cancel",
-                                                  @"Cancel the current action and return to what the user was doing");
- 
-        [hotkeyWarning addButtonWithTitle: defaultButtonLabel];
-        [hotkeyWarning addButtonWithTitle: cancelLabel].keyEquivalent = @"\e";
-        
-        hotkeyWarning.delegate = self;
-        hotkeyWarning.showsHelp = YES;
-        hotkeyWarning.helpAnchor = @"spaces-shortcuts";
-        
-        if (self.currentSession)
-        {
-            [hotkeyWarning beginSheetModalForWindow: self.currentSession.windowForSheet
-                                      modalDelegate: self
-                                     didEndSelector: @selector(_perAppHotkeyAlertDidEnd:returnCode:contextInfo:)
-                                        contextInfo: NULL];
-        }
-        else
-        {
-            NSInteger returnCode = [hotkeyWarning runModal];
-            [self _perAppHotkeyAlertDidEnd: hotkeyWarning returnCode: returnCode contextInfo: NULL];
-        }
-        
-        [hotkeyWarning release];
-    }
-}
-
-- (void) _perAppHotkeyAlertDidEnd: (NSAlert *)alert
-                       returnCode: (NSInteger)returnCode
-                      contextInfo: (void *)contextInfo
-{
-    if (returnCode == NSAlertFirstButtonReturn)
-    {
-        [self _showPerAppAccessibilityControls];
-    }
-    else
-    {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setBool: YES forKey: @"hasDismissedPerAppHotkeyWarning"];
-    }
 }
 
 - (void) _showLegacyAccessibilityControls

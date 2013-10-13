@@ -296,13 +296,15 @@
 }
 
 
-#pragma mark -
-#pragma mark Controlling shutdown
+#pragma mark - Controlling shutdown
 
-//We are considered to have unsaved changes if we have a not-yet-finalized gamebox.
-- (BOOL) isDocumentEdited
+- (BOOL) canCloseSafely
 {
-    return (self.gamebox != nil) && (self.importStage < BXImportSessionFinished);
+    //If the gamebox is being imported and is not yet finalized, we can't close the document safely.
+    if (self.gamebox != nil && self.importStage < BXImportSessionFinished)
+        return NO;
+    
+    return YES;
 }
 
 //Overridden to display our own custom confirmation alert instead of the standard NSDocument one.

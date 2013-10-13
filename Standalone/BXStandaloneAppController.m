@@ -133,6 +133,11 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
 {
+    //Display the hotkey warning if appropriate for this game.
+    //We do this modally and before starting up the game itself, because we may need to restart
+    //in order for permissions to take effect.
+    [self showHotkeyWarningIfUnavailable];
+    
     [NSApp activateIgnoringOtherApps: YES];
     
     NSError *launchError = nil;
@@ -146,10 +151,6 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
         }
         
         [NSApp terminate: self];
-    }
-    else
-    {
-        [self showHotkeyWarningIfUnavailable];
     }
 }
 

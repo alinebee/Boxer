@@ -192,6 +192,9 @@ typedef enum {
 //is suspended, at the DOS prompt, or not currently emulating at all.
 @property (readonly, assign) BOOL programIsActive;
 
+//Whether this session can be safely closed without losing data.
+@property (readonly, nonatomic) BOOL canCloseSafely;
+
 //Whether this session is currently able to open any URLs via openURLInDOS:error:.
 //Will only be YES while the session is idling at the DOS prompt.
 @property (readonly, assign) BOOL canOpenURLs;

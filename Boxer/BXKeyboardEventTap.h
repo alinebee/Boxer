@@ -8,9 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
+/// The current status of the event tap.
 typedef enum {
+    /// The event tap is not installed.
     BXKeyboardEventTapNotTapping,
+    
+    /// The event tap is currently trying to install.
+    BXKeyboardEventTapInstalling,
+    
+    /// The event tap is installed but is tapping system events (media keys) only.
     BXKeyboardEventTapTappingSystemEventsOnly,
+    
+    /// The event tap is installed and is tapping both system and keyboard events.
     BXKeyboardEventTapTappingAllKeyboardEvents,
 } BXKeyboardEventTapStatus;
 
@@ -39,7 +48,7 @@ typedef enum {
 /// Toggling this will attach/detach the event tap.
 @property (assign, nonatomic, getter=isEnabled) BOOL enabled;
 
-/// The current status of the event tap. See BXKeyboardEventTapStatus constants.
+/// The current status of the event tap. See @c BXKeyboardEventTapStatus constants.
 @property (readonly) BXKeyboardEventTapStatus status;
 
 /// Whether our tap is able to capture keyup/keydown events, which require special accessibiity privileges.
@@ -50,7 +59,7 @@ typedef enum {
 @property (readonly, nonatomic) BOOL canCaptureKeyEvents;
 
 /// Whether an application restart is needed to provide full event tap functionality.
-/// This will be set to YES when Boxer is unable to establish a full event tap despite canCaptureKeyEvents
+/// This will be set to YES when Boxer is unable to establish a full event tap despite @c canCaptureKeyEvents
 /// returning YES: This indicates that Boxer has been given permission but it has not yet taken effect.
 @property (readonly, nonatomic) BOOL restartNeeded;
 
@@ -59,10 +68,17 @@ typedef enum {
 /// Changing this while a tap is in progress will stop and restart the tap.
 @property (assign, nonatomic) BOOL usesDedicatedThread;
 
+/// Attempts to re-establish an event tap if the tap is enabled but was not able to attach, or is not able to capture all events.
+/// This is intended to be called by a parent context whenever the app regains application focus or may have otherwise been granted
+/// broader tap permissions.
+- (void) retryEventTapIfNeeded;
+
 @end
 
 
 /// A protocol for responding to delegate messages sent by a BXKeyboardEventTap instance.
+/// Because event taps can operate on their own dedicated threads, the delegate must be
+/// prepared to receive delegate messages on a thread other than the main thread.
 @protocol BXKeyboardEventTapDelegate <NSObject>
 
 /// Called when a BXKeyboardEventTap instance receives a keyup or keydown event,
@@ -83,5 +99,11 @@ typedef enum {
 /// @return NO if the event tap should let the event reach the system unmolested.
 /// @note This may be called on a thread other than the main thread.
 - (BOOL) eventTap: (BXKeyboardEventTap *)tap shouldCaptureSystemDefinedEvent: (NSEvent *)event;
+
+/// Called whenever the event tap has finished trying (and possibly succeeding) to attach itself.
+/// @param tap      The BXKeyboardEventTap instance that attempted to attach itself.
+///                 If the event tap failed to attach, its @c status will be @c BXKeyboardEventTapNotTapping.
+/// @note This may be called on a thread other than the main thread.
+- (void) eventTapDidFinishAttaching: (BXKeyboardEventTap *)tap;
 
 @end

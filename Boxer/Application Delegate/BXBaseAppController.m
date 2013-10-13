@@ -63,6 +63,7 @@
 @synthesize hotkeySuppressionTap = _hotkeySuppressionTap;
 
 @synthesize postTerminationHandler = _postTerminationHandler;
+@synthesize activeHotkeyAlert = _activeHotkeyAlert;
 
 
 #pragma mark - Helper class methods
@@ -171,6 +172,7 @@
     self.generalQueue = nil;
     
     self.postTerminationHandler = nil;
+    self.activeHotkeyAlert = nil;
 	
 	[super dealloc];
 }
@@ -181,16 +183,7 @@
 - (void) applicationWillFinishLaunching: (NSNotification *)notification
 {
     //Set up our keyboard event tap
-    self.hotkeySuppressionTap = [[[BXKeyboardEventTap alloc] init] autorelease];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
-    self.hotkeySuppressionTap.delegate = self;
-    //Event-tap threading is a hidden preference, so don't bother binding it.
-    self.hotkeySuppressionTap.usesDedicatedThread = [defaults boolForKey: @"useMultithreadedEventTap"];
-    [self.hotkeySuppressionTap bind: @"enabled"
-                           toObject: defaults
-                        withKeyPath: @"suppressSystemHotkeys"
-                            options: nil];
+    [self prepareHotkeyTap];
 
     //Start scanning for MIDI devices now
     self.MIDIDeviceMonitor = [[[BXMIDIDeviceMonitor alloc] init] autorelease];
@@ -423,6 +416,7 @@
 - (void) applicationDidBecomeActive: (NSNotification *)notification
 {
     [self syncApplicationPresentationMode];
+    [self checkHotkeyCaptureAvailability];
 }
 
 

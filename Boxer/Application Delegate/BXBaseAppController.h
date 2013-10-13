@@ -28,6 +28,8 @@
     BXMIDIDeviceMonitor *_MIDIDeviceMonitor;
     
     void (^_postTerminationHandler)();
+    
+    NSAlert *_activeHotkeyAlert;
 }
 
 #pragma mark - Properties
@@ -57,6 +59,9 @@
 /// This is equivalent to [NSDocumentController documents] filtered to contain just BXSession instances.
 @property (readonly, nonatomic) NSArray *sessions;
 
+/// Used by @c BXBaseAppController+BXHotkeys to track whether we are currently displaying our hotkey warning,
+/// so it can be programmatically dismissed under certain circumstances.
+@property (retain, nonatomic) NSAlert *activeHotkeyAlert;
 
 /// Whether emulated audio is muted. Persisted across all sessions in user defaults.
 @property (assign, nonatomic) BOOL muted;

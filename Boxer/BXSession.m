@@ -672,11 +672,27 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         [[NSApp delegate] openUntitledDocumentAndDisplay: YES error: NULL];
 }
 
+- (BOOL) isEntireFileLoaded
+{
+    return NO;
+}
+
+- (BOOL) canCloseSafely
+{
+    if (self.emulator.isRunningActiveProcess)
+        return NO;
+    
+    if (self.isImportingDrives)
+        return NO;
+    
+    return YES;
+}
+
 //Overridden solely so that NSDocumentController will call canCloseDocumentWithDelegate:
 //in the first place. This otherwise should have no effect and should not show up in the UI.
 - (BOOL) isDocumentEdited
 {
-    return self.emulator.isRunningActiveProcess || self.isImportingDrives;
+    return ![self canCloseSafely];
 }
 
 //Overridden to display our own custom confirmation alert instead of the standard NSDocument one.

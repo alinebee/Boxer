@@ -110,7 +110,6 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
                                                       error: NULL];
     }
     
-    /*
     NSData *appIconBookmark = [defaults dataForKey: @"appIconURLBookmark"];
     if (appIconBookmark)
     {
@@ -120,7 +119,6 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
                                         bookmarkDataIsStale: NULL
                                                       error: NULL];
     }
-     */
     
     //The help links array needs to be deeply mutable, so we need to do extra work when loading it in.
     NSArray *savedHelpLinks = [defaults arrayForKey: @"helpLinks"];

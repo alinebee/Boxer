@@ -18,6 +18,11 @@
 //Elements of this implementation were adapted from
 //http://joshua.nozzi.name/2010/10/catching-media-key-events/
 
+
+/// The event subtype for media key events, used to distinguish them from other kinds
+/// of private system events.
+#define BXMediaKeyEventSubtype 8
+
 @implementation BXBaseAppController (BXHotKeys)
 
 #pragma mark - Media key handling

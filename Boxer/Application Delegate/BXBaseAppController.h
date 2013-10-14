@@ -25,7 +25,6 @@
     BXJoystickController *_joystickController;
     BXJoypadController *_joypadController;
     
-	
     BXMIDIDeviceMonitor *_MIDIDeviceMonitor;
     
     void (^_postTerminationHandler)();
@@ -184,6 +183,7 @@
 @end
 
 
+/// Top-level methods for reporting fatal errors to Boxer's error reporting page.
 @interface BXBaseAppController (BXErrorReporting)
 
 /// Opens an issue tracker page for a new issue, prefilling with optional issue data.

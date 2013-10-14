@@ -9,8 +9,11 @@
 #import "BXBaseAppController+BXSupportFiles.h"
 #import "BXBaseAppController+BXHotKeys.h"
 
-///Private API for BXAppController which should only be accessed by subclasses.
+/// Private API for BXAppController which should only be accessed by subclasses.
 @interface BXBaseAppController ()
+
+/// A block to run once the application has finished terminating. Used by @c -terminateWithHandler:.
+@property (copy, nonatomic) void(^postTerminationHandler)();
 
 /// Captures incoming hotkey and media key events, to allow Boxer to make use of play/pause/fast-forward keys
 /// and to prevent conflicting OS X hotkeys from interfering with DOS games.
@@ -22,6 +25,9 @@
 
 //Redeclared to be writable
 @property (assign, nonatomic) BOOL needsRestartForHotkeyCapture;
+
+//Redeclared to be writable
+@property (readwrite, retain) NSOperationQueue *generalQueue;
 
 
 #pragma mark - Initialization

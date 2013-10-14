@@ -137,7 +137,7 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
     //Display the hotkey warning if appropriate for this game.
     //We do this modally and before starting up the game itself, because we may need to restart
     //in order for permissions to take effect.
-    [self showHotkeyWarningIfUnavailable];
+    [self showHotkeyWarningIfUnavailable: self];
     
     [NSApp activateIgnoringOtherApps: YES];
     
@@ -213,15 +213,6 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
     }
 }
 
-- (IBAction) relaunch: (id)sender
-{
-    [self terminateWithHandler: ^{
-        NSString *executablePath = [[NSBundle mainBundle] executablePath];
-        [NSTask launchedTaskWithLaunchPath: executablePath arguments: @[]];
-    }]
-}
-
-
 - (id) makeDocumentWithContentsOfURL: (NSURL *)absoluteURL
                               ofType: (NSString *)typeName
                                error: (NSError **)outError
@@ -247,8 +238,16 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
     return YES;
 }
 
-#pragma mark -
-#pragma mark UI actions
+
+#pragma mark - UI actions
+
+- (IBAction) relaunch: (id)sender
+{
+    [self terminateWithHandler: ^{
+        NSString *executablePath = [[NSBundle mainBundle] executablePath];
+        [NSTask launchedTaskWithLaunchPath: executablePath arguments: @[]];
+    }];
+}
 
 - (IBAction) orderFrontAboutPanel: (id)sender
 {

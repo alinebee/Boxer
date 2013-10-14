@@ -9,8 +9,6 @@
 #import "BXKeyboardEventTap.h"
 
 
-#define BXMediaKeyEventSubtype 8
-
 /// Extensions for handling system hotkey events and displaying a startup warning if hotkeys cannot be captured.
 @interface BXBaseAppController (BXHotKeys) <BXKeyboardEventTapDelegate>
 

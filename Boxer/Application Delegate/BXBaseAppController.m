@@ -38,19 +38,6 @@
 #define BXMasterVolumeIncrement (1.0f / BXMasterVolumeNumIncrements)
 
 
-#pragma mark - Private API
-
-@interface BXBaseAppController ()
-
-//Overridden to be read-write
-@property (readwrite, retain) NSOperationQueue *generalQueue;
-
-/// A block to run once the application has finished terminating. Used by @c -terminateWithHandler:.
-@property (copy, nonatomic) void(^postTerminationHandler)();
-
-@end
-
-
 #pragma mark - Implementation
 
 @implementation BXBaseAppController

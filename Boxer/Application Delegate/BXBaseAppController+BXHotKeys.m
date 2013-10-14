@@ -173,18 +173,28 @@
     [self willChangeValueForKey: @"canCaptureHotkeys"];
     [self didChangeValueForKey: @"canCaptureHotkeys"];
     
-    //If we now have permission to capture hotkeys, dismiss any hotkey warning we were displaying.
-    //Note that we do this regardless of whether the tap gets installed properly or not, because
-    //one we have permission then there's nothing further that the user can do with that alert.
-    //(If the application needs a restart in order for the new permissions to take effect,
-    //then we'll do that below in eventTapDidFinishAttaching:.)
-    if (self.canCaptureHotkeys && self.activeHotkeyAlert)
+    if (self.canCaptureHotkeys)
     {
-        if ([NSApp modalWindow] == self.activeHotkeyAlert.window)
+        //If our event tap isn't working at full strength yet, try to reattach it
+        //to take advantage of broader hotkey permissions. We check if this was successful
+        //below in eventTapDidFinishAttaching:.
+        if (self.hotkeySuppressionTap.status != BXKeyboardEventTapTappingAllKeyboardEvents)
+        {
+            [self.hotkeySuppressionTap refreshEventTap];
+        }
+        
+        //Otherwise, get rid of any hotkey alert we're displaying to the user,
+        //since once we have hotkey capture permission there's nothing more they
+        //can do with that alert.
+        //(If we're trying to reattach the tap then we shouldn't close the modal alert
+        //yet though, because we don't want to let the application resume *until* we know
+        //if we need to restart the whole durn app. And we won't know that until downstairs
+        //in eventTapDidFinishAttaching:.)
+        else if (self.activeHotkeyAlert)
+        {
             [NSApp abortModal];
+        }
     }
-    
-    [self.hotkeySuppressionTap retryEventTapIfNeeded];
 }
 
 - (BOOL) canCaptureHotkeys
@@ -196,6 +206,12 @@
 {
     //Ensure we respond on the main thread, since this may be called from the tap's dedicated thread.
     dispatch_async(dispatch_get_main_queue(), ^{
+        //If we have permission to capture hotkeys, dismiss any hotkey warning we were still displaying.
+        //(See note above under checkHotkeyCaptureAvailability for why we do this here also.)
+        if (self.canCaptureHotkeys && self.activeHotkeyAlert)
+        {
+            [NSApp abortModal];
+        }
         
         //If the tap couldn't capture, even though we ought to have permission to tap, it probably means
         //we need to restart the application for those permissions to take effect.

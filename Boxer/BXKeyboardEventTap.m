@@ -231,9 +231,9 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     }
 }
 
-- (void) retryEventTapIfNeeded
+- (void) refreshEventTap
 {
-    if (self.isEnabled && self.status != BXKeyboardEventTapTappingAllKeyboardEvents && [self.class canCaptureKeyEvents])
+    if (self.isEnabled)
     {
         [self _stopTapping];
         [self _startTapping];

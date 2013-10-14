@@ -63,10 +63,11 @@ typedef enum {
 /// Changing this while a tap is in progress will stop and restart the tap.
 @property (assign, nonatomic) BOOL usesDedicatedThread;
 
-/// Attempts to re-establish an event tap if the tap is enabled but was not able to attach, or is not able to capture all events.
-/// This is intended to be called by a parent context whenever the app regains application focus or may have otherwise been granted
-/// broader tap permissions.
-- (void) retryEventTapIfNeeded;
+/// If the event tap is enabled, detaches the event tap and attempts to re-attach it.
+/// Has no effect if the tap is disabled.
+/// This is intended to be called by a parent context when the application
+/// may have been granted broader tap permissions.
+- (void) refreshEventTap;
 
 @end
 

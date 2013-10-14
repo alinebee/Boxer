@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXBaseAppController.h"
+#import "BXBaseAppControllerPrivate.h"
 #import "BXValueTransformers.h"
 #import "ADBAppKitVersionHelpers.h"
 
@@ -64,6 +64,7 @@
 
 @synthesize postTerminationHandler = _postTerminationHandler;
 @synthesize activeHotkeyAlert = _activeHotkeyAlert;
+@synthesize needsRestartForHotkeyCapture = _needsRestartForHotkeyCapture;
 
 
 #pragma mark - Helper class methods

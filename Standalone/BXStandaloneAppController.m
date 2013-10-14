@@ -5,6 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
+#import "BXBaseAppControllerPrivate.h"
 #import "BXStandaloneAppController.h"
 #import "BXSession.h"
 #import "BXEmulator.h"

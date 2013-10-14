@@ -41,6 +41,13 @@ typedef enum {
     __unsafe_unretained id <BXKeyboardEventTapDelegate> _delegate;
 }
 
+/// Whether OS X has granting the application permission to capture keyup and keydown events.
+/// In OS X 10.8 and below, this will be YES if the accessibility API is enabled: i.e. "Enable access for assistive devices" is turned on.
+/// In OS X 10.9 and above, this will be YES if Boxer has been given accessibility control in the Security & Privacy preferences pane.
+/// @note Even if this returns NO, the event tap may still be able to attach: in which case it will only catch media key events
+/// and not all keyboard events.
++ (BOOL) canCaptureKeyEvents;
+
 /// The delegate whom we will ask for event-capture decisions.
 @property (assign) id <BXKeyboardEventTapDelegate> delegate;
 
@@ -50,18 +57,6 @@ typedef enum {
 
 /// The current status of the event tap. See @c BXKeyboardEventTapStatus constants.
 @property (readonly) BXKeyboardEventTapStatus status;
-
-/// Whether our tap is able to capture keyup/keydown events, which require special accessibiity privileges.
-/// In OS X 10.8 and below, this will be YES if the accessibility API is enabled: i.e. "Enable access for assistive devices" is turned on.
-/// In OS X 10.9 and above, this will be YES if Boxer has been given accessibility control in the Security & Privacy preferences pane.
-/// @note Even if this returns NO, the event tap may still be able to attach: in which case it will only catch media key events
-/// and not all keyboard events.
-@property (readonly, nonatomic) BOOL canCaptureKeyEvents;
-
-/// Whether an application restart is needed to provide full event tap functionality.
-/// This will be set to YES when Boxer is unable to establish a full event tap despite @c canCaptureKeyEvents
-/// returning YES: This indicates that Boxer has been given permission but it has not yet taken effect.
-@property (readonly, nonatomic) BOOL restartNeeded;
 
 /// Whether the event tap should run on a separate thread or the main thread.
 /// A separate thread prevents input lag in other apps when the main thread is busy.

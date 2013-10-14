@@ -5,8 +5,6 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXBaseAppController centralises functionality shared between the standard and
-//standalone app controller subclasses. It is not intended to be instantiated directly.
 
 #import <AppKit/AppKit.h>
 
@@ -16,20 +14,26 @@
 @class BXMIDIDeviceMonitor;
 @class BXKeyboardEventTap;
 
+/// A base class for application delegates, that centralises functionality that is shared between
+/// the standard and standalone app controller subclasses. It is not intended to be instantiated directly.
 @interface BXBaseAppController : NSDocumentController <NSApplicationDelegate, NSAlertDelegate>
+
 {
 	BXSession *_currentSession;
 	NSOperationQueue *_generalQueue;
 	
     BXJoystickController *_joystickController;
     BXJoypadController *_joypadController;
-    BXKeyboardEventTap *_hotkeySuppressionTap;
+    
 	
     BXMIDIDeviceMonitor *_MIDIDeviceMonitor;
     
     void (^_postTerminationHandler)();
     
+    BXKeyboardEventTap *_hotkeySuppressionTap;
     NSAlert *_activeHotkeyAlert;
+    BOOL _couldCaptureHotkeysAtStartup;
+    BOOL _needsRestartForHotkeyCapture;
 }
 
 #pragma mark - Properties
@@ -37,7 +41,12 @@
 /// The currently-active DOS session. Changes whenever a new session opens.
 @property (retain) BXSession *currentSession;
 
-//App-wide controllers for HID joystick input and JoyPad app input.
+/// An array of open @c BXSession documents.
+/// This is equivalent to @c [NSDocumentController documents] filtered to contain just @c BXSession instances.
+@property (readonly, nonatomic) NSArray *sessions;
+
+
+#pragma mark App-wide controllers
 
 /// Responds to incoming HID controller events from gamepads and joysticks, and dispatches them the current DOS session.
 @property (retain, nonatomic) IBOutlet BXJoystickController *joystickController;
@@ -48,20 +57,11 @@
 /// Monitors the connected MIDI devices, and scans newly-connected devices to see if they're MT-32 units.
 @property (retain, nonatomic) BXMIDIDeviceMonitor *MIDIDeviceMonitor;
 
-/// Captures incoming hotkey and media key events, to allow Boxer to make use of play/pause/fast-forward keys
-/// and to prevent conflicting OS X hotkeys from interfering with DOS games.
-@property (retain, nonatomic) BXKeyboardEventTap *hotkeySuppressionTap;
-
 /// A general operation queue for non-session-specific operations.
 @property (retain, readonly) NSOperationQueue *generalQueue;
 
-/// An array of open BXSession documents.
-/// This is equivalent to [NSDocumentController documents] filtered to contain just BXSession instances.
-@property (readonly, nonatomic) NSArray *sessions;
 
-/// Used by @c BXBaseAppController+BXHotkeys to track whether we are currently displaying our hotkey warning,
-/// so it can be programmatically dismissed under certain circumstances.
-@property (retain, nonatomic) NSAlert *activeHotkeyAlert;
+#pragma mark Application volume settings
 
 /// Whether emulated audio is muted. Persisted across all sessions in user defaults.
 @property (assign, nonatomic) BOOL muted;
@@ -75,7 +75,9 @@
 @property (assign, nonatomic) float effectiveVolume;
 
 
-#pragma mark - Class helper methods
+#pragma mark - Methods
+
+#pragma mark Application metadata
 
 /// A human-readable representation of the application version. This is only used for display to the user.
 + (NSString *) localizedVersion;
@@ -98,44 +100,7 @@
 - (BOOL) isUnbrandedGameBundle;
 
 
-#pragma mark - Initialization
-
-/// Load/create the user defaults for the application. Called from +initialize.
-+ (void) prepareUserDefaults;
-
-/// Create common value transformers used throughout the application. Called from +initialize.
-+ (void) prepareValueTransformers;
-
-
-#pragma mark - Responding to changes in application mode
-
-/// Set the application UI to the appropriate mode for the current session's
-/// fullscreen and mouse-locked status. Called in response to relevant changes in application state.
-- (void) syncApplicationPresentationMode;
-
-/// Registers the application delegate to receive notifications about application mode changes.
-- (void) registerApplicationModeObservers;
-
-/// Called whenever a Boxer session releases the mouse.
-- (void) sessionDidUnlockMouse: (NSNotification *)notification;
-
-/// Called whenever a Boxer session locks the mouse to its window.
-- (void) sessionDidLockMouse: (NSNotification *)notification;
-
-/// Called when a Boxer session is about to enter fullscreen mode.
-- (void) sessionWillEnterFullScreenMode: (NSNotification *)notification;
-
-/// Called when a Boxer session has finished entering fullscreen mode.
-- (void) sessionDidEnterFullScreenMode: (NSNotification *)notification;
-
-/// Called when a Boxer session is about to exit fullscreen mode.
-- (void) sessionWillExitFullScreenMode: (NSNotification *)notification;
-
-/// Called when a Boxer session has finished exiting fullscreen mode.
-- (void) sessionDidExitFullScreenMode: (NSNotification *)notification;
-
-
-#pragma mark - Managing application audio
+#pragma mark Application audio
 
 /// Returns whether we should play sounds for UI events. This checks OS X's own user defaults
 /// for whether the user has enabled "Play user interface sound effects" in OS X's Sound Preferences.
@@ -173,22 +138,19 @@
 - (IBAction) maximizeVolume: (id)sender;
 
 
-#pragma mark - Misc UI actions
+
+#pragma mark Application lifecycle
 
 /// Relaunch the application, restoring its previous state if possible.
 /// @note This must be implemented by subclasses: the default implementation will raise a not-implemented exception.
 - (IBAction) relaunch: (id)sender;
 
-/// Attempts to terminate the application, calling the specified termination handler if termination is successful.
-/// This is intended for use by @c BXBaseAppController subclasses in order to restart the app or launch a secondary Boxer process.
-/// @param postTerminationHandler   The block to execute once the app is ready to terminate.
-///                                 This will only be executed if the app really will terminate;
-///                                 if the user cancels termination, the handler will be discarded unused.
-- (void) terminateWithHandler: (void (^)())postTerminationHandler;
+
+#pragma mark Misc UI actions
 
 /// Open the specified URLs in Boxer's preferred application(s) for each.
-/// @param URLs     An array of URLs to open. Boxer will open each one in Boxer's preferred application,
-///                 which will usually be the OS X default application for that filetype.
+/// @param URLs             An array of URLs to open. Boxer will open each one in Boxer's preferred application,
+///                         which will usually be the OS X default application for that filetype.
 /// @param launchOptions    The options which NSWorkspace should use when opening the URLs.
 /// @see BXFileTypes  @c -bundleIdentifierForApplicationToOpenURL:
 - (BOOL) openURLsInPreferredApplications: (NSArray *)URLs

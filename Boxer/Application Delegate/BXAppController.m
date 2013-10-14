@@ -5,9 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-
-#import "BXBaseAppController+BXSupportFiles.h"
-#import "BXBaseAppController+BXHotKeys.h"
+#import "BXBaseAppControllerPrivate.h"
 #import "BXAppController+BXGamesFolder.h"
 
 #import "BXAboutController.h"

@@ -107,7 +107,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     }
 }
 
-- (BOOL) canCaptureKeyEvents
++ (BOOL) canCaptureKeyEvents
 {
     return AXAPIEnabled() || AXIsProcessTrusted();
 }
@@ -191,14 +191,12 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
                 case BXKeyboardEventTapTappingSystemEventsOnly:
                     NSLog(@"Event tap created but tapping system events only.");
                     self.status = reportedStatus;
-                    self.restartNeeded = [self canCaptureKeyEvents];
                     return YES;
                 case BXKeyboardEventTapNotTapping:
                 case BXKeyboardEventTapInstalling: //Will never be returned by _reportedStatusOfEventTap, but included anyway to suppress compiler warnings.
                     NSLog(@"Event tap created but could not capture any relevant events: discarding.");
                     [self _removeEventTapFromCurrentThread];
                     self.status = reportedStatus;
-                    self.restartNeeded = [self canCaptureKeyEvents];
                     return NO;
             }
         }
@@ -206,7 +204,6 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
         {
             NSLog(@"Event tap could not be created");
             self.status = BXKeyboardEventTapNotTapping;
-            self.restartNeeded = [self canCaptureKeyEvents];
             return NO;
         }
     }
@@ -236,7 +233,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 
 - (void) retryEventTapIfNeeded
 {
-    if (self.isEnabled && self.status != BXKeyboardEventTapTappingAllKeyboardEvents && self.canCaptureKeyEvents)
+    if (self.isEnabled && self.status != BXKeyboardEventTapTappingAllKeyboardEvents && [self.class canCaptureKeyEvents])
     {
         [self _stopTapping];
         [self _startTapping];

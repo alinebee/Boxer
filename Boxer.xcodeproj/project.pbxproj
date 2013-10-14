@@ -1849,6 +1849,7 @@
 		9FE90BF511F8D1DC003CFFFF /* ADBDelegatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBDelegatedView.h; sourceTree = "<group>"; };
 		9FE90BF611F8D1DC003CFFFF /* ADBDelegatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBDelegatedView.m; sourceTree = "<group>"; };
 		9FEA1831144BFD8F00E39ACD /* BXAudioSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAudioSource.h; sourceTree = "<group>"; };
+		9FEA4ED6180C5C1800A745D6 /* BXBaseAppControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBaseAppControllerPrivate.h; sourceTree = "<group>"; };
 		9FEAA3EA1204595B0085F008 /* ADBOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBOperation.h; sourceTree = "<group>"; };
 		9FEAA3EB1204595B0085F008 /* ADBOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBOperation.m; sourceTree = "<group>"; };
 		9FEBB70E11DF9BB50055933F /* BXEmulatorDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorDelegate.h; sourceTree = "<group>"; };
@@ -2181,6 +2182,7 @@
 			isa = PBXGroup;
 			children = (
 				9FCB7B0E15B844AA00CC7CC7 /* BXBaseAppController.h */,
+				9FEA4ED6180C5C1800A745D6 /* BXBaseAppControllerPrivate.h */,
 				9FCB7B0F15B844AA00CC7CC7 /* BXBaseAppController.m */,
 				9FBC35110F56C7B7001811F2 /* BXAppController.h */,
 				9FBC351E0F56C7B7001811F2 /* BXAppController.m */,

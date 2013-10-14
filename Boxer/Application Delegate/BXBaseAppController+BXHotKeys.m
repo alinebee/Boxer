@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXBaseAppController+BXHotKeys.h"
+#import "BXBaseAppControllerPrivate.h"
 #import "BXKeyboardEventTap.h"
 #import "BXSession+BXUIControls.h"
 #import "SystemPreferences.h"
@@ -146,6 +146,11 @@
     self.hotkeySuppressionTap = [[[BXKeyboardEventTap alloc] init] autorelease];
     self.hotkeySuppressionTap.delegate = self;
     
+    //When we first set up the tap at application startup, check if Boxer already has permission to capture hotkeys.
+    //We use this later to determine whether Boxer has been granted that permission while it's running,
+    //and hence whether we may need to restart in order for those permissions to take effect.
+    _couldCaptureHotkeysAtStartup = self.canCaptureHotkeys;
+    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     //Event-tap threading is a hidden preference, so don't bother binding it.
@@ -159,6 +164,7 @@
 
 - (void) checkHotkeyCaptureAvailability
 {
+    //Flag that hotkey capture permissions may have been granted while Boxer was inactive.
     [self willChangeValueForKey: @"canCaptureHotkeys"];
     [self didChangeValueForKey: @"canCaptureHotkeys"];
     
@@ -178,26 +184,30 @@
 
 - (BOOL) canCaptureHotkeys
 {
-    return self.hotkeySuppressionTap.canCaptureKeyEvents;
-}
-
-- (BOOL) needsRestartForHotkeyCapture
-{
-    return self.hotkeySuppressionTap.restartNeeded;
+    return [BXKeyboardEventTap canCaptureKeyEvents];
 }
 
 - (void) eventTapDidFinishAttaching: (BXKeyboardEventTap *)tap
 {
     //Ensure we respond on the main thread, since this may be called from the tap's dedicated thread.
     dispatch_async(dispatch_get_main_queue(), ^{
-        //Post a KVO notification so that interested parties (namely the preferences window)
-        //can pick up on whether we need a restart or not.
-        [self willChangeValueForKey: @"needsRestartForHotkeyCapture"];
-        [self didChangeValueForKey: @"needsRestartForHotkeyCapture"];
+        
+        //If the tap couldn't capture, even though we ought to have permission to tap, it probably means
+        //we need to restart the application for those permissions to take effect.
+        //TWEAK: we only flag ourselves as needing a restart if the permissions got toggled *during this
+        //application session*. We don't want to restart - or advise the user to restart - if we already
+        //had those permissions when we started and it didn't do us any good.
+        //This is defensive coding in case a later OS X update prevents Boxer from establishing an event
+        //tap at all even though the API reports that we have permission to do so (which would otherwise
+        //cause us to enter a continual restart loop as we keep thinking we're just a restart away from
+        //those permissions taking effect.)
+        BOOL permissionGrantedThisSession = self.canCaptureHotkeys && !_couldCaptureHotkeysAtStartup;
+        
+        self.needsRestartForHotkeyCapture = (tap.status != BXKeyboardEventTapTappingAllKeyboardEvents) && permissionGrantedThisSession;
         
         //If the tap needs an application restart before it can provide full tapping capability,
         //and if we're not in the middle of running a game right now, then relaunch immediately.
-        if (tap.restartNeeded && (self.currentSession == nil || [self.currentSession canCloseSafely]))
+        if (self.needsRestartForHotkeyCapture && (self.currentSession == nil || [self.currentSession canCloseSafely]))
         {
             [self relaunch: self];
         }

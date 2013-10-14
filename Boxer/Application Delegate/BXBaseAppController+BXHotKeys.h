@@ -36,8 +36,8 @@
 /// @note This property is KVO-observable and will update whenever Boxer becomes the active application.
 @property (readonly, nonatomic) BOOL canCaptureHotkeys;
 
-/// This will be YES if Boxer needs to be restarted in order for expanded accessibility permissions to take effect.
-/// @note This property is KVO-observable and will update whenever Boxer attempts to establish an event tap.
+/// This will be set to YES if Boxer needs to be restarted in order for expanded accessibility permissions to take effect.
+/// @note This property is KVO-observable, and will update whenever Boxer attempts to establish an event tap.
 @property (readonly, nonatomic) BOOL needsRestartForHotkeyCapture;
 
 /// Whether the application should warn the user at startup. This will be YES if:

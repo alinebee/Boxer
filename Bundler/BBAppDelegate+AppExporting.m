@@ -237,10 +237,25 @@
 
     //Write all of our changes to the app's plist back into the app.
     [appInfo writeToURL: appInfoURL atomically: YES];
-
-
-
-    //Finally, move the finished app from the temporary location to the final destination.
+    
+    //Code-sign the application with the developer's ID, if they have one.
+    NSString *codeSignPath = @"/usr/bin/codesign";
+    NSArray *codeSignArgs  = @[@"--force",
+                               @"--deep",
+                               @"--sign",
+                               @"Developer ID Application",
+                               tempAppURL.path];
+    NSTask *signApp = [NSTask launchedTaskWithLaunchPath: codeSignPath
+                                               arguments: codeSignArgs];
+    
+    [signApp waitUntilExit];
+    
+    //TODO: notify the user if the app failed
+    NSLog(@"Code signing finished with status code: %i using arguments: %@",
+          signApp.terminationStatus,
+          codeSignArgs);
+    
+    //Finally, move the finished and codesigned app from the temporary location to the final destination.
     NSURL *finalDestinationURL = nil;
     BOOL swapped = [manager replaceItemAtURL: destinationURL
                                withItemAtURL: tempAppURL

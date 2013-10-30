@@ -252,13 +252,23 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 {
     if (!NSEqualRects(_targetViewportRect, newRect))
     {
-        NSTimeInterval duration = (animated) ? 0.2 : 0;
-        
-        _targetViewportRect = newRect;
-        [NSAnimationContext beginGrouping];
-            [NSAnimationContext currentContext].duration = duration;
-            [self.animator setViewportRect: _targetViewportRect];
-        [NSAnimationContext endGrouping];
+        //If our viewport is zero (i.e. we haven't received a frame until now)
+        //then just replace the viewport with the new one instead of animating to it.
+        if (NSIsEmptyRect(_viewportRect))
+        {
+            self.viewportRect = newRect;
+        }
+        else
+        {
+            NSTimeInterval duration = (animated) ? 0.2 : 0;
+            
+            _targetViewportRect = newRect;
+            
+            [NSAnimationContext beginGrouping];
+                [NSAnimationContext currentContext].duration = duration;
+                [self.animator setViewportRect: _targetViewportRect];
+            [NSAnimationContext endGrouping];
+        }
     }
 }
 

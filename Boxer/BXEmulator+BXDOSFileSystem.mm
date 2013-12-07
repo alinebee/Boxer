@@ -19,13 +19,16 @@
 #import "cdrom.h"
 
 
-
-
-#pragma mark -
-#pragma mark Constants
+#pragma mark - Private constants
 
 NSString * const BXDOSBoxUnmountErrorDomain  = @"BXDOSBoxUnmountErrorDomain";
 NSString * const BXDOSBoxMountErrorDomain    = @"BXDOSBoxMountErrorDomain";
+
+NSString * const BXEmulatorDriveDidMountNotification    = @"BXEmulatorDriveDidMountNotification";
+NSString * const BXEmulatorDriveDidUnmountNotification  = @"BXEmulatorDriveDidUnmountNotification";
+NSString * const BXEmulatorDidCreateFileNotification    = @"BXEmulatorDidCreateFileNotification";
+NSString * const BXEmulatorDidRemoveFileNotification    = @"BXEmulatorDidRemoveFileNotification";
+
 
 
 //Drive geometry constants passed to _DOSBoxDriveFromPath:freeSpace:geometry:mediaID:error:
@@ -34,8 +37,7 @@ BXDriveGeometry BXFloppyDiskGeometry	= {512, 1, 2880, 2880};		//1.44MB, 1.44MB f
 BXDriveGeometry BXCDROMGeometry			= {2048, 1, 65535, 0};		//~650MB, no free space
 
 
-#pragma mark -
-#pragma mark Externs
+#pragma mark - Externs
 
 //Defined in dos_files.cpp
 extern DOS_File * Files[DOS_FILES];
@@ -46,6 +48,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 
 
+#pragma mark - BXEmulator (BXDOSFileSystem)
 
 @implementation BXEmulator (BXDOSFileSystem)
 
@@ -292,11 +295,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 			[self _addDriveToCache: drive];
 			
 			//Post a notification to whoever's listening
-			NSDictionary *userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
-            
-			[self _postNotificationName: @"BXDriveDidMountNotification"
+			[self _postNotificationName: BXEmulatorDriveDidMountNotification
 					   delegateSelector: @selector(emulatorDidMountDrive:)
-							   userInfo: userInfo];
+							   userInfo: @{ @"drive": drive }];
 			
             _driveBeingMounted = nil;
 			return drive;
@@ -383,16 +384,16 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	if (unmounted)
 	{
 		//If this was the drive we were on, recover by switching to Z drive
-		if (isCurrentDrive && self.isAtPrompt) [self changeToDriveLetter: @"Z"];
+		if (isCurrentDrive && self.isAtPrompt)
+            [self changeToDriveLetter: @"Z"];
 		
 		//Remove the drive from our drive cache
 		[self _removeDriveFromCache: drive];
 		
 		//Post a notification to whoever's listening
-		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
-		[self _postNotificationName: @"BXDriveDidUnmountNotification"
+		[self _postNotificationName: BXEmulatorDriveDidUnmountNotification
 				   delegateSelector: @selector(emulatorDidUnmountDrive:)
-						   userInfo: userInfo];
+						   userInfo: @{ @"drive": drive }];
 	}
     else if (outError)
     {   
@@ -1228,10 +1229,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 //adding new drives and removing old drives as necessary.
 - (void) _syncDriveCache
 {
-	NSDictionary *userInfo;
-	NSUInteger i;
-	
-	for (i=0; i < DOS_DRIVES; i++)
+	for (NSUInteger i=0; i<DOS_DRIVES; i++)
 	{
 		NSString *letter	= [self _driveLetterForIndex: i];
 		BXDrive *drive		= [_driveCache objectForKey: letter];
@@ -1243,10 +1241,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 			[self _addDriveToCache: drive];
 			
 			//Post a notification to whoever's listening
-			userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
-			[self _postNotificationName: @"BXDriveDidMountNotification"
+			[self _postNotificationName: BXEmulatorDriveDidMountNotification
 					   delegateSelector: @selector(emulatorDidMountDrive:)
-							   userInfo: userInfo];
+							   userInfo: @{ @"drive": drive }];
 		}
 		//A drive no longer exists in DOSBox which we have a leftover record for, remove it
 		else if (!Drives[i] && drive)
@@ -1254,10 +1251,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 			[self _removeDriveFromCache: drive];
 			
 			//Post a notification to whoever's listening
-			userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
-			[self _postNotificationName: @"BXDriveDidUnmountNotification"
+			[self _postNotificationName: BXEmulatorDriveDidUnmountNotification
 					   delegateSelector: @selector(emulatorDidUnmountDrive:)
-							   userInfo: userInfo];
+							   userInfo: @{ @"drive": drive }];
 		}
 	}
 }

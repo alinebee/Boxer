@@ -12,53 +12,60 @@
 #import "BXEmulatedMT32Delegate.h"
 
 
-#pragma mark -
-#pragma mark Constants
+#pragma mark - MIDI device description constants
 
 //Keys and constants used in the dictionary for requestedMIDIDeviceDescription.
 
-enum {
-    BXMIDIMusicDisabled    = -1,    //Disable MIDI playback altogether.
-    BXMIDIMusicAutodetect  = 0,     //Autodetect whether the game plays MT-32 or General MIDI music
-    BXMIDIMusicGeneralMIDI = 1,     //The game plays General MIDI music
-    BXMIDIMusicMT32        = 2      //The game plays MT-32 music
-};
-typedef NSInteger BXMIDIMusicType;
+/// Possible values for the BXMIDIMusicTypeKey of MIDI device description dictionaries.
+/// Set by the game configuration's @c mididevice setting to determine what kind of MIDI
+/// device the emulator should request.
+typedef enum {
+    /// The emulator should disable MIDI playback altogether.
+    /// Determined by the game configuration file and is not used in descriptions
+    /// when requesting a MIDI device from the delegate.
+    BXMIDIMusicDisabled    = -1,
 
-//An NSNumber corresponding to one of the BXMIDIMusicType constants.
-//If BXMIDIMusicNone, Boxer will disable MIDI playback.
-//If omitted, defaults to BXMIDIMusicAuto.
+    /// The emulator should detect whether the game plays MT-32 or General MIDI music.
+    /// Determined by the game configuration file and is not used in descriptions
+    /// when requesting a MIDI device from the delegate.
+    BXMIDIMusicAutodetect  = 0,
+
+    /// The game plays General MIDI music.
+    BXMIDIMusicGeneralMIDI = 1,
+    
+    /// The game plays MT-32 music.
+    BXMIDIMusicMT32        = 2
+} BXMIDIMusicType;
+
+/// An NSNumber corresponding to one of the BXMIDIMusicType constants.
+/// If BXMIDIMusicDisabled, Boxer will disable MIDI playback.
 extern NSString * const BXMIDIMusicTypeKey;
 
-//An NSNumber containing a boolean indicating whether an external
-//playback device should be used if any are available.
+/// An NSNumber boolean indicating whether an external General MIDI playback device
+/// should be chosen if any are available.
 extern NSString * const BXMIDIPreferExternalKey;
 
-//An NSNumber indicating the numeric destination index of the external
-//device to use for MIDI playback. If omitted, defaults to 0 (which
-//means the first device found).
-//Only used if BXMIDIPreferExternal is YES.
-extern NSString * const BXMIDIExternalDeviceIndexKey;
-
-//An NSNumber indicating the unique ID index of the external device
-//to use for MIDI playback. Takes priority over BXMIDIExternalDeviceIndex.
-//Only used if BXMIDIPreferExternal is YES.
+/// An NSNumber indicating the unique ID of the external device to use for MIDI playback.
+/// Only applicable if @c BXMIDIPreferExternal is YES.
 extern NSString * const BXMIDIExternalDeviceUniqueIDKey;
 
-//An NSNumber containing a boolean indicating whether the requested
-//external MIDI device needs sysex delays. (Note that this is distinct
-//from the BXMIDIMusicMT32 music type.)
+/// An NSNumber indicating the numeric enumeration order of the external device to use for MIDI playback.
+/// Only applicable if @c BXMIDIPreferExternalKey is @c YES.
+/// @note If both this and @c BXMIDIExternalDeviceUniqueIDKey are omitted, delegates should return the
+/// first appropriate MIDI device that is found.
+extern NSString * const BXMIDIExternalDeviceIndexKey;
+
+/// An NSNumber boolean indicating whether the requested external MIDI device requires additional sysex
+/// delays when sending MIDI signals. Necessary for older-generation MT-32 devices.
 extern NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey;
 
 
-#pragma mark -
-#pragma mark Interface declaration
+#pragma mark - BXEmulator (BXAudio)
 
 @protocol BXMIDIDevice;
 @interface BXEmulator (BXAudio) <BXEmulatedMT32Delegate>
 
-#pragma mark -
-#pragma mark MIDI processing
+#pragma mark - MIDI processing
 
 //Sends an LCD message via Sysex to the MT-32 emulator
 //(or to a real MT-32, in CoreMIDI mode.)

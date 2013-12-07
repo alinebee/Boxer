@@ -40,9 +40,6 @@ NSString * const BXEmulatorDidFinishGraphicalContextNotification	= @"BXEmulatorD
 
 NSString * const BXEmulatorDidChangeEmulationStateNotification		= @"BXEmulatorDidChangeEmulationStateNotification";
 
-NSString * const BXEmulatorDidCreateFileNotification				= @"BXEmulatorDidCreateFileNotification";
-NSString * const BXEmulatorDidRemoveFileNotification				= @"BXEmulatorDidRemoveFileNotification";
-
 
 NSString * const BXEmulatorDOSPathKey           = @"DOSPath";
 NSString * const BXEmulatorIsBatchFileKey       = @"isBatchFile";

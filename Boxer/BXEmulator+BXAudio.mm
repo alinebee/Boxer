@@ -32,11 +32,9 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 
 - (void) emulatedMT32: (BXEmulatedMT32 *)MT32 didDisplayMessage: (NSString *)message
 {
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject: message forKey: @"message"];
-
     [self _postNotificationName: BXEmulatorDidDisplayMT32MessageNotification
                delegateSelector: @selector(emulatorDidDisplayMT32Message:)
-                       userInfo: userInfo];
+                       userInfo: @{ @"message": message }];
 }
 
 - (void) sendMT32LCDMessage: (NSString *)message
@@ -51,12 +49,12 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 
 - (BXMIDIMusicType) musicType
 {
-    return [[[self requestedMIDIDeviceDescription] objectForKey: BXMIDIMusicTypeKey] integerValue];
+    return [[self.requestedMIDIDeviceDescription objectForKey: BXMIDIMusicTypeKey] integerValue];
 }
 
-- (void) setActiveMIDIDevice:(id<BXMIDIDevice>)device
+- (void) setActiveMIDIDevice: (id<BXMIDIDevice>)device
 {
-    if (device != [self activeMIDIDevice])
+    if (device != self.activeMIDIDevice)
     {
         [_activeMIDIDevice release];
         _activeMIDIDevice = [device retain];
@@ -67,7 +65,10 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
             [self _addMIDIMixerChannelWithSampleRate: [(id <BXAudioSource>)device sampleRate]];
         }
         //Otherwise, disable and remove any existing mixer channel.
-        else [self _removeMIDIMixerChannel];
+        else
+        {
+            [self _removeMIDIMixerChannel];
+        }
         
 #ifdef BOXER_DEBUG
         //When debugging, display an LCD message so that we know MT-32 mode has kicked in
@@ -123,8 +124,9 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
             if (supportConfirmed)
             {
 #if BOXER_DEBUG
-                NSLog(@"Conclusive MT-32 sysex: %@ total length: %lu", [BXExternalMT32 dataInSysex: message
-                                                                includingAddress: YES], (unsigned long)message.length);
+                NSLog(@"Conclusive MT-32 sysex: %@ total length: %lu",
+                      [BXExternalMT32 dataInSysex: message includingAddress: YES],
+                      (unsigned long)message.length);
 #endif
                 
                 id device = [self attachMIDIDeviceForDescription: @{ BXMIDIMusicTypeKey: @(BXMIDIMusicMT32) }];
@@ -150,8 +152,7 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
             else
             {
 #if BOXER_DEBUG
-                NSLog(@"Inconclusive MT-32 sysex: %@", [BXExternalMT32 dataInSysex: message
-                                                                  includingAddress: YES]);
+                NSLog(@"Inconclusive MT-32 sysex: %@", [BXExternalMT32 dataInSysex: message includingAddress: YES]);
 #endif
                 [self _queueSysexMessage: message];
             }
@@ -237,7 +238,7 @@ void _renderMIDIOutput(Bitu numFrames)
 
 - (void) _renderMIDIOutputToChannel: (MixerChannel *)channel frames: (NSUInteger)numFrames
 {
-    id <BXAudioSource> source = (id <BXAudioSource>)[self activeMIDIDevice];
+    id <BXAudioSource> source = (id <BXAudioSource>)self.activeMIDIDevice;
     
     NSAssert1([source conformsToProtocol: @protocol(BXAudioSource)], @"_renderMIDIOutputToChannel:length: called for MIDI device that does not implement BXAudioSource: %@", source);
     
@@ -376,8 +377,7 @@ void _renderMIDIOutput(Bitu numFrames)
                                        shouldWaitForMIDIDevice: device
                                                      untilDate: date];
         
-        //Block by running the thread's loop until the time is up
-        //or we've been cancelled
+        //Block by running the thread's loop until the time is up or we've been cancelled
         if (keepWaiting)
         {
             while (!self.isCancelled && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode

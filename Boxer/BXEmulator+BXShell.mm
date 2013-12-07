@@ -225,12 +225,6 @@ nil];
 	return [self _executeCommand: command encoding: encoding];
 }
 
-- (void) setConfig: (NSString *)name to: (NSString *)value
-{
-	NSString *command = [NSString stringWithFormat: @"%@ %@", name, value];
-	return [self _executeCommand: command encoding: BXDirectStringEncoding];	
-}
-
 
 #pragma mark -
 #pragma mark Buffering commands

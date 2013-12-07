@@ -16,16 +16,7 @@
 #import "joystick.h"
 
 
-#pragma mark -
-#pragma mark Global tracking variables
-
-//The singleton emulator instance. Returned by [BXEmulator currentEmulator].
-static BXEmulator *_currentEmulator = nil;
-static BOOL _hasStartedEmulator = NO;
-
-
-#pragma mark -
-#pragma mark Constants
+#pragma mark - Constants
 
 //The name and path to the DOSBox shell. Used when determining the current process.
 NSString * const shellProcessName = @"DOSBOX";
@@ -66,15 +57,12 @@ NSString * const BXEmulatorExitDateKey          = @"exitDate";
 NSString * const BXDOSBoxErrorDomain = @"BXDOSBoxErrorDomain";
 
 
-//Use for strings that should be displayed to the user
 NSStringEncoding BXDisplayStringEncoding	= CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSLatin1);
-//Use for strings that should be left unmunged (usually filesystem paths)
 NSStringEncoding BXDirectStringEncoding		= NSUTF8StringEncoding;
 
 
 
-#pragma mark -
-#pragma mark External function definitions
+#pragma mark - External function definitions
 
 //defined in dos_execute.cpp
 extern const char* RunningProgram;
@@ -93,8 +81,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 #endif
 
 
-#pragma mark -
-#pragma mark Implementation
+#pragma mark - Implementation
 
 @implementation BXEmulator
 @synthesize processName = _processName;
@@ -120,6 +107,15 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @synthesize masterVolume = _masterVolume;
 @synthesize keyBuffer = _keyBuffer;
 @synthesize waitingForCommandInput = _waitingForCommandInput;
+
+
+#pragma mark - Global tracking variables
+
+/// The singleton emulator instance. Returned by [BXEmulator currentEmulator].
+static BXEmulator *_currentEmulator = nil;
+
+/// Whether an emulator instance has been started yet. No other emulators can be started after this.
+static BOOL _hasStartedEmulator = NO;
 
 
 #pragma mark - Class methods
@@ -231,20 +227,20 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (void) start
 {
-    NSAssert(!_hasStartedEmulator, @"Emulation session started after one has already been started.");
+    NSAssert(_hasStartedEmulator == NO && _currentEmulator == nil,
+             @"A second emulation session cannot be started after one has already been started.");
     
 	if (self.isCancelled) return;
     
     self.emulationThread = [NSThread currentThread];
 	
 	//Record ourselves as the current emulator instance for DOSBox to talk to
-    if (!_currentEmulator)
-    {
-        _currentEmulator = [self retain];
-    }
+    _currentEmulator = [self retain];
 	_hasStartedEmulator = YES;
 	
-	[self _willStart];
+	[self _postNotificationName: BXEmulatorWillStartNotification
+			   delegateSelector: @selector(emulatorWillStart:)
+					   userInfo: nil];
 	
 	self.executing = YES;
 	
@@ -259,7 +255,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
         _currentEmulator = nil;
 	}
     
-	[self _didFinish];
+	[self _postNotificationName: BXEmulatorDidFinishNotification
+			   delegateSelector: @selector(emulatorDidFinish:)
+					   userInfo: nil];
 }
 
 - (void) cancel
@@ -792,8 +790,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 }
 
 
-#pragma mark -
-#pragma mark Synchronizing emulation state
+#pragma mark - Synchronizing emulation state
 
 //Dispatch KVC notifications on the main thread
 - (void) willChangeValueForKey: (NSString *)key
@@ -844,13 +841,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     }
 }
 
-- (void) _willStart
-{
-	[self _postNotificationName: BXEmulatorWillStartNotification
-			   delegateSelector: @selector(emulatorWillStart:)
-					   userInfo: nil];
-}
-
 - (void) _didInitialize
 {
 	self.initialized = YES;
@@ -865,13 +855,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	//Let the delegate know that the emulation state has changed behind its back, so it can re-check CPU settings
 	[self _postNotificationName: BXEmulatorDidInitializeNotification
 			   delegateSelector: @selector(emulatorDidInitialize:)
-					   userInfo: nil];
-}
-
-- (void) _didFinish
-{
-	[self _postNotificationName: BXEmulatorDidFinishNotification
-			   delegateSelector: @selector(emulatorDidFinish:)
 					   userInfo: nil];
 }
 

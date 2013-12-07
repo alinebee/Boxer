@@ -222,13 +222,13 @@ nil];
 - (void) setVariable: (NSString *)name to: (NSString *)value encoding: (NSStringEncoding)encoding
 {
 	NSString *command = [NSString stringWithFormat: @"set %@=%@", name, value];
-	return [self _substituteCommand: command encoding: encoding];
+	return [self _executeCommand: command encoding: encoding];
 }
 
 - (void) setConfig: (NSString *)name to: (NSString *)value
 {
 	NSString *command = [NSString stringWithFormat: @"%@ %@", name, value];
-	return [self _substituteCommand: command encoding: BXDirectStringEncoding];	
+	return [self _executeCommand: command encoding: BXDirectStringEncoding];	
 }
 
 
@@ -263,7 +263,7 @@ nil];
 
 - (void) showShellCommandHelp: (NSString *)argumentString
 {
-	[self _substituteCommand: @"cls" encoding: BXDirectStringEncoding];
+	[self _executeCommand: @"cls" encoding: BXDirectStringEncoding];
 	[self displayString: NSLocalizedStringFromTable(@"Shell Command Help", @"Shell",
                                                     @"A list of common DOS commands, displayed when running HELP at the command line. This should list the commands in the left column (which should be left untranslated) and command descriptions in the right-hand column. Accepts DOSBox-style formatting characters.")];
 }
@@ -490,7 +490,7 @@ nil];
 		else
 		{
 			NSString *fullCommand = [aliasedCommand stringByAppendingString: originalArgumentString];
-			[self _substituteCommand: fullCommand encoding: BXDirectStringEncoding];
+			[self _executeCommand: fullCommand encoding: BXDirectStringEncoding];
 			return YES;
 		}
 	}
@@ -535,7 +535,7 @@ nil];
 }
 
 
-- (void) _substituteCommand: (NSString *)command encoding: (NSStringEncoding)encoding
+- (void) _executeCommand: (NSString *)command encoding: (NSStringEncoding)encoding
 {
 	if (self.isExecuting)
 	{
@@ -557,7 +557,7 @@ nil];
               cursorPosition: (NSUInteger *)cursorPosition
               executeCommand: (BOOL *)execute
 {
-    NSAssert(execute, @"_handleCommandInput:cursorPosition:executeCommand: must be given a pointer to fill with the execute flag.");
+    NSAssert(execute != NULL, @"_handleCommandInput:cursorPosition:executeCommand: must be given a pointer to fill with the execute flag.");
     
     NSMutableArray *queue = self.commandQueue;
 	if (queue.count)

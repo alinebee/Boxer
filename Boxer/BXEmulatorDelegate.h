@@ -167,17 +167,19 @@ extern NSString * const BXEmulatorExitDateKey;
 
 @protocol BXEmulatorFileSystemDelegate <NSObject>
 
-//Return whether the file at the specified path should be shown in DOS directory listings.
+/// @return @c YES if files with the specified name should be shown in DOS directory listings, or @c NO otherwise.
 - (BOOL) emulator: (BXEmulator *)emulator shouldShowFileWithName: (NSString *)filePath;
 
-//Called whenever a path is mounted from the DOS MOUNT command.
-//Return NO to prevent the mount.
-- (BOOL) emulator: (BXEmulator *)emulator shouldMountDriveFromShell: (NSString *)drive;
+/// Whether the specified filesystem location is allowed to be mounted as a new drive.
+/// Called whenever the DOS MOUNT or IMGMOUNT commands try to mount a file location as a drive.
+/// @return @c YES to allow the mount to proceed, or @c NO to prevent the mount.
+- (BOOL) emulator: (BXEmulator *)emulator shouldMountDriveFromURL: (NSURL *)fileURL;
 
-//Whether the emulator should be allowed to open the file at the specified local filesystem path for writing.
-- (BOOL) emulator: (BXEmulator *)emulator shouldAllowWriteAccessToPath: (NSString *)path onDrive: (BXDrive *)drive;
+/// @return @c YES to allow the emulator to write to the specified file location, or @c NO otherwise.
+- (BOOL) emulator: (BXEmulator *)emulator shouldAllowWriteAccessToURL: (NSURL *)fileURL onDrive: (BXDrive *)drive;
 
 @optional
+
 //Notifies the delegate that a DOS drive has been added/removed.
 - (void) emulatorDidMountDrive:		(NSNotification *)notification;
 - (void) emulatorDidUnmountDrive:	(NSNotification *)notification;

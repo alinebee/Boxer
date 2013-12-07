@@ -1276,12 +1276,13 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	[self didChangeValueForKey: @"mountedDrives"];
 }
 
-- (void) _didCreateFileAtPath: (NSString *)filesystemPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+- (void) _didCreateFileAtLocalPath: (const char *)localPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     //TODO: make this receive DOS paths and manually resolve them to logical and filesystem URLs ourselves.
     //This way it can be deployed across all drive types.
+    NSURL *fileURL = [NSURL URLFromFileSystemRepresentation: localPath];
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    NSURL *fileURL = [NSURL fileURLWithPath: filesystemPath];
+    
 	//Post a notification to whoever's listening
 	NSDictionary *userInfo = @{
                             BXEmulatorDriveKey: drive,
@@ -1294,12 +1295,13 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 					   userInfo: userInfo];	
 }
 
-- (void) _didRemoveFileAtPath: (NSString *)filesystemPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+- (void) _didRemoveFileAtLocalPath: (const char *)localPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     //TODO: make this receive DOS paths and manually resolve them to logical and filesystem URLs ourselves.
     //This way it can be deployed across all drive types.
+    NSURL *fileURL = [NSURL URLFromFileSystemRepresentation: localPath];
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
-    NSURL *fileURL = [NSURL fileURLWithPath: filesystemPath];
+    
 	//Post a notification to whoever's listening
 	NSDictionary *userInfo = @{
                                BXEmulatorDriveKey: drive,
@@ -1318,9 +1320,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (BOOL) _DOSBoxDriveInUseAtIndex: (NSUInteger)index
 {
-    //If we're at the DOS prompt, then any open file handles are leftovers
-    //and can be safely ignored, so don't bother checking.
-    if (self.isAtPrompt) return NO;
+    //If we have no processes running, then any open file handles are leftovers and can be safely ignored, so don't bother checking.
+    if (self.currentProcess == nil) return NO;
 
 	int i;
 	for (i=0; i<DOS_FILES; i++)
@@ -1340,9 +1341,10 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 //If the folder was restricted, print an error to the shell and deny access
 //Todo: this assumes that the check is being called from the shell;
 //we should instead populate an NSError with the error details and let the upstream context handle it
-- (BOOL) _shouldMountPath: (NSString *)filePath
+- (BOOL) _shouldMountLocalPath: (const char *)localPath
 {
-	return [self.delegate emulator: self shouldMountDriveFromShell: filePath];
+    NSURL *fileURL = [NSURL URLFromFileSystemRepresentation: localPath];
+	return [self.delegate emulator: self shouldMountDriveFromURL: fileURL];
 }
 
 //Todo: supplement this by getting entire OS X filepaths out of DOSBox, instead of just filenames
@@ -1351,11 +1353,12 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     return [self.delegate emulator: self shouldShowFileWithName: fileName];
 }
 
-- (BOOL) _shouldAllowWriteAccessToPath: (NSString *)filePath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+- (BOOL) _shouldAllowWriteAccessToLocalPath: (const char *)localPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {	
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     
-    return [self.delegate emulator: self shouldAllowWriteAccessToPath: filePath onDrive: drive];
+    NSURL *fileURL = [NSURL URLFromFileSystemRepresentation: localPath];
+    return [self.delegate emulator: self shouldAllowWriteAccessToURL: fileURL onDrive: drive];
 }
 
 
@@ -1607,7 +1610,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 }
 
 - (id <ADBFilesystemFileURLEnumeration>) _directoryEnumeratorForLocalPath: (const char *)path
-                                                                 onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+                                                            onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
     BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
     id <ADBFilesystemPathAccess, ADBFilesystemFileURLAccess> filesystem = (id)drive.filesystem;

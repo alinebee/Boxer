@@ -131,7 +131,8 @@ bool boxer_shellShouldRunCommand(DOS_Shell *shell, char* cmd, char* args)
 	NSString *argumentString	= [NSString stringWithCString: args	encoding: BXDirectStringEncoding];
 	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return ![emulator _handleCommand: command withArgumentString: argumentString];
+	bool handledInternally = [emulator _handleCommand: command withArgumentString: argumentString];
+    return !handledInternally;
 }
 
 bool boxer_handleShellCommandInput(DOS_Shell *shell, char *cmd, Bitu *cursorPosition, bool *executeImmediately)
@@ -147,9 +148,9 @@ bool boxer_handleShellCommandInput(DOS_Shell *shell, char *cmd, Bitu *cursorPosi
 		if (newcmd)
 		{
             strlcpy(cmd, newcmd, CMD_MAXLINE);
-            return YES;
+            return true;
 		}
-		else return NO;
+		else return false;
 	}
 	return false;
 }
@@ -228,16 +229,12 @@ bool boxer_shellShouldDisplayStartupMessages(DOS_Shell *shell)
 
 #pragma mark - Filesystem functions
 
-#define boxer_pathFromCPath(path) ([[NSFileManager defaultManager] stringWithFileSystemRepresentation: path length: strlen(path)])
-
 //Whether or not to allow the specified path to be mounted.
 //Called by MOUNT::Run in DOSBox's dos/dos_programs.cpp.
 bool boxer_shouldMountPath(const char *path)
 {
-	NSString *localPath = boxer_pathFromCPath(path);
-	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _shouldMountPath: localPath];
+	return [emulator _shouldMountLocalPath: path];
 }
 
 //Whether to include a file with the specified name in DOSBox directory listings
@@ -251,10 +248,8 @@ bool boxer_shouldShowFileWithName(const char *name)
 //Whether to allow write access to the file at the specified path on the local filesystem
 bool boxer_shouldAllowWriteAccessToPath(const char *path, DOS_Drive *dosboxDrive)
 {
-	NSString *localPath = boxer_pathFromCPath(path);
-	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _shouldAllowWriteAccessToPath: localPath onDOSBoxDrive: dosboxDrive];
+	return [emulator _shouldAllowWriteAccessToLocalPath: path onDOSBoxDrive: dosboxDrive];
 }
 
 //Tells Boxer to resync its cached drives - called by DOSBox functions that add/remove drives
@@ -272,18 +267,14 @@ void boxer_driveDidUnmount(Bit8u driveIndex)
 
 void boxer_didCreateLocalFile(const char *path, DOS_Drive *dosboxDrive)
 {
-	NSString *localPath = boxer_pathFromCPath(path);	
-
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _didCreateFileAtPath: localPath onDOSBoxDrive: dosboxDrive];
+	[emulator _didCreateFileAtLocalPath: path onDOSBoxDrive: dosboxDrive];
 }
 
 void boxer_didRemoveLocalFile(const char *path, DOS_Drive *dosboxDrive)
 {
-	NSString *localPath = boxer_pathFromCPath(path);
-	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _didRemoveFileAtPath: localPath onDOSBoxDrive: dosboxDrive];
+	[emulator _didRemoveFileAtLocalPath: path onDOSBoxDrive: dosboxDrive];
 }
 
 

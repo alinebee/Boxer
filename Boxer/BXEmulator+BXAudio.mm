@@ -110,7 +110,7 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
     
     //Autodetect if the music we're receiving would be suitable for an MT-32:
     //If so, and our current device can't play MT-32 music, try switching to one that can.
-    if ([self _shouldAutodetectMT32])
+    if (self.autodetectsMT32 && !self.activeMIDIDevice.supportsMT32Music)
     {
         //Check if the message we've received was intended for an MT-32,
         //and if so, how 'conclusive' it is that the game is playing MT-32 music.
@@ -324,13 +324,6 @@ void _renderMIDIOutput(Bitu numFrames)
         BXMIDIMusicType musicType = [[newDescription objectForKey: BXMIDIMusicTypeKey] integerValue];
         self.autodetectsMT32 = (musicType == BXMIDIMusicAutodetect);
     }
-}
-
-- (BOOL) _shouldAutodetectMT32
-{
-    //Try to autodetect the MT-32 only if autodetection was enabled,
-    //and if we don't already have a MIDI device that supports MT-32 music.
-    return (self.autodetectsMT32 && !self.activeMIDIDevice.supportsMT32Music);
 }
 
 - (void) _resetMIDIDevice

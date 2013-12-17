@@ -7,8 +7,7 @@ The Boxer XCode project is designed to be a painless one-click build. Here's a q
 Build requirements
 ------------------
 
-To build the Boxer project you will need OS X 10.7 or higher and XCode 4.3 or higher.
-(Boxer Bundler requires OS X 10.8 or higher: see below).
+To build the Boxer project you will need OS X 10.8 or higher and XCode 4.5 or higher.
 
 All necessary frameworks and other dependencies are included in the Boxer repo, so the project itself is all you'll need.
 
@@ -22,7 +21,7 @@ The Boxer project has three targets:
 
 - "Boxer Standalone": a cut-down version of Boxer that wraps up a gamebox into a single unified app. Game importing and settings UIs have been stripped out of this version, and it will only launch the gamebox that bundled inside it. This target is not meant to be used on its own: instead it's a build component for…
 
-- "Boxer Bundler": a graphical tool for converting gameboxes into standalone apps using its own self-contained copy of Boxer Standalone. Unlike the other two, this target can only be compiled (and run) on OSX 10.8.
+- "Boxer Bundler": a graphical tool for converting gameboxes into standalone apps using its own self-contained copy of Boxer Standalone.
 
 
 Build Configurations

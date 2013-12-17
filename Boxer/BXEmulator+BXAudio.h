@@ -19,7 +19,7 @@
 /// Possible values for the BXMIDIMusicTypeKey of MIDI device description dictionaries.
 /// Set by the game configuration's @c mididevice setting to determine what kind of MIDI
 /// device the emulator should request.
-typedef enum {
+enum {
     /// The emulator should disable MIDI playback altogether.
     /// Determined by the game configuration file and is not used in descriptions
     /// when requesting a MIDI device from the delegate.
@@ -35,7 +35,8 @@ typedef enum {
     
     /// The game plays MT-32 music.
     BXMIDIMusicMT32        = 2
-} BXMIDIMusicType;
+};
+typedef NSInteger BXMIDIMusicType;
 
 /// An NSNumber corresponding to one of the BXMIDIMusicType constants.
 /// If BXMIDIMusicDisabled, Boxer will disable MIDI playback.

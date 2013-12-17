@@ -55,8 +55,6 @@
 - (BOOL) saveAsIconToURL: (NSURL *)URL
                    error: (out NSError **)outError
 {
-    NSUInteger numImages = self.representations.count;
-    
     if ([URL checkResourceIsReachableAndReturnError: NULL])
     {
         if (outError)
@@ -68,26 +66,57 @@
         return NO;
     }
     
+    NSUInteger numImages = self.representations.count;
     CGImageDestinationRef destination = CGImageDestinationCreateWithURL((__bridge CFURLRef)URL,
                                                                         kUTTypeAppleICNS,
                                                                         numImages,
                                                                         NULL);
     
-    for (NSImageRep *rep in self.representations)
+    if (destination != NULL)
     {
-        CGImageRef image = [rep CGImageForProposedRect: NULL context: nil hints: nil];
-        NSDictionary* properties = @{(NSString *)kCGImagePropertyDPIWidth: @(rep.size.width),
-                                     (NSString *)kCGImagePropertyDPIHeight: @(rep.size.height),
-                                     (NSString *)kCGImagePropertyPixelWidth: @(rep.pixelsWide),
-                                     (NSString *)kCGImagePropertyPixelHeight: @(rep.pixelsHigh),
-                                     };
+        for (NSImageRep *rep in self.representations)
+        {
+            CGImageRef image = [rep CGImageForProposedRect: NULL context: nil hints: nil];
+            NSDictionary* properties = @{(NSString *)kCGImagePropertyDPIWidth: @(rep.size.width),
+                                         (NSString *)kCGImagePropertyDPIHeight: @(rep.size.height),
+                                         (NSString *)kCGImagePropertyPixelWidth: @(rep.pixelsWide),
+                                         (NSString *)kCGImagePropertyPixelHeight: @(rep.pixelsHigh),
+                                         };
+            
+            CGImageDestinationAddImage(destination, image, (__bridge CFDictionaryRef)properties);
+        }
         
-        CGImageDestinationAddImage(destination, image, (__bridge CFDictionaryRef)properties);
+        BOOL finalized = CGImageDestinationFinalize(destination);
+        CFRelease(destination);
+        
+        if (finalized)
+        {
+            return YES;
+        }
+        else
+        {
+            //TODO: try to get more specific error information out of Core Graphics
+            if (outError)
+            {
+                *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                                code: NSFileWriteUnknownError
+                                            userInfo: @{ NSURLErrorKey: URL }];
+            }
+            return NO;
+        }
     }
-    
-    BOOL success = CGImageDestinationFinalize(destination);
-    CFRelease(destination);
-    return success;
+    else
+    {
+        //TODO: try to get more specific error information out of Core Graphics
+        if (outError)
+        {
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                            code: NSFileWriteUnknownError
+                                        userInfo: @{ NSURLErrorKey: URL }];
+        }
+        
+        return NO;
+    }
 }
 
 @end

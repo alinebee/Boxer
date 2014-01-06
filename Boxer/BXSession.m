@@ -1042,7 +1042,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 - (NSImage *)representedIcon
 {
-    if (!self.cachedIcon && self.hasGamebox)
+    if (self.hasGamebox && self.cachedIcon == nil)
     {
         NSImage *icon = self.gamebox.coverArt;
         
@@ -1064,6 +1064,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         
         self.cachedIcon = icon;
     }
+    
     return self.cachedIcon;
 }
 
@@ -1071,16 +1072,13 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 {
     //Note: this equality check is fairly feeble, since we cannot
     //(and should not) compare image data for equality.
-    if (self.gamebox)
+    if (self.hasGamebox && ![self.cachedIcon isEqual: icon])
     {
-        if (![self.cachedIcon isEqual: icon])
-        {
-            self.cachedIcon = icon;
-            self.gamebox.coverArt = icon;
+        self.gamebox.coverArt = icon;
+        self.cachedIcon = icon;
         
-            //Force the window's icon to update to account for the new icon.
-            [self.DOSWindowController synchronizeWindowTitleWithDocumentName];
-        }
+        //Force the window's icon to update to account for the new icon.
+        [self.DOSWindowController synchronizeWindowTitleWithDocumentName];
     }
 }
 

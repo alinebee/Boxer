@@ -27,6 +27,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+
+#pragma mark - ADBFallbackProxyCategory
 /// A base class for 'category-like' classes that copy their own methods onto another class when loaded.
 /// This behaves much like a category: except that if the other class already has an implementation
 /// of the method being copied, it will not be replaced. (Regular Objective-C categories will collide
@@ -45,6 +47,8 @@
 
 @end
 
+
+#pragma mark - NSFileManager
 
 @interface NSFileManager (ADBForwardCompatibility)
 
@@ -70,6 +74,8 @@
 @end
 
 
+#pragma mark - NSURL
+
 @interface NSURL (ADBForwardCompatibility)
 
 //Declared in OS X 10.9
@@ -78,4 +84,15 @@
 @end
 
 @interface NSURLProxyCategory: ADBFallbackProxyCategory
+@end
+
+
+#pragma mark - NSView
+@interface NSView (ADBForwardCompatibility)
+
+//Declared in OS X 10.9. Declared to avoid compilation errors, but not actually implemented by proxy:
+//instead, check for availability with respondsToSelector:.
+- (BOOL) layerUsesCoreImageFilters;
+- (void) setLayerUsesCoreImageFilters: (BOOL)flag;
+
 @end

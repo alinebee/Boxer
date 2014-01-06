@@ -8,6 +8,7 @@
 #import "BXPrintStatusPanelController.h"
 #import "BXPrintSession.h"
 #import "ADBGeometry.h"
+#import "ADBForwardCompatibility.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation BXPrintStatusPanelController
@@ -272,6 +273,10 @@
     
     self.layer = background;
     self.wantsLayer = YES;
+    
+    //For 10.9: fixes crash when using compositing filters.
+    if ([self respondsToSelector: @selector(setLayerUsesCoreImageFilters:)])
+        self.layerUsesCoreImageFilters = YES;
     
     [self _syncPagePosition];
     [self _syncHeadPosition];

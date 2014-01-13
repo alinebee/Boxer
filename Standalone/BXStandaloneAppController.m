@@ -11,6 +11,7 @@
 #import "BXEmulator.h"
 #import "BXStandaloneAboutController.h"
 #import "BXBaseAppController+BXHotKeys.h"
+#import "BXFileTypes.h"
 
 #pragma mark -
 #pragma mark App-menu replacement constants
@@ -141,18 +142,28 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
     
     [NSApp activateIgnoringOtherApps: YES];
     
-    NSError *launchError = nil;
-    BXSession *session = [self openBundledGameAndDisplay: YES error: &launchError];
-    
-    if (!session)
+    //If we opened a specific gamebox during debugging, don't open the bundled game.
+    if (self.sessions.count == 0)
     {
-        if (launchError)
-        {
-            [self presentError: launchError];
-        }
+        NSError *launchError = nil;
+        BXSession *session = [self openBundledGameAndDisplay: YES error: &launchError];
         
-        [NSApp terminate: self];
+        if (session == nil)
+        {
+            if (launchError)
+            {
+                [self presentError: launchError];
+            }
+            
+            [NSApp terminate: self];
+        }
     }
+}
+
+- (id) openDocumentWithContentsOfURL: (NSURL *)url display: (BOOL)displayDocument error: (NSError **)outError
+{
+    NSLog(@"Opening document!");
+    return [super openDocumentWithContentsOfURL: url display: displayDocument error: outError];
 }
 
 - (id) openBundledGameAndDisplay: (BOOL)display error: (NSError **)outError
@@ -185,10 +196,9 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
             {
                 NSString *errorTitle = @"This application does not contain a bundled gamebox.";
                 NSString *errorSuggestion = @"Ensure that the gamebox is placed in the Resources folder of the application, and that the Info.plist contains a “BXBundledGameboxName” key specifying the name of the gamebox without an extension.";
-                NSDictionary *errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                           errorTitle, NSLocalizedDescriptionKey,
-                                           errorSuggestion, NSLocalizedRecoverySuggestionErrorKey,
-                                           nil];
+                NSDictionary *errorInfo = @{ NSLocalizedDescriptionKey: errorTitle,
+                                             NSLocalizedRecoverySuggestionErrorKey: errorSuggestion
+                                            };
                 
                 *outError = [NSError errorWithDomain: BXStandaloneAppErrorDomain
                                                 code: BXStandaloneAppMissingGameboxError
@@ -213,11 +223,16 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
     }
 }
 
-- (id) makeDocumentWithContentsOfURL: (NSURL *)absoluteURL
-                              ofType: (NSString *)typeName
-                               error: (NSError **)outError
+- (Class) documentClassForType: (NSString *)UTI
 {
-    return [self makeUntitledDocumentOfType: typeName error: outError];
+    if (UTTypeConformsTo((CFStringRef)UTI, (CFStringRef)BXGameboxType))
+    {
+        return [BXSession class];
+    }
+    else
+    {
+        return nil;
+    }
 }
 
 //Suppress the automatic opening of untitled files when the user refocuses the application.

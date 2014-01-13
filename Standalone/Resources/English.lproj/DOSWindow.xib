@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="13A524d" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4514" systemVersion="13B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1060" defaultVersion="1060" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4514"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BXDOSWindowController">
@@ -135,23 +135,26 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="480" height="296"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <collectionView focusRingType="none" maxNumberOfColumns="1" id="1157">
+                                                        <collectionView focusRingType="none" maxNumberOfColumns="1" id="1157" customClass="BXLauncherList">
                                                             <rect key="frame" x="0.0" y="0.0" width="480" height="296"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <color key="primaryBackgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                                             <connections>
-                                                                <binding destination="1056" name="content" keyPath="favoriteProgramRows" id="1250"/>
+                                                                <binding destination="1056" name="content" keyPath="displayedRows" id="wDJ-DB-UDR"/>
+                                                                <outlet property="delegate" destination="1056" id="ghR-qx-jVg"/>
+                                                                <outlet property="favoritePrototype" destination="1160" id="E1I-5V-qiH"/>
+                                                                <outlet property="headingPrototype" destination="1160" id="8GE-Xh-CZM"/>
                                                                 <outlet property="itemPrototype" destination="1160" id="1162"/>
                                                             </connections>
                                                         </collectionView>
                                                     </subviews>
                                                     <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 </clipView>
-                                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" id="1158" customClass="BXHUDScroller">
+                                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="1158" customClass="BXHUDScroller">
                                                     <rect key="frame" x="-100" y="-100" width="233" height="15"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                 </scroller>
-                                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" id="1159" customClass="BXHUDScroller">
+                                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="1159" customClass="BXHUDScroller">
                                                     <rect key="frame" x="234" y="1" width="15" height="143"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                 </scroller>
@@ -196,12 +199,14 @@
         </viewController>
         <viewController id="1056" userLabel="Launch Panel Controller" customClass="BXLaunchPanelController">
             <connections>
-                <outlet property="favoriteProgramsList" destination="1157" id="1189"/>
+                <outlet property="launcherList" destination="1157" id="UDc-av-DTZ"/>
+                <outlet property="launcherScrollView" destination="1156" id="ODA-BB-nrp"/>
                 <outlet property="view" destination="1010" id="1060"/>
             </connections>
         </viewController>
-        <collectionViewItem id="1160" userLabel="Favorite Programs Item" customClass="BXCollectionItem">
+        <collectionViewItem id="1160" userLabel="Favorite Programs Item" customClass="BXLauncherItem">
             <connections>
+                <outlet property="delegate" destination="1056" id="s00-Db-CDY"/>
                 <outlet property="view" destination="1161" id="1163"/>
             </connections>
         </collectionViewItem>
@@ -217,8 +222,7 @@
                         <font key="font" metaFont="system" size="20"/>
                     </buttonCell>
                     <connections>
-                        <action selector="launchFavoriteProgram:" target="1056" id="1243"/>
-                        <binding destination="1056" name="enabled" keyPath="canLaunchPrograms" id="1201"/>
+                        <action selector="openItemInDOS:" target="1160" id="bvb-ZR-ZZB"/>
                         <binding destination="1160" name="title" keyPath="representedObject.title" id="1204"/>
                     </connections>
                 </button>

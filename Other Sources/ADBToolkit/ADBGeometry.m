@@ -33,6 +33,12 @@ NSInteger fitToPowerOfTwo(NSInteger value)
     return 2 << shift;
 }
 
+//q.v. http://stackoverflow.com/a/600306/228788
+BOOL isPowerOfTwo(NSUInteger value)
+{
+    return (value != 0) && (value & (value - 1)) == 0;
+}
+
 CGFloat aspectRatioOfSize(NSSize size)
 {
 	return (size.height) ? (size.width / size.height) : 0.0f;
@@ -40,14 +46,14 @@ CGFloat aspectRatioOfSize(NSSize size)
 
 NSPoint integralPoint(NSPoint point)
 {
-    return NSMakePoint(roundf(point.x), roundf(point.y));
+    return NSMakePoint(round(point.x), round(point.y));
 }
 
 NSSize integralSize(NSSize size)
 {
 	//To match behaviour of NSIntegralRect
 	if (size.width <= 0 || size.height <= 0) return NSZeroSize;
-	return NSMakeSize(ceilf(size.width), ceilf(size.height));
+	return NSMakeSize(ceil(size.width), ceil(size.height));
 }
 
 NSSize sizeToMatchRatio(NSSize size, CGFloat aspectRatio, BOOL preserveHeight)
@@ -141,8 +147,8 @@ NSRect constrainToRect(NSRect innerRect, NSRect outerRect, NSPoint anchor)
 NSPoint clampPointToRect(NSPoint point, NSRect rect)
 {
 	NSPoint clampedPoint = NSZeroPoint;
-	clampedPoint.x = fmaxf(fminf(point.x, NSMaxX(rect)), NSMinX(rect));
-	clampedPoint.y = fmaxf(fminf(point.y, NSMaxY(rect)), NSMinY(rect));
+	clampedPoint.x = fmax(fmin(point.x, NSMaxX(rect)), NSMinX(rect));
+	clampedPoint.y = fmax(fmin(point.y, NSMaxY(rect)), NSMinY(rect));
 	return clampedPoint;
 }
 

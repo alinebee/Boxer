@@ -35,6 +35,9 @@ extern "C" {
 
 	//Returns the nearest power of two that can accommodate the specified value
 	NSInteger fitToPowerOfTwo(NSInteger value);
+    
+    //Returns whether the specified unsigned number is a power of two.
+    BOOL isPowerOfTwo(NSUInteger value);
 
 	//Returns the aspect ratio (width / height) for size. This will be 0 if either dimension was 0.
 	CGFloat aspectRatioOfSize(NSSize size);

@@ -675,6 +675,7 @@
 		9FA54099139E85D800999940 /* 4ButtonJoystick.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FA54098139E85D800999940 /* 4ButtonJoystick.png */; };
 		9FA5D68311EB6CCC0012DFA5 /* ADBLineEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA5D68211EB6CCC0012DFA5 /* ADBLineEnumerator.m */; };
 		9FA85CD510A357A600E6457F /* BXSession+BXFileManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA85CD410A357A600E6457F /* BXSession+BXFileManagement.m */; };
+		9FA95BA818848874009F75B3 /* ADBGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35280F56C7B7001811F2 /* ADBGeometry.m */; };
 		9FA9E256121FD5BA006E20C4 /* DropzoneTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA9E255121FD5BA006E20C4 /* DropzoneTemplate.pdf */; };
 		9FA9E281121FD874006E20C4 /* PanelExpandTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA9E27F121FD874006E20C4 /* PanelExpandTemplate.pdf */; };
 		9FA9E282121FD874006E20C4 /* PanelCollapseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */; };
@@ -4665,6 +4666,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FA95BA818848874009F75B3 /* ADBGeometry.m in Sources */,
 				9FB4539716442CDD00BCF63B /* main.m in Sources */,
 				9FB4539E16442CDD00BCF63B /* BBAppDelegate.m in Sources */,
 				9FB453B816442ECE00BCF63B /* NSURL+ADBFilesystemHelpers.m in Sources */,

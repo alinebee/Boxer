@@ -116,6 +116,8 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 {
     NSUInteger i, numTaps = 0;
     CGGetEventTapList(0, NULL, &numTaps);
+    
+    BXKeyboardEventTapStatus status = BXKeyboardEventTapNotTapping;
     if (numTaps > 0)
     {
         CGEventTapInformation *taps = malloc(sizeof(CGEventTapInformation) * numTaps);
@@ -135,24 +137,24 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
                 
                 if ((tap.eventsOfInterest & keyEvents) == keyEvents)
                 {
-                    return BXKeyboardEventTapTappingAllKeyboardEvents;
+                    status = BXKeyboardEventTapTappingAllKeyboardEvents;
                 }
                 else if ((tap.eventsOfInterest & systemEvents) == systemEvents)
                 {
-                    return BXKeyboardEventTapTappingSystemEventsOnly;
+                    status = BXKeyboardEventTapTappingSystemEventsOnly;
                 }
                 else
                 {
-                    return BXKeyboardEventTapNotTapping;
+                    status = BXKeyboardEventTapNotTapping;
                 }
                 
                 break;
             }
         }
+        free(taps);
     }
     
-    //If we got this far, we couldn't find our tap in the tap info and can assume that our own tap failed to install.
-    return BXKeyboardEventTapNotTapping;
+    return status;
 }
 
 - (BOOL) _installEventTapOnCurrentThread

@@ -122,7 +122,7 @@
     
     BOOL renderingToSnapshot = ([NSView focusView] == nil);
     BOOL topShadowDirty     = renderingToSnapshot || [self needsToDrawRect: topShadowRect];
-    BOOL bottomShadowDirty  = renderingToSnapshot || [self needsToDrawRect: bottomShadowRect];
+    //BOOL bottomShadowDirty  = renderingToSnapshot || [self needsToDrawRect: bottomShadowRect];
     if (topShadowDirty)
     {
         NSGradient *topShadow = [[NSGradient alloc] initWithColorsAndLocations:
@@ -132,9 +132,11 @@
                                  nil];
         
         [topShadow drawInRect: topShadowRect angle: 270];
+        [topShadow release];
     }
     
-    if (NO && bottomShadowDirty)
+    /*
+    if (bottomShadowDirty)
     {
         NSColor *bottomBevel = [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.1];
         
@@ -144,8 +146,7 @@
             [bottomBevel setFill];
             NSRectFillUsingOperation(bevelRect, NSCompositeSourceOver);
         [NSGraphicsContext restoreGraphicsState];
-        
-        /*
+     
         NSGradient *bottomShadow = [[NSGradient alloc] initWithColorsAndLocations:
                                     [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.1f], 0.0f,
                                     [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.1f], 1.0f,
@@ -154,8 +155,8 @@
         [bottomShadow drawInRect: bottomShadowRect angle: 90];
         
         [bottomShadow release];
-         */
     }
+    */
 }
 
 - (void) _drawBrandInRect: (NSRect)dirtyRect

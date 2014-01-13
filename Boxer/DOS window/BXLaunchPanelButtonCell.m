@@ -226,10 +226,12 @@
                          [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.1f], 1.0f,
                          nil];
         
-        NSColor *innerBevelColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f];
-        innerBevel = [NSShadow shadowWithBlurRadius: 1.0f
+        /*
+         NSColor *innerBevelColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f];
+         innerBevel = [NSShadow shadowWithBlurRadius: 1.0f
                                              offset: NSMakeSize(0, -1.0f)
                                               color: innerBevelColor];
+         */
         innerBevel = nil;
         
         NSColor *glowColor = [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.66f];
@@ -250,10 +252,12 @@
                          [NSColor colorWithCalibratedWhite: 1 alpha: 0.1f], 1.0f,
                          nil];
         
-        NSColor *innerBevelColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f];
-        innerBevel = [NSShadow shadowWithBlurRadius: 1.0f
+        /*
+         NSColor *innerBevelColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f];
+         innerBevel = [NSShadow shadowWithBlurRadius: 1.0f
                                              offset: NSMakeSize(0, -1.0f)
                                               color: innerBevelColor];
+         */
         innerBevel = nil;
         
         NSColor *glowColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.33f];

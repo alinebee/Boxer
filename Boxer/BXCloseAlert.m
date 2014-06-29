@@ -87,7 +87,7 @@
 	
 	alert.messageText = [NSString stringWithFormat: messageFormat, programName];
 	
-	alert.informativeText =	NSLocalizedString(@"You can run this program in a Windows emulator instead. For more help, click the ? button.",
+	alert.informativeText =	NSLocalizedString(@"You can run this program in a Windows emulator (or possibly extract a DOS version using a tool like innoextract). For more help, click the ? button.",
                                               @"Informative text of warning sheet after running a Windows-only executable or importing a Windows-only game.");
 	
     NSButton *cancelButton = alert.buttons.lastObject;

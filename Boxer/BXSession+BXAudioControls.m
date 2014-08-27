@@ -108,7 +108,7 @@
     //if we can't find a real MT-32, then try MUNT emulation.
     if (musicType == BXMIDIMusicMT32)
     {
-        NSArray *deviceIDs = [[NSApp delegate] MIDIDeviceMonitor].discoveredMT32s;
+        NSArray *deviceIDs = [(BXBaseAppController*)[NSApp delegate] MIDIDeviceMonitor].discoveredMT32s;
         
         for (NSNumber *deviceID in deviceIDs)
         {
@@ -120,7 +120,7 @@
         }
         
         NSError *emulatedMT32Error = nil;
-        BXEmulatedMT32 *emulatedMT32 = [[[BXEmulatedMT32 alloc] initWithPCMROM: [[NSApp delegate] MT32PCMROMURL]
+        BXEmulatedMT32 *emulatedMT32 = [[[BXEmulatedMT32 alloc] initWithPCMROM: [(BXBaseAppController*)[NSApp delegate] MT32PCMROMURL]
                                                                     controlROM: [[NSApp delegate] MT32ControlROMURL]
                                                                       delegate: theEmulator
                                                                          error: &emulatedMT32Error] autorelease];

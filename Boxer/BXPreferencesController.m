@@ -247,7 +247,7 @@ enum {
     BOOL showRealMT32Help;
     
     //First, check if any real MT-32s are plugged in.
-    BOOL realMT32Connected = ([[NSApp delegate] MIDIDeviceMonitor].discoveredMT32s.count > 0);
+    BOOL realMT32Connected = ([(BXBaseAppController*)[NSApp delegate] MIDIDeviceMonitor].discoveredMT32s.count > 0);
     
     //If so, display a custom message
     if (realMT32Connected)
@@ -265,8 +265,8 @@ enum {
     //Failing that, check what type of MT-32 ROMs we have installed.
     else
     {
-        NSURL *controlURL   = [[NSApp delegate] MT32ControlROMURL];
-        NSURL *PCMURL       = [[NSApp delegate] MT32PCMROMURL];
+        NSURL *controlURL   = [(BXBaseAppController*)[NSApp delegate] MT32ControlROMURL];
+        NSURL *PCMURL       = [(BXBaseAppController*)[NSApp delegate] MT32PCMROMURL];
         
         NSError *error = nil;
         type = [BXEmulatedMT32 typeOfROMPairWithControlROMURL: controlURL

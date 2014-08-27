@@ -177,7 +177,7 @@ enum {
 {
     if (self.selectedDriveIndexes.count)
     {
-        NSArray *drives = [[NSApp delegate] currentSession].allDrives;
+        NSArray *drives = [(BXBaseAppController*)[NSApp delegate] currentSession].allDrives;
         return [drives objectsAtIndexes: self.selectedDriveIndexes];
     }
     else return [NSArray array];

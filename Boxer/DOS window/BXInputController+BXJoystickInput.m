@@ -238,7 +238,7 @@
     [self.controllerProfiles removeAllObjects];
     if (self.emulatedJoystick)
     {
-        NSArray *controllers = [[NSApp delegate] joystickController].joystickDevices;
+        NSArray *controllers = [(BXBaseAppController*)[NSApp delegate] joystickController].joystickDevices;
         for (DDHidJoystick *controller in controllers)
         {
             BXHIDControllerProfile *profile = [BXHIDControllerProfile profileForHIDDevice: controller
@@ -290,7 +290,7 @@
     
     //If there are known joystick/gamepad remapper tools running, assume
     //that they're handling joystick input on behalf of Boxer.
-    if ([[NSApp delegate] joystickController].recentHIDRemappers.count) return NO;
+    if ([(BXBaseAppController*)[NSApp delegate] joystickController].recentHIDRemappers.count) return NO;
     
     
     //If we get this far then yes, the current program does seem to be ignoring the joystick.

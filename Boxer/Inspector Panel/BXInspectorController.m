@@ -83,7 +83,7 @@
 						 change: (NSDictionary *)change
 						context: (void *)context
 {	
-	BXSession *session = [[NSApp delegate] currentSession];
+	BXSession *session = [(BXBaseAppController*)[NSApp delegate] currentSession];
 	if ([keyPath isEqualToString: @"currentSession"])
 	{
 		if (session)
@@ -102,7 +102,7 @@
 - (void) showWindow: (id)sender
 {
 	//If there’s no session active, don’t allow the window to be shown
-	if (![[NSApp delegate] currentSession].isEmulating) return;
+	if (![(BXBaseAppController*)[NSApp delegate] currentSession].isEmulating) return;
 	
 	[self loadWindow];
 	
@@ -179,7 +179,7 @@
 //Pass requests for a window manager on to the current session
 - (NSUndoManager *) windowWillReturnUndoManager: (NSWindow *)window
 {
-    return [[NSApp delegate] currentSession].undoManager;
+    return [(BXBaseAppController*)[NSApp delegate] currentSession].undoManager;
 }
 
 #pragma mark -
@@ -208,7 +208,7 @@
 - (BOOL) tabView: (NSTabView *)tabView shouldSelectTabViewItem: (NSTabViewItem *)tabViewItem
 {
 	return ([tabView indexOfTabViewItem: tabViewItem] != BXGameInspectorPanelIndex ||
-			[[NSApp delegate] currentSession].hasGamebox);
+			[(BXBaseAppController*)[NSApp delegate] currentSession].hasGamebox);
 }
 
 - (BOOL) shouldSyncWindowTitleToTabLabel: (NSString *)label
@@ -220,7 +220,7 @@
 {
     if (theItem.tag == BXGameInspectorPanelIndex)
     {
-        return ([[NSApp delegate] currentSession].hasGamebox);
+        return ([(BXBaseAppController*)[NSApp delegate] currentSession].hasGamebox);
     }
     return YES;
 }
@@ -229,12 +229,12 @@
 #pragma mark -
 #pragma mark Help
 
-- (IBAction) showGamePanelHelp: (id)sender				{ [[NSApp delegate] showHelpAnchor: @"game-inspector"]; }
-- (IBAction) showCPUPanelHelp: (id)sender				{ [[NSApp delegate] showHelpAnchor: @"adjusting-game-speed"]; }
-- (IBAction) showMousePanelHelp: (id)sender				{ [[NSApp delegate] showHelpAnchor: @"mouse-inspector"]; }
-- (IBAction) showDrivesPanelHelp: (id)sender			{ [[NSApp delegate] showHelpAnchor: @"adding-and-removing-drives"]; }
+- (IBAction) showGamePanelHelp: (id)sender				{ [(BXBaseAppController*)[NSApp delegate] showHelpAnchor: @"game-inspector"]; }
+- (IBAction) showCPUPanelHelp: (id)sender				{ [(BXBaseAppController*)[NSApp delegate] showHelpAnchor: @"adjusting-game-speed"]; }
+- (IBAction) showMousePanelHelp: (id)sender				{ [(BXBaseAppController*)[NSApp delegate] showHelpAnchor: @"mouse-inspector"]; }
+- (IBAction) showDrivesPanelHelp: (id)sender			{ [(BXBaseAppController*)[NSApp delegate] showHelpAnchor: @"adding-and-removing-drives"]; }
 
-- (IBAction) showJoystickPanelHelp: (id)sender			{ [[NSApp delegate] showHelpAnchor: @"joystick-emulation-options"]; }
-- (IBAction) showInactiveJoystickPanelHelp: (id)sender	{ [[NSApp delegate] showHelpAnchor: @"joysticks"]; }
+- (IBAction) showJoystickPanelHelp: (id)sender			{ [(BXBaseAppController*)[NSApp delegate] showHelpAnchor: @"joystick-emulation-options"]; }
+- (IBAction) showInactiveJoystickPanelHelp: (id)sender	{ [(BXBaseAppController*)[NSApp delegate] showHelpAnchor: @"joysticks"]; }
 
 @end

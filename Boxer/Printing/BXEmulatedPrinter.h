@@ -66,7 +66,7 @@ typedef enum {
     BXESCPTypefaceSVBusaba = 30,
     BXESCPTypefaceSVJittra = 31,
     
-    BXESCPTypefaceDefault = BXESCPTypefaceRoman,
+    BXESCPTypefaceDefault = BXESCPTypefaceSansSerifH,
 } BXESCPTypeface;
 
 typedef enum {

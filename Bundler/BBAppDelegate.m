@@ -61,6 +61,11 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
     self.window.delegate = self;
     [self.window registerForDraggedTypes: @[NSURLPboardType]];
     [self.window makeKeyAndOrderFront: self];
+    
+    
+        // Insert code here to initialize your application
+        
+    
 }
 
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *)sender

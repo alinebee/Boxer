@@ -335,6 +335,13 @@ enum {
 #pragma mark -
 #pragma mark Geometry
 
+/**
+ Converts a size given in points to inch
+ */
+-(NSSize)convertPointSizeToInch:(NSSize)pageSize{
+    return NSMakeSize(pageSize.width / 72.0, pageSize.height /72.0);
+}
+
 //Convert a coordinate in page inches into a coordinate in Quartz points.
 //This will flip the coordinate system to place the origin at the bottom left.
 - (NSPoint) convertPointFromPage: (NSPoint)pagePoint
@@ -353,9 +360,21 @@ enum {
 
 - (void) _moveHeadToX: (CGFloat)xOffset
 {
+    [self _moveHeadToX:xOffset writeLine:YES];
+}
+
+- (void) _moveHeadToX: (CGFloat)xOffset writeLine:(bool)needsToWriteLine
+{
     if (_headPosition.x != xOffset)
     {
+        
         _headPosition.x = xOffset;
+        
+        // If head moves, print the line
+        if (needsToWriteLine) {
+            // Only if head moves more than a character widht
+            [self writeAttributedStringToView];
+        }
         
         if ([self.delegate respondsToSelector: @selector(printer:didMoveHeadToX:)])
             [self.delegate printer: self didMoveHeadToX: xOffset];
@@ -710,8 +729,11 @@ enum {
             
         case BXESCPTypefaceRoman:
         case BXESCPTypefaceRomanT:
-        default:
             familyName = @"Times New Roman";
+            break;
+            
+        default:
+            familyName = @"Helvetica Neue";
             break;
     }
     
@@ -837,8 +859,13 @@ enum {
 {
     _initialized = YES;
     
+    
     //TODO: derive the default page size from OSX's default printer settings instead.
     //We could even pop up the OSX page setup sheet to get them to confirm the values there.
+    
+    NSPrintInfo *printInfo = [[NSPrintInfo alloc]init];
+    NSSize size =  printInfo.paperSize;
+    size = [self convertPointSizeToInch:size];
     self.defaultPageSize = NSMakeSize(8.5, 11); //US Letter paper in inches
     
     //Initialise the emulated printer settings and data structures.
@@ -959,11 +986,17 @@ enum {
 
 - (void) _startNewLine
 {
+    
+    
     [self _moveHeadToX: self.leftMargin];
     [self _moveHeadToY: self.headPosition.y + self.lineSpacing];
     
     if (self.headPosition.y > self.bottomMargin)
         [self _startNewPageWithCarriageReturn: NO discardBlankPages: NO];
+  
+    // Print the lineBuffer if not empty before start a new line
+    [self writeAttributedStringToView];
+    
 }
 
 - (void) _startNewPrintSession
@@ -1379,6 +1412,16 @@ enum {
     }
 }
 
+/// Holds the Text fo one line, if not splitted by vertical feed
+NSMutableAttributedString *_characterLinePuffer;
+
+/// In case the print head moves up or dwon before line ends, this holds the starting position for printing the line Buffer
+NSPoint _linePufferStartingPoint;
+
+/**
+ Add a charcter to the linePuffer with charcter Attributes
+ @param character The character to add
+ */
 - (void) _printCharacter: (uint8_t)character
 {
     //FIXME: this routine naively prints each glyph one by one, which prevents OSX from doing kerning or ligatures.
@@ -1435,28 +1478,16 @@ enum {
     NSPoint drawPos = [self convertPointFromPage: textOrigin];
     
     //Draw into the preview and PDF context in turn.
-    [self _prepareCanvasForPrinting];
-    NSArray *contexts = [NSArray arrayWithObjects:
-                         self.currentSession.previewContext,
-                         self.currentSession.PDFContext,
-                         nil];
+
+
     
-    for (NSGraphicsContext *context in contexts)
-    {
-        [NSGraphicsContext saveGraphicsState];
-            [NSGraphicsContext setCurrentContext: context];
-        
-            [stringToPrint drawAtPoint: drawPos
-                        withAttributes: self.textAttributes];
-        
-            //In doublestrike mode, reprint the same string shifted slightly down to 'thicken' it.
-            if (self.doubleStrike)
-            {
-                [stringToPrint drawAtPoint: NSMakePoint(drawPos.x, drawPos.y + 0.5)
-                            withAttributes: self.textAttributes];
-            }
-        [NSGraphicsContext restoreGraphicsState];
+    if (!_characterLinePuffer) {
+        _characterLinePuffer = [[NSMutableAttributedString alloc]init];
     }
+    
+    NSAttributedString *attributedCharacter = [[NSAttributedString alloc]initWithString:stringToPrint attributes:self.textAttributes];
+    [_characterLinePuffer appendAttributedString:attributedCharacter];
+    
     
     //Advance the head past the string.
     CGFloat newX = self.headPosition.x + advance + self.effectiveLetterSpacing;
@@ -1469,11 +1500,62 @@ enum {
 	}
     else
     {
-        [self _moveHeadToX: newX];
+        [self _moveHeadToX: newX writeLine:NO];
     }
     
     if ([self.delegate respondsToSelector: @selector(printer:didPrintToPageInSession:)])
         [self.delegate printer: self didPrintToPageInSession: self.currentSession];
+}
+
+-(void)writeAttributedStringToView{
+    
+    double descenderHeight = [[self.textAttributes objectForKey: NSFontAttributeName] descender] / 72.0;
+    
+    //Draw the glyph at the current position off the print head,
+    //centered within the space it is expected to occupy.
+    NSPoint textOrigin = self.headPosition;
+    
+    //The virtual head position is positioned at the top of the line to print,
+    //but ESC/P printers print text on a baseline that's 20/180 inch below this point
+    //(regardless of the current font size.) This ensures that baselines always line
+    //up regardless of font size.
+    //(Also note that we have to take the descender height into consideration because
+    //AppKit's drawAtPoint: function draws from the bottom of the descender, not the baseline.)
+    textOrigin.y += BXESCPBaselineOffset - descenderHeight;
+    
+    //Position the glyph in the middle of the expected character width.
+    //This prevents characters in proportional-but-monospaced fonts bunching up together.
+    //textOrigin.x += (advance - stringWidth) * 0.5;
+    
+    
+    NSPoint drawPos = [self convertPointFromPage: textOrigin];
+    
+    
+    [self _prepareCanvasForPrinting];
+    NSArray *contexts = [NSArray arrayWithObjects:
+                         self.currentSession.previewContext,
+                         self.currentSession.PDFContext,
+                         nil];
+    
+    for (NSGraphicsContext *context in contexts)
+    {
+        [NSGraphicsContext saveGraphicsState];
+        [NSGraphicsContext setCurrentContext: context];
+        
+        [_characterLinePuffer drawAtPoint: _linePufferStartingPoint];
+        
+        //In doublestrike mode, reprint the same string shifted slightly down to 'thicken' it.
+        if (self.doubleStrike)
+        {
+            [_characterLinePuffer drawAtPoint: NSMakePoint(_linePufferStartingPoint.x, _linePufferStartingPoint.y + 0.5)];
+        }
+        [NSGraphicsContext restoreGraphicsState];
+    }
+    
+    // Clear the lineBuffer
+    _characterLinePuffer  = [[NSMutableAttributedString alloc]init];
+    _linePufferStartingPoint = NSMakePoint(drawPos.x,drawPos.y);
+    
 }
 
 - (BOOL) _handleControlCharacter: (uint8_t)byte

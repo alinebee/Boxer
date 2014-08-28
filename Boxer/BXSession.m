@@ -619,6 +619,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	//This prevents menu highlights from getting 'stuck' because of DOSBox's main loop blocking
 	//the thread.
 	
+    
 	if (!_hasStarted) [self performSelector: @selector(_startEmulator)
                                  withObject: nil
                                  afterDelay: 0.1];

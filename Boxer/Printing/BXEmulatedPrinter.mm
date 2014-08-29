@@ -735,8 +735,9 @@ enum {
     
     
     // Apply characterPitch with Kerning, if nessesary
-    if (self.fontPitch == BXFontPitch10CPI) {
-        [self.textAttributes setObject: [NSNumber numberWithDouble:_effectivePitch / BXFontPitch10CPI]
+    if (self.fontPitch !=BXFontPitch10CPI) {
+       // NSLog(@"EffectivePitch: %f", _effectivePitch);
+        [self.textAttributes setObject: [NSNumber numberWithDouble:_effectivePitch / 17]
                                 forKey: NSKernAttributeName];
     }
     

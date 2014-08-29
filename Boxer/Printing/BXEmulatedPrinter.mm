@@ -694,6 +694,16 @@ enum {
                                 forKey: NSSuperscriptAttributeName];
     }
     
+    
+    
+    // Apply characterPitch with Kerning
+    
+    //TODO: The factor 7.0 to shrink the _effectivePitch to a meaningful kerning should be reviewed
+    if (_effectivePitch>BXFontPitch10CPI) {
+        [self.textAttributes setObject: [NSNumber numberWithDouble:_effectivePitch / 7.0]
+                                forKey: NSKernAttributeName];
+    }
+    
     _textAttributesNeedUpdate = NO;
 }
 
@@ -1474,6 +1484,7 @@ NSPoint _linePufferStartingPoint;
     //This prevents characters in proportional-but-monospaced fonts bunching up together.
     textOrigin.x += (advance - stringWidth) * 0.5;
     
+    NSLog(@"textorigin: %@, HeadPosition: %@",NSStringFromPoint(textOrigin),NSStringFromPoint(self.headPosition));
     
     NSPoint drawPos = [self convertPointFromPage: textOrigin];
     
@@ -1488,6 +1499,9 @@ NSPoint _linePufferStartingPoint;
     NSAttributedString *attributedCharacter = [[NSAttributedString alloc]initWithString:stringToPrint attributes:self.textAttributes];
     [_characterLinePuffer appendAttributedString:attributedCharacter];
     
+    if (self.effectiveLetterSpacing>0) {
+        NSLog(@"Letter Spacing >0: %f",self.effectiveLetterSpacing);
+    }
     
     //Advance the head past the string.
     CGFloat newX = self.headPosition.x + advance + self.effectiveLetterSpacing;

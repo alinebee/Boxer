@@ -233,6 +233,9 @@ typedef enum {
     BOOL _textAttributesNeedUpdate;
     
     BXPrintSession *_currentSession;
+    
+    NSMutableAttributedString *_characterLineBuffer;
+    NSPoint _lineBufferStartingPoint;
 }
 
 #pragma mark -

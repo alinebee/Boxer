@@ -87,6 +87,13 @@ enum {
 
 @property (retain, nonatomic) NSMutableData *bitmapData;
 
+/// Holds the text for one line, if not splitted by vertical feed
+@property (retain,nonatomic) NSMutableAttributedString *characterLineBuffer;
+
+/// In case the print head moves up or down before line ends, this holds the starting position for printing the line buffer
+@property (assign,nonatomic) NSPoint lineBufferStartingPoint;
+
+
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -258,6 +265,8 @@ enum {
 @synthesize bottomMargin = _bottomMargin;
 @synthesize lineSpacing = _lineSpacing;
 
+@synthesize characterLineBuffer = _characterLineBuffer;
+@synthesize lineBufferStartingPoint =_lineBufferStartingPoint;
 
 - (id) init
 {
@@ -279,7 +288,7 @@ enum {
     self.currentSession = nil;
     self.textAttributes = nil;
     self.bitmapData = nil;
-    
+    self.characterLineBuffer = nil;
     [super dealloc];
 }
 
@@ -358,11 +367,20 @@ enum {
                        self.pageSize.height - (userSpacePoint.y / 72.0));
 }
 
+/**
+ Moves the printer head to a new (relative) X- position
+ @param xOffset the offset to move
+ */
 - (void) _moveHeadToX: (CGFloat)xOffset
 {
     [self _moveHeadToX:xOffset writeLine:YES];
 }
 
+/**
+ Moves the printer head to a new (relative) X- position
+ @param xOffset the offset to move
+ @param needsToWriteLine If YES the line buffer is forced to write a line
+ */
 - (void) _moveHeadToX: (CGFloat)xOffset writeLine:(bool)needsToWriteLine
 {
     if (_headPosition.x != xOffset)
@@ -381,12 +399,32 @@ enum {
     }
 }
 
-- (void) _moveHeadToY: (CGFloat)yOffset
+/**
+ Moves the printer head to a new (relative) Y- position
+ @param xOffset the offset to move
+ @param needsToWriteLine If YES the line buffer is forced to write a line
+ */
+- (void) _moveHeadToY: (CGFloat)yOffset{
+    [self _moveHeadToY:yOffset writeLine:YES];
+}
+
+/**
+ Moves the printer head to a new (relative) X- position
+ @param xOffset the offset to move
+ @param needsToWriteLine If YES the line buffer is forced to write a line
+ */
+- (void) _moveHeadToY: (CGFloat)yOffset writeLine:(bool)needsToWriteLine
 {
     if (_headPosition.y != yOffset)
     {
         _headPosition.y = yOffset;
     
+        // If head moves, print the line
+        if (needsToWriteLine) {
+            // Only if head moves more than a character widht
+            [self writeAttributedStringToView];
+        }
+        
         if ([self.delegate respondsToSelector: @selector(printer:didMoveHeadToY:)])
             [self.delegate printer: self didMoveHeadToY: yOffset];
     }
@@ -577,7 +615,7 @@ enum {
 - (void) _updateTextAttributes
 {
     NSFontDescriptor *fontDescriptor = [self.class _fontDescriptorForEmulatedTypeface: self.fontTypeface
-                                                                                 bold: self.bold
+                                                                                 bold: self.bold || self.doubleStrike
                                                                                italic: self.italic];
     
     //Work out the effective horizontal and vertical scale we need for the text.
@@ -696,11 +734,9 @@ enum {
     
     
     
-    // Apply characterPitch with Kerning
-    
-    //TODO: The factor 7.0 to shrink the _effectivePitch to a meaningful kerning should be reviewed
-    if (_effectivePitch>BXFontPitch10CPI) {
-        [self.textAttributes setObject: [NSNumber numberWithDouble:_effectivePitch / 7.0]
+    // Apply characterPitch with Kerning, if nessesary
+    if (self.fontPitch == BXFontPitch10CPI) {
+        [self.textAttributes setObject: [NSNumber numberWithDouble:_effectivePitch / BXFontPitch10CPI]
                                 forKey: NSKernAttributeName];
     }
     
@@ -734,7 +770,7 @@ enum {
             
         case BXESCPTypefaceSansSerif:
         case BXESCPTypefaceSansSerifH:
-            familyName = @"Helvetica Neue";
+            familyName = @"Menlo";
             break;
             
         case BXESCPTypefaceRoman:
@@ -743,7 +779,8 @@ enum {
             break;
             
         default:
-            familyName = @"Helvetica Neue";
+            // Menlo is a monospace character set, "Helvetia" is a proportional character set, Monospace should be the default font. Proportional fonts should be user selectable
+            familyName = @"Menlo"; // "@"Helvetica Neue";
             break;
     }
     
@@ -999,7 +1036,7 @@ enum {
     
     
     [self _moveHeadToX: self.leftMargin];
-    [self _moveHeadToY: self.headPosition.y + self.lineSpacing];
+    [self _moveHeadToY: self.headPosition.y + self.lineSpacing writeLine:NO]; // moveHeadToX already wrote the line
     
     if (self.headPosition.y > self.bottomMargin)
         [self _startNewPageWithCarriageReturn: NO discardBlankPages: NO];
@@ -1422,11 +1459,6 @@ enum {
     }
 }
 
-/// Holds the Text fo one line, if not splitted by vertical feed
-NSMutableAttributedString *_characterLinePuffer;
-
-/// In case the print head moves up or dwon before line ends, this holds the starting position for printing the line Buffer
-NSPoint _linePufferStartingPoint;
 
 /**
  Add a charcter to the linePuffer with charcter Attributes
@@ -1434,10 +1466,6 @@ NSPoint _linePufferStartingPoint;
  */
 - (void) _printCharacter: (uint8_t)character
 {
-    //FIXME: this routine naively prints each glyph one by one, which prevents OSX from doing kerning or ligatures.
-    //Instead, when in proportional mode we could batch up characters into strings and print them once we hit the
-    //end of the line (or are interrupted by other commands.)
-    
     //I have no real idea why this is here, it was just in the original implementation with no explanation given.
     //Perhaps there's some DOS programs that send 1s instead of spaces??
     if (character == 0x01)
@@ -1484,24 +1512,14 @@ NSPoint _linePufferStartingPoint;
     //This prevents characters in proportional-but-monospaced fonts bunching up together.
     textOrigin.x += (advance - stringWidth) * 0.5;
     
-    NSLog(@"textorigin: %@, HeadPosition: %@",NSStringFromPoint(textOrigin),NSStringFromPoint(self.headPosition));
-    
-    NSPoint drawPos = [self convertPointFromPage: textOrigin];
-    
-    //Draw into the preview and PDF context in turn.
 
-
-    
-    if (!_characterLinePuffer) {
-        _characterLinePuffer = [[NSMutableAttributedString alloc]init];
+    if (!_characterLineBuffer) {
+        _characterLineBuffer = [[NSMutableAttributedString alloc]init];
     }
     
-    NSAttributedString *attributedCharacter = [[NSAttributedString alloc]initWithString:stringToPrint attributes:self.textAttributes];
-    [_characterLinePuffer appendAttributedString:attributedCharacter];
+    NSAttributedString *attributedCharacter = [[[NSAttributedString alloc]initWithString:stringToPrint attributes:self.textAttributes] autorelease];
+    [self.characterLineBuffer appendAttributedString:attributedCharacter];
     
-    if (self.effectiveLetterSpacing>0) {
-        NSLog(@"Letter Spacing >0: %f",self.effectiveLetterSpacing);
-    }
     
     //Advance the head past the string.
     CGFloat newX = self.headPosition.x + advance + self.effectiveLetterSpacing;
@@ -1556,19 +1574,15 @@ NSPoint _linePufferStartingPoint;
         [NSGraphicsContext saveGraphicsState];
         [NSGraphicsContext setCurrentContext: context];
         
-        [_characterLinePuffer drawAtPoint: _linePufferStartingPoint];
+        [self.characterLineBuffer drawAtPoint: self.lineBufferStartingPoint];
         
-        //In doublestrike mode, reprint the same string shifted slightly down to 'thicken' it.
-        if (self.doubleStrike)
-        {
-            [_characterLinePuffer drawAtPoint: NSMakePoint(_linePufferStartingPoint.x, _linePufferStartingPoint.y + 0.5)];
-        }
+       
         [NSGraphicsContext restoreGraphicsState];
     }
     
     // Clear the lineBuffer
-    _characterLinePuffer  = [[NSMutableAttributedString alloc]init];
-    _linePufferStartingPoint = NSMakePoint(drawPos.x,drawPos.y);
+    self.characterLineBuffer.mutableString.string = @"";
+    self.lineBufferStartingPoint = NSMakePoint(drawPos.x,drawPos.y);
     
 }
 

@@ -634,6 +634,8 @@ enum {
         {
             if (self.proportional)
             {
+                //TODO: A proportionally font should be used
+                
                 //Proportional condensed fonts are 50% of the width of standard fonts.
                 _effectivePitch *= 2;
             }
@@ -733,11 +735,11 @@ enum {
     }
     
     
-    
-    // Apply characterPitch with Kerning, if nessesary
-    if (self.fontPitch !=BXFontPitch10CPI) {
-       // NSLog(@"EffectivePitch: %f", _effectivePitch);
-        [self.textAttributes setObject: [NSNumber numberWithDouble:_effectivePitch / 17]
+    // Apply letterSpacing with Kerning, if nessesary
+    if (self.letterSpacing >=0) {
+        NSLog(@"Set letter Spacing (Kerning) to %f",self.letterSpacing);
+        
+        [self.textAttributes setObject: [NSNumber numberWithDouble:self.letterSpacing]
                                 forKey: NSKernAttributeName];
     }
     
@@ -761,7 +763,7 @@ enum {
             break;
             
         case BXESCPTypefaceCourier:
-            familyName = @"Courier";
+            familyName = @"Courier New";
             break;
             
         case BXESCPTypefaceScript:
@@ -1521,6 +1523,10 @@ enum {
     NSAttributedString *attributedCharacter = [[[NSAttributedString alloc]initWithString:stringToPrint attributes:self.textAttributes] autorelease];
     [self.characterLineBuffer appendAttributedString:attributedCharacter];
     
+    NSLog(@"Write Character %@",stringToPrint);
+    if ([stringToPrint isEqualToString:@"@"]) {
+        NSLog(@"Found Tabulator");
+    }
     
     //Advance the head past the string.
     CGFloat newX = self.headPosition.x + advance + self.effectiveLetterSpacing;
@@ -2270,14 +2276,17 @@ enum {
         case 'p': // Turn proportional mode on/off (ESC p)
             switch (params[0])
             {
+                    //A proportional font should be used, we are now not setting each character
                 case '0':
                 case 0:
                     self.proportional = NO;
+                    self.fontTypeface = BXESCPTypefaceDefault;
                     break;
                 case '1':
                 case 1:
                     self.proportional = YES;
                     self.quality = BXESCPQualityLQ;
+                    self.fontTypeface = BXESCPTypefaceRoman;
                     break;
             }
             self.multipointEnabled = NO;
@@ -2327,13 +2336,12 @@ enum {
                 case 0:
                 case '0':
                     self.quality = BXESCPQualityDraft;
-                    //CHECKME: There's nothing in the ESC/P spec indicating that this mode should trigger condensed printing.
-                    //self.condensed = YES;
+                    //Checked: Draft, LQ or NLQ differ only in the printing quality and speed, it's only a mechanical problem
+                    // Maybe the print looks a bit lighter, bit I don't expect that someone is using draft or LQ modes to change typeface intentionaly
                     break;
                 case 1:
                 case '1':
                     self.quality = BXESCPQualityLQ;
-                    //self.condensed = NO;
                     break;
             }
             break;

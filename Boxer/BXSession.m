@@ -667,9 +667,9 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     [self close];
     
     if (reopenURL)
-        [[NSApp delegate] openDocumentWithContentsOfURL: reopenURL display: YES error: NULL];
+        [(BXBaseAppController *)[NSApp delegate] openDocumentWithContentsOfURL: reopenURL display: YES error: NULL];
     else
-        [[NSApp delegate] openUntitledDocumentAndDisplay: YES error: NULL];
+        [(BXBaseAppController *)[NSApp delegate] openUntitledDocumentAndDisplay: YES error: NULL];
 }
 
 - (BOOL) isEntireFileLoaded
@@ -975,7 +975,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 - (NSString *) displayName
 {
-    if ([[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
         return [BXBaseAppController appName];
     
 	else if (self.hasGamebox)
@@ -1025,7 +1025,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     //Prevent access to the launcher panel if this is a standalone game bundle with only one launch option,
     //and it hasn't been overridden to always show the launch panel.
     //In such cases the launcher panel is unnecessary.
-    if ([[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
     {
         BOOL alwaysStartWithLaunchPanel = [[self.gameSettings objectForKey: BXGameboxSettingsAlwaysShowLaunchPanelKey] boolValue];
         if (!alwaysStartWithLaunchPanel && self.gamebox.launchers.count == 1)
@@ -1050,7 +1050,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         //a new one for it now and try to apply it to the gamebox.
         //IMPLEMENTATION NOTE: we don't do this if we're part of a standalone
         //game bundle, because then we'll be using the app's own icon instead.
-        if (!icon && ![[NSApp delegate] isStandaloneGameBundle])
+        if (!icon && ![(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
         {
             BXReleaseMedium medium = self.gameProfile.releaseMedium;
             icon = [self.class bootlegCoverArtForGamebox: self.gamebox
@@ -1152,7 +1152,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 
 - (BOOL) emulatorShouldDisplayStartupMessages: (BXEmulator *)emulator
 {
-    if ([[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
         return NO;
     
     return YES;
@@ -1255,7 +1255,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     //TWEAK: Sanitise the configurations folder of a standalone game app the first time the app is launched,
     //by deleting all unused conf files.
-    if ([[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
     {   
         NSFileManager *manager = [[NSFileManager alloc] init];
         NSURL *confBaseURL = [appBundle.resourceURL URLByAppendingPathComponent: @"Configurations"];
@@ -1648,7 +1648,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 {
     //For standalone game apps, only allow the user to skip the startup program
     //if there is more than one launch option to display on the launch panel.
-    if ([[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
     {
         return self.allowsLauncherPanel;
     }
@@ -1659,7 +1659,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 {
     //If this is a standalone game app, assume it has everything it needs
     //and ignore external volumes.
-    if ([[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
         return NO;
     else
         return YES;
@@ -1674,7 +1674,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 {
     //Don't bother persisting drives for standalone game apps:
     //they should already include everything they need.
-    if ([[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
         return NO;
     else
         return YES;
@@ -1684,7 +1684,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 {
     //For standalone game apps, only bother recording the previous program
     //if the gamebox has more than one launch option to choose from.
-    if ([[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
     {
         BOOL hasMultipleLaunchers = (self.gamebox.launchers.count > 1);
         return hasMultipleLaunchers;
@@ -1701,7 +1701,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     //Standalone-specific behaviour:
     //- if the game has launchers, then always return to the launcher panel;
     //- otherwise, exit the application altogether.
-    if ([[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
     {
         if (self.allowsLauncherPanel)
             return BXSessionShowLauncherOnCompletion;
@@ -1884,7 +1884,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                 [self close];
                 break;
             case 2: //Report
-                [[NSApp delegate] reportIssueForError: error inSession: self];
+                [(BXBaseAppController *)[NSApp delegate] reportIssueForError: error inSession: self];
                 [self close];
                 break;
         }

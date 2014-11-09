@@ -64,12 +64,6 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 @synthesize maxFullscreenViewportSize = _maxFullscreenViewportSize;
 @synthesize renderingStyle = _renderingStyle;
 
-
-//Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
-- (BXSession *) document	{ return (BXSession *)[super document]; }
-- (BXDOSWindow *) window	{ return (BXDOSWindow *)[super window]; }
-
-
 - (void) setDocument: (BXSession *)document
 {	
 	//Assign references to our document for our view controllers, or clear those references when the document is cleared.
@@ -211,9 +205,10 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     
 	//Now that we can retrieve the game's identifier from the session,
 	//use the autosaved window size for that game
-	if (self.document.hasGamebox)
+    BXGamebox *gamebox = [(BXSession *)self.document gamebox];
+	if (gamebox != nil)
 	{
-		NSString *gameIdentifier = self.document.gamebox.gameIdentifier;
+		NSString *gameIdentifier = gamebox.gameIdentifier;
 		if (gameIdentifier)
             [self setFrameAutosaveName: gameIdentifier];
     }
@@ -292,50 +287,56 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 {
     //If this app is a standalone game bundle, use the name of the app as the title,
     //and do not allow the user to browse to the bundled game's location.
-    if ([[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
     {
         self.window.representedURL = nil;
         self.window.title = [self windowTitleForDocumentDisplayName: [BXBaseAppController appName]]; 
     }
     //If the session is a gamebox, always use the gamebox for the window title (like a regular NSDocument.)
-	else if (self.document.hasGamebox)
-	{
-		[super synchronizeWindowTitleWithDocumentName];
-        
-        //Also make sure we adopt the current icon of the gamebox,
-        //in case it has changed during the lifetime of the session.
-        NSImage *icon = self.document.representedIcon;
-        if (icon)
-            [self.window standardWindowButton: NSWindowDocumentIconButton].image = icon;
-	}
 	else
-	{
-		//If the session isn't a gamebox, then use the current program/directory as the window title.
-		NSURL *representedURL = self.document.currentURL;
-		
-		if (representedURL)
-		{
-			NSString *displayName = representedURL.localizedName;
-            if (!displayName)
-                displayName = representedURL.lastPathComponent;
-			self.window.representedURL = representedURL;
-			self.window.title = [self windowTitleForDocumentDisplayName: displayName];
-		}
-		else
-		{
-			NSString *fallbackTitle = NSLocalizedString(@"MS-DOS Prompt",
-														@"The standard window title when the session is at the DOS prompt.");
-			//If that wasn't available either (e.g. we're on drive Z) then just display a generic title
-			self.window.representedURL = nil;
-            self.window.title = [self windowTitleForDocumentDisplayName: fallbackTitle];
-		}
-	}
+    {
+        BXSession *session = (BXSession *)self.document;
+        if (session.hasGamebox)
+        {
+            [super synchronizeWindowTitleWithDocumentName];
+            
+            //Also make sure we adopt the current icon of the gamebox,
+            //in case it has changed during the lifetime of the session.
+            NSImage *icon = session.representedIcon;
+            if (icon)
+                [self.window standardWindowButton: NSWindowDocumentIconButton].image = icon;
+        }
+        else
+        {
+            //If the session isn't a gamebox, then use the current program/directory as the window title.
+            NSURL *representedURL = session.currentURL;
+            
+            if (representedURL)
+            {
+                NSString *displayName = representedURL.localizedName;
+                if (!displayName)
+                    displayName = representedURL.lastPathComponent;
+                self.window.representedURL = representedURL;
+                self.window.title = [self windowTitleForDocumentDisplayName: displayName];
+            }
+            else
+            {
+                NSString *fallbackTitle = NSLocalizedString(@"MS-DOS Prompt",
+                                                            @"The standard window title when the session is at the DOS prompt.");
+                //If that wasn't available either (e.g. we're on drive Z) then just display a generic title
+                self.window.representedURL = nil;
+                self.window.title = [self windowTitleForDocumentDisplayName: fallbackTitle];
+            }
+        }
+    }
 }
 
 - (NSString *) windowTitleForDocumentDisplayName: (NSString *)displayName
 {
+    BXSession *session = (BXSession *)self.document;
+
 	//If we're running an import session then modify the window title to reflect that
-	if (self.document.isGameImport)
+	if (session.isGameImport)
 	{
 		NSString *importWindowFormat = NSLocalizedString(@"Importing %@",
 														 @"Title for game import window. %@ is the name of the gamebox/source path being imported.");
@@ -343,7 +344,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 	}
 	
 	//If emulation is paused (but not simply interrupted by UI events) then indicate this in the title
-	if (self.currentPanel == BXDOSWindowDOSView && (self.document.isPaused || self.document.isAutoPaused))
+	if (self.currentPanel == BXDOSWindowDOSView && (session.isPaused || session.isAutoPaused))
 	{
 		NSString *pausedFormat = NSLocalizedString(@"%@ (Paused)",
 												   @"Window title format when session is paused. %@ is the regular title of the window.");
@@ -404,8 +405,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 	{
         [self willChangeValueForKey: @"statusBarShown"];
         
-		BXDOSWindow *theWindow	= self.window;
-        NSView *contentView = self.window.actualContentView;
+		BXDOSWindow *theWindow = (BXDOSWindow *)self.window;
+        NSView *contentView = theWindow.actualContentView;
 		
 		if (show)
             [self _resizeToAccommodateSlidingView: self.statusBar];
@@ -437,7 +438,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 - (void) setProgramPanelShown: (BOOL)show animate: (BOOL)animate
 {
 	//Don't open the program panel if we're not running a gamebox
-	if (show && !self.document.hasGamebox) return;
+	if (show && ![(BXSession *)self.document hasGamebox]) return;
 	
     //IMPLEMENTATION NOTE: see note above for setStatusBarShown:animate:.
 	if (show == self.programPanel.isHidden)
@@ -447,7 +448,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 		if (show)
             [self _resizeToAccommodateSlidingView: self.programPanel];
 		
-        NSView *contentView = self.window.actualContentView;
+        NSView *contentView = [(BXDOSWindow *)self.window actualContentView];
         
 		//Temporarily override the other views' resizing behaviour so that they don't slide up as we do this
 		NSUInteger oldMask = contentView.autoresizingMask;
@@ -529,7 +530,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 - (IBAction) incrementFullscreenSize: (id)sender
 {
-    if (!self.window.isFullScreen || self.fullscreenSizeAtMaximum)
+    if (![(BXDOSWindow *)self.window isFullScreen] || self.fullscreenSizeAtMaximum)
         return;
     
     NSSize canvasSize = self.renderingView.bounds.size;
@@ -557,7 +558,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 - (IBAction) decrementFullscreenSize: (id)sender
 {
-    if (!self.window.isFullScreen || self.fullscreenSizeAtMinimum)
+    if (![(BXDOSWindow *)self.window isFullScreen] || self.fullscreenSizeAtMinimum)
         return;
     
     NSSize canvasSize = self.renderingView.bounds.size;
@@ -616,7 +617,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
         return YES;
     
     NSSize fullscreenCanvas;
-    if (self.window.isFullScreen)
+    if ([(BXDOSWindow *)self.window isFullScreen])
         fullscreenCanvas = self.renderingView.bounds.size;
     else
         fullscreenCanvas = self.window.screen.frame.size;
@@ -681,7 +682,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 - (NSSize) maxViewportSizeUIBinding
 {
-    if (self.window.isFullScreen && /*!self.window.isInFullScreenTransition && */!self.fullscreenViewportFillsCanvas)
+    if ([(BXDOSWindow *)self.window isFullScreen] && /*!self.window.isInFullScreenTransition && */!self.fullscreenViewportFillsCanvas)
     {
         if (sizeFitsWithinSize(self.minFullscreenViewportSize, self.maxFullscreenViewportSize))
             return self.maxFullscreenViewportSize;
@@ -699,7 +700,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     if (self.renderingStyle != style)
     {
         _renderingStyle = style;
-        BXVideoHandler *videoHandler = self.document.emulator.videoHandler;
+        BXSession *session = (BXSession *)self.document;
+        BXVideoHandler *videoHandler = session.emulator.videoHandler;
         
         //Work out whether to have the GL view handle the style, or do it in software.
         if ([self.renderingView supportsRenderingStyle: style])
@@ -731,13 +733,15 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 - (void) setHerculesTintMode: (BXHerculesTintMode)tint
 {
-    BXVideoHandler *videoHandler = self.document.emulator.videoHandler;
+    BXSession *session = (BXSession *)self.document;
+    BXVideoHandler *videoHandler = session.emulator.videoHandler;
     videoHandler.herculesTint = tint;
 }
 
 - (BXHerculesTintMode) herculesTintMode
 {
-    BXVideoHandler *videoHandler = self.document.emulator.videoHandler;
+    BXSession *session = (BXSession *)self.document;
+    BXVideoHandler *videoHandler = session.emulator.videoHandler;
     return videoHandler.herculesTint;
 }
 
@@ -808,7 +812,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 - (BOOL) canToggleLaunchPanel
 {
-    if (!self.document.allowsLauncherPanel)
+    if (![(BXSession *)self.document allowsLauncherPanel])
         return NO;
     
     if (self.currentPanel == BXDOSWindowLoadingPanel)
@@ -877,12 +881,12 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 - (void) enterFullScreen
 {
-	[self.window setFullScreen: YES animate: YES];
+	[(BXDOSWindow *)self.window setFullScreen: YES animate: YES];
 }
 
 - (void) exitFullScreen
 {
-	[self.window setFullScreen: NO animate: NO];
+	[(BXDOSWindow *)self.window setFullScreen: NO animate: NO];
 }
 
 - (void) window: (NSWindow *)window didToggleFullScreenWithAnimation: (BOOL)animated
@@ -902,7 +906,9 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem
 {	
-	SEL theAction = theItem.action;
+    SEL theAction = theItem.action;
+    BXSession *session = (BXSession *)self.document;
+    BXDOSWindow *window = (BXDOSWindow *)self.window;
 
 	if (theAction == @selector(toggleRenderingStyle:))
 	{
@@ -920,7 +926,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     
 	if (theAction == @selector(toggleHerculesTintMode:))
 	{
-        if (self.document.emulator.videoHandler.isInHerculesMode)
+        if (session.emulator.videoHandler.isInHerculesMode)
         {
             BXHerculesTintMode tint = (BXHerculesTintMode)theItem.tag;
             if (tint == self.herculesTintMode)
@@ -955,8 +961,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 			theItem.title = NSLocalizedString(@"Show Programs Panel", @"View menu option for showing the program panel.");
 		else
 			theItem.title = NSLocalizedString(@"Hide Programs Panel", @"View menu option for hiding the program panel.");
-			
-		return (self.document.hasGamebox && !self.window.isFullScreen && self.window.isVisible);
+        
+		return (session.hasGamebox && !window.isFullScreen && window.isVisible);
 	}
 	
 	else if (theAction == @selector(toggleStatusBarShown:))
@@ -966,17 +972,17 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 		else
 			theItem.title = NSLocalizedString(@"Hide Status Bar", @"View menu option for hiding the status bar.");
 	
-		return (!self.window.isFullScreen && self.window.isVisible);
+		return (!window.isFullScreen && window.isVisible);
 	}
     
     else if (theAction == @selector(incrementFullscreenSize:))
     {
-        return self.window.isFullScreen && !self.fullscreenSizeAtMaximum;
+        return window.isFullScreen && !self.fullscreenSizeAtMaximum;
     }
     
     else if (theAction == @selector(decrementFullscreenSize:))
     {
-        return self.window.isFullScreen && !self.fullscreenSizeAtMinimum;
+        return window.isFullScreen && !self.fullscreenSizeAtMinimum;
     }
     
     else
@@ -1003,6 +1009,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 - (void) switchToPanel: (BXDOSWindowPanel)newPanel animate: (BOOL)animate
 {
     BXDOSWindowPanel oldPanel = self.currentPanel;
+    BXSession *session = (BXSession *)self.document;
+    BXDOSWindow *window = (BXDOSWindow *)self.window;
     
     //Don't bother if we're already displaying this panel.
     if (newPanel == oldPanel)
@@ -1031,7 +1039,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     
     if (newPanel == BXDOSWindowDOSView)
     {
-        [self.document.emulator.videoHandler reset];
+        [session.emulator.videoHandler reset];
     }
     
     if (animate)
@@ -1177,13 +1185,13 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
         [self.window makeFirstResponder: self.inputView];
         
         //Re-lock the mouse when switching from the launch panel to the DOS view.
-        if (self.window.isFullScreen || (!self.inputController.trackMouseWhileUnlocked && oldPanel == BXDOSWindowLaunchPanel))
+        if (window.isFullScreen || (!self.inputController.trackMouseWhileUnlocked && oldPanel == BXDOSWindowLaunchPanel))
         {
             [self.inputController setMouseLocked: YES
-                                           force: self.window.isFullScreen];
+                                           force: window.isFullScreen];
             
             //TODO: let the app controller handle this, the way it handles the standard fullscreen notifications.
-            if (self.window.isFullScreen)
+            if (window.isFullScreen)
                 [[BXBezelController controller] showFullscreenBezel];
         }
     }
@@ -1284,8 +1292,9 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 //This will differ from the actual render view size when in fullscreen mode.
 - (NSSize) windowedRenderingViewSize
 {
-    if (self.window.isFullScreen) return _renderingViewSizeBeforeFullScreen;
-    else return self.window.actualContentViewSize;
+    BXDOSWindow *window = (BXDOSWindow *)self.window;
+    if (window.isFullScreen) return _renderingViewSizeBeforeFullScreen;
+    else return window.actualContentViewSize;
 }
 
 - (NSImage *) screenshotOfCurrentFrame
@@ -1364,7 +1373,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 - (NSRect) windowWillUseStandardFrame: (NSWindow *)theWindow
                          defaultFrame: (NSRect)defaultFrame
 {
-	if (!self.document.emulator.isExecuting)
+    BXSession *session = (BXSession *)self.document;
+	if (!session.emulator.isExecuting)
         return defaultFrame;
 	
 	NSRect standardFrame;
@@ -1401,7 +1411,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     
     self.renderingView.managesViewport = YES;
     
-    _renderingViewSizeBeforeFullScreen = self.window.actualContentViewSize;
+    BXDOSWindow *window = (BXDOSWindow *)self.window;
+    _renderingViewSizeBeforeFullScreen = window.actualContentViewSize;
 }
 
 - (void) windowDidEnterFullScreen: (NSNotification *)notification
@@ -1536,7 +1547,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 - (NSUndoManager *) windowWillReturnUndoManager: (NSWindow *)window
 {
-    return self.document.undoManager;
+    return [(BXSession *)self.document undoManager];
 }
 
 //TODO: make BXInputController listen for these notifications itself
@@ -1619,7 +1630,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 {
     //If we're in fullscreen mode, we'll set the requested size later when we come out of fullscreen.
     //(We don't want to resize the window itself during fullscreen.)
-    if (self.window.isFullScreen)
+    if ([(BXDOSWindow *)self.window isFullScreen])
     {
         _renderingViewSizeBeforeFullScreen = newSize;
     }
@@ -1695,7 +1706,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 - (void) _resizeToAccommodateSlidingView: (NSView *)view
 {
     //Don't perform resizing when we're in fullscreen
-    if (self.window.isFullScreen || self.window.isInFullScreenTransition) return;
+    BXDOSWindow *window = (BXDOSWindow *)self.window;
+    if (window.isFullScreen || window.isInFullScreenTransition) return;
     
 	CGFloat height = view.frame.size.height;
 	NSRect maxFrame = self.window.screen.visibleFrame;
@@ -1718,7 +1730,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show animate: (BOOL)animate
 {
-    BOOL isFullScreen = self.window.isFullScreen || self.window.isInFullScreenTransition;
+    BXDOSWindow *window = (BXDOSWindow *)self.window;
+    BOOL isFullScreen = window.isFullScreen || window.isInFullScreenTransition;
 
     if (show)
     {

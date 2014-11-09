@@ -46,7 +46,7 @@
 - (void) _syncControlsShownWithAnimation: (BOOL)animate
 {
     BOOL showControls = (self.isSelected && !self.isImporting);
-    BOOL showImportControl = showControls && [[[NSApp delegate] currentSession] canImportDrive: self.representedObject];
+    BOOL showImportControl = showControls && [[(BXBaseAppController *)[NSApp delegate] currentSession] canImportDrive: self.representedObject];
     
     [NSAnimationContext beginGrouping];
         [NSAnimationContext currentContext].duration = animate ? 0.25 : 0.0;
@@ -151,13 +151,13 @@
 
 - (BOOL) isBundled
 {
-    return [[[NSApp delegate] currentSession] driveIsBundled: self.drive];
+    return [[(BXBaseAppController *)[NSApp delegate] currentSession] driveIsBundled: self.drive];
 }
 + (NSSet *) keyPathsForValuesAffectingBundled { return [NSSet setWithObject: @"importing"]; }
 
 - (BOOL) isMounted
 {
-    return [[[NSApp delegate] currentSession] driveIsMounted: self.drive];
+    return [[(BXBaseAppController *)[NSApp delegate] currentSession] driveIsMounted: self.drive];
 }
 + (NSSet *) keyPathsForValuesAffectingMounted { return [NSSet setWithObject: @"drive.mounted"]; }
 

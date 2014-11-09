@@ -500,7 +500,7 @@
 	SEL theAction = theItem.action;
 	
     BOOL isShowingDOSView = self.DOSWindowController.DOSViewShown;
-    BOOL isStandalone = [[NSApp delegate] isStandaloneGameBundle];
+    BOOL isStandalone = [(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle];
     
     NSString *title;
     //Pause menu item
@@ -759,7 +759,7 @@
         fileName = [fileName stringByReplacingOccurrencesOfString: @":" withString: @"-"];
         fileName = [fileName stringByReplacingOccurrencesOfString: @"/" withString: @"-"];
         
-        NSURL *baseURL = [[NSApp delegate] recordingsURLCreatingIfMissing: YES error: NULL];
+        NSURL *baseURL = [(BXBaseAppController *)[NSApp delegate] recordingsURLCreatingIfMissing: YES error: NULL];
         NSURL *destinationURL = [baseURL URLByAppendingPathComponent: fileName];
         
         BOOL saved = [screenshot saveToURL: destinationURL
@@ -771,7 +771,7 @@
         {
             [destinationURL setResourceValue: @(YES) forKey: NSURLHasHiddenExtensionKey error: NULL];
             
-            [[NSApp delegate] playUISoundWithName: @"Snapshot" atVolume: 1.0f];
+            [(BXBaseAppController *)[NSApp delegate] playUISoundWithName: @"Snapshot" atVolume: 1.0f];
             [[BXBezelController controller] showScreenshotBezel];
         }
     }
@@ -849,7 +849,7 @@
         
         //We use slightly different terms to refer to the operation depending on whether we’re
         //a standalone game-app or not.
-        if ([[NSApp delegate] isStandaloneGameBundle])
+        if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
         {
             NSString *messageFormat = NSLocalizedString(@"Do you want to reset %@ to its original state?",
                                                         @"Bold text of confirmation when reverting a standalone game app to its original state. %@ is the name of the app.");
@@ -1088,7 +1088,7 @@
             BOOL exported = [self exportGameStateToURL: destinationURL error: &exportError];
             if (exported)
             {
-                [[NSApp delegate] revealURLsInFinder: @[destinationURL]];
+                [(BXBaseAppController *)[NSApp delegate] revealURLsInFinder: @[destinationURL]];
             }
             else if (exportError)
             {
@@ -1212,7 +1212,8 @@
 
 - (void) userDidToggleFullScreen
 {
-    BOOL isInFullscreen = self.DOSWindowController.window.isFullScreen;
+    BXDOSWindow *mainWindow = (BXDOSWindow *)self.DOSWindowController.window;
+    BOOL isInFullscreen = mainWindow.isFullScreen;
     [self.gameSettings setObject: @(isInFullscreen) forKey: BXGameboxSettingsStartUpInFullScreenKey];
 }
 
@@ -1245,7 +1246,7 @@
         //Display the mouse-locked notification if our window's statusbar is hidden
         //(the statusbar will otherwise display a tip about the mouse state.)
         
-        if (!self.DOSWindowController.statusBarShown || self.DOSWindowController.window.isFullScreen)
+        if (!self.DOSWindowController.statusBarShown || [(BXDOSWindow *)self.DOSWindowController.window isFullScreen])
         {
             //TWEAK: delay this in case we've locked the mouse because we're *just about* to switch into fullscreen
             [[BXBezelController controller] showMouseLockedBezel];

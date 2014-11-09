@@ -35,10 +35,10 @@
 
 - (void) awakeFromNib
 {
-    [[NSApp delegate] addObserver: self
-                       forKeyPath: @"currentSession.gamebox.documentationURLs"
-                          options: 0
-                          context: nil];
+    [(BXBaseAppController *)[NSApp delegate] addObserver: self
+                                              forKeyPath: @"currentSession.gamebox.documentationURLs"
+                                                 options: 0
+                                                 context: nil];
     
     _needsHelpLinksRefresh = YES;
     _needsSessionDocsRefresh = YES;
@@ -46,7 +46,8 @@
 
 - (void) dealloc
 {
-    [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.gamebox.documentationURLs"];
+    [(BXBaseAppController *)[NSApp delegate] removeObserver: self
+                                                 forKeyPath: @"currentSession.gamebox.documentationURLs"];
     
     self.mobygamesItem = nil;
     self.replacementDocsItem = nil;
@@ -79,31 +80,33 @@
 
 - (IBAction) showGameAtMobygames: (id)sender
 {
-	BXSession *session = [[NSApp delegate] currentSession];
+    BXBaseAppController *appController = (BXBaseAppController *)[NSApp delegate];
+	BXSession *session = appController.currentSession;
 	
 	if (session.hasGamebox)
 	{
 		NSString *search = session.displayName;
-		[[NSApp delegate] searchURLFromKey: @"MobygamesSearchURL" withSearchString: search];
+		[appController searchURLFromKey: @"MobygamesSearchURL" withSearchString: search];
 	}
 	else
 	{
-		[[NSApp delegate] openURLFromKey: @"MobygamesURL"];
+		[appController openURLFromKey: @"MobygamesURL"];
 	}
 }
 
 - (IBAction) showGameAtReplacementDocs:	(id)sender
 {
-	BXSession *session = [[NSApp delegate] currentSession];
+    BXBaseAppController *appController = (BXBaseAppController *)[NSApp delegate];
+	BXSession *session = appController.currentSession;
 
 	if (session.hasGamebox)
 	{
 		NSString *search = session.displayName;
-		[[NSApp delegate] searchURLFromKey: @"ReplacementDocsSearchURL" withSearchString: search];
+		[appController searchURLFromKey: @"ReplacementDocsSearchURL" withSearchString: search];
 	}
 	else
 	{
-		[[NSApp delegate] openURLFromKey: @"ReplacementDocsURL"];	
+		[appController openURLFromKey: @"ReplacementDocsURL"];
 	}
 }
 
@@ -118,8 +121,10 @@
 {
     NSURL *documentURL = sender.representedObject;
 	if (documentURL)
-        [[NSApp delegate] openURLsInPreferredApplications: @[documentURL]
-                                                  options: NSWorkspaceLaunchDefault];
+    {
+        [(BXBaseAppController *)[NSApp delegate] openURLsInPreferredApplications: @[documentURL]
+                                                                         options: NSWorkspaceLaunchDefault];
+    }
 }
 
 
@@ -159,7 +164,7 @@
 //and set menu item titles appropriately
 - (void) menuNeedsUpdate: (NSMenu *)menu
 {
-    BXSession *session = [[NSApp delegate] currentSession];
+    BXSession *session = [(BXBaseAppController *)[NSApp delegate] currentSession];
     
 	self.replacementDocsItem.title = [self.class replacementDocsMenuTitleForSession: session];
 	self.mobygamesItem.title = [self.class mobygamesMenuTitleForSession: session];
@@ -211,7 +216,7 @@
         NSArray *sortedDocs = [documentation sortedArrayUsingDescriptors: [self.class documentationSortCriteria]];
         NSString *heading;
         
-        if ([[NSApp delegate] isStandaloneGameBundle])
+        if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
         {
             heading = NSLocalizedString(@"Game Documentation:",
                                         @"Heading for game documentation in help menu for standalone game bundles.");

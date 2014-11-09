@@ -169,7 +169,8 @@
 
 - (BOOL) joystickControllersAvailable
 {
-    return [[[[NSApp delegate] joystickController] joystickDevices] count] > 0;
+    BXJoystickController *joystickController = [(BXBaseAppController *)[NSApp delegate] joystickController];
+    return joystickController.joystickDevices.count > 0;
 }
 
 - (BOOL) controllersAvailable
@@ -238,10 +239,10 @@
     [self.controllerProfiles removeAllObjects];
     if (self.emulatedJoystick)
     {
-        NSArray *controllers = [[NSApp delegate] joystickController].joystickDevices;
-        for (DDHidJoystick *controller in controllers)
+        BXJoystickController *joystickController = [(BXBaseAppController *)[NSApp delegate] joystickController];
+        for (DDHidJoystick *device in joystickController.joystickDevices)
         {
-            BXHIDControllerProfile *profile = [BXHIDControllerProfile profileForHIDDevice: controller
+            BXHIDControllerProfile *profile = [BXHIDControllerProfile profileForHIDDevice: device
                                                                          emulatedJoystick: self.emulatedJoystick
                                                                                  keyboard: self.emulatedKeyboard];
             
@@ -249,7 +250,7 @@
             NSLog(@"%@", profile);
 #endif
             
-            NSNumber *locationID = [NSNumber numberWithLong: controller.locationId];
+            NSNumber *locationID = [NSNumber numberWithLong: device.locationId];
             [self.controllerProfiles setObject: profile forKey: locationID];
         }
     }
@@ -290,7 +291,7 @@
     
     //If there are known joystick/gamepad remapper tools running, assume
     //that they're handling joystick input on behalf of Boxer.
-    if ([[NSApp delegate] joystickController].recentHIDRemappers.count) return NO;
+    if ([(BXBaseAppController *)[NSApp delegate] joystickController].recentHIDRemappers.count) return NO;
     
     
     //If we get this far then yes, the current program does seem to be ignoring the joystick.

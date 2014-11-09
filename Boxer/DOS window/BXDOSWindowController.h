@@ -150,14 +150,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //The tint (white, amber, green) to use when running in Hercules emulation mode
 @property (assign, nonatomic) BXHerculesTintMode herculesTintMode;
 
-#pragma mark -
-#pragma mark Inherited accessor overrides
-
-//Recast NSWindowController's standard accessors so that we get our own classes
-//(and don't have to keep recasting them ourselves)
-- (BXSession *) document;
-- (BXDOSWindow *) window;
-
 
 #pragma mark -
 #pragma mark Renderer-related methods

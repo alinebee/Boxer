@@ -99,7 +99,7 @@
 
 - (BOOL) joypadControllersAvailable
 {
-    return [[[NSApp delegate] joypadController] hasJoypadDevices];
+    return [(BXBaseAppController *)[NSApp delegate] joypadController].hasJoypadDevices;
 }
 
 - (void) _warnIfJoystickInactive

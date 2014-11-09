@@ -70,10 +70,10 @@ enum {
        options: nil];
     
     //Listen for changes to the current session's mounted drives, so we can enable/disable our action buttons
-    [[NSApp delegate] addObserver: self
-                       forKeyPath: @"currentSession.mountedDrives"
-                          options: 0
-                          context: NULL];
+    [(BXBaseAppController *)[NSApp delegate] addObserver: self
+                                              forKeyPath: @"currentSession.mountedDrives"
+                                                 options: 0
+                                                 context: NULL];
     
     
 	//Register the entire drive panel as a drag-drop target.
@@ -97,7 +97,7 @@ enum {
 {
 	//Clean up notifications and bindings
     [self unbind: @"currentSession.allDrives"];
-    [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.mountedDrives"];
+    [(BXBaseAppController *)[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.mountedDrives"];
     
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center removeObserver: self];
@@ -137,7 +137,7 @@ enum {
 - (void) syncButtonStates
 {
 	//Disable the appropriate drive controls when there are no selected items or no session.
-    BXSession *session      = [[NSApp delegate] currentSession];
+    BXSession *session      = [(BXBaseAppController *)[NSApp delegate] currentSession];
     BOOL hasSelection       = self.selectedDrives.count > 0;
     
     [self.driveControls setEnabled: (session != nil)  forSegment: BXAddDriveSegment];
@@ -177,7 +177,7 @@ enum {
 {
     if (self.selectedDriveIndexes.count)
     {
-        NSArray *drives = [[NSApp delegate] currentSession].allDrives;
+        NSArray *drives = [(BXBaseAppController *)[NSApp delegate] currentSession].allDrives;
         return [drives objectsAtIndexes: self.selectedDriveIndexes];
     }
     else return [NSArray array];
@@ -217,7 +217,7 @@ enum {
     }
     
     if (URLsToReveal.count)
-        [[NSApp delegate] revealURLsInFinder: URLsToReveal];
+        [(BXBaseAppController *)[NSApp delegate] revealURLsInFinder: URLsToReveal];
 }
 
 
@@ -226,7 +226,7 @@ enum {
 	BXDrive *drive = self.selectedDrives.lastObject;
 	if (drive)
     {
-        BXSession *session = [[NSApp delegate] currentSession];
+        BXSession *session = [(BXBaseAppController *)[NSApp delegate] currentSession];
         if (![session driveIsMounted: drive])
         {
             [session mountDrive: drive
@@ -245,7 +245,7 @@ enum {
 
 - (IBAction) toggleSelectedDrives: (id)sender
 {
-	BXSession *session = [[NSApp delegate] currentSession];
+	BXSession *session = [(BXBaseAppController *)[NSApp delegate] currentSession];
     
     //If any of the drives are mounted, this will act as an unmount operation.
     //Otherwise, it will act as a mount operation.
@@ -267,7 +267,7 @@ enum {
 
 - (IBAction) mountSelectedDrives: (id)sender
 {
-	BXSession *session = [[NSApp delegate] currentSession];
+	BXSession *session = [(BXBaseAppController *)[NSApp delegate] currentSession];
     
     for (BXDrive *drive in self.selectedDrives)
     {
@@ -293,7 +293,7 @@ enum {
 
 - (BOOL) _unmountDrives: (NSArray *)drives options: (BXDriveMountOptions)options
 {
-    BXSession *session = [[NSApp delegate] currentSession];
+    BXSession *session = [(BXBaseAppController *)[NSApp delegate] currentSession];
 	if ([session shouldUnmountDrives: drives
                         usingOptions: options
                               sender: self])
@@ -333,7 +333,7 @@ enum {
 
 - (IBAction) importSelectedDrives: (id)sender
 {
-	BXSession *session = [[NSApp delegate] currentSession];
+	BXSession *session = [(BXBaseAppController *)[NSApp delegate] currentSession];
 
 	for (BXDrive *drive in self.selectedDrives)
         [session importOperationForDrive: drive startImmediately: YES];
@@ -341,7 +341,7 @@ enum {
 
 - (IBAction) cancelImportsForSelectedDrives: (id)sender
 {
-	BXSession *session = [[NSApp delegate] currentSession];
+	BXSession *session = [(BXBaseAppController *)[NSApp delegate] currentSession];
     
 	for (BXDrive *drive in self.selectedDrives)
         [session cancelImportForDrive: drive];
@@ -360,7 +360,7 @@ enum {
 
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem
 {
-	BXSession *session = [[NSApp delegate] currentSession];
+	BXSession *session = [(BXBaseAppController *)[NSApp delegate] currentSession];
 	//If there's currently no active session, we can't do anything
 	if (!session) return NO;
 	
@@ -566,7 +566,7 @@ enum {
 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
 {
-    BXSession *session = [[NSApp delegate] currentSession];
+    BXSession *session = [(BXBaseAppController *)[NSApp delegate] currentSession];
     if (!session)
         return NSDragOperationNone;
     
@@ -637,7 +637,7 @@ enum {
         }
         else
         {
-            BXSession *session = [[NSApp delegate] currentSession];
+            BXSession *session = [(BXBaseAppController *)[NSApp delegate] currentSession];
             return [session handleDraggedURLs: draggedURLs launchImmediately: NO];
         }
     }

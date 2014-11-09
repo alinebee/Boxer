@@ -101,33 +101,33 @@ enum {
                           withKeyPath: @"gamesFolderURL.path"
                               options: @{NSValueTransformerNameBindingOption : @"BXIconifiedGamesFolderPath"}];
 	
-    
+    BXBaseAppController *appController = (BXBaseAppController *)[NSApp delegate];
     //Listen for changes to the ROMs so that we can set the correct device in the ROM dropzone.
-    [[NSApp delegate] addObserver: self
-                       forKeyPath: @"MT32ControlROMURL"
-                          options: 0
-                          context: nil];
+    [appController addObserver: self
+                    forKeyPath: @"MT32ControlROMURL"
+                       options: 0
+                       context: nil];
     
-    [[NSApp delegate] addObserver: self
-                       forKeyPath: @"MT32PCMROMURL"
-                          options: 0
-                          context: nil];
+    [appController addObserver: self
+                    forKeyPath: @"MT32PCMROMURL"
+                       options: 0
+                       context: nil];
     
     //Also listen for MT-32 device connections.
-    [[NSApp delegate] addObserver: self
-                       forKeyPath: @"MIDIDeviceMonitor.discoveredMT32s"
-                          options: 0
-                          context: nil];
+    [appController addObserver: self
+                    forKeyPath: @"MIDIDeviceMonitor.discoveredMT32s"
+                       options: 0
+                       context: nil];
     
-    [[NSApp delegate] addObserver: self
-                       forKeyPath: @"canCaptureKeyEvents"
-                          options: 0
-                          context: nil];
+    [appController addObserver: self
+                    forKeyPath: @"canCaptureKeyEvents"
+                       options: 0
+                       context: nil];
     
-    [[NSApp delegate] addObserver: self
-                       forKeyPath: @"needsRestartForHotkeyCapture"
-                          options: 0
-                          context: nil];
+    [appController addObserver: self
+                    forKeyPath: @"needsRestartForHotkeyCapture"
+                       options: 0
+                       context: nil];
     
     //Resync the MT-32 ROM panel whenever Boxer regains the application focus,
     //to cover the user manually adding them in Finder.
@@ -163,11 +163,13 @@ enum {
                                                forKeyPath: @"renderingStyle"];
     
     [[NSNotificationCenter defaultCenter] removeObserver: self];
-    [[NSApp delegate] removeObserver: self forKeyPath: @"MIDIDeviceMonitor.discoveredMT32s"];
-    [[NSApp delegate] removeObserver: self forKeyPath: @"MT32ControlROMURL"];
-    [[NSApp delegate] removeObserver: self forKeyPath: @"MT32PCMROMURL"];
-    [[NSApp delegate] removeObserver: self forKeyPath: @"canCaptureKeyEvents"];
-    [[NSApp delegate] removeObserver: self forKeyPath: @"needsRestartForHotkeyCapture"];
+    
+    BXBaseAppController *appController = (BXBaseAppController *)[NSApp delegate];
+    [appController removeObserver: self forKeyPath: @"MIDIDeviceMonitor.discoveredMT32s"];
+    [appController removeObserver: self forKeyPath: @"MT32ControlROMURL"];
+    [appController removeObserver: self forKeyPath: @"MT32PCMROMURL"];
+    [appController removeObserver: self forKeyPath: @"canCaptureKeyEvents"];
+    [appController removeObserver: self forKeyPath: @"needsRestartForHotkeyCapture"];
     
 	[self.currentGamesFolderItem unbind: @"attributedTitle"];
 	
@@ -247,7 +249,7 @@ enum {
     BOOL showRealMT32Help;
     
     //First, check if any real MT-32s are plugged in.
-    BOOL realMT32Connected = ([[NSApp delegate] MIDIDeviceMonitor].discoveredMT32s.count > 0);
+    BOOL realMT32Connected = ([(BXBaseAppController *)[NSApp delegate] MIDIDeviceMonitor].discoveredMT32s.count > 0);
     
     //If so, display a custom message
     if (realMT32Connected)
@@ -265,8 +267,8 @@ enum {
     //Failing that, check what type of MT-32 ROMs we have installed.
     else
     {
-        NSURL *controlURL   = [[NSApp delegate] MT32ControlROMURL];
-        NSURL *PCMURL       = [[NSApp delegate] MT32PCMROMURL];
+        NSURL *controlURL   = [(BXBaseAppController *)[NSApp delegate] MT32ControlROMURL];
+        NSURL *PCMURL       = [(BXBaseAppController *)[NSApp delegate] MT32PCMROMURL];
         
         NSError *error = nil;
         type = [BXEmulatedMT32 typeOfROMPairWithControlROMURL: controlURL
@@ -348,7 +350,7 @@ enum {
 - (BOOL) handleROMImportFromURLs: (NSArray *)URLs
 {
     NSError *error;
-    BOOL succeeded = [[NSApp delegate] importMT32ROMsFromURLs: URLs error: &error];
+    BOOL succeeded = [(BXBaseAppController *)[NSApp delegate] importMT32ROMsFromURLs: URLs error: &error];
     
     if (!succeeded)
     {
@@ -366,24 +368,24 @@ enum {
 - (IBAction) showMT32ROMsInFinder: (id)sender
 {
     NSMutableArray *URLsToReveal = [NSMutableArray arrayWithCapacity: 2];
-    NSURL *controlROMURL = [[NSApp delegate] MT32ControlROMURL];
+    NSURL *controlROMURL = [(BXBaseAppController *)[NSApp delegate] MT32ControlROMURL];
     if (controlROMURL)
         [URLsToReveal addObject: controlROMURL];
     
-    NSURL *pcmROMURL = [[NSApp delegate] MT32PCMROMURL];
+    NSURL *pcmROMURL = [(BXBaseAppController *)[NSApp delegate] MT32PCMROMURL];
     if (pcmROMURL)
         [URLsToReveal addObject: pcmROMURL];
     
     //If the user has not yet added any ROMs, then create the empty directory and display that instead.
     if (!URLsToReveal.count)
     {
-        NSURL *baseROMURL = [[NSApp delegate] MT32ROMURLCreatingIfMissing: YES error: NULL];
+        NSURL *baseROMURL = [(BXBaseAppController *)[NSApp delegate] MT32ROMURLCreatingIfMissing: YES error: NULL];
         if (baseROMURL)
             [URLsToReveal addObject: baseROMURL];
     }
     
     if (URLsToReveal.count)
-        [[NSApp delegate] revealURLsInFinder: URLsToReveal];
+        [(BXBaseAppController *)[NSApp delegate] revealURLsInFinder: URLsToReveal];
 
 }
 
@@ -463,22 +465,22 @@ enum {
 	
 	//This will already have been set by the button's own binding,
 	//but it doesn't hurt to do it explicitly here
-	[[NSApp delegate] setAppliesShelfAppearanceToGamesFolder: flag];
+	[(BXAppController *)[NSApp delegate] setAppliesShelfAppearanceToGamesFolder: flag];
 	
-	NSURL *URL = [[NSApp delegate] gamesFolderURL];
+	NSURL *URL = [(BXAppController *)[NSApp delegate] gamesFolderURL];
 	if ([URL checkResourceIsReachableAndReturnError: NULL])
 	{
 		if (flag)
 		{
-			[[NSApp delegate] applyShelfAppearanceToURL: URL
-                                          andSubFolders: YES
-                                      switchToShelfMode: YES];
+			[(BXAppController *)[NSApp delegate] applyShelfAppearanceToURL: URL
+                                                             andSubFolders: YES
+                                                         switchToShelfMode: YES];
 		}
 		else
 		{
 			//Restore the folder to its unshelfed state
-			[[NSApp delegate] removeShelfAppearanceFromURL: URL
-                                             andSubFolders: YES];
+			[(BXAppController *)[NSApp delegate] removeShelfAppearanceFromURL: URL
+                                                                andSubFolders: YES];
 		}		
 	}
 }
@@ -515,7 +517,7 @@ enum {
 - (void) syncKeyboardInstructions
 {
     CGFloat extraHelpSize = [NSFont systemFontSizeForControlSize: NSSmallControlSize];
-    if ([[NSApp delegate] needsRestartForHotkeyCapture])
+    if ([(BXBaseAppController *)[NSApp delegate] needsRestartForHotkeyCapture])
     {
         self.hotkeyCaptureToggle.enabled = NO;
         self.hotkeyCaptureDescription.textColor = [NSColor disabledControlTextColor];
@@ -528,7 +530,7 @@ enum {
         self.hotkeyCapturePermissionsButton.target = [NSApp delegate];
         self.hotkeyCapturePermissionsButton.action = @selector(relaunch:);
     }
-    else if ([[NSApp delegate] canCaptureHotkeys])
+    else if ([(BXBaseAppController *)[NSApp delegate] canCaptureHotkeys])
     {
         self.hotkeyCaptureToggle.enabled = YES;
         self.hotkeyCaptureDescription.textColor = [NSColor controlTextColor];
@@ -573,19 +575,19 @@ enum {
 
 - (IBAction) showDisplayPreferencesHelp: (id)sender
 {
-	[[NSApp delegate] showHelpAnchor: @"display"];
+	[(BXBaseAppController *)[NSApp delegate] showHelpAnchor: @"display"];
 }
 
 
 - (IBAction) showKeyboardPreferencesHelp: (id)sender
 {
     //Was @"keyboard", but that was too general for the contents of the keyboard panel.
-	[[NSApp delegate] showHelpAnchor: @"spaces-shortcuts"];
+	[(BXBaseAppController *)[NSApp delegate] showHelpAnchor: @"spaces-shortcuts"];
 }
 
 - (IBAction) showAudioPreferencesHelp: (id)sender
 {
-	[[NSApp delegate] showHelpAnchor: @"mt32-music"];
+	[(BXBaseAppController *)[NSApp delegate] showHelpAnchor: @"mt32-music"];
 }
 
 

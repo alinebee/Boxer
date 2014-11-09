@@ -20,12 +20,12 @@
 
 - (NSURL *)gamesFolderURL
 {
-    return [[NSApp delegate] gamesFolderURL];
+    return [(BXAppController *)[NSApp delegate] gamesFolderURL];
 }
 
 - (void) setGamesFolderURL: (NSURL *)url
 {
-	[[NSApp delegate] setGamesFolderURL: url];
+	[(BXAppController *)[NSApp delegate] setGamesFolderURL: url];
 }
 
 + (BXScriptablePreferences *) sharedPreferences

@@ -84,7 +84,7 @@
 
 - (IBAction) showImportDropzoneHelp: (id)sender
 {
-	[[NSApp delegate] showHelpAnchor: @"import-drop-game"];
+	[(BXBaseAppController *)[NSApp delegate] showHelpAnchor: @"import-drop-game"];
 }
 
 

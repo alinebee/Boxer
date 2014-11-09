@@ -66,7 +66,7 @@
 	
 	if ([sender isSelectedForSegment: BXStatusBarInspectorSegment] != self.inspector.isVisible)
 	{
-		[[NSApp delegate] toggleInspectorPanel: sender];
+		[(BXAppController *)[NSApp delegate] toggleInspectorPanel: sender];
 	}
 	
 	if ([sender isSelectedForSegment: BXStatusBarProgramPanelSegment] != self.controller.programPanelShown)
@@ -159,7 +159,8 @@
 	[self.statusBarControls setSelected: self.controller.programPanelShown              forSegment: BXStatusBarProgramPanelSegment];
 	[self.statusBarControls setSelected: self.controller.inputController.mouseLocked    forSegment: BXStatusBarMouseLockSegment];
 	
-	[self.statusBarControls setEnabled:	self.controller.document.hasGamebox             forSegment: BXStatusBarProgramPanelSegment];
+    BXSession *session = (BXSession *)self.controller.document;
+	[self.statusBarControls setEnabled:	session.hasGamebox                              forSegment: BXStatusBarProgramPanelSegment];
 	[self.statusBarControls setEnabled:	self.controller.inputController.mouseActive     forSegment: BXStatusBarMouseLockSegment];
 	
 	NSString *panelImageName;

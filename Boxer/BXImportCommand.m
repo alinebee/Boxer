@@ -18,11 +18,11 @@
 	
 	if (fileURL)
 	{
-		[[NSApp delegate] openImportSessionWithContentsOfURL: fileURL display: YES error: &importError];
+		[(BXAppController *)[NSApp delegate] openImportSessionWithContentsOfURL: fileURL display: YES error: &importError];
 	}
 	else
 	{
-		[[NSApp delegate] orderFrontImportGamePanel: self];		
+		[(BXAppController *)[NSApp delegate] orderFrontImportGamePanel: self];
 	}
 
 	

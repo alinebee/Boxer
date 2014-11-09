@@ -33,7 +33,7 @@
 {	
 	BXCloseAlert *alert = [self alert];
 	
-    if ([[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
     {
         NSString *sessionName	= theSession.displayName;
         NSString *messageFormat	= NSLocalizedString(@"Do you want to quit %@?",
@@ -175,7 +175,7 @@
 {	
 	BXCloseAlert *alert = [self alert];
     
-	if ([[NSApp delegate] isStandaloneGameBundle])
+	if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
     {
         NSString *sessionName	= theSession.displayName;
         NSString *messageFormat	= NSLocalizedString(@"Do you want to restart %@?",

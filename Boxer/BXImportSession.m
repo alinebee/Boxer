@@ -1483,10 +1483,10 @@
 	if (!gameName) gameName	= [self.class gameboxNameForGameAtURL: self.sourceURL];
 	
     
-    NSURL *gamesFolder = [[NSApp delegate] gamesFolderURL];
+    NSURL *gamesFolder = [(BXAppController *)[NSApp delegate] gamesFolderURL];
 	//If the games folder is missing or not set, then fall back on a path we know does exist (the Desktop)
     if (![gamesFolder checkResourceIsReachableAndReturnError: NULL])
-        gamesFolder = [[NSApp delegate] fallbackGamesFolderURL];
+        gamesFolder = [(BXAppController *)[NSApp delegate] fallbackGamesFolderURL];
 	
     NSString *fullGameName = [gameName stringByAppendingPathExtension: @"boxer"];
 	NSURL *baseGameboxURL = [gamesFolder URLByAppendingPathComponent: fullGameName];

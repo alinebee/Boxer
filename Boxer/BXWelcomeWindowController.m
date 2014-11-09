@@ -110,7 +110,7 @@
 {
 	NSURL *url = sender.representedObject;
 	
-	[[NSApp delegate] openDocumentWithContentsOfURL: url display: YES error: NULL];
+	[(BXBaseAppController *)[NSApp delegate] openDocumentWithContentsOfURL: url display: YES error: NULL];
 }
 
 #pragma mark -
@@ -118,7 +118,7 @@
 
 - (void) menuWillOpen: (NSMenu *)menu
 {
-	NSArray *documents = [[NSApp delegate] recentDocumentURLs];
+	NSArray *documents = [(BXBaseAppController *)[NSApp delegate] recentDocumentURLs];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSFileManager *manager = [NSFileManager defaultManager];
 	
@@ -179,8 +179,8 @@
 	for (NSURL *URL in URLs)
 	{
 		//If any of the files were not of a recognised type, bail out
-		NSString *fileType = [[NSApp delegate] typeForContentsOfURL: URL error: NULL];
-		Class documentClass = [[NSApp delegate] documentClassForType: fileType];
+		NSString *fileType = [(BXBaseAppController *)[NSApp delegate] typeForContentsOfURL: URL error: NULL];
+		Class documentClass = [(BXBaseAppController *)[NSApp delegate] documentClassForType: fileType];
 		if (!documentClass) return NO;
 	}
 	return YES;
@@ -191,9 +191,9 @@
 {
 	for (NSURL *URL in URLs)
 	{
-		[[NSApp delegate] openDocumentWithContentsOfURL: URL
-												display: YES
-												  error: NULL];
+		[(BXBaseAppController *)[NSApp delegate] openDocumentWithContentsOfURL: URL
+                                                                       display: YES
+                                                                         error: NULL];
 	}
 }
 
@@ -210,9 +210,9 @@
 	//Import only the first file, since we can't (and don't want to) support
 	//multiple concurrent import sessions
 	NSURL *URLToImport = [URLs objectAtIndex: 0];
-	[[NSApp delegate] openImportSessionWithContentsOfURL: URLToImport
-												 display: YES
-												   error: NULL];
+	[(BXAppController *)[NSApp delegate] openImportSessionWithContentsOfURL: URLToImport
+                                                                    display: YES
+                                                                      error: NULL];
 }
 
 - (NSDragOperation) button: (BXWelcomeButton *)button draggingEntered: (id <NSDraggingInfo>)sender

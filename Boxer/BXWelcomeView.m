@@ -99,11 +99,6 @@
 
 @implementation BXWelcomeButtonCell
 
-- (BXWelcomeButton *) controlView
-{
-    return (BXWelcomeButton *)[super controlView];
-}
-
 #pragma mark -
 #pragma mark Button style
 
@@ -114,7 +109,7 @@
 
 - (NSColor *) titleColor
 {
-    CGFloat alpha = 0.75f + (0.25f * self.controlView.illumination);
+    CGFloat alpha = 0.75f + (0.25f * [(BXWelcomeButton *)self.controlView illumination]);
     return [NSColor colorWithCalibratedWhite: 1.0f alpha: alpha];
 }
 

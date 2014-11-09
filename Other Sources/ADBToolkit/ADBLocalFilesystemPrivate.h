@@ -28,7 +28,7 @@
 
 #import "ADBLocalFilesystem.h"
 
-@interface ADBLocalFilesystem ()
+@interface ADBLocalFilesystem () <NSFileManagerDelegate>
 
 //Our own file manager for internal use.
 @property (retain, nonatomic) NSFileManager *manager;

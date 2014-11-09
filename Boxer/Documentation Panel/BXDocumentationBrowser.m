@@ -96,14 +96,17 @@ enum {
     //Insert ourselves into the responder chain ahead of our view. This is necessary to let us receive actions
     //which are bound to the first responder rather than directly to us (this is the case for menu items and other
     //UI elements that are stored in a nested XIB for our collection view items.)
-    self.nextResponder = self.view.nextResponder;
-    self.view.nextResponder = self;
+    if (self.view.nextResponder != self)
+    {
+        self.nextResponder = self.view.nextResponder;
+        self.view.nextResponder = self;
+    }
 }
 
 - (void) dealloc
 {
     self.representedObject = nil;
-    self.view.nextResponder = nil;
+    self.view.nextResponder = self.nextResponder;
     
     self.documentationURLs = nil;
     self.documentationSelectionIndexes = nil;
@@ -235,7 +238,7 @@ enum {
 
 - (BOOL) canModifyDocumentation
 {
-    if ([[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
         return NO;
     
     if (![self.representedObject gamebox].hasDocumentationFolder)
@@ -338,8 +341,8 @@ enum {
 {
     if (self.documentationSelectionIndexes.count)
     {
-        [[NSApp delegate] openURLsInPreferredApplications: self.selectedDocumentationURLs
-                                                  options: NSWorkspaceLaunchDefault];
+        [(BXBaseAppController *)[NSApp delegate] openURLsInPreferredApplications: self.selectedDocumentationURLs
+                                                                         options: NSWorkspaceLaunchDefault];
         
         if ([self.delegate respondsToSelector: @selector(documentationBrowser:didOpenURLs:)])
             [self.delegate documentationBrowser: self didOpenURLs: self.selectedDocumentationURLs];
@@ -357,7 +360,7 @@ enum {
             [resolvedURLs addObject: resolvedURL];
         }
         
-        BOOL revealedAnyURLs = [[NSApp delegate] revealURLsInFinder: resolvedURLs];
+        BOOL revealedAnyURLs = [(BXBaseAppController *)[NSApp delegate] revealURLsInFinder: resolvedURLs];
         
         if (revealedAnyURLs && [self.delegate respondsToSelector: @selector(documentationBrowser:didRevealURLs:)])
             [self.delegate documentationBrowser: self didRevealURLs: self.selectedDocumentationURLs];

@@ -71,8 +71,11 @@
 	
 	
 	//Insert ourselves into the responder chain as our view's next responder
-	self.nextResponder = self.view.nextResponder;
-    self.view.nextResponder = self;
+    if (self.view.nextResponder != self)
+    {
+        self.nextResponder = self.view.nextResponder;
+        self.view.nextResponder = self;
+    }
     
 	//Tell the view to accept touch events
     self.view.acceptsTouchEvents = YES;
@@ -123,8 +126,8 @@
 	BXSession *previousSession = self.representedObject;
 	if (session != previousSession)
 	{
-		BXJoystickController *joystickController = [[NSApp delegate] joystickController];
-        BXJoypadController *joypadController = [[NSApp delegate] joypadController];
+		BXJoystickController *joystickController    = [(BXBaseAppController *)[NSApp delegate] joystickController];
+        BXJoypadController *joypadController        = [(BXBaseAppController *)[NSApp delegate] joypadController];
 		
 		if (previousSession)
 		{
@@ -468,7 +471,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 		[self cursorUpdate: nil];
 		
 		//Release the mouse lock when DOS stops using the mouse, unless we're in fullscreen mode
-		if (!active && !self.windowController.window.isFullScreen)
+		if (!active && ![(BXDOSWindow *)self.windowController.window isFullScreen])
             self.mouseLocked = NO;
     }
 }
@@ -493,7 +496,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 - (BOOL) trackMouseWhileUnlocked
 {
 	//Tweak: when in fullscreen mode, ignore the current mouse-tracking setting.
-	return _trackMouseWhileUnlocked && !self.windowController.window.isFullScreen;
+	return _trackMouseWhileUnlocked && ![(BXDOSWindow *)self.windowController.window isFullScreen];
 }
 
 - (BOOL) canLockMouse
@@ -503,7 +506,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	if (!self.view.window.isKeyWindow) return NO;
 	
     //Always allow the mouse to be locked in fullscreen mode, even when the mouse is not active.
-	return (self.mouseActive || self.windowController.window.isFullScreen);
+	return (self.mouseActive || [(BXDOSWindow *)self.windowController.window isFullScreen]);
 }
 
 
@@ -526,7 +529,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	if (self.mouseLocked != wasLocked)
 	{
 		NSString *lockSoundName	= (wasLocked) ? @"LockOpening" : @"LockClosing";
-		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: BXMouseLockSoundVolume];
+		[(BXBaseAppController *)[NSApp delegate] playUISoundWithName: lockSoundName atVolume: BXMouseLockSoundVolume];
 	}
 }
 

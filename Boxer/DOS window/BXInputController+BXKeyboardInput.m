@@ -89,7 +89,7 @@
             return;
         }
         //Pressing ESC while in fullscreen mode and not running any programs, will exit fullscreen mode.
-        else if (self.windowController.window.isFullScreen && emulator.currentProcess == nil)
+        else if ([(BXDOSWindow *)self.windowController.window isFullScreen] && emulator.currentProcess == nil)
         {
             [self.windowController.window toggleFullScreen: self];
             return;

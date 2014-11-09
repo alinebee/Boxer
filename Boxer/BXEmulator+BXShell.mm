@@ -365,7 +365,7 @@ nil];
     //This should be handled upstream as an emulator delegate callback.
     if ([fileURL checkResourceIsReachableAndReturnError: NULL])
     {
-        [[NSApp delegate] revealURLsInFinder: @[fileURL]];
+        [(BXBaseAppController *)[NSApp delegate] revealURLsInFinder: @[fileURL]];
     }
     //The file did not exist in OS X so could not be revealed.
     else

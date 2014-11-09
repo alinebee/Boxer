@@ -734,7 +734,7 @@
     
     if (URL)
     {
-        [[NSApp delegate] revealURLsInFinder: @[URL]];
+        [(BXBaseAppController *)[NSApp delegate] revealURLsInFinder: @[URL]];
     }
 }
 

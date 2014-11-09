@@ -100,14 +100,14 @@
 //own fullscreen notification handlers call these to set up the window.
 - (BOOL) statusBarShown
 {
-    if (self.window.isFullScreen)
+    if ([(BXDOSWindow *)self.window isFullScreen])
         return _statusBarShownBeforeFullScreen;
     else return super.statusBarShown;
 }
 
 - (BOOL) programPanelShown
 {
-    if (self.window.isFullScreen)
+    if ([(BXDOSWindow *)self.window isFullScreen])
         return _programPanelShownBeforeFullScreen;
     else return super.programPanelShown;
 }
@@ -116,7 +116,7 @@
 {
     _statusBarShownBeforeFullScreen = show;
     
-    if (!self.window.isFullScreen)
+    if (![(BXDOSWindow *)self.window isFullScreen])
 	{
 		[super setStatusBarShown: show animate: animate];
 	}
@@ -125,11 +125,11 @@
 - (void) setProgramPanelShown: (BOOL)show animate: (BOOL)animate
 {
 	//Don't open the program panel if we're not running a gamebox
-	if (show && !self.document.hasGamebox) return;
+	if (show && ![(BXSession *)self.document hasGamebox]) return;
 	
     _programPanelShownBeforeFullScreen = show;
 	
-    if (!self.window.isFullScreen)
+    if (![(BXDOSWindow *)self.window isFullScreen])
 	{
 		[super setProgramPanelShown: show animate: animate];
 	}

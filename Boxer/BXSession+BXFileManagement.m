@@ -232,9 +232,9 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 {
     if (self.hasGamebox)
     {
-        NSURL *stateURL = [[NSApp delegate] gameStatesURLForGamebox: self.gamebox
-                                                  creatingIfMissing: NO
-                                                              error: NULL];
+        NSURL *stateURL = [(BXBaseAppController *)[NSApp delegate] gameStatesURLForGamebox: self.gamebox
+                                                                         creatingIfMissing: NO
+                                                                                     error: NULL];
         
         return [stateURL URLByAppendingPathComponent: @"Current.boxerstate"];
     }
@@ -470,7 +470,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (BOOL) allowsDriveChanges
 {
-    return !([[NSApp delegate] isStandaloneGameBundle]);
+    return !([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle]);
 }
 
 - (NSArray *) allDrives
@@ -1710,7 +1710,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	
     //If this drive is part of the gamebox, and we're not a standalone app,
     //scan it for executables to display in the program panel
-	if (![[NSApp delegate] isStandaloneGameBundle] && !drive.isVirtual && [self driveIsBundled: drive])
+	if (![(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle] && !drive.isVirtual && [self driveIsBundled: drive])
 	{
         [self executableScanForDrive: drive startImmediately: YES];
 	}

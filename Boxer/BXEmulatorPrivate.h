@@ -693,8 +693,8 @@ struct boxer_emulatorException: public std::exception {
     NSArray *_BXCallStackSymbols;
 }
 
-@property (retain, nonatomic) NSArray *callStackReturnAddresses;
-@property (retain, nonatomic) NSArray *callStackSymbols;
+@property (copy) NSArray *callStackReturnAddresses;
+@property (copy) NSArray *callStackSymbols;
 
 + (id) exceptionWithName: (NSString *)name originalException: (boxer_emulatorException *)info;
 

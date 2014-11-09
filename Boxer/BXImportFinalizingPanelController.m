@@ -303,7 +303,7 @@
 
 - (IBAction) showImportFinalizingHelp: (id)sender
 {
-	[[NSApp delegate] showHelpAnchor: @"import-finalizing"];
+	[(BXBaseAppController *)[NSApp delegate] showHelpAnchor: @"import-finalizing"];
 }
 
 @end

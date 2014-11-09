@@ -246,7 +246,7 @@
 
 - (IBAction) showImportInstallerHelp: (id)sender
 {
-	[[NSApp delegate] showHelpAnchor: @"import-choose-installer"];
+	[(BXBaseAppController *)[NSApp delegate] showHelpAnchor: @"import-choose-installer"];
 }
 
 @end

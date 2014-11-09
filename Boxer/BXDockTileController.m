@@ -16,15 +16,15 @@
 - (void) awakeFromNib
 {
 	//Listen for changes to the current session's represented icon
-	[[NSApp delegate] addObserver: self
-					   forKeyPath: @"currentSession.representedIcon"
-						  options: NSKeyValueObservingOptionInitial
-						  context: nil];
+	[(BXBaseAppController *)[NSApp delegate] addObserver: self
+                                              forKeyPath: @"currentSession.representedIcon"
+                                                 options: NSKeyValueObservingOptionInitial
+                                                 context: nil];
 }
 
 - (void) dealloc
 {
-	[[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.representedIcon"];
+	[(BXBaseAppController *)[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.representedIcon"];
 	[super dealloc];
 }
 
@@ -40,7 +40,7 @@
 
 - (void) syncIconWithActiveSession
 {
-	BXSession *session = [[NSApp delegate] currentSession];
+	BXSession *session = [(BXBaseAppController *)[NSApp delegate] currentSession];
 	NSImage *icon = [[session.representedIcon copy] autorelease];
     
     //If the session didn't have an icon of its own, generate a bootleg one

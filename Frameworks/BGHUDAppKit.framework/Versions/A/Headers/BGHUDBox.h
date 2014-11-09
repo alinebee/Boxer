@@ -60,7 +60,7 @@
 @property BOOL drawBottomBorder;
 @property BOOL drawLeftBorder;
 @property BOOL drawRightBorder;
-@property (retain) NSColor *borderColor;
+@property (copy) NSColor *borderColor;
 @property BOOL drawTopShadow;
 @property BOOL drawBottomShadow;
 @property BOOL drawLeftShadow;

@@ -139,7 +139,7 @@
 {
 	//Forward all HID events to the current window's input controller
     //FIXME: this is gross, instead we should do some kind of subscribe system.
-    BXBaseAppController *appController = [NSApp delegate];
+    BXBaseAppController *appController = (BXBaseAppController *)[NSApp delegate];
 	BXSession *activeSession = [appController documentForWindow: [NSApp keyWindow]];
 	if ([activeSession isKindOfClass: [BXSession class]])
 	{

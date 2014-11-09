@@ -188,8 +188,8 @@
     
     //TWEAK: if there's a DOS window visible, then anchor the bezel within that window's region.
     //Otherwise, anchor it within the overall screen.
-    BXSession *currentSession = [[NSApp delegate] currentSession];
-    BXDOSWindow *currentDOSWindow = currentSession.DOSWindowController.window;
+    BXSession *currentSession = [(BXBaseAppController *)[NSApp delegate] currentSession];
+    BXDOSWindow *currentDOSWindow = (BXDOSWindow *)currentSession.DOSWindowController.window;
     
     if (currentDOSWindow.isVisible)
     {
@@ -273,7 +273,7 @@
 
 - (void) showFullscreenBezel
 {
-    BXSession *currentSession = [[NSApp delegate] currentSession];
+    BXSession *currentSession = [(BXBaseAppController *)[NSApp delegate] currentSession];
     BOOL isInDOSView = (currentSession.DOSWindowController.currentPanel == BXDOSWindowDOSView);
     BOOL fullscreenMessageEnabled = [[NSUserDefaults standardUserDefaults] boolForKey: @"showFullscreenToggleMessage"];
     
@@ -399,7 +399,7 @@
 {
     //Don't show the missing MT-32 bezel if we're a standalone game app,
     //as there's nothing the user can do about it.
-    if ([[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
         return;
     
     [self showBezel: self.MT32MissingBezel

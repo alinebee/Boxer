@@ -56,22 +56,23 @@
     [self setCurrentLayout: [BX4ButtonJoystickLayout layout]];
     [joypadManager startFindingDevices];
     
-    [[NSApp delegate] addObserver: self
-                       forKeyPath: @"currentSession.DOSWindowController.inputController.currentJoypadLayout"
-                          options: NSKeyValueObservingOptionInitial
-                          context: nil];
+    BXBaseAppController *appController = (BXBaseAppController *)[NSApp delegate];
+    [appController addObserver: self
+                    forKeyPath: @"currentSession.DOSWindowController.inputController.currentJoypadLayout"
+                       options: NSKeyValueObservingOptionInitial
+                       context: nil];
     
-    [[NSApp delegate] addObserver: self
-                       forKeyPath: @"currentSession.DOSWindowController.inputController"
-                          options: NSKeyValueObservingOptionInitial
-                          context: nil];
+    [appController addObserver: self
+                    forKeyPath: @"currentSession.DOSWindowController.inputController"
+                       options: NSKeyValueObservingOptionInitial
+                       context: nil];
 }
 
 - (void) dealloc
 {
-    [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.DOSWindowController.inputController.currentJoypadLayout"];
-    
-    [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.DOSWindowController.inputController"];
+    BXBaseAppController *appController = (BXBaseAppController *)[NSApp delegate];
+    [appController removeObserver: self forKeyPath: @"currentSession.DOSWindowController.inputController.currentJoypadLayout"];
+    [appController removeObserver: self forKeyPath: @"currentSession.DOSWindowController.inputController"];
     
     [joypadManager stopFindingDevices];
     [joypadManager release], joypadManager = nil;
@@ -90,7 +91,7 @@
 
 - (BXInputController *) activeWindowController
 {
-    return [[[[NSApp delegate] currentSession] DOSWindowController] inputController];
+    return [[[(BXBaseAppController *)[NSApp delegate] currentSession] DOSWindowController] inputController];
 }
 
 - (void) observeValueForKeyPath: (NSString *)keyPath

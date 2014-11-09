@@ -40,7 +40,7 @@
 {
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 	
-	NSURL *currentFolderURL = [[NSApp delegate] gamesFolderURL];
+	NSURL *currentFolderURL = [(BXAppController *)[NSApp delegate] gamesFolderURL];
 	NSURL *initialURL;
 	if (currentFolderURL)
 	{
@@ -68,7 +68,7 @@
                                           @"Help text shown at the top of choose-a-games-folder panel.");
 	
 	//Set the initial state of the shelf-appearance toggle to match the current preference setting
-	self.useShelfAppearanceToggle.state = [[NSApp delegate] appliesShelfAppearanceToGamesFolder];
+	self.useShelfAppearanceToggle.state = [(BXAppController *)[NSApp delegate] appliesShelfAppearanceToGamesFolder];
 	
     void (^completionHandler)(NSInteger result) = ^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton)
@@ -127,12 +127,12 @@
 //Delegate validation method for 10.6 and above.
 - (BOOL) panel: (id)openPanel validateURL: (NSURL *)url error: (NSError **)outError
 {
-	return [[NSApp delegate] validateGamesFolderURL: &url error: outError];
+	return [(BXAppController *)[NSApp delegate] validateGamesFolderURL: &url error: outError];
 }
 
 - (BOOL) chooseGamesFolderURL: (NSURL *)URL error: (NSError **)outError
 {
-    BXAppController *controller = [NSApp delegate];
+    BXAppController *controller = (BXAppController *)[NSApp delegate];
     BOOL addSampleGames		= self.sampleGamesToggle.state;
     BOOL useShelfAppearance	= self.useShelfAppearanceToggle.state;
     

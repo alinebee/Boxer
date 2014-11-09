@@ -301,7 +301,7 @@
     //On SL, we need to manage the fullscreen application state ourselves.
     if (isRunningOnSnowLeopard())
     {
-        if ([NSApp isActive] && currentController.window.isFullScreen)
+        if ([NSApp isActive] && [(BXDOSWindow *)currentController.window isFullScreen])
         {
             if (currentController.inputController.mouseLocked)
             {
@@ -823,12 +823,12 @@
             }
         }
         
-        [[NSApp delegate] reportIssueWithTitle: issueTitle body: issueBody];
+        [(BXBaseAppController *)[NSApp delegate] reportIssueWithTitle: issueTitle body: issueBody];
     }
     //We don't yet have suitable formulations for other kinds of errors, so just open the issue page blank.
     else
     {
-        [[NSApp delegate] reportIssueWithTitle: nil body: nil];
+        [(BXBaseAppController *)[NSApp delegate] reportIssueWithTitle: nil body: nil];
     }
 }
 @end

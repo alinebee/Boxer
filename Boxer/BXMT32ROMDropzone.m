@@ -44,6 +44,7 @@
     self.highlightLayer     = [CALayer layer];
     self.titleLayer         = [CATextLayer layer];
     
+    self.backgroundLayer.delegate = self;
     self.CM32LLayer.delegate = self;
     self.MT32Layer.delegate = self;
     self.highlightLayer.delegate = self;
@@ -98,8 +99,14 @@
     self.wantsLayer = YES;
 }
 
+- (void) drawRect: (NSRect)dirtyRect
+{
+//Overridden to disable NSButton's default draw behaviour on OS X 10.10.
+}
+
 //Required for OSX 10.8, which appears to have removed the default
 //transition for the CALayer hidden property.
+
 - (id <CAAction>) actionForLayer: (CALayer *)layer forKey: (NSString *)event
 {
     if ([event isEqualToString: @"hidden"])
@@ -119,7 +126,16 @@
 
 - (BOOL) layer: (CALayer *)layer shouldInheritContentsScale: (CGFloat)newScale fromWindow: (NSWindow *)window
 {
-    return YES;
+    //HACK for OS X 10.10: for some reason, only the text-based title layer actually needs this to return YES:
+    //all the image-based layer require it to return NO, or else they won't render their contents at all.
+    if (layer == self.titleLayer)
+    {
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
 }
 
 - (void) setHighlighted: (BOOL)flag
@@ -134,13 +150,15 @@
 - (void) _syncDisplayedDevice
 {
     [CATransaction begin];
-        self.CM32LLayer.hidden      = !(self.ROMType & BXMT32ROMIsCM32L);
-        self.MT32Layer.hidden       = !(self.ROMType & BXMT32ROMIsMT32);
+        self.CM32LLayer.hidden      = (self.ROMType & BXMT32ROMIsCM32L) != BXMT32ROMIsCM32L;
+        self.MT32Layer.hidden       = (self.ROMType & BXMT32ROMIsMT32) != BXMT32ROMIsMT32;
         self.highlightLayer.hidden  = !(self.ROMType == BXMT32ROMTypeUnknown && self.isHighlighted);
     [CATransaction commit];
     
     self.MT32Layer.shadowOpacity    = self.isHighlighted ? 1: 0;
     self.CM32LLayer.shadowOpacity   = self.isHighlighted ? 1: 0;
+    
+    [self setNeedsDisplay: YES];
 }
 
 - (void) setROMType: (BXMT32ROMType)ROMType

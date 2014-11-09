@@ -116,7 +116,7 @@ decisionListener: (id < WebPolicyDecisionListener >)listener
 
 - (IBAction) showAcknowledgements: (id)sender
 {
-	[[NSApp delegate] showHelpAnchor: @"acknowledgements"];
+	[(BXBaseAppController *)[NSApp delegate] showHelpAnchor: @"acknowledgements"];
 }
 
 @end

@@ -37,8 +37,6 @@
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
-	<key>CFBundleIconFile</key>
-	<string>app.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>net.washboardabs.boxer-standalone-bundler</string>
 	<key>CFBundleInfoDictionaryVersion</key>

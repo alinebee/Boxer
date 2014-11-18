@@ -26,13 +26,13 @@
 @protocol BXHIDInputBinding;
 
 //Constants used by BXHIDControllerProfile.controllerStyle.
-typedef enum {
+typedef NS_ENUM(NSInteger, BXControllerStyle) {
     BXControllerStyleUnknown,
     BXControllerStyleJoystick,
     BXControllerStyleFlightstick,
     BXControllerStyleGamepad,
     BXControllerStyleWheel,
-} BXControllerStyle;
+};
 
 
 @interface BXHIDControllerProfile : NSObject

@@ -19,12 +19,12 @@
 #pragma mark -
 #pragma mark Constants
 
-typedef enum {
+typedef NS_ENUM(NSInteger, BXReleaseMedium) {
 	BXUnknownMedium = 0,
 	BX525DisketteMedium = 1,
 	BX35DisketteMedium = 2,
 	BXCDROMMedium = 3
-} BXReleaseMedium;
+};
 
 
 //The default identifier string used for game profiles that don't match a known profile.

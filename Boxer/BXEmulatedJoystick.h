@@ -31,7 +31,7 @@ extern NSString * const BXAxisAccelerator;
 extern NSString * const BXAxisBrake;
 
 
-enum {
+typedef NS_ENUM(NSUInteger, BXEmulatedJoystickButton) {
 	BXEmulatedJoystickUnknownButton = 0,
 	BXEmulatedJoystickButton1,
 	BXEmulatedJoystickButton2,
@@ -45,11 +45,9 @@ enum {
 	BXEmulatedJoystick2Button2 = BXEmulatedJoystickButton4
 };
 
-typedef NSUInteger BXEmulatedJoystickButton;
-
 
 //Unlike BXHIDPOVxxx constants, these are bitmasks
-enum {
+typedef NS_OPTIONS(NSUInteger, BXEmulatedPOVDirection) {
 	BXEmulatedPOVCentered	= 0,
 	BXEmulatedPOVNorth		= 1U << 0,
 	BXEmulatedPOVEast		= 1U << 1,
@@ -61,8 +59,6 @@ enum {
     BXEmulatedPOVSouthEast  = BXEmulatedPOVSouth | BXEmulatedPOVEast,
     BXEmulatedPOVSouthWest  = BXEmulatedPOVSouth | BXEmulatedPOVWest
 };
-
-typedef NSUInteger BXEmulatedPOVDirection;
 
 
 #pragma mark -

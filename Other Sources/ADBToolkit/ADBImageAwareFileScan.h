@@ -32,11 +32,11 @@
 #import "ADBFileScan.h"
 
 
-typedef enum {
+typedef NS_ENUM(NSInteger, ADBFileScanEjectionBehaviour) {
     ADBFileScanEjectIfSelfMounted,
     ADBFileScanNeverEject,
     ADBFileScanAlwaysEject
-} ADBFileScanEjectionBehaviour;
+};
 
     
 @interface ADBImageAwareFileScan : ADBFileScan

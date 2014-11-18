@@ -62,7 +62,7 @@ extern NSString * const BXGameboxSettingsDrivesKey;
 extern NSString * const BXGameboxSettingsShowLaunchPanelKey;
 
 //Used by openURLInDOS: to decide what to do after the requested program exits or the directory has been changed.
-typedef enum {
+typedef NS_ENUM(NSInteger, BXSessionProgramCompletionBehavior) {
     BXSessionProgramCompletionBehaviorDoNothing,    //Do not change the currently displayed view at all.
     BXSessionProgramCompletionBehaviorAuto,         //If the DOS view was visible when the opening the URL, stay at the DOS prompt;
                                                     //Otherwise, show the program launcher.
@@ -71,7 +71,7 @@ typedef enum {
                                                     //Otherwise, behave like BXSessionProgramCompletionBehaviorAuto.
     BXSessionShowLauncherOnCompletion,              //Show the program launcher panel if available.
     BXSessionCloseOnCompletion,                     //Close the DOS session altogether.
-} BXSessionProgramCompletionBehavior;
+};
 
 
 #pragma mark - Interface

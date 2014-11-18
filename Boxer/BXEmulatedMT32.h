@@ -54,7 +54,7 @@ enum {
 };
 
 
-enum {
+typedef NS_OPTIONS(NSUInteger, BXMT32ROMType) {
     BXMT32ROMTypeUnknown    = 0,
     
     //Mutually exclusive
@@ -73,8 +73,6 @@ enum {
     BXMT32ModelMask = BXMT32ROMIsMT32 | BXMT32ROMIsCM32L,
     BXMT32TypeMask  = BXMT32ROMIsControl | BXMT32ROMIsPCM,
 };
-
-typedef NSUInteger BXMT32ROMType;
 
 
 #pragma mark -

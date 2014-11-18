@@ -32,7 +32,7 @@
 
 #import <DDHidLib/DDHidLib.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, ADBHIDEventType) {
 	ADBHIDUnknownEventType = -1,
 	ADBHIDKeyDown,
 	ADBHIDKeyUp,
@@ -45,9 +45,9 @@ typedef enum {
 	ADBHIDJoystickButtonUp,
 	ADBHIDJoystickAxisChanged,
 	ADBHIDJoystickPOVSwitchChanged
-} ADBHIDEventType;
+};
 
-enum {
+typedef NS_ENUM(NSInteger, ADBHIDPOVSwitchDirection) {
 	ADBHIDPOVCentered	= -1,
 	ADBHIDPOVNorth		= 0,
 	ADBHIDPOVNorthEast	= 45 * 100,
@@ -58,8 +58,6 @@ enum {
 	ADBHIDPOVWest		= 270 * 100,
 	ADBHIDPOVNorthWest	= 315 * 100
 };
-
-typedef NSInteger ADBHIDPOVSwitchDirection;
 
 
 @interface ADBHIDEvent : NSObject <NSCopying>

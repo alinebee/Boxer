@@ -12,13 +12,13 @@
 
 #import <Cocoa/Cocoa.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, BXRenderingStyle) {
     BXRenderingStyleNormal,
     BXRenderingStyleSmoothed,
     BXRenderingStyleCRT,
     //---
     BXNumRenderingStyles
-} BXRenderingStyle;
+};
 
 
 @class BXVideoFrame;

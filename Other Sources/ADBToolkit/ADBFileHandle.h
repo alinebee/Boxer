@@ -39,7 +39,7 @@
 
 #pragma mark - Constants
 
-enum {
+typedef NS_OPTIONS(NSUInteger, ADBHandleOptions) {
     ADBOpenForReading   = 1 << 0,
     ADBOpenForWriting   = 1 << 1,
     
@@ -67,8 +67,6 @@ enum {
     ADBPOSIXModeAX     = ADBOpenForWriting | ADBAppend | ADBCreateAlways,
     ADBPOSIXModeAPlusX = ADBPOSIXModeAX | ADBOpenForReading,
 };
-
-typedef NSUInteger ADBHandleOptions;
 
 
 #pragma mark - Protocol definitions
@@ -132,11 +130,11 @@ typedef NSUInteger ADBHandleOptions;
 
 @protocol ADBSeekable <NSObject>
 
-typedef enum {
+typedef NS_ENUM(int, ADBHandleSeekLocation) {
     ADBSeekFromStart    = SEEK_SET,
     ADBSeekFromEnd      = SEEK_END,
     ADBSeekFromCurrent  = SEEK_CUR,
-} ADBHandleSeekLocation;
+};
 
 //Returned by -offset when the offset cannot be determined or is not applicable.
 #define ADBOffsetUnknown -1

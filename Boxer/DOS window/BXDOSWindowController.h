@@ -14,16 +14,17 @@
 #pragma mark -
 #pragma mark Constants
 
+#import <Cocoa/Cocoa.h>
+
 //Used by currentPanel and switchToPanel:animate:.
-typedef enum {
+typedef NS_ENUM(NSInteger, BXDOSWindowPanel) {
     BXDOSWindowNoPanel,
     BXDOSWindowLoadingPanel,
     BXDOSWindowLaunchPanel,
     BXDOSWindowDOSView
-} BXDOSWindowPanel;
+};
 
 
-#import <Cocoa/Cocoa.h>
 #import "ADBFullscreenCapableWindow.h"
 #import "BXFrameRenderingView.h"
 #import "BXVideoHandler.h"

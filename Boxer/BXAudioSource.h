@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 
-enum {
+typedef NS_OPTIONS(NSUInteger, BXAudioFormat) {
     BXAudioFormatAny        = 0,
     BXAudioFormat8Bit       = 1 << 0,
     BXAudioFormat16Bit      = 1 << 1,
@@ -27,8 +27,6 @@ enum {
     BXAudioFormatSignedMask = BXAudioFormatSigned | BXAudioFormatUnsigned,
     BXAudioFormatStereoMask = BXAudioFormatMono | BXAudioFormatStereo
 };
-
-typedef NSUInteger BXAudioFormat;
 
 
 @protocol BXAudioSource <NSObject>

@@ -73,12 +73,12 @@ enum
 };
 
 //Executable types.
-typedef enum {
+typedef NS_ENUM(NSInteger, BXExecutableType) {
 	BXExecutableTypeUnknown	= 0,
 	BXExecutableTypeDOS,
 	BXExecutableTypeWindows,
 	BXExecutableTypeOS2
-} BXExecutableType;
+};
 
 @protocol ADBReadable, ADBSeekable, ADBFilesystemPathAccess;
 @interface BXFileTypes (BXExecutableTypes)

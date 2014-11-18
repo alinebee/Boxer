@@ -33,16 +33,16 @@
 #define BXMaxSystemKeyCode 256
 
 //These correspond to NSEvent's mouse button numbers
-typedef enum {
+typedef NS_ENUM(NSInteger, BXMouseButton) {
 	BXMouseButtonLeft	= 0,
 	BXMouseButtonRight	= 1,
 	BXMouseButtonMiddle	= 2,
     BXMouseButtonMax    = 3
-} BXMouseButton;
+};
 
 
 //These correspond to NSEvent's pressedMouseButton masks
-enum {
+typedef NS_OPTIONS(NSUInteger, BXMouseButtonMask) {
 	BXNoMouseButtonsMask	= 0,
 	BXMouseButtonLeftMask	= 1U << BXMouseButtonLeft,
 	BXMouseButtonRightMask	= 1U << BXMouseButtonRight,
@@ -50,8 +50,6 @@ enum {
 	
 	BXMouseButtonLeftAndRightMask = BXMouseButtonLeftMask | BXMouseButtonRightMask
 };
-
-typedef NSUInteger BXMouseButtonMask;
 
 
 //Modifier flag constants for left- and right-side modifier keys, copied from IOKit/IOLLEvent.h.

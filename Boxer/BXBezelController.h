@@ -13,12 +13,11 @@
 #pragma mark -
 #pragma mark Constants
 
-enum {
+typedef NS_ENUM(NSInteger, BXBezelPriority) {
     BXBezelPriorityLow,
     BXBezelPriorityNormal,
     BXBezelPriorityHigh
 };
-typedef NSUInteger BXBezelPriority;
 
 //XIB view flags for indicating different view roles within a bezel
 enum {

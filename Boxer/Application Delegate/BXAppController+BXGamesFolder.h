@@ -17,12 +17,12 @@
 #pragma mark Constants
 
 //What shelf appearance to use. Currently only used by assignGamesFolderURL:.
-typedef enum {
+typedef NS_ENUM(NSInteger, BXShelfAppearance) {
 	BXShelfAuto		= -1,
 	BXShelfNone		= 0,
 	BXShelfDefault	= 1,
 	BXShelfWood		= 1,
-} BXShelfAppearance;
+};
 
 //Constants for errors concerning the games folder
 extern NSString * const BXGamesFolderErrorDomain;

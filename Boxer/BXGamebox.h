@@ -94,13 +94,12 @@ extern NSString * const BXDocumentationFolderName;
 
 
 //The different kinds of game identifiers we can have.
-enum {
+typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 	BXGameIdentifierUserSpecified	= 0,	//Manually specified type.
 	BXGameIdentifierUUID			= 1,	//Standard UUID. Generated for empty gameboxes.
 	BXGameIdentifierEXEDigest		= 2,	//SHA1 digest of each EXE file in the gamebox.
 	BXGameIdentifierReverseDNS		= 3,	//Reverse-DNS (net.washboardabs.boxer)-style identifer.
 };
-typedef NSUInteger BXGameIdentifierType;
 
 
 #pragma mark - Interface
@@ -222,10 +221,10 @@ typedef NSUInteger BXGameIdentifierType;
 
 
 #pragma mark - Documentation autodiscovery
-typedef enum {
+typedef NS_ENUM(NSInteger, BXGameboxDocumentationConflictBehaviour) {
     BXGameboxDocumentationRename,
     BXGameboxDocumentationReplace,
-} BXGameboxDocumentationConflictBehaviour;
+};
 
 @interface BXGamebox (BXGameDocumentation)
 

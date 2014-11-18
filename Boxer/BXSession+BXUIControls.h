@@ -39,11 +39,11 @@ enum
 //The maximum frameskip level we can set
 #define BXMaxFrameskip 9
 
-typedef enum {
+typedef NS_ENUM(NSInteger, BXPlaybackMode) {
     BXPaused,
     BXPlaying,
     BXFastForward,
-} BXPlaybackMode;
+};
 
 @class BXEmulator;
 

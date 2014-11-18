@@ -18,15 +18,15 @@
 
 
 //Options for resolving drive letter conflicts when mounting drives
-typedef enum {
+typedef NS_ENUM(NSInteger, BXDriveConflictBehaviour) {
     BXDriveReplace,     //Replace any existing drive at the same drive letter.
     BXDriveQueue,       //Queue behind any existing drive at the same drive letter.
     BXDriveReassign     //Assign the new drive to the next available free drive letter.
-} BXDriveConflictBehaviour;
+};
 
 
 //Bitflag options for mountDrive:ifExists:options:error:.
-enum {
+typedef NS_OPTIONS(NSUInteger, BXDriveMountOptions) {
     BXDriveKeepWithSameType             = 1U << 0,  //Try to mount the drive at the same letter as an
                                                     //existing drive of the same type, if it doesn't
                                                     //have a more specific drive letter of its own.
@@ -46,10 +46,8 @@ enum {
     
     BXDriveUseShadowingIfAvailable      = 1U << 3,  //Shadow writes to this drive to a separate location
                                                     //if appropriate.
-};
 
 //These options are applicable to both mountDrive:ifExists:options:error and unmountDrive:options:error:.
-enum {
     BXDriveShowNotifications            = 1U << 4,  //Notification bezels will be shown when this drive
                                                     //is added/ejected.
     
@@ -67,9 +65,6 @@ enum {
     BXDriveForceUnmountingIfRemovable   = 1U << 8,  //Act as BXDriveForceUnmounting if the drive in question
                                                     //is a floppy-disk or CD-ROM. Has no effect for hard disks.
 
-};
-
-enum {
     //Behaviour when mounting a drive via drag-drop or from Add New Drive,
     //or when inserting a floppy or CD after emulation has started.
     //Will queue floppy and CD drives with other drives of the same type,
@@ -109,8 +104,6 @@ enum {
     //Behaviour when unmounting drive temporarily to remove/merge shadow files.
     BXShadowOperationDriveUnmountOptions = BXDriveForceUnmounting,
 };
-
-typedef NSUInteger BXDriveMountOptions;
 
 
 #pragma mark -

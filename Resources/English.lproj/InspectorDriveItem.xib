@@ -1,1170 +1,174 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
-	<data>
-		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12C60</string>
-		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
-		<string key="IBDocument.AppKitVersion">1187.34</string>
-		<string key="IBDocument.HIToolboxVersion">625.00</string>
-		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
-			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">3084</string>
-		</object>
-		<array key="IBDocument.IntegratedClassDependencies">
-			<string>NSButton</string>
-			<string>NSButtonCell</string>
-			<string>NSCustomObject</string>
-			<string>NSCustomView</string>
-			<string>NSImageCell</string>
-			<string>NSImageView</string>
-			<string>NSProgressIndicator</string>
-			<string>NSTextField</string>
-			<string>NSTextFieldCell</string>
-		</array>
-		<array key="IBDocument.PluginDependencies">
-			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-		</array>
-		<object class="NSMutableDictionary" key="IBDocument.Metadata">
-			<string key="NS.key.0">PluginDependencyRecalculationVersion</string>
-			<integer value="1" key="NS.object.0"/>
-		</object>
-		<array class="NSMutableArray" key="IBDocument.RootObjects" id="1000">
-			<object class="NSCustomObject" id="1001">
-				<string key="NSClassName">BXDriveItem</string>
-			</object>
-			<object class="NSCustomObject" id="1003">
-				<string key="NSClassName">FirstResponder</string>
-			</object>
-			<object class="NSCustomObject" id="1004">
-				<string key="NSClassName">NSApplication</string>
-			</object>
-			<object class="NSCustomView" id="538100461">
-				<reference key="NSNextResponder"/>
-				<int key="NSvFlags">266</int>
-				<array class="NSMutableArray" key="NSSubviews">
-					<object class="NSTextField" id="1058072283">
-						<reference key="NSNextResponder" ref="538100461"/>
-						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{72, 24}, {140, 17}}</string>
-						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="333940824"/>
-						<int key="NSTag">2</int>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="414029261">
-							<int key="NSCellFlags">67108928</int>
-							<int key="NSCellFlags2">4195840</int>
-							<string key="NSContents">[Display name]</string>
-							<object class="NSFont" key="NSSupport" id="756024321">
-								<string key="NSName">LucidaGrande</string>
-								<double key="NSSize">13</double>
-								<int key="NSfFlags">1044</int>
-							</object>
-							<reference key="NSControlView" ref="1058072283"/>
-							<object class="NSColor" key="NSBackgroundColor" id="318994083">
-								<int key="NSColorSpace">6</int>
-								<string key="NSCatalogName">System</string>
-								<string key="NSColorName">controlColor</string>
-								<object class="NSColor" key="NSColor">
-									<int key="NSColorSpace">3</int>
-									<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
-								</object>
-							</object>
-							<object class="NSColor" key="NSTextColor" id="690952022">
-								<int key="NSColorSpace">6</int>
-								<string key="NSCatalogName">System</string>
-								<string key="NSColorName">textColor</string>
-								<object class="NSColor" key="NSColor" id="596246687">
-									<int key="NSColorSpace">3</int>
-									<bytes key="NSWhite">MAA</bytes>
-								</object>
-							</object>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSTextField" id="857624103">
-						<reference key="NSNextResponder" ref="538100461"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{48, 20}, {25, 21}}</string>
-						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="1058072283"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="238921778">
-							<int key="NSCellFlags">67108864</int>
-							<int key="NSCellFlags2">138412032</int>
-							<string key="NSContents">W</string>
-							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaGrande-Bold</string>
-								<double key="NSSize">13</double>
-								<int key="NSfFlags">16</int>
-							</object>
-							<reference key="NSControlView" ref="857624103"/>
-							<reference key="NSBackgroundColor" ref="318994083"/>
-							<object class="NSColor" key="NSTextColor">
-								<int key="NSColorSpace">6</int>
-								<string key="NSCatalogName">System</string>
-								<string key="NSColorName">controlTextColor</string>
-								<reference key="NSColor" ref="596246687"/>
-							</object>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSImageView" id="786569398">
-						<reference key="NSNextResponder" ref="538100461"/>
-						<int key="NSvFlags">268</int>
-						<array class="NSMutableArray" key="NSSubviews"/>
-						<set class="NSMutableSet" key="NSDragTypes">
-							<string>Apple PDF pasteboard type</string>
-							<string>Apple PICT pasteboard type</string>
-							<string>Apple PNG pasteboard type</string>
-							<string>NSFilenamesPboardType</string>
-							<string>NeXT Encapsulated PostScript v1.2 pasteboard type</string>
-							<string>NeXT TIFF v4.0 pasteboard type</string>
-						</set>
-						<string key="NSFrame">{{10, 6}, {38, 38}}</string>
-						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
-						<int key="NSTag">4</int>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSImageCell" key="NSCell" id="714609405">
-							<int key="NSCellFlags">671088640</int>
-							<int key="NSCellFlags2">33554432</int>
-							<object class="NSCustomResource" key="NSContents">
-								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">CDROMTemplate</string>
-							</object>
-							<int key="NSAlign">0</int>
-							<int key="NSScale">0</int>
-							<int key="NSStyle">0</int>
-							<bool key="NSAnimates">NO</bool>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-						<bool key="NSEditable">YES</bool>
-					</object>
-					<object class="NSButton" id="333940824">
-						<reference key="NSNextResponder" ref="538100461"/>
-						<int key="NSvFlags">-2147483383</int>
-						<array class="NSMutableArray" key="NSSubviews"/>
-						<string key="NSFrame">{{217, 23}, {18, 18}}</string>
-						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
-						<int key="NSTag">9</int>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="302127434">
-							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents"/>
-							<reference key="NSSupport" ref="756024321"/>
-							<reference key="NSControlView" ref="333940824"/>
-							<int key="NSButtonFlags">105136128</int>
-							<int key="NSButtonFlags2">134</int>
-							<object class="NSCustomResource" key="NSNormalImage">
-								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">BundleFreestandingTemplate</string>
-							</object>
-							<string key="NSAlternateContents"/>
-							<string key="NSKeyEquivalent"/>
-							<int key="NSPeriodicDelay">200</int>
-							<int key="NSPeriodicInterval">25</int>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSButton" id="999769036">
-						<reference key="NSNextResponder" ref="538100461"/>
-						<int key="NSvFlags">-2147483383</int>
-						<array class="NSMutableArray" key="NSSubviews"/>
-						<string key="NSFrame">{{236, 23}, {18, 18}}</string>
-						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
-						<int key="NSTag">8</int>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="288943020">
-							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents"/>
-							<reference key="NSSupport" ref="756024321"/>
-							<reference key="NSControlView" ref="999769036"/>
-							<int key="NSButtonFlags">105136128</int>
-							<int key="NSButtonFlags2">134</int>
-							<object class="NSCustomResource" key="NSNormalImage">
-								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">NSRevealFreestandingTemplate</string>
-							</object>
-							<string key="NSAlternateContents"/>
-							<string key="NSKeyEquivalent"/>
-							<int key="NSPeriodicDelay">200</int>
-							<int key="NSPeriodicInterval">25</int>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSButton" id="101752426">
-						<reference key="NSNextResponder" ref="538100461"/>
-						<int key="NSvFlags">-2147483383</int>
-						<array class="NSMutableArray" key="NSSubviews"/>
-						<string key="NSFrame">{{255, 23}, {18, 18}}</string>
-						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
-						<int key="NSTag">7</int>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="1057637640">
-							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents"/>
-							<reference key="NSSupport" ref="756024321"/>
-							<reference key="NSControlView" ref="101752426"/>
-							<int key="NSButtonFlags">105136128</int>
-							<int key="NSButtonFlags2">134</int>
-							<object class="NSCustomResource" key="NSNormalImage">
-								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">EjectFreestandingTemplate</string>
-							</object>
-							<string key="NSAlternateContents"/>
-							<string key="NSKeyEquivalent"/>
-							<int key="NSPeriodicDelay">200</int>
-							<int key="NSPeriodicInterval">25</int>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSButton" id="228187998">
-						<reference key="NSNextResponder" ref="538100461"/>
-						<int key="NSvFlags">-2147483383</int>
-						<array class="NSMutableArray" key="NSSubviews"/>
-						<string key="NSFrame">{{256, 7}, {16, 16}}</string>
-						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
-						<int key="NSTag">6</int>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="9482485">
-							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents"/>
-							<reference key="NSSupport" ref="756024321"/>
-							<reference key="NSControlView" ref="228187998"/>
-							<int key="NSButtonFlags">105136128</int>
-							<int key="NSButtonFlags2">134</int>
-							<object class="NSCustomResource" key="NSNormalImage">
-								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">NSStopProgressFreestandingTemplate</string>
-							</object>
-							<string key="NSAlternateContents"/>
-							<string key="NSKeyEquivalent"/>
-							<int key="NSPeriodicDelay">200</int>
-							<int key="NSPeriodicInterval">25</int>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSTextField" id="34396795">
-						<reference key="NSNextResponder" ref="538100461"/>
-						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{51, 8}, {216, 14}}</string>
-						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="710545240"/>
-						<int key="NSTag">3</int>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="561859013">
-							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">4326400</int>
-							<string key="NSContents">[Drive type]</string>
-							<object class="NSFont" key="NSSupport" id="26">
-								<string key="NSName">LucidaGrande</string>
-								<double key="NSSize">11</double>
-								<int key="NSfFlags">3100</int>
-							</object>
-							<reference key="NSControlView" ref="34396795"/>
-							<reference key="NSBackgroundColor" ref="318994083"/>
-							<reference key="NSTextColor" ref="690952022"/>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-					<object class="NSProgressIndicator" id="710545240">
-						<reference key="NSNextResponder" ref="538100461"/>
-						<int key="NSvFlags">-2147483382</int>
-						<string key="NSFrame">{{141, 9}, {114, 12}}</string>
-						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="228187998"/>
-						<int key="NSpiFlags">16650</int>
-						<double key="NSMaxValue">1</double>
-					</object>
-					<object class="NSTextField" id="1020297771">
-						<reference key="NSNextResponder" ref="538100461"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{51, 8}, {93, 14}}</string>
-						<reference key="NSSuperview" ref="538100461"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="34396795"/>
-						<int key="NSTag">5</int>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="373190442">
-							<int key="NSCellFlags">68157504</int>
-							<int key="NSCellFlags2">4326400</int>
-							<string key="NSContents">100% of 999MB</string>
-							<reference key="NSSupport" ref="26"/>
-							<reference key="NSControlView" ref="1020297771"/>
-							<reference key="NSBackgroundColor" ref="318994083"/>
-							<reference key="NSTextColor" ref="690952022"/>
-						</object>
-						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-					</object>
-				</array>
-				<string key="NSFrameSize">{284, 48}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
-				<reference key="NSNextKeyView" ref="786569398"/>
-				<bool key="NSViewIsLayerTreeHost">YES</bool>
-				<string key="NSClassName">BXDriveItemView</string>
-			</object>
-		</array>
-		<object class="IBObjectContainer" key="IBDocument.Objects">
-			<array class="NSMutableArray" key="connectionRecords">
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">imageView</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="786569398"/>
-					</object>
-					<int key="connectionID">59</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">progressMeter</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="710545240"/>
-					</object>
-					<int key="connectionID">60</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">progressMeterLabel</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="1020297771"/>
-					</object>
-					<int key="connectionID">66</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">view</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="538100461"/>
-					</object>
-					<int key="connectionID">67</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">icon</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="786569398"/>
-					</object>
-					<int key="connectionID">110</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">titleLabel</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="1058072283"/>
-					</object>
-					<int key="connectionID">111</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">typeLabel</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="34396795"/>
-					</object>
-					<int key="connectionID">112</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">revealButton</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="999769036"/>
-					</object>
-					<int key="connectionID">113</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">cancelButton</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="228187998"/>
-					</object>
-					<int key="connectionID">114</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">importButton</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="333940824"/>
-					</object>
-					<int key="connectionID">115</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">toggleButton</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="101752426"/>
-					</object>
-					<int key="connectionID">116</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">letterLabel</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="857624103"/>
-					</object>
-					<int key="connectionID">119</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">revealInFinder:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="999769036"/>
-					</object>
-					<int key="connectionID">129</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">toggle:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="101752426"/>
-					</object>
-					<int key="connectionID">130</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">import:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="333940824"/>
-					</object>
-					<int key="connectionID">131</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">cancelImport:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="228187998"/>
-					</object>
-					<int key="connectionID">132</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">delegate</string>
-						<reference key="source" ref="538100461"/>
-						<reference key="destination" ref="1001"/>
-					</object>
-					<int key="connectionID">98</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: mounted</string>
-						<reference key="source" ref="34396795"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="34396795"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">enabled: mounted</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">mounted</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">89</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: typeDescription</string>
-						<reference key="source" ref="34396795"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="34396795"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">value: typeDescription</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">typeDescription</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">BXCapitalizedString</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">107</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: drive.title</string>
-						<reference key="source" ref="1058072283"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1058072283"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">value: drive.title</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">drive.title</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">71</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: mounted</string>
-						<reference key="source" ref="1058072283"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1058072283"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">enabled: mounted</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">mounted</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">86</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">toolTip: drive.sourceURL.path</string>
-						<reference key="source" ref="1058072283"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1058072283"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">toolTip: drive.sourceURL.path</string>
-							<string key="NSBinding">toolTip</string>
-							<string key="NSKeyPath">drive.sourceURL.path</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">BXDriveDisplayPath</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">133</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: mounted</string>
-						<reference key="source" ref="786569398"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="786569398"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">enabled: mounted</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">mounted</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">93</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: driveImage</string>
-						<reference key="source" ref="786569398"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="786569398"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">value: driveImage</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">driveImage</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">106</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">image: iconForToggle</string>
-						<reference key="source" ref="101752426"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector" id="471752746">
-							<reference key="NSSource" ref="101752426"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">image: iconForToggle</string>
-							<string key="NSBinding">image</string>
-							<string key="NSKeyPath">iconForToggle</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">117</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">toolTip: tooltipForToggle</string>
-						<reference key="source" ref="101752426"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="101752426"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">toolTip: tooltipForToggle</string>
-							<string key="NSBinding">toolTip</string>
-							<string key="NSKeyPath">tooltipForToggle</string>
-							<reference key="NSPreviousConnector" ref="471752746"/>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">118</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: mounted</string>
-						<reference key="source" ref="857624103"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="857624103"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">enabled: mounted</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">mounted</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">91</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: drive.letter</string>
-						<reference key="source" ref="857624103"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="857624103"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">value: drive.letter</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">drive.letter</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">104</int>
-				</object>
-			</array>
-			<object class="IBMutableOrderedSet" key="objectRecords">
-				<array key="orderedObjects">
-					<object class="IBObjectRecord">
-						<int key="objectID">0</int>
-						<array key="object" id="0"/>
-						<reference key="children" ref="1000"/>
-						<nil key="parent"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">-2</int>
-						<reference key="object" ref="1001"/>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">File's Owner</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">-1</int>
-						<reference key="object" ref="1003"/>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">First Responder</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">-3</int>
-						<reference key="object" ref="1004"/>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">Application</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">2</int>
-						<reference key="object" ref="538100461"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="1020297771"/>
-							<reference ref="34396795"/>
-							<reference ref="333940824"/>
-							<reference ref="786569398"/>
-							<reference ref="228187998"/>
-							<reference ref="999769036"/>
-							<reference ref="101752426"/>
-							<reference ref="857624103"/>
-							<reference ref="710545240"/>
-							<reference ref="1058072283"/>
-						</array>
-						<reference key="parent" ref="0"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">3</int>
-						<reference key="object" ref="1020297771"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="373190442"/>
-						</array>
-						<reference key="parent" ref="538100461"/>
-						<string key="objectName">Import Progress Description</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">4</int>
-						<reference key="object" ref="34396795"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="561859013"/>
-						</array>
-						<reference key="parent" ref="538100461"/>
-						<string key="objectName">Drive Type</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">5</int>
-						<reference key="object" ref="1058072283"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="414029261"/>
-						</array>
-						<reference key="parent" ref="538100461"/>
-						<string key="objectName">Drive Name</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">6</int>
-						<reference key="object" ref="333940824"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="302127434"/>
-						</array>
-						<reference key="parent" ref="538100461"/>
-						<string key="objectName">Import</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">7</int>
-						<reference key="object" ref="786569398"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="714609405"/>
-						</array>
-						<reference key="parent" ref="538100461"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">8</int>
-						<reference key="object" ref="710545240"/>
-						<array class="NSMutableArray" key="children"/>
-						<reference key="parent" ref="538100461"/>
-						<string key="objectName">Import Progress</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">10</int>
-						<reference key="object" ref="999769036"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="288943020"/>
-						</array>
-						<reference key="parent" ref="538100461"/>
-						<string key="objectName">Show in Finder</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">11</int>
-						<reference key="object" ref="101752426"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="1057637640"/>
-						</array>
-						<reference key="parent" ref="538100461"/>
-						<string key="objectName">Insert/Eject</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">12</int>
-						<reference key="object" ref="857624103"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="238921778"/>
-						</array>
-						<reference key="parent" ref="538100461"/>
-						<string key="objectName">Drive Letter</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">13</int>
-						<reference key="object" ref="238921778"/>
-						<reference key="parent" ref="857624103"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">14</int>
-						<reference key="object" ref="1057637640"/>
-						<reference key="parent" ref="101752426"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">15</int>
-						<reference key="object" ref="288943020"/>
-						<reference key="parent" ref="999769036"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">17</int>
-						<reference key="object" ref="714609405"/>
-						<reference key="parent" ref="786569398"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">18</int>
-						<reference key="object" ref="302127434"/>
-						<reference key="parent" ref="333940824"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">19</int>
-						<reference key="object" ref="414029261"/>
-						<reference key="parent" ref="1058072283"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">20</int>
-						<reference key="object" ref="561859013"/>
-						<reference key="parent" ref="34396795"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">21</int>
-						<reference key="object" ref="373190442"/>
-						<reference key="parent" ref="1020297771"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">9</int>
-						<reference key="object" ref="228187998"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="9482485"/>
-						</array>
-						<reference key="parent" ref="538100461"/>
-						<string key="objectName">Cancel Import</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">16</int>
-						<reference key="object" ref="9482485"/>
-						<reference key="parent" ref="228187998"/>
-					</object>
-				</array>
-			</object>
-			<dictionary class="NSMutableDictionary" key="flattenedProperties">
-				<string key="-1.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="-2.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="-3.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<object class="NSMutableDictionary" key="10.IBAttributePlaceholdersKey">
-					<string key="NS.key.0">ToolTip</string>
-					<object class="IBToolTipAttribute" key="NS.object.0">
-						<string key="name">ToolTip</string>
-						<reference key="object" ref="999769036"/>
-						<string key="toolTip">Show in Finder</string>
-					</object>
-				</object>
-				<string key="10.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="11.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="12.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="13.CustomClassName">BXDriveLetterCell</string>
-				<object class="NSMutableDictionary" key="13.IBAttributePlaceholdersKey">
-					<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-					<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
-						<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-						<reference key="object" ref="238921778"/>
-						<array key="userDefinedRuntimeAttributes">
-							<object class="IBUserDefinedRuntimeAttribute">
-								<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.string</string>
-								<string key="keyPath">themeKey</string>
-								<string key="value">BXInspectorListTheme</string>
-							</object>
-						</array>
-					</object>
-				</object>
-				<string key="13.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="14.CustomClassName">BXDriveItemButtonCell</string>
-				<string key="14.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="15.CustomClassName">BXDriveItemButtonCell</string>
-				<string key="15.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="16.CustomClassName">BXDriveItemButtonCell</string>
-				<string key="16.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="17.CustomClassName">BXThemedImageCell</string>
-				<object class="NSMutableDictionary" key="17.IBAttributePlaceholdersKey">
-					<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-					<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
-						<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-						<reference key="object" ref="714609405"/>
-						<array key="userDefinedRuntimeAttributes">
-							<object class="IBUserDefinedRuntimeAttribute">
-								<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.string</string>
-								<string key="keyPath">themeKey</string>
-								<string key="value">BXInspectorListTheme</string>
-							</object>
-						</array>
-					</object>
-				</object>
-				<string key="17.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="18.CustomClassName">BXDriveItemButtonCell</string>
-				<string key="18.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="19.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="2.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="20.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="21.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="3.CustomClassName">BXThemedLabel</string>
-				<object class="NSMutableDictionary" key="3.IBAttributePlaceholdersKey">
-					<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-					<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
-						<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-						<reference key="object" ref="1020297771"/>
-						<array key="userDefinedRuntimeAttributes">
-							<object class="IBUserDefinedRuntimeAttribute">
-								<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.string</string>
-								<string key="keyPath">themeKey</string>
-								<string key="value">BXInspectorListTheme</string>
-							</object>
-						</array>
-					</object>
-				</object>
-				<string key="3.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="4.CustomClassName">BXThemedLabel</string>
-				<object class="NSMutableDictionary" key="4.IBAttributePlaceholdersKey">
-					<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-					<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
-						<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-						<reference key="object" ref="34396795"/>
-						<array key="userDefinedRuntimeAttributes">
-							<object class="IBUserDefinedRuntimeAttribute">
-								<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.string</string>
-								<string key="keyPath">themeKey</string>
-								<string key="value">BXInspectorListTheme</string>
-							</object>
-						</array>
-					</object>
-				</object>
-				<string key="4.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="5.CustomClassName">BXThemedLabel</string>
-				<object class="NSMutableDictionary" key="5.IBAttributePlaceholdersKey">
-					<string key="NS.key.0">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-					<object class="IBUserDefinedRuntimeAttributesPlaceholder" key="NS.object.0">
-						<string key="name">IBUserDefinedRuntimeAttributesPlaceholderName</string>
-						<reference key="object" ref="1058072283"/>
-						<array key="userDefinedRuntimeAttributes">
-							<object class="IBUserDefinedRuntimeAttribute">
-								<string key="typeIdentifier">com.apple.InterfaceBuilder.userDefinedRuntimeAttributeType.string</string>
-								<string key="keyPath">themeKey</string>
-								<string key="value">BXInspectorListTheme</string>
-							</object>
-						</array>
-					</object>
-				</object>
-				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<object class="NSMutableDictionary" key="6.IBAttributePlaceholdersKey">
-					<string key="NS.key.0">ToolTip</string>
-					<object class="IBToolTipAttribute" key="NS.object.0">
-						<string key="name">ToolTip</string>
-						<reference key="object" ref="333940824"/>
-						<string key="toolTip">Import into Gamebox</string>
-					</object>
-				</object>
-				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="7.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="8.CustomClassName">BXThemedProgressIndicator</string>
-				<string key="8.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<object class="NSMutableDictionary" key="9.IBAttributePlaceholdersKey">
-					<string key="NS.key.0">ToolTip</string>
-					<object class="IBToolTipAttribute" key="NS.object.0">
-						<string key="name">ToolTip</string>
-						<reference key="object" ref="228187998"/>
-						<string key="toolTip">Cancel Import</string>
-					</object>
-				</object>
-				<string key="9.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			</dictionary>
-			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
-			<nil key="activeLocalization"/>
-			<dictionary class="NSMutableDictionary" key="localizations"/>
-			<nil key="sourceID"/>
-			<int key="maxID">133</int>
-		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">BGHUDButtonCell</string>
-					<string key="superclassName">NSButtonCell</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BGHUDButtonCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BGHUDLabel</string>
-					<string key="superclassName">NSTextField</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BGHUDLabel.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXCollectionItem</string>
-					<string key="superclassName">NSCollectionViewItem</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXCollectionItem.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXCollectionItemView</string>
-					<string key="superclassName">NSView</string>
-					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">delegate</string>
-						<string key="NS.object.0">NSCollectionViewItem</string>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<string key="NS.key.0">delegate</string>
-						<object class="IBToOneOutletInfo" key="NS.object.0">
-							<string key="name">delegate</string>
-							<string key="candidateClassName">NSCollectionViewItem</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXCollectionItemView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXDriveItem</string>
-					<string key="superclassName">BXCollectionItem</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="cancelImport:">id</string>
-						<string key="import:">id</string>
-						<string key="revealInFinder:">id</string>
-						<string key="toggle:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="cancelImport:">
-							<string key="name">cancelImport:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="import:">
-							<string key="name">import:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="revealInFinder:">
-							<string key="name">revealInFinder:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="toggle:">
-							<string key="name">toggle:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="cancelButton">NSButton</string>
-						<string key="icon">NSImageView</string>
-						<string key="importButton">NSButton</string>
-						<string key="letterLabel">NSTextField</string>
-						<string key="progressMeter">NSProgressIndicator</string>
-						<string key="progressMeterLabel">NSTextField</string>
-						<string key="revealButton">NSButton</string>
-						<string key="titleLabel">NSTextField</string>
-						<string key="toggleButton">NSButton</string>
-						<string key="typeLabel">NSTextField</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="cancelButton">
-							<string key="name">cancelButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="icon">
-							<string key="name">icon</string>
-							<string key="candidateClassName">NSImageView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="importButton">
-							<string key="name">importButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="letterLabel">
-							<string key="name">letterLabel</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="progressMeter">
-							<string key="name">progressMeter</string>
-							<string key="candidateClassName">NSProgressIndicator</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="progressMeterLabel">
-							<string key="name">progressMeterLabel</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="revealButton">
-							<string key="name">revealButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="titleLabel">
-							<string key="name">titleLabel</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="toggleButton">
-							<string key="name">toggleButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="typeLabel">
-							<string key="name">typeLabel</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXDriveItem.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXDriveItemButtonCell</string>
-					<string key="superclassName">BXThemedButtonCell</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXDriveItemButtonCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXDriveItemView</string>
-					<string key="superclassName">BXInspectorListCollectionItemView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXDriveItemView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXDriveLetterCell</string>
-					<string key="superclassName">NSTextFieldCell</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXDriveLetterCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXInspectorListCollectionItemView</string>
-					<string key="superclassName">BXCollectionItemView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXInspectorListCollectionItemView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXThemedButtonCell</string>
-					<string key="superclassName">BGHUDButtonCell</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXThemedButtonCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXThemedImageCell</string>
-					<string key="superclassName">NSImageCell</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXThemedImageCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXThemedLabel</string>
-					<string key="superclassName">BGHUDLabel</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXThemedLabel.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXThemedProgressIndicator</string>
-					<string key="superclassName">NSProgressIndicator</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXThemedProgressIndicator.h</string>
-					</object>
-				</object>
-			</array>
-		</object>
-		<int key="IBDocument.localizationMode">0</int>
-		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
-		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
-		<int key="IBDocument.defaultPropertyAccessControl">3</int>
-		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
-			<string key="BundleFreestandingTemplate">{128, 128}</string>
-			<string key="CDROMTemplate">{128, 128}</string>
-			<string key="EjectFreestandingTemplate">{128, 128}</string>
-			<string key="NSRevealFreestandingTemplate">{14, 14}</string>
-			<string key="NSStopProgressFreestandingTemplate">{83, 83}</string>
-		</dictionary>
-	</data>
-</archive>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" promptedForUpgradeToXcode5="NO">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="BXDriveItem">
+            <connections>
+                <outlet property="cancelButton" destination="9" id="114"/>
+                <outlet property="icon" destination="7" id="110"/>
+                <outlet property="imageView" destination="7" id="59"/>
+                <outlet property="importButton" destination="6" id="115"/>
+                <outlet property="letterLabel" destination="12" id="119"/>
+                <outlet property="progressMeter" destination="8" id="60"/>
+                <outlet property="progressMeterLabel" destination="3" id="66"/>
+                <outlet property="revealButton" destination="10" id="113"/>
+                <outlet property="titleLabel" destination="5" id="111"/>
+                <outlet property="toggleButton" destination="11" id="116"/>
+                <outlet property="typeLabel" destination="4" id="112"/>
+                <outlet property="view" destination="2" id="67"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application"/>
+        <customView wantsLayer="YES" id="2" customClass="BXDriveItemView">
+            <rect key="frame" x="0.0" y="0.0" width="284" height="48"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField verticalHuggingPriority="750" tag="5" id="3" userLabel="Import Progress Description" customClass="BXThemedLabel">
+                    <rect key="frame" x="51" y="8" width="93" height="14"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="100% of 999MB" id="21">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="themeKey" value="BXInspectorListTheme"/>
+                    </userDefinedRuntimeAttributes>
+                </textField>
+                <progressIndicator hidden="YES" verticalHuggingPriority="750" maxValue="1" bezeled="NO" indeterminate="YES" controlSize="small" style="bar" id="8" userLabel="Import Progress" customClass="BXThemedProgressIndicator">
+                    <rect key="frame" x="141" y="9" width="114" height="12"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                </progressIndicator>
+                <textField verticalHuggingPriority="750" tag="3" id="4" userLabel="Drive Type" customClass="BXThemedLabel">
+                    <rect key="frame" x="51" y="8" width="216" height="14"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="[Drive type]" id="20">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="themeKey" value="BXInspectorListTheme"/>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <binding destination="-2" name="enabled" keyPath="mounted" id="89"/>
+                        <binding destination="-2" name="value" keyPath="typeDescription" id="107">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">BXCapitalizedString</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </textField>
+                <button hidden="YES" toolTip="Cancel Import" tag="6" id="9" userLabel="Cancel Import">
+                    <rect key="frame" x="256" y="7" width="16" height="16"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="NSStopProgressFreestandingTemplate" imagePosition="only" scrollable="YES" lineBreakMode="clipping" imageScaling="proportionallyDown" inset="2" id="16" customClass="BXDriveItemButtonCell">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="cancelImport:" target="-2" id="132"/>
+                    </connections>
+                </button>
+                <button hidden="YES" tag="7" id="11" userLabel="Insert/Eject">
+                    <rect key="frame" x="255" y="23" width="18" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="EjectFreestandingTemplate" imagePosition="only" scrollable="YES" lineBreakMode="clipping" imageScaling="proportionallyDown" inset="2" id="14" customClass="BXDriveItemButtonCell">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="toggle:" target="-2" id="130"/>
+                        <binding destination="-2" name="image" keyPath="iconForToggle" id="117"/>
+                        <binding destination="-2" name="toolTip" keyPath="tooltipForToggle" previousBinding="117" id="118"/>
+                    </connections>
+                </button>
+                <button hidden="YES" toolTip="Show in Finder" tag="8" id="10" userLabel="Show in Finder">
+                    <rect key="frame" x="236" y="23" width="18" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="NSRevealFreestandingTemplate" imagePosition="only" scrollable="YES" lineBreakMode="clipping" imageScaling="proportionallyDown" inset="2" id="15" customClass="BXDriveItemButtonCell">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="revealInFinder:" target="-2" id="129"/>
+                    </connections>
+                </button>
+                <button hidden="YES" toolTip="Import into Gamebox" tag="9" id="6" userLabel="Import">
+                    <rect key="frame" x="217" y="23" width="18" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="BundleFreestandingTemplate" imagePosition="only" scrollable="YES" lineBreakMode="clipping" imageScaling="proportionallyDown" inset="2" id="18" customClass="BXDriveItemButtonCell">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="import:" target="-2" id="131"/>
+                    </connections>
+                </button>
+                <imageView tag="4" id="7">
+                    <rect key="frame" x="10" y="6" width="38" height="38"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <imageCell key="cell" enabled="NO" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="CDROMTemplate" id="17" customClass="BXThemedImageCell">
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="themeKey" value="BXInspectorListTheme"/>
+                        </userDefinedRuntimeAttributes>
+                    </imageCell>
+                    <connections>
+                        <binding destination="-2" name="enabled" keyPath="mounted" id="93"/>
+                        <binding destination="-2" name="value" keyPath="driveImage" id="106"/>
+                    </connections>
+                </imageView>
+                <textField verticalHuggingPriority="750" id="12" userLabel="Drive Letter">
+                    <rect key="frame" x="48" y="20" width="25" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="W" id="13" customClass="BXDriveLetterCell">
+                        <font key="font" metaFont="systemBold"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="themeKey" value="BXInspectorListTheme"/>
+                        </userDefinedRuntimeAttributes>
+                    </textFieldCell>
+                    <connections>
+                        <binding destination="-2" name="enabled" keyPath="mounted" id="91"/>
+                        <binding destination="-2" name="value" keyPath="drive.letter" id="104"/>
+                    </connections>
+                </textField>
+                <textField verticalHuggingPriority="750" tag="2" id="5" userLabel="Drive Name" customClass="BXThemedLabel">
+                    <rect key="frame" x="72" y="24" width="140" height="17"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" lineBreakMode="truncatingHead" sendsActionOnEndEditing="YES" alignment="left" title="[Display name]" id="19">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="themeKey" value="BXInspectorListTheme"/>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <binding destination="-2" name="enabled" keyPath="mounted" id="86"/>
+                        <binding destination="-2" name="toolTip" keyPath="drive.sourceURL.path" id="133">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">BXDriveDisplayPath</string>
+                            </dictionary>
+                        </binding>
+                        <binding destination="-2" name="value" keyPath="drive.title" id="71"/>
+                    </connections>
+                </textField>
+            </subviews>
+            <connections>
+                <outlet property="delegate" destination="-2" id="98"/>
+            </connections>
+        </customView>
+    </objects>
+    <resources>
+        <image name="BundleFreestandingTemplate" width="128" height="128"/>
+        <image name="CDROMTemplate" width="128" height="128"/>
+        <image name="EjectFreestandingTemplate" width="128" height="128"/>
+        <image name="NSRevealFreestandingTemplate" width="14" height="14"/>
+        <image name="NSStopProgressFreestandingTemplate" width="14" height="14"/>
+    </resources>
+</document>

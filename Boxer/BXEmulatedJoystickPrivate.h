@@ -25,7 +25,7 @@ enum
 	BXGameportButton2
 };
 
-enum
+typedef NS_ENUM(NSUInteger, BXGameportAxis)
 {	
 	BXGameportXAxis,
 	BXGameportYAxis,
@@ -38,10 +38,8 @@ enum
     BXWheelBrakeAxis            = BXGameportY2Axis
 };
 
-typedef NSUInteger BXGameportAxis;
 
-
-enum
+typedef NS_OPTIONS(NSUInteger, BXGameportButtonMask)
 {
 	BXNoGameportButtonsMask = 0,
 	BXGameportButton1Mask = 1U << 0,
@@ -50,8 +48,6 @@ enum
 	BXGameportButton4Mask = 1U << 3,
 	BXAllGameportButtonsMask = BXGameportButton1Mask | BXGameportButton2Mask | BXGameportButton3Mask | BXGameportButton4Mask
 };
-
-typedef NSUInteger BXGameportButtonMask;
 
 
 #define BXGameportAxisMin -1.0f

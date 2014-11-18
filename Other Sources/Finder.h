@@ -8,15 +8,14 @@
 
 @class FinderApplication, FinderItem, FinderContainer, FinderComputerObject, FinderDisk, FinderFolder, FinderDesktopObject, FinderTrashObject, FinderFile, FinderAliasFile, FinderApplicationFile, FinderDocumentFile, FinderInternetLocationFile, FinderClipping, FinderPackage, FinderWindow, FinderFinderWindow, FinderDesktopWindow, FinderInformationWindow, FinderPreferencesWindow, FinderClippingWindow, FinderProcess, FinderApplicationProcess, FinderDeskAccessoryProcess, FinderPreferences, FinderLabel, FinderIconFamily, FinderIconViewOptions, FinderColumnViewOptions, FinderListViewOptions, FinderColumn, FinderAliasList;
 
-enum FinderPriv {
+typedef NS_ENUM(OSType, FinderPriv) {
 	FinderPrivReadOnly = 'read',
 	FinderPrivReadWrite = 'rdwr',
 	FinderPrivWriteOnly = 'writ',
 	FinderPrivNone = 'none'
 };
-typedef enum FinderPriv FinderPriv;
 
-enum FinderEdfm {
+typedef NS_ENUM(OSType, FinderEdfm) {
 	FinderEdfmMacOSFormat = 'dfhf',
 	FinderEdfmMacOSExtendedFormat = 'dfh+',
 	FinderEdfmUFSFormat = 'dfuf',
@@ -37,9 +36,8 @@ enum FinderEdfm {
 	FinderEdfmXsanFormat = 'dfac',
 	FinderEdfmUnknownFormat = 'df\?\?'
 };
-typedef enum FinderEdfm FinderEdfm;
 
-enum FinderIpnl {
+typedef NS_ENUM(OSType, FinderIpnl) {
 	FinderIpnlGeneralInformationPanel = 'gpnl',
 	FinderIpnlSharingPanel = 'spnl',
 	FinderIpnlMemoryPanel = 'mpnl',
@@ -54,26 +52,23 @@ enum FinderIpnl {
 	FinderIpnlMoreInfoPanel = 'minl',
 	FinderIpnlSimpleHeaderPanel = 'shnl'
 };
-typedef enum FinderIpnl FinderIpnl;
 
-enum FinderPple {
+typedef NS_ENUM(OSType, FinderPple) {
 	FinderPpleGeneralPreferencesPanel = 'pgnp',
 	FinderPpleLabelPreferencesPanel = 'plbp',
 	FinderPpleSidebarPreferencesPanel = 'psid',
 	FinderPpleAdvancedPreferencesPanel = 'padv'
 };
-typedef enum FinderPple FinderPple;
 
-enum FinderEcvw {
+typedef NS_ENUM(OSType, FinderEcvw) {
 	FinderEcvwIconView = 'icnv',
 	FinderEcvwListView = 'lsvw',
 	FinderEcvwColumnView = 'clvw',
 	FinderEcvwGroupView = 'grvw',
 	FinderEcvwFlowView = 'flvw'
 };
-typedef enum FinderEcvw FinderEcvw;
 
-enum FinderEarr {
+typedef NS_ENUM(OSType, FinderEarr) {
 	FinderEarrNotArranged = 'narr',
 	FinderEarrSnapToGrid = 'grda',
 	FinderEarrArrangedByName = 'nama',
@@ -83,21 +78,18 @@ enum FinderEarr {
 	FinderEarrArrangedByKind = 'kina',
 	FinderEarrArrangedByLabel = 'laba'
 };
-typedef enum FinderEarr FinderEarr;
 
-enum FinderEpos {
+typedef NS_ENUM(OSType, FinderEpos) {
 	FinderEposRight = 'lrgt',
 	FinderEposBottom = 'lbot'
 };
-typedef enum FinderEpos FinderEpos;
 
-enum FinderSodr {
+typedef NS_ENUM(OSType, FinderSodr) {
 	FinderSodrNormal = 'snrm',
 	FinderSodrReversed = 'srvs'
 };
-typedef enum FinderSodr FinderSodr;
 
-enum FinderElsv {
+typedef NS_ENUM(OSType, FinderElsv) {
 	FinderElsvNameColumn = 'elsn',
 	FinderElsvModificationDateColumn = 'elsm',
 	FinderElsvCreationDateColumn = 'elsc',
@@ -107,13 +99,11 @@ enum FinderElsv {
 	FinderElsvVersionColumn = 'elsv',
 	FinderElsvCommentColumn = 'elsC'
 };
-typedef enum FinderElsv FinderElsv;
 
-enum FinderLvic {
+typedef NS_ENUM(OSType, FinderLvic) {
 	FinderLvicSmallIcon = 'smic',
 	FinderLvicLargeIcon = 'lgic'
 };
-typedef enum FinderLvic FinderLvic;
 
 
 

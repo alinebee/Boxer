@@ -20,7 +20,7 @@
 #pragma mark Class constants
 
 //Constants returned by importStage
-typedef enum {
+typedef NS_ENUM(NSInteger, BXImportStage) {
 	BXImportSessionWaitingForSource,
 	BXImportSessionLoadingSource,
 	BXImportSessionWaitingForInstaller,
@@ -31,10 +31,10 @@ typedef enum {
 	BXImportSessionCancellingSourceFileImport,
 	BXImportSessionCleaningGamebox,
 	BXImportSessionFinished
-} BXImportStage;
+};
 
 //Constants returned by sourceFileImportType
-typedef enum {
+typedef NS_ENUM(NSInteger, BXSourceFileImportType) {
 	BXImportTypeUnknown,                //We haven't decided yet what we're importing from
 	BXImportFromPreInstalledGame,		//Bundling a pre-installed game folder into a gamebox
 	BXImportFromCDVolume,				//Coping from a real CD
@@ -45,7 +45,7 @@ typedef enum {
 	BXImportFromFolderToCD,				//Converting a folder of game files into a fake CD
 	BXImportFromFolderToFloppy,			//Converting a folder of game files into a fake floppy
 	BXImportFromFolderToHardDisk,		//Converting a folder of game files into a secondary hard disk
-} BXSourceFileImportType;
+};
 
 
 @class BXImportWindowController;

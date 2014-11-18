@@ -17,7 +17,7 @@
 #endif
 
 //These constants are for reference and correspond directly to constants defined in DOSBox's render_scalers.h
-typedef enum {
+typedef NS_ENUM(NSUInteger, BXFilterType) {
 	BXFilterNormal		= 0,
 	BXFilterMAME		= 1,
 	BXFilterInterpolated= 2,
@@ -29,7 +29,7 @@ typedef enum {
 	BXFilterRGB			= 8,
 	BXFilterScanlines	= 9,
     BXMaxFilters
-} BXFilterType;
+};
 
 typedef struct {
 	//The type constant from BXEmulator+BXRendering.h to which this definition
@@ -64,11 +64,11 @@ typedef struct {
 } BXFilterDefinition;
 
 
-typedef enum {
+typedef NS_ENUM(NSInteger, BXHerculesTintMode) {
     BXHerculesWhiteTint,
     BXHerculesAmberTint,
     BXHerculesGreenTint,
-} BXHerculesTintMode;
+};
 
 
 

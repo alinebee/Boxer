@@ -14,7 +14,7 @@
 #pragma mark -
 #pragma mark Constants
 
-enum {
+typedef NS_OPTIONS(NSUInteger, BXESCPLineStyle) {
     BXESCPLineStyleNone = 0,
     BXESCPLineStyleSingle = 1 << 0,
     BXESCPLineStyleDouble = 1 << 1,
@@ -23,7 +23,6 @@ enum {
     BXESCPLineStyleSingleBroken = BXESCPLineStyleSingle | BXESCPLineStyleBroken,
     BXESCPLineStyleDoubleBroken = BXESCPLineStyleDouble | BXESCPLineStyleBroken,
 };
-typedef NSUInteger BXESCPLineStyle;
 
 typedef enum {
     BXPrinterPortLPT1 = 1,

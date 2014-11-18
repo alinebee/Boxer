@@ -119,13 +119,12 @@ typedef uint32_t RKLRegexOptions; // This must be identical to the ICU 'flags' a
 #ifndef   RKLREGEXENUMERATIONOPTIONS_DEFINED
 #define   RKLREGEXENUMERATIONOPTIONS_DEFINED
 
-enum {
+typedef NS_OPTIONS(NSUInteger, RKLRegexEnumerationOptions) {
   RKLRegexEnumerationNoOptions                               = 0UL,
   RKLRegexEnumerationCapturedStringsNotRequired              = 1UL << 9,
   RKLRegexEnumerationReleaseStringReturnedByReplacementBlock = 1UL << 10,
   RKLRegexEnumerationFastCapturedStringsXXX                  = 1UL << 11,
 };
-typedef NSUInteger RKLRegexEnumerationOptions;
   
 #endif // RKLREGEXENUMERATIONOPTIONS_DEFINED
 

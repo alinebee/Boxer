@@ -15,10 +15,10 @@
 
 #pragma mark - Constants
 
-typedef enum {
+typedef NS_ENUM(NSInteger, BXAxisPolarity) {
     kBXAxisNegative = -1,
     kBXAxisPositive = 1,
-} BXAxisPolarity;
+};
 
 
 //The minimum and maximum acceptable input values.

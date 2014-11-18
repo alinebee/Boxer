@@ -431,7 +431,7 @@ int _ADBHandleClose(void *cookie)
 
 + (id) handleForURL: (NSURL *)URL options: (ADBHandleOptions)options error:(out NSError **)outError
 {
-    return [[[self alloc] initWithURL: URL options: options error: outError] autorelease];
+    return [[(ADBFileHandle*)[self alloc] initWithURL: URL options: options error: outError] autorelease];
 }
 
 - (id) initWithURL: (NSURL *)URL options:(ADBHandleOptions)options error:(out NSError **)outError

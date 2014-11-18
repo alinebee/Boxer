@@ -12,17 +12,17 @@
 #pragma mark - Emulator constants
 
 /// The current DOSBox CPU speed mode: either a fixed speed or as fast as it can go.
-typedef enum {
+typedef NS_ENUM(NSInteger, BXSpeedMode) {
     /// The emulator is running at a fixed rate of cycles.
     /// Corresponds to "cycles=fixed n" in DOSBox config parlance.
 	BXSpeedFixed,
     /// The emulator is running to a maximum percentage of the host computer's available CPU.
     /// Corresponds to "cycles=max" in DOSBox config parlance.
 	BXSpeedAuto,
-} BXSpeedMode;
+};
 
 /// The current DOSBox CPU core emulation mode.
-typedef enum {
+typedef NS_ENUM(NSInteger, BXCoreMode) {
     /// The core emulation mode is not recognised or emulation has not been started.
 	BXCoreUnknown	= -1,
     
@@ -37,13 +37,13 @@ typedef enum {
     
     /// The full CPU emulation core ("core=full" in DOSBox parlance.) Not used by Boxer.
 	BXCoreFull		= 3
-} BXCoreMode;
+};
 
 
 /// The gameport timing options used by @c -gameportTimingMode and taken from the "timing" DOSBox config setting.
 /// These affect how the gameport's axis values decay over time, which influences the calibration of the joystick.
 /// The correct setting depends on the gmae's gameport polling strategy, which varies from game to game.
-typedef enum {
+typedef NS_ENUM(NSInteger, BXGameportTimingMode) {
     /// Gameport timing is directly based on the rate at which the game polls the gameport for its status.
     /// Preferred for older games and is highly cycle-dependent: changing the CPU cycles will
     /// usually require recalibration of the joystick.
@@ -52,12 +52,12 @@ typedef enum {
     /// Gameport timing is based on the BIOS clock. Preferred for later games that poll the gameport
     /// at irregular intervals.
 	BXGameportTimingClockBased
-} BXGameportTimingMode;
+};
 
 /// The current game's level of gameport joystick support used by @c -joystickSupport and taken from
 /// the "joysticktype" DOSBox config setting.
 /// Indicates whether the game supports 4-axis joysticks, 2-axis joysticks or no joystick at all.
-typedef enum {
+typedef NS_ENUM(NSInteger, BXJoystickSupportLevel) {
     /// The current session does not support gameport devices. Controller capturing should be disabled altogether.
     /// Corresponds to "joysticktype=none" in DOSBox config parlance.
 	BXNoJoystickSupport,
@@ -68,7 +68,7 @@ typedef enum {
     
     /// The game supports 4-axis, 4-button gameport devices. This is the default.
 	BXJoystickSupportFull
-} BXJoystickSupportLevel;
+};
 
 
 /// The C string encoding to use for strings that will be displayed to the user. Intended for use with

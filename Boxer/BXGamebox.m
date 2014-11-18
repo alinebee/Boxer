@@ -18,11 +18,11 @@
 
 #pragma mark - Constants
 
-typedef enum {
+typedef NS_ENUM(NSInteger, BXGameboxDocumentationOperation) {
     BXGameboxDocumentationCopy,
     BXGameboxDocumentationMove,
     BXGameboxDocumentationSymlink,
-} BXGameboxDocumentationOperation;
+};
 
 
 NSString * const BXGameIdentifierGameInfoKey        = @"BXGameIdentifier";

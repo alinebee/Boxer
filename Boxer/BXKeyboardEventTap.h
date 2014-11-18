@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 /// The current status of the event tap.
-typedef enum {
+typedef NS_ENUM(NSInteger, BXKeyboardEventTapStatus) {
     /// The event tap is not installed.
     BXKeyboardEventTapNotTapping,
     
@@ -21,7 +21,7 @@ typedef enum {
     
     /// The event tap is installed and is tapping both system and keyboard events.
     BXKeyboardEventTapTappingAllKeyboardEvents,
-} BXKeyboardEventTapStatus;
+};
 
 @class ADBContinuousThread;
 @protocol BXKeyboardEventTapDelegate;

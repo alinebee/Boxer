@@ -15,13 +15,13 @@
 #pragma mark -
 #pragma mark Constants
 
-typedef enum {
+typedef NS_ENUM(NSInteger, BXDriveType) {
 	BXDriveAutodetect	= -1,
 	BXDriveHardDisk		= 0,
 	BXDriveFloppyDisk	= 1,
 	BXDriveCDROM		= 2,
 	BXDriveVirtual		= 3
-} BXDriveType;
+};
 
 //Setting freeSpace to BXDefaultFreeSpace indicates that the drive should use whatever free space DOSBox thinks is best.
 #define BXDefaultFreeSpace -1

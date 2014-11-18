@@ -264,13 +264,12 @@ NSString * const RKLICURegexSubjectRangeErrorKey       = @"RKLICURegexSubjectRan
 NSString * const RKLICURegexSubjectStringErrorKey      = @"RKLICURegexSubjectString";
 
 // Used internally by rkl_userInfoDictionary to specify which arguments should be set in the NSError userInfo dictionary.
-enum {
+typedef NS_OPTIONS(NSUInteger, RKLUserInfoOptions) {
   RKLUserInfoNone                    = 0UL,
   RKLUserInfoSubjectRange            = 1UL << 0,
   RKLUserInfoReplacedCount           = 1UL << 1,
   RKLUserInfoRegexEnumerationOptions = 1UL << 2,
 };
-typedef NSUInteger RKLUserInfoOptions;
 
 ////////////
 #pragma mark -

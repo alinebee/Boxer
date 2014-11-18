@@ -17,7 +17,7 @@
 #endif
 
 //These constants are for reference and correspond directly to constants defined in DOSBox's render_scalers.h
-typedef NS_ENUM(NSInteger, BXFilterType) {
+typedef NS_ENUM(NSUInteger, BXFilterType) {
 	BXFilterNormal		= 0,
 	BXFilterMAME		= 1,
 	BXFilterInterpolated= 2,

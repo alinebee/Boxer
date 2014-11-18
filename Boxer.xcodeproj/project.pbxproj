@@ -405,7 +405,6 @@
 		9F486F6216F5E78800FE263E /* WelcomeFocusRing@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F486F6016F5E78800FE263E /* WelcomeFocusRing@2x.png */; };
 		9F4971BB108EF02F00282261 /* BXEmulator+BXDOSFileSystem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */; };
 		9F4B1AFA165C122F001AE063 /* BXDriveItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4B1AF9165C122F001AE063 /* BXDriveItem.m */; };
-		9F4B5284122591960055022A /* prompt.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F4B5283122591960055022A /* prompt.icns */; };
 		9F4BCC1A17E5CFF700140390 /* NSImage+ADBSaveImages.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2120FD1301597E002AB1B7 /* NSImage+ADBSaveImages.m */; };
 		9F4BCCD817E6190A00140390 /* Boxer.help in Resources */ = {isa = PBXBuildFile; fileRef = 9F4BCCD717E6190A00140390 /* Boxer.help */; };
 		9F4C10E11691E0D50092441A /* DiscSwapTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F4C10E01691E0D50092441A /* DiscSwapTemplate.pdf */; };
@@ -463,7 +462,6 @@
 		9F69133310A2F62A00EA78CD /* BXDrive.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69133210A2F62A00EA78CD /* BXDrive.m */; };
 		9F693D5E16DD40DD00CCEA7C /* ADBEnumerationHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F693D5D16DD40DD00CCEA7C /* ADBEnumerationHelpers.m */; };
 		9F693D5F16DD40DD00CCEA7C /* ADBEnumerationHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F693D5D16DD40DD00CCEA7C /* ADBEnumerationHelpers.m */; };
-		9F6A79041203547800D2097D /* gamefolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A79031203547800D2097D /* gamefolder.icns */; };
 		9F6BF48616592EA600D9D66E /* Inspector.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F6BF48416592EA600D9D66E /* Inspector.xib */; };
 		9F6C1CDA14373AF600601ACB /* BXDummyMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */; };
 		9F70277B13D706CC00606B4C /* BXBezelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70277A13D706CC00606B4C /* BXBezelController.m */; };
@@ -742,8 +740,6 @@
 		9FCB7B1A15B8589B00CC7CC7 /* BXDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */; };
 		9FCB7B2715B877E500CC7CC7 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0915B8422000CC7CC7 /* DOS Toolkit */; };
 		9FCB7B2815B8782800CC7CC7 /* Bezel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F886FDD144CB6C30033CCD3 /* Bezel.xib */; };
-		9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
-		9FCBB2D110A61CA800C28B09 /* executable.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CE10A61CA800C28B09 /* executable.icns */; };
 		9FCBB2D210A61CA800C28B09 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
 		9FCBB6F310A6DDBD00C28B09 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */; };
 		9FCC2F9A1366EF170013F083 /* BXEmulatedKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FCC2F991366EF170013F083 /* BXEmulatedKeyboard.mm */; };
@@ -1055,7 +1051,6 @@
 		9F486F6016F5E78800FE263E /* WelcomeFocusRing@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "WelcomeFocusRing@2x.png"; sourceTree = "<group>"; };
 		9F4B1AF8165C122F001AE063 /* BXDriveItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveItem.h; sourceTree = "<group>"; };
 		9F4B1AF9165C122F001AE063 /* BXDriveItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDriveItem.m; sourceTree = "<group>"; };
-		9F4B5283122591960055022A /* prompt.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = prompt.icns; sourceTree = "<group>"; };
 		9F4BCCD717E6190A00140390 /* Boxer.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Boxer.help; sourceTree = "<group>"; };
 		9F4C10E01691E0D50092441A /* DiscSwapTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DiscSwapTemplate.pdf; sourceTree = "<group>"; };
 		9F4E042B0F67E72300427D50 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -1138,7 +1133,6 @@
 		9F69133210A2F62A00EA78CD /* BXDrive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrive.m; sourceTree = "<group>"; };
 		9F693D5C16DD40DD00CCEA7C /* ADBEnumerationHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBEnumerationHelpers.h; sourceTree = "<group>"; };
 		9F693D5D16DD40DD00CCEA7C /* ADBEnumerationHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBEnumerationHelpers.m; sourceTree = "<group>"; };
-		9F6A79031203547800D2097D /* gamefolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gamefolder.icns; sourceTree = "<group>"; };
 		9F6BF48516592EA600D9D66E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/Inspector.xib; sourceTree = "<group>"; };
 		9F6C1CD814373AF600601ACB /* BXDummyMIDIDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDummyMIDIDevice.h; sourceTree = "<group>"; };
 		9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDummyMIDIDevice.m; sourceTree = "<group>"; };
@@ -1615,8 +1609,6 @@
 		9FCB7B0C15B842E000CC7CC7 /* BXStandaloneAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXStandaloneAppController.m; sourceTree = "<group>"; };
 		9FCB7B0E15B844AA00CC7CC7 /* BXBaseAppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBaseAppController.h; sourceTree = "<group>"; };
 		9FCB7B0F15B844AA00CC7CC7 /* BXBaseAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBaseAppController.m; sourceTree = "<group>"; };
-		9FCBB2CD10A61CA800C28B09 /* boxer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = boxer.icns; sourceTree = "<group>"; };
-		9FCBB2CE10A61CA800C28B09 /* executable.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = executable.icns; sourceTree = "<group>"; };
 		9FCBB2CF10A61CA800C28B09 /* package.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = package.icns; sourceTree = "<group>"; };
 		9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "DOS Toolkit"; sourceTree = "<group>"; };
 		9FCC2F981366EF170013F083 /* BXEmulatedKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedKeyboard.h; sourceTree = "<group>"; };
@@ -2975,10 +2967,6 @@
 			isa = PBXGroup;
 			children = (
 				557A24EF1A1AF1CE002FE9BD /* Icons.xcassets */,
-				9F4B5283122591960055022A /* prompt.icns */,
-				9FCBB2CD10A61CA800C28B09 /* boxer.icns */,
-				9F6A79031203547800D2097D /* gamefolder.icns */,
-				9FCBB2CE10A61CA800C28B09 /* executable.icns */,
 				9FCBB2CF10A61CA800C28B09 /* package.icns */,
 			);
 			name = Icons;
@@ -3515,8 +3503,6 @@
 				9F45A1C9109C3D1100593456 /* DOSWindow.xib in Resources */,
 				9F45A1CD109C3D3400593456 /* MainMenu.xib in Resources */,
 				9F45A46C109C9A0400593456 /* MountPanelOptions.xib in Resources */,
-				9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */,
-				9FCBB2D110A61CA800C28B09 /* executable.icns in Resources */,
 				9FCBB2D210A61CA800C28B09 /* package.icns in Resources */,
 				9FCBB6F310A6DDBD00C28B09 /* DOS Toolkit in Resources */,
 				557A24EA1A1AF0F2002FE9BD /* Bezels-DOSBox.xcassets in Resources */,
@@ -3533,7 +3519,6 @@
 				9FDCDEFD11B5B83B0032DA4E /* dsa_pub.pem in Resources */,
 				9FAA451511EB40180042B986 /* Configuration.strings in Resources */,
 				9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */,
-				9F6A79041203547800D2097D /* gamefolder.icns in Resources */,
 				9F1CBB5E120CABBB00C5E926 /* ImportWindow.xib in Resources */,
 				9F550667121B057C0042614A /* 35Diskette.icns in Resources */,
 				9F550668121B057C0042614A /* CDCase.icns in Resources */,
@@ -3546,7 +3531,6 @@
 				9FA9E282121FD874006E20C4 /* PanelCollapseTemplate.pdf in Resources */,
 				9FDE34371351E0F5000DCE44 /* Welcome.xib in Resources */,
 				9F2292631225848000ABC0B3 /* WelcomeSpotlight.png in Resources */,
-				9F4B5284122591960055022A /* prompt.icns in Resources */,
 				557A24E71A1AF0CB002FE9BD /* Bezels-shared.xcassets in Resources */,
 				9F160DE21236952600F8768E /* Sample Games in Resources */,
 				9F70C19C129036C900A3627F /* Boxer.sdef in Resources */,
@@ -4805,6 +4789,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = boxer;
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
 				COMBINE_HIDPI_IMAGES = NO;
@@ -4836,6 +4821,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = boxer;
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
 				COMBINE_HIDPI_IMAGES = NO;

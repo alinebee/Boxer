@@ -128,8 +128,6 @@
 	<string>Boxer.help</string>
 	<key>CFBundleHelpBookName</key>
 	<string>net.washboardabs.boxer.help</string>
-	<key>CFBundleIconFile</key>
-	<string>boxer.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>net.washboardabs.boxer</string>
 	<key>CFBundleInfoDictionaryVersion</key>

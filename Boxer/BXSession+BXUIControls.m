@@ -624,6 +624,12 @@
     //Restart menu item
     else if (theAction == @selector(performRestartAtLaunchPanel:))
     {
+        //If this is a standalone game, hide the menu option altogether if the app can't show the launcher panel.
+        if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
+        {
+            theItem.hidden = !self.allowsLauncherPanel;
+        }
+        
         //Disable the option if the current session does not support the launch panel
         //or if we're already at the launch panel.
         return self.isEmulating && self.allowsLauncherPanel && (self.DOSWindowController.currentPanel != BXDOSWindowLaunchPanel);

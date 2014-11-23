@@ -243,7 +243,7 @@
     NSArray *codeSignArgs  = @[@"--force",
                                @"--deep",
                                @"--sign",
-                               @"Developer ID Application",
+                               @"Mac Developer",
                                tempAppURL.path];
     NSTask *signApp = [NSTask launchedTaskWithLaunchPath: codeSignPath
                                                arguments: codeSignArgs];

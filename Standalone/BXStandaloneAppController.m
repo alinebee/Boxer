@@ -184,6 +184,30 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
     return bundledGameboxURL;
 }
 
+- (id) makeDocumentWithContentsOfURL: (NSURL *)absoluteURL
+                              ofType: (NSString *)typeName
+                               error: (NSError **)outError
+{
+    if ([BXEmulator canLaunchEmulator])
+    {
+        return [super makeDocumentWithContentsOfURL: absoluteURL
+                                             ofType: typeName
+                                              error: outError];
+    }
+    else
+    {
+        NSString *executablePath = [[NSBundle mainBundle] executablePath];
+        [NSTask launchedTaskWithLaunchPath: executablePath arguments: @[absoluteURL.path]];
+        
+        if (outError)
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                            code: NSUserCancelledError
+                                        userInfo: nil];
+        return nil;
+    }
+}
+
+
 - (id) makeUntitledDocumentOfType: (NSString *)typeName error: (NSError **)outError
 {
     if ([BXEmulator canLaunchEmulator])

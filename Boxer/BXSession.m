@@ -1255,7 +1255,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     //TWEAK: Sanitise the configurations folder of a standalone game app the first time the app is launched,
     //by deleting all unused conf files.
-    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle] &&
+        [[NSBundle mainBundle] objectForInfoDictionaryKey: @"BXBundledGameboxName"] != nil)
     {   
         NSFileManager *manager = [[NSFileManager alloc] init];
         NSURL *confBaseURL = [appBundle.resourceURL URLByAppendingPathComponent: @"Configurations"];

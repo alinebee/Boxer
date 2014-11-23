@@ -221,7 +221,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 	self.renderingView.postsFrameChangedNotifications = YES;
 	
     //Ensure our loading spinner runs on a separate thread.
-    self.loadingSpinner.usesThreadedAnimation = YES;
+    //Disabled as this was causing CATransaction errors.
+    //self.loadingSpinner.usesThreadedAnimation = YES;
     
     
     //Prepare menu representations for the toolbar items, which (being custom views)
@@ -1049,8 +1050,9 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
         [[NSNotificationCenter defaultCenter] postNotificationName: BXWillBeginInterruptionNotification object: self];
         
         //Slide horizontally between the launcher panel and the DOS view.
-        if ((self.currentPanel == BXDOSWindowDOSView && newPanel == BXDOSWindowLaunchPanel) ||
-            (self.currentPanel == BXDOSWindowLaunchPanel && newPanel == BXDOSWindowDOSView))
+        //TWEAK: disabled for now because the lurching slide animation was making me carsick.
+        if (NO && ((self.currentPanel == BXDOSWindowDOSView && newPanel == BXDOSWindowLaunchPanel) ||
+            (self.currentPanel == BXDOSWindowLaunchPanel && newPanel == BXDOSWindowDOSView)))
         {
             //Disable window flushes to prevent partial redraws while we're setting up the views.
             [self.window disableFlushWindow];
@@ -1058,6 +1060,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
             //We reveal the launcher by sliding the parent view along horizontally:
             //So we resize the wrapper to accommodate both views side-by-side.
             NSView *wrapperView = self.panelWrapper;
+            NSAssert(wrapperView != nil, @"No view was bound to the wrapperView outlet in the XIB.");
             
             NSRect originalFrame = wrapperView.frame;
             NSRect originalBounds = wrapperView.bounds;
@@ -1158,7 +1161,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
             NSViewAnimation *animation = [[NSViewAnimation alloc] init];
             animation.viewAnimations = animations;
             animation.duration = 0.25f;
-            animation.animationBlockingMode = NSAnimationBlocking;
+            animation.animationBlockingMode = NSAnimationNonblocking;
             animation.animationCurve = NSAnimationEaseIn;
             
             if (involvesRenderingView && [self.renderingView respondsToSelector: @selector(viewAnimationWillStart:)])

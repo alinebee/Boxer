@@ -965,11 +965,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
-		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		501F2839161303DA00B1ED53 /* BXBuiltinShaderRenderers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBuiltinShaderRenderers.h; sourceTree = "<group>"; };
 		501F283A161303DA00B1ED53 /* BXBuiltinShaderRenderers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBuiltinShaderRenderers.m; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1047,7 +1047,7 @@
 		9F20ADCF1702E87B007263C8 /* BXDrive+BXDriveArchiving.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXDrive+BXDriveArchiving.m"; sourceTree = "<group>"; };
 		9F20ADD117030CE0007263C8 /* BXDrivePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrivePrivate.h; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
-		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
+		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = System/Library/Frameworks/QTKit.framework; sourceTree = SDKROOT; };
 		9F2120F613015653002AB1B7 /* BXShelfArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShelfArt.h; sourceTree = "<group>"; };
 		9F2120F713015653002AB1B7 /* BXShelfArt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXShelfArt.m; sourceTree = "<group>"; };
 		9F2120FC1301597E002AB1B7 /* NSImage+ADBSaveImages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+ADBSaveImages.h"; sourceTree = "<group>"; };
@@ -1056,7 +1056,7 @@
 		9F2122E91301BDE1002AB1B7 /* BXShelfAppearanceOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXShelfAppearanceOperation.m; sourceTree = "<group>"; };
 		9F2122ED1301BE6E002AB1B7 /* BXSampleGamesCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSampleGamesCopy.h; sourceTree = "<group>"; };
 		9F2122EE1301BE6E002AB1B7 /* BXSampleGamesCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSampleGamesCopy.m; sourceTree = "<group>"; };
-		9F2140FE0F59F28000A5A183 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
+		9F2140FE0F59F28000A5A183 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WelcomeSpotlight.png; sourceTree = "<group>"; };
 		9F24D2351224336E009C1817 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Welcome.xib; sourceTree = "<group>"; };
 		9F24D24B122439E0009C1817 /* BXWelcomeWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeWindowController.h; sourceTree = "<group>"; };
@@ -1145,7 +1145,7 @@
 		9F4B5283122591960055022A /* prompt.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = prompt.icns; sourceTree = "<group>"; };
 		9F4BCCD717E6190A00140390 /* Boxer.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Boxer.help; sourceTree = "<group>"; };
 		9F4C10E01691E0D50092441A /* DiscSwapTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DiscSwapTemplate.pdf; sourceTree = "<group>"; };
-		9F4E042B0F67E72300427D50 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
+		9F4E042B0F67E72300427D50 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		9F4FC1131592508100319428 /* BXSupersamplingRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSupersamplingRenderer.h; sourceTree = "<group>"; };
 		9F4FC1141592508100319428 /* BXSupersamplingRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSupersamplingRenderer.m; sourceTree = "<group>"; };
 		9F4FC116159253DA00319428 /* BXShaderRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShaderRenderer.h; sourceTree = "<group>"; };
@@ -1643,7 +1643,7 @@
 		9FBC31D10F56C370001811F2 /* AboutBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AboutBackground.png; sourceTree = "<group>"; };
 		9FBC31DD0F56C383001811F2 /* LockClosing.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = LockClosing.aiff; sourceTree = "<group>"; };
 		9FBC31DE0F56C383001811F2 /* LockOpening.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = LockOpening.aiff; sourceTree = "<group>"; };
-		9FBC32110F56C3E9001811F2 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		9FBC32110F56C3E9001811F2 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		9FBC34490F56C5D1001811F2 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/DOSBox.strings; sourceTree = "<group>"; };
 		9FBC344B0F56C5D1001811F2 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Shell.strings; sourceTree = "<group>"; };
 		9FBC345C0F56C64D001811F2 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1666,9 +1666,9 @@
 		9FBC3A7F0F56CEA2001811F2 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		9FBC3C140F56D6E8001811F2 /* SDL.framework */ = {isa = PBXFileReference; comments = "This is the stock SDL 1.2.14 framework, downloaded from http://www.libsdl.org/"; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
 		9FBC3C150F56D6E8001811F2 /* SDL_net.framework */ = {isa = PBXFileReference; comments = "This is the stock SDL_Net 1.2.7 framework, downloaded from http://www.libsdl.org/projects/SDL_net/"; lastKnownFileType = wrapper.framework; path = SDL_net.framework; sourceTree = "<group>"; };
-		9FBC3C710F56E0AE001811F2 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
-		9FBC3C760F56E0D7001811F2 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
-		9FBC3C770F56E0D7001811F2 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
+		9FBC3C710F56E0AE001811F2 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		9FBC3C760F56E0D7001811F2 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
+		9FBC3C770F56E0D7001811F2 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		9FBC3CB10F56E32C001811F2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
 		9FBD321610E5144C00031CB6 /* Brand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Brand.png; sourceTree = "<group>"; };
 		9FBDC590141A0E5D00171176 /* BundleFreestandingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = BundleFreestandingTemplate.pdf; sourceTree = "<group>"; };
@@ -5010,7 +5010,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",
 				);
-				GCC_MODEL_TUNING = G5;
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
 					BOXER_DEBUG,
 					USE_PRIVATE_APIS,
@@ -5042,7 +5041,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",
 				);
-				GCC_MODEL_TUNING = G5;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
@@ -5070,7 +5068,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Bundler/Boxer Bundler-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5112,6 +5109,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
@@ -5119,6 +5117,7 @@
 				CLANG_WARN__ARC_BRIDGE_CAST_NONARC = NO;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CURRENT_PROJECT_VERSION = 20120907.1;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -5147,7 +5146,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",
 				);
-				GCC_MODEL_TUNING = G5;
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
 					BOXER_DEBUG,
 					USE_PRIVATE_APIS,
@@ -5163,6 +5161,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
+				VALID_ARCHS = i386;
 			};
 			name = Debug;
 		};
@@ -5178,7 +5177,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",
 				);
-				GCC_MODEL_TUNING = G5;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				INFOPLIST_FILE = Info.plist;
@@ -5190,6 +5188,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
+				VALID_ARCHS = i386;
 			};
 			name = Release;
 		};
@@ -5197,6 +5196,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;

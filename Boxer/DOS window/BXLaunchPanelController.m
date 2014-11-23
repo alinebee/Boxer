@@ -186,7 +186,7 @@
     }
 }
 
-- (void) viewWillAppear
+- (void) willShowPanel
 {
     _shouldUpdateImmediately = YES;
     
@@ -202,7 +202,7 @@
     [self _syncLaunchableState];
 }
 
-- (void) viewDidDisappear
+- (void) didHidePanel
 {
     _shouldUpdateImmediately = NO;
 }

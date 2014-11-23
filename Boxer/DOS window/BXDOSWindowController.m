@@ -1025,7 +1025,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     //If we're switching to the launcher panel, let it know so it can (re-)populate its program list.
     if (newPanel == BXDOSWindowLaunchPanel)
     {
-        [self.launchPanelController viewWillAppear];
+        if ([self.launchPanelController respondsToSelector: @selector(willShowPanel)])
+            [self.launchPanelController willShowPanel];
     }
     
     //If we're switching to the loading panel, fire up the spinning animation before the transition begins.
@@ -1211,7 +1212,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     //If we're switching away from the launcher panel, let it know so it can defer its updates.
     if (oldPanel == BXDOSWindowLaunchPanel)
     {
-        [self.launchPanelController viewDidDisappear];
+        if ([self.launchPanelController respondsToSelector: @selector(didHidePanel)])
+            [self.launchPanelController didHidePanel];
     }
     
     //Sync the cursor state, given that a different view may have just slid under the mouse.

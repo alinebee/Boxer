@@ -34,8 +34,9 @@
 {
 	//Set up the dropzone panel to support drag-drop operations
 	[self.view registerForDraggedTypes: @[NSFilenamesPboardType]];
-	
-    self.spinner.usesThreadedAnimation = YES;
+    
+    //Disabled as this was causing CATransaction errors.
+    //self.spinner.usesThreadedAnimation = YES;
 	//Since the spinner is on a separate view that's only added to the window
 	//when it's spinnin' time, we can safely start it animating now
 	[self.spinner startAnimation: self];

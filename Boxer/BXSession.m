@@ -13,6 +13,8 @@
 #import "BXBootlegCoverArt.h"
 #import "BXDrive.h"
 #import "BXBaseAppController.h"
+#import "BXStandaloneAppController.h"
+
 #import "BXDOSWindow.h"
 #import "BXDOSWindowControllerLion.h"
 #import "BXPrintStatusPanelController.h"
@@ -1255,8 +1257,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     //TWEAK: Sanitise the configurations folder of a standalone game app the first time the app is launched,
     //by deleting all unused conf files.
-    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle] &&
-        [[NSBundle mainBundle] objectForInfoDictionaryKey: @"BXBundledGameboxName"] != nil)
+    if ([(BXStandaloneAppController *)[NSApp delegate] isStandaloneGameBundle] &&
+        [(BXStandaloneAppController *)[NSApp delegate] bundledGameboxURL] != nil)
     {   
         NSFileManager *manager = [[NSFileManager alloc] init];
         NSURL *confBaseURL = [appBundle.resourceURL URLByAppendingPathComponent: @"Configurations"];

@@ -171,21 +171,28 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
     return [self openUntitledDocumentAndDisplay: display error: outError];
 }
 
+- (NSURL *) bundledGameboxURL
+{
+    NSString *bundledGameboxName = [[NSBundle mainBundle] objectForInfoDictionaryKey: BXBundledGameboxNameInfoPlistKey];
+    
+    if (![bundledGameboxName.pathExtension isEqualToString: @"boxer"])
+        bundledGameboxName = [bundledGameboxName stringByAppendingPathExtension: @"boxer"];
+    
+    NSURL *bundledGameboxURL = [[NSBundle mainBundle] URLForResource: bundledGameboxName
+                                                       withExtension: nil];
+    
+    return bundledGameboxURL;
+}
+
 - (id) makeUntitledDocumentOfType: (NSString *)typeName error: (NSError **)outError
 {
     if ([BXEmulator canLaunchEmulator])
     {
-        NSString *bundledGameboxName = [[NSBundle mainBundle] objectForInfoDictionaryKey: BXBundledGameboxNameInfoPlistKey];
+        NSURL *gameboxURL = self.bundledGameboxURL;
         
-        if (![bundledGameboxName.pathExtension isEqualToString: @"boxer"])
-            bundledGameboxName = [bundledGameboxName stringByAppendingPathExtension: @"boxer"];
-        
-        NSURL *bundledGameboxURL = [[NSBundle mainBundle] URLForResource: bundledGameboxName
-                                                           withExtension: nil];
-        
-        if (bundledGameboxURL)
+        if (gameboxURL)
         {
-            BXSession *session = [[BXSession alloc] initWithContentsOfURL: bundledGameboxURL
+            BXSession *session = [[BXSession alloc] initWithContentsOfURL: gameboxURL
                                                                    ofType: typeName
                                                                     error: outError];
             return [session autorelease];

@@ -14,6 +14,8 @@
 	<true/>
 	<key>renderingStyle</key>
 	<integer>0</integer>
+	<key>herculesTintMode</key>
+	<integer>0</integer>
 	<key>statusBarShown</key>
 	<true/>
 	<key>startUpInFullScreen</key>

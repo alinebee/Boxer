@@ -16,6 +16,8 @@
 	<true/>
 	<key>renderingStyle</key>
 	<integer>0</integer>
+	<key>herculesTintMode</key>
+	<integer>0</integer>
 	<key>initialInspectorPanelIndex</key>
 	<integer>1</integer>
 	<key>startupAction</key>

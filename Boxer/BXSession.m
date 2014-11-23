@@ -598,12 +598,12 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         [_DOSWindowController release];
         _DOSWindowController = [controller retain];
         
-        if (self.DOSWindowController)
+        if (controller)
         {
-            [self.DOSWindowController addObserver: self
-                                       forKeyPath: @"currentPanel"
-                                          options: 0
-                                          context: NULL];
+            [controller addObserver: self
+                         forKeyPath: @"currentPanel"
+                            options: 0
+                            context: NULL];
         }
     }
 }

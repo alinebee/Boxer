@@ -393,6 +393,8 @@
 		9F34BE62142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */; };
 		9F35F3E916CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F35F3E816CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m */; };
 		9F35F3EA16CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F35F3E816CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m */; };
+		9F3756B51A2228860060E131 /* BXStandaloneLaunchPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3756B41A2228860060E131 /* BXStandaloneLaunchPanelController.m */; };
+		9F3756B81A2229B90060E131 /* BXStandaloneLaunchPanelButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3756B71A2229B80060E131 /* BXStandaloneLaunchPanelButtonCell.m */; };
 		9F38B38B16DFB1960050AB15 /* ADBLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F38B38A16DFB1960050AB15 /* ADBLocalFilesystem.m */; };
 		9F38B38C16DFB1960050AB15 /* ADBLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F38B38A16DFB1960050AB15 /* ADBLocalFilesystem.m */; };
 		9F39A43B1452CE9100942D0F /* BXBezelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F39A43A1452CE9100942D0F /* BXBezelView.m */; };
@@ -413,7 +415,6 @@
 		9F44C75315A0A38800F6A9ED /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; };
 		9F44C75415A0A3AA00F6A9ED /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F44E5E410D17A4C0081B8D2 /* BXEmulator+BXPaste.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */; };
-		9F458D9C15D83B8800DF9102 /* BXLaunchPanelButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */; };
 		9F458D9D15D83B8C00DF9102 /* BXLaunchPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCA6D9515C85D8500E1650C /* BXLaunchPanelController.m */; };
 		9F458D9E15D83B9000DF9102 /* BXDOSWindowBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA2C09115C8409000380261 /* BXDOSWindowBackgroundView.m */; };
 		9F45A1BD109C3C3900593456 /* About.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1BB109C3C3900593456 /* About.xib */; };
@@ -685,7 +686,6 @@
 		9FADFE5511EC7E1700990E91 /* ADBDigest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE5411EC7E1700990E91 /* ADBDigest.m */; };
 		9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE9611EC932800990E91 /* NSData+HexStrings.m */; };
 		9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */; };
-		9FAEBE4F15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */; };
 		9FAEBE5215D678C800C9AC5F /* DOSWindowBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FAEBE5115D678C800C9AC5F /* DOSWindowBackground.png */; };
 		9FAEBE5315D678C800C9AC5F /* DOSWindowBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FAEBE5115D678C800C9AC5F /* DOSWindowBackground.png */; };
 		9FAEBE5515D67C3A00C9AC5F /* DOSWindowGrille.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FAEBE5415D67C3A00C9AC5F /* DOSWindowGrille.png */; };
@@ -1092,6 +1092,10 @@
 		9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXBaseAppController+BXSupportFiles.m"; sourceTree = "<group>"; };
 		9F35F3E716CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+ADBUniqueFilenames.h"; sourceTree = "<group>"; };
 		9F35F3E816CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+ADBUniqueFilenames.m"; sourceTree = "<group>"; };
+		9F3756B31A2228860060E131 /* BXStandaloneLaunchPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXStandaloneLaunchPanelController.h; sourceTree = "<group>"; };
+		9F3756B41A2228860060E131 /* BXStandaloneLaunchPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXStandaloneLaunchPanelController.m; sourceTree = "<group>"; };
+		9F3756B61A2229B80060E131 /* BXStandaloneLaunchPanelButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXStandaloneLaunchPanelButtonCell.h; sourceTree = "<group>"; };
+		9F3756B71A2229B80060E131 /* BXStandaloneLaunchPanelButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXStandaloneLaunchPanelButtonCell.m; sourceTree = "<group>"; };
 		9F38B38916DFB1960050AB15 /* ADBLocalFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBLocalFilesystem.h; sourceTree = "<group>"; };
 		9F38B38A16DFB1960050AB15 /* ADBLocalFilesystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBLocalFilesystem.m; sourceTree = "<group>"; };
 		9F39A4391452CE9100942D0F /* BXBezelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBezelView.h; sourceTree = "<group>"; };
@@ -1594,8 +1598,6 @@
 		9FADFE9511EC932800990E91 /* NSData+HexStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+HexStrings.h"; sourceTree = "<group>"; };
 		9FADFE9611EC932800990E91 /* NSData+HexStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+HexStrings.m"; sourceTree = "<group>"; };
 		9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
-		9FAEBE4D15D669AF00C9AC5F /* BXLaunchPanelButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXLaunchPanelButtonCell.h; sourceTree = "<group>"; };
-		9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXLaunchPanelButtonCell.m; sourceTree = "<group>"; };
 		9FAEBE5115D678C800C9AC5F /* DOSWindowBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DOSWindowBackground.png; sourceTree = "<group>"; };
 		9FAEBE5415D67C3A00C9AC5F /* DOSWindowGrille.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DOSWindowGrille.png; sourceTree = "<group>"; };
 		9FB05B9D168FA0940051CE6F /* DocumentationTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DocumentationTemplate.pdf; sourceTree = "<group>"; };
@@ -2362,8 +2364,6 @@
 				9FA2C09115C8409000380261 /* BXDOSWindowBackgroundView.m */,
 				9FCA6D9415C85D8500E1650C /* BXLaunchPanelController.h */,
 				9FCA6D9515C85D8500E1650C /* BXLaunchPanelController.m */,
-				9FAEBE4D15D669AF00C9AC5F /* BXLaunchPanelButtonCell.h */,
-				9FAEBE4E15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m */,
 			);
 			path = "DOS window";
 			sourceTree = "<group>";
@@ -2439,6 +2439,10 @@
 				9FCB7B0C15B842E000CC7CC7 /* BXStandaloneAppController.m */,
 				9FDFB46C15DBA38E004EA615 /* BXStandaloneAboutController.h */,
 				9FDFB46D15DBA38E004EA615 /* BXStandaloneAboutController.m */,
+				9F3756B31A2228860060E131 /* BXStandaloneLaunchPanelController.h */,
+				9F3756B41A2228860060E131 /* BXStandaloneLaunchPanelController.m */,
+				9F3756B61A2229B80060E131 /* BXStandaloneLaunchPanelButtonCell.h */,
+				9F3756B71A2229B80060E131 /* BXStandaloneLaunchPanelButtonCell.m */,
 			);
 			path = Standalone;
 			sourceTree = "<group>";
@@ -4208,7 +4212,6 @@
 				9FB60E9215C5643200CD0D63 /* NSError+ADBErrorHelpers.mm in Sources */,
 				9FA2C09215C8409000380261 /* BXDOSWindowBackgroundView.m in Sources */,
 				9FCA6D9615C85D8500E1650C /* BXLaunchPanelController.m in Sources */,
-				9FAEBE4F15D669AF00C9AC5F /* BXLaunchPanelButtonCell.m in Sources */,
 				9F57684915DA27A300B50500 /* BXHUDSpinningProgressIndicator.m in Sources */,
 				9F2C458715DB7E77009F4477 /* ADBGLHelpers.m in Sources */,
 				9F3DD6CC15EE8047003C9A25 /* BXCHFlightstickProUSB.m in Sources */,
@@ -4482,6 +4485,7 @@
 				9F2D304715B8233800FAE848 /* render_scalers.cpp in Sources */,
 				9F2D304815B8233800FAE848 /* adlib.cpp in Sources */,
 				9F2D304915B8233800FAE848 /* cmos.cpp in Sources */,
+				9F3756B81A2229B90060E131 /* BXStandaloneLaunchPanelButtonCell.m in Sources */,
 				9F2D304A15B8233800FAE848 /* dbopl.cpp in Sources */,
 				9F2D304B15B8233800FAE848 /* disney.cpp in Sources */,
 				9F2D304C15B8233800FAE848 /* dma.cpp in Sources */,
@@ -4627,7 +4631,6 @@
 				9F98410315BEE64400B50CDA /* ADBShadowedFilesystem.m in Sources */,
 				9FB60E8F15C5552F00CD0D63 /* NSURL+ADBFilesystemHelpers.m in Sources */,
 				9FB60E9315C5643200CD0D63 /* NSError+ADBErrorHelpers.mm in Sources */,
-				9F458D9C15D83B8800DF9102 /* BXLaunchPanelButtonCell.m in Sources */,
 				9F458D9D15D83B8C00DF9102 /* BXLaunchPanelController.m in Sources */,
 				9F458D9E15D83B9000DF9102 /* BXDOSWindowBackgroundView.m in Sources */,
 				9F57684A15DA27A300B50500 /* BXHUDSpinningProgressIndicator.m in Sources */,
@@ -4653,6 +4656,7 @@
 				9F35F3EA16CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */,
 				9F80E80016DA3170001C3162 /* ADBFileHandle.m in Sources */,
 				9F693D5F16DD40DD00CCEA7C /* ADBEnumerationHelpers.m in Sources */,
+				9F3756B51A2228860060E131 /* BXStandaloneLaunchPanelController.m in Sources */,
 				9F38B38C16DFB1960050AB15 /* ADBLocalFilesystem.m in Sources */,
 				9F1E8CDB16E16C0400F1C908 /* ADBScanOperation.m in Sources */,
 				9F1E8CDF16E16EB800F1C908 /* ADBMountableImage.m in Sources */,

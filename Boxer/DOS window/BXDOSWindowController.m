@@ -1324,7 +1324,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 	return _resizingProgrammatically || self.inputView.inLiveResize;
 }
 
-//Warn the emulator to prepare for emulation cutout when resizing the window
+//Warn the emulator to prepare for emulation cutout when resizing the rendered view
 - (void) windowWillStartLiveResize: (NSNotification *)notification
 {
 	[[NSNotificationCenter defaultCenter] postNotificationName: BXWillBeginInterruptionNotification object: self];
@@ -1337,13 +1337,13 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 }
 
 
-//Snap to multiples of the base render size as we scale
+//Snap to multiples of the base render size as we scale, and ensure the aspect ratio conforms to that of the window.
 - (NSSize) windowWillResize: (NSWindow *)theWindow toSize: (NSSize) proposedFrameSize
 {
 	NSInteger snapThreshold	= BXWindowSnapThreshold;
     
 	NSSize snapIncrement	= self.renderingView.currentFrame.scaledResolution;
-	CGFloat aspectRatio		= aspectRatioOfSize(theWindow.contentAspectRatio);
+	CGFloat aspectRatio		= aspectRatioOfSize(self.renderingView.frame.size);
     
 	NSRect proposedFrame	= NSMakeRect(0, 0, proposedFrameSize.width, proposedFrameSize.height);
 	NSRect renderFrame		= [theWindow contentRectForFrameRect: proposedFrame];
@@ -1418,6 +1418,9 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     
     BXDOSWindow *window = (BXDOSWindow *)self.window;
     _renderingViewSizeBeforeFullScreen = window.actualContentViewSize;
+    
+    //Disable aspect ratio clamping
+    window.resizeIncrements = NSMakeSize(1.0, 1.0);
 }
 
 - (void) windowDidEnterFullScreen: (NSNotification *)notification
@@ -1436,6 +1439,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     
     self.renderingView.managesViewport = NO;
     [self.inputController setMouseLocked: NO force: YES];
+    
+    window.contentAspectRatio = _renderingViewSizeBeforeFullScreen;
 }
 
 - (void) windowWillExitFullScreen: (NSNotification *)notification
@@ -1466,6 +1471,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center postNotificationName: BXSessionDidExitFullScreenNotification object: self.document];
+    
+    self.window.contentAspectRatio = _renderingViewSizeBeforeFullScreen;
 }
 
 - (void) windowDidFailToExitFullScreen: (NSWindow *)window

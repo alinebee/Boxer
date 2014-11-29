@@ -293,7 +293,7 @@
         {
             //Convert DOSBox's array of dirty blocks into a set of ranges
             NSUInteger i=0, currentOffset = 0, maxOffset = self.currentFrame.size.height;
-            while (currentOffset < maxOffset)
+            while (currentOffset < maxOffset && i < MAX_DIRTY_REGIONS)
             {
                 NSUInteger regionLength = dirtyBlocks[i];
                 

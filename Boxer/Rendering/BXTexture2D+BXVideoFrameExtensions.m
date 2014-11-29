@@ -41,13 +41,19 @@
     //If the frame has changed shape: update the content region, wipe the texture clean,
     //and copy the entire frame into the texture rather than bothering to check for changed lines.
     CGRect newContentRegion = CGRectMake(0, 0, frame.size.width, frame.size.height);
-    if (!CGRectEqualToRect(_contentRegion, newContentRegion))
+    if (YES || !CGRectEqualToRect(_contentRegion, newContentRegion))
     {
         self.contentRegion = newContentRegion;
         CGRect textureRegion = CGRectMake(0, 0, _textureSize.width, _textureSize.height);
         [self fillRegion: textureRegion withRed: 0 green: 0 blue: 0 alpha: 0 error: NULL];
         return [self fillRegion: newContentRegion withBytes: frame.bytes error: outError];
     }
+    //This branch is disabled for now because it was occasionally missing rows:
+    //this could be because of a logical error in the calculation of dirty ranges,
+    //or could be because of a change in OS X's GL server that has introduced some
+    //race condition with the multithreaded renderer.
+    //(My gut says that with modern drivers it's more efficient to upload all the texture
+    //data in a single call anyway, so the code below is a false optimisation.)
     else
     {
         //Optimisation: only upload the changed regions to the texture.

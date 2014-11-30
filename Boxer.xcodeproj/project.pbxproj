@@ -819,6 +819,8 @@
 		9FD011BD10C2A02F00670CE1 /* BXGameboxPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */; };
 		9FD012E313AB845200AF6FE8 /* GamepadTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */; };
 		9FD012FB13AB87E500AF6FE8 /* BXThemedImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD012FA13AB87E500AF6FE8 /* BXThemedImageCell.m */; };
+		9FD140771A2B24AF0036BD93 /* Game@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD140761A2B24AF0036BD93 /* Game@2x.png */; };
+		9FD140791A2B2A770036BD93 /* Drives@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD140781A2B2A770036BD93 /* Drives@2x.png */; };
 		9FD1D6251364291600792011 /* DDHidDevice+ADBDeviceExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D6241364291600792011 /* DDHidDevice+ADBDeviceExtensions.m */; };
 		9FD1D7011364819E00792011 /* BXJoystickController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D7001364819E00792011 /* BXJoystickController.m */; };
 		9FD1D78A1364991100792011 /* ADBHIDEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D7891364991100792011 /* ADBHIDEvent.m */; };
@@ -1765,6 +1767,8 @@
 		9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = GamepadTemplate.pdf; sourceTree = "<group>"; };
 		9FD012F913AB87E500AF6FE8 /* BXThemedImageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedImageCell.h; sourceTree = "<group>"; };
 		9FD012FA13AB87E500AF6FE8 /* BXThemedImageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedImageCell.m; sourceTree = "<group>"; };
+		9FD140761A2B24AF0036BD93 /* Game@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Game@2x.png"; sourceTree = "<group>"; };
+		9FD140781A2B2A770036BD93 /* Drives@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Drives@2x.png"; sourceTree = "<group>"; };
 		9FD1D6231364291600792011 /* DDHidDevice+ADBDeviceExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DDHidDevice+ADBDeviceExtensions.h"; sourceTree = "<group>"; };
 		9FD1D6241364291600792011 /* DDHidDevice+ADBDeviceExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DDHidDevice+ADBDeviceExtensions.m"; sourceTree = "<group>"; };
 		9FD1D6FF1364819E00792011 /* BXJoystickController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXJoystickController.h; sourceTree = "<group>"; };
@@ -3140,9 +3144,11 @@
 			isa = PBXGroup;
 			children = (
 				9F5E389616C85140009774A9 /* Game.png */,
+				9FD140761A2B24AF0036BD93 /* Game@2x.png */,
 				9FB6AE8716C8274000EB1D40 /* Joystick.png */,
 				9FB6AE8C16C8366D00EB1D40 /* Joystick@2x.png */,
 				9FB6AE7F16C80ED700EB1D40 /* Drives.png */,
+				9FD140781A2B2A770036BD93 /* Drives@2x.png */,
 				9FB6AE7D16C808A800EB1D40 /* Mouse.png */,
 				9FB6AE8D16C8366D00EB1D40 /* Mouse@2x.png */,
 				9FB6AE7A16C800BD00EB1D40 /* CPU.png */,
@@ -3834,6 +3840,7 @@
 				9FFF636314013F4D007E8B47 /* EjectTemplate.pdf in Resources */,
 				9FFF636414013F4D007E8B47 /* InsertTemplate.pdf in Resources */,
 				9FFF636C140150C3007E8B47 /* DisketteTemplate.pdf in Resources */,
+				9FD140791A2B2A770036BD93 /* Drives@2x.png in Resources */,
 				9F955B60141A05990068EF71 /* InsertFreestandingTemplate.pdf in Resources */,
 				9F955B61141A05990068EF71 /* EjectFreestandingTemplate.pdf in Resources */,
 				9FE3BAF817ECE1E800C9BB82 /* LauncherFavorite.xib in Resources */,
@@ -3856,6 +3863,7 @@
 				9F3034BA14E2C3F600BC572E /* NumlockInactiveTemplate.pdf in Resources */,
 				9F8F374C14F9366F00E482FB /* FastForwardTemplate.pdf in Resources */,
 				9F27BD1814FAA4F5008EB0A1 /* Volume33PercentTemplate.pdf in Resources */,
+				9FD140771A2B24AF0036BD93 /* Game@2x.png in Resources */,
 				9F27BD1914FAA4F5008EB0A1 /* Volume66PercentTemplate.pdf in Resources */,
 				9F27BD1A14FAA4F5008EB0A1 /* Volume100PercentTemplate.pdf in Resources */,
 				9F27BD1B14FAA4F5008EB0A1 /* Volume0PercentCroppedTemplate.pdf in Resources */,

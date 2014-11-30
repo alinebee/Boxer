@@ -166,8 +166,17 @@
     NSString *soundfontPath = [[NSUserDefaults standardUserDefaults] objectForKey: @"MIDISoundFontPath"];
     if (soundfontPath)
     {
-        [fallbackSynth loadSoundFontWithContentsOfURL: [NSURL fileURLWithPath: soundfontPath]
-                                                error: NULL];
+        NSError *loadError = nil;
+        BOOL loaded = [fallbackSynth loadSoundFontWithContentsOfURL: [NSURL fileURLWithPath: soundfontPath] error: &loadError];
+        
+        if (loaded)
+        {
+            NSLog(@"Successfully loaded soundfont: %@", soundfontPath);
+        }
+        else
+        {
+            NSLog(@"Error when loading soundfont: %@", loadError);
+        }
     }
     
     return fallbackSynth;

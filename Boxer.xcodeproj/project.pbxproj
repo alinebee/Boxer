@@ -821,6 +821,10 @@
 		9FD012FB13AB87E500AF6FE8 /* BXThemedImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD012FA13AB87E500AF6FE8 /* BXThemedImageCell.m */; };
 		9FD140771A2B24AF0036BD93 /* Game@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD140761A2B24AF0036BD93 /* Game@2x.png */; };
 		9FD140791A2B2A770036BD93 /* Drives@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD140781A2B2A770036BD93 /* Drives@2x.png */; };
+		9FD1407B1A2B2FC30036BD93 /* CHFlightstickPro@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD1407A1A2B2FC30036BD93 /* CHFlightstickPro@2x.png */; };
+		9FD1407D1A2B33D60036BD93 /* 4ButtonJoystick@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD1407C1A2B33D60036BD93 /* 4ButtonJoystick@2x.png */; };
+		9FD1407F1A2B36180036BD93 /* RacingWheel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD1407E1A2B36180036BD93 /* RacingWheel@2x.png */; };
+		9FD140811A2B3AE10036BD93 /* ThrustmasterFCS@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FD140801A2B3AE10036BD93 /* ThrustmasterFCS@2x.png */; };
 		9FD1D6251364291600792011 /* DDHidDevice+ADBDeviceExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D6241364291600792011 /* DDHidDevice+ADBDeviceExtensions.m */; };
 		9FD1D7011364819E00792011 /* BXJoystickController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D7001364819E00792011 /* BXJoystickController.m */; };
 		9FD1D78A1364991100792011 /* ADBHIDEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D7891364991100792011 /* ADBHIDEvent.m */; };
@@ -1769,6 +1773,10 @@
 		9FD012FA13AB87E500AF6FE8 /* BXThemedImageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedImageCell.m; sourceTree = "<group>"; };
 		9FD140761A2B24AF0036BD93 /* Game@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Game@2x.png"; sourceTree = "<group>"; };
 		9FD140781A2B2A770036BD93 /* Drives@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Drives@2x.png"; sourceTree = "<group>"; };
+		9FD1407A1A2B2FC30036BD93 /* CHFlightstickPro@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "CHFlightstickPro@2x.png"; sourceTree = "<group>"; };
+		9FD1407C1A2B33D60036BD93 /* 4ButtonJoystick@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "4ButtonJoystick@2x.png"; sourceTree = "<group>"; };
+		9FD1407E1A2B36180036BD93 /* RacingWheel@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RacingWheel@2x.png"; sourceTree = "<group>"; };
+		9FD140801A2B3AE10036BD93 /* ThrustmasterFCS@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ThrustmasterFCS@2x.png"; sourceTree = "<group>"; };
 		9FD1D6231364291600792011 /* DDHidDevice+ADBDeviceExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DDHidDevice+ADBDeviceExtensions.h"; sourceTree = "<group>"; };
 		9FD1D6241364291600792011 /* DDHidDevice+ADBDeviceExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DDHidDevice+ADBDeviceExtensions.m"; sourceTree = "<group>"; };
 		9FD1D6FF1364819E00792011 /* BXJoystickController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXJoystickController.h; sourceTree = "<group>"; };
@@ -3154,9 +3162,13 @@
 				9FB6AE7A16C800BD00EB1D40 /* CPU.png */,
 				9FB6AE8A16C82F5300EB1D40 /* CPU@2x.png */,
 				9F7FC94B139EB38300D60320 /* RacingWheel.png */,
+				9FD1407E1A2B36180036BD93 /* RacingWheel@2x.png */,
 				9FA54098139E85D800999940 /* 4ButtonJoystick.png */,
+				9FD1407C1A2B33D60036BD93 /* 4ButtonJoystick@2x.png */,
 				9F0E610E139E1A05004A7A56 /* CHFlightstickPro.png */,
+				9FD1407A1A2B2FC30036BD93 /* CHFlightstickPro@2x.png */,
 				9F0E610F139E1A05004A7A56 /* ThrustmasterFCS.png */,
+				9FD140801A2B3AE10036BD93 /* ThrustmasterFCS@2x.png */,
 				9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */,
 				9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */,
 				9FFF636B140150C3007E8B47 /* DisketteTemplate.pdf */,
@@ -3796,6 +3808,8 @@
 				9FDCDEFD11B5B83B0032DA4E /* dsa_pub.pem in Resources */,
 				9FAA451511EB40180042B986 /* Configuration.strings in Resources */,
 				9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */,
+				9FD140811A2B3AE10036BD93 /* ThrustmasterFCS@2x.png in Resources */,
+				9FD1407F1A2B36180036BD93 /* RacingWheel@2x.png in Resources */,
 				9F6A79041203547800D2097D /* gamefolder.icns in Resources */,
 				9F1CBB5E120CABBB00C5E926 /* ImportWindow.xib in Resources */,
 				9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */,
@@ -3822,6 +3836,7 @@
 				9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */,
 				9FC5353512F489F8005E7670 /* 35DisketteShine.icns in Resources */,
 				9FF86678134DCA16001CE857 /* cdrdao in Resources */,
+				9FD1407B1A2B2FC30036BD93 /* CHFlightstickPro@2x.png in Resources */,
 				9FF86679134DCA16001CE857 /* toc2cue in Resources */,
 				9FDE34131351DCDB000DCE44 /* DOSImportWindow.xib in Resources */,
 				9FDE343A1351E127000DCE44 /* ImportTipsPanel.xib in Resources */,
@@ -3907,6 +3922,7 @@
 				9F125C44169842F4003B5B2B /* DocumentationPanel.xib in Resources */,
 				9F125C4916984378003B5B2B /* InspectorDriveItem.xib in Resources */,
 				9F125C4A16984378003B5B2B /* InspectorJoystickItem.xib in Resources */,
+				9FD1407D1A2B33D60036BD93 /* 4ButtonJoystick@2x.png in Resources */,
 				9FB6AE7B16C800BD00EB1D40 /* CPU.png in Resources */,
 				9FB6AE7E16C808A800EB1D40 /* Mouse.png in Resources */,
 				9FB6AE8016C80ED700EB1D40 /* Drives.png in Resources */,

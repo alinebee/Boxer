@@ -1418,9 +1418,6 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     
     BXDOSWindow *window = (BXDOSWindow *)self.window;
     _renderingViewSizeBeforeFullScreen = window.actualContentViewSize;
-    
-    //Disable aspect ratio clamping
-    window.resizeIncrements = NSMakeSize(1.0, 1.0);
 }
 
 - (void) windowDidEnterFullScreen: (NSNotification *)notification
@@ -1439,8 +1436,6 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     
     self.renderingView.managesViewport = NO;
     [self.inputController setMouseLocked: NO force: YES];
-    
-    window.contentAspectRatio = _renderingViewSizeBeforeFullScreen;
 }
 
 - (void) windowWillExitFullScreen: (NSNotification *)notification
@@ -1471,8 +1466,6 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center postNotificationName: BXSessionDidExitFullScreenNotification object: self.document];
-    
-    self.window.contentAspectRatio = _renderingViewSizeBeforeFullScreen;
 }
 
 - (void) windowDidFailToExitFullScreen: (NSWindow *)window

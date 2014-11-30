@@ -88,6 +88,12 @@
     return proposedOptions | NSApplicationPresentationAutoHideToolbar;
 }
 
+//Simply implementing this method at all corrects window-sizing errors when toolbar is in use.
+- (NSSize) window: (NSWindow *)window willUseFullScreenContentSize: (NSSize)proposedSize
+{
+    return proposedSize;
+}
+
 
 #pragma mark -
 #pragma mark UI element toggles

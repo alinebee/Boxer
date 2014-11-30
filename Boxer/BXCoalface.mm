@@ -229,6 +229,12 @@ bool boxer_shellShouldDisplayStartupMessages(DOS_Shell *shell)
 
 #pragma mark - Filesystem functions
 
+FILE *boxer_openCaptureFile(const char *typeDescription, const char *fileExtension)
+{
+    BXEmulator *emulator = [BXEmulator currentEmulator];
+    return [emulator _openFileForCaptureOfType:typeDescription extension: fileExtension];
+}
+
 //Whether or not to allow the specified path to be mounted.
 //Called by MOUNT::Run in DOSBox's dos/dos_programs.cpp.
 bool boxer_shouldMountPath(const char *path)

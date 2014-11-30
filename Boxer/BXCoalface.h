@@ -34,6 +34,7 @@ extern "C" {
 #define GFX_GetBestMode boxer_idealOutputMode
 #define GFX_ShowMsg boxer_log
 #define MIDI_Available boxer_MIDIAvailable
+#define OpenCaptureFile boxer_openCaptureFile
 
 #define E_Exit(format,...) boxer_die(__PRETTY_FUNCTION__, __FILE__, __LINE__, format, ##__VA_ARGS__)
 	class DOS_Drive;

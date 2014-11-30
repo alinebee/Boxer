@@ -445,4 +445,10 @@ typedef NS_OPTIONS(NSUInteger, BXDriveMountOptions) {
 //Called when a drive has finished importing. Replaces the source drive with the imported version.
 - (void) driveImportDidFinish: (NSNotification *)theNotification;
 
+#pragma mark - Captures
+
+/// Returns a file URL suitable for capturing a file of the specified type and extension.
+- (NSURL *) URLForCaptureOfType: (NSString *)typeDescription
+                  fileExtension: (NSString *)extension;
+
 @end

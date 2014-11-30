@@ -374,7 +374,6 @@ enum {
 - (BOOL) _shouldAllowWriteAccessToLocalPath: (const char *)localPath
                               onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-
 #pragma mark - Local filesystem access
 
 /// Resolves a DOS path on a particular drive to a local filesystem URL.
@@ -394,6 +393,16 @@ enum {
 /// Returns nil if there is no corresponding logical location (This will be the case if the drive is a DOSBox-internal drive.)
 - (NSURL *) _logicalURLForDOSPath: (const char *)dosPath
                     onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+
+/// Opens a local file handle for DOSBox to record captured output to, in write-only mode.
+/// DOSBox is expected to close the file when done.
+/// @note Passes the decision on to the delegate via -emulator:openCaptureFileOfType:description:.
+/// @param typeDescription      A string describing the type of data to be captured.
+/// @param fileExtension        The suggested file extension to use for that data.
+/// @return An open file handle for DOSBox to record into, or @c nil if capturing is not permitted.
+- (FILE *) _openFileForCaptureOfType: (const char *)typeDescription
+                           extension: (const char *)fileExtension;
+
 
 /// Attempts to open a file on the local filesystem.
 /// @param localPath    The POSIX path to the file on the local filesystem which should be opened.

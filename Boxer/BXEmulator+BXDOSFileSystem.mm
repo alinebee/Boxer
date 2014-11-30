@@ -1405,6 +1405,17 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     return [drive logicalURLForDOSPath: dosPath];
 }
 
+- (FILE *) _openFileForCaptureOfType: (const char *)typeDescription extension: (const char *)fileExtension
+{
+    NSString *type  = [NSString stringWithUTF8String: typeDescription];
+    NSString *ext   = [NSString stringWithUTF8String: fileExtension];
+    //Strip off DOSBox's leading extension separators
+    if ([ext hasPrefix: @"."])
+        ext = [ext substringFromIndex: 1];
+    
+    return [self.delegate emulator: self openCaptureFileOfType: type extension: ext];
+}
+
 - (FILE *) _openFileAtLocalPath: (const char *)path
                   onDOSBoxDrive: (DOS_Drive *)dosboxDrive
                          inMode: (const char *)mode

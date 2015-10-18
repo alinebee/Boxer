@@ -330,8 +330,6 @@
 		9F2D30D315B8233800FAE848 /* NSKeyedArchiver+ADBArchivingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5F12C515ADCE74007A070F /* NSKeyedArchiver+ADBArchivingAdditions.m */; };
 		9F2D30D615B8233800FAE848 /* LockClosing.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DD0F56C383001811F2 /* LockClosing.aiff */; };
 		9F2D30D715B8233800FAE848 /* LockOpening.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DE0F56C383001811F2 /* LockOpening.aiff */; };
-		9F2D30D815B8233800FAE848 /* DOSBox.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC34480F56C5D1001811F2 /* DOSBox.strings */; };
-		9F2D30D915B8233800FAE848 /* Shell.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC344A0F56C5D1001811F2 /* Shell.strings */; };
 		9F2D30DB15B8233800FAE848 /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9F2D30E815B8233800FAE848 /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9F2D30E915B8233800FAE848 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
@@ -733,8 +731,6 @@
 		9FBC31E00F56C383001811F2 /* LockClosing.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DD0F56C383001811F2 /* LockClosing.aiff */; };
 		9FBC31E10F56C383001811F2 /* LockOpening.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DE0F56C383001811F2 /* LockOpening.aiff */; };
 		9FBC32120F56C3E9001811F2 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC32110F56C3E9001811F2 /* Carbon.framework */; };
-		9FBC344D0F56C5D1001811F2 /* DOSBox.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC34480F56C5D1001811F2 /* DOSBox.strings */; };
-		9FBC344E0F56C5D1001811F2 /* Shell.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC344A0F56C5D1001811F2 /* Shell.strings */; };
 		9FBC345D0F56C64D001811F2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC345B0F56C64D001811F2 /* InfoPlist.strings */; };
 		9FBC352B0F56C7B7001811F2 /* BXAboutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC351D0F56C7B7001811F2 /* BXAboutController.m */; };
 		9FBC352C0F56C7B7001811F2 /* BXAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC351E0F56C7B7001811F2 /* BXAppController.m */; };
@@ -1123,6 +1119,8 @@
 		9F4037B912CB6CA300DAA66C /* BXEmulatorPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorPrivate.h; sourceTree = "<group>"; };
 		9F4175EF119DCF7E00646B15 /* BXFrameRateCounterLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameRateCounterLayer.h; sourceTree = "<group>"; };
 		9F4175F0119DCF7E00646B15 /* BXFrameRateCounterLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFrameRateCounterLayer.m; sourceTree = "<group>"; };
+		9F4199B21BD3E35300A2D165 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/DOSBox.strings; sourceTree = "<group>"; };
+		9F4199B41BD3E35300A2D165 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Shell.strings; sourceTree = "<group>"; };
 		9F424205109D03F500111D28 /* BXInspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInspectorController.h; sourceTree = "<group>"; };
 		9F424206109D03F500111D28 /* BXInspectorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInspectorController.m; sourceTree = "<group>"; };
 		9F42D9DD1172481800AC6F1F /* BXStatusBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXStatusBarController.h; sourceTree = "<group>"; };
@@ -1554,7 +1552,6 @@
 		9F98410415BF10B700B50CDA /* ADBFilesystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ADBFilesystem.h; sourceTree = "<group>"; };
 		9F98589513EF71F600E66877 /* ADBBinCueImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBBinCueImage.h; sourceTree = "<group>"; };
 		9F98589613EF71F600E66877 /* ADBBinCueImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBBinCueImage.m; sourceTree = "<group>"; };
-		9F98EF5814E80A0900095248 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9F991BDF1800396700E2C0FE /* SystemPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemPreferences.h; sourceTree = "<group>"; };
 		9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryOriginal.png; sourceTree = "<group>"; };
 		9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryHQx.png; sourceTree = "<group>"; };
@@ -1652,8 +1649,6 @@
 		9FBC31DD0F56C383001811F2 /* LockClosing.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = LockClosing.aiff; sourceTree = "<group>"; };
 		9FBC31DE0F56C383001811F2 /* LockOpening.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = LockOpening.aiff; sourceTree = "<group>"; };
 		9FBC32110F56C3E9001811F2 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
-		9FBC34490F56C5D1001811F2 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/DOSBox.strings; sourceTree = "<group>"; };
-		9FBC344B0F56C5D1001811F2 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Shell.strings; sourceTree = "<group>"; };
 		9FBC345C0F56C64D001811F2 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9FBC35100F56C7B7001811F2 /* BXAboutController.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXAboutController.h; sourceTree = "<group>"; };
 		9FBC35110F56C7B7001811F2 /* BXAppController.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXAppController.h; sourceTree = "<group>"; };
@@ -2585,10 +2580,9 @@
 		9F496E4D108EEE0700282261 /* Strings */ = {
 			isa = PBXGroup;
 			children = (
-				9F98EF5714E80A0900095248 /* Localizable.strings */,
+				9F4199B11BD3E35300A2D165 /* DOSBox.strings */,
+				9F4199B31BD3E35300A2D165 /* Shell.strings */,
 				9FBC345B0F56C64D001811F2 /* InfoPlist.strings */,
-				9FBC34480F56C5D1001811F2 /* DOSBox.strings */,
-				9FBC344A0F56C5D1001811F2 /* Shell.strings */,
 				9FAA451411EB40180042B986 /* Configuration.strings */,
 			);
 			name = Strings;
@@ -3743,7 +3737,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Alun Bestor and contributors";
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Boxer" */;
@@ -3776,8 +3770,6 @@
 				9FBC31D70F56C370001811F2 /* AboutBackground.png in Resources */,
 				9FBC31E00F56C383001811F2 /* LockClosing.aiff in Resources */,
 				9FBC31E10F56C383001811F2 /* LockOpening.aiff in Resources */,
-				9FBC344D0F56C5D1001811F2 /* DOSBox.strings in Resources */,
-				9FBC344E0F56C5D1001811F2 /* Shell.strings in Resources */,
 				9FBC345D0F56C64D001811F2 /* InfoPlist.strings in Resources */,
 				9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */,
 				9F45A1BD109C3C3900593456 /* About.xib in Resources */,
@@ -3944,8 +3936,6 @@
 			files = (
 				9F2D30D615B8233800FAE848 /* LockClosing.aiff in Resources */,
 				9F2D30D715B8233800FAE848 /* LockOpening.aiff in Resources */,
-				9F2D30D815B8233800FAE848 /* DOSBox.strings in Resources */,
-				9F2D30D915B8233800FAE848 /* Shell.strings in Resources */,
 				9F2D30DB15B8233800FAE848 /* Snapshot.aiff in Resources */,
 				9F2D30E815B8233800FAE848 /* GameProfiles.plist in Resources */,
 				9F2D30E915B8233800FAE848 /* Configurations in Resources */,
@@ -4770,6 +4760,22 @@
 			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
+		9F4199B11BD3E35300A2D165 /* DOSBox.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F4199B21BD3E35300A2D165 /* English */,
+			);
+			name = DOSBox.strings;
+			sourceTree = "<group>";
+		};
+		9F4199B31BD3E35300A2D165 /* Shell.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F4199B41BD3E35300A2D165 /* English */,
+			);
+			name = Shell.strings;
+			sourceTree = "<group>";
+		};
 		9F45A1BB109C3C3900593456 /* About.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -4848,14 +4854,6 @@
 			name = Bezel.xib;
 			sourceTree = "<group>";
 		};
-		9F98EF5714E80A0900095248 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9F98EF5814E80A0900095248 /* English */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
 		9F9A4CA410F67DD800E61965 /* Preferences.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -4887,22 +4885,6 @@
 				9FB453AB16442D2900BCF63B /* en */,
 			);
 			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-		9FBC34480F56C5D1001811F2 /* DOSBox.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9FBC34490F56C5D1001811F2 /* English */,
-			);
-			name = DOSBox.strings;
-			sourceTree = "<group>";
-		};
-		9FBC344A0F56C5D1001811F2 /* Shell.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9FBC344B0F56C5D1001811F2 /* English */,
-			);
-			name = Shell.strings;
 			sourceTree = "<group>";
 		};
 		9FBC345B0F56C64D001811F2 /* InfoPlist.strings */ = {

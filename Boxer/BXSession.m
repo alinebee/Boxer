@@ -1502,7 +1502,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                     //Otherwise, just print out explanatory text at the DOS prompt.
                     else
                     {
-                        NSString *warningFormat = NSLocalizedStringFromTable(@"Windows-only game warning", @"Shell", nil);
+                        NSString *warningFormat = NSLocalizedStringFromTable(@"Windows-only game warning", @"Shell",
+                                                                             @"Warning shown at the DOS prompt after a Windows-only game was launched and exited.\n\nNOTE FOR TRANSLATORS: The key for this string is a reference for a much longer text. See the English version of Shell.strings for the actual text to be translated.");
                         NSString *programName = programURL.lastPathComponent.uppercaseString;
                         NSString *warningText = [NSString stringWithFormat: warningFormat, programName];
                         [self.emulator displayString: warningText];

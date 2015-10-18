@@ -397,6 +397,34 @@
 		9F3FB1AF1306F88800DB8FBE /* BXScriptablePreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1AE1306F88800DB8FBE /* BXScriptablePreferences.m */; };
 		9F3FB1B61306F9FB00DB8FBE /* NSApplication+BXScripting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1B51306F9FB00DB8FBE /* NSApplication+BXScripting.m */; };
 		9F3FB24E130714D700DB8FBE /* BXScriptableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB24D130714D700DB8FBE /* BXScriptableWindow.m */; };
+		9F4199DF1BD3F86500A2D165 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F4199D91BD3F1CE00A2D165 /* InfoPlist.strings */; settings = {ASSET_TAGS = (); }; };
+		9F4199E01BD3F86500A2D165 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FB453AA16442D2900BCF63B /* MainMenu.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199E11BD416E400A2D165 /* DocumentationPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F125C42169842F4003B5B2B /* DocumentationPanel.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199E21BD416E400A2D165 /* DocumentationBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F631D8016947B2C00AD06C4 /* DocumentationBrowser.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199E31BD416E400A2D165 /* PrintStatusPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F6785651649A791007FE89A /* PrintStatusPanel.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199E41BD416E400A2D165 /* GamesFolderPanelOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199E51BD416E400A2D165 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1CB109C3D3400593456 /* MainMenu.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199E61BD416E400A2D165 /* DOSWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1C7109C3D1100593456 /* DOSWindow.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199E71BD416E400A2D165 /* LaunchPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FED09FC17ED95CA009C4155 /* LaunchPanel.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199E81BD416E400A2D165 /* LauncherItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAE617EC9AA100C9BB82 /* LauncherItem.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199E91BD416E400A2D165 /* LauncherHeading.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAE917ECA09500C9BB82 /* LauncherHeading.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199EA1BD416E400A2D165 /* LauncherFavorite.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAF617ECE1E800C9BB82 /* LauncherFavorite.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199EB1BD416E400A2D165 /* DOSImportWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34111351DCDB000DCE44 /* DOSImportWindow.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199EC1BD416E400A2D165 /* ImportWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199ED1BD416E400A2D165 /* Inspector.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F6BF48416592EA600D9D66E /* Inspector.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199EE1BD416E400A2D165 /* InspectorDriveItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F125C4516984378003B5B2B /* InspectorDriveItem.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199EF1BD416E400A2D165 /* InspectorJoystickItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F125C4716984378003B5B2B /* InspectorJoystickItem.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199F01BD416E400A2D165 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA410F67DD800E61965 /* Preferences.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199F11BD416E400A2D165 /* About.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1BB109C3C3900593456 /* About.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199F21BD416E400A2D165 /* ProgramPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199F31BD416E400A2D165 /* ImportTipsPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34381351E127000DCE44 /* ImportTipsPanel.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199F41BD416E400A2D165 /* MountPanelOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A46A109C9A0400593456 /* MountPanelOptions.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199F51BD416E400A2D165 /* Welcome.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34361351E0F5000DCE44 /* Welcome.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199F61BD416E400A2D165 /* Bezel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F886FDD144CB6C30033CCD3 /* Bezel.xib */; settings = {ASSET_TAGS = (); }; };
+		9F4199F71BD416E900A2D165 /* DOSBox.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F4199B11BD3E35300A2D165 /* DOSBox.strings */; settings = {ASSET_TAGS = (); }; };
+		9F4199F81BD416E900A2D165 /* Shell.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F4199B31BD3E35300A2D165 /* Shell.strings */; settings = {ASSET_TAGS = (); }; };
+		9F4199F91BD416E900A2D165 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC345B0F56C64D001811F2 /* InfoPlist.strings */; settings = {ASSET_TAGS = (); }; };
+		9F4199FA1BD416E900A2D165 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; settings = {ASSET_TAGS = (); }; };
 		9F424207109D03F500111D28 /* BXInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F424206109D03F500111D28 /* BXInspectorController.m */; };
 		9F42D9DF1172481800AC6F1F /* BXStatusBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F42D9DE1172481800AC6F1F /* BXStatusBarController.m */; };
 		9F438C5810E3D8C8007D30AD /* BXScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F438C5710E3D8C8007D30AD /* BXScroller.m */; };
@@ -3736,6 +3764,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F4199EC1BD416E400A2D165 /* ImportWindow.xib in Resources */,
 				9FBC31D70F56C370001811F2 /* AboutBackground.png in Resources */,
 				9FBC31E00F56C383001811F2 /* LockClosing.aiff in Resources */,
 				9FBC31E10F56C383001811F2 /* LockOpening.aiff in Resources */,
@@ -3745,6 +3774,7 @@
 				9FCBB2D210A61CA800C28B09 /* package.icns in Resources */,
 				9FCBB6F310A6DDBD00C28B09 /* DOS Toolkit in Resources */,
 				9F59D99810AE0956008DBBC1 /* BoxArtShine.png in Resources */,
+				9F4199E11BD416E400A2D165 /* DocumentationPanel.xib in Resources */,
 				9F59DD2310AF6129008DBBC1 /* Grille.png in Resources */,
 				9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */,
 				9FFAFE4310DE343F00728BAC /* Configurations in Resources */,
@@ -3754,14 +3784,20 @@
 				9FE3BAF317ECC16C00C9BB82 /* FavoriteOutlineTemplate.pdf in Resources */,
 				9F9A4C9810F67A1F00E61965 /* GalleryMAME.png in Resources */,
 				9F9A4C9910F67A1F00E61965 /* GallerySpotlight.png in Resources */,
+				9F4199FA1BD416E900A2D165 /* Configuration.strings in Resources */,
 				9FE3BAF517ECC37800C9BB82 /* LaunchPanelDivider.png in Resources */,
+				9F4199E41BD416E400A2D165 /* GamesFolderPanelOptions.xib in Resources */,
 				9F9A4C9A10F67A1F00E61965 /* GalleryBkg.jpg in Resources */,
 				9F9A4C9B10F67A1F00E61965 /* GalleryTVScanlines.png in Resources */,
+				9F4199F41BD416E400A2D165 /* MountPanelOptions.xib in Resources */,
+				9F4199F71BD416E900A2D165 /* DOSBox.strings in Resources */,
+				9F4199EB1BD416E400A2D165 /* DOSImportWindow.xib in Resources */,
 				9F466AFC11A92C4B00C50965 /* UserDefaults.plist in Resources */,
 				9FDCDEFD11B5B83B0032DA4E /* dsa_pub.pem in Resources */,
 				9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */,
 				9FD140811A2B3AE10036BD93 /* ThrustmasterFCS@2x.png in Resources */,
 				9FD1407F1A2B36180036BD93 /* RacingWheel@2x.png in Resources */,
+				9F4199F81BD416E900A2D165 /* Shell.strings in Resources */,
 				9F6A79041203547800D2097D /* gamefolder.icns in Resources */,
 				9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */,
 				9F73446317F8A6E90059A0CF /* RecentItemsTemplate.pdf in Resources */,
@@ -3772,6 +3808,7 @@
 				9FE2172E121EED1E001452E3 /* ImportCoverArtTip.png in Resources */,
 				9FE2172F121EED1E001452E3 /* ImportRenameTip.png in Resources */,
 				9FA9E256121FD5BA006E20C4 /* DropzoneTemplate.pdf in Resources */,
+				9F4199E91BD416E400A2D165 /* LauncherHeading.xib in Resources */,
 				9FA9E281121FD874006E20C4 /* PanelExpandTemplate.pdf in Resources */,
 				9FA9E282121FD874006E20C4 /* PanelCollapseTemplate.pdf in Resources */,
 				9F2292631225848000ABC0B3 /* WelcomeSpotlight.png in Resources */,
@@ -3795,6 +3832,8 @@
 				9F96969813E59CA100FB51EC /* NoJoystickTemplate.pdf in Resources */,
 				9FFF635F14013F4D007E8B47 /* HardDiskTemplate.pdf in Resources */,
 				9FFF636014013F4D007E8B47 /* CDROMTemplate.pdf in Resources */,
+				9F4199EA1BD416E400A2D165 /* LauncherFavorite.xib in Resources */,
+				9F4199ED1BD416E400A2D165 /* Inspector.xib in Resources */,
 				9FFF636114013F4D007E8B47 /* PauseTemplate.pdf in Resources */,
 				9FFF636214013F4D007E8B47 /* PlayTemplate.pdf in Resources */,
 				9FFF636314013F4D007E8B47 /* EjectTemplate.pdf in Resources */,
@@ -3812,16 +3851,24 @@
 				9F586CF1143E51DD00E840C8 /* CM32L.png in Resources */,
 				9F586CF2143E51DD00E840C8 /* MT32.png in Resources */,
 				9F1F00AB143F091300FF163A /* Audio.png in Resources */,
+				9F4199E81BD416E400A2D165 /* LauncherItem.xib in Resources */,
 				9F0102E01440543500942713 /* MT32ShelfHighlight.png in Resources */,
 				9F0102E21440561E00942713 /* MT32Shelf.jpg in Resources */,
+				9F4199F21BD416E400A2D165 /* ProgramPanel.xib in Resources */,
 				9F12F97C144875F400FC9645 /* DummyCD.iso in Resources */,
 				9FBA48C01450B73900F9BBDE /* Keyboard.png in Resources */,
+				9F4199F31BD416E400A2D165 /* ImportTipsPanel.xib in Resources */,
 				9FD54A5B14DE96B800FE350F /* NumpadActiveTemplate.pdf in Resources */,
+				9F4199E21BD416E400A2D165 /* DocumentationBrowser.xib in Resources */,
 				9FD54A5D14DE979B00FE350F /* NumpadInactiveTemplate.pdf in Resources */,
+				9F4199E71BD416E400A2D165 /* LaunchPanel.xib in Resources */,
 				9F3034B914E2C3F600BC572E /* NumlockActiveTemplate.pdf in Resources */,
 				9F3034BA14E2C3F600BC572E /* NumlockInactiveTemplate.pdf in Resources */,
+				9F4199EE1BD416E400A2D165 /* InspectorDriveItem.xib in Resources */,
 				9F8F374C14F9366F00E482FB /* FastForwardTemplate.pdf in Resources */,
+				9F4199F01BD416E400A2D165 /* Preferences.xib in Resources */,
 				9F27BD1814FAA4F5008EB0A1 /* Volume33PercentTemplate.pdf in Resources */,
+				9F4199E31BD416E400A2D165 /* PrintStatusPanel.xib in Resources */,
 				9FD140771A2B24AF0036BD93 /* Game@2x.png in Resources */,
 				9F27BD1914FAA4F5008EB0A1 /* Volume66PercentTemplate.pdf in Resources */,
 				9F27BD1A14FAA4F5008EB0A1 /* Volume100PercentTemplate.pdf in Resources */,
@@ -3840,9 +3887,14 @@
 				9FCA157F1597223C00C42D10 /* Grille@2x.png in Resources */,
 				9FCA1584159729C400C42D10 /* ImportCoverArtTip@2x.png in Resources */,
 				9FCA1585159729C400C42D10 /* ImportRenameTip@2x.png in Resources */,
+				9F4199F51BD416E400A2D165 /* Welcome.xib in Resources */,
+				9F4199F11BD416E400A2D165 /* About.xib in Resources */,
 				9FCA1587159732F300C42D10 /* import@2x.png in Resources */,
 				9FE3BAE417EC763E00C9BB82 /* ShelfTemplate.jpg in Resources */,
 				9FCA158A1597377B00C42D10 /* Audio@2x.png in Resources */,
+				9F4199E61BD416E400A2D165 /* DOSWindow.xib in Resources */,
+				9F4199EF1BD416E400A2D165 /* InspectorJoystickItem.xib in Resources */,
+				9F4199F91BD416E900A2D165 /* InfoPlist.strings in Resources */,
 				9FCA158B1597377B00C42D10 /* Keyboard@2x.png in Resources */,
 				9FCA158D15973A6D00C42D10 /* Display@2x.png in Resources */,
 				9FAEBE5215D678C800C9AC5F /* DOSWindowBackground.png in Resources */,
@@ -3863,6 +3915,8 @@
 				9FB6AE7B16C800BD00EB1D40 /* CPU.png in Resources */,
 				9FB6AE7E16C808A800EB1D40 /* Mouse.png in Resources */,
 				9FB6AE8016C80ED700EB1D40 /* Drives.png in Resources */,
+				9F4199E51BD416E400A2D165 /* MainMenu.xib in Resources */,
+				9F4199F61BD416E400A2D165 /* Bezel.xib in Resources */,
 				9FB6AE8816C8274000EB1D40 /* Joystick.png in Resources */,
 				9FB6AE8B16C82F5300EB1D40 /* CPU@2x.png in Resources */,
 				9FB6AE8E16C8366D00EB1D40 /* Joystick@2x.png in Resources */,
@@ -3929,6 +3983,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				9FB453B216442D3B00BCF63B /* UserDefaults.plist in Resources */,
+				9F4199E01BD3F86500A2D165 /* MainMenu.xib in Resources */,
+				9F4199DF1BD3F86500A2D165 /* InfoPlist.strings in Resources */,
 				9FB453B316442D3F00BCF63B /* app.icns in Resources */,
 				9FB453B716442DAC00BCF63B /* Boxer Standalone.app in Resources */,
 			);

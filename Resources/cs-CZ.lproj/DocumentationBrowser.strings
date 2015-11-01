@@ -1,0 +1,24 @@
+/* Class = "NSTextFieldCell"; title = "[Game name] Documentation"; ObjectID = "20"; */
+"20.title" = "Dokumentace ke hře [název hry]";
+
+/* Class = "NSTextFieldCell"; title = "[Documentation name]"; ObjectID = "26"; */
+"26.title" = "[Název dokumentu]";
+
+/* Class = "BindingConnection"; ibShadowedDisplayPattern = "%{value1}@"; ObjectID = "38"; */
+"38.ibShadowedDisplayPattern" = "%{value1}@";
+
+/* Class = "NSMenuItem"; title = "Open"; ObjectID = "40"; */
+"40.title" = "Otevřít";
+
+/* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "41"; */
+"41.title" = "Zobrazit ve Finderu";
+
+/* Class = "NSMenuItem"; title = "Remove from List"; ObjectID = "42"; */
+"42.title" = "Odebrat ze seznamu";
+
+/* Class = "NSTextFieldCell"; title = "Add more documentation by dropping it here."; ObjectID = "83"; */
+"83.title" = "Přetažením na toto místo přidejte další dokumentaci.";
+
+/* Class = "NSMenuItem"; title = "Quick Look"; ObjectID = "94"; */
+"94.title" = "Náhled";
+

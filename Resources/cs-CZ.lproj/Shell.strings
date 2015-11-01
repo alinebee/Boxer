@@ -1,0 +1,31 @@
+/* Format for listing internal DOSBox drives via the DRIVES command: %1$@ is the drive letter, %2$@ is the localized drive type. */
+"%1$@: %2$@
+" = "%1$@: %2$@
+";
+
+/* Format for listing regular drives via the DRIVES command: %1$@ is the drive letter, %2$@ is the localized drive type, %3$@ is the drive's OS X filesystem path */
+"%1$@: %2$@ from %3$@
+" = "%1$@: %2$@ z %3$@
+";
+
+/* Heading for drive list when drunning DRIVES command. */
+"Currently mounted drives:" = "Aktuálně připojené disky:";
+
+/* A list of common DOS commands, displayed when running HELP at the command line. This should list the commands in the left column (which should be left untranslated) and command descriptions in the right-hand column. Accepts DOSBox-style formatting characters.\n\nNOTE FOR TRANSLATORS: The key for this string is a reference for a much longer text. See the English version of Shell.strings for the actual text to be translated. */
+"Shell Command Help" = "Nápověda k příkazům";
+
+/* Error message displayed when the REVEAL command cannot reveal a path in OS X because it did not exist. %1$@ is the absolute DOS path, including drive letter. */
+"The path \"%1$@\" does not exist in OS X." = "Cesta \"%1$@\" v OS X neexistuje.";
+
+/* Error message displayed when the REVEAL command is called on a path that could not be resolved to a full DOS path. %1$@ is the path exactly as the user entered it on the commandline. */
+"The path \"%1$@\" does not exist." = "Cesta \"%1$@\" neexistuje.";
+
+/* Error message displayed when the REVEAL command is called on an internal virtual drive. %1$@ is the absolute DOS path to that drive, including drive letter. */
+"The path \"%1$@\" is a virtual drive used by Boxer and does not exist in OS X." = "Cesta \"%1$@\" představuje virtuální disk používaný Boxerem, který v OS X neexistuje.";
+
+/* Error message displayed when the REVEAL command cannot resolve a DOS path to an OS X filesystem path. %1$@ is the absolute DOS path, including drive letter. */
+"The path \"%1$@\" is not accessible in OS X." = "Cesta \"%1$@\" není v OS X přístupná.";
+
+/* Warning shown at the DOS prompt after a Windows-only game was launched and exited.\n\nNOTE FOR TRANSLATORS: The key for this string is a reference for a much longer text. See the English version of Shell.strings for the actual text to be translated. */
+"Windows-only game warning" = "Varování ke hře pouze pro Windows";
+

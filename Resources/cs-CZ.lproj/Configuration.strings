@@ -1,0 +1,6 @@
+/* Used by generated configuration files as a commented header at the top of the file. */
+"Configuration preamble" = "Úvodní text ke konfiguraci";
+
+/* Used in generated configuration files as a commented header underneath the [autoexec] section. */
+"Preamble for startup commands" = "Úvodní text k příkazům prováděným při spuštění";
+

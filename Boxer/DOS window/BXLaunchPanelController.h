@@ -89,7 +89,7 @@
 }
 @property (assign, nonatomic) IBOutlet id <BXLauncherItemDelegate> delegate;
 @property (assign, nonatomic, getter=isLaunchable) BOOL launchable;
-@property (retain, nonatomic) IBOutlet NSMenu *menu; //The context menu to display for this item.
+@property (retain) IBOutlet NSMenu *menu; //The context menu to display for this item.
 
 - (IBAction) openItemInDOS: (id)sender;
 - (IBAction) revealItemInFinder: (id)sender;

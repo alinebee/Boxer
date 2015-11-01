@@ -1217,7 +1217,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     }
     
     //Sync the cursor state, given that a different view may have just slid under the mouse.
-    [self.inputController cursorUpdate: nil];
+    [self.inputController syncCursor];
     
     [self didChangeValueForKey: @"currentPanel"];
 }

@@ -21,7 +21,7 @@
 @property (copy, nonatomic) NSString *themeKey;
 
 //Toggles the highlighted appearance for the image cell.
-@property (assign, nonatomic, getter=isHighlighted) BOOL highlighted;
+@property (assign, getter=isHighlighted) BOOL highlighted;
 
 @end
 

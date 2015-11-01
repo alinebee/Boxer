@@ -96,6 +96,8 @@
 //Called by our cursor animation as a delegate method.
 - (BOOL) animationShouldChangeCursor: (BXCursorFadeAnimation *)cursorAnimation;
 
+//Called when the cursor needs updating outside of the standard NSResponder event mechanisms.
+- (void) syncCursor;
 
 //Called by BXDOSWindowController whenever the view loses keyboard focus.
 - (void) didResignKey;

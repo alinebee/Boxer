@@ -1,794 +1,108 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
-	<data>
-		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">12B19</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2549</string>
-		<string key="IBDocument.AppKitVersion">1187</string>
-		<string key="IBDocument.HIToolboxVersion">624.00</string>
-		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
-			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2549</string>
-		</object>
-		<array key="IBDocument.IntegratedClassDependencies">
-			<string>NSButton</string>
-			<string>NSButtonCell</string>
-			<string>NSCustomObject</string>
-			<string>NSCustomView</string>
-			<string>NSTextField</string>
-			<string>NSTextFieldCell</string>
-			<string>NSView</string>
-			<string>NSWindowTemplate</string>
-		</array>
-		<array key="IBDocument.PluginDependencies">
-			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-		</array>
-		<object class="NSMutableDictionary" key="IBDocument.Metadata">
-			<string key="NS.key.0">PluginDependencyRecalculationVersion</string>
-			<integer value="1" key="NS.object.0"/>
-		</object>
-		<array class="NSMutableArray" key="IBDocument.RootObjects" id="1000">
-			<object class="NSCustomObject" id="1001">
-				<string key="NSClassName">BXAboutController</string>
-			</object>
-			<object class="NSCustomObject" id="1003">
-				<string key="NSClassName">FirstResponder</string>
-			</object>
-			<object class="NSCustomObject" id="1004">
-				<string key="NSClassName">NSApplication</string>
-			</object>
-			<object class="NSWindowTemplate" id="1032262345">
-				<int key="NSWindowStyleMask">3</int>
-				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{1030, 229}, {340, 384}}</string>
-				<int key="NSWTFlags">1685585920</int>
-				<string key="NSWindowTitle"/>
-				<string key="NSWindowClass">NSPanel</string>
-				<nil key="NSViewClass"/>
-				<nil key="NSUserInterfaceItemIdentifier"/>
-				<object class="NSView" key="NSWindowView" id="495798130">
-					<reference key="NSNextResponder"/>
-					<int key="NSvFlags">256</int>
-					<array class="NSMutableArray" key="NSSubviews">
-						<object class="NSCustomView" id="245758057">
-							<reference key="NSNextResponder" ref="495798130"/>
-							<int key="NSvFlags">292</int>
-							<array class="NSMutableArray" key="NSSubviews">
-								<object class="NSButton" id="327811048">
-									<reference key="NSNextResponder" ref="245758057"/>
-									<int key="NSvFlags">268</int>
-									<string key="NSFrame">{{193, 7}, {127, 25}}</string>
-									<reference key="NSSuperview" ref="245758057"/>
-									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView"/>
-									<bool key="NSEnabled">YES</bool>
-									<object class="NSButtonCell" key="NSCell" id="296060041">
-										<int key="NSCellFlags">-2080374784</int>
-										<int key="NSCellFlags2">134217728</int>
-										<string key="NSContents">Boxer Website</string>
-										<object class="NSFont" key="NSSupport" id="897304321">
-											<string key="NSName">LucidaGrande</string>
-											<double key="NSSize">13</double>
-											<int key="NSfFlags">1044</int>
-										</object>
-										<reference key="NSControlView" ref="327811048"/>
-										<int key="NSButtonFlags">-2035531776</int>
-										<int key="NSButtonFlags2">163</int>
-										<object class="NSCustomResource" key="NSNormalImage">
-											<string key="NSClassName">NSImage</string>
-											<string key="NSResourceName">NSFollowLinkFreestandingTemplate</string>
-										</object>
-										<string key="NSAlternateContents"/>
-										<string key="NSKeyEquivalent"/>
-										<int key="NSPeriodicDelay">400</int>
-										<int key="NSPeriodicInterval">75</int>
-									</object>
-									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-								</object>
-								<object class="NSButton" id="962285433">
-									<reference key="NSNextResponder" ref="245758057"/>
-									<int key="NSvFlags">268</int>
-									<string key="NSFrame">{{20, 7}, {160, 25}}</string>
-									<reference key="NSSuperview" ref="245758057"/>
-									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView" ref="327811048"/>
-									<bool key="NSEnabled">YES</bool>
-									<object class="NSButtonCell" key="NSCell" id="335223746">
-										<int key="NSCellFlags">-2080374784</int>
-										<int key="NSCellFlags2">134217728</int>
-										<string key="NSContents">Acknowledgements</string>
-										<reference key="NSSupport" ref="897304321"/>
-										<reference key="NSControlView" ref="962285433"/>
-										<int key="NSButtonFlags">-2035007488</int>
-										<int key="NSButtonFlags2">163</int>
-										<string key="NSAlternateContents"/>
-										<string key="NSKeyEquivalent"/>
-										<int key="NSPeriodicDelay">400</int>
-										<int key="NSPeriodicInterval">75</int>
-									</object>
-									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-								</object>
-							</array>
-							<string key="NSFrameSize">{340, 40}</string>
-							<reference key="NSSuperview" ref="495798130"/>
-							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="962285433"/>
-							<string key="NSClassName">BXBottomBar</string>
-						</object>
-						<object class="NSCustomView" id="524924394">
-							<reference key="NSNextResponder" ref="495798130"/>
-							<int key="NSvFlags">292</int>
-							<array class="NSMutableArray" key="NSSubviews">
-								<object class="NSTextField" id="978929940">
-									<reference key="NSNextResponder" ref="524924394"/>
-									<int key="NSvFlags">268</int>
-									<string key="NSFrame">{{20, 20}, {303, 17}}</string>
-									<reference key="NSSuperview" ref="524924394"/>
-									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView" ref="245758057"/>
-									<bool key="NSEnabled">YES</bool>
-									<object class="NSTextFieldCell" key="NSCell" id="467885608">
-										<int key="NSCellFlags">70254657</int>
-										<int key="NSCellFlags2">272630784</int>
-										<string key="NSContents">[Version 1.2 | build 20111031.1]</string>
-										<object class="NSFont" key="NSSupport">
-											<string key="NSName">LucidaGrande</string>
-											<double key="NSSize">12</double>
-											<int key="NSfFlags">16</int>
-										</object>
-										<reference key="NSControlView" ref="978929940"/>
-										<object class="NSColor" key="NSBackgroundColor" id="1068513734">
-											<int key="NSColorSpace">6</int>
-											<string key="NSCatalogName">System</string>
-											<string key="NSColorName">controlColor</string>
-											<object class="NSColor" key="NSColor" id="284131482">
-												<int key="NSColorSpace">3</int>
-												<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
-											</object>
-										</object>
-										<object class="NSColor" key="NSTextColor" id="802163884">
-											<int key="NSColorSpace">6</int>
-											<string key="NSCatalogName">System</string>
-											<string key="NSColorName">textColor</string>
-											<object class="NSColor" key="NSColor" id="466446076">
-												<int key="NSColorSpace">3</int>
-												<bytes key="NSWhite">MAA</bytes>
-											</object>
-										</object>
-									</object>
-									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-								</object>
-								<object class="NSTextField" id="890281471">
-									<reference key="NSNextResponder" ref="524924394"/>
-									<int key="NSvFlags">268</int>
-									<string key="NSFrame">{{20, 46}, {160, 167}}</string>
-									<reference key="NSSuperview" ref="524924394"/>
-									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView" ref="978929940"/>
-									<bool key="NSEnabled">YES</bool>
-									<object class="NSTextFieldCell" key="NSCell" id="28243971">
-										<int key="NSCellFlags">67108864</int>
-										<int key="NSCellFlags2">272629760</int>
-										<string type="base64-UTF8" key="NSContents">Qm94ZXIgaXMgZGVzaWduZWQgYnkNQWx1biBCZXN0b3IgJiByZWxlYXNlZCB1bmRlciB0aGUgR05VIFB1
-YmxpYyBMaWNlbnNlLg0NQm94ZXIgaXMgYmFzZWQgb24gRE9TQm94IDAuNzQsIHdoaWNoIGlzIArCqSAy
-MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
-										<object class="NSFont" key="NSSupport">
-											<string key="NSName">LucidaGrande</string>
-											<double key="NSSize">13</double>
-											<int key="NSfFlags">16</int>
-										</object>
-										<reference key="NSControlView" ref="890281471"/>
-										<object class="NSColor" key="NSBackgroundColor">
-											<int key="NSColorSpace">6</int>
-											<string key="NSCatalogName">System</string>
-											<string key="NSColorName">controlBackgroundColor</string>
-											<reference key="NSColor" ref="284131482"/>
-										</object>
-										<reference key="NSTextColor" ref="802163884"/>
-									</object>
-									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-								</object>
-								<object class="NSTextField" id="427986242">
-									<reference key="NSNextResponder" ref="524924394"/>
-									<int key="NSvFlags">268</int>
-									<string key="NSFrame">{{20, 226}, {172, 38}}</string>
-									<reference key="NSSuperview" ref="524924394"/>
-									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView" ref="890281471"/>
-									<int key="NSTag">1</int>
-									<bool key="NSEnabled">YES</bool>
-									<object class="NSTextFieldCell" key="NSCell" id="374931781">
-										<int key="NSCellFlags">67108864</int>
-										<int key="NSCellFlags2">272629760</int>
-										<string type="base64-UTF8" key="NSContents">UHVuY2hpbmcgc29tZSBzZW5zZQ1pbnRvIERPUyBlbXVsYXRpb24uA</string>
-										<object class="NSFont" key="NSSupport">
-											<string key="NSName">LucidaGrande</string>
-											<double key="NSSize">16</double>
-											<int key="NSfFlags">16</int>
-										</object>
-										<reference key="NSControlView" ref="427986242"/>
-										<reference key="NSBackgroundColor" ref="1068513734"/>
-										<reference key="NSTextColor" ref="466446076"/>
-									</object>
-									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
-								</object>
-							</array>
-							<string key="NSFrame">{{0, 40}, {340, 344}}</string>
-							<reference key="NSSuperview" ref="495798130"/>
-							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="427986242"/>
-							<string key="NSClassName">BXAboutBackgroundView</string>
-						</object>
-					</array>
-					<string key="NSFrameSize">{340, 384}</string>
-					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
-					<reference key="NSNextKeyView" ref="524924394"/>
-				</object>
-				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
-				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
-				<bool key="NSAutorecalculatesContentBorderThicknessMinY">NO</bool>
-				<double key="NSContentBorderThicknessMinY">41</double>
-				<bool key="NSWindowIsRestorable">YES</bool>
-			</object>
-		</array>
-		<object class="IBObjectContainer" key="IBDocument.Objects">
-			<array class="NSMutableArray" key="connectionRecords">
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">window</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="1032262345"/>
-					</object>
-					<int key="connectionID">29</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">showAcknowledgements:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="962285433"/>
-					</object>
-					<int key="connectionID">52</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">version</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="978929940"/>
-					</object>
-					<int key="connectionID">59</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">showWebsite:</string>
-						<reference key="source" ref="1003"/>
-						<reference key="destination" ref="327811048"/>
-					</object>
-					<int key="connectionID">51</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">delegate</string>
-						<reference key="source" ref="1032262345"/>
-						<reference key="destination" ref="1001"/>
-					</object>
-					<int key="connectionID">28</int>
-				</object>
-			</array>
-			<object class="IBMutableOrderedSet" key="objectRecords">
-				<array key="orderedObjects">
-					<object class="IBObjectRecord">
-						<int key="objectID">0</int>
-						<array key="object" id="0"/>
-						<reference key="children" ref="1000"/>
-						<nil key="parent"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">-2</int>
-						<reference key="object" ref="1001"/>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">File's Owner</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">-1</int>
-						<reference key="object" ref="1003"/>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">First Responder</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">-3</int>
-						<reference key="object" ref="1004"/>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">Application</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">24</int>
-						<reference key="object" ref="1032262345"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="495798130"/>
-						</array>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">About Panel</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">25</int>
-						<reference key="object" ref="495798130"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="245758057"/>
-							<reference ref="524924394"/>
-						</array>
-						<reference key="parent" ref="1032262345"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">53</int>
-						<reference key="object" ref="245758057"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="962285433"/>
-							<reference ref="327811048"/>
-						</array>
-						<reference key="parent" ref="495798130"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">46</int>
-						<reference key="object" ref="962285433"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="335223746"/>
-						</array>
-						<reference key="parent" ref="245758057"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">47</int>
-						<reference key="object" ref="335223746"/>
-						<reference key="parent" ref="962285433"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">48</int>
-						<reference key="object" ref="327811048"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="296060041"/>
-						</array>
-						<reference key="parent" ref="245758057"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">49</int>
-						<reference key="object" ref="296060041"/>
-						<reference key="parent" ref="327811048"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">54</int>
-						<reference key="object" ref="524924394"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="427986242"/>
-							<reference ref="890281471"/>
-							<reference ref="978929940"/>
-						</array>
-						<reference key="parent" ref="495798130"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">31</int>
-						<reference key="object" ref="427986242"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="374931781"/>
-						</array>
-						<reference key="parent" ref="524924394"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">36</int>
-						<reference key="object" ref="374931781"/>
-						<reference key="parent" ref="427986242"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">55</int>
-						<reference key="object" ref="890281471"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="28243971"/>
-						</array>
-						<reference key="parent" ref="524924394"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">56</int>
-						<reference key="object" ref="28243971"/>
-						<reference key="parent" ref="890281471"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">57</int>
-						<reference key="object" ref="978929940"/>
-						<array class="NSMutableArray" key="children">
-							<reference ref="467885608"/>
-						</array>
-						<reference key="parent" ref="524924394"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">58</int>
-						<reference key="object" ref="467885608"/>
-						<reference key="parent" ref="978929940"/>
-					</object>
-				</array>
-			</object>
-			<dictionary class="NSMutableDictionary" key="flattenedProperties">
-				<string key="-1.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="-2.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="-3.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<boolean value="NO" key="24.IBNSWindowAutoPositionCentersHorizontal"/>
-				<boolean value="YES" key="24.IBNSWindowAutoPositionCentersVertical"/>
-				<string key="24.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="24.IBWindowTemplateEditedContentRect">{{331, 201}, {340, 384}}</string>
-				<boolean value="NO" key="24.NSWindowTemplate.visibleAtLaunch"/>
-				<string key="25.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="31.CustomClassName">BXAboutDarkLabel</string>
-				<string key="31.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<real value="0.0" key="31.IBViewIntegration.shadowBlurRadius"/>
-				<object class="NSColor" key="31.IBViewIntegration.shadowColor">
-					<int key="NSColorSpace">3</int>
-					<bytes key="NSWhite">MSAwLjUAA</bytes>
-					<object class="NSColorSpace" key="NSCustomColorSpace">
-						<int key="NSID">2</int>
-					</object>
-				</object>
-				<real value="-1" key="31.IBViewIntegration.shadowOffsetHeight"/>
-				<real value="0.0" key="31.IBViewIntegration.shadowOffsetWidth"/>
-				<string key="36.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="46.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="47.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="48.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="49.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="53.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="54.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="55.CustomClassName">BXAboutLabel</string>
-				<string key="55.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<real value="2" key="55.IBViewIntegration.shadowBlurRadius"/>
-				<object class="NSColor" key="55.IBViewIntegration.shadowColor">
-					<int key="NSColorSpace">3</int>
-					<bytes key="NSWhite">MCAwLjUAA</bytes>
-				</object>
-				<real value="-1" key="55.IBViewIntegration.shadowOffsetHeight"/>
-				<real value="0.0" key="55.IBViewIntegration.shadowOffsetWidth"/>
-				<string key="56.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="57.CustomClassName">BXAboutLightLabel</string>
-				<string key="57.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<real value="2" key="57.IBViewIntegration.shadowBlurRadius"/>
-				<object class="NSColor" key="57.IBViewIntegration.shadowColor">
-					<int key="NSColorSpace">3</int>
-					<bytes key="NSWhite">MCAwLjUAA</bytes>
-				</object>
-				<real value="-1" key="57.IBViewIntegration.shadowOffsetHeight"/>
-				<real value="0.0" key="57.IBViewIntegration.shadowOffsetWidth"/>
-				<string key="58.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			</dictionary>
-			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
-			<nil key="activeLocalization"/>
-			<dictionary class="NSMutableDictionary" key="localizations"/>
-			<nil key="sourceID"/>
-			<int key="maxID">59</int>
-		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">BGHUDLabel</string>
-					<string key="superclassName">NSTextField</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BGHUDLabel.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXAboutBackgroundView</string>
-					<string key="superclassName">NSView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXAboutBackgroundView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXAboutController</string>
-					<string key="superclassName">NSWindowController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">showAcknowledgements:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">showAcknowledgements:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">showAcknowledgements:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">version</string>
-						<string key="NS.object.0">NSTextField</string>
-					</object>
-					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<string key="NS.key.0">version</string>
-						<object class="IBToOneOutletInfo" key="NS.object.0">
-							<string key="name">version</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXAboutController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXAboutDarkLabel</string>
-					<string key="superclassName">BXThemedLabel</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXAboutDarkLabel.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXAboutLabel</string>
-					<string key="superclassName">BXThemedLabel</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXAboutLabel.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXAboutLightLabel</string>
-					<string key="superclassName">BXThemedLabel</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXAboutLightLabel.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXAppController</string>
-					<string key="superclassName">BXBaseAppController</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="hideWelcomePanel:">id</string>
-						<string key="orderFrontAboutPanel:">id</string>
-						<string key="orderFrontFirstRunPanel:">id</string>
-						<string key="orderFrontFirstRunPanelWithTransition:">id</string>
-						<string key="orderFrontImportGamePanel:">id</string>
-						<string key="orderFrontInspectorPanel:">id</string>
-						<string key="orderFrontPreferencesPanel:">id</string>
-						<string key="orderFrontWelcomePanel:">id</string>
-						<string key="orderFrontWelcomePanelWithTransition:">id</string>
-						<string key="revealCurrentSessionPath:">id</string>
-						<string key="revealGamesFolder:">id</string>
-						<string key="sendEmail:">id</string>
-						<string key="showBugReportPage:">id</string>
-						<string key="showCPUPanel:">id</string>
-						<string key="showDonationPage:">id</string>
-						<string key="showDrivesPanel:">id</string>
-						<string key="showGamePanel:">id</string>
-						<string key="showJoypadDownloadPage:">id</string>
-						<string key="showMountPanel:">id</string>
-						<string key="showMousePanel:">id</string>
-						<string key="showPerianDownloadPage:">id</string>
-						<string key="showUniversalAccessPrefsPane:">id</string>
-						<string key="showWebsite:">id</string>
-						<string key="toggleInspectorPanel:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="hideWelcomePanel:">
-							<string key="name">hideWelcomePanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontAboutPanel:">
-							<string key="name">orderFrontAboutPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontFirstRunPanel:">
-							<string key="name">orderFrontFirstRunPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontFirstRunPanelWithTransition:">
-							<string key="name">orderFrontFirstRunPanelWithTransition:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontImportGamePanel:">
-							<string key="name">orderFrontImportGamePanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontInspectorPanel:">
-							<string key="name">orderFrontInspectorPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontPreferencesPanel:">
-							<string key="name">orderFrontPreferencesPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontWelcomePanel:">
-							<string key="name">orderFrontWelcomePanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="orderFrontWelcomePanelWithTransition:">
-							<string key="name">orderFrontWelcomePanelWithTransition:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="revealCurrentSessionPath:">
-							<string key="name">revealCurrentSessionPath:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="revealGamesFolder:">
-							<string key="name">revealGamesFolder:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="sendEmail:">
-							<string key="name">sendEmail:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showBugReportPage:">
-							<string key="name">showBugReportPage:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showCPUPanel:">
-							<string key="name">showCPUPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showDonationPage:">
-							<string key="name">showDonationPage:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showDrivesPanel:">
-							<string key="name">showDrivesPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showGamePanel:">
-							<string key="name">showGamePanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showJoypadDownloadPage:">
-							<string key="name">showJoypadDownloadPage:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showMountPanel:">
-							<string key="name">showMountPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showMousePanel:">
-							<string key="name">showMousePanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showPerianDownloadPage:">
-							<string key="name">showPerianDownloadPage:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showUniversalAccessPrefsPane:">
-							<string key="name">showUniversalAccessPrefsPane:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="showWebsite:">
-							<string key="name">showWebsite:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="toggleInspectorPanel:">
-							<string key="name">toggleInspectorPanel:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXAppController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXBaseAppController</string>
-					<string key="superclassName">NSDocumentController</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="decrementVolume:">id</string>
-						<string key="incrementVolume:">id</string>
-						<string key="maximizeVolume:">id</string>
-						<string key="minimizeVolume:">id</string>
-						<string key="openInDefaultApplication:">id</string>
-						<string key="revealInFinder:">id</string>
-						<string key="toggleMuted:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="decrementVolume:">
-							<string key="name">decrementVolume:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="incrementVolume:">
-							<string key="name">incrementVolume:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="maximizeVolume:">
-							<string key="name">maximizeVolume:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="minimizeVolume:">
-							<string key="name">minimizeVolume:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="openInDefaultApplication:">
-							<string key="name">openInDefaultApplication:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="revealInFinder:">
-							<string key="name">revealInFinder:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="toggleMuted:">
-							<string key="name">toggleMuted:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="joypadController">BXJoypadController</string>
-						<string key="joystickController">BXJoystickController</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="joypadController">
-							<string key="name">joypadController</string>
-							<string key="candidateClassName">BXJoypadController</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="joystickController">
-							<string key="name">joystickController</string>
-							<string key="candidateClassName">BXJoystickController</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXBaseAppController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXBottomBar</string>
-					<string key="superclassName">NSView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXBottomBar.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXJoypadController</string>
-					<string key="superclassName">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXJoypadController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXJoystickController</string>
-					<string key="superclassName">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXJoystickController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXThemedLabel</string>
-					<string key="superclassName">BGHUDLabel</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXThemedLabel.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">FirstResponder</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">showWebsite:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">showWebsite:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">showWebsite:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
-					</object>
-				</object>
-			</array>
-		</object>
-		<int key="IBDocument.localizationMode">0</int>
-		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
-		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
-			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
-			<real value="1060" key="NS.object.0"/>
-		</object>
-		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
-		<int key="IBDocument.defaultPropertyAccessControl">3</int>
-		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
-			<string key="NS.key.0">NSFollowLinkFreestandingTemplate</string>
-			<string key="NS.object.0">{10, 10}</string>
-		</object>
-	</data>
-</archive>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+    <dependencies>
+        <deployment version="1080" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="BXAboutController">
+            <connections>
+                <outlet property="version" destination="57" id="59"/>
+                <outlet property="window" destination="24" id="29"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application"/>
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="24" userLabel="About Panel" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES"/>
+            <rect key="contentRect" x="1030" y="229" width="340" height="384"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <view key="contentView" id="25">
+                <rect key="frame" x="0.0" y="0.0" width="340" height="384"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <customView id="53" customClass="BXBottomBar">
+                        <rect key="frame" x="0.0" y="0.0" width="340" height="40"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" id="46">
+                                <rect key="frame" x="20" y="7" width="160" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <animations/>
+                                <buttonCell key="cell" type="roundTextured" title="Acknowledgements" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="47">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="showAcknowledgements:" target="-2" id="52"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" id="48">
+                                <rect key="frame" x="193" y="7" width="127" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <animations/>
+                                <buttonCell key="cell" type="roundTextured" title="Boxer Website" bezelStyle="texturedRounded" image="NSFollowLinkFreestandingTemplate" imagePosition="right" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="49">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="showWebsite:" target="-1" id="51"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <animations/>
+                    </customView>
+                    <customView id="54" customClass="BXAboutBackgroundView">
+                        <rect key="frame" x="0.0" y="40" width="340" height="344"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <textField verticalHuggingPriority="750" tag="1" id="31" customClass="BXAboutDarkLabel">
+                                <rect key="frame" x="20" y="226" width="172" height="38"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <animations/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="36">
+                                    <font key="font" metaFont="system" size="16"/>
+                                    <string key="title">Punching some senseinto DOS emulation.</string>
+                                    <color key="textColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="55" customClass="BXAboutLabel">
+                                <rect key="frame" x="20" y="46" width="160" height="167"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <animations/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="56">
+                                    <font key="font" metaFont="system"/>
+                                    <string key="title">Boxer is designed byAlun Bestor &amp; released under the GNU Public License.Boxer is based on DOSBox 0.74, which is 
+© 2002–2010 by the DOSBox Team.</string>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="57" customClass="BXAboutLightLabel">
+                                <rect key="frame" x="20" y="20" width="303" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <animations/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" title="[Version 1.2 | build 20111031.1]" id="58">
+                                    <font key="font" metaFont="cellTitle"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <animations/>
+                    </customView>
+                </subviews>
+                <animations/>
+            </view>
+            <contentBorderThickness minY="41"/>
+            <connections>
+                <outlet property="delegate" destination="-2" id="28"/>
+            </connections>
+        </window>
+    </objects>
+    <resources>
+        <image name="NSFollowLinkFreestandingTemplate" width="14" height="14"/>
+    </resources>
+</document>

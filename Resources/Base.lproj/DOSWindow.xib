@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="13A584" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1060" defaultVersion="1060" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
+        <deployment version="1080" identifier="macosx"/>
+        <development version="6300" identifier="xcode"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BXDOSWindowController">
@@ -21,8 +22,8 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
-        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" wantsToBeColor="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="1" customClass="BXDOSWindow">
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="1" customClass="BXDOSWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
             <rect key="contentRect" x="400" y="240" width="640" height="506"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
@@ -37,6 +38,7 @@
                             <textField verticalHuggingPriority="750" tag="2" id="909">
                                 <rect key="frame" x="33" y="6" width="321" height="14"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <animations/>
                                 <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Cmd-click to lock the mouse pointer to the window." id="910">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -46,6 +48,7 @@
                             <button verticalHuggingPriority="750" id="1442">
                                 <rect key="frame" x="7" y="4" width="24" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                <animations/>
                                 <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="NSLockUnlockedTemplate" imagePosition="overlaps" alignment="center" alternateImage="NSLockLockedTemplate" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1443">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                     <font key="font" metaFont="systemBold" size="12"/>
@@ -55,6 +58,7 @@
                                 </connections>
                             </button>
                         </subviews>
+                        <animations/>
                     </customView>
                     <customView id="924" userLabel="Window Content Wrapper" customClass="BXDOSWindowBackgroundView">
                         <rect key="frame" x="0.0" y="26" width="640" height="480"/>
@@ -71,8 +75,10 @@
                                             <openGLView focusRingType="none" rendererType="accelerated" useAuxiliaryDepthBufferStencil="NO" useDoubleBufferingEnabled="YES" useRecovery="YES" wantsBestResolutionOpenGLSurface="YES" id="970" customClass="BXGLRenderingView">
                                                 <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <animations/>
                                             </openGLView>
                                         </subviews>
+                                        <animations/>
                                     </customView>
                                     <customView id="1251" userLabel="Loading view">
                                         <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
@@ -81,14 +87,19 @@
                                             <customView id="1253" customClass="BXHUDSpinningProgressIndicator">
                                                 <rect key="frame" x="242" y="160" width="156" height="160"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                <animations/>
                                             </customView>
                                         </subviews>
+                                        <animations/>
                                     </customView>
                                 </subviews>
+                                <animations/>
                             </customView>
                         </subviews>
+                        <animations/>
                     </customView>
                 </subviews>
+                <animations/>
             </view>
             <toolbar key="toolbar" implicitIdentifier="2C5F78C8-93AF-4984-B864-4A2ABD5AA305" explicitIdentifier="DOSWindowToolbar" displayMode="iconOnly" sizeMode="regular" id="1268">
                 <allowedToolbarItems>
@@ -100,6 +111,7 @@
                         <button key="view" verticalHuggingPriority="750" id="1283">
                             <rect key="frame" x="9" y="14" width="40" height="25"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="LauncherListTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1284">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -119,6 +131,7 @@
                         <button key="view" verticalHuggingPriority="750" id="1346">
                             <rect key="frame" x="6" y="14" width="40" height="25"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="DocumentationTemplate" imagePosition="only" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1347">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -135,6 +148,7 @@
                         <button key="view" verticalHuggingPriority="750" id="1277">
                             <rect key="frame" x="9" y="14" width="40" height="25"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSRevealFreestandingTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1278">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -158,6 +172,7 @@
                                     <slider toolTip="Adjust the volume" focusRingType="none" verticalHuggingPriority="750" id="2UX-hR-kRW">
                                         <rect key="frame" x="29" y="7" width="72" height="15"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <animations/>
                                         <sliderCell key="cell" controlSize="small" continuous="YES" state="on" focusRingType="none" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="eHh-bb-mnd"/>
                                         <connections>
                                             <binding destination="-3" name="value" keyPath="delegate.effectiveVolume" id="qO5-w1-mUY">
@@ -170,6 +185,7 @@
                                     <button toolTip="Set the volume to maximum" verticalHuggingPriority="750" id="ktK-fd-rsN">
                                         <rect key="frame" x="102" y="5" width="27" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <animations/>
                                         <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="Volume100PercentTemplate" imagePosition="only" alignment="center" controlSize="small" state="on" borderStyle="border" inset="2" id="w0L-iR-Af7">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="systemBold" size="12"/>
@@ -181,6 +197,7 @@
                                     <button toolTip="Mute the volume" verticalHuggingPriority="750" id="32N-s1-9hf">
                                         <rect key="frame" x="6" y="5" width="22" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <animations/>
                                         <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="Volume0PercentCroppedTemplate" imagePosition="overlaps" alignment="center" controlSize="small" borderStyle="border" inset="2" id="bVp-0Y-J3v">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="systemBold" size="12"/>
@@ -190,7 +207,9 @@
                                         </connections>
                                     </button>
                                 </subviews>
+                                <animations/>
                             </view>
+                            <animations/>
                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         </box>
@@ -209,6 +228,7 @@
                                     <button toolTip="Decrease the CPU speed" verticalHuggingPriority="750" id="1420">
                                         <rect key="frame" x="0.0" y="5" width="29" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <animations/>
                                         <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="TurtleTemplate" imagePosition="only" alignment="center" controlSize="small" continuous="YES" state="on" borderStyle="border" inset="2" id="1421">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="systemBold" size="12"/>
@@ -220,6 +240,7 @@
                                     <button toolTip="Increase the CPU speed" verticalHuggingPriority="750" id="1419">
                                         <rect key="frame" x="101" y="5" width="29" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <animations/>
                                         <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="BunnyTemplate" imagePosition="only" alignment="center" controlSize="small" continuous="YES" state="on" borderStyle="border" inset="2" id="1422">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="systemBold" size="12"/>
@@ -231,6 +252,7 @@
                                     <slider toolTip="Adjust the emulated CPU speed" focusRingType="none" verticalHuggingPriority="750" id="1418">
                                         <rect key="frame" x="29" y="5" width="72" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <animations/>
                                         <sliderCell key="cell" controlSize="small" continuous="YES" state="on" focusRingType="none" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="below" numberOfTickMarks="6" sliderType="linear" id="1423"/>
                                         <connections>
                                             <binding destination="-2" name="enabled" keyPath="document.emulating" id="1429"/>
@@ -244,7 +266,9 @@
                                         </connections>
                                     </slider>
                                 </subviews>
+                                <animations/>
                             </view>
+                            <animations/>
                             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         </box>
@@ -255,7 +279,8 @@
                         <segmentedControl key="view" verticalHuggingPriority="750" id="1343">
                             <rect key="frame" x="0.0" y="14" width="104" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <segmentedCell key="cell" alignment="left" style="texturedRounded" trackingMode="selectOne" id="1344">
+                            <animations/>
+                            <segmentedCell key="cell" borderStyle="border" alignment="left" style="texturedRounded" trackingMode="selectOne" id="1344">
                                 <font key="font" metaFont="system"/>
                                 <segments>
                                     <segment toolTip="Pause the game" image="PauseTemplate" width="32"/>
@@ -269,9 +294,9 @@
                                 <binding destination="-2" name="enabled" keyPath="DOSViewShown" id="1415"/>
                                 <binding destination="-2" name="selectedTag" keyPath="document.playbackMode" id="1411">
                                     <dictionary key="options">
-                                        <integer key="NSNotApplicablePlaceholder" value="1"/>
-                                        <integer key="NSNoSelectionPlaceholder" value="1"/>
                                         <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                        <integer key="NSNoSelectionPlaceholder" value="1"/>
+                                        <integer key="NSNotApplicablePlaceholder" value="1"/>
                                         <integer key="NSNullPlaceholder" value="1"/>
                                     </dictionary>
                                 </binding>
@@ -286,6 +311,7 @@
                         <button key="view" verticalHuggingPriority="750" id="1353">
                             <rect key="frame" x="2" y="14" width="40" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSRefreshTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1354">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -302,6 +328,7 @@
                         <button key="view" verticalHuggingPriority="750" id="1377">
                             <rect key="frame" x="13" y="14" width="40" height="25"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="ScreenshotTemplate" imagePosition="only" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1378">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -319,6 +346,7 @@
                         <button key="view" verticalHuggingPriority="750" id="1400">
                             <rect key="frame" x="20" y="14" width="40" height="25"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="DiscSwapTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1401">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -387,10 +415,10 @@
         <image name="DiscSwapTemplate" width="24" height="16"/>
         <image name="DocumentationTemplate" width="16" height="16"/>
         <image name="FastForwardTemplate" width="19" height="13"/>
-        <image name="LauncherListTemplate" width="16" height="16"/>
-        <image name="NSLockLockedTemplate" width="9" height="12"/>
-        <image name="NSLockUnlockedTemplate" width="9" height="12"/>
-        <image name="NSRefreshTemplate" width="10" height="12"/>
+        <image name="LauncherListTemplate" width="16" height="13"/>
+        <image name="NSLockLockedTemplate" width="10" height="14"/>
+        <image name="NSLockUnlockedTemplate" width="10" height="14"/>
+        <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSRevealFreestandingTemplate" width="14" height="14"/>
         <image name="PauseTemplate" width="10" height="13"/>
         <image name="PlayTemplate" width="10" height="13"/>

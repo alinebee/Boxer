@@ -475,7 +475,7 @@
     
     if (sourceRep)
     {
-        NSData *data = [sourceRep representationUsingType: NSPNGFileType properties: nil];
+        NSData *data = [sourceRep representationUsingType: NSPNGFileType properties: @{}];
         BOOL wroteIcon = [data writeToURL: helpbookIconURL options: NSAtomicWrite error: outError];
         if (!wroteIcon)
         {
@@ -485,7 +485,7 @@
     
     if (source2xRep)
     {
-        NSData *data = [source2xRep representationUsingType: NSPNGFileType properties: nil];
+        NSData *data = [source2xRep representationUsingType: NSPNGFileType properties: @{}];
         BOOL wroteIcon = [data writeToURL: helpbookIcon2xURL options: NSAtomicWrite error: outError];
         if (!wroteIcon)
         {

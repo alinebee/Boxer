@@ -691,6 +691,10 @@
 		9FA9E281121FD874006E20C4 /* PanelExpandTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA9E27F121FD874006E20C4 /* PanelExpandTemplate.pdf */; };
 		9FA9E282121FD874006E20C4 /* PanelCollapseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */; };
 		9FAA44A711EB24A90042B986 /* NSString+ADBStringFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAA44A611EB24A90042B986 /* NSString+ADBStringFormatting.m */; };
+		9FAA7EB01BE698ED00F4FCA6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FFE3EAA1BE68DBA005332E0 /* Localizable.strings */; };
+		9FAA7EB11BE6996800F4FCA6 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; };
+		9FAA7EB21BE6996B00F4FCA6 /* Shell.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F4199B31BD3E35300A2D165 /* Shell.strings */; };
+		9FAA7EB31BE6996E00F4FCA6 /* DOSBox.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F4199B11BD3E35300A2D165 /* DOSBox.strings */; };
 		9FAD1DFD14641ECD00C3074E /* ADBContinuousThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD1DFC14641ECD00C3074E /* ADBContinuousThread.m */; };
 		9FADFE5511EC7E1700990E91 /* ADBDigest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE5411EC7E1700990E91 /* ADBDigest.m */; };
 		9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE9611EC932800990E91 /* NSData+HexStrings.m */; };
@@ -907,10 +911,8 @@
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
 		9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */ = {isa = PBXBuildFile; fileRef = 9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */; };
 		9FFE1F831390F70C005C438A /* BXThrustmasterFCS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */; };
-		9FFE3E911BE68DB6005332E0 /* Shell.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FFE3E931BE68DB6005332E0 /* Shell.strings */; };
 		9FFE3E991BE68DB7005332E0 /* Boxer Standalone-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FFE3E9B1BE68DB7005332E0 /* Boxer Standalone-InfoPlist.strings */; };
 		9FFE3EA81BE68DBA005332E0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FFE3EAA1BE68DBA005332E0 /* Localizable.strings */; };
-		9FFE3EB21BE68DBB005332E0 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FFE3EB41BE68DBB005332E0 /* Configuration.strings */; };
 		9FFE7104165E931600F99C3D /* BXJoystickItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE7103165E931600F99C3D /* BXJoystickItem.m */; };
 		9FFF635F14013F4D007E8B47 /* HardDiskTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635914013F4D007E8B47 /* HardDiskTemplate.pdf */; };
 		9FFF636014013F4D007E8B47 /* CDROMTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635A14013F4D007E8B47 /* CDROMTemplate.pdf */; };
@@ -1911,7 +1913,6 @@
 		9FFE3E8C1BE68DB6005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "cs-CZ.lproj/MainMenu.strings"; sourceTree = "<group>"; };
 		9FFE3E8D1BE68DB6005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "cs-CZ.lproj/InspectorJoystickItem.strings"; sourceTree = "<group>"; };
 		9FFE3E8E1BE68DB6005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "cs-CZ.lproj/LauncherFavorite.strings"; sourceTree = "<group>"; };
-		9FFE3E921BE68DB6005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "cs-CZ.lproj/Shell.strings"; sourceTree = "<group>"; };
 		9FFE3E941BE68DB7005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "Resources/cs-CZ.lproj/DOSWindow.strings"; sourceTree = "<group>"; };
 		9FFE3E951BE68DB7005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "cs-CZ.lproj/Shell.strings"; sourceTree = "<group>"; };
 		9FFE3E961BE68DB7005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "Resources/cs-CZ.lproj/ImportWindow.strings"; sourceTree = "<group>"; };
@@ -1932,7 +1933,6 @@
 		9FFE3EAD1BE68DBA005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "cs-CZ.lproj/MainMenu.strings"; sourceTree = "<group>"; };
 		9FFE3EAE1BE68DBA005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "cs-CZ.lproj/DOSWindow.strings"; sourceTree = "<group>"; };
 		9FFE3EAF1BE68DBA005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "Resources/cs-CZ.lproj/MainMenu.strings"; sourceTree = "<group>"; };
-		9FFE3EB31BE68DBB005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "cs-CZ.lproj/Configuration.strings"; sourceTree = "<group>"; };
 		9FFE3EB51BE68DBB005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "Resources/cs-CZ.lproj/Preferences.strings"; sourceTree = "<group>"; };
 		9FFE3EB61BE68DBB005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "Resources/cs-CZ.lproj/GamesFolderPanelOptions.strings"; sourceTree = "<group>"; };
 		9FFE3EB71BE68DBB005332E0 /* cs-CZ */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "cs-CZ"; path = "cs-CZ.lproj/LaunchPanel.strings"; sourceTree = "<group>"; };
@@ -2120,7 +2120,6 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				9FFE3EAA1BE68DBA005332E0 /* Localizable.strings */,
 				9F4BCCD717E6190A00140390 /* Boxer.help */,
 				9FBC3CB10F56E32C001811F2 /* Info.plist */,
 				9F466AFB11A92C4B00C50965 /* UserDefaults.plist */,
@@ -2476,9 +2475,7 @@
 		9F2D317915B823D300FAE848 /* Standalone */ = {
 			isa = PBXGroup;
 			children = (
-				9FFE3EB41BE68DBB005332E0 /* Configuration.strings */,
 				9FFE3E9B1BE68DB7005332E0 /* Boxer Standalone-InfoPlist.strings */,
-				9FFE3E931BE68DB6005332E0 /* Shell.strings */,
 				9F2D317A15B8240400FAE848 /* Resources */,
 				9F2D317415B8233900FAE848 /* Boxer Standalone-Info.plist */,
 				9FCB7B0B15B842E000CC7CC7 /* BXStandaloneAppController.h */,
@@ -2619,10 +2616,11 @@
 		9F496E4D108EEE0700282261 /* Strings */ = {
 			isa = PBXGroup;
 			children = (
+				9FFE3EAA1BE68DBA005332E0 /* Localizable.strings */,
 				9F4199B11BD3E35300A2D165 /* DOSBox.strings */,
 				9F4199B31BD3E35300A2D165 /* Shell.strings */,
-				9FBC345B0F56C64D001811F2 /* InfoPlist.strings */,
 				9FAA451411EB40180042B986 /* Configuration.strings */,
+				9FBC345B0F56C64D001811F2 /* InfoPlist.strings */,
 			);
 			name = Strings;
 			sourceTree = "<group>";
@@ -3975,11 +3973,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F2D30D615B8233800FAE848 /* LockClosing.aiff in Resources */,
+				9FAA7EB01BE698ED00F4FCA6 /* Localizable.strings in Resources */,
 				9F2D30D715B8233800FAE848 /* LockOpening.aiff in Resources */,
 				9F2D30DB15B8233800FAE848 /* Snapshot.aiff in Resources */,
 				9F2D30E815B8233800FAE848 /* GameProfiles.plist in Resources */,
 				9F2D30E915B8233800FAE848 /* Configurations in Resources */,
 				9F2D311515B8233800FAE848 /* KeyboardLayouts.plist in Resources */,
+				9FAA7EB21BE6996B00F4FCA6 /* Shell.strings in Resources */,
 				9F2D312115B8233800FAE848 /* PauseTemplate.pdf in Resources */,
 				9F2D312215B8233800FAE848 /* PlayTemplate.pdf in Resources */,
 				9F2D312315B8233800FAE848 /* EjectTemplate.pdf in Resources */,
@@ -4009,6 +4009,7 @@
 				9FB60E9415C573C100CD0D63 /* package.icns in Resources */,
 				9FAEBE5315D678C800C9AC5F /* DOSWindowBackground.png in Resources */,
 				9FAEBE5615D67C3A00C9AC5F /* DOSWindowGrille.png in Resources */,
+				9FAA7EB31BE6996E00F4FCA6 /* DOSBox.strings in Resources */,
 				9F57684E15DA3DA600B50500 /* DOSWindowBackground@2x.png in Resources */,
 				9F57685115DA3DAF00B50500 /* DOSWindowGrille@2x.png in Resources */,
 				9F57685B15DA3DFC00B50500 /* StandaloneLogo.png in Resources */,
@@ -4016,8 +4017,7 @@
 				9FDFB47F15DBBABC004EA615 /* Credits.html in Resources */,
 				9FDFB48215DBC73D004EA615 /* Help.help in Resources */,
 				9F794DAF15EA966E00A4CB05 /* DummyCD.iso in Resources */,
-				9FFE3E911BE68DB6005332E0 /* Shell.strings in Resources */,
-				9FFE3EB21BE68DBB005332E0 /* Configuration.strings in Resources */,
+				9FAA7EB11BE6996800F4FCA6 /* Configuration.strings in Resources */,
 				9FCA937F16FF38EC00720B81 /* DocumentationBrowser.xib in Resources */,
 				9FCA938016FF38F800720B81 /* DocumentationPanel.xib in Resources */,
 			);
@@ -5061,14 +5061,6 @@
 			name = LaunchPanel.xib;
 			sourceTree = "<group>";
 		};
-		9FFE3E931BE68DB6005332E0 /* Shell.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9FFE3E921BE68DB6005332E0 /* cs-CZ */,
-			);
-			name = Shell.strings;
-			sourceTree = "<group>";
-		};
 		9FFE3E9B1BE68DB7005332E0 /* Boxer Standalone-InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -5084,14 +5076,6 @@
 			);
 			name = Localizable.strings;
 			sourceTree = SOURCE_ROOT;
-		};
-		9FFE3EB41BE68DBB005332E0 /* Configuration.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9FFE3EB31BE68DBB005332E0 /* cs-CZ */,
-			);
-			name = Configuration.strings;
-			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
 

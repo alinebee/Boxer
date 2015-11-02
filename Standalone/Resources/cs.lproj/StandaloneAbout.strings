@@ -1,0 +1,24 @@
+
+/* Class = "NSButtonCell"; title = "Acknowledgements"; ObjectID = "47"; */
+"47.title" = "Acknowledgements";
+
+/* Class = "NSButtonCell"; title = "Get more games"; ObjectID = "49"; */
+"49.title" = "Get more games";
+
+/* Class = "NSTextFieldCell"; title = "Version [1.2] ([20111031.1])"; ObjectID = "58"; */
+"58.title" = "Version [1.2] ([20111031.1])";
+
+/* Class = "NSTextFieldCell"; title = "[Game name]"; ObjectID = "67"; */
+"67.title" = "[Game name]";
+
+/* Class = "BindingConnection"; ibShadowedDisplayPattern = "Version %{value1}@ (%{value2}@)"; ObjectID = "84"; */
+"84.ibShadowedDisplayPattern" = "Version %{value1}@ (%{value2}@)";
+
+/* Class = "BindingConnection"; ibShadowedDisplayPattern = "Version %{value1}@ (%{value2}@)"; ObjectID = "86"; */
+"86.ibShadowedDisplayPattern" = "Version %{value1}@ (%{value2}@)";
+
+/* Class = "BindingConnection"; ibShadowedDisplayPattern = "Version %{value1}@ (%{value2}@)"; ObjectID = "94"; */
+"94.ibShadowedDisplayPattern" = "Version %{value1}@ (%{value2}@)";
+
+/* Class = "BindingConnection"; ibShadowedDisplayPattern = "Version %{value1}@ (%{value2}@)"; ObjectID = "96"; */
+"96.ibShadowedDisplayPattern" = "Version %{value1}@ (%{value2}@)";

@@ -2,13 +2,13 @@
 "29.title" = "Hlavní menu";
 
 /* Class = "NSMenuItem"; title = "[AppName]"; ObjectID = "56"; */
-"56.title" = "[Název aplikace]";
+"56.title" = "[AppName]";
 
 /* Class = "NSMenu"; title = "[AppName]"; ObjectID = "57"; */
-"57.title" = "[Název aplikace]";
+"57.title" = "[AppName]";
 
 /* Class = "NSMenuItem"; title = "About [AppName]"; ObjectID = "58"; */
-"58.title" = "O hře [název aplikace]";
+"58.title" = "O hře [AppName]";
 
 /* Class = "NSMenuItem"; title = "Help"; ObjectID = "103"; */
 "103.title" = "Nápověda";
@@ -17,13 +17,13 @@
 "106.title" = "Nápověda";
 
 /* Class = "NSMenuItem"; title = "[AppName] Help"; ObjectID = "111"; */
-"111.title" = "Nápověda pro hru [název aplikace]";
+"111.title" = "Nápověda pro hru [AppName]";
 
 /* Class = "NSMenuItem"; title = "Hide [AppName]"; ObjectID = "134"; */
-"134.title" = "Skrýt hru [název aplikace]";
+"134.title" = "Skrýt hru [AppName]";
 
 /* Class = "NSMenuItem"; title = "Quit [AppName]"; ObjectID = "136"; */
-"136.title" = "Ukončit hru [název aplikace]";
+"136.title" = "Ukončit hru [AppName]";
 
 /* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "145"; */
 "145.title" = "Skrýt ostatní";

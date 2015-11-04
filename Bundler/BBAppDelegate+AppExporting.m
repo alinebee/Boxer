@@ -152,6 +152,27 @@
     userDefaults[@"showAspectCorrectionToggle"] = @(self.showsAspectCorrectionToggle);
     [userDefaults writeToURL: userDefaultsURL atomically: YES];
     
+    
+    //Also rewrite the strings files for every localization within the app,
+    //to use the substituted app and organization info.
+    NSEnumerator *enumerator = [manager enumeratorAtURL: appResourceURL
+                             includingPropertiesForKeys: nil
+                                                options: 0
+                                           errorHandler: NULL];
+    for (NSURL *URL in enumerator)
+    {
+        if ([URL.pathExtension.lowercaseString isEqualToString: @"strings"])
+        {
+            BOOL rewrote = [self _rewriteStringsFileAtURL: URL withSubstitutions: substitutions error: outError];
+            if (!rewrote)
+            {
+                [manager removeItemAtURL: baseTempURL error: NULL];
+                return nil;
+            }
+        }
+    }
+    
+    
     //Now let's get to work on the help book.
     NSString *helpbookName = appInfo[@"CFBundleHelpBookFolder"];
     if (helpbookName)
@@ -495,7 +516,8 @@
     return helpbookIconURL;
 }
 
-- (BOOL) _rewritePlist: (NSMutableDictionary *)plist withSubstitutions: (NSDictionary *)substitutions
+- (BOOL) _rewritePlist: (NSMutableDictionary *)plist
+     withSubstitutions: (NSDictionary *)substitutions
 {
     for (NSString *key in plist.allKeys)
     {
@@ -513,6 +535,37 @@
         }
     }
     return YES;
+}
+
+- (BOOL) _rewriteStringsFileAtURL: (NSURL *)stringsURL
+                withSubstitutions: (NSDictionary *)substitutions
+                            error: (NSError **)outError;
+{
+    NSStringEncoding originalEncoding;
+    NSString *contentsOfStringsFile = [NSString stringWithContentsOfURL: stringsURL
+                                                           usedEncoding: &originalEncoding
+                                                                  error: outError];
+    if (contentsOfStringsFile != nil)
+    {
+        NSMutableString *rewrittenString = [NSMutableString stringWithString: contentsOfStringsFile];
+        for (NSString *pattern in substitutions)
+        {
+            NSString *replacement = substitutions[pattern];
+            [rewrittenString replaceOccurrencesOfString: pattern
+                                             withString: replacement
+                                                options: NSLiteralSearch
+                                                  range: NSMakeRange(0, rewrittenString.length)];
+        }
+        
+        return [rewrittenString writeToURL: stringsURL
+                                atomically: YES
+                                  encoding: originalEncoding
+                                     error: outError];
+    }
+    else
+    {
+        return NO;
+    }
 }
 
 - (NSArray *) _helpLinksForPlist

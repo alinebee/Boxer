@@ -17,6 +17,9 @@
 + (NSString *) organizationName;
 + (NSURL *) organizationWebsiteURL;
 
+//The URL to the bundled gamebox resource. Will be nil if no bundled gamebox is present.
+- (NSURL *) bundledGameboxURL;
+
 //Launches the gamebox bundled in the application and returns the resulting session.
 //Returns nil and populates outError if the bundled gamebox could not be launched.
 - (id) openBundledGameAndDisplay: (BOOL)display error: (NSError **)outError;

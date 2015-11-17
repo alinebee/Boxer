@@ -259,7 +259,7 @@ nil];
 {
 	[self _executeCommand: @"cls" encoding: BXDirectStringEncoding];
 	[self displayString: NSLocalizedStringFromTable(@"Shell Command Help", @"Shell",
-                                                    @"A list of common DOS commands, displayed when running HELP at the command line. This should list the commands in the left column (which should be left untranslated) and command descriptions in the right-hand column. Accepts DOSBox-style formatting characters.")];
+                                                    @"A list of common DOS commands, displayed when running HELP at the command line. This should list the commands in the left column (which should be left untranslated) and command descriptions in the right-hand column. Accepts DOSBox-style formatting characters.\n\nNOTE FOR TRANSLATORS: The key for this string is a reference for a much longer text. See the English version of Shell.strings for the actual text to be translated.")];
 }
 
 - (void) runPreflightCommands: (NSString *)argumentString

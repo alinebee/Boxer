@@ -152,6 +152,7 @@
             //Also resync the favorites and recents, since more accurate path info may have become available for them
             [self _syncFavoriteProgramRows];
             [self _syncRecentProgramRows];
+            [self _syncLaunchableState];
         }
     }
     
@@ -159,24 +160,33 @@
     {
         _recentProgramRowsDirty = YES;
         if (_shouldUpdateImmediately)
+        {
             [self _syncRecentProgramRows];
+            [self _syncLaunchableState];
+        }
     }
     
     else if ([keyPath isEqualToString: @"gamebox.launchers"])
     {
         _favoriteProgramRowsDirty = YES;
         if (_shouldUpdateImmediately)
+        {
             [self _syncFavoriteProgramRows];
+            [self _syncLaunchableState];
+        }
     }
     
     else if ([keyPath isEqualToString: @"canOpenURLs"])
     {
         if (_shouldUpdateImmediately)
+        {
             [self _syncLaunchableState];
+            [self _syncLaunchableState];
+        }
     }
 }
 
-- (void) viewWillAppear
+- (void) willShowPanel
 {
     _shouldUpdateImmediately = YES;
     
@@ -192,7 +202,7 @@
     [self _syncLaunchableState];
 }
 
-- (void) viewDidDisappear
+- (void) didHidePanel
 {
     _shouldUpdateImmediately = NO;
 }

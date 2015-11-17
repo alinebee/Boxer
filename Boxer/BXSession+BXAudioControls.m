@@ -164,10 +164,23 @@
     
     //If a custom soundfont has been specified for the MIDI synth, load that now also.
     NSString *soundfontPath = [[NSUserDefaults standardUserDefaults] objectForKey: @"MIDISoundFontPath"];
-    if (soundfontPath)
+    if (soundfontPath.length > 0)
     {
-        [fallbackSynth loadSoundFontWithContentsOfURL: [NSURL fileURLWithPath: soundfontPath]
-                                                error: NULL];
+        NSError *loadError = nil;
+        BOOL loaded = [fallbackSynth loadSoundFontWithContentsOfURL: [NSURL fileURLWithPath: soundfontPath] error: &loadError];
+        
+        if (loaded)
+        {
+            NSLog(@"Successfully loaded soundfont: %@", soundfontPath);
+        }
+        else
+        {
+            NSLog(@"Error when loading soundfont: %@", loadError);
+        }
+    }
+    else
+    {
+        NSLog(@"No soundfont specified, using default OS X soundfont.");
     }
     
     return fallbackSynth;

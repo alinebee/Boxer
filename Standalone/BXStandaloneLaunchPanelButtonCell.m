@@ -5,13 +5,13 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXLaunchPanelButtonCell.h"
+#import "BXStandaloneLaunchPanelButtonCell.h"
 #import "NSShadow+ADBShadowExtensions.h"
 #import "NSBezierPath+MCAdditions.h"
 #import "NSImage+ADBImageEffects.h"
 #import "ADBGeometry.h"
 
-@implementation BXLaunchPanelButton
+@implementation BXStandaloneLaunchPanelButton
 
 - (void) updateTrackingAreas
 {
@@ -37,7 +37,7 @@
 @end
 
 
-@interface BXLaunchPanelButtonCell ()
+@interface BXStandaloneLaunchPanelButtonCell ()
 
 //Whether the button is currently being hovered.
 @property (assign, nonatomic) BOOL mouseIsInside;
@@ -45,7 +45,7 @@
 @end
 
 
-@implementation BXLaunchPanelButtonCell
+@implementation BXStandaloneLaunchPanelButtonCell
 @synthesize mouseIsInside = _mouseIsInside;
 
 + (NSString *) defaultThemeKey { return @"BXIndentedTheme"; }
@@ -325,17 +325,6 @@
            dropShadow: indent
           innerShadow: innerShadow
        respectFlipped: YES];
-}
-
-@end
-
-
-@implementation BXLaunchPanelLogoCell
-
-- (void) awakeFromNib
-{
-    self.showsStateBy = NSNoCellMask;
-    self.highlightsBy = NSNoCellMask;
 }
 
 @end

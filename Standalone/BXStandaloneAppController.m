@@ -171,21 +171,52 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
     return [self openUntitledDocumentAndDisplay: display error: outError];
 }
 
+- (NSURL *) bundledGameboxURL
+{
+    NSString *bundledGameboxName = [[NSBundle mainBundle] objectForInfoDictionaryKey: BXBundledGameboxNameInfoPlistKey];
+    
+    if (![bundledGameboxName.pathExtension isEqualToString: @"boxer"])
+        bundledGameboxName = [bundledGameboxName stringByAppendingPathExtension: @"boxer"];
+    
+    NSURL *bundledGameboxURL = [[NSBundle mainBundle] URLForResource: bundledGameboxName
+                                                       withExtension: nil];
+    
+    return bundledGameboxURL;
+}
+
+- (id) makeDocumentWithContentsOfURL: (NSURL *)absoluteURL
+                              ofType: (NSString *)typeName
+                               error: (NSError **)outError
+{
+    if ([BXEmulator canLaunchEmulator])
+    {
+        return [super makeDocumentWithContentsOfURL: absoluteURL
+                                             ofType: typeName
+                                              error: outError];
+    }
+    else
+    {
+        NSString *executablePath = [[NSBundle mainBundle] executablePath];
+        [NSTask launchedTaskWithLaunchPath: executablePath arguments: @[absoluteURL.path]];
+        
+        if (outError)
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                            code: NSUserCancelledError
+                                        userInfo: nil];
+        return nil;
+    }
+}
+
+
 - (id) makeUntitledDocumentOfType: (NSString *)typeName error: (NSError **)outError
 {
     if ([BXEmulator canLaunchEmulator])
     {
-        NSString *bundledGameboxName = [[NSBundle mainBundle] objectForInfoDictionaryKey: BXBundledGameboxNameInfoPlistKey];
+        NSURL *gameboxURL = self.bundledGameboxURL;
         
-        if (![bundledGameboxName.pathExtension isEqualToString: @"boxer"])
-            bundledGameboxName = [bundledGameboxName stringByAppendingPathExtension: @"boxer"];
-        
-        NSURL *bundledGameboxURL = [[NSBundle mainBundle] URLForResource: bundledGameboxName
-                                                           withExtension: nil];
-        
-        if (bundledGameboxURL)
+        if (gameboxURL)
         {
-            BXSession *session = [[BXSession alloc] initWithContentsOfURL: bundledGameboxURL
+            BXSession *session = [[BXSession alloc] initWithContentsOfURL: gameboxURL
                                                                    ofType: typeName
                                                                     error: outError];
             return [session autorelease];

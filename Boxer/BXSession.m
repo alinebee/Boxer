@@ -13,6 +13,8 @@
 #import "BXBootlegCoverArt.h"
 #import "BXDrive.h"
 #import "BXBaseAppController.h"
+#import "BXStandaloneAppController.h"
+
 #import "BXDOSWindow.h"
 #import "BXDOSWindowControllerLion.h"
 #import "BXPrintStatusPanelController.h"
@@ -598,12 +600,12 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         [_DOSWindowController release];
         _DOSWindowController = [controller retain];
         
-        if (self.DOSWindowController)
+        if (controller)
         {
-            [self.DOSWindowController addObserver: self
-                                       forKeyPath: @"currentPanel"
-                                          options: 0
-                                          context: NULL];
+            [controller addObserver: self
+                         forKeyPath: @"currentPanel"
+                            options: 0
+                            context: NULL];
         }
     }
 }
@@ -1255,7 +1257,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     //TWEAK: Sanitise the configurations folder of a standalone game app the first time the app is launched,
     //by deleting all unused conf files.
-    if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
+    if ([(BXStandaloneAppController *)[NSApp delegate] isStandaloneGameBundle] &&
+        [(BXStandaloneAppController *)[NSApp delegate] bundledGameboxURL] != nil)
     {   
         NSFileManager *manager = [[NSFileManager alloc] init];
         NSURL *confBaseURL = [appBundle.resourceURL URLByAppendingPathComponent: @"Configurations"];
@@ -1499,7 +1502,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                     //Otherwise, just print out explanatory text at the DOS prompt.
                     else
                     {
-                        NSString *warningFormat = NSLocalizedStringFromTable(@"Windows-only game warning", @"Shell", nil);
+                        NSString *warningFormat = NSLocalizedStringFromTable(@"Windows-only game warning", @"Shell",
+                                                                             @"Warning shown at the DOS prompt after a Windows-only game was launched and exited.\n\nNOTE FOR TRANSLATORS: The key for this string is a reference for a much longer text. See the English version of Shell.strings for the actual text to be translated.");
                         NSString *programName = programURL.lastPathComponent.uppercaseString;
                         NSString *warningText = [NSString stringWithFormat: warningFormat, programName];
                         [self.emulator displayString: warningText];

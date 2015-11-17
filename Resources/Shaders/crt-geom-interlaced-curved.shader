@@ -65,7 +65,7 @@ vec2 fwtrans(vec2 uv)
   float r = FIX(sqrt(dot(uv,uv)));
   uv *= sin(r/R)/r;
   float x = 1.0-cos(r/R);
-  float D = d/R + x*cosangle.x*cosangle.y+dot(uv,sinangle);
+  float D = d/R + x*cosangle.x*cosangle.y;//+dot(uv,sinangle);
   return d*(uv*cosangle-x*sinangle)/D;
 }
 

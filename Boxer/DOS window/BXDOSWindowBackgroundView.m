@@ -207,9 +207,12 @@
     else
     {
         NSSize backingSize = self.bounds.size;
+        //Disabled: this was based on a flawed understanding of backing sizes vs. point sizes.
+        //Our NSImage's dimensions are expressed in the same units as the window bounds.
+        /*
         if ([self respondsToSelector: @selector(convertSizeToBacking:)])
             backingSize = [self convertSizeToBacking: backingSize];
-        
+        */
         if (!NSEqualSizes(backingSize, self.snapshot.size))
         {
             //CHECKME: this would be less code if we used NSBitmapImageRep -initWithFocusedViewRect:.

@@ -277,7 +277,7 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
             return [@"/" stringByAppendingPathComponent: path];
         }
     }
-    return nil;
+    return path;
 }
 
 - (BOOL) exposesLogicalURL: (NSURL *)URL

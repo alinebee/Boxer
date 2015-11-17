@@ -2,11 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
-      "scale" : "1x",
-      "filename" : "Drives.png"
+      "filename" : "Drives.png",
+      "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "Drives@2x.png",
       "scale" : "2x"
     },
     {

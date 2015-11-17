@@ -221,7 +221,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 	self.renderingView.postsFrameChangedNotifications = YES;
 	
     //Ensure our loading spinner runs on a separate thread.
-    self.loadingSpinner.usesThreadedAnimation = YES;
+    //Disabled as this was causing CATransaction errors.
+    //self.loadingSpinner.usesThreadedAnimation = YES;
     
     
     //Prepare menu representations for the toolbar items, which (being custom views)
@@ -1024,7 +1025,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     //If we're switching to the launcher panel, let it know so it can (re-)populate its program list.
     if (newPanel == BXDOSWindowLaunchPanel)
     {
-        [self.launchPanelController viewWillAppear];
+        if ([self.launchPanelController respondsToSelector: @selector(willShowPanel)])
+            [self.launchPanelController willShowPanel];
     }
     
     //If we're switching to the loading panel, fire up the spinning animation before the transition begins.
@@ -1049,8 +1051,9 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
         [[NSNotificationCenter defaultCenter] postNotificationName: BXWillBeginInterruptionNotification object: self];
         
         //Slide horizontally between the launcher panel and the DOS view.
-        if ((self.currentPanel == BXDOSWindowDOSView && newPanel == BXDOSWindowLaunchPanel) ||
-            (self.currentPanel == BXDOSWindowLaunchPanel && newPanel == BXDOSWindowDOSView))
+        //TWEAK: disabled for now because the lurching slide animation was making me carsick.
+        if (NO && ((self.currentPanel == BXDOSWindowDOSView && newPanel == BXDOSWindowLaunchPanel) ||
+            (self.currentPanel == BXDOSWindowLaunchPanel && newPanel == BXDOSWindowDOSView)))
         {
             //Disable window flushes to prevent partial redraws while we're setting up the views.
             [self.window disableFlushWindow];
@@ -1058,6 +1061,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
             //We reveal the launcher by sliding the parent view along horizontally:
             //So we resize the wrapper to accommodate both views side-by-side.
             NSView *wrapperView = self.panelWrapper;
+            NSAssert(wrapperView != nil, @"No view was bound to the wrapperView outlet in the XIB.");
             
             NSRect originalFrame = wrapperView.frame;
             NSRect originalBounds = wrapperView.bounds;
@@ -1158,7 +1162,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
             NSViewAnimation *animation = [[NSViewAnimation alloc] init];
             animation.viewAnimations = animations;
             animation.duration = 0.25f;
-            animation.animationBlockingMode = NSAnimationBlocking;
+            animation.animationBlockingMode = NSAnimationNonblocking;
             animation.animationCurve = NSAnimationEaseIn;
             
             if (involvesRenderingView && [self.renderingView respondsToSelector: @selector(viewAnimationWillStart:)])
@@ -1208,7 +1212,8 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
     //If we're switching away from the launcher panel, let it know so it can defer its updates.
     if (oldPanel == BXDOSWindowLaunchPanel)
     {
-        [self.launchPanelController viewDidDisappear];
+        if ([self.launchPanelController respondsToSelector: @selector(didHidePanel)])
+            [self.launchPanelController didHidePanel];
     }
     
     //Sync the cursor state, given that a different view may have just slid under the mouse.
@@ -1319,7 +1324,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 	return _resizingProgrammatically || self.inputView.inLiveResize;
 }
 
-//Warn the emulator to prepare for emulation cutout when resizing the window
+//Warn the emulator to prepare for emulation cutout when resizing the rendered view
 - (void) windowWillStartLiveResize: (NSNotification *)notification
 {
 	[[NSNotificationCenter defaultCenter] postNotificationName: BXWillBeginInterruptionNotification object: self];
@@ -1332,13 +1337,13 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 }
 
 
-//Snap to multiples of the base render size as we scale
+//Snap to multiples of the base render size as we scale, and ensure the aspect ratio conforms to that of the window.
 - (NSSize) windowWillResize: (NSWindow *)theWindow toSize: (NSSize) proposedFrameSize
 {
 	NSInteger snapThreshold	= BXWindowSnapThreshold;
     
 	NSSize snapIncrement	= self.renderingView.currentFrame.scaledResolution;
-	CGFloat aspectRatio		= aspectRatioOfSize(theWindow.contentAspectRatio);
+	CGFloat aspectRatio		= aspectRatioOfSize(self.renderingView.frame.size);
     
 	NSRect proposedFrame	= NSMakeRect(0, 0, proposedFrameSize.width, proposedFrameSize.height);
 	NSRect renderFrame		= [theWindow contentRectForFrameRect: proposedFrame];

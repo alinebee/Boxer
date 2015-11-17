@@ -56,7 +56,7 @@
         
         [NSValueTransformer setValueTransformer: speedBanding forName: @"BXSpeedSliderTransformer"];
         [NSValueTransformer setValueTransformer: invertFramerate forName: @"BXFrameRateSliderTransformer"];
-        [NSValueTransformer setValueTransformer: screenshotDater forName: @"BXScreenshotDateTransformer"];
+        [NSValueTransformer setValueTransformer: screenshotDater forName: @"BXCaptureDateTransformer"];
         
         [speedBanding release];
         [invertFramerate release];
@@ -624,6 +624,12 @@
     //Restart menu item
     else if (theAction == @selector(performRestartAtLaunchPanel:))
     {
+        //If this is a standalone game, hide the menu option altogether if the app can't show the launcher panel.
+        if ([(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
+        {
+            theItem.hidden = !self.allowsLauncherPanel;
+        }
+        
         //Disable the option if the current session does not support the launch panel
         //or if we're already at the launch panel.
         return self.isEmulating && self.allowsLauncherPanel && (self.DOSWindowController.currentPanel != BXDOSWindowLaunchPanel);
@@ -744,24 +750,7 @@
     NSImage *screenshot = [self.DOSWindowController screenshotOfCurrentFrame];
     if (screenshot)
     {
-        //Work out an appropriate filename, based on the window title and the current date and time.
-        NSValueTransformer *transformer = [NSValueTransformer valueTransformerForName: @"BXScreenshotDateTransformer"];
-        NSString *formattedDate = [transformer transformedValue: [NSDate date]];
-        
-        NSString *nameFormat = NSLocalizedString(@"%1$@ %2$@.png",
-                                                 @"Filename pattern for screenshots: %1$@ is the display name of the DOS session, %2$@ is the current date and time in a notation suitable for chronologically-ordered filenames.");
-        
-        NSString *windowTitle = self.DOSWindowController.window.title;
-        NSString *fileName = [NSString stringWithFormat: nameFormat, windowTitle, formattedDate];
-        
-        //Sanitise the filename in case it contains characters that are disallowed for file paths.
-        //TODO: move this off to an NSFileManager/NSString category.
-        fileName = [fileName stringByReplacingOccurrencesOfString: @":" withString: @"-"];
-        fileName = [fileName stringByReplacingOccurrencesOfString: @"/" withString: @"-"];
-        
-        NSURL *baseURL = [(BXBaseAppController *)[NSApp delegate] recordingsURLCreatingIfMissing: YES error: NULL];
-        NSURL *destinationURL = [baseURL URLByAppendingPathComponent: fileName];
-        
+        NSURL *destinationURL = [self URLForCaptureOfType: @"Screenshot" fileExtension: @"png"];
         BOOL saved = [screenshot saveToURL: destinationURL
                                   withType: NSPNGFileType
                                 properties: nil
@@ -1059,7 +1048,7 @@
     //Work out a suitable filename, based on the game name and the current date.
     NSString *nameFormat = NSLocalizedString(@"%1$@ %2$@", @"The filename format under which to save exported game states. %1$@ is the name of the current game. %2$@ is the current date and time.");
     
-    NSValueTransformer *transformer = [NSValueTransformer valueTransformerForName: @"BXScreenshotDateTransformer"];
+    NSValueTransformer *transformer = [NSValueTransformer valueTransformerForName: @"BXCaptureDateTransformer"];
     NSString *formattedDate = [transformer transformedValue: [NSDate date]];
     
     NSString *baseName  = [NSString stringWithFormat: nameFormat, self.displayName, formattedDate];

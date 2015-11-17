@@ -65,9 +65,9 @@ typedef struct {
 
 
 typedef NS_ENUM(NSInteger, BXHerculesTintMode) {
-    BXHerculesWhiteTint,
-    BXHerculesAmberTint,
-    BXHerculesGreenTint,
+    BXHerculesWhiteTint = 0,
+    BXHerculesAmberTint = 1,
+    BXHerculesGreenTint = 2,
 };
 
 

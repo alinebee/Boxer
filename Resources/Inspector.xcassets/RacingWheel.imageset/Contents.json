@@ -2,11 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
-      "scale" : "1x",
-      "filename" : "RacingWheel.png"
+      "filename" : "RacingWheel.png",
+      "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "RacingWheel@2x.png",
       "scale" : "2x"
     },
     {

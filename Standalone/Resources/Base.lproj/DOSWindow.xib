@@ -12,6 +12,7 @@
                 <outlet property="launchPanelController" destination="1056" id="1246"/>
                 <outlet property="loadingPanel" destination="1251" id="1252"/>
                 <outlet property="loadingSpinner" destination="1253" id="1254"/>
+                <outlet property="panelWrapper" destination="1244" id="pC4-Pw-j9N"/>
                 <outlet property="renderingView" destination="970" id="976"/>
                 <outlet property="statusBar" destination="3" id="918"/>
                 <outlet property="statusBarController" destination="926" id="983"/>
@@ -70,7 +71,7 @@
                                     <slider focusRingType="none" verticalHuggingPriority="750" id="985">
                                         <rect key="frame" x="21" y="5" width="72" height="15"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                                        <sliderCell key="cell" controlSize="small" continuous="YES" state="on" focusRingType="none" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="986" customClass="BXIndentedSliderCell"/>
+                                        <sliderCell key="cell" controlSize="small" continuous="YES" state="on" focusRingType="none" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="986"/>
                                         <connections>
                                             <binding destination="-3" name="value" keyPath="delegate.effectiveVolume" id="1002">
                                                 <dictionary key="options">
@@ -91,6 +92,41 @@
                                 <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
+                                    <customView hidden="YES" id="1010" userLabel="Launch Panel">
+                                        <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <subviews>
+                                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="1156">
+                                                <rect key="frame" x="80" y="92" width="480" height="296"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="ZVr-rE-dYp">
+                                                    <rect key="frame" x="0.0" y="0.0" width="480" height="296"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <subviews>
+                                                        <collectionView focusRingType="none" maxNumberOfColumns="1" id="1157">
+                                                            <rect key="frame" x="0.0" y="0.0" width="480" height="296"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <color key="primaryBackgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                            <connections>
+                                                                <binding destination="1056" name="content" keyPath="displayedRows" id="wDJ-DB-UDR"/>
+                                                                <outlet property="delegate" destination="1056" id="ghR-qx-jVg"/>
+                                                                <outlet property="itemPrototype" destination="1160" id="1162"/>
+                                                            </connections>
+                                                        </collectionView>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                </clipView>
+                                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="1158" customClass="BXHUDScroller">
+                                                    <rect key="frame" x="-100" y="-100" width="233" height="15"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                </scroller>
+                                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="1159" customClass="BXHUDScroller">
+                                                    <rect key="frame" x="234" y="1" width="15" height="143"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                </scroller>
+                                            </scrollView>
+                                        </subviews>
+                                    </customView>
                                     <customView hidden="YES" id="978" userLabel="DOS Input View" customClass="BXInputView">
                                         <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -109,67 +145,6 @@
                                                 <rect key="frame" x="242" y="160" width="156" height="160"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                             </customView>
-                                            <button focusRingType="none" id="1262">
-                                                <rect key="frame" x="268" y="28" width="104" height="24"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="StandaloneLogo" imagePosition="only" alignment="center" refusesFirstResponder="YES" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="1263" customClass="BXLaunchPanelLogoCell">
-                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                </buttonCell>
-                                                <connections>
-                                                    <action selector="visitOrganizationWebsite:" target="-1" id="1264"/>
-                                                    <binding destination="-3" name="hidden" keyPath="delegate.isUnbrandedGameBundle" id="1268"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                    </customView>
-                                    <customView hidden="YES" id="1010" userLabel="Launch Panel">
-                                        <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
-                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                        <subviews>
-                                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="1156">
-                                                <rect key="frame" x="80" y="92" width="480" height="296"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="ZVr-rE-dYp">
-                                                    <rect key="frame" x="0.0" y="0.0" width="480" height="296"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                    <subviews>
-                                                        <collectionView focusRingType="none" maxNumberOfColumns="1" id="1157" customClass="BXLauncherList">
-                                                            <rect key="frame" x="0.0" y="0.0" width="480" height="296"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                            <color key="primaryBackgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                            <connections>
-                                                                <binding destination="1056" name="content" keyPath="displayedRows" id="wDJ-DB-UDR"/>
-                                                                <outlet property="delegate" destination="1056" id="ghR-qx-jVg"/>
-                                                                <outlet property="favoritePrototype" destination="1160" id="E1I-5V-qiH"/>
-                                                                <outlet property="headingPrototype" destination="1160" id="8GE-Xh-CZM"/>
-                                                                <outlet property="itemPrototype" destination="1160" id="1162"/>
-                                                            </connections>
-                                                        </collectionView>
-                                                    </subviews>
-                                                    <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                </clipView>
-                                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="1158" customClass="BXHUDScroller">
-                                                    <rect key="frame" x="-100" y="-100" width="233" height="15"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                </scroller>
-                                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="1159" customClass="BXHUDScroller">
-                                                    <rect key="frame" x="234" y="1" width="15" height="143"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                </scroller>
-                                            </scrollView>
-                                            <button focusRingType="none" id="1257">
-                                                <rect key="frame" x="268" y="28" width="104" height="24"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="StandaloneLogo" imagePosition="only" alignment="center" refusesFirstResponder="YES" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="1258" customClass="BXLaunchPanelLogoCell">
-                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                </buttonCell>
-                                                <connections>
-                                                    <action selector="visitOrganizationWebsite:" target="-1" id="1261"/>
-                                                    <binding destination="-3" name="hidden" keyPath="delegate.isUnbrandedGameBundle" id="1266"/>
-                                                </connections>
-                                            </button>
                                         </subviews>
                                     </customView>
                                 </subviews>
@@ -196,10 +171,9 @@
                 <outlet property="view" destination="978" id="980"/>
             </connections>
         </viewController>
-        <viewController id="1056" userLabel="Launch Panel Controller" customClass="BXLaunchPanelController">
+        <viewController id="1056" userLabel="Launch Panel Controller" customClass="BXStandaloneLaunchPanelController">
             <connections>
-                <outlet property="launcherList" destination="1157" id="UDc-av-DTZ"/>
-                <outlet property="launcherScrollView" destination="1156" id="ODA-BB-nrp"/>
+                <outlet property="launcherList" destination="1157" id="9aa-gC-csp"/>
                 <outlet property="view" destination="1010" id="1060"/>
             </connections>
         </viewController>
@@ -213,15 +187,15 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="56"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
             <subviews>
-                <button id="1187" customClass="BXLaunchPanelButton">
+                <button id="1187" customClass="BXStandaloneLaunchPanelButton">
                     <rect key="frame" x="14" y="4" width="452" height="48"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                    <buttonCell key="cell" type="square" title="Launch Program" bezelStyle="shadowlessSquare" image="NSFollowLinkFreestandingTemplate" imagePosition="right" alignment="left" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="1188" customClass="BXLaunchPanelButtonCell">
+                    <buttonCell key="cell" type="square" title="Launch Program" bezelStyle="shadowlessSquare" image="NSFollowLinkFreestandingTemplate" imagePosition="right" alignment="left" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="1188" customClass="BXStandaloneLaunchPanelButtonCell">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system" size="20"/>
                     </buttonCell>
                     <connections>
-                        <action selector="openItemInDOS:" target="1160" id="bvb-ZR-ZZB"/>
+                        <action selector="openItemInDOS:" target="1160" id="dHg-tO-40k"/>
                         <binding destination="1160" name="title" keyPath="representedObject.title" id="1204"/>
                     </connections>
                 </button>

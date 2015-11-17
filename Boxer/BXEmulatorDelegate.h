@@ -219,6 +219,11 @@ extern NSString * const BXEmulatorDidRemoveFileNotification;
 /// @return @c YES to allow the emulator to write to the specified file location, or @c NO otherwise.
 - (BOOL) emulator: (BXEmulator *)emulator shouldAllowWriteAccessToURL: (NSURL *)fileURL onDrive: (BXDrive *)drive;
 
+/// Called when the emulator wants to capture output to a file.
+/// Return an open file handle which will later be closed by the emulator once capturing is complete.
+/// Return nil if the emulator is not permitted to capture files.
+- (FILE *) emulator: (BXEmulator *)emulator openCaptureFileOfType: (NSString *)captureType extension: (NSString *)extension;
+
 @optional
 
 /// Called when a DOS drive has been mounted. Corresponds to @c BXEmulatorDriveDidMountNotification.

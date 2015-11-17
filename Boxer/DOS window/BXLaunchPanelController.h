@@ -61,8 +61,8 @@
 
 //Called by BXDOSWindowController when it is about to switch to/away from the launcher panel.
 //Causes it to (re-)populate its program list.
-- (void) viewWillAppear;
-- (void) viewDidDisappear;
+- (void) willShowPanel;
+- (void) didHidePanel;
 
 @end
 

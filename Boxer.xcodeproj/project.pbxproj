@@ -9,23 +9,12 @@
 /* Begin PBXBuildFile section */
 		501F283B161303DA00B1ED53 /* BXBuiltinShaderRenderers.m in Sources */ = {isa = PBXBuildFile; fileRef = 501F283A161303DA00B1ED53 /* BXBuiltinShaderRenderers.m */; };
 		501F283C161303DA00B1ED53 /* BXBuiltinShaderRenderers.m in Sources */ = {isa = PBXBuildFile; fileRef = 501F283A161303DA00B1ED53 /* BXBuiltinShaderRenderers.m */; };
-		557A24DC1A1AEF82002FE9BD /* Printing.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24DB1A1AEF82002FE9BD /* Printing.xcassets */; };
-		557A24DE1A1AEFB8002FE9BD /* Volume.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24DD1A1AEFB8002FE9BD /* Volume.xcassets */; };
-		557A24DF1A1AEFBE002FE9BD /* Volume.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24DD1A1AEFB8002FE9BD /* Volume.xcassets */; };
-		557A24E11A1AF000002FE9BD /* Shelves.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24E01A1AF000002FE9BD /* Shelves.xcassets */; };
-		557A24E31A1AF041002FE9BD /* Preferences.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24E21A1AF041002FE9BD /* Preferences.xcassets */; };
-		557A24E51A1AF07C002FE9BD /* Inspector.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24E41A1AF07C002FE9BD /* Inspector.xcassets */; };
-		557A24E71A1AF0CB002FE9BD /* Bezels-shared.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24E61A1AF0CA002FE9BD /* Bezels-shared.xcassets */; };
-		557A24E81A1AF0D0002FE9BD /* Bezels-shared.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24E61A1AF0CA002FE9BD /* Bezels-shared.xcassets */; };
-		557A24EA1A1AF0F2002FE9BD /* Bezels-DOSBox.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24E91A1AF0F2002FE9BD /* Bezels-DOSBox.xcassets */; };
+		554E2B6D1BFAF6720038C506 /* Shared.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 554E2B6C1BFAF6720038C506 /* Shared.xcassets */; };
+		554E2B6E1BFAF6B20038C506 /* Shared.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 554E2B6C1BFAF6720038C506 /* Shared.xcassets */; };
+		554E2B701BFAF6D90038C506 /* Boxer only.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 554E2B6F1BFAF6D90038C506 /* Boxer only.xcassets */; };
 		557A24EC1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24EB1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets */; };
-		557A24EE1A1AF19C002FE9BD /* Launcher.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24ED1A1AF19C002FE9BD /* Launcher.xcassets */; };
 		557A24F01A1AF1CE002FE9BD /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24EF1A1AF1CE002FE9BD /* Icons.xcassets */; };
 		55B22BA21A1BD9760007665E /* Bundler.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55B22BA11A1BD9760007665E /* Bundler.xcassets */; };
-		55BF4B8D1A1AF5A800399A43 /* Unsorted.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55BF4B8C1A1AF5A800399A43 /* Unsorted.xcassets */; };
-		55BF4B8F1A1AF61B00399A43 /* Unsorted-shared.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55BF4B8E1A1AF61B00399A43 /* Unsorted-shared.xcassets */; };
-		55BF4B901A1AF61B00399A43 /* Unsorted-shared.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55BF4B8E1A1AF61B00399A43 /* Unsorted-shared.xcassets */; };
-		55BF4B921A1AF66700399A43 /* Cover art.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55BF4B911A1AF66700399A43 /* Cover art.xcassets */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9F0497C01334C5970001FEE4 /* ADBForwardCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0497BF1334C5970001FEE4 /* ADBForwardCompatibility.m */; };
@@ -850,20 +839,11 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		501F2839161303DA00B1ED53 /* BXBuiltinShaderRenderers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBuiltinShaderRenderers.h; sourceTree = "<group>"; };
 		501F283A161303DA00B1ED53 /* BXBuiltinShaderRenderers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBuiltinShaderRenderers.m; sourceTree = "<group>"; };
-		557A24DB1A1AEF82002FE9BD /* Printing.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Printing.xcassets; sourceTree = "<group>"; };
-		557A24DD1A1AEFB8002FE9BD /* Volume.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Volume.xcassets; sourceTree = "<group>"; };
-		557A24E01A1AF000002FE9BD /* Shelves.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Shelves.xcassets; sourceTree = "<group>"; };
-		557A24E21A1AF041002FE9BD /* Preferences.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Preferences.xcassets; sourceTree = "<group>"; };
-		557A24E41A1AF07C002FE9BD /* Inspector.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Inspector.xcassets; sourceTree = "<group>"; };
-		557A24E61A1AF0CA002FE9BD /* Bezels-shared.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Bezels-shared.xcassets"; sourceTree = "<group>"; };
-		557A24E91A1AF0F2002FE9BD /* Bezels-DOSBox.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Bezels-DOSBox.xcassets"; sourceTree = "<group>"; };
+		554E2B6C1BFAF6720038C506 /* Shared.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Shared.xcassets; sourceTree = "<group>"; };
+		554E2B6F1BFAF6D90038C506 /* Boxer only.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Boxer only.xcassets"; sourceTree = "<group>"; };
 		557A24EB1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Importing-nonLocalizable.xcassets"; sourceTree = "<group>"; };
-		557A24ED1A1AF19C002FE9BD /* Launcher.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Launcher.xcassets; sourceTree = "<group>"; };
 		557A24EF1A1AF1CE002FE9BD /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
 		55B22BA11A1BD9760007665E /* Bundler.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Bundler.xcassets; sourceTree = "<group>"; };
-		55BF4B8C1A1AF5A800399A43 /* Unsorted.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Unsorted.xcassets; sourceTree = "<group>"; };
-		55BF4B8E1A1AF61B00399A43 /* Unsorted-shared.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Unsorted-shared.xcassets"; sourceTree = "<group>"; };
-		55BF4B911A1AF66700399A43 /* Cover art.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Cover art.xcassets"; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F0497BE1334C5970001FEE4 /* ADBForwardCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBForwardCompatibility.h; sourceTree = "<group>"; };
 		9F0497BF1334C5970001FEE4 /* ADBForwardCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBForwardCompatibility.m; sourceTree = "<group>"; };
@@ -2863,15 +2843,6 @@
 			name = MIDI;
 			sourceTree = "<group>";
 		};
-		9F9606E514F65A0B0072E90C /* Bezels */ = {
-			isa = PBXGroup;
-			children = (
-				557A24E61A1AF0CA002FE9BD /* Bezels-shared.xcassets */,
-				557A24E91A1AF0F2002FE9BD /* Bezels-DOSBox.xcassets */,
-			);
-			name = Bezels;
-			sourceTree = "<group>";
-		};
 		9F9606EC14F65B030072E90C /* Importing */ = {
 			isa = PBXGroup;
 			children = (
@@ -3012,19 +2983,11 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				557A24DB1A1AEF82002FE9BD /* Printing.xcassets */,
-				557A24DD1A1AEFB8002FE9BD /* Volume.xcassets */,
+				554E2B6C1BFAF6720038C506 /* Shared.xcassets */,
+				554E2B6F1BFAF6D90038C506 /* Boxer only.xcassets */,
 				9F9606EE14F65B5F0072E90C /* Icons */,
-				557A24E01A1AF000002FE9BD /* Shelves.xcassets */,
-				557A24E21A1AF041002FE9BD /* Preferences.xcassets */,
-				557A24E41A1AF07C002FE9BD /* Inspector.xcassets */,
-				9F9606E514F65A0B0072E90C /* Bezels */,
 				9F9606EC14F65B030072E90C /* Importing */,
-				55BF4B911A1AF66700399A43 /* Cover art.xcassets */,
-				557A24ED1A1AF19C002FE9BD /* Launcher.xcassets */,
 				9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */,
-				55BF4B8C1A1AF5A800399A43 /* Unsorted.xcassets */,
-				55BF4B8E1A1AF61B00399A43 /* Unsorted-shared.xcassets */,
 				9FBD321610E5144C00031CB6 /* Brand.png */,
 			);
 			name = Images;
@@ -3394,29 +3357,24 @@
 				9F4199EC1BD416E400A2D165 /* ImportWindow.xib in Resources */,
 				9FBC31E00F56C383001811F2 /* LockClosing.aiff in Resources */,
 				9FBC31E10F56C383001811F2 /* LockOpening.aiff in Resources */,
-				557A24E11A1AF000002FE9BD /* Shelves.xcassets in Resources */,
-				55BF4B921A1AF66700399A43 /* Cover art.xcassets in Resources */,
 				9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */,
 				9FCBB2D210A61CA800C28B09 /* package.icns in Resources */,
 				9FCBB6F310A6DDBD00C28B09 /* DOS Toolkit in Resources */,
 				9F4199E11BD416E400A2D165 /* DocumentationPanel.xib in Resources */,
-				557A24EA1A1AF0F2002FE9BD /* Bezels-DOSBox.xcassets in Resources */,
 				9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */,
 				9FFAFE4310DE343F00728BAC /* Configurations in Resources */,
 				9FBD321710E5144C00031CB6 /* Brand.png in Resources */,
 				9F4199F41BD416E400A2D165 /* MountPanelOptions.xib in Resources */,
 				9F4199F71BD416E900A2D165 /* DOSBox.strings in Resources */,
 				9F4199EB1BD416E400A2D165 /* DOSImportWindow.xib in Resources */,
-				557A24E51A1AF07C002FE9BD /* Inspector.xcassets in Resources */,
+				554E2B701BFAF6D90038C506 /* Boxer only.xcassets in Resources */,
 				9F466AFC11A92C4B00C50965 /* UserDefaults.plist in Resources */,
-				55BF4B8F1A1AF61B00399A43 /* Unsorted-shared.xcassets in Resources */,
 				9FDCDEFD11B5B83B0032DA4E /* dsa_pub.pem in Resources */,
 				9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */,
 				9F4199F81BD416E900A2D165 /* Shell.strings in Resources */,
 				9FE2172E121EED1E001452E3 /* ImportCoverArtTip.png in Resources */,
 				9FE2172F121EED1E001452E3 /* ImportRenameTip.png in Resources */,
 				9F4199E91BD416E400A2D165 /* LauncherHeading.xib in Resources */,
-				557A24E71A1AF0CB002FE9BD /* Bezels-shared.xcassets in Resources */,
 				9F160DE21236952600F8768E /* Sample Games in Resources */,
 				9F70C19C129036C900A3627F /* Boxer.sdef in Resources */,
 				9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */,
@@ -3426,10 +3384,9 @@
 				9F4199EA1BD416E400A2D165 /* LauncherFavorite.xib in Resources */,
 				9F4199ED1BD416E400A2D165 /* Inspector.xib in Resources */,
 				9F8A9CD2143E120B00C37A93 /* MT32ROMTypes.plist in Resources */,
+				554E2B6D1BFAF6720038C506 /* Shared.xcassets in Resources */,
 				9F12F97C144875F400FC9645 /* DummyCD.iso in Resources */,
 				9F4199F31BD416E400A2D165 /* ImportTipsPanel.xib in Resources */,
-				55BF4B8D1A1AF5A800399A43 /* Unsorted.xcassets in Resources */,
-				557A24DE1A1AEFB8002FE9BD /* Volume.xcassets in Resources */,
 				9F4199EE1BD416E400A2D165 /* InspectorDriveItem.xib in Resources */,
 				9F4199E31BD416E400A2D165 /* PrintStatusPanel.xib in Resources */,
 				9FE32383157A9559004492E8 /* Shaders in Resources */,
@@ -3439,14 +3396,11 @@
 				9F4199F11BD416E400A2D165 /* About.xib in Resources */,
 				9F4199EF1BD416E400A2D165 /* InspectorJoystickItem.xib in Resources */,
 				9F4199F91BD416E900A2D165 /* InfoPlist.strings in Resources */,
-				557A24DC1A1AEF82002FE9BD /* Printing.xcassets in Resources */,
-				557A24E31A1AF041002FE9BD /* Preferences.xcassets in Resources */,
 				557A24EC1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets in Resources */,
 				557A24F01A1AF1CE002FE9BD /* Icons.xcassets in Resources */,
 				9F4199E51BD416E400A2D165 /* MainMenu.xib in Resources */,
 				9F4199F61BD416E400A2D165 /* Bezel.xib in Resources */,
 				9F4BCCD817E6190A00140390 /* Boxer.help in Resources */,
-				557A24EE1A1AF19C002FE9BD /* Launcher.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3456,7 +3410,6 @@
 			files = (
 				9F2D30D615B8233800FAE848 /* LockClosing.aiff in Resources */,
 				9F2D30D715B8233800FAE848 /* LockOpening.aiff in Resources */,
-				557A24DF1A1AEFBE002FE9BD /* Volume.xcassets in Resources */,
 				9F2D30DB15B8233800FAE848 /* Snapshot.aiff in Resources */,
 				9F2D30E815B8233800FAE848 /* GameProfiles.plist in Resources */,
 				9F2D30E915B8233800FAE848 /* Configurations in Resources */,
@@ -3466,16 +3419,15 @@
 				9F2D318915B826F600FAE848 /* DOSWindow.xib in Resources */,
 				9F2D318B15B826FE00FAE848 /* MainMenu.xib in Resources */,
 				9FCB7B2715B877E500CC7CC7 /* DOS Toolkit in Resources */,
-				557A24E81A1AF0D0002FE9BD /* Bezels-shared.xcassets in Resources */,
 				9FCB7B2815B8782800CC7CC7 /* Bezel.xib in Resources */,
 				9F1E959A15BD88D700C3C6A0 /* UserDefaults.plist in Resources */,
 				9F1E959C15BD899500C3C6A0 /* GameDefaults.plist in Resources */,
 				9FB60E9415C573C100CD0D63 /* package.icns in Resources */,
-				55BF4B901A1AF61B00399A43 /* Unsorted-shared.xcassets in Resources */,
 				9F57685B15DA3DFC00B50500 /* StandaloneLogo.png in Resources */,
 				9F57685C15DA3DFC00B50500 /* StandaloneLogo@2x.png in Resources */,
 				9FDFB47F15DBBABC004EA615 /* Credits.html in Resources */,
 				9FDFB48215DBC73D004EA615 /* Help.help in Resources */,
+				554E2B6E1BFAF6B20038C506 /* Shared.xcassets in Resources */,
 				9F794DAF15EA966E00A4CB05 /* DummyCD.iso in Resources */,
 				9FCA937F16FF38EC00720B81 /* DocumentationBrowser.xib in Resources */,
 				9FCA938016FF38F800720B81 /* DocumentationPanel.xib in Resources */,

@@ -50,9 +50,9 @@ extern NSString * const BXUniqueDriveNameFormat;
 
 
 //Return a suitably initialized BXOperation subclass for transferring the drive.
-- (id <BXDriveImport>) initForDrive: (BXDrive *)drive
-               destinationFolderURL: (NSURL *)destinationFolderURL
-						  copyFiles: (BOOL)copyFiles;
+- (instancetype) initForDrive: (BXDrive *)drive
+         destinationFolderURL: (NSURL *)destinationFolderURL
+                    copyFiles: (BOOL)copyFiles;
 
 @end
 
@@ -87,6 +87,6 @@ extern NSString * const BXUniqueDriveNameFormat;
 //A protocol for import-related error subclasses.
 @protocol BXDriveImportError <NSObject>
 
-+ (id) errorWithDrive: (BXDrive *)drive;
++ (instancetype) errorWithDrive: (BXDrive *)drive;
 
 @end

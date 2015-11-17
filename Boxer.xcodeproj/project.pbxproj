@@ -397,34 +397,34 @@
 		9F3FB1AF1306F88800DB8FBE /* BXScriptablePreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1AE1306F88800DB8FBE /* BXScriptablePreferences.m */; };
 		9F3FB1B61306F9FB00DB8FBE /* NSApplication+BXScripting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1B51306F9FB00DB8FBE /* NSApplication+BXScripting.m */; };
 		9F3FB24E130714D700DB8FBE /* BXScriptableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB24D130714D700DB8FBE /* BXScriptableWindow.m */; };
-		9F4199DF1BD3F86500A2D165 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F4199D91BD3F1CE00A2D165 /* InfoPlist.strings */; settings = {ASSET_TAGS = (); }; };
-		9F4199E01BD3F86500A2D165 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FB453AA16442D2900BCF63B /* MainMenu.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199E11BD416E400A2D165 /* DocumentationPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F125C42169842F4003B5B2B /* DocumentationPanel.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199E21BD416E400A2D165 /* DocumentationBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F631D8016947B2C00AD06C4 /* DocumentationBrowser.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199E31BD416E400A2D165 /* PrintStatusPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F6785651649A791007FE89A /* PrintStatusPanel.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199E41BD416E400A2D165 /* GamesFolderPanelOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199E51BD416E400A2D165 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1CB109C3D3400593456 /* MainMenu.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199E61BD416E400A2D165 /* DOSWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1C7109C3D1100593456 /* DOSWindow.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199E71BD416E400A2D165 /* LaunchPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FED09FC17ED95CA009C4155 /* LaunchPanel.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199E81BD416E400A2D165 /* LauncherItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAE617EC9AA100C9BB82 /* LauncherItem.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199E91BD416E400A2D165 /* LauncherHeading.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAE917ECA09500C9BB82 /* LauncherHeading.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199EA1BD416E400A2D165 /* LauncherFavorite.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAF617ECE1E800C9BB82 /* LauncherFavorite.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199EB1BD416E400A2D165 /* DOSImportWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34111351DCDB000DCE44 /* DOSImportWindow.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199EC1BD416E400A2D165 /* ImportWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199ED1BD416E400A2D165 /* Inspector.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F6BF48416592EA600D9D66E /* Inspector.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199EE1BD416E400A2D165 /* InspectorDriveItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F125C4516984378003B5B2B /* InspectorDriveItem.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199EF1BD416E400A2D165 /* InspectorJoystickItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F125C4716984378003B5B2B /* InspectorJoystickItem.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199F01BD416E400A2D165 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA410F67DD800E61965 /* Preferences.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199F11BD416E400A2D165 /* About.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1BB109C3C3900593456 /* About.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199F21BD416E400A2D165 /* ProgramPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199F31BD416E400A2D165 /* ImportTipsPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34381351E127000DCE44 /* ImportTipsPanel.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199F41BD416E400A2D165 /* MountPanelOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A46A109C9A0400593456 /* MountPanelOptions.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199F51BD416E400A2D165 /* Welcome.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34361351E0F5000DCE44 /* Welcome.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199F61BD416E400A2D165 /* Bezel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F886FDD144CB6C30033CCD3 /* Bezel.xib */; settings = {ASSET_TAGS = (); }; };
-		9F4199F71BD416E900A2D165 /* DOSBox.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F4199B11BD3E35300A2D165 /* DOSBox.strings */; settings = {ASSET_TAGS = (); }; };
-		9F4199F81BD416E900A2D165 /* Shell.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F4199B31BD3E35300A2D165 /* Shell.strings */; settings = {ASSET_TAGS = (); }; };
-		9F4199F91BD416E900A2D165 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC345B0F56C64D001811F2 /* InfoPlist.strings */; settings = {ASSET_TAGS = (); }; };
-		9F4199FA1BD416E900A2D165 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; settings = {ASSET_TAGS = (); }; };
+		9F4199DF1BD3F86500A2D165 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F4199D91BD3F1CE00A2D165 /* InfoPlist.strings */; };
+		9F4199E01BD3F86500A2D165 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FB453AA16442D2900BCF63B /* MainMenu.xib */; };
+		9F4199E11BD416E400A2D165 /* DocumentationPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F125C42169842F4003B5B2B /* DocumentationPanel.xib */; };
+		9F4199E21BD416E400A2D165 /* DocumentationBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F631D8016947B2C00AD06C4 /* DocumentationBrowser.xib */; };
+		9F4199E31BD416E400A2D165 /* PrintStatusPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F6785651649A791007FE89A /* PrintStatusPanel.xib */; };
+		9F4199E41BD416E400A2D165 /* GamesFolderPanelOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */; };
+		9F4199E51BD416E400A2D165 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1CB109C3D3400593456 /* MainMenu.xib */; };
+		9F4199E61BD416E400A2D165 /* DOSWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1C7109C3D1100593456 /* DOSWindow.xib */; };
+		9F4199E71BD416E400A2D165 /* LaunchPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FED09FC17ED95CA009C4155 /* LaunchPanel.xib */; };
+		9F4199E81BD416E400A2D165 /* LauncherItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAE617EC9AA100C9BB82 /* LauncherItem.xib */; };
+		9F4199E91BD416E400A2D165 /* LauncherHeading.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAE917ECA09500C9BB82 /* LauncherHeading.xib */; };
+		9F4199EA1BD416E400A2D165 /* LauncherFavorite.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FE3BAF617ECE1E800C9BB82 /* LauncherFavorite.xib */; };
+		9F4199EB1BD416E400A2D165 /* DOSImportWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34111351DCDB000DCE44 /* DOSImportWindow.xib */; };
+		9F4199EC1BD416E400A2D165 /* ImportWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */; };
+		9F4199ED1BD416E400A2D165 /* Inspector.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F6BF48416592EA600D9D66E /* Inspector.xib */; };
+		9F4199EE1BD416E400A2D165 /* InspectorDriveItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F125C4516984378003B5B2B /* InspectorDriveItem.xib */; };
+		9F4199EF1BD416E400A2D165 /* InspectorJoystickItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F125C4716984378003B5B2B /* InspectorJoystickItem.xib */; };
+		9F4199F01BD416E400A2D165 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA410F67DD800E61965 /* Preferences.xib */; };
+		9F4199F11BD416E400A2D165 /* About.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1BB109C3C3900593456 /* About.xib */; };
+		9F4199F21BD416E400A2D165 /* ProgramPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */; };
+		9F4199F31BD416E400A2D165 /* ImportTipsPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34381351E127000DCE44 /* ImportTipsPanel.xib */; };
+		9F4199F41BD416E400A2D165 /* MountPanelOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A46A109C9A0400593456 /* MountPanelOptions.xib */; };
+		9F4199F51BD416E400A2D165 /* Welcome.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34361351E0F5000DCE44 /* Welcome.xib */; };
+		9F4199F61BD416E400A2D165 /* Bezel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F886FDD144CB6C30033CCD3 /* Bezel.xib */; };
+		9F4199F71BD416E900A2D165 /* DOSBox.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F4199B11BD3E35300A2D165 /* DOSBox.strings */; };
+		9F4199F81BD416E900A2D165 /* Shell.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F4199B31BD3E35300A2D165 /* Shell.strings */; };
+		9F4199F91BD416E900A2D165 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC345B0F56C64D001811F2 /* InfoPlist.strings */; };
+		9F4199FA1BD416E900A2D165 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; };
 		9F424207109D03F500111D28 /* BXInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F424206109D03F500111D28 /* BXInspectorController.m */; };
 		9F42D9DF1172481800AC6F1F /* BXStatusBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F42D9DE1172481800AC6F1F /* BXStatusBarController.m */; };
 		9F438C5810E3D8C8007D30AD /* BXScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F438C5710E3D8C8007D30AD /* BXScroller.m */; };
@@ -1734,7 +1734,6 @@
 		9FC9E4DF136725190095DCDE /* BXEmulatedJoystick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedJoystick.h; sourceTree = "<group>"; };
 		9FC9E4E0136725190095DCDE /* BXEmulatedJoystick.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulatedJoystick.mm; sourceTree = "<group>"; };
 		9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCHFlightstick.mm; sourceTree = "<group>"; };
-		9FC9E59A13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedJoystickPrivate.h; sourceTree = "<group>"; };
 		9FC9E59B13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedJoystickPrivate.h; sourceTree = "<group>"; };
 		9FCA156F15970C5500C42D10 /* CM32L@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "CM32L@2x.png"; sourceTree = "<group>"; };
 		9FCA157015970C5500C42D10 /* MT32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MT32@2x.png"; sourceTree = "<group>"; };
@@ -2079,6 +2078,7 @@
 			);
 			name = Boxer;
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
@@ -3529,7 +3529,6 @@
 				9FCC2F991366EF170013F083 /* BXEmulatedKeyboard.mm */,
 				9FC9E4DF136725190095DCDE /* BXEmulatedJoystick.h */,
 				9FC9E4E0136725190095DCDE /* BXEmulatedJoystick.mm */,
-				9FC9E59A13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */,
 				9FC9E59B13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */,
 				9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */,
 				9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */,

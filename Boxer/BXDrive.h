@@ -188,18 +188,18 @@ typedef NS_ENUM(NSInteger, BXDriveType) {
 //letter will be determined when the drive is first mounted.
 //If driveType is specified, a drive of that type will be created; if it is BXDriveTypeAuto,
 //the most appropriate type will be determined from the contents of the URL.
-- (id) initWithContentsOfURL: (NSURL *)sourceURL
-                      letter: (NSString *)driveLetter
-                        type: (BXDriveType)driveType;
+- (instancetype) initWithContentsOfURL: (NSURL *)sourceURL
+                                letter: (NSString *)driveLetter
+                                  type: (BXDriveType)driveType;
 
-+ (id) driveWithContentsOfURL: (NSURL *)sourceURL
-                       letter: (NSString *)driveLetter
-                         type: (BXDriveType)driveType;
++ (instancetype) driveWithContentsOfURL: (NSURL *)sourceURL
+                                 letter: (NSString *)driveLetter
+                                   type: (BXDriveType)driveType;
 
 //Returns a marker for a DOSBox internal virtual drive.
 //Such drives do not have source URLs or filesystems, and cannot be used to resolve absolute URLs
 //to DOS filesystem paths.
-+ (id) virtualDriveWithLetter: (NSString *)letter;
++ (instancetype) virtualDriveWithLetter: (NSString *)letter;
 
 #pragma mark - Path lookups
 

@@ -9,7 +9,7 @@
 #import "BXCollectionItemView.h"
 
 @class BXLauncherItem;
-@protocol BXLauncherItemDelegate
+@protocol BXLauncherItemDelegate <NSObject>
 
 - (void) openItemInDOS: (BXLauncherItem *)item;
 - (void) revealItemInFinder: (BXLauncherItem *)item;

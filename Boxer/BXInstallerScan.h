@@ -18,10 +18,10 @@
 @class BXGameProfile;
 @interface BXInstallerScan : ADBImageAwareFileScan
 {
-    NSMutableArray *_windowsExecutables;
-    NSMutableArray *_DOSExecutables;
-    NSMutableArray *_macOSApps;
-    NSMutableArray *_DOSBoxConfigurations;
+    NSMutableArray<NSString*> *_windowsExecutables;
+    NSMutableArray<NSString*> *_DOSExecutables;
+    NSMutableArray<NSString*> *_macOSApps;
+    NSMutableArray<NSString*> *_DOSBoxConfigurations;
     BOOL _alreadyInstalled;
     
     BXGameProfile *_detectedProfile;
@@ -29,10 +29,10 @@
 
 //The relative paths of all DOS and Windows executables and DOSBox configuration files
 //discovered during scanning.
-@property (readonly, retain, nonatomic) NSArray *windowsExecutables;
-@property (readonly, retain, nonatomic) NSArray *DOSExecutables;
-@property (readonly, retain, nonatomic) NSArray *macOSApps;
-@property (readonly, retain, nonatomic) NSArray *DOSBoxConfigurations;
+@property (readonly, retain, nonatomic) NSArray<NSString*> *windowsExecutables;
+@property (readonly, retain, nonatomic) NSArray<NSString*> *DOSExecutables;
+@property (readonly, retain, nonatomic) NSArray<NSString*> *macOSApps;
+@property (readonly, retain, nonatomic) NSArray<NSString*> *DOSBoxConfigurations;
 
 //The path which the scanner recommends as the base path to import from.
 //This will usually be the same as the base path, but may point to a mounted

@@ -35,17 +35,17 @@ extern NSString * const BXBatchProgramType;     //.bat
 
 @interface BXFileTypes : NSObject
 
-+ (NSSet *) executableTypes;		//DOS executable UTIs
-+ (NSSet *) macOSAppTypes;          //MacOS/OS X application UTIs
-+ (NSSet *) hddVolumeTypes;			//UTIs that should be mounted as DOS hard drives
-+ (NSSet *) cdVolumeTypes;			//UTIs that should be mounted as DOS CD-ROM drives
-+ (NSSet *) floppyVolumeTypes;		//UTIs that should be mounted as DOS floppy drives
-+ (NSSet *) mountableFolderTypes;	//All mountable folder UTIs supported by Boxer
-+ (NSSet *) mountableImageTypes;	//All mountable disk-image UTIs supported by Boxer
-+ (NSSet *) OSXMountableImageTypes; //All disk-image UTIs that OSX's hdiutil can mount
-+ (NSSet *) mountableTypes;			//All mountable UTIs supported by Boxer
++ (NSSet<NSString*> *) executableTypes;		//DOS executable UTIs
++ (NSSet<NSString*> *) macOSAppTypes;          //MacOS/OS X application UTIs
++ (NSSet<NSString*> *) hddVolumeTypes;			//UTIs that should be mounted as DOS hard drives
++ (NSSet<NSString*> *) cdVolumeTypes;			//UTIs that should be mounted as DOS CD-ROM drives
++ (NSSet<NSString*> *) floppyVolumeTypes;		//UTIs that should be mounted as DOS floppy drives
++ (NSSet<NSString*> *) mountableFolderTypes;	//All mountable folder UTIs supported by Boxer
++ (NSSet<NSString*> *) mountableImageTypes;	//All mountable disk-image UTIs supported by Boxer
++ (NSSet<NSString*> *) OSXMountableImageTypes; //All disk-image UTIs that OSX's hdiutil can mount
++ (NSSet<NSString*> *) mountableTypes;			//All mountable UTIs supported by Boxer
 
-+ (NSSet *) documentationTypes;     //Document filetypes that Boxer will treat as game documentation.
++ (NSSet<NSString*> *) documentationTypes;     //Document filetypes that Boxer will treat as game documentation.
 
 //A dictionary of file extension->app identifier pairs for overriding OS X's default
 //choice of application for opening a particular file extension.

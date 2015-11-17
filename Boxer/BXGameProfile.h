@@ -135,11 +135,11 @@ extern NSString * const BXGenericProfileIdentifier;
 
 //Returns an array of generic profiles that match multiple games.
 //This corresponds the contents of the BXGenericProfiles key in GameProfiles.plist.
-+ (NSArray *) genericProfiles;
++ (NSArray<BXGameProfile*> *) genericProfiles;
 
 //Returns an array of game profiles identifying specific games.
 //This corresponds the contents of the BXSpecificGameProfiles key in GameProfiles.plist.
-+ (NSArray *) specificGameProfiles;
++ (NSArray<BXGameProfile*> *) specificGameProfiles;
 
 //Returns the kind of distribution medium (CD-ROM, floppy) that the contents of the specified
 //file URL probably used, based on filesize and age of files. Among other things, this is used
@@ -151,14 +151,14 @@ extern NSString * const BXGenericProfileIdentifier;
 #pragma mark Initializers
 
 //Returns a generic profile with no special configuration or game data.
-+ (id) genericProfile;
++ (instancetype) genericProfile;
 
 //Returns the game profile matching the specified identifier,
 //or nil if no such profile was found.
-+ (id) profileWithIdentifier: (NSString *)identifier;
++ (instancetype) profileWithIdentifier: (NSString *)identifier;
 
 //Creates a new profile from the specified GameProfiles.plist-format dictionary.
-- (id) initWithDictionary: (NSDictionary *)profileDictionary;
+- (instancetype) initWithDictionary: (NSDictionary *)profileDictionary;
 
 
 //Detects and returns an appropriate game profile for the specified path,
@@ -166,14 +166,14 @@ extern NSString * const BXGenericProfileIdentifier;
 //Will return nil if no profile could be found.
 //If searchSubfolders is NO, only the base path will be scanned without
 //recursing into subfolders.
-+ (id) detectedProfileForPath: (NSString *)basePath
-             searchSubfolders: (BOOL) searchSubfolders;
++ (instancetype) detectedProfileForPath: (NSString *)basePath
+                       searchSubfolders: (BOOL) searchSubfolders;
 
 //Returns the profile whose telltales match the specified path, or nil if no matching profile
 //is found. This checks only the specified path and does not perform any recursion of directories.
 //Used internally by profilesDetectedInContentsOfEnumerator: and profileScanWithEnumerator:.
-+ (id) profileMatchingPath: (NSString *)basePath
-              inFilesystem: (id <ADBFilesystemPathAccess>)filesystem;
++ (instancetype) profileMatchingPath: (NSString *)basePath
+                        inFilesystem: (id <ADBFilesystemPathAccess>)filesystem;
 
 //Returns an enumerator of all game profiles detected by traversing the specified enumerator.
 //(As a convenience this returns an enumerator instead of an array, so that scanning can be

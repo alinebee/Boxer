@@ -126,7 +126,7 @@ typedef NS_ENUM(NSInteger, BXSourceFileImportType) {
 #pragma mark Import helper methods
 
 //The UTIs of filetypes we can accept for import.
-+ (NSSet *)acceptedSourceTypes;
++ (NSSet<NSString*> *)acceptedSourceTypes;
 
 //Whether the specified source path is a folder, volume or image type we can import.
 + (BOOL) canImportFromSourceURL: (NSURL *)sourceURL;

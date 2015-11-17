@@ -45,7 +45,7 @@
 @property (readonly, nonatomic) NSUInteger numPages;
 
 //An array of NSImages containing previews of each page, including the current page.
-@property (readonly, nonatomic) NSArray *pagePreviews;
+@property (readonly, nonatomic) NSArray<NSImage*> *pagePreviews;
 
 //A preview of the current page. Will be nil if no page is in progress.
 @property (readonly, nonatomic) NSImage *currentPagePreview;

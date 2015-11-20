@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4511" systemVersion="13A598" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1050" defaultVersion="1060" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4511"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BXPreferencesController">
@@ -24,8 +25,8 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
-        <window title="Boxer Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" wantsToBeColor="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="1">
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Boxer Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="1">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="160" y="250" width="532" height="396"/>
@@ -37,6 +38,7 @@
                     <tabView drawsBackground="NO" allowsTruncatedLabels="NO" type="noTabsNoBorder" initialItem="175" id="174">
                         <rect key="frame" x="0.0" y="0.0" width="532" height="396"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="General Preferences" identifier="" id="175" userLabel="General Preferences">
@@ -51,6 +53,7 @@
                                                 <textField verticalHuggingPriority="750" id="140">
                                                     <rect key="frame" x="32" y="174" width="155" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Keep my DOS games in:" id="141">
                                                         <font key="font" metaFont="system"/>
                                                         <color key="textColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -60,6 +63,7 @@
                                                 <popUpButton verticalHuggingPriority="750" id="142">
                                                     <rect key="frame" x="189" y="168" width="304" height="26"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <popUpButtonCell key="cell" type="push" title="(No folder specified)" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="145" id="143">
                                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                         <font key="font" metaFont="menu"/>
@@ -82,6 +86,7 @@
                                                 <button id="149">
                                                     <rect key="frame" x="190" y="147" width="289" height="18"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <buttonCell key="cell" type="check" title="Use shelf appearance in Finder’s icon view" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="150">
                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                         <font key="font" metaFont="system"/>
@@ -99,6 +104,7 @@
                                                 <button id="222">
                                                     <rect key="frame" x="190" y="41" width="221" height="18"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <buttonCell key="cell" type="check" title="When a program is still running" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="223">
                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                         <font key="font" metaFont="system"/>
@@ -114,6 +120,7 @@
                                                 <textField verticalHuggingPriority="750" id="224">
                                                     <rect key="frame" x="32" y="42" width="155" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Prompt before closing:" id="225">
                                                         <font key="font" metaFont="system"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -123,13 +130,14 @@
                                                 <box autoresizesSubviews="NO" title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="349">
                                                     <rect key="frame" x="-1" y="75" width="534" height="54"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                    <view key="contentView">
+                                                    <view key="contentView" id="Ceo-vY-pYK">
                                                         <rect key="frame" x="1" y="1" width="532" height="52"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <subviews>
                                                             <popUpButton verticalHuggingPriority="750" id="351">
                                                                 <rect key="frame" x="189" y="13" width="304" height="26"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                <animations/>
                                                                 <popUpButtonCell key="cell" type="push" title="Show welcome panel" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="1" imageScaling="proportionallyDown" inset="2" selectedItem="355" id="352">
                                                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="menu"/>
@@ -150,6 +158,7 @@
                                                             <textField verticalHuggingPriority="750" id="350">
                                                                 <rect key="frame" x="63" y="19" width="123" height="17"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                <animations/>
                                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="When Boxer starts:" id="357">
                                                                     <font key="font" metaFont="system"/>
                                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -157,13 +166,17 @@
                                                                 </textFieldCell>
                                                             </textField>
                                                         </subviews>
+                                                        <animations/>
                                                     </view>
+                                                    <animations/>
                                                     <color key="borderColor" white="0.0" alpha="0.1000000015" colorSpace="calibratedWhite"/>
                                                     <color key="fillColor" white="0.0" alpha="0.050000000750000002" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                                 </box>
                                             </subviews>
+                                            <animations/>
                                         </view>
                                     </subviews>
+                                    <animations/>
                                 </view>
                                 <connections>
                                     <outlet property="initialFirstResponder" destination="142" id="183"/>
@@ -185,6 +198,7 @@
                                                         <button focusRingType="none" id="83" customClass="BXFilterPortrait">
                                                             <rect key="frame" x="59" y="1" width="128" height="212"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <animations/>
                                                             <buttonCell key="cell" type="square" title="Original" bezelStyle="shadowlessSquare" image="GalleryOriginal" imagePosition="overlaps" alignment="center" focusRingType="none" inset="2" id="86" customClass="BXFilterPortraitCell">
                                                                 <behavior key="behavior" lightByContents="YES"/>
                                                                 <font key="font" metaFont="system"/>
@@ -196,6 +210,7 @@
                                                         <button focusRingType="none" tag="1" id="82" customClass="BXFilterPortrait">
                                                             <rect key="frame" x="202" y="1" width="128" height="212"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <animations/>
                                                             <buttonCell key="cell" type="square" title="Smooth" bezelStyle="shadowlessSquare" image="GalleryHQx" imagePosition="overlaps" alignment="center" focusRingType="none" inset="2" id="87" customClass="BXFilterPortraitCell">
                                                                 <behavior key="behavior" lightByContents="YES"/>
                                                                 <font key="font" metaFont="system"/>
@@ -207,6 +222,7 @@
                                                         <button focusRingType="none" tag="2" id="81" customClass="BXFilterPortrait">
                                                             <rect key="frame" x="345" y="1" width="128" height="212"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <animations/>
                                                             <buttonCell key="cell" type="square" title="CRT Display" bezelStyle="shadowlessSquare" image="GalleryTVScanlines" imagePosition="overlaps" alignment="center" focusRingType="none" inset="2" id="88" customClass="BXFilterPortraitCell">
                                                                 <behavior key="behavior" lightByContents="YES"/>
                                                                 <font key="font" metaFont="system"/>
@@ -218,6 +234,7 @@
                                                         <textField wantsLayer="YES" verticalHuggingPriority="750" id="347" customClass="BXHUDLabel">
                                                             <rect key="frame" x="117" y="181" width="295" height="20"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <animations/>
                                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Choose a rendering style for DOS games:" id="348">
                                                                 <font key="font" metaFont="systemBold"/>
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -225,10 +242,12 @@
                                                             </textFieldCell>
                                                         </textField>
                                                     </subviews>
+                                                    <animations/>
                                                 </customView>
                                                 <button id="75">
                                                     <rect key="frame" x="118" y="143" width="296" height="18"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <buttonCell key="cell" type="check" title="Start up games in Full Screen mode" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="76">
                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                         <font key="font" metaFont="system"/>
@@ -241,6 +260,7 @@
                                                 <textField verticalHuggingPriority="750" id="74">
                                                     <rect key="frame" x="136" y="109" width="279" height="28"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="You can switch to and from Full Screen at any time from the View menu or by pressing Cmd-F." id="77">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -250,6 +270,7 @@
                                                 <button id="73">
                                                     <rect key="frame" x="118" y="68" width="296" height="18"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <buttonCell key="cell" type="check" title="Always use 4:3 aspect ratio" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="78">
                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                         <font key="font" metaFont="system"/>
@@ -261,6 +282,7 @@
                                                 <textField verticalHuggingPriority="750" id="72">
                                                     <rect key="frame" x="136" y="34" width="279" height="28"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="When enabled, games will be stretched to match their original aspect ratio on old PC monitors." id="79">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -270,6 +292,7 @@
                                                 <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="263">
                                                     <rect key="frame" x="490" y="16" width="25" height="25"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="264">
                                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                         <font key="font" metaFont="system"/>
@@ -279,8 +302,10 @@
                                                     </connections>
                                                 </button>
                                             </subviews>
+                                            <animations/>
                                         </view>
                                     </subviews>
+                                    <animations/>
                                 </view>
                                 <connections>
                                     <outlet property="initialFirstResponder" destination="75" id="186"/>
@@ -302,6 +327,7 @@
                                                         <textField verticalHuggingPriority="750" id="275">
                                                             <rect key="frame" x="17" y="74" width="378" height="34"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <animations/>
                                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" id="276">
                                                                 <font key="font" metaFont="systemBold"/>
                                                                 <string key="title">Boxer does not come with the ROMs needed to play
@@ -313,6 +339,7 @@ MT-32 music, as these are not legal to distribute.</string>
                                                         <textField verticalHuggingPriority="750" id="277">
                                                             <rect key="frame" x="17" y="23" width="378" height="43"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <animations/>
                                                             <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" id="278">
                                                                 <font key="font" metaFont="smallSystem"/>
                                                                 <string key="title">But if one should stumble across MT-32 ROMs on the internet, then acccidentally download them, one could drag them onto this shelf to bring one’s MT-32 games to life.</string>
@@ -321,6 +348,7 @@ MT-32 music, as these are not legal to distribute.</string>
                                                             </textFieldCell>
                                                         </textField>
                                                     </subviews>
+                                                    <animations/>
                                                 </customView>
                                                 <customView hidden="YES" id="330">
                                                     <rect key="frame" x="60" y="0.0" width="412" height="128"/>
@@ -329,6 +357,7 @@ MT-32 music, as these are not legal to distribute.</string>
                                                         <textField verticalHuggingPriority="750" id="332">
                                                             <rect key="frame" x="17" y="74" width="378" height="34"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <animations/>
                                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Music in supporting games will be played through your Roland MT-32 Sound Module." id="333">
                                                                 <font key="font" metaFont="systemBold"/>
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -338,6 +367,7 @@ MT-32 music, as these are not legal to distribute.</string>
                                                         <textField verticalHuggingPriority="750" id="331">
                                                             <rect key="frame" x="17" y="23" width="378" height="43"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <animations/>
                                                             <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="As an MT-32 owner, you are also a person of taste and distinction." id="334">
                                                                 <font key="font" metaFont="smallSystem"/>
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -345,6 +375,7 @@ MT-32 music, as these are not legal to distribute.</string>
                                                             </textFieldCell>
                                                         </textField>
                                                     </subviews>
+                                                    <animations/>
                                                 </customView>
                                                 <customView hidden="YES" id="289">
                                                     <rect key="frame" x="60" y="0.0" width="412" height="128"/>
@@ -353,6 +384,7 @@ MT-32 music, as these are not legal to distribute.</string>
                                                         <button id="316">
                                                             <rect key="frame" x="58" y="89" width="296" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <animations/>
                                                             <buttonCell key="cell" type="check" title="Show messages from the MT-32’s LCD" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="317">
                                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                 <font key="font" metaFont="system"/>
@@ -364,6 +396,7 @@ MT-32 music, as these are not legal to distribute.</string>
                                                         <textField verticalHuggingPriority="750" id="318">
                                                             <rect key="frame" x="76" y="40" width="279" height="43"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <animations/>
                                                             <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" title="Some games will print secret messages on the MT-32’s LCD panel. When enabled, Boxer will display these on-screen." id="319">
                                                                 <font key="font" metaFont="smallSystem"/>
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -371,10 +404,12 @@ MT-32 music, as these are not legal to distribute.</string>
                                                             </textFieldCell>
                                                         </textField>
                                                     </subviews>
+                                                    <animations/>
                                                 </customView>
                                                 <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="303">
                                                     <rect key="frame" x="490" y="16" width="25" height="25"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="304">
                                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                         <font key="font" metaFont="system"/>
@@ -386,6 +421,7 @@ MT-32 music, as these are not legal to distribute.</string>
                                                 <button id="308" customClass="BXMT32ROMDropzone">
                                                     <rect key="frame" x="0.0" y="128" width="532" height="192"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <animations/>
                                                     <buttonCell key="cell" type="square" title="[Drop MT-32 ROMs here to enable MT-32 emulation]" bezelStyle="shadowlessSquare" alignment="center" imageScaling="proportionallyDown" inset="2" id="309">
                                                         <behavior key="behavior" lightByContents="YES"/>
                                                         <font key="font" metaFont="system"/>
@@ -395,8 +431,10 @@ MT-32 music, as these are not legal to distribute.</string>
                                                     </buttonCell>
                                                 </button>
                                             </subviews>
+                                            <animations/>
                                         </customView>
                                     </subviews>
+                                    <animations/>
                                     <connections>
                                         <outlet property="delegate" destination="-2" id="361"/>
                                     </connections>
@@ -414,6 +452,7 @@ MT-32 music, as these are not legal to distribute.</string>
                                                 <button id="366">
                                                     <rect key="frame" x="96" y="142" width="343" height="18"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <buttonCell key="cell" type="check" title="Capture function keys and arrow keys for games" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="367">
                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                         <font key="font" metaFont="system"/>
@@ -425,6 +464,7 @@ MT-32 music, as these are not legal to distribute.</string>
                                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="368">
                                                     <rect key="frame" x="114" y="105" width="303" height="28"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" title="Prevents OS X system hotkeys from interfering with the keyboard controls in your DOS games." id="369">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -434,6 +474,7 @@ MT-32 music, as these are not legal to distribute.</string>
                                                 <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="370">
                                                     <rect key="frame" x="489" y="17" width="25" height="25"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="371">
                                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                         <font key="font" metaFont="system"/>
@@ -445,6 +486,7 @@ MT-32 music, as these are not legal to distribute.</string>
                                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" id="372">
                                                     <rect key="frame" x="114" y="69" width="304" height="28"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" id="373">
                                                         <font key="font" metaFont="smallSystemBold"/>
                                                         <string key="title">“Enable access for assistive devices” must also
@@ -456,6 +498,7 @@ be enabled in the Universal Access preferences.</string>
                                                 <button verticalHuggingPriority="750" id="376">
                                                     <rect key="frame" x="111" y="33" width="310" height="32"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <animations/>
                                                     <buttonCell key="cell" type="push" title="Open System Preferences" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="377">
                                                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                         <font key="font" metaFont="system"/>
@@ -465,8 +508,10 @@ be enabled in the Universal Access preferences.</string>
                                                     </connections>
                                                 </button>
                                             </subviews>
+                                            <animations/>
                                         </customView>
                                     </subviews>
+                                    <animations/>
                                 </view>
                                 <connections>
                                     <outlet property="initialFirstResponder" destination="366" id="398"/>
@@ -478,6 +523,7 @@ be enabled in the Universal Access preferences.</string>
                         </connections>
                     </tabView>
                 </subviews>
+                <animations/>
             </view>
             <toolbar key="toolbar" implicitIdentifier="76B0F17F-D318-49FE-A082-D1A4344E7B4A" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconAndLabel" sizeMode="regular" id="100">
                 <allowedToolbarItems>

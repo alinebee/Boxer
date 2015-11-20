@@ -50,7 +50,7 @@
         BOOL copied = [manager copyItemAtURL: gameURL toURL: destinationURL error: NULL];
         if (copied)
         {
-            [destinationURL setResourceValue: @(YES) forKey: NSURLHasHiddenExtensionKey error: NULL];
+            [destinationURL setResourceValue: @YES forKey: NSURLHasHiddenExtensionKey error: NULL];
         
             NSString *baseName = gameName.stringByDeletingPathExtension;
             NSURL *iconURL = [[NSBundle mainBundle] URLForResource: baseName

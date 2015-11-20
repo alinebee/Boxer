@@ -31,7 +31,7 @@
 @synthesize targetURL = _targetURL;
 @synthesize appliesToSubFolders = _appliesToSubFolders;
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
 	if (self)

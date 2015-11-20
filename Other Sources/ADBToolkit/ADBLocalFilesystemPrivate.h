@@ -57,9 +57,9 @@
 @property (retain, nonatomic) NSDirectoryEnumerator *enumerator;
 @property (retain, nonatomic) ADBLocalFilesystem *filesystem;
 
-- (id) initWithURL: (NSURL *)localURL
+- (instancetype) initWithURL: (NSURL *)localURL
        inFilesytem: (ADBLocalFilesystem *)filesystem
-includingPropertiesForKeys: (NSArray *)keys
+includingPropertiesForKeys: (NSArray<NSString*> *)keys
            options: (NSDirectoryEnumerationOptions)mask
         returnURLs: (BOOL)returnURLs
       errorHandler: (ADBFilesystemFileURLErrorHandler)errorHandler;

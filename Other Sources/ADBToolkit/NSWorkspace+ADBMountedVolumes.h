@@ -80,7 +80,7 @@ typedef NS_OPTIONS(NSUInteger, ADBImageMountingOptions) {
 //If hidden is YES, this will include invisible volumes.
 //Note that this will block and can take a significant time to return if a volume has been
 //disconnected unexpectedly or is not responding.
-- (NSArray *) mountedVolumeURLsIncludingHidden: (BOOL)hidden;
+- (NSArray<NSURL*> *) mountedVolumeURLsIncludingHidden: (BOOL)hidden;
 
 //Returns the URLs all mounted filesystems of the specified filesystem type.
 - (NSArray *) mountedVolumeURLsOfType: (NSString *)volumeType

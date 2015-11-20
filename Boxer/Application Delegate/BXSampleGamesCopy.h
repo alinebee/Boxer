@@ -15,16 +15,15 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface BXSampleGamesCopy : NSOperation
-{
-	NSURL *_targetURL;
-	NSURL *_sourceURL;
-}
 @property (copy) NSURL *targetURL;
 @property (copy) NSURL *sourceURL;
 
 //Create a new copy operation from the specified source path to the specified path.
 - (instancetype) initFromSourceURL: (NSURL *)sourceURL
-                       toTargetURL: (NSURL *)targetURL;
+                       toTargetURL: (NSURL *)targetURL DEPRECATED_ATTRIBUTE;
+
+- (instancetype) initWithSourceURL: (NSURL *)sourceURL
+                         targetURL: (NSURL *)targetURL;
 
 @end
 

@@ -15,6 +15,11 @@
 
 - (id) initFromSourceURL: (NSURL *)sourceURL toTargetURL: (NSURL *)targetURL
 {
+    return [self initWithSourceURL:sourceURL targetURL:targetURL];
+}
+
+- (instancetype) initWithSourceURL: (NSURL *)sourceURL targetURL: (NSURL *)targetURL
+{
     self = [self init];
 	if (self)
 	{
@@ -22,14 +27,6 @@
         self.targetURL = targetURL;
 	}
 	return self;
-}
-
-- (void) dealloc
-{
-    self.sourceURL = nil;
-    self.targetURL = nil;
-    
-	[super dealloc];
 }
 
 - (void) main
@@ -67,7 +64,6 @@
                     
                     [[NSWorkspace sharedWorkspace] setIcon: iconForGame forFile: destinationURL.path options: 0];
                 }
-                [image release];
             }
         }
 	}

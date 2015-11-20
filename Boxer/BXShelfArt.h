@@ -23,7 +23,7 @@
 #pragma mark Initialization and teardown
 
 //Default initializer: returns a BXShelfArt object initialized with the specified source image.
-- (id) initWithSourceImage: (NSImage *)image;
+- (instancetype) initWithSourceImage: (NSImage *)image;
 
 
 #pragma mark -

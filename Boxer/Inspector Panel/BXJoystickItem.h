@@ -14,8 +14,8 @@
     NSImageView *_icon;
 }
 
-@property (retain, nonatomic) IBOutlet NSTextField *titleLabel;
-@property (retain, nonatomic) IBOutlet NSTextField *descriptionLabel;
-@property (retain, nonatomic) IBOutlet NSImageView *icon;
+@property (retain, nonatomic, null_unspecified) IBOutlet NSTextField *titleLabel;
+@property (retain, nonatomic, null_unspecified) IBOutlet NSTextField *descriptionLabel;
+@property (retain, nonatomic, null_unspecified) IBOutlet NSImageView *icon;
 
 @end

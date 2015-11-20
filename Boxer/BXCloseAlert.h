@@ -17,29 +17,29 @@
 
 //Shown when closing the window while a DOSBox process is running.
 //Warns the user that any unsaved data will be lost if they continue.
-+ (BXCloseAlert *) closeAlertWhileSessionIsEmulating: (BXSession *)theSession;
++ (instancetype) closeAlertWhileSessionIsEmulating: (BXSession *)theSession;
 
 //Shown when closing the window while one or more drive import operations are in progress.
-+ (BXCloseAlert *) closeAlertWhileImportingDrives: (BXSession *)theSession;
++ (instancetype) closeAlertWhileImportingDrives: (BXSession *)theSession;
 
 //Shown when closing the window while a game import is in progress.
-+ (BXCloseAlert *) closeAlertWhileImportingGame: (BXImportSession *)theSession;
++ (instancetype) closeAlertWhileImportingGame: (BXImportSession *)theSession;
 
 //Shown when closing the window while a game installer is running during import.
-+ (BXCloseAlert *) closeAlertWhileRunningInstaller: (BXImportSession *)theSession;
++ (instancetype) closeAlertWhileRunningInstaller: (BXImportSession *)theSession;
 
 //Shown after a windows-only program has failed to run and exited.
-+ (BXCloseAlert *) closeAlertAfterWindowsOnlyProgramExited: (NSString *)programPath;
++ (instancetype) closeAlertAfterWindowsOnlyProgramExited: (NSString *)programPath;
 
 //Shown when returning to the launch panel while a DOSBox process is running.
 //Warns the user that any unsaved data will be lost if they continue.
-+ (BXCloseAlert *) restartAlertWhenReturningToLaunchPanel: (BXSession *)theSession;
++ (instancetype) restartAlertWhenReturningToLaunchPanel: (BXSession *)theSession;
 
 //Shown when restarting the session while a DOSBox process is running.
 //Warns the user that any unsaved data will be lost if they continue.
-+ (BXCloseAlert *) restartAlertWhileSessionIsEmulating: (BXSession *)theSession;
++ (instancetype) restartAlertWhileSessionIsEmulating: (BXSession *)theSession;
 
 //Shown when restarting the session while one or more drive import operations are in progress.
-+ (BXCloseAlert *) restartAlertWhileImportingDrives: (BXSession *)theSession;
++ (instancetype) restartAlertWhileImportingDrives: (BXSession *)theSession;
 
 @end

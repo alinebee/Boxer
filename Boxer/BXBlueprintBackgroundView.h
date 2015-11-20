@@ -5,11 +5,9 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-
-//BXBlueprintBackgroundView draws the custom blueprint background and watermark for the DOS window
-//while importing a game.
-
 #import "BXDOSWindowBackgroundView.h"
 
+//! BXBlueprintBackgroundView draws the custom blueprint background and watermark for the DOS window
+//! while importing a game.
 @interface BXBlueprintBackgroundView : BXDOSWindowBackgroundView
 @end

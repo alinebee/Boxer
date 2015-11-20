@@ -106,11 +106,11 @@ extern const GLcharARB * const ADBBSNESShaderFrameCountUniform;
 //Returns an array of ADBBSNESShaders loaded from the specified OpenGLShader XML definition,
 //in the order they were defined. Returns nil and populates outError if the file could not
 //be parsed or if one or more shaders failed to compile.
-+ (NSArray *) shadersWithContentsOfURL: (NSURL *)shaderURL
++ (NSArray<ADBBSNESShader*> *) shadersWithContentsOfURL: (NSURL *)shaderURL
                              inContext: (CGLContextObj)context
                                  error: (NSError **)outError;
 
-+ (NSArray *) shadersWithDefinition: (NSXMLDocument *)shaderDefinition
++ (NSArray<ADBBSNESShader*> *) shadersWithDefinition: (NSXMLDocument *)shaderDefinition
                           inContext: (CGLContextObj)context
                               error: (NSError **)outError;
 

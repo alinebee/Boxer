@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" promptedForUpgradeToXcode5="NO">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BXWelcomeWindowController">
@@ -30,6 +31,7 @@
                             <button verticalHuggingPriority="750" id="94">
                                 <rect key="frame" x="435" y="7" width="70" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                <animations/>
                                 <buttonCell key="cell" type="roundTextured" title="Close" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="100">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -45,6 +47,7 @@ Gw
                             <popUpButton verticalHuggingPriority="750" id="95">
                                 <rect key="frame" x="13" y="7" width="115" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
                                 <popUpButtonCell key="cell" type="roundTextured" title="Open recent" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="99" id="96">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -68,6 +71,7 @@ Gw
                                 </connections>
                             </popUpButton>
                         </subviews>
+                        <animations/>
                     </customView>
                     <customView id="84" customClass="BXWelcomeView">
                         <rect key="frame" x="0.0" y="40" width="520" height="268"/>
@@ -76,6 +80,7 @@ Gw
                             <button focusRingType="none" id="88" customClass="BXWelcomeButton">
                                 <rect key="frame" x="340" y="20" width="160" height="186"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                                <animations/>
                                 <buttonCell key="cell" type="square" title="Open a DOS prompt" bezelStyle="shadowlessSquare" image="prompt" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="89" customClass="BXWelcomeButtonCell">
                                     <behavior key="behavior" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -89,6 +94,7 @@ Gw
                             <button focusRingType="none" id="87" customClass="BXWelcomeButton">
                                 <rect key="frame" x="180" y="20" width="160" height="186"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <animations/>
                                 <buttonCell key="cell" type="square" title="Import a new game" bezelStyle="shadowlessSquare" image="import" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="90" customClass="BXWelcomeButtonCell">
                                     <behavior key="behavior" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -102,6 +108,7 @@ Gw
                             <button focusRingType="none" id="86" customClass="BXWelcomeButton">
                                 <rect key="frame" x="20" y="20" width="160" height="186"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <animations/>
                                 <buttonCell key="cell" type="square" title="Browse your games" bezelStyle="shadowlessSquare" image="gamefolder" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="91" customClass="BXWelcomeButtonCell">
                                     <behavior key="behavior" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -114,6 +121,7 @@ Gw
                             <textField verticalHuggingPriority="750" id="269">
                                 <rect key="frame" x="17" y="214" width="486" height="39"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <animations/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Welcome to Boxer." id="270">
                                     <font key="font" metaFont="system" size="32"/>
                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -121,8 +129,10 @@ Gw
                                 </textFieldCell>
                             </textField>
                         </subviews>
+                        <animations/>
                     </customView>
                 </subviews>
+                <animations/>
             </view>
             <contentBorderThickness minY="41"/>
             <connections>

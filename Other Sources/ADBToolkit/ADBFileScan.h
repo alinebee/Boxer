@@ -69,7 +69,7 @@ extern NSString * const ADBFileScanLastMatchKey;
 //The array of matched files, which will be gradually populated throughout the scan.
 //File paths are relative to basePath; a set of absolute paths can be retrieved by
 //performing [[scan basePath] stringsByAppendingPaths: [scan matchingPaths]].
-@property (readonly, nonatomic) NSArray *matchingPaths;
+@property (readonly, nonatomic) NSArray<NSString*> *matchingPaths;
 
 //Optional: the maximum number of matches to return. Defaults to 0, which means no limit.
 @property (assign, nonatomic) NSUInteger maxMatches;

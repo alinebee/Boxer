@@ -12,10 +12,11 @@
 #import <Cocoa/Cocoa.h>
 
 @class BXSession;
+@class BXDrive;
 
 @interface BXDrivesInUseAlert : NSAlert
 
 //Initialise and return a new alert, whose text refers to the drives and session provided.
-- (id) initWithDrives: (NSArray *)drivesInUse forSession: (BXSession *)theSession;
+- (instancetype) initWithDrives: (NSArray<BXDrive*> *)drivesInUse forSession: (BXSession *)theSession;
 
 @end

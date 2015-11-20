@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" promptedForUpgradeToXcode5="NO">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BXProgramPanelController">
@@ -16,15 +17,15 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <arrayController objectClassName="NSDictionary" editable="NO" avoidsEmptySelection="NO" id="25" userLabel="Available Programs">
             <declaredKeys>
                 <mutableString>executables</mutableString>
                 <string>count</string>
             </declaredKeys>
             <connections>
-                <binding destination="-2" name="contentArray" keyPath="panelExecutables" id="393"/>
                 <binding destination="-2" name="sortDescriptors" keyPath="executableSortDescriptors" id="390"/>
+                <binding destination="-2" name="contentArray" keyPath="panelExecutables" id="393"/>
             </connections>
         </arrayController>
         <collectionViewItem id="24" userLabel="Program Item" customClass="BXProgramItem">
@@ -39,13 +40,14 @@
                 <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="0.0" verticalPageScroll="0.0" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" id="221">
                     <rect key="frame" x="0.0" y="0.0" width="640" height="40"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="AGy-rj-hoa">
+                    <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="87I-lT-nWG">
                         <rect key="frame" x="0.0" y="0.0" width="640" height="40"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView focusRingType="none" maxNumberOfRows="1" id="224" customClass="BXProgramListView">
                                 <rect key="frame" x="0.0" y="0.0" width="640" height="40"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <animations/>
                                 <color key="primaryBackgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <connections>
                                     <binding destination="25" name="content" keyPath="arrangedObjects" id="231"/>
@@ -54,20 +56,25 @@
                                 </connections>
                             </collectionView>
                         </subviews>
+                        <animations/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                     </clipView>
+                    <animations/>
                     <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" arrowsPosition="none" horizontal="YES" id="223" customClass="BXScroller">
                         <rect key="frame" x="1" y="144" width="233" height="15"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
                     </scroller>
                     <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="222">
                         <rect key="frame" x="-100" y="-100" width="15" height="143"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
                     </scroller>
                 </scrollView>
                 <textField verticalHuggingPriority="750" tag="1" id="468" customClass="BXIndentedLabel">
                     <rect key="frame" x="210" y="43" width="220" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Click a program to launch:" id="469">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -75,6 +82,7 @@
                     </textFieldCell>
                 </textField>
             </subviews>
+            <animations/>
         </customView>
         <customView id="52" userLabel="Default Program Toggle">
             <rect key="frame" x="0.0" y="0.0" width="640" height="64"/>
@@ -87,6 +95,7 @@
                         <textField verticalHuggingPriority="750" id="474" customClass="BXIndentedHelpTextLabel">
                             <rect key="frame" x="36" y="11" width="386" height="14"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Hold down Option during startup to get the DOS prompt instead." id="475">
                                 <font key="font" metaFont="smallSystem"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -96,18 +105,21 @@
                         <button id="476">
                             <rect key="frame" x="18" y="28" width="403" height="18"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="check" title="Launch wwwwwww.exe every time I start this gamebox." bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="477" customClass="BXIndentedCheckboxCell">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
                             <connections>
-                                <binding destination="-2" name="title" keyPath="labelForDefaultProgramToggle" id="479"/>
                                 <binding destination="-2" name="value" keyPath="activeProgramIsDefault" id="481"/>
+                                <binding destination="-2" name="title" keyPath="labelForDefaultProgramToggle" id="479"/>
                             </connections>
                         </button>
                     </subviews>
+                    <animations/>
                 </customView>
             </subviews>
+            <animations/>
         </customView>
         <customView id="394" userLabel="Initial Program Toggle">
             <rect key="frame" x="0.0" y="0.0" width="640" height="64"/>
@@ -120,6 +132,7 @@
                         <button verticalHuggingPriority="750" id="421">
                             <rect key="frame" x="470" y="19" width="150" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" title="Launch every time" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="422">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -131,6 +144,7 @@
                         <button verticalHuggingPriority="750" id="419">
                             <rect key="frame" x="370" y="19" width="90" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" title="Not now" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="420">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -142,6 +156,7 @@
                         <textField verticalHuggingPriority="750" id="482" customClass="BXIndentedLabel">
                             <rect key="frame" x="17" y="31" width="336" height="17"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Launch wwwwwwww.exe every time?" id="483">
                                 <font key="font" metaFont="systemBold"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -154,6 +169,7 @@
                         <textField verticalHuggingPriority="750" id="486" customClass="BXIndentedHelpTextLabel">
                             <rect key="frame" x="17" y="15" width="336" height="14"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="You can change your choice later from the Inspector Panel." id="487">
                                 <font key="font" metaFont="smallSystem"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -161,8 +177,10 @@
                             </textFieldCell>
                         </textField>
                     </subviews>
+                    <animations/>
                 </customView>
             </subviews>
+            <animations/>
         </customView>
         <customView id="66" userLabel="Scanning for Programs">
             <rect key="frame" x="0.0" y="0.0" width="640" height="64"/>
@@ -171,11 +189,13 @@
                 <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" style="spinning" id="441">
                     <rect key="frame" x="304" y="14" width="32" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
                     <connections>
                         <binding destination="-2" name="animate" keyPath="representedObject.isScanningForExecutables" id="463"/>
                     </connections>
                 </progressIndicator>
             </subviews>
+            <animations/>
         </customView>
         <customView id="454" userLabel="No Programs Found">
             <rect key="frame" x="0.0" y="0.0" width="640" height="64"/>
@@ -184,6 +204,7 @@
                 <textField verticalHuggingPriority="750" id="488" customClass="BXIndentedLabel">
                     <rect key="frame" x="17" y="30" width="606" height="17"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="There are no programs in this gamebox." id="489">
                         <font key="font" metaFont="systemBold"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -193,6 +214,7 @@
                 <textField verticalHuggingPriority="750" id="490" customClass="BXIndentedHelpTextLabel">
                     <rect key="frame" x="17" y="13" width="606" height="14"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <animations/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Once you’ve installed some programs, they will be listed here." id="491">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -200,6 +222,7 @@
                     </textFieldCell>
                 </textField>
             </subviews>
+            <animations/>
         </customView>
         <customView id="246" userLabel="Program Item View" customClass="BXCollectionItemView">
             <rect key="frame" x="0.0" y="0.0" width="120" height="24"/>
@@ -208,17 +231,13 @@
                 <button verticalHuggingPriority="750" tag="4" id="494" customClass="BXProgramItemButton">
                     <rect key="frame" x="4" y="2" width="112" height="19"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <animations/>
                     <buttonCell key="cell" type="recessed" title="[filename.exe]" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="495" customClass="BXProgramItemButtonCell">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="systemBold" size="12"/>
                     </buttonCell>
                     <connections>
                         <action selector="openInDOS:" target="-1" id="496"/>
-                        <binding destination="24" name="argument" keyPath="representedObject.path" id="515">
-                            <dictionary key="options">
-                                <string key="NSSelectorName">openInDOS:</string>
-                            </dictionary>
-                        </binding>
                         <binding destination="-2" name="target" keyPath="representedObject" previousBinding="515" id="516">
                             <dictionary key="options">
                                 <string key="NSSelectorName">openInDOS:</string>
@@ -229,9 +248,15 @@
                                 <string key="NSValueTransformerName">BXDOSFilenameTransformer</string>
                             </dictionary>
                         </binding>
+                        <binding destination="24" name="argument" keyPath="representedObject.path" id="515">
+                            <dictionary key="options">
+                                <string key="NSSelectorName">openInDOS:</string>
+                            </dictionary>
+                        </binding>
                     </connections>
                 </button>
             </subviews>
+            <animations/>
             <connections>
                 <outlet property="delegate" destination="24" id="492"/>
             </connections>

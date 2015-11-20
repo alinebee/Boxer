@@ -32,6 +32,8 @@
 #import <Cocoa/Cocoa.h>
 #import "BXFileTypes.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NSWorkspace (BXExecutableTypes)
 
 //Returns whether the file at the specified path is an executable that can be run by DOSBox.
@@ -43,3 +45,5 @@
 - (BXExecutableType) executableTypeAtPath: (NSString *)path error: (out NSError **)outError;
 
 @end
+
+NS_ASSUME_NONNULL_END

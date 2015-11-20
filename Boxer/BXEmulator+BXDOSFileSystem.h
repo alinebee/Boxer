@@ -46,10 +46,10 @@
 #pragma mark -
 #pragma mark Helper class methods
 
-+ (NSArray *) driveLetters;			//all drive letters in order, including reserved letters
-+ (NSArray *) floppyDriveLetters;	//letters appropriate for floppy drives (A-W)
-+ (NSArray *) hardDriveLetters;		//letters appropriate for hard disk drives (C-W)
-+ (NSArray *) CDROMDriveLetters;	//letters appropriate for CD-ROM drives (D-W)
++ (NSArray<NSString*> *) driveLetters;			//all drive letters in order, including reserved letters
++ (NSArray<NSString*> *) floppyDriveLetters;	//letters appropriate for floppy drives (A-W)
++ (NSArray<NSString*> *) hardDriveLetters;		//letters appropriate for hard disk drives (C-W)
++ (NSArray<NSString*> *) CDROMDriveLetters;	//letters appropriate for CD-ROM drives (D-W)
 
 
 //Generates a drive from the specified mount/imgmount command string,

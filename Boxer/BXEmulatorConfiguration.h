@@ -31,7 +31,7 @@
 @property (readonly, nonatomic) NSDictionary *settings;
 
 //Returns an array of all startup commands.
-@property (readonly, nonatomic) NSArray *startupCommands;
+@property (readonly, nonatomic) NSArray<NSString*> *startupCommands;
 
 //A string to prepend as a header comment at the start of the configuration file.
 //Used by description and writeToFile:error:
@@ -47,20 +47,20 @@
 
 //Returns an instance containing the settings in the file at the specified location.
 //Will return nil and populate outError on failure to read the file.
-+ (id) configurationWithContentsOfURL: (NSURL *)URL error: (out NSError **)outError;
-- (id) initWithContentsOfURL: (NSURL *)URL error: (out NSError **)outError;
-+ (id) configurationWithContentsOfFile: (NSString *)filePath error: (out NSError **)outError;
++ (instancetype) configurationWithContentsOfURL: (NSURL *)URL error: (out NSError **)outError;
+- (instancetype) initWithContentsOfURL: (NSURL *)URL error: (out NSError **)outError;
++ (instancetype) configurationWithContentsOfFile: (NSString *)filePath error: (out NSError **)outError;
 
 //Returns an instance containing the settings parsed from the specified DOSBox-formatted
 //configuration string.
-+ (id) configurationWithString: (NSString *)configuration;
-- (id) initWithString: (NSString *)configuration;
++ (instancetype) configurationWithString: (NSString *)configuration;
+- (instancetype) initWithString: (NSString *)configuration;
 
 //Returns an instance using the specified heirarchical dictionary of sections and settings.
-- (id) initWithSettings: (NSDictionary *)initialSettings;
+- (instancetype) initWithSettings: (NSDictionary *)initialSettings;
 
 //Returns an autoreleased empty configuration.
-+ (id) configuration;
++ (instancetype) configuration;
 
 
 //Writes the configuration in DOSBox format atomically to the specified location.

@@ -51,8 +51,12 @@
 
 + (NSDictionary *) _defaultPDFInfo
 {
+#if 0
     return [NSDictionary dictionaryWithObjectsAndKeys:
             nil];
+#else
+    return @{};
+#endif
 }
 
 - (id) init

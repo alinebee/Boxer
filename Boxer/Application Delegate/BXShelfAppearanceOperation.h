@@ -42,9 +42,9 @@
 @property (copy) NSImage *icon;
 @property (assign) BOOL switchToIconView;
 
-- (id) initWithTargetURL: (NSURL *)_targetURL
-	  backgroundImageURL: (NSURL *)_backgroundImageURL
-                    icon: (NSImage *)_icon;
+- (instancetype) initWithTargetURL: (NSURL *)_targetURL
+                backgroundImageURL: (NSURL *)_backgroundImageURL
+                              icon: (NSImage *)_icon;
 @end
 
 
@@ -57,7 +57,7 @@
 
 @property (copy) NSURL *sourceURL;
 
-- (id) initWithTargetURL: (NSURL *)_targetURL
-	   appearanceFromURL: (NSURL *)_sourceURL;
+- (instancetype) initWithTargetURL: (NSURL *)_targetURL
+                 appearanceFromURL: (NSURL *)_sourceURL;
 
 @end

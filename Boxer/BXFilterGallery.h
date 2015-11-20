@@ -28,9 +28,9 @@
 @interface BXFilterPortraitCell : NSButtonCell
 
 //Methods defining how the button title text should be rendered
-- (NSColor *) titleColor;
-- (NSShadow *) titleShadow;
-- (NSDictionary *) titleAttributes;
+@property (readonly, assign) NSColor *titleColor;
+@property (readonly, assign) NSShadow *titleShadow;
+@property (readonly, assign) NSDictionary *titleAttributes;
 
 - (void) drawSpotlightWithFrame: (NSRect)frame inView: (NSView *)controlView withAlpha: (CGFloat)alpha;
 

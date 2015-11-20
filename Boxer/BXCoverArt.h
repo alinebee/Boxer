@@ -46,7 +46,7 @@
 - (NSImageRep *) representationForSize: (NSSize)iconSize;
 
 //Default initializer: returns a BXCoverArt object initialized with the specified original image.
-- (id) initWithSourceImage: (NSImage *)image;
+- (instancetype) initWithSourceImage: (NSImage *)image;
 
 //Returns a cover art image rendered from the source image to 512, 256, 128 and 32x32 sizes,
 //suitable for use as an OS X icon.

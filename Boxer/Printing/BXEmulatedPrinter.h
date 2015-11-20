@@ -10,6 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 #pragma mark Constants
@@ -288,11 +289,11 @@ typedef enum {
 @property (assign, nonatomic) BOOL autoFeed;
 
 //The delegate to whom we will send BXEmulatedPrinterDelegate messages.
-@property (assign, nonatomic) id <BXEmulatedPrinterDelegate> delegate;
+@property (assign, nonatomic, nullable) id <BXEmulatedPrinterDelegate> delegate;
 
 //The current print session that the printer is working on.
 //Will be nil before the printer has received anything to print.
-@property (readonly, retain, nonatomic) BXPrintSession *currentSession;
+@property (readonly, retain, nonatomic, nullable) BXPrintSession *currentSession;
 
 //The standard page size in inches. Defaults to US Letter (8.5 x 11").
 @property (assign, nonatomic) NSSize defaultPageSize;
@@ -404,3 +405,5 @@ typedef enum {
 - (void) printer: (BXEmulatedPrinter *)printer didMoveHeadToY: (CGFloat)yOffset;
 
 @end
+
+NS_ASSUME_NONNULL_END

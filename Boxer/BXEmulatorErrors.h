@@ -53,7 +53,7 @@ enum {
 #pragma mark Error classes
 
 //A protocol for generic emulator-related error subclasses.
-@protocol BXEmulatorError
+@protocol BXEmulatorError <NSObject>
 
 //Returns an autoreleased error object preconfigured with
 //the error code and domain for that error type.
@@ -63,7 +63,7 @@ enum {
 
 //A protocol for drive-related error subclasses.
 @class BXDrive;
-@protocol BXDriveError
+@protocol BXDriveError <NSObject>
 
 //Returns an autoreleased error object preconfigured with
 //the error code and domain for that error type, and a user

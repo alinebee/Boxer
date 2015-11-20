@@ -12,10 +12,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-@protocol BXBootlegCoverArt
+@protocol BXBootlegCoverArt <NSObject>
 
 //Return a new BXBootlegCoverArt implementor using the specified title.
-- (id) initWithTitle: (NSString *)coverTitle;
+- (instancetype) initWithTitle: (NSString *)coverTitle;
 
 //Set and get the title which this cover art will display.
 - (void) setTitle: (NSString *)coverTitle;

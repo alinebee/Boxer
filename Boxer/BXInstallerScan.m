@@ -17,10 +17,10 @@
 
 @interface BXInstallerScan ()
 
-@property (retain, nonatomic) NSArray *windowsExecutables;
-@property (retain, nonatomic) NSArray *DOSExecutables;
-@property (retain, nonatomic) NSArray *DOSBoxConfigurations;
-@property (retain, nonatomic) NSArray *macOSApps;
+@property (retain, nonatomic) NSArray<NSString*> *windowsExecutables;
+@property (retain, nonatomic) NSArray<NSString*> *DOSExecutables;
+@property (retain, nonatomic) NSArray<NSString*> *DOSBoxConfigurations;
+@property (retain, nonatomic) NSArray<NSString*> *macOSApps;
 @property (retain, nonatomic) BXGameProfile *detectedProfile;
 @property (nonatomic, getter=isAlreadyInstalled) BOOL alreadyInstalled;
 

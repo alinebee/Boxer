@@ -30,10 +30,10 @@ static const NSUInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 #pragma mark Detecting installers
 
 //Returns a set of known installer name patterns.
-+ (NSSet *) installerPatterns;
++ (NSSet<NSString*> *) installerPatterns;
 
 //Returns a set of likely installer name patterns in order of preference.
-+ (NSArray *) preferredInstallerPatterns;
++ (NSArray<NSString*> *) preferredInstallerPatterns;
 
 //Returns whether the executable at the specified path is an installer or not.
 //Uses +installerPatterns:
@@ -56,7 +56,7 @@ static const NSUInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 #pragma mark Detecting files not to import
 
 //A set of regex patterns matching files that should be cleaned out of an imported game.
-+ (NSSet *) junkFilePatterns;
++ (NSSet<NSString*> *) junkFilePatterns;
 
 //Returns whether the file at the specified path should be discarded when importing.
 //Uses +junkFilePatterns.
@@ -67,10 +67,10 @@ static const NSUInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 #pragma mark Detecting whether a game is already installed
 
 //A set of regex patterns matching files that indicate the game is installed and playable.
-+ (NSSet *) playableGameTelltalePatterns;
++ (NSSet<NSString*> *) playableGameTelltalePatterns;
 
 //A set of filename extensions whose presence indicates the game is installed and playable.
-+ (NSSet *) playableGameTelltaleExtensions;
++ (NSSet<NSString*> *) playableGameTelltaleExtensions;
 
 //Returns whether the file at the specified path is a telltale for an installed and playable game.
 //Uses playableGameTelltaleExtensions and playableGameTelltalePatterns, in that order.
@@ -127,7 +127,7 @@ static const NSUInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 //the shortest name. This is intended to handle e.g. GOG games that come with client/server
 //configurations as well as standalone configurations, where the former have "_client"/"_server"
 //suffixes applied to the base name of the latter.
-+ (NSURL *) preferredConfigurationFileFromURLs: (NSArray *)URLs;
++ (NSURL *) preferredConfigurationFileFromURLs: (NSArray<NSURL*> *)URLs;
 
 //Returns a new DOSBox configuration cherry-picked from the specified configuration.
 //This will strip out all settings that are redundant, or that will interfere with Boxer.
@@ -135,11 +135,11 @@ static const NSUInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 + (BXEmulatorConfiguration *) sanitizedVersionOfConfiguration: (BXEmulatorConfiguration *)configuration;
 
 //Returns an array of just the mount commands in the specified configuration's autoexec.
-+ (NSArray *) mountCommandsFromConfiguration: (BXEmulatorConfiguration *)configuration;
++ (NSArray<NSString*> *) mountCommandsFromConfiguration: (BXEmulatorConfiguration *)configuration;
 
 //Returns an array of the commands in the specified configuration's autoexec that are
 //responsible for launching the game and that should hence be bundled into a launcher batchfile.
 //This excludes mount commands and 'junk' like echo, rem, cls and exit.
-+ (NSArray *) launchCommandsFromConfiguration: (BXEmulatorConfiguration *)configuration;
++ (NSArray<NSString*> *) launchCommandsFromConfiguration: (BXEmulatorConfiguration *)configuration;
 
 @end

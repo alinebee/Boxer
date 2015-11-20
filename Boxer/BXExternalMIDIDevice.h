@@ -11,6 +11,8 @@
 #import <CoreMIDI/MIDIServices.h>
 #import "BXMIDIDevice.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 //The default seconds-per-byte delay to allow after sending a sysex.
 //Equivalent to the MIDI 1.0 specified delay of 3125 bytes/sec.
 #define BXExternalMIDIDeviceDefaultSysexRate 1.0f / 3125.0f
@@ -71,14 +73,14 @@
 #pragma mark -
 #pragma mark Initializers
 
-- (id <BXMIDIDevice>) initWithDestination: (MIDIEndpointRef)destination
-                                    error: (NSError **)outError;
+- (nullable instancetype) initWithDestination: (MIDIEndpointRef)destination
+                                        error: (NSError **)outError;
 
-- (id <BXMIDIDevice>) initWithDestinationAtIndex: (ItemCount)destIndex
-                                           error: (NSError **)outError;
+- (nullable instancetype) initWithDestinationAtIndex: (ItemCount)destIndex
+                                               error: (NSError **)outError;
 
-- (id <BXMIDIDevice>) initWithDestinationAtUniqueID: (MIDIUniqueID)uniqueID
-                                              error: (NSError **)outError;
+- (nullable instancetype) initWithDestinationAtUniqueID: (MIDIUniqueID)uniqueID
+                                                  error: (NSError **)outError;
 
 #pragma mark -
 #pragma mark Volume control
@@ -95,3 +97,5 @@
 - (void) syncVolume;
 
 @end
+
+NS_ASSUME_NONNULL_END

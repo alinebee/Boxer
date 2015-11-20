@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" promptedForUpgradeToXcode5="NO">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -10,7 +11,7 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="401" userLabel="Boxer App Controller" customClass="BXStandaloneAppController">
             <connections>
                 <outlet property="joypadController" destination="2158" id="2159"/>
@@ -24,7 +25,7 @@
                         <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
                         <font key="NSFont" metaFont="smallSystem"/>
                         <font key="NSOriginalFont" metaFont="smallSystem"/>
-                        <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                        <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO"/>
                     </attributes>
                 </fragment>
             </attributedString>
@@ -396,12 +397,12 @@
                             <menuItem title="Use 4:3 Aspect Ratio" id="1612">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
+                                    <binding destination="1841" name="value" keyPath="values.aspectCorrected" id="1852"/>
                                     <binding destination="1841" name="hidden" keyPath="values.showAspectCorrectionToggle" id="2526">
                                         <dictionary key="options">
                                             <string key="NSValueTransformerName">NSNegateBoolean</string>
                                         </dictionary>
                                     </binding>
-                                    <binding destination="1841" name="value" keyPath="values.aspectCorrected" id="1852"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="2187"/>
@@ -720,6 +721,7 @@
                 <slider verticalHuggingPriority="750" id="2201">
                     <rect key="frame" x="22" y="-1" width="152" height="21"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <animations/>
                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="2202"/>
                     <connections>
                         <binding destination="401" name="value" keyPath="effectiveVolume" id="2229"/>
@@ -728,6 +730,7 @@
                 <button verticalHuggingPriority="750" id="2230">
                     <rect key="frame" x="3" y="1" width="19" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <animations/>
                     <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="Volume0PercentCroppedTemplate" imagePosition="only" alignment="center" controlSize="small" state="on" borderStyle="border" inset="2" id="2233">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="systemBold" size="12"/>
@@ -739,6 +742,7 @@
                 <button verticalHuggingPriority="750" id="2231">
                     <rect key="frame" x="174" y="0.0" width="27" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                    <animations/>
                     <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="Volume100PercentTemplate" imagePosition="only" alignment="center" controlSize="small" state="on" borderStyle="border" inset="2" id="2232">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="systemBold" size="12"/>
@@ -748,10 +752,11 @@
                     </connections>
                 </button>
             </subviews>
+            <animations/>
         </customView>
     </objects>
     <resources>
-        <image name="Volume0PercentCroppedTemplate" width="128" height="128"/>
-        <image name="Volume100PercentTemplate" width="128" height="128"/>
+        <image name="Volume0PercentCroppedTemplate" width="7" height="12"/>
+        <image name="Volume100PercentTemplate" width="17" height="16"/>
     </resources>
 </document>

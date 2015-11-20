@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" promptedForUpgradeToXcode5="NO">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BXImportWindowController">
@@ -24,6 +25,7 @@
             <view key="contentView" id="4">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="340"/>
                 <autoresizingMask key="autoresizingMask"/>
+                <animations/>
             </view>
             <contentBorderThickness minY="41"/>
             <connections>
@@ -41,6 +43,7 @@
                         <button id="28" customClass="BXImportDropzone">
                             <rect key="frame" x="158" y="104" width="160" height="160"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="29">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -53,6 +56,7 @@
                         <textField verticalHuggingPriority="750" id="451" customClass="BXBlueprintLabel">
                             <rect key="frame" x="17" y="61" width="446" height="39"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Drop your game here." id="452">
                                 <font key="font" metaFont="system" size="32"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -62,6 +66,7 @@
                         <textField verticalHuggingPriority="750" id="453" customClass="BXBlueprintHelpTextLabel">
                             <rect key="frame" x="17" y="19" width="446" height="34"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="454">
                                 <font key="font" metaFont="system"/>
                                 <string key="title">Drop a CD-ROM, game folder or disc image
@@ -71,6 +76,7 @@ and Boxer will import it into a new gamebox. </string>
                             </textFieldCell>
                         </textField>
                     </subviews>
+                    <animations/>
                     <connections>
                         <outlet property="menu" destination="69" id="74"/>
                     </connections>
@@ -82,6 +88,7 @@ and Boxer will import it into a new gamebox. </string>
                         <button verticalHuggingPriority="750" id="14">
                             <rect key="frame" x="395" y="7" width="70" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" title="Close" bezelStyle="texturedRounded" alignment="center" refusesFirstResponder="YES" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="15">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -96,6 +103,7 @@ Gw
                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="359">
                             <rect key="frame" x="15" y="7" width="25" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="360">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -105,8 +113,10 @@ Gw
                             </connections>
                         </button>
                     </subviews>
+                    <animations/>
                 </customView>
             </subviews>
+            <animations/>
             <connections>
                 <outlet property="delegate" destination="63" id="67"/>
                 <outlet property="nextKeyView" destination="28" id="109"/>
@@ -123,10 +133,12 @@ Gw
                         <customView id="340" customClass="BXBlueprintProgressIndicator">
                             <rect key="frame" x="190" y="136" width="96" height="96"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                         </customView>
                         <textField verticalHuggingPriority="750" id="449" customClass="BXBlueprintLabel">
                             <rect key="frame" x="17" y="49" width="446" height="58"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="450">
                                 <font key="font" metaFont="system" size="24"/>
                                 <string key="title">Please wait while Boxer
@@ -136,6 +148,7 @@ scans your game.</string>
                             </textFieldCell>
                         </textField>
                     </subviews>
+                    <animations/>
                     <connections>
                         <outlet property="menu" destination="69" id="331"/>
                     </connections>
@@ -147,6 +160,7 @@ scans your game.</string>
                         <button verticalHuggingPriority="750" id="319">
                             <rect key="frame" x="395" y="7" width="70" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" title="Close" bezelStyle="texturedRounded" alignment="center" refusesFirstResponder="YES" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="320">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -161,6 +175,7 @@ Gw
                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="376">
                             <rect key="frame" x="15" y="7" width="25" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="377">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -170,8 +185,10 @@ Gw
                             </connections>
                         </button>
                     </subviews>
+                    <animations/>
                 </customView>
             </subviews>
+            <animations/>
         </view>
         <view id="33" userLabel="Installer panel">
             <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
@@ -184,6 +201,7 @@ Gw
                         <popUpButton focusRingType="none" verticalHuggingPriority="750" id="52">
                             <rect key="frame" x="176" y="114" width="253" height="26"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <animations/>
                             <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingHead" state="on" borderStyle="borderAndBezel" focusRingType="none" tag="1" imageScaling="proportionallyDown" inset="2" selectedItem="58" id="53">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -202,6 +220,7 @@ Gw
                         <textField verticalHuggingPriority="750" id="455" customClass="BXBlueprintLabel">
                             <rect key="frame" x="17" y="158" width="446" height="58"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="456">
                                 <font key="font" metaFont="system" size="24"/>
                                 <string key="title">Boxer will now launch an
@@ -213,6 +232,7 @@ installer to set up this game.</string>
                         <textField verticalHuggingPriority="750" id="457" customClass="BXBlueprintLabel">
                             <rect key="frame" x="52" y="120" width="116" height="17"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Choose installer:" id="458">
                                 <font key="font" metaFont="systemBold"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -222,6 +242,7 @@ installer to set up this game.</string>
                         <textField verticalHuggingPriority="750" id="459" customClass="BXBlueprintHelpTextLabel">
                             <rect key="frame" x="17" y="64" width="446" height="34"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="460">
                                 <font key="font" metaFont="system"/>
                                 <string key="title">You can skip the installer if the game is
@@ -231,6 +252,7 @@ already installed and ready to play.</string>
                             </textFieldCell>
                         </textField>
                     </subviews>
+                    <animations/>
                 </customView>
                 <customView id="35" customClass="BXBottomBar">
                     <rect key="frame" x="0.0" y="0.0" width="480" height="40"/>
@@ -239,6 +261,7 @@ already installed and ready to play.</string>
                         <button verticalHuggingPriority="750" id="36">
                             <rect key="frame" x="340" y="7" width="125" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" title="Launch installer" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="37">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -253,6 +276,7 @@ DQ
                         <button verticalHuggingPriority="750" id="49">
                             <rect key="frame" x="55" y="7" width="104" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" title="Skip installer" bezelStyle="texturedRounded" alignment="center" refusesFirstResponder="YES" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="50">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -264,6 +288,7 @@ DQ
                         <button verticalHuggingPriority="750" id="46">
                             <rect key="frame" x="270" y="7" width="60" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" title="Back" bezelStyle="texturedRounded" alignment="center" refusesFirstResponder="YES" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="47">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -278,6 +303,7 @@ Gw
                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="367">
                             <rect key="frame" x="15" y="7" width="25" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="368">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -287,8 +313,10 @@ Gw
                             </connections>
                         </button>
                     </subviews>
+                    <animations/>
                 </customView>
             </subviews>
+            <animations/>
             <connections>
                 <outlet property="nextKeyView" destination="36" id="362"/>
             </connections>
@@ -304,6 +332,7 @@ Gw
                         <textField verticalHuggingPriority="750" id="470" customClass="BXBlueprintLabel">
                             <rect key="frame" x="55" y="160" width="369" height="58"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="471">
                                 <font key="font" metaFont="system" size="24"/>
                                 <string key="title">Please wait while Boxer
@@ -315,6 +344,7 @@ finishes importing your game.</string>
                         <progressIndicator verticalHuggingPriority="750" maxValue="1" bezeled="NO" indeterminate="YES" style="bar" id="174">
                             <rect key="frame" x="56" y="116" width="367" height="20"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <connections>
                                 <binding destination="388" name="animate" keyPath="selection.stageProgressIndeterminate" id="402"/>
                                 <binding destination="388" name="isIndeterminate" keyPath="selection.stageProgressIndeterminate" previousBinding="402" id="405"/>
@@ -324,6 +354,7 @@ finishes importing your game.</string>
                         <textField verticalHuggingPriority="750" id="461" customClass="BXBlueprintHelpTextLabel">
                             <rect key="frame" x="55" y="29" width="369" height="34"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="462">
                                 <font key="font" metaFont="system"/>
                                 <string key="title">If your game has more than one CD, you can import the
@@ -342,6 +373,7 @@ others later from the Drives Inspector while you play.</string>
                         <textField verticalHuggingPriority="750" id="466" customClass="BXBlueprintLabel">
                             <rect key="frame" x="55" y="98" width="369" height="17"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="[Current import stage]" id="467">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -352,6 +384,7 @@ others later from the Drives Inspector while you play.</string>
                             </connections>
                         </textField>
                     </subviews>
+                    <animations/>
                 </customView>
                 <customView id="170" customClass="BXBottomBar">
                     <rect key="frame" x="0.0" y="0.0" width="480" height="40"/>
@@ -360,6 +393,7 @@ others later from the Drives Inspector while you play.</string>
                         <button verticalHuggingPriority="750" id="171">
                             <rect key="frame" x="318" y="7" width="147" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" title="[Stop importing]" bezelStyle="texturedRounded" alignment="center" refusesFirstResponder="YES" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="172">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -376,6 +410,7 @@ Gw
                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="370">
                             <rect key="frame" x="15" y="7" width="25" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="371">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -385,8 +420,10 @@ Gw
                             </connections>
                         </button>
                     </subviews>
+                    <animations/>
                 </customView>
             </subviews>
+            <animations/>
         </view>
         <view id="123" userLabel="Finished panel" customClass="ADBDelegatedView">
             <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
@@ -399,6 +436,7 @@ Gw
                         <textField verticalHuggingPriority="750" id="228">
                             <rect key="frame" x="112" y="36" width="256" height="22"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" title="[Gamebox name]" drawsBackground="YES" id="229" customClass="BXBlueprintTextFieldCell">
                                 <font key="font" metaFont="systemBold"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -416,16 +454,19 @@ Gw
                         <imageView id="259">
                             <rect key="frame" x="312" y="59" width="128" height="64"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <imageCell key="cell" enabled="NO" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="ImportRenameTip" id="260"/>
                         </imageView>
                         <imageView id="261">
                             <rect key="frame" x="32" y="103" width="136" height="88"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <imageCell key="cell" enabled="NO" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="ImportCoverArtTip" id="262"/>
                         </imageView>
                         <imageView focusRingType="none" id="272" customClass="BXImportIconDropzone">
                             <rect key="frame" x="176" y="66" width="128" height="128"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <imageCell key="cell" selectable="YES" editable="YES" focusRingType="none" alignment="left" imageScaling="proportionallyUpOrDown" image="package" id="273"/>
                             <connections>
                                 <action selector="addCoverArt:" target="206" id="277"/>
@@ -439,6 +480,7 @@ Gw
                             </connections>
                         </imageView>
                     </subviews>
+                    <animations/>
                 </customView>
                 <customView id="124" customClass="BXBottomBar">
                     <rect key="frame" x="0.0" y="0.0" width="480" height="40"/>
@@ -447,6 +489,7 @@ Gw
                         <button verticalHuggingPriority="750" id="138">
                             <rect key="frame" x="351" y="7" width="114" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" title="Launch game" bezelStyle="texturedRounded" alignment="center" refusesFirstResponder="YES" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="141">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -461,6 +504,7 @@ DQ
                         <button verticalHuggingPriority="750" id="184">
                             <rect key="frame" x="55" y="7" width="122" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" title="Show in Finder" bezelStyle="texturedRounded" alignment="center" refusesFirstResponder="YES" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="185">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -472,6 +516,7 @@ DQ
                         <button verticalHuggingPriority="750" id="187">
                             <rect key="frame" x="281" y="7" width="60" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="roundTextured" title="Close" bezelStyle="texturedRounded" alignment="center" refusesFirstResponder="YES" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="188">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -486,6 +531,7 @@ Gw
                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="373">
                             <rect key="frame" x="15" y="7" width="25" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="374">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -495,10 +541,12 @@ Gw
                             </connections>
                         </button>
                     </subviews>
+                    <animations/>
                 </customView>
                 <textField verticalHuggingPriority="750" id="472" customClass="BXBlueprintLabel">
                     <rect key="frame" x="55" y="242" width="369" height="58"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Congratulations! Your new gamebox is ready to play." id="473">
                         <font key="font" metaFont="system" size="24"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -506,6 +554,7 @@ Gw
                     </textFieldCell>
                 </textField>
             </subviews>
+            <animations/>
             <connections>
                 <outlet property="delegate" destination="206" id="271"/>
                 <outlet property="nextKeyView" destination="138" id="192"/>

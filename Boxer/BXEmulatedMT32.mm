@@ -402,13 +402,13 @@ void BXEmulatedMT32ReportHandler::onErrorPCMROM()
 
 void BXEmulatedMT32ReportHandler::showLCDMessage(const char *cMessage)
 {
-    NSString *message = [NSString stringWithCString: cMessage encoding: NSASCIIStringEncoding];
+    NSString *message = @(cMessage);
     [_delegate.delegate emulatedMT32: _delegate didDisplayMessage: message];
 }
 
 void BXEmulatedMT32ReportHandler::printDebug(const char *fmt, va_list list)
 {
 #ifdef BOXER_DEBUG
-    NSLogv([NSString stringWithCString: fmt encoding: NSASCIIStringEncoding], list);
+    NSLogv(@(fmt), list);
 #endif
 }

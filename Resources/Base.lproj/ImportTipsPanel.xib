@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" promptedForUpgradeToXcode5="NO">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BXImportTipsPanelController">
@@ -11,7 +12,7 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="299" userLabel="Installer Tips">
             <rect key="frame" x="0.0" y="0.0" width="640" height="64"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -23,6 +24,7 @@
                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" id="327">
                             <rect key="frame" x="595" y="17" width="25" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="328">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -34,6 +36,7 @@
                         <textField verticalHuggingPriority="750" id="442" customClass="BXBlueprintLabel">
                             <rect key="frame" x="27" y="34" width="280" height="17"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="If you’re asked where to install the game:" id="443">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -43,6 +46,7 @@
                         <textField verticalHuggingPriority="750" id="444" customClass="BXBlueprintLabel">
                             <rect key="frame" x="27" y="15" width="280" height="17"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Select anywhere on Drive C." id="445">
                                 <font key="font" metaFont="systemBold"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -52,6 +56,7 @@
                         <textField verticalHuggingPriority="750" id="446" customClass="BXBlueprintLabel">
                             <rect key="frame" x="320" y="34" width="273" height="17"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="If you’re asked for soundcard settings:" id="449">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -61,6 +66,7 @@
                         <textField verticalHuggingPriority="750" id="447" customClass="BXBlueprintLabel">
                             <rect key="frame" x="320" y="15" width="273" height="17"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Select Sound Blaster 16 with IRQ 7." id="448">
                                 <font key="font" metaFont="systemBold"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -68,8 +74,10 @@
                             </textFieldCell>
                         </textField>
                     </subviews>
+                    <animations/>
                 </customView>
             </subviews>
+            <animations/>
         </customView>
         <customView id="304" userLabel="Finish Importing Notice">
             <rect key="frame" x="0.0" y="0.0" width="640" height="64"/>
@@ -82,6 +90,7 @@
                         <button verticalHuggingPriority="750" id="317">
                             <rect key="frame" x="482" y="12" width="144" height="32"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="push" title="Finish importing" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="318">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -93,6 +102,7 @@
                         <button verticalHuggingPriority="750" id="381">
                             <rect key="frame" x="331" y="12" width="152" height="32"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <buttonCell key="cell" type="push" title="Relaunch installer" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="382">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -104,6 +114,7 @@
                         <textField verticalHuggingPriority="750" id="438" customClass="BXBlueprintLabel">
                             <rect key="frame" x="17" y="34" width="304" height="17"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Has the installer finished setting up the game?" id="439">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -113,6 +124,7 @@
                         <textField verticalHuggingPriority="750" id="440" customClass="BXBlueprintLabel">
                             <rect key="frame" x="17" y="15" width="304" height="17"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="If so, then we’re ready to finish importing." id="441">
                                 <font key="font" metaFont="systemBold"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -120,8 +132,10 @@
                             </textFieldCell>
                         </textField>
                     </subviews>
+                    <animations/>
                 </customView>
             </subviews>
+            <animations/>
         </customView>
     </objects>
 </document>

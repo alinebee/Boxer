@@ -705,6 +705,6 @@ struct boxer_emulatorException: public std::exception {
 @property (copy) NSArray *callStackReturnAddresses;
 @property (copy) NSArray *callStackSymbols;
 
-+ (id) exceptionWithName: (NSString *)name originalException: (boxer_emulatorException *)info;
++ (instancetype) exceptionWithName: (NSString *)name originalException: (boxer_emulatorException *)info;
 
 @end

@@ -35,7 +35,7 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 @protocol BXOutputBinding <NSObject>
 
 //Returns an autoreleased instance of the class.
-+ (id) binding;
++ (instancetype) binding;
 
 //Receives a raw input value.
 - (void) applyInputValue: (float)value;
@@ -103,7 +103,7 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 }
 @property (assign, nonatomic) BXEmulatedJoystickButton button;
 
-+ (id) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick button: (BXEmulatedJoystickButton)button;
++ (instancetype) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick button: (BXEmulatedJoystickButton)button;
 
 @end
 
@@ -117,9 +117,9 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 @property (copy, nonatomic) NSString *axisName;
 @property (assign, nonatomic) BXAxisPolarity polarity;
 
-+ (id) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick
-                      axis: (NSString *)axisName
-                  polarity: (BXAxisPolarity)polarity;
++ (instancetype) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick
+                                axis: (NSString *)axisName
+                            polarity: (BXAxisPolarity)polarity;
 
 @end
 
@@ -133,9 +133,9 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 @property (assign, nonatomic) NSUInteger POVNumber;
 @property (assign, nonatomic) BXEmulatedPOVDirection POVDirection;
 
-+ (id) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick
-                       POV: (NSUInteger)POVNumber
-                 direction: (BXEmulatedPOVDirection)direction;
++ (instancetype) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick
+                                 POV: (NSUInteger)POVNumber
+                           direction: (BXEmulatedPOVDirection)direction;
 
 @end
 
@@ -155,7 +155,7 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 //The key code to press/release when this binding is activated.
 @property (assign, nonatomic) BXDOSKeyCode keyCode;
 
-+ (id) bindingWithKeyboard: (BXEmulatedKeyboard *)keyboard keyCode: (BXDOSKeyCode)keyCode;
++ (instancetype) bindingWithKeyboard: (BXEmulatedKeyboard *)keyboard keyCode: (BXDOSKeyCode)keyCode;
 
 @end
 
@@ -173,7 +173,7 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 @property (assign, nonatomic) SEL pressedAction;
 @property (assign, nonatomic) SEL releasedAction;
 
-+ (id) bindingWithTarget: (id)target pressedAction: (SEL)pressedAction releasedAction: (SEL)releasedAction;
++ (instancetype) bindingWithTarget: (id)target pressedAction: (SEL)pressedAction releasedAction: (SEL)releasedAction;
 
 @end
 
@@ -236,6 +236,6 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 //if negative, the axis value will decrease.
 @property (assign, nonatomic) float ratePerSecond;
 
-+ (id) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick axis: (NSString *)axisName rate: (float)ratePerSecond;
++ (instancetype) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick axis: (NSString *)axisName rate: (float)ratePerSecond;
 
 @end

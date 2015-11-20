@@ -16,19 +16,20 @@
 #import <CoreMIDI/CoreMIDI.h>
 #import "ADBContinuousThread.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
 @class BXMIDIInputListener;
 @protocol BXMIDIInputListenerDelegate <NSObject>
 
 @optional
 
-//Sent whenever the listener receives a new batch of data. data contains the chunk just
-//received: for the full data received so far, call [listener receivedData].
+//! Sent whenever the listener receives a new batch of data. data contains the chunk just
+//! received: for the full data received so far, call <code>[listener receivedData]</code>.
 - (void) MIDIInputListener: (BXMIDIInputListener *)listener receivedData: (NSData *)data;
 
-//Sent when the listener has gone for its timeout period without receiving any data.
-//If the return value is YES, the listener will stop listening and close its connection.
-//(If the delegate does not implement this method, the listener assumes the answer is yes.)
+//! Sent when the listener has gone for its timeout period without receiving any data.
+//! If the return value is <code>YES</code>, the listener will stop listening and close its connection.
+//! (If the delegate does not implement this method, the listener assumes the answer is yes.)
 - (BOOL) MIDIInputListenerShouldStopListeningAfterTimeout: (BXMIDIInputListener *)listener;
 
 @end
@@ -42,11 +43,11 @@
     NSMutableArray *_listeners;
 }
 
-//An array of unique destination IDs for MT-32s found during our scan.
-//This will be populated and depopulated as devices are added and removed.
-//This property is thread-safe and key-value-coding compliant, though KVC
-//notifications will be sent on the operation's thread.)
-@property (readonly) NSArray *discoveredMT32s;
+//! An array of unique destination IDs for MT-32s found during our scan.
+//! This will be populated and depopulated as devices are added and removed.
+//! This property is thread-safe and key-value-coding compliant, though KVC
+//! notifications will be sent on the operation's thread.)
+@property (readonly) NSArray<NSNumber*> *discoveredMT32s;
 
 @end
 
@@ -101,36 +102,38 @@
 @property (assign, nonatomic) NSTimeInterval timeout;
 
 //The delegate to which notification messages will be sent.
-@property (assign, nonatomic) id <BXMIDIInputListenerDelegate> delegate;
+@property (assign, nonatomic, nullable) id <BXMIDIInputListenerDelegate> delegate;
 
 
 # pragma mark -
 # pragma mark Methods
 
-//Creates and returns an input port set up on the specified client,
-//with a callback that will dispatch received messages to BXMIDIPortListener
-//objects. Returns NULL and populates outError if the port could not be created.
-//(This port will be owned by the calling context, and can be disposed of
-//with MIDIPortDispose once it is no longer needed.)
+//! Creates and returns an input port set up on the specified client,
+//! with a callback that will dispatch received messages to BXMIDIPortListener
+//! objects. Returns NULL and populates outError if the port could not be created.
+//! (This port will be owned by the calling context, and can be disposed of
+//! with \c MIDIPortDispose once it is no longer needed.)
 + (MIDIPortRef) createListeningPortForClient: (MIDIClientRef)client
                                     withName: (NSString *)portName
                                        error: (NSError **)outError;
 
-//Returns a new listener instance assigned to the specified delegate.
-- (id) initWithDelegate: (id <BXMIDIInputListenerDelegate>)delegate;
+//! Returns a new listener instance assigned to the specified delegate.
+- (instancetype) initWithDelegate: (id <BXMIDIInputListenerDelegate>)delegate;
 
-//Start listening for input on the specified source, with the specified contextInfo
-//(which is not retained). Returns YES if the listener is now attached and listening,
-//NO if there was an error.
+//! Start listening for input on the specified source, with the specified contextInfo
+//! (which is not retained). Returns \c YES if the listener is now attached and listening,
+//! \c NO if there was an error.
 - (BOOL) listenToSource: (MIDIEndpointRef)source
                  onPort: (MIDIPortRef)port
             contextInfo: (void *)contextInfo;
 
-//Called by the port callback with the data just received.
+//! Called by the port callback with the data just received.
 - (void) receivePackets: (const MIDIPacketList *)packets;
 
-//Disconnect from the source, if listening. Called automatically when the listener
-//times out, unless the delegate returns NO to MIDIInputListenerShouldStopListeningAfterTimeout:.
+//! Disconnect from the source, if listening. Called automatically when the listener
+//! times out, unless the delegate returns \c NO to <code>MIDIInputListenerShouldStopListeningAfterTimeout:</code>.
 - (void) stopListening;
 
 @end
+
+NS_ASSUME_NONNULL_END

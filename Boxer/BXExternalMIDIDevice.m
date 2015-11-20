@@ -56,7 +56,7 @@
 #pragma mark -
 #pragma mark Initialization and cleanup
 
-- (id <BXMIDIDevice>) init
+- (instancetype) init
 {
     if ((self = [super init]))
     {
@@ -70,8 +70,8 @@
 }
 
 
-- (id <BXMIDIDevice>) initWithDestination: (MIDIEndpointRef)destination
-                                    error: (NSError **)outError
+- (instancetype) initWithDestination: (MIDIEndpointRef)destination
+                               error: (NSError **)outError
 {
     if ((self = [self init]))
     {
@@ -86,7 +86,7 @@
 }
 
 
-- (id <BXMIDIDevice>) initWithDestinationAtIndex: (ItemCount)destIndex
+- (instancetype) initWithDestinationAtIndex: (ItemCount)destIndex
                                            error: (NSError **)outError
 {
     if ((self = [self init]))
@@ -102,8 +102,8 @@
     return self;
 }
 
-- (id <BXMIDIDevice>) initWithDestinationAtUniqueID: (MIDIUniqueID)uniqueID
-                                              error: (NSError **)outError
+- (instancetype) initWithDestinationAtUniqueID: (MIDIUniqueID)uniqueID
+                                         error: (NSError **)outError
 {
     if ((self = [self init]))
     {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1060" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BXDOSWindowController">
@@ -37,6 +37,7 @@
                             <textField verticalHuggingPriority="750" tag="2" id="909">
                                 <rect key="frame" x="185" y="6" width="270" height="14"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <animations/>
                                 <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Cmd-click to lock the mouse to the window." id="910">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -50,6 +51,7 @@
                                     <button verticalHuggingPriority="750" id="992">
                                         <rect key="frame" x="0.0" y="4" width="19" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <animations/>
                                         <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="Volume0PercentCroppedTemplate" imagePosition="only" alignment="center" controlSize="small" state="on" borderStyle="border" inset="2" id="993">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="systemBold" size="12"/>
@@ -61,6 +63,7 @@
                                     <button verticalHuggingPriority="750" id="995">
                                         <rect key="frame" x="95" y="4" width="27" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <animations/>
                                         <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="Volume100PercentTemplate" imagePosition="only" alignment="center" controlSize="small" state="on" borderStyle="border" inset="2" id="996">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="systemBold" size="12"/>
@@ -72,6 +75,7 @@
                                     <slider focusRingType="none" verticalHuggingPriority="750" id="985">
                                         <rect key="frame" x="21" y="5" width="72" height="15"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <animations/>
                                         <sliderCell key="cell" controlSize="small" continuous="YES" state="on" focusRingType="none" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="986"/>
                                         <connections>
                                             <binding destination="-3" name="value" keyPath="delegate.effectiveVolume" id="1002">
@@ -82,8 +86,10 @@
                                         </connections>
                                     </slider>
                                 </subviews>
+                                <animations/>
                             </customView>
                         </subviews>
+                        <animations/>
                     </customView>
                     <customView id="924" userLabel="Window Content Wrapper" customClass="BXDOSWindowBackgroundView">
                         <rect key="frame" x="0.0" y="26" width="640" height="480"/>
@@ -107,6 +113,7 @@
                                                         <collectionView focusRingType="none" maxNumberOfColumns="1" id="1157">
                                                             <rect key="frame" x="0.0" y="0.0" width="480" height="296"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <animations/>
                                                             <color key="primaryBackgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                                             <connections>
                                                                 <binding destination="1056" name="content" keyPath="displayedRows" id="wDJ-DB-UDR"/>
@@ -115,18 +122,23 @@
                                                             </connections>
                                                         </collectionView>
                                                     </subviews>
+                                                    <animations/>
                                                     <color key="backgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 </clipView>
+                                                <animations/>
                                                 <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="1158" customClass="BXHUDScroller">
                                                     <rect key="frame" x="-100" y="-100" width="233" height="15"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <animations/>
                                                 </scroller>
                                                 <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="1159" customClass="BXHUDScroller">
                                                     <rect key="frame" x="234" y="1" width="15" height="143"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <animations/>
                                                 </scroller>
                                             </scrollView>
                                         </subviews>
+                                        <animations/>
                                     </customView>
                                     <customView hidden="YES" id="978" userLabel="DOS Input View" customClass="BXInputView">
                                         <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
@@ -135,8 +147,10 @@
                                             <openGLView focusRingType="none" rendererType="accelerated" useAuxiliaryDepthBufferStencil="NO" useDoubleBufferingEnabled="YES" useRecovery="YES" wantsBestResolutionOpenGLSurface="YES" id="970" customClass="BXGLRenderingView">
                                                 <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <animations/>
                                             </openGLView>
                                         </subviews>
+                                        <animations/>
                                     </customView>
                                     <customView id="1251" userLabel="Loading view">
                                         <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
@@ -145,14 +159,19 @@
                                             <customView id="1253" customClass="BXHUDSpinningProgressIndicator">
                                                 <rect key="frame" x="242" y="160" width="156" height="160"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                <animations/>
                                             </customView>
                                         </subviews>
+                                        <animations/>
                                     </customView>
                                 </subviews>
+                                <animations/>
                             </customView>
                         </subviews>
+                        <animations/>
                     </customView>
                 </subviews>
+                <animations/>
             </view>
             <contentBorderThickness minY="26"/>
             <connections>
@@ -191,6 +210,7 @@
                 <button id="1187" customClass="BXStandaloneLaunchPanelButton">
                     <rect key="frame" x="14" y="4" width="452" height="48"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                    <animations/>
                     <buttonCell key="cell" type="square" title="Launch Program" bezelStyle="shadowlessSquare" image="NSFollowLinkFreestandingTemplate" imagePosition="right" alignment="left" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="1188" customClass="BXStandaloneLaunchPanelButtonCell">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system" size="20"/>
@@ -201,6 +221,7 @@
                     </connections>
                 </button>
             </subviews>
+            <animations/>
             <connections>
                 <outlet property="delegate" destination="1160" id="1241"/>
             </connections>

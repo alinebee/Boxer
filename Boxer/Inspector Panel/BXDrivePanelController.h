@@ -15,7 +15,7 @@
 
 @class BXDriveList;
 @class BXDrive;
-@interface BXDrivePanelController : NSViewController <ADBOperationDelegate, NSWindowDelegate>
+@interface BXDrivePanelController : NSViewController <ADBOperationDelegate, NSWindowDelegate, NSDraggingDestination>
 {
 	NSSegmentedControl *_driveControls;
 	NSMenu *_driveActionsMenu;

@@ -14,6 +14,8 @@
 #import "BXDOSWindowController.h"
 #import "BXInputController.h"
 
+#import <DDHidLib/DDHidJoystick.h>
+
 @interface BXJoystickController ()
 
 @property (retain, nonatomic) ADBHIDMonitor *HIDMonitor;

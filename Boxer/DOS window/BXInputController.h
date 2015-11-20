@@ -20,10 +20,7 @@
 @class BXSession;
 @class DDHidJoystick;
 
-@interface BXInputController : NSViewController
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
-< NSAnimationDelegate >
-#endif
+@interface BXInputController : NSViewController <NSAnimationDelegate>
 {
 	BXCursorFadeAnimation *_cursorFade;
 	

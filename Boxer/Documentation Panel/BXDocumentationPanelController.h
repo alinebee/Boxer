@@ -8,6 +8,8 @@
 #import <Cocoa/Cocoa.h>
 #import "BXDocumentationBrowser.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class NSPopover;
 @class BXSession;
 @interface BXDocumentationPanelController : NSWindowController <NSPopoverDelegate, BXDocumentationBrowserDelegate>
@@ -23,7 +25,7 @@
 #pragma mark - Properties
 
 //The session whose documents are being displayed in the panel.
-@property (retain, nonatomic) BXSession *session;
+@property (retain, nonatomic, nullable) BXSession *session;
 
 //Whether the panel is currently visible, either as a popover or as a window.
 @property (readonly, nonatomic, getter=isShown) BOOL shown;
@@ -38,7 +40,7 @@
 #pragma mark - Initialization
 
 //Returns a new controller instance.
-+ (BXDocumentationPanelController *) controller;
++ (instancetype) controller;
 
 #pragma mark - Display methods
 
@@ -65,3 +67,5 @@
 - (void) sizeToFit;
 
 @end
+
+NS_ASSUME_NONNULL_END

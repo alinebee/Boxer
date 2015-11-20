@@ -76,8 +76,8 @@
 
 //Returns a newly-created BXDocumentationListController instance
 //whose UI is loaded from DocumentationList.xib.
-+ (id) browserForSession: (BXSession *)session;
-- (id) initWithSession: (BXSession *)session;
++ (instancetype) browserForSession: (BXSession *)session;
+- (instancetype) initWithSession: (BXSession *)session;
 
 
 #pragma mark - Interface actions

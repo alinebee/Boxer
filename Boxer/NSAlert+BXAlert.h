@@ -13,7 +13,7 @@
 @interface NSAlert (BXAlert)
 
 //Returns a non-retained NSAlert instance.
-+ (id) alert;
++ (instancetype) alert;
 
 //Set the alert's icon to the represented icon of the specified window.
 //Returns YES if the window had a specific icon, NO otherwise.

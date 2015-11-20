@@ -15,7 +15,7 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="1" customClass="ADBDelegatedView">
             <rect key="frame" x="0.0" y="0.0" width="480" height="256"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -23,7 +23,7 @@
                 <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="0.0" verticalPageScroll="0.0" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="11">
                     <rect key="frame" x="0.0" y="30" width="480" height="192"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                    <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="F0C-Cu-bxA">
+                    <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="CPF-D1-Fr6">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="192"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
@@ -33,8 +33,8 @@
                                 <animations/>
                                 <color key="primaryBackgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <connections>
-                                    <binding destination="-2" name="content" keyPath="documentationURLs" id="87"/>
                                     <binding destination="-2" name="selectionIndexes" keyPath="documentationSelectionIndexes" previousBinding="87" id="89"/>
+                                    <binding destination="-2" name="content" keyPath="documentationURLs" id="87"/>
                                     <outlet property="delegate" destination="-2" id="47"/>
                                     <outlet property="itemPrototype" destination="15" id="17"/>
                                 </connections>

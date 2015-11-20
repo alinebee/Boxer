@@ -165,7 +165,7 @@
                         <box key="view" autoresizesSubviews="NO" transparent="YES" borderWidth="0.0" boxType="custom" borderType="none" titlePosition="noTitle" id="MWA-k3-MA8">
                             <rect key="frame" x="0.0" y="14" width="130" height="22"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <view key="contentView" id="iSM-Ln-B6d">
+                            <view key="contentView" id="pog-wV-FrI">
                                 <rect key="frame" x="0.0" y="0.0" width="130" height="22"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
@@ -221,7 +221,7 @@
                         <box key="view" autoresizesSubviews="NO" transparent="YES" borderWidth="0.0" boxType="custom" borderType="none" titlePosition="noTitle" id="1417">
                             <rect key="frame" x="0.0" y="14" width="130" height="22"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <view key="contentView" id="DdV-1K-DpQ">
+                            <view key="contentView" id="Ut0-Lx-FQG">
                                 <rect key="frame" x="0.0" y="0.0" width="130" height="22"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>

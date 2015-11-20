@@ -36,7 +36,7 @@
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. The controller should always be accessed from this singleton.
-+ (id) controller;
++ (instancetype) controller;
 
 //Open the URL represented by the sending menu item. Called by items in the Open Recent popup button.
 - (IBAction) openRecentDocument: (NSMenuItem *)sender;

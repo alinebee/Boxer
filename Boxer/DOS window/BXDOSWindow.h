@@ -6,24 +6,24 @@
  */
 
 
-//BXDOSWindow is the main window for a DOS session. This class is heavily reliant on
-//BXDOSWindowController and exists mainly just to override NSWindow's default window sizing
-//and constraining methods.
 
 #import "ADBFullscreenCapableWindow.h"
 
 @class BXDOSWindowController;
 
+//! <code>BXDOSWindow</code> is the main window for a DOS session. This class is heavily reliant on
+//! <code>BXDOSWindowController</code> and exists mainly just to override <code>NSWindow</code>'s default window sizing
+//! and constraining methods.
 @interface BXDOSWindow : ADBFullscreenCapableWindow
 {
     NSView *actualContentView;
 }
-//The 'real' content view by which our content size calculations will be constrained,
-//and which will fill the screen in fullscreen mode. This is distinct from the window's
-//top-level content view and does not include the program panel or statusbar views.
+//! The 'real' content view by which our content size calculations will be constrained,
+//! and which will fill the screen in fullscreen mode. This is distinct from the window's
+//! top-level content view and does not include the program panel or statusbar views.
 @property (retain, nonatomic) IBOutlet NSView *actualContentView;
 
-//Return the current size of actualContentView.
+//! Return the current size of actualContentView.
 - (NSSize) actualContentViewSize;
 
 @end

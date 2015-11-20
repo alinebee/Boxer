@@ -132,7 +132,7 @@
     {
         NSSize idealSize = [self.windowBrowser idealContentSizeForNumberOfItems: numItems];
         NSRect windowRect = [self windowRectForIdealBrowserSize: idealSize];
-        [self.window setFrame: windowRect display: self.window.isVisible animate: self.window.isVisible];
+        [self.window setFrame: windowRect display: self.window.isVisible animate: self.window.visible];
     }
 }
 

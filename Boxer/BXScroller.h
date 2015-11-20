@@ -10,20 +10,26 @@
 #import <Cocoa/Cocoa.h>
 
 
-//BXScroller is a custom scroller used in some of our interfaces: it displayes a simple grey
-//scroller knob in a track with no scroll buttons.
-
+//! BXScroller is a custom scroller used in some of our interfaces: it displayes a simple grey
+//! scroller knob in a track with no scroll buttons.
 @interface BXScroller : NSScroller
-- (BOOL) isVertical;	//Returns whether the scroller is horizontal or vertical.
+//! Returns whether the scroller is horizontal or vertical.
+@property (readonly, getter=isVertical) BOOL vertical;
 
-- (NSSize) knobMargin;			//How big a margin to leave between the edge of the scroller and the scroll knob
-- (NSSize) slotMargin;			//How big a margin to leave between the edge of the scroller and the visible track
-- (NSColor *)slotFill;			//The color with which to fill the scroller track
-- (NSShadow *)slotShadow;		//The inner shadow to give the scroller track
-- (NSColor *)knobStroke;        //The color with which to stroke the scroller knob (quiet you)
-- (NSGradient *)knobGradient;	//The gradient with which to fill the scroller knob
+//! How big a margin to leave between the edge of the scroller and the scroll knob
+@property (readonly) NSSize knobMargin;
+//! How big a margin to leave between the edge of the scroller and the visible track
+@property (readonly) NSSize slotMargin;
+//! The color with which to fill the scroller track
+@property (readonly, assign) NSColor *slotFill;
+//! The inner shadow to give the scroller track
+@property (readonly, assign) NSShadow *slotShadow;
+//! The color with which to stroke the scroller knob (quiet you)
+@property (readonly, assign) NSColor *knobStroke;
+//! The gradient with which to fill the scroller knob
+@property (readonly, assign) NSGradient *knobGradient;
 @end
 
-//A recoloured variant for use in HUD-style panels.
+//! A recoloured variant for use in HUD-style panels.
 @interface BXHUDScroller : BXScroller
 @end

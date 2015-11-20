@@ -109,9 +109,9 @@
 	NSRect	knobRect;
 	CGFloat	knobRadius;
 	CGFloat	knobGradientAngle;
-	NSGradient *knobGradient	= [self knobGradient];
-    NSColor *knobStroke         = [self knobStroke];
-	NSSize	knobMargin			= [self knobMargin];
+	NSGradient *knobGradient	= self.knobGradient;
+    NSColor *knobStroke         = self.knobStroke;
+	NSSize	knobMargin			= self.knobMargin;
 	
 	if ([self isVertical])
 	{
@@ -149,15 +149,15 @@
 {
 	if (NSEqualRects(regionRect, NSZeroRect)) return;
 	
-	NSColor *slotFill		= [self slotFill];
-	NSShadow *slotShadow	= [self slotShadow];
+    NSColor *slotFill		= self.slotFill;
+	NSShadow *slotShadow	= self.slotShadow;
 	
 	
 	NSRect slotRect;
 	CGFloat slotRadius;
-	NSSize slotMargin = [self slotMargin];
+	NSSize slotMargin = self.slotMargin;
 	
-	if ([self isVertical])
+	if (self.vertical)
 	{	
 		slotRect = NSInsetRect(regionRect, slotMargin.width, slotMargin.height);
 		slotRadius = slotRect.size.width / 2;

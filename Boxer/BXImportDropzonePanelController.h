@@ -15,10 +15,7 @@
 @class BXImportWindowController;
 @class BXBlueprintProgressIndicator;
 
-@interface BXImportDropzonePanelController : NSViewController
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
-< NSOpenSavePanelDelegate >
-#endif
+@interface BXImportDropzonePanelController : NSViewController <NSOpenSavePanelDelegate>
 {
     __unsafe_unretained BXImportWindowController *_controller;
 	BXImportDropzone *_dropzone;
@@ -26,21 +23,21 @@
 }
 
 //The dropzone within the dropzone panel
-@property (retain, nonatomic) IBOutlet BXImportDropzone *dropzone;
+@property (retain, nonatomic, nullable) IBOutlet BXImportDropzone *dropzone;
 
 //The progress indicator shown when scanning a game for installers.
 //(This now lives on a separate interstitial view and not the Dropzone
 //view, but I can't be bothered making a second controller for it.)
-@property (retain, nonatomic) IBOutlet BXBlueprintProgressIndicator *spinner;
+@property (retain, nonatomic, nullable) IBOutlet BXBlueprintProgressIndicator *spinner;
 
 //A reference to our window controller
-@property (assign, nonatomic) IBOutlet BXImportWindowController *controller;
+@property (assign, nonatomic, nullable) IBOutlet BXImportWindowController *controller;
 
 
 //Display a file picker for choosing a folder or disc image to import
-- (IBAction) showImportPathPicker: (id)sender;
+- (IBAction) showImportPathPicker: (nullable id)sender;
 
 //Display help for this stage of the import process.
-- (IBAction) showImportDropzoneHelp: (id)sender;
+- (IBAction) showImportDropzoneHelp: (nullable id)sender;
 
 @end

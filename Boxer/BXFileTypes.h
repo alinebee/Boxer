@@ -9,6 +9,8 @@
 
 //Constants and class methods for file type UTIs that Boxer manages.
 
+NS_ASSUME_NONNULL_BEGIN
+
 extern NSString * const BXGameboxType;          //.boxer
 extern NSString * const BXGameStateType;        //.boxerstate
 
@@ -121,3 +123,5 @@ typedef NS_ENUM(NSInteger, BXExecutableType) {
                                                                                       error: (out NSError **)outError;
 
 @end
+
+NS_ASSUME_NONNULL_END

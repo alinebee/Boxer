@@ -159,7 +159,7 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 @property (assign, nonatomic) NSUInteger defaultLauncherIndex;
 
 //The delegate from whom we will request an undo manager for undoable operations.
-@property (assign, nonatomic) id <ADBUndoDelegate> undoDelegate;
+@property (assign, nonatomic, nullable) id <ADBUndoDelegate> undoDelegate;
 
 
 #pragma mark - Instance methods

@@ -12,6 +12,8 @@
 //copy without blocking the main thread.
 //Used by BXAppController+BXGamesFolder addSampleGamesToPath:
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface BXSampleGamesCopy : NSOperation
 {
 	NSURL *_targetURL;
@@ -21,7 +23,9 @@
 @property (copy) NSURL *sourceURL;
 
 //Create a new copy operation from the specified source path to the specified path.
-- (id) initFromSourceURL: (NSURL *)sourceURL
-             toTargetURL: (NSURL *)targetURL;
+- (instancetype) initFromSourceURL: (NSURL *)sourceURL
+                       toTargetURL: (NSURL *)targetURL;
 
 @end
+
+NS_ASSUME_NONNULL_END

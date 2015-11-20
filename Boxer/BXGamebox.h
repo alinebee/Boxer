@@ -17,6 +17,7 @@
 #import <Cocoa/Cocoa.h>
 #import "ADBUndoExtensions.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Gamebox-related error constants
 
@@ -27,7 +28,6 @@ enum {
     BXDocumentationNotInFolderError,    //Attempted a destructive documentation operation on a URL that was not within the gamebox's documentation folder
     BXTargetPathOutsideGameboxError = BXLauncherURLOutsideGameboxError,
 };
-
 
 #pragma mark - Game Info.plist constants
 
@@ -117,7 +117,7 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 
 //Returns a dictionary of gamebox metadata loaded from Boxer.plist.
 //Keys in this dictionary also be retrieved with gameInfoForKey:, and set with setGameInfo:forKey:.
-@property (readonly, retain, nonatomic) NSDictionary *gameInfo;
+@property (readonly, retain, nonatomic, nullable) NSDictionary *gameInfo;
 
 //The name of the game, suitable for display. This is the gamebox's filename minus any ".boxer" extension.
 @property (readonly, nonatomic) NSString *gameName;
@@ -126,9 +126,9 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 @property (copy, nonatomic) NSString *gameIdentifier;
 
 //URLs to bundled drives and images of the specified types.
-@property (readonly, nonatomic) NSArray *hddVolumeURLs;
-@property (readonly, nonatomic) NSArray *cdVolumeURLs;
-@property (readonly, nonatomic) NSArray *floppyVolumeURLs;
+@property (readonly, nonatomic) NSArray<NSURL*> *hddVolumeURLs;
+@property (readonly, nonatomic) NSArray<NSURL*> *cdVolumeURLs;
+@property (readonly, nonatomic) NSArray<NSURL*> *floppyVolumeURLs;
 
 //An array of drives bundled inside this gamebox, ordered by drive letter and filename.
 @property (readonly, nonatomic) NSArray *bundledDrives;
@@ -161,17 +161,12 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 //The delegate from whom we will request an undo manager for undoable operations.
 @property (assign, nonatomic) id <ADBUndoDelegate> undoDelegate;
 
-#pragma mark - Class methods
-
-//Re-casts the return value as a BXGamebox instead of an NSBundle
-+ (BXGamebox *)bundleWithURL: (NSURL *)URL;
-
 
 #pragma mark - Instance methods
 
 //Get/set metadata in the gameInfo dictionary.
-- (id) gameInfoForKey: (NSString *)key;
-- (void) setGameInfo: (id)info forKey: (NSString *)key;
+- (nullable id) gameInfoForKey: (NSString *)key;
+- (void) setGameInfo: (nullable id)info forKey: (NSString *)key;
 
 //Clear resource caches for documentation, gameInfo and executables.
 - (void) refresh;
@@ -185,13 +180,13 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 //title is optional: if omitted, the filename of the URL will be used.
 //Will raise an assertion if URL does not point to a location within the gamebox.
 - (void) insertLauncherWithURL: (NSURL *)URL
-                     arguments: (NSString *)launchArguments
+                     arguments: (nullable NSString *)launchArguments
                          title: (NSString *)title
                        atIndex: (NSUInteger)index;
 
 //Same as above, but adds the launcher item at the end of the list.
 - (void) addLauncherWithURL: (NSURL *)URL
-                  arguments: (NSString *)launchArguments
+                  arguments: (nullable NSString *)launchArguments
                       title: (NSString *)title;
 
 //Remove the specified launcher item from the launchers array.
@@ -200,13 +195,13 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 
 //Validates that the specified URL is located within the gamebox
 //and is otherwise suitable as the target of a launcher.
-- (BOOL) validateLauncherURL: (NSURL **)ioValue error: (NSError **)outError;
+- (BOOL) validateLauncherURL: (NSURL *__nonnull*__nullable)ioValue error: (NSError **)outError;
 
 
 #pragma mark - Filesystem methods
 
 //Returns the URLs of all bundled volumes with the specified UTIs.
-- (NSArray *) URLsOfVolumesMatchingTypes: (NSSet *)fileTypes;
+- (NSArray<NSURL*> *) URLsOfVolumesMatchingTypes: (NSSet *)fileTypes;
 
 //Returns whether the gamebox's disk representation is currently writable to Boxer:
 //according to the NSURLFileIsWritableKey resource property of the bundle's URL.
@@ -248,7 +243,7 @@ typedef NS_ENUM(NSInteger, BXGameboxDocumentationConflictBehaviour) {
 + (NSSet *) documentationExclusions;	//Filename patterns for documentation to exclude from searches.
 
 //Returns all the documentation files in the specified filesystem location.
-+ (NSArray *) URLsForDocumentationInLocation: (NSURL *)location searchSubdirectories: (BOOL)searchSubdirs;
++ (NSArray<NSURL*> *) URLsForDocumentationInLocation: (NSURL *)location searchSubdirectories: (BOOL)searchSubdirs;
 
 //Returns whether the file at the specified URL appears to be documentation.
 + (BOOL) isDocumentationFileAtURL: (NSURL *)URL;
@@ -274,7 +269,7 @@ typedef NS_ENUM(NSInteger, BXGameboxDocumentationConflictBehaviour) {
 //Returns the URL of the folder in the trash, or nil if the folder could not be trashed
 //(including if it didn't exist.)
 //This method registers an undo operation if the folder was successfully moved to the trash.
-- (NSURL *) trashDocumentationFolderWithError: (NSError **)outError;
+- (nullable NSURL *) trashDocumentationFolderWithError: (NSError **)outError;
 
 //Populates the documentation folder with symlinks to documentation found elsewhere in the gamebox.
 //If createIfMissing is YES, the folder will be created if it doesn't already exist.
@@ -282,7 +277,7 @@ typedef NS_ENUM(NSInteger, BXGameboxDocumentationConflictBehaviour) {
 //or NO and returns outError if it could not be populated (including if the documentation folder
 //doesn't exist and createIfMissing was NO.)
 //This method registers undo operations for creating the folder and populating each documentation file.
-- (NSArray *) populateDocumentationFolderCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
+- (nullable NSArray<NSURL*> *) populateDocumentationFolderCreatingIfMissing: (BOOL)createIfMissing error: (out NSError **)outError;
 
 
 //Copies the file at the specified location into the documentation folder,
@@ -293,10 +288,10 @@ typedef NS_ENUM(NSInteger, BXGameboxDocumentationConflictBehaviour) {
 //the file will be replaced or renamed (by appending a number to the filename).
 //Returns the URL of the imported file on success, or nil and populates outError on failure.
 //This method registers an undo operation if the file was successfully added.
-- (NSURL *) addDocumentationFileFromURL: (NSURL *)sourceURL
-                              withTitle: (NSString *)title
-                               ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
-                                  error: (out NSError **)outError;
+- (nullable NSURL *) addDocumentationFileFromURL: (NSURL *)sourceURL
+                                       withTitle: (nullable NSString *)title
+                                        ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
+                                           error: (out NSError **)outError;
 
 //Adds a symlink to the specified URL into the gamebox's documentation folder,
 //creating the folder first if it is missing.
@@ -306,10 +301,10 @@ typedef NS_ENUM(NSInteger, BXGameboxDocumentationConflictBehaviour) {
 //the file will be replaced or renamed (by appending a number to the filename).
 //Returns the URL of the symlink on success, or nil and populates outError on failure.
 //This method registers an undo operation if the symlink was successfully added.
-- (NSURL *) addDocumentationSymlinkToURL: (NSURL *)sourceURL
-                               withTitle: (NSString *)title
-                                ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
-                                   error: (out NSError **)outError;
+- (nullable NSURL *) addDocumentationSymlinkToURL: (NSURL *)sourceURL
+                                        withTitle: (nullable NSString *)title
+                                         ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
+                                            error: (out NSError **)outError;
 
 //Moves the documentation file at the specified URL to the trash (if it is a regular file)
 //or deletes it altogether (if it is a symlink).
@@ -318,7 +313,7 @@ typedef NS_ENUM(NSInteger, BXGameboxDocumentationConflictBehaviour) {
 //is not located within the gamebox's documentation folder.
 //This method registers an undo operation if the file was successfully deleted/moved to the trash.
 - (BOOL) removeDocumentationURL: (NSURL *)documentationURL
-                   resultingURL: (out NSURL **)resultingURL
+                   resultingURL: (out NSURL *__nonnull*__nullable)resultingURL
                           error: (out NSError **)outError;
 
 //Returns whether the specified documentation file can be removed from the gamebox.
@@ -335,9 +330,11 @@ typedef NS_ENUM(NSInteger, BXGameboxDocumentationConflictBehaviour) {
 @interface BXGamebox (BXGameboxLegacyPathAPI)
 
 //The path to the default executable for this gamebox. Will be nil if the gamebox has no target executable.
-@property (copy, nonatomic) NSString *targetPath __deprecated;
+@property (copy, nonatomic, null_unspecified) NSString *targetPath __deprecated;
 
 //Returns whether the specified path is valid to be the default target of this gamebox
-- (BOOL) validateTargetPath: (id *)ioValue error: (NSError **)outError;
+- (BOOL) validateTargetPath: (id __null_unspecified*__null_unspecified)ioValue error: (NSError **)outError;
 
 @end
+
+NS_ASSUME_NONNULL_END

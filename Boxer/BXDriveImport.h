@@ -87,6 +87,6 @@ extern NSString * const BXUniqueDriveNameFormat;
 //A protocol for import-related error subclasses.
 @protocol BXDriveImportError <NSObject>
 
-+ (instancetype) errorWithDrive: (BXDrive *)drive;
++ (NSError*) errorWithDrive: (BXDrive *)drive;
 
 @end

@@ -1,0 +1,15 @@
+[submodule "Vendor/BGHUDAppKit"]
+	path = Vendor/BGHUDAppKit
+	url = https://github.com/MaddTheSane/BGHUDAppKit.git
+[submodule "Vendor/Boxer-DDHidLib"]
+	path = Vendor/DDHidLib
+	url = https://github.com/MaddTheSane/Boxer-DDHidLib.git
+[submodule "Vendor/Boxer-MT32Emu"]
+	path = Vendor/MT32Emu
+	url = https://github.com/MaddTheSane/Boxer-MT32Emu.git
+[submodule "Vendor/Sparkle"]
+	path = Vendor/Sparkle
+	url = https://github.com/sparkle-project/Sparkle.git
+[submodule "Vendor/cdrdao"]
+	path = Vendor/cdrdao
+	url = https://github.com/MaddTheSane/Boxer-cdrdao.git

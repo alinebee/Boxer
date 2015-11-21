@@ -3,38 +3,45 @@
 <plist version="1.0">
 <dict>
 	<key>BuildMachineOSBuild</key>
-	<string>11E53</string>
+	<string>15B42</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>SDL_sound</string>
+	<key>CFBundleGetInfoString</key>
+	<string>http://www.icculus.org/SDL_sound
+</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.washboardabs.SDL_sound</string>
+	<string>org.libsdl.SDL-sound</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>SDL_sound</string>
+	<string>SDL Sound</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.0.3</string>
 	<key>CFBundleSignature</key>
-	<string>????</string>
+	<string>SDLX</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>MacOSX</string>
+	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>1.0.3</string>
 	<key>DTCompiler</key>
-	<string></string>
+	<string>com.apple.compilers.llvm.clang.1_0</string>
 	<key>DTPlatformBuild</key>
-	<string>4E3002</string>
+	<string>7B1005</string>
 	<key>DTPlatformVersion</key>
 	<string>GM</string>
 	<key>DTSDKBuild</key>
-	<string>11E52</string>
+	<string>15A278</string>
 	<key>DTSDKName</key>
-	<string>macosx10.7</string>
+	<string>macosx10.11</string>
 	<key>DTXcode</key>
-	<string>0433</string>
+	<string>0711</string>
 	<key>DTXcodeBuild</key>
-	<string>4E3002</string>
+	<string>7B1005</string>
 </dict>
 </plist>

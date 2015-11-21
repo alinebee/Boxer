@@ -625,7 +625,7 @@
 		9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE9611EC932800990E91 /* NSData+HexStrings.m */; };
 		9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */; };
 		9FB446EB13D23BD900E69AF5 /* BXG25ControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB446EA13D23BD900E69AF5 /* BXG25ControllerProfile.m */; };
-		9FB4538F16442CDD00BCF63B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB4538E16442CDD00BCF63B /* Cocoa.framework */; };
+		9FB4538F16442CDD00BCF63B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9FB4539716442CDD00BCF63B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4539616442CDD00BCF63B /* main.m */; };
 		9FB4539E16442CDD00BCF63B /* BBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4539D16442CDD00BCF63B /* BBAppDelegate.m */; };
 		9FB453B216442D3B00BCF63B /* UserDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FB453AC16442D2900BCF63B /* UserDefaults.plist */; };
@@ -1439,7 +1439,6 @@
 		9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
 		9FB446EA13D23BD900E69AF5 /* BXG25ControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXG25ControllerProfile.m; sourceTree = "<group>"; };
 		9FB4538C16442CDD00BCF63B /* Boxer Bundler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Boxer Bundler.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9FB4538E16442CDD00BCF63B /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		9FB4539216442CDD00BCF63B /* Boxer Bundler-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Boxer Bundler-Info.plist"; sourceTree = "<group>"; };
 		9FB4539616442CDD00BCF63B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		9FB4539816442CDD00BCF63B /* Boxer Bundler-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Boxer Bundler-Prefix.pch"; sourceTree = "<group>"; };
@@ -1795,7 +1794,6 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9FB4538E16442CDD00BCF63B /* Cocoa.framework */,
 				9FB769E2164861D8000644C2 /* Quartz.framework */,
 				9F77EE0015DCC9BF00B75835 /* WebKit.framework */,
 				9FC637FC13C09B10004478A3 /* CoreServices.framework */,
@@ -4488,7 +4486,10 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Frameworks/SDL.framework/Headers\"";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks/SDL.framework/Headers\"",
+				);
 				INFOPLIST_FILE = "Standalone/Boxer Standalone-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -4517,7 +4518,10 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Frameworks/SDL.framework/Headers\"";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks/SDL.framework/Headers\"",
+				);
 				INFOPLIST_FILE = "Standalone/Boxer Standalone-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -4644,6 +4648,10 @@
 				);
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks/SDL.framework/Headers\"",
+				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -4672,6 +4680,10 @@
 				);
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks/SDL.framework/Headers\"",
+				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (

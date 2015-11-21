@@ -54,3 +54,5 @@
 #import "BGHUDView.h"
 #import "BGHUDComboBoxCell.h"
 #import "BGHUDStepperCell.h"
+#import "BGHUDTabView.h"
+#import "BGHUDTabViewItem.h"

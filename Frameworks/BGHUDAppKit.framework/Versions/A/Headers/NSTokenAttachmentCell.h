@@ -21,7 +21,6 @@
 + (void)initialize;
 - (id)initTextCell:(id)fp8;
 - (id)init;
-- (void)dealloc;
 - (id)representedObject;
 - (void)setRepresentedObject:(id)fp8;
 - (int)interiorBackgroundStyle;

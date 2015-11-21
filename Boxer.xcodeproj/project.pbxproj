@@ -13,7 +13,6 @@
 		554E2B6E1BFAF6B20038C506 /* Shared.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 554E2B6C1BFAF6720038C506 /* Shared.xcassets */; };
 		554E2B701BFAF6D90038C506 /* Boxer only.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 554E2B6F1BFAF6D90038C506 /* Boxer only.xcassets */; };
 		557A24EC1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24EB1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets */; };
-		557A24F01A1AF1CE002FE9BD /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24EF1A1AF1CE002FE9BD /* Icons.xcassets */; };
 		558A661B1BFFD7630043F15C /* BBAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558A661A1BFFD7630043F15C /* BBAppDelegate.swift */; };
 		55B22BA21A1BD9760007665E /* Bundler.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55B22BA11A1BD9760007665E /* Bundler.xcassets */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -638,7 +637,6 @@
 		9FB60E8F15C5552F00CD0D63 /* NSURL+ADBFilesystemHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E8D15C5552F00CD0D63 /* NSURL+ADBFilesystemHelpers.m */; };
 		9FB60E9215C5643200CD0D63 /* NSError+ADBErrorHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E9115C5643200CD0D63 /* NSError+ADBErrorHelpers.mm */; };
 		9FB60E9315C5643200CD0D63 /* NSError+ADBErrorHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FB60E9115C5643200CD0D63 /* NSError+ADBErrorHelpers.mm */; };
-		9FB60E9415C573C100CD0D63 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
 		9FB642A313FEB71D00385DD3 /* ADBISOImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F81CFB813EEA3F4008F0265 /* ADBISOImage.m */; };
 		9FB642A413FEB71D00385DD3 /* ADBBinCueImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98589613EF71F600E66877 /* ADBBinCueImage.m */; };
 		9FB6664B17EF9C95009C0D90 /* BXLayerBackedRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB6664A17EF9C95009C0D90 /* BXLayerBackedRenderingView.m */; };
@@ -710,7 +708,6 @@
 		9FCB7B1A15B8589B00CC7CC7 /* BXDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */; };
 		9FCB7B2715B877E500CC7CC7 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0915B8422000CC7CC7 /* DOS Toolkit */; };
 		9FCB7B2815B8782800CC7CC7 /* Bezel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F886FDD144CB6C30033CCD3 /* Bezel.xib */; };
-		9FCBB2D210A61CA800C28B09 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
 		9FCBB6F310A6DDBD00C28B09 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */; };
 		9FCC2F9A1366EF170013F083 /* BXEmulatedKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FCC2F991366EF170013F083 /* BXEmulatedKeyboard.mm */; };
 		9FCC2FF41366FA820013F083 /* BXInputController+BXKeyboardInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCC2FF31366FA820013F083 /* BXInputController+BXKeyboardInput.m */; };
@@ -851,7 +848,6 @@
 		554E2B6C1BFAF6720038C506 /* Shared.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Shared.xcassets; sourceTree = "<group>"; };
 		554E2B6F1BFAF6D90038C506 /* Boxer only.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Boxer only.xcassets"; sourceTree = "<group>"; };
 		557A24EB1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Importing-nonLocalizable.xcassets"; sourceTree = "<group>"; };
-		557A24EF1A1AF1CE002FE9BD /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
 		558A66191BFFD7630043F15C /* Boxer Bundler-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Boxer Bundler-Bridging-Header.h"; sourceTree = "<group>"; };
 		558A661A1BFFD7630043F15C /* BBAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BBAppDelegate.swift; sourceTree = "<group>"; };
 		55B22BA11A1BD9760007665E /* Bundler.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Bundler.xcassets; sourceTree = "<group>"; };
@@ -1550,7 +1546,6 @@
 		9FCB7B0C15B842E000CC7CC7 /* BXStandaloneAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXStandaloneAppController.m; sourceTree = "<group>"; };
 		9FCB7B0E15B844AA00CC7CC7 /* BXBaseAppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBaseAppController.h; sourceTree = "<group>"; };
 		9FCB7B0F15B844AA00CC7CC7 /* BXBaseAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBaseAppController.m; sourceTree = "<group>"; };
-		9FCBB2CF10A61CA800C28B09 /* package.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = package.icns; sourceTree = "<group>"; };
 		9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "DOS Toolkit"; sourceTree = "<group>"; };
 		9FCC2F981366EF170013F083 /* BXEmulatedKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedKeyboard.h; sourceTree = "<group>"; };
 		9FCC2F991366EF170013F083 /* BXEmulatedKeyboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulatedKeyboard.mm; sourceTree = "<group>"; };
@@ -2864,15 +2859,6 @@
 			name = Importing;
 			sourceTree = "<group>";
 		};
-		9F9606EE14F65B5F0072E90C /* Icons */ = {
-			isa = PBXGroup;
-			children = (
-				557A24EF1A1AF1CE002FE9BD /* Icons.xcassets */,
-				9FCBB2CF10A61CA800C28B09 /* package.icns */,
-			);
-			name = Icons;
-			sourceTree = "<group>";
-		};
 		9F9840FE15BEE5F700B50CDA /* Filesystem */ = {
 			isa = PBXGroup;
 			children = (
@@ -2996,7 +2982,6 @@
 			children = (
 				554E2B6C1BFAF6720038C506 /* Shared.xcassets */,
 				554E2B6F1BFAF6D90038C506 /* Boxer only.xcassets */,
-				9F9606EE14F65B5F0072E90C /* Icons */,
 				9F9606EC14F65B030072E90C /* Importing */,
 				9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */,
 				9FBD321610E5144C00031CB6 /* Brand.png */,
@@ -3369,7 +3354,6 @@
 				9FBC31E00F56C383001811F2 /* LockClosing.aiff in Resources */,
 				9FBC31E10F56C383001811F2 /* LockOpening.aiff in Resources */,
 				9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */,
-				9FCBB2D210A61CA800C28B09 /* package.icns in Resources */,
 				9FCBB6F310A6DDBD00C28B09 /* DOS Toolkit in Resources */,
 				9F4199E11BD416E400A2D165 /* DocumentationPanel.xib in Resources */,
 				9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */,
@@ -3416,7 +3400,6 @@
 				9F4199EF1BD416E400A2D165 /* InspectorJoystickItem.xib in Resources */,
 				9F4199F91BD416E900A2D165 /* InfoPlist.strings in Resources */,
 				557A24EC1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets in Resources */,
-				557A24F01A1AF1CE002FE9BD /* Icons.xcassets in Resources */,
 				9F4199E51BD416E400A2D165 /* MainMenu.xib in Resources */,
 				9F4199F61BD416E400A2D165 /* Bezel.xib in Resources */,
 				9F4BCCD817E6190A00140390 /* Boxer.help in Resources */,
@@ -3441,7 +3424,6 @@
 				9FCB7B2815B8782800CC7CC7 /* Bezel.xib in Resources */,
 				9F1E959A15BD88D700C3C6A0 /* UserDefaults.plist in Resources */,
 				9F1E959C15BD899500C3C6A0 /* GameDefaults.plist in Resources */,
-				9FB60E9415C573C100CD0D63 /* package.icns in Resources */,
 				9F57685B15DA3DFC00B50500 /* StandaloneLogo.png in Resources */,
 				9F57685C15DA3DFC00B50500 /* StandaloneLogo@2x.png in Resources */,
 				9FDFB47F15DBBABC004EA615 /* Credits.html in Resources */,

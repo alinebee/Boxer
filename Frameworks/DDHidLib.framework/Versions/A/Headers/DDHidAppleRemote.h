@@ -27,8 +27,9 @@
 #import "DDHidDevice.h"
 
 @class DDHidElement;
+@protocol DDHidAppleRemoteDelegate;
 
-enum DDHidAppleRemoteEventIdentifier
+typedef NS_ENUM(NSInteger, DDHidAppleRemoteEventIdentifier)
 {
 	kDDHidRemoteButtonVolume_Plus=0,
 	kDDHidRemoteButtonVolume_Minus,
@@ -42,8 +43,9 @@ enum DDHidAppleRemoteEventIdentifier
 	kDDHidRemoteButtonPlay_Sleep,
 	kDDHidRemoteControl_Switched,
     kDDHidRemoteControl_Paired,
+    
+    kDDHidRemoteControl_Terminating = -1,
 };
-typedef enum DDHidAppleRemoteEventIdentifier DDHidAppleRemoteEventIdentifier;
 
 @interface DDHidAppleRemote : DDHidDevice
 {
@@ -52,31 +54,30 @@ typedef enum DDHidAppleRemoteEventIdentifier DDHidAppleRemoteEventIdentifier;
     DDHidElement * mIdElement;
     int mRemoteId;
 
-    id mDelegate;
+    id<DDHidAppleRemoteDelegate> mDelegate;
 }
 
-+ (NSArray *) allRemotes;
++ (NSArray<DDHidAppleRemote*> *) allRemotes;
 
 + (DDHidAppleRemote *) firstRemote;
 
-- (id) initWithDevice: (io_object_t) device error: (NSError **) error_;
+- (instancetype) initWithDevice: (io_object_t) device error: (NSError **) error_;
 
 #pragma mark -
 #pragma mark Asynchronous Notification
 
-- (void) setDelegate: (id) delegate;
+@property (assign) id<DDHidAppleRemoteDelegate> delegate;
 
 - (void) addElementsToDefaultQueue;
 
 #pragma mark -
 #pragma mark Properties
 
-- (int) remoteId;
-- (void) setRemoteId: (int) theRemoteId;
+@property int remoteId;
 
 @end
 
-@interface NSObject (DDHidAppleRemoteDelegate)
+@protocol DDHidAppleRemoteDelegate <NSObject>
 
 - (void) ddhidAppleRemoteButton: (DDHidAppleRemoteEventIdentifier) buttonIdentifier
                     pressedDown: (BOOL) pressedDown;

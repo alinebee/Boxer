@@ -27,6 +27,7 @@
 
 @class DDHidElement;
 @class DDHidQueue;
+@protocol DDHidKeyboardBarcodeScannerDelegate;
 
 @interface DDHidKeyboardBarcodeScanner : DDHidDevice
 {
@@ -36,37 +37,37 @@
     NSTimer *mBarcodeInputTimer;
     BOOL mIsLikelyKeyboardBarcodeScanner;
     
-    id mDelegate;
+    id<DDHidKeyboardBarcodeScannerDelegate> mDelegate;
 }
 
-+ (NSArray *) allPossibleKeyboardBarcodeScanners;
++ (NSArray<DDHidKeyboardBarcodeScanner*> *) allPossibleKeyboardBarcodeScanners;
 
-- (id) initWithDevice: (io_object_t) device error: (NSError **) error_;
+- (instancetype) initWithDevice: (io_object_t) device error: (NSError **) error_;
 
 #pragma mark -
 #pragma mark Keyboard Elements
 
 - (NSArray *) keyElements;
 
-- (unsigned) numberOfKeys;
+@property (readonly) NSInteger numberOfKeys;
 
 - (void) addElementsToQueue: (DDHidQueue *) queue;
 
 #pragma mark -
 #pragma mark Asynchronous Notification
 
-- (void) setDelegate: (id) delegate;
+@property (assign) id<DDHidKeyboardBarcodeScannerDelegate> delegate;
 
 - (void) addElementsToDefaultQueue;
 
 #pragma mark -
 #pragma mark Properties
 
-- (BOOL) isLikelyKeyboardBarcodeScanner;
+@property (readonly, getter=isLikelyKeyboardBarcodeScanner) BOOL likelyKeyboardBarcodeScanner;
 
 @end
 
-@interface NSObject (DDHidKeyboardBarcodeScannerDelegate)
+@protocol DDHidKeyboardBarcodeScannerDelegate <NSObject>
 
 - (void) ddhidKeyboardBarcodeScanner: (DDHidKeyboardBarcodeScanner *) keyboardBarcodeScanner
                           gotBarcode: (NSString *) barcode;

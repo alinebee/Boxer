@@ -23,27 +23,46 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import "DDHidDevice.h"
 
+@class DDHidElement;
+@class DDHidQueue;
 
-@interface DDHidUsage : NSObject
+@protocol DDHidAppleMikeyDelegate;
+
+@interface DDHidAppleMikey : DDHidDevice
 {
-    unsigned mUsagePage;
-    unsigned mUsageId;
+    NSMutableArray * mPressElements;
+    
+    id<DDHidAppleMikeyDelegate> mDelegate;
 }
 
-+ (instancetype) usageWithUsagePage: (unsigned) usagePage
-                            usageId: (unsigned) usageId;
++ (NSArray<DDHidAppleMikey*> *) allMikeys;
 
-- (instancetype) initWithUsagePage: (unsigned) usagePage
-                           usageId: (unsigned) usageId;
+- (instancetype) initWithDevice: (io_object_t) device error: (NSError **) error_;
 
-@property (readonly) unsigned usagePage;
-@property (readonly) unsigned usageId;
-@property (readonly, assign) NSString *usageName;
-@property (readonly, assign) NSString *usageNameWithIds;
+#pragma mark -
+#pragma mark Elements
 
-- (NSString *) description;
+@property (readonly, assign) NSArray<DDHidElement*> *pressElements;
 
-- (BOOL) isEqualToUsagePage: (unsigned) usagePage usageId: (unsigned) usageId;
+@property (readonly) NSInteger numberOfKeys;
+
+- (void) addElementsToQueue: (DDHidQueue *) queue;
+
+#pragma mark -
+#pragma mark Asynchronous Notification
+
+@property (assign) id<DDHidAppleMikeyDelegate> delegate;
+
+- (void) addElementsToDefaultQueue;
+
+@end
+
+@protocol DDHidAppleMikeyDelegate <NSObject>
+
+- (void) ddhidAppleMikey: (DDHidAppleMikey *) mikey
+                   press: (unsigned) usageId
+                upOrDown:(BOOL)upOrDown;
 
 @end

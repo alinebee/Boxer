@@ -27,35 +27,35 @@
 
 @class DDHidElement;
 @class DDHidQueue;
+@protocol DDHidJoystickDelegate;
 
 @interface DDHidJoystickStick : NSObject
 {
     DDHidElement * mXAxisElement;
     DDHidElement * mYAxisElement;
-    NSMutableArray * mStickElements;
+    NSMutableArray<DDHidElement*> * mStickElements;
     // Point of view elements (i.e. hat switches)
-    NSMutableArray * mPovElements;
+    NSMutableArray<DDHidElement*> * mPovElements;
 }
 
-- (DDHidElement *) xAxisElement;
-
-- (DDHidElement *) yAxisElement;
+@property (readonly, retain) DDHidElement *xAxisElement;
+@property (readonly, retain) DDHidElement *yAxisElement;
 
 #pragma mark -
 #pragma mark StickElements - indexed accessors
 
-- (unsigned int) countOfStickElements;
-- (DDHidElement *) objectInStickElementsAtIndex: (unsigned int)index;
+@property (readonly) NSInteger countOfStickElements;
+- (DDHidElement *) objectInStickElementsAtIndex: (NSInteger)index;
 
 #pragma mark -
 #pragma mark PovElements - indexed accessors
 
-- (unsigned int) countOfPovElements;
-- (DDHidElement *) objectInPovElementsAtIndex: (unsigned int)index;
+@property (readonly) NSInteger countOfPovElements;
+- (DDHidElement *) objectInPovElementsAtIndex: (NSInteger)index;
 
-- (NSArray *) allElements;
+@property (readonly, assign) NSArray<DDHidElement*> *allElements;
 
--  (BOOL) addElement: (DDHidElement *) element;
+- (BOOL) addElement: (DDHidElement *) element;
 
 @end
 
@@ -65,36 +65,36 @@
     NSMutableArray * mButtonElements;
     NSMutableArray * mLogicalDeviceElements;
 
-    id mDelegate;
+    id<DDHidJoystickDelegate> mDelegate;
 }
 
-+ (NSArray *) allJoysticks;
++ (NSArray<DDHidJoystick*> *) allJoysticks;
 
-- (id) initLogicalWithDevice: (io_object_t) device 
-         logicalDeviceNumber: (int) logicalDeviceNumber 
-                       error: (NSError **) error;
+- (instancetype) initLogicalWithDevice: (io_object_t) device
+                   logicalDeviceNumber: (int) logicalDeviceNumber
+                                 error: (NSError **) error;
 
 - (int) logicalDeviceCount;
 
 #pragma mark -
 #pragma mark Joystick Elements
 
-- (unsigned) numberOfButtons;
+@property (readonly) NSInteger numberOfButtons;
 
 - (NSArray *) buttonElements;
 
 #pragma mark -
 #pragma mark Sticks - indexed accessors
 
-- (unsigned int) countOfSticks;
-- (DDHidJoystickStick *) objectInSticksAtIndex: (unsigned int)index;
+@property (readonly) NSInteger countOfSticks;
+- (DDHidJoystickStick *) objectInSticksAtIndex: (NSInteger)index;
 
 - (void) addElementsToQueue: (DDHidQueue *) queue;
 
 #pragma mark -
 #pragma mark Asynchronous Notification
 
-- (void) setDelegate: (id) delegate;
+@property (assign) id<DDHidJoystickDelegate> delegate;
 
 - (void) addElementsToDefaultQueue;
 
@@ -103,7 +103,9 @@
 #define DDHID_JOYSTICK_VALUE_MIN -65536
 #define DDHID_JOYSTICK_VALUE_MAX 65536
 
-@interface NSObject (DDHidJoystickDelegate)
+@protocol DDHidJoystickDelegate <NSObject>
+
+@optional
 
 - (void) ddhidJoystick: (DDHidJoystick *) joystick
                  stick: (unsigned) stick

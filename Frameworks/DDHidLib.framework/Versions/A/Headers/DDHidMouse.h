@@ -28,6 +28,8 @@
 @class DDHidElement;
 @class DDHidQueue;
 
+@protocol DDHidMouseDelegate;
+
 @interface DDHidMouse : DDHidDevice
 {
     DDHidElement * mXElement;
@@ -35,39 +37,38 @@
     DDHidElement * mWheelElement;
     NSMutableArray * mButtonElements;
     
-    id mDelegate;
+    id<DDHidMouseDelegate> mDelegate;
 }
 
-+ (NSArray *) allMice;
++ (NSArray<DDHidMouse*> *) allMice;
 
-- (id) initWithDevice: (io_object_t) device error: (NSError **) error_;
+- (instancetype) initWithDevice: (io_object_t) device error: (NSError **) error_;
 
 #pragma mark -
 #pragma mark Mouse Elements
 
-- (DDHidElement *) xElement;
+@property (readonly, retain) DDHidElement *xElement;
+@property (readonly, retain) DDHidElement *yElement;
+@property (readonly, retain) DDHidElement *wheelElement;
 
-- (DDHidElement *) yElement;
+- (NSArray<DDHidElement*> *) buttonElements;
 
-- (DDHidElement *) wheelElement;
-
-- (NSArray *) buttonElements;
-
-- (unsigned) numberOfButtons;
+- (NSInteger) numberOfButtons;
 
 - (void) addElementsToQueue: (DDHidQueue *) queue;
 
 #pragma mark -
 #pragma mark Asynchronous Notification
 
-- (void) setDelegate: (id) delegate;
+@property (assign) id<DDHidMouseDelegate> delegate;
 
 - (void) addElementsToDefaultQueue;
 
 @end
 
-@interface NSObject (DDHidMouseDelegate)
+@protocol DDHidMouseDelegate <NSObject>
 
+@optional
 - (void) ddhidMouse: (DDHidMouse *) mouse xChanged: (SInt32) deltaX;
 - (void) ddhidMouse: (DDHidMouse *) mouse yChanged: (SInt32) deltaY;
 - (void) ddhidMouse: (DDHidMouse *) mouse wheelChanged: (SInt32) deltaWheel;

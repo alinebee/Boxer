@@ -30,9 +30,9 @@
     NSDictionary * mLookupTables;
 }
 
-+ (DDHidUsageTables *) standardUsageTables;
++ (instancetype) standardUsageTables;
 
-- (id) initWithLookupTables: (NSDictionary *) lookupTables;
+- (instancetype) initWithLookupTables: (NSDictionary *) lookupTables;
 
 - (NSString *) descriptionForUsagePage: (unsigned) usagePage
                                  usage: (unsigned) usage;

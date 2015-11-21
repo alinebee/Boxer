@@ -8,6 +8,12 @@
 
 import Cocoa
 
+let kBBRowIndexSetDropType = "BBRowIndexSetDropType";
+let kUTTypeGamebox = "net.washboardabs.boxer-game-package";
+
+let kBBValidationErrorDomain = "net.washboardabs.boxer-bundler.validationErrorDomain";
+
+
 final class BBAppDelegate : NSObject, NSApplicationDelegate, NSTableViewDataSource, NSWindowDelegate {
     
     enum VaidationValue {

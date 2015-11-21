@@ -15,6 +15,18 @@
 		557A24EC1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24EB1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets */; };
 		558A661B1BFFD7630043F15C /* BBAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558A661A1BFFD7630043F15C /* BBAppDelegate.swift */; };
 		55B22BA21A1BD9760007665E /* Bundler.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55B22BA11A1BD9760007665E /* Bundler.xcassets */; };
+		55E6A0B61C00C86200285593 /* MT32Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A0B51C00C81E00285593 /* MT32Emu.framework */; };
+		55E6A0B71C00C86200285593 /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A0B51C00C81E00285593 /* MT32Emu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		55E6A0BA1C00C86200285593 /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A0AC1C00C80A00285593 /* DDHidLib.framework */; };
+		55E6A0BB1C00C86200285593 /* DDHidLib.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A0AC1C00C80A00285593 /* DDHidLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		55E6A0BE1C00C86200285593 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A09C1C00C7F900285593 /* BGHUDAppKit.framework */; };
+		55E6A0BF1C00C86200285593 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A09C1C00C7F900285593 /* BGHUDAppKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		55E6A0C21C00C88A00285593 /* MT32Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A0B51C00C81E00285593 /* MT32Emu.framework */; };
+		55E6A0C31C00C88A00285593 /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A0B51C00C81E00285593 /* MT32Emu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		55E6A0C61C00C88A00285593 /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A0AC1C00C80A00285593 /* DDHidLib.framework */; };
+		55E6A0C71C00C88A00285593 /* DDHidLib.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A0AC1C00C80A00285593 /* DDHidLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		55E6A0CA1C00C88A00285593 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A09C1C00C7F900285593 /* BGHUDAppKit.framework */; };
+		55E6A0CB1C00C88A00285593 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A09C1C00C7F900285593 /* BGHUDAppKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9F0497C01334C5970001FEE4 /* ADBForwardCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0497BF1334C5970001FEE4 /* ADBForwardCompatibility.m */; };
@@ -337,21 +349,13 @@
 		9F2D315D15B8233800FAE848 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F61942312340F5400F35AB4 /* ScriptingBridge.framework */; };
 		9F2D315F15B8233800FAE848 /* SDL_sound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
 		9F2D316015B8233800FAE848 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBAA8F3134AFABD0092BF95 /* DiskArbitration.framework */; };
-		9F2D316115B8233800FAE848 /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
 		9F2D316215B8233800FAE848 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731B51136331A9005E564F /* IOKit.framework */; };
-		9F2D316315B8233800FAE848 /* MT32Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
-		9F2D316415B8233800FAE848 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; };
-		9F2D316615B8233800FAE848 /* DDHidLib.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F2D316715B8233800FAE848 /* SDL_sound.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F2D316815B8233800FAE848 /* SDL_net.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F2D316B15B8233800FAE848 /* SDL.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9F2D316C15B8233800FAE848 /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9F2D316D15B8233800FAE848 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F2D318915B826F600FAE848 /* DOSWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2D317E15B826EF00FAE848 /* DOSWindow.xib */; };
 		9F2D318B15B826FE00FAE848 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2D318215B826EF00FAE848 /* MainMenu.xib */; };
 		9F34BE40142B700100A69FAF /* BXCoalfaceAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE3E142B700100A69FAF /* BXCoalfaceAudio.mm */; };
-		9F34BE5B142B76D800A69FAF /* MT32Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
-		9F34BE5C142B76F500A69FAF /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F34BE5F142B851800A69FAF /* BXEmulator+BXAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */; };
 		9F34BE62142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE61142B917100A69FAF /* BXBaseAppController+BXSupportFiles.m */; };
 		9F35F3E916CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F35F3E816CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m */; };
@@ -402,8 +406,6 @@
 		9F444FCC12AEA28700A2D405 /* ADBOperationSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F444FCB12AEA28700A2D405 /* ADBOperationSet.m */; };
 		9F444FFF12AEBE5200A2D405 /* BXDriveBundleImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F444FFE12AEBE5200A2D405 /* BXDriveBundleImport.m */; };
 		9F44500212AEC0FC00A2D405 /* BXSimpleDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F44500112AEC0FC00A2D405 /* BXSimpleDriveImport.m */; };
-		9F44C75315A0A38800F6A9ED /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; };
-		9F44C75415A0A3AA00F6A9ED /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F44E5E410D17A4C0081B8D2 /* BXEmulator+BXPaste.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */; };
 		9F458D9D15D83B8C00DF9102 /* BXLaunchPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCA6D9515C85D8500E1650C /* BXLaunchPanelController.m */; };
 		9F458D9E15D83B9000DF9102 /* BXDOSWindowBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA2C09115C8409000380261 /* BXDOSWindowBackgroundView.m */; };
@@ -459,8 +461,6 @@
 		9F70277B13D706CC00606B4C /* BXBezelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70277A13D706CC00606B4C /* BXBezelController.m */; };
 		9F70278413D72D8100606B4C /* BXThemedControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70278313D72D8100606B4C /* BXThemedControls.m */; };
 		9F70C19C129036C900A3627F /* Boxer.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 9F70C19B129036C900A3627F /* Boxer.sdef */; };
-		9F731AF513630820005E564F /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
-		9F731B1D13630B6D005E564F /* DDHidLib.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F731B2E136323D2005E564F /* ADBHIDMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F731B2D136323D2005E564F /* ADBHIDMonitor.m */; };
 		9F731B52136331A9005E564F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731B51136331A9005E564F /* IOKit.framework */; };
 		9F740BDE142A24A400BA66B4 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F740BDD142A24A400BA66B4 /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -792,6 +792,97 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		55E6A09B1C00C7F900285593 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55E6A0971C00C7F900285593 /* BGHUDAppKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53DF68FD067E5B5A0090B5B0;
+			remoteInfo = BGHUDAppKit;
+		};
+		55E6A0A51C00C80A00285593 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55E6A09D1C00C80A00285593 /* DDHidLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D1107320486CEB800E47090;
+			remoteInfo = HIDBrowser;
+		};
+		55E6A0A71C00C80A00285593 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55E6A09D1C00C80A00285593 /* DDHidLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 559CBAE10B5B313000C8FD74;
+			remoteInfo = HIDDeviceTest;
+		};
+		55E6A0A91C00C80A00285593 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55E6A09D1C00C80A00285593 /* DDHidLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 559CBBCC0B5B336600C8FD74;
+			remoteInfo = ddhid;
+		};
+		55E6A0AB1C00C80A00285593 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55E6A09D1C00C80A00285593 /* DDHidLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 55193E500B93F2EE004C0C98;
+			remoteInfo = DDHidLib;
+		};
+		55E6A0B21C00C81E00285593 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55E6A0AD1C00C81D00285593 /* Boxer-MT32Emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9F8B8B0A142B57830077B6F2;
+			remoteInfo = "Static Library";
+		};
+		55E6A0B41C00C81E00285593 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55E6A0AD1C00C81D00285593 /* Boxer-MT32Emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9F41EE22142B585B0029CA47;
+			remoteInfo = Framework;
+		};
+		55E6A0B81C00C86200285593 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55E6A0AD1C00C81D00285593 /* Boxer-MT32Emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9F41EE21142B585B0029CA47;
+			remoteInfo = Framework;
+		};
+		55E6A0BC1C00C86200285593 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55E6A09D1C00C80A00285593 /* DDHidLib.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 55193E4F0B93F2EE004C0C98;
+			remoteInfo = DDHidLib;
+		};
+		55E6A0C01C00C86200285593 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55E6A0971C00C7F900285593 /* BGHUDAppKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 53DF68FC067E5B5A0090B5B0;
+			remoteInfo = BGHUDAppKit;
+		};
+		55E6A0C41C00C88A00285593 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55E6A0AD1C00C81D00285593 /* Boxer-MT32Emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9F41EE21142B585B0029CA47;
+			remoteInfo = Framework;
+		};
+		55E6A0C81C00C88A00285593 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55E6A09D1C00C80A00285593 /* DDHidLib.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 55193E4F0B93F2EE004C0C98;
+			remoteInfo = DDHidLib;
+		};
+		55E6A0CC1C00C88A00285593 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55E6A0971C00C7F900285593 /* BGHUDAppKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 53DF68FC067E5B5A0090B5B0;
+			remoteInfo = BGHUDAppKit;
+		};
 		9FB453B516442DA200BCF63B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -808,12 +899,12 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9F2D316615B8233800FAE848 /* DDHidLib.framework in Copy Bundled Frameworks */,
 				9F2D316715B8233800FAE848 /* SDL_sound.framework in Copy Bundled Frameworks */,
+				55E6A0C71C00C88A00285593 /* DDHidLib.framework in Copy Bundled Frameworks */,
 				9F2D316815B8233800FAE848 /* SDL_net.framework in Copy Bundled Frameworks */,
+				55E6A0C31C00C88A00285593 /* MT32Emu.framework in Copy Bundled Frameworks */,
+				55E6A0CB1C00C88A00285593 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
 				9F2D316B15B8233800FAE848 /* SDL.framework in Copy Bundled Frameworks */,
-				9F2D316C15B8233800FAE848 /* MT32Emu.framework in Copy Bundled Frameworks */,
-				9F2D316D15B8233800FAE848 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
 			);
 			name = "Copy Bundled Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -824,13 +915,13 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9F731B1D13630B6D005E564F /* DDHidLib.framework in Copy Bundled Frameworks */,
 				9F19E7E112B3F48200496BCF /* SDL_sound.framework in Copy Bundled Frameworks */,
 				9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */,
+				55E6A0BF1C00C86200285593 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
 				9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */,
 				9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */,
-				9F34BE5C142B76F500A69FAF /* MT32Emu.framework in Copy Bundled Frameworks */,
-				9F44C75415A0A3AA00F6A9ED /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
+				55E6A0BB1C00C86200285593 /* DDHidLib.framework in Copy Bundled Frameworks */,
+				55E6A0B71C00C86200285593 /* MT32Emu.framework in Copy Bundled Frameworks */,
 			);
 			name = "Copy Bundled Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -851,6 +942,9 @@
 		558A66191BFFD7630043F15C /* Boxer Bundler-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Boxer Bundler-Bridging-Header.h"; sourceTree = "<group>"; };
 		558A661A1BFFD7630043F15C /* BBAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BBAppDelegate.swift; sourceTree = "<group>"; };
 		55B22BA11A1BD9760007665E /* Bundler.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Bundler.xcassets; sourceTree = "<group>"; };
+		55E6A0971C00C7F900285593 /* BGHUDAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BGHUDAppKit.xcodeproj; path = Vendor/BGHUDAppKit/BGHUDAppKit.xcodeproj; sourceTree = SOURCE_ROOT; };
+		55E6A09D1C00C80A00285593 /* DDHidLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DDHidLib.xcodeproj; path = Vendor/DDHidLib/DDHidLib.xcodeproj; sourceTree = SOURCE_ROOT; };
+		55E6A0AD1C00C81D00285593 /* Boxer-MT32Emu.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "Boxer-MT32Emu.xcodeproj"; path = "Vendor/MT32Emu/Boxer-MT32Emu.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F0497BE1334C5970001FEE4 /* ADBForwardCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBForwardCompatibility.h; sourceTree = "<group>"; };
 		9F0497BF1334C5970001FEE4 /* ADBForwardCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBForwardCompatibility.m; sourceTree = "<group>"; };
@@ -938,7 +1032,6 @@
 		9F348A9D128F004A0034E780 /* BXWelcomeButtonDraggingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeButtonDraggingDelegate.h; sourceTree = "<group>"; };
 		9F34BE3E142B700100A69FAF /* BXCoalfaceAudio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalfaceAudio.mm; sourceTree = "<group>"; };
 		9F34BE3F142B700100A69FAF /* BXCoalfaceAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalfaceAudio.h; sourceTree = "<group>"; };
-		9F34BE5A142B76D800A69FAF /* MT32Emu.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MT32Emu.framework; sourceTree = "<group>"; };
 		9F34BE5D142B851700A69FAF /* BXEmulator+BXAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXAudio.h"; sourceTree = "<group>"; };
 		9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXAudio.mm"; sourceTree = "<group>"; };
 		9F34BE60142B917100A69FAF /* BXBaseAppController+BXSupportFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXBaseAppController+BXSupportFiles.h"; sourceTree = "<group>"; };
@@ -1019,7 +1112,6 @@
 		9F44500112AEC0FC00A2D405 /* BXSimpleDriveImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSimpleDriveImport.m; sourceTree = "<group>"; };
 		9F44501012AEC71100A2D405 /* ADBFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBFileTransfer.h; sourceTree = "<group>"; };
 		9F44509F12AECC4700A2D405 /* BXDriveImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveImport.h; sourceTree = "<group>"; };
-		9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = BGHUDAppKit.framework; sourceTree = "<group>"; };
 		9F44E5E210D17A4C0081B8D2 /* BXEmulator+BXPaste.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXPaste.h"; sourceTree = "<group>"; };
 		9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXPaste.mm"; sourceTree = "<group>"; };
 		9F45A422109C867E00593456 /* BXMountPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMountPanelController.h; sourceTree = "<group>"; };
@@ -1105,7 +1197,6 @@
 		9F70278213D72D8100606B4C /* BXThemedControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedControls.h; sourceTree = "<group>"; };
 		9F70278313D72D8100606B4C /* BXThemedControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedControls.m; sourceTree = "<group>"; };
 		9F70C19B129036C900A3627F /* Boxer.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Boxer.sdef; sourceTree = "<group>"; };
-		9F731AF413630820005E564F /* DDHidLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DDHidLib.framework; sourceTree = "<group>"; };
 		9F731B2C136323D2005E564F /* ADBHIDMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBHIDMonitor.h; sourceTree = "<group>"; };
 		9F731B2D136323D2005E564F /* ADBHIDMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBHIDMonitor.m; sourceTree = "<group>"; };
 		9F731B51136331A9005E564F /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -1686,6 +1777,7 @@
 				9F77EE0215DCC9DC00B75835 /* WebKit.framework in Frameworks */,
 				9FC6380A13C09C5B004478A3 /* libJoypadCocoa.a in Frameworks */,
 				9FC637FD13C09B11004478A3 /* CoreServices.framework in Frameworks */,
+				55E6A0BE1C00C86200285593 /* BGHUDAppKit.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				9FBC32120F56C3E9001811F2 /* Carbon.framework in Frameworks */,
 				9FBC3C160F56D6E8001811F2 /* SDL.framework in Frameworks */,
@@ -1694,18 +1786,17 @@
 				9FBC3C780F56E0D7001811F2 /* AudioUnit.framework in Frameworks */,
 				9FBC3C790F56E0D7001811F2 /* CoreMIDI.framework in Frameworks */,
 				9FB769E3164861D8000644C2 /* Quartz.framework in Frameworks */,
+				55E6A0B61C00C86200285593 /* MT32Emu.framework in Frameworks */,
 				9F2140FF0F59F28000A5A183 /* QuartzCore.framework in Frameworks */,
 				9F4E042C0F67E72300427D50 /* AudioToolbox.framework in Frameworks */,
 				9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */,
 				9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */,
 				9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */,
 				9F61942412340F5400F35AB4 /* ScriptingBridge.framework in Frameworks */,
+				55E6A0BA1C00C86200285593 /* DDHidLib.framework in Frameworks */,
 				9FCEDF3312B3DFFC00E856A4 /* SDL_sound.framework in Frameworks */,
 				9FBAA8F4134AFABD0092BF95 /* DiskArbitration.framework in Frameworks */,
-				9F731AF513630820005E564F /* DDHidLib.framework in Frameworks */,
 				9F731B52136331A9005E564F /* IOKit.framework in Frameworks */,
-				9F34BE5B142B76D800A69FAF /* MT32Emu.framework in Frameworks */,
-				9F44C75315A0A38800F6A9ED /* BGHUDAppKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1725,16 +1816,16 @@
 				9F2D315715B8233800FAE848 /* CoreMIDI.framework in Frameworks */,
 				9FB769E5164861E1000644C2 /* Quartz.framework in Frameworks */,
 				9F2D315815B8233800FAE848 /* QuartzCore.framework in Frameworks */,
+				55E6A0CA1C00C88A00285593 /* BGHUDAppKit.framework in Frameworks */,
 				9F2D315915B8233800FAE848 /* AudioToolbox.framework in Frameworks */,
 				9F2D315A15B8233800FAE848 /* libicucore.dylib in Frameworks */,
+				55E6A0C21C00C88A00285593 /* MT32Emu.framework in Frameworks */,
 				9F2D315C15B8233800FAE848 /* QTKit.framework in Frameworks */,
 				9F2D315D15B8233800FAE848 /* ScriptingBridge.framework in Frameworks */,
 				9F2D315F15B8233800FAE848 /* SDL_sound.framework in Frameworks */,
 				9F2D316015B8233800FAE848 /* DiskArbitration.framework in Frameworks */,
-				9F2D316115B8233800FAE848 /* DDHidLib.framework in Frameworks */,
+				55E6A0C61C00C88A00285593 /* DDHidLib.framework in Frameworks */,
 				9F2D316215B8233800FAE848 /* IOKit.framework in Frameworks */,
-				9F2D316315B8233800FAE848 /* MT32Emu.framework in Frameworks */,
-				9F2D316415B8233800FAE848 /* BGHUDAppKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1881,6 +1972,34 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		55E6A0981C00C7F900285593 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				55E6A09C1C00C7F900285593 /* BGHUDAppKit.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		55E6A09E1C00C80A00285593 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				55E6A0A61C00C80A00285593 /* HIDBrowser.app */,
+				55E6A0A81C00C80A00285593 /* HIDDeviceTest.app */,
+				55E6A0AA1C00C80A00285593 /* libddhid.a */,
+				55E6A0AC1C00C80A00285593 /* DDHidLib.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		55E6A0AE1C00C81D00285593 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				55E6A0B31C00C81E00285593 /* libmt32emu.a */,
+				55E6A0B51C00C81E00285593 /* MT32Emu.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		9F010D1616CEC7C800B9CE0A /* Windows */ = {
@@ -3002,9 +3121,9 @@
 		9FBC3C130F56D6E8001811F2 /* Bundled Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9F44C75215A0A38800F6A9ED /* BGHUDAppKit.framework */,
-				9F34BE5A142B76D800A69FAF /* MT32Emu.framework */,
-				9F731AF413630820005E564F /* DDHidLib.framework */,
+				55E6A0AD1C00C81D00285593 /* Boxer-MT32Emu.xcodeproj */,
+				55E6A09D1C00C80A00285593 /* DDHidLib.xcodeproj */,
+				55E6A0971C00C7F900285593 /* BGHUDAppKit.xcodeproj */,
 				E5CF183F128F81AF0065844A /* PhysFS.framework */,
 				9F20C28A11E5D848005AF541 /* Sparkle.framework */,
 				9FBC3C140F56D6E8001811F2 /* SDL.framework */,
@@ -3267,6 +3386,9 @@
 			);
 			comments = "REGARDING --mstackrealign\nBoxer will crash with a dyld_misaligned_stack_error if dynamic core mode is on when the session starts.\n\ndyld is the dynamic linker, so this may be some peculiar interaction of threading and dynamically-loaded frameworks: the crash also happens in our non-XCode, SDL-framework-using build, and it *doesn't* happen if a sleep() delay is introduced before DOSBox_main is called, which implies a race condition.\n\nAdding -mstackrealign to the C flags for Intel seems to have made the problem go away. Which doesn't explain why it's happening in the first place.";
 			dependencies = (
+				55E6A0B91C00C86200285593 /* PBXTargetDependency */,
+				55E6A0BD1C00C86200285593 /* PBXTargetDependency */,
+				55E6A0C11C00C86200285593 /* PBXTargetDependency */,
 			);
 			name = Boxer;
 			productInstallPath = "$(HOME)/Applications";
@@ -3288,6 +3410,9 @@
 			);
 			comments = "REGARDING --mstackrealign\nBoxer will crash with a dyld_misaligned_stack_error if dynamic core mode is on when the session starts.\n\ndyld is the dynamic linker, so this may be some peculiar interaction of threading and dynamically-loaded frameworks: the crash also happens in our non-XCode, SDL-framework-using build, and it *doesn't* happen if a sleep() delay is introduced before DOSBox_main is called, which implies a race condition.\n\nAdding -mstackrealign to the C flags for Intel seems to have made the problem go away. Which doesn't explain why it's happening in the first place.";
 			dependencies = (
+				55E6A0C51C00C88A00285593 /* PBXTargetDependency */,
+				55E6A0C91C00C88A00285593 /* PBXTargetDependency */,
+				55E6A0CD1C00C88A00285593 /* PBXTargetDependency */,
 			);
 			name = "Boxer Standalone";
 			productInstallPath = "$(HOME)/Applications";
@@ -3336,6 +3461,20 @@
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Boxer */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 55E6A0981C00C7F900285593 /* Products */;
+					ProjectRef = 55E6A0971C00C7F900285593 /* BGHUDAppKit.xcodeproj */;
+				},
+				{
+					ProductGroup = 55E6A0AE1C00C81D00285593 /* Products */;
+					ProjectRef = 55E6A0AD1C00C81D00285593 /* Boxer-MT32Emu.xcodeproj */;
+				},
+				{
+					ProductGroup = 55E6A09E1C00C80A00285593 /* Products */;
+					ProjectRef = 55E6A09D1C00C80A00285593 /* DDHidLib.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* Boxer */,
@@ -3344,6 +3483,58 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		55E6A09C1C00C7F900285593 /* BGHUDAppKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BGHUDAppKit.framework;
+			remoteRef = 55E6A09B1C00C7F900285593 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		55E6A0A61C00C80A00285593 /* HIDBrowser.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = HIDBrowser.app;
+			remoteRef = 55E6A0A51C00C80A00285593 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		55E6A0A81C00C80A00285593 /* HIDDeviceTest.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = HIDDeviceTest.app;
+			remoteRef = 55E6A0A71C00C80A00285593 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		55E6A0AA1C00C80A00285593 /* libddhid.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libddhid.a;
+			remoteRef = 55E6A0A91C00C80A00285593 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		55E6A0AC1C00C80A00285593 /* DDHidLib.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DDHidLib.framework;
+			remoteRef = 55E6A0AB1C00C80A00285593 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		55E6A0B31C00C81E00285593 /* libmt32emu.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libmt32emu.a;
+			remoteRef = 55E6A0B21C00C81E00285593 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		55E6A0B51C00C81E00285593 /* MT32Emu.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MT32Emu.framework;
+			remoteRef = 55E6A0B41C00C81E00285593 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8D1107290486CEB800E47090 /* Resources */ = {
@@ -4148,6 +4339,36 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		55E6A0B91C00C86200285593 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework;
+			targetProxy = 55E6A0B81C00C86200285593 /* PBXContainerItemProxy */;
+		};
+		55E6A0BD1C00C86200285593 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DDHidLib;
+			targetProxy = 55E6A0BC1C00C86200285593 /* PBXContainerItemProxy */;
+		};
+		55E6A0C11C00C86200285593 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BGHUDAppKit;
+			targetProxy = 55E6A0C01C00C86200285593 /* PBXContainerItemProxy */;
+		};
+		55E6A0C51C00C88A00285593 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework;
+			targetProxy = 55E6A0C41C00C88A00285593 /* PBXContainerItemProxy */;
+		};
+		55E6A0C91C00C88A00285593 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DDHidLib;
+			targetProxy = 55E6A0C81C00C88A00285593 /* PBXContainerItemProxy */;
+		};
+		55E6A0CD1C00C88A00285593 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BGHUDAppKit;
+			targetProxy = 55E6A0CC1C00C88A00285593 /* PBXContainerItemProxy */;
+		};
 		9FB453B616442DA200BCF63B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 9F2D2F9715B8233800FAE848 /* Boxer Standalone */;

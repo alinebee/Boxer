@@ -10,7 +10,7 @@
 
 @interface BBIconDropzone : NSImageView
 
-//Returns the URL of the image currently displayed in the image view.
+///Returns the URL of the image currently displayed in the image view.
 @property (copy, nonatomic) NSURL *imageURL;
 
 @end

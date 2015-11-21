@@ -114,7 +114,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 
 - (BXKeyboardEventTapStatus) _reportedStatusOfEventTap
 {
-    NSUInteger i, numTaps = 0;
+    uint32_t i, numTaps = 0;
     CGGetEventTapList(0, NULL, &numTaps);
     
     BXKeyboardEventTapStatus status = BXKeyboardEventTapNotTapping;

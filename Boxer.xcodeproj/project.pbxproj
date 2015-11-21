@@ -14,6 +14,7 @@
 		554E2B701BFAF6D90038C506 /* Boxer only.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 554E2B6F1BFAF6D90038C506 /* Boxer only.xcassets */; };
 		557A24EC1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24EB1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets */; };
 		557A24F01A1AF1CE002FE9BD /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24EF1A1AF1CE002FE9BD /* Icons.xcassets */; };
+		558A661B1BFFD7630043F15C /* BBAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558A661A1BFFD7630043F15C /* BBAppDelegate.swift */; };
 		55B22BA21A1BD9760007665E /* Bundler.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55B22BA11A1BD9760007665E /* Bundler.xcassets */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -851,6 +852,8 @@
 		554E2B6F1BFAF6D90038C506 /* Boxer only.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Boxer only.xcassets"; sourceTree = "<group>"; };
 		557A24EB1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Importing-nonLocalizable.xcassets"; sourceTree = "<group>"; };
 		557A24EF1A1AF1CE002FE9BD /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
+		558A66191BFFD7630043F15C /* Boxer Bundler-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Boxer Bundler-Bridging-Header.h"; sourceTree = "<group>"; };
+		558A661A1BFFD7630043F15C /* BBAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BBAppDelegate.swift; sourceTree = "<group>"; };
 		55B22BA11A1BD9760007665E /* Bundler.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Bundler.xcassets; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F0497BE1334C5970001FEE4 /* ADBForwardCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBForwardCompatibility.h; sourceTree = "<group>"; };
@@ -2953,7 +2956,7 @@
 		9FB4539016442CDD00BCF63B /* Bundler */ = {
 			isa = PBXGroup;
 			children = (
-				9FB453A616442D2900BCF63B /* Resources */,
+				558A661A1BFFD7630043F15C /* BBAppDelegate.swift */,
 				9FB4539C16442CDD00BCF63B /* BBAppDelegate.h */,
 				9FB4539D16442CDD00BCF63B /* BBAppDelegate.m */,
 				9F5537F21644321500B9447D /* BBAppDelegate+AppExporting.h */,
@@ -2962,6 +2965,7 @@
 				9F5537F51644321500B9447D /* BBIconDropzone.m */,
 				9F5537F61644321500B9447D /* BBURLTransformer.h */,
 				9F5537F71644321500B9447D /* BBURLTransformer.m */,
+				9FB453A616442D2900BCF63B /* Resources */,
 				9FB4539116442CDD00BCF63B /* Supporting Files */,
 			);
 			path = Bundler;
@@ -2971,6 +2975,7 @@
 			isa = PBXGroup;
 			children = (
 				9FB4539216442CDD00BCF63B /* Boxer Bundler-Info.plist */,
+				558A66191BFFD7630043F15C /* Boxer Bundler-Bridging-Header.h */,
 				9FB4539616442CDD00BCF63B /* main.m */,
 				9FB4539816442CDD00BCF63B /* Boxer Bundler-Prefix.pch */,
 			);
@@ -3331,6 +3336,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0710;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Alun Bestor and contributors";
 			};
@@ -4154,6 +4160,7 @@
 				9F5537F91644321500B9447D /* BBIconDropzone.m in Sources */,
 				9F5537FA1644321500B9447D /* BBURLTransformer.m in Sources */,
 				9FF91EB816CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */,
+				558A661B1BFFD7630043F15C /* BBAppDelegate.swift in Sources */,
 				9F4BCC1A17E5CFF700140390 /* NSImage+ADBSaveImages.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4481,6 +4488,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Frameworks/SDL.framework/Headers\"";
 				INFOPLIST_FILE = "Standalone/Boxer Standalone-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -4509,6 +4517,7 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Frameworks/SDL.framework/Headers\"";
 				INFOPLIST_FILE = "Standalone/Boxer Standalone-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -4527,6 +4536,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = app;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
@@ -4545,9 +4555,12 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Bundler/Boxer Bundler-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Bundler/Boxer Bundler-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -4558,6 +4571,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = app;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
@@ -4571,9 +4585,11 @@
 				GCC_PREFIX_HEADER = "Bundler/Boxer Bundler-Prefix.pch";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Bundler/Boxer Bundler-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Bundler/Boxer Bundler-Bridging-Header.h";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

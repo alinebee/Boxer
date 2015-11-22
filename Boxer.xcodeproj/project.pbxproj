@@ -818,6 +818,7 @@
 		9FCB7B1A15B8589B00CC7CC7 /* BXDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */; };
 		9FCB7B2715B877E500CC7CC7 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0915B8422000CC7CC7 /* DOS Toolkit */; };
 		9FCB7B2815B8782800CC7CC7 /* Bezel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F886FDD144CB6C30033CCD3 /* Bezel.xib */; };
+		9FCB87DA1C026B7800EAFE47 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FCB87DC1C026B7800EAFE47 /* Localizable.strings */; };
 		9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
 		9FCBB2D110A61CA800C28B09 /* executable.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CE10A61CA800C28B09 /* executable.icns */; };
 		9FCBB2D210A61CA800C28B09 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
@@ -1799,6 +1800,7 @@
 		9FCB7B0F15B844AA00CC7CC7 /* BXBaseAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBaseAppController.m; sourceTree = "<group>"; };
 		9FCB87D51C0268CE00EAFE47 /* cs */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = cs; path = cs.lproj/Bezel.xib; sourceTree = "<group>"; };
 		9FCB87D71C026A2700EAFE47 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/DOSWindow.strings; sourceTree = "<group>"; };
+		9FCB87DB1C026B7800EAFE47 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9FCBB2CD10A61CA800C28B09 /* boxer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = boxer.icns; sourceTree = "<group>"; };
 		9FCBB2CE10A61CA800C28B09 /* executable.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = executable.icns; sourceTree = "<group>"; };
 		9FCBB2CF10A61CA800C28B09 /* package.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = package.icns; sourceTree = "<group>"; };
@@ -3392,6 +3394,7 @@
 		9FB4539116442CDD00BCF63B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				9FCB87DC1C026B7800EAFE47 /* Localizable.strings */,
 				9FB4539216442CDD00BCF63B /* Boxer Bundler-Info.plist */,
 				9FB4539616442CDD00BCF63B /* main.m */,
 				9FB4539816442CDD00BCF63B /* Boxer Bundler-Prefix.pch */,
@@ -4035,6 +4038,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9FB453B216442D3B00BCF63B /* UserDefaults.plist in Resources */,
+				9FCB87DA1C026B7800EAFE47 /* Localizable.strings in Resources */,
 				9F4199E01BD3F86500A2D165 /* MainMenu.xib in Resources */,
 				9F4199DF1BD3F86500A2D165 /* InfoPlist.strings in Resources */,
 				9FB453B316442D3F00BCF63B /* app.icns in Resources */,
@@ -4996,6 +5000,14 @@
 				9F4199D31BD3F0CB00A2D165 /* Base */,
 			);
 			name = "ImportRenameTip@2x.png";
+			sourceTree = "<group>";
+		};
+		9FCB87DC1C026B7800EAFE47 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FCB87DB1C026B7800EAFE47 /* cs */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 		9FDE34111351DCDB000DCE44 /* DOSImportWindow.xib */ = {

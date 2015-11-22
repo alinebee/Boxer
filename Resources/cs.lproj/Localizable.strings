@@ -25,9 +25,6 @@
 /* Heading for game documentation in help menu. %@ is the display name of the current DOS session. */
 "%@ Documentation:" = "Dokumentace ke hře %@:";
 
-/* Error message shown when the user tries to load settings from an application that is not a bundled game app. %@ is the filename of the application. */
-"%@ is not a bundled game application." = "%@ není zabalená herní aplikace.";
-
 /* Format for the label of the initial cancel button when finalizing import, which should indicate that the action will not take effect immediately. %@ is the original button label. */
 "%@…" = "%@…";
 
@@ -296,7 +293,7 @@ na vlastních osách.";
 "Export" = "Exportovat";
 
 /* Label for filename field on save panel when exporting the current game state. */
-"Export as:" = "Exportovat jako:";
+"Export as:" = "Název:";
 
 /* Title for save panel when exporting the current game state */
 "Export game data" = "Exportovat herní data";

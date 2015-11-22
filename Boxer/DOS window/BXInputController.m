@@ -346,26 +346,33 @@
     //TODO: find a better heuristic for detecting such cursor updates,
     //and figure out why they're being generated in the first place.
     BOOL isSpuriousUpdate = (theEvent != nil) && (theEvent.timestamp == 0);
-    if (isSpuriousUpdate) return;
-    
+    if (!isSpuriousUpdate)
+    {
+        [self syncCursor];
+    }
+
+}
+
+- (void) syncCursor
+{
     //If we have control of the mouse cursor and we aren't fading it out yet,
     //start doing so now.
-	if ([self _controlsCursor])
-	{
+    if ([self _controlsCursor])
+    {
         if (!self.cursorFade.isAnimating)
-		{
-			//If the cursor fade was interrupted, make it restart from the beginning
+        {
+            //If the cursor fade was interrupted, make it restart from the beginning
             //rather than where it left off last time.
-			self.cursorFade.currentProgress = 0.0f;
-        	[self.cursorFade startAnimation];
-		}
-	}
+            self.cursorFade.currentProgress = 0.0f;
+            [self.cursorFade startAnimation];
+        }
+    }
     //Otherwise, restore the opaque cursor.
-	else
-	{
-		[self.cursorFade stopAnimation];
+    else
+    {
+        [self.cursorFade stopAnimation];
         [[NSCursor arrowCursor] set];
-	}
+    }
 }
 
 - (float) animation: (NSAnimation *)animation valueForProgress: (NSAnimationProgress)progress
@@ -419,7 +426,7 @@
 	[self _syncModifierFlags: (NSUInteger)currentModifiers];
 	
 	//Also sync the cursor state while we're at it, in case the cursor was already over the window.
-	[self cursorUpdate: nil];
+    [self syncCursor];
 }
 
 void _inputSourceChanged(CFNotificationCenterRef center,
@@ -468,7 +475,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 		_mouseActive = active;
         //Update the mouse cursor, in case the mouse became active while the cursor was already
         //over the window.
-		[self cursorUpdate: nil];
+        [self syncCursor];
 		
 		//Release the mouse lock when DOS stops using the mouse, unless we're in fullscreen mode
 		if (!active && ![(BXDOSWindow *)self.windowController.window isFullScreen])
@@ -888,8 +895,8 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 	[self willChangeValueForKey: @"mouseInView"];
 	//Force a cursor update at this point: OS X 10.7 won't do so itself
     //if the mouse leaves the tracking area by moving into a floating panel.
-	[super mouseExited: theEvent];
-    [self cursorUpdate: theEvent];
+    [super mouseExited: theEvent];
+    [self syncCursor];
     [self didChangeValueForKey: @"mouseInView"];
     
     //If the mouse leaves the view while we're locked, unlock it immediately:
@@ -903,8 +910,8 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 - (void) mouseEntered: (NSEvent *)theEvent
 {
 	[self willChangeValueForKey: @"mouseInView"];
-	[super mouseEntered: theEvent];
-    [self cursorUpdate: theEvent];
+    [super mouseEntered: theEvent];
+    [self syncCursor];
 	[self didChangeValueForKey: @"mouseInView"];
 }
 

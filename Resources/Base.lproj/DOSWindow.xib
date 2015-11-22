@@ -2,8 +2,8 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="macosx"/>
+        <development version="6300" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
-        <capability name="box content view" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BXDOSWindowController">
@@ -165,7 +165,7 @@
                         <box key="view" autoresizesSubviews="NO" transparent="YES" borderWidth="0.0" boxType="custom" borderType="none" titlePosition="noTitle" id="MWA-k3-MA8">
                             <rect key="frame" x="0.0" y="14" width="130" height="22"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <view key="contentView" id="pog-wV-FrI">
+                            <view key="contentView">
                                 <rect key="frame" x="0.0" y="0.0" width="130" height="22"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
@@ -221,7 +221,7 @@
                         <box key="view" autoresizesSubviews="NO" transparent="YES" borderWidth="0.0" boxType="custom" borderType="none" titlePosition="noTitle" id="1417">
                             <rect key="frame" x="0.0" y="14" width="130" height="22"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <view key="contentView" id="Ut0-Lx-FQG">
+                            <view key="contentView">
                                 <rect key="frame" x="0.0" y="0.0" width="130" height="22"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>

@@ -24,8 +24,8 @@
                 <string>count</string>
             </declaredKeys>
             <connections>
-                <binding destination="-2" name="sortDescriptors" keyPath="executableSortDescriptors" id="390"/>
                 <binding destination="-2" name="contentArray" keyPath="panelExecutables" id="393"/>
+                <binding destination="-2" name="sortDescriptors" keyPath="executableSortDescriptors" id="390"/>
             </connections>
         </arrayController>
         <collectionViewItem id="24" userLabel="Program Item" customClass="BXProgramItem">
@@ -40,7 +40,7 @@
                 <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="0.0" verticalPageScroll="0.0" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" id="221">
                     <rect key="frame" x="0.0" y="0.0" width="640" height="40"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="87I-lT-nWG">
+                    <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="RNu-FL-WU9">
                         <rect key="frame" x="0.0" y="0.0" width="640" height="40"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
@@ -238,6 +238,11 @@
                     </buttonCell>
                     <connections>
                         <action selector="openInDOS:" target="-1" id="496"/>
+                        <binding destination="24" name="argument" keyPath="representedObject.path" id="515">
+                            <dictionary key="options">
+                                <string key="NSSelectorName">openInDOS:</string>
+                            </dictionary>
+                        </binding>
                         <binding destination="-2" name="target" keyPath="representedObject" previousBinding="515" id="516">
                             <dictionary key="options">
                                 <string key="NSSelectorName">openInDOS:</string>
@@ -246,11 +251,6 @@
                         <binding destination="24" name="title" keyPath="representedObject.path" id="504">
                             <dictionary key="options">
                                 <string key="NSValueTransformerName">BXDOSFilenameTransformer</string>
-                            </dictionary>
-                        </binding>
-                        <binding destination="24" name="argument" keyPath="representedObject.path" id="515">
-                            <dictionary key="options">
-                                <string key="NSSelectorName">openInDOS:</string>
                             </dictionary>
                         </binding>
                     </connections>

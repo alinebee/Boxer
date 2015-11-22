@@ -41,7 +41,7 @@
                             <rect key="frame" x="99" y="10" width="24" height="24"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <animations/>
-                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="7C686CD6-303F-4566-BF53-1D7A4AB3542B" id="i1m-Na-c3k" customClass="BXThemedImageCell">
+                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="49702D1B-4346-4735-8E7B-1210E0C3C3FA" id="i1m-Na-c3k" customClass="BXThemedImageCell">
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="themeKey" value="BXLauncherHeadingTheme"/>
                                 </userDefinedRuntimeAttributes>
@@ -83,7 +83,7 @@
         </menu>
     </objects>
     <resources>
-        <image name="7C686CD6-303F-4566-BF53-1D7A4AB3542B" width="32" height="32">
+        <image name="49702D1B-4346-4735-8E7B-1210E0C3C3FA" width="32" height="32">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGS0xYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK8QEAcI
 ExgdHicoKS00OTw/RUhVJG51bGzVCQoLDA0ODxARElYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVwc1xO

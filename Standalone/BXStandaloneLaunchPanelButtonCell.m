@@ -11,6 +11,14 @@
 #import "NSImage+ADBImageEffects.h"
 #import "ADBGeometry.h"
 
+@interface BXStandaloneLaunchPanelButtonCell ()
+
+//Whether the button is currently being hovered.
+@property (assign, nonatomic) BOOL mouseIsInside;
+
+@end
+
+
 @implementation BXStandaloneLaunchPanelButton
 
 - (void) updateTrackingAreas
@@ -24,23 +32,16 @@
     //button cell here instead.
     NSPoint location = self.window.mouseLocationOutsideOfEventStream;
     NSPoint locationInView = [self convertPoint: location fromView: nil];
+    BXStandaloneLaunchPanelButtonCell *cell = self.cell;
     if ([self hitTest: locationInView] != nil)
     {
-        [self.cell mouseEntered: nil];
+        cell.mouseIsInside = YES;
     }
     else
     {
-        [self.cell mouseExited: nil];
+        cell.mouseIsInside = NO;
     }
 }
-
-@end
-
-
-@interface BXStandaloneLaunchPanelButtonCell ()
-
-//Whether the button is currently being hovered.
-@property (assign, nonatomic) BOOL mouseIsInside;
 
 @end
 

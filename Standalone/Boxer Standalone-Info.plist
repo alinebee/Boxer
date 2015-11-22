@@ -64,7 +64,7 @@
 	<key>CFBundleSignature</key>
 	<string>Boxr</string>
 	<key>CFBundleVersion</key>
-	<string>20141123.1</string>
+	<string>20151122.1</string>
 	<key>JoypadURL</key>
 	<string>http://getjoypad.com/</string>
 	<key>LSMinimumSystemVersion</key>

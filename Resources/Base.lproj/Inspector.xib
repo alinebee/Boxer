@@ -69,7 +69,7 @@ to change this game’s icon.</string>
                                                 <box autoresizesSubviews="NO" title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="2188">
                                                     <rect key="frame" x="-1" y="39" width="298" height="134"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <view key="contentView" id="2g4-JZ-qJh">
+                                                    <view key="contentView" id="L3a-X4-RBb">
                                                         <rect key="frame" x="1" y="1" width="296" height="132"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <subviews>
@@ -223,7 +223,7 @@ sound or animation are stuttering.</string>
                                                 <box autoresizesSubviews="NO" title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="2030">
                                                     <rect key="frame" x="-1" y="234" width="298" height="86"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                    <view key="contentView" id="ZLM-L8-mBN">
+                                                    <view key="contentView" id="Y99-kE-dZv">
                                                         <rect key="frame" x="1" y="1" width="296" height="84"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <subviews>
@@ -545,7 +545,7 @@ with the game’s own keyboard controls.</string>
                                                 <box autoresizesSubviews="NO" title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="1982">
                                                     <rect key="frame" x="-1" y="194" width="298" height="86"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                    <view key="contentView" id="fkm-XM-gmq">
+                                                    <view key="contentView" id="xaf-nS-iA3">
                                                         <rect key="frame" x="1" y="1" width="296" height="84"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <subviews>
@@ -685,14 +685,14 @@ to add them as DOS drives.</string>
                                                 <box autoresizesSubviews="NO" title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="2196">
                                                     <rect key="frame" x="-1" y="57" width="298" height="301"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                    <view key="contentView" id="ooo-gh-YHT">
+                                                    <view key="contentView" id="D5w-ZR-Vi8">
                                                         <rect key="frame" x="1" y="1" width="296" height="299"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <subviews>
                                                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="2206">
                                                                 <rect key="frame" x="0.0" y="0.0" width="296" height="299"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="pyC-pL-oKA">
+                                                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="EY8-QE-ZYf">
                                                                     <rect key="frame" x="0.0" y="0.0" width="296" height="299"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
@@ -871,14 +871,14 @@ if the joystick drifts or behaves erratically.</string>
                                                         <box autoresizesSubviews="NO" borderWidth="0.0" title="Box" boxType="custom" borderType="line" titlePosition="noTitle" id="2308">
                                                             <rect key="frame" x="0.0" y="110" width="298" height="322"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                            <view key="contentView" id="9kf-Bq-NKw">
+                                                            <view key="contentView" id="jIz-Mb-aCD">
                                                                 <rect key="frame" x="0.0" y="0.0" width="298" height="322"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
                                                                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" id="2309">
                                                                         <rect key="frame" x="0.0" y="0.0" width="298" height="322"/>
                                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                                        <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="hHH-zf-U2N">
+                                                                        <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="E45-jm-IAK">
                                                                             <rect key="frame" x="0.0" y="0.0" width="298" height="322"/>
                                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                             <subviews>

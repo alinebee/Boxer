@@ -10,5 +10,6 @@
 
 #import <Cocoa/Cocoa.h>
 
+/// BXImportCommand implements the behaviour for the "import [game]" scripting command.
 @interface BXImportCommand : NSScriptCommand
 @end

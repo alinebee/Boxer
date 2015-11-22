@@ -17,10 +17,10 @@
 @property (retain, nonatomic) NSView *finishImportingPanel;
 @property (retain, nonatomic) NSView *installerTipsPanel;
 
-//! Used by installerTipsPanel to show the help page for game installation.
+/// Used by installerTipsPanel to show the help page for game installation.
 - (IBAction) showInstallerHelp: (id)sender;
 
-//! Used by finishImportingPanel to end the DOS session and finish up the import.
+/// Used by finishImportingPanel to end the DOS session and finish up the import.
 - (IBAction) finishImporting: (id)sender;
 
 @end

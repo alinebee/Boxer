@@ -7,7 +7,7 @@
 
 #import "BXDOSWindowBackgroundView.h"
 
-//! BXBlueprintBackgroundView draws the custom blueprint background and watermark for the DOS window
-//! while importing a game.
+/// BXBlueprintBackgroundView draws the custom blueprint background and watermark for the DOS window
+/// while importing a game.
 @interface BXBlueprintBackgroundView : BXDOSWindowBackgroundView
 @end

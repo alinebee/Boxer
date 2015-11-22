@@ -14,8 +14,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class BXEmulator;
-//! BXMIDISyth sending MIDI signals from DOSBox to OS X's built-in MIDI synth, using the AUGraph API.
-//! It's largely cribbed from DOSBox's own coreaudio MIDI handler.
+/// BXMIDISyth sending MIDI signals from DOSBox to OS X's built-in MIDI synth, using the AUGraph API.
+/// It's largely cribbed from DOSBox's own coreaudio MIDI handler.
 @interface BXMIDISynth : NSObject <BXMIDIDevice>
 {
 	AUGraph _graph;
@@ -24,25 +24,25 @@ NS_ASSUME_NONNULL_BEGIN
     NSURL *_soundFontURL;
 }
 
-//! The URL of the soundfont bank we are currently using,
-//! which be the default system unless a custom one has been
-//! set with \c loadSoundFontWithContentsOfURL:error:
+/// The URL of the soundfont bank we are currently using,
+/// which be the default system unless a custom one has been
+/// set with \c loadSoundFontWithContentsOfURL:error:
 @property (readonly, copy, nonatomic) NSURL *soundFontURL;
 
-//! Returns the URL of the default system soundfont.
+/// Returns the URL of the default system soundfont.
 + (NSURL *) defaultSoundFontURL;
 
-//! Returns a fully-initialized synth ready to receive MIDI messages.
-//! Returns nil and populates outError if the synth could not be initialised.
+/// Returns a fully-initialized synth ready to receive MIDI messages.
+/// Returns nil and populates outError if the synth could not be initialised.
 - (nullable id <BXMIDIDevice>) initWithError: (NSError **)outError;
 
-//! Sets the specified soundfont with which MIDI should be played back.
-//! \c soundFontURL will be updated with the specified URL.
-//! Pass \c nil as the path to clear a previous custom soundfont and revert
-//! to using the system soundfont.
-//! Returns \c YES if the soundfont was loaded/cleared, or \c NO and populates
-//! \c outError if the soundfont couldn't be loaded for any reason (in which
-//! case soundFontURL will remain unchanged.)
+/// Sets the specified soundfont with which MIDI should be played back.
+/// \c soundFontURL will be updated with the specified URL.
+/// Pass \c nil as the path to clear a previous custom soundfont and revert
+/// to using the system soundfont.
+/// Returns \c YES if the soundfont was loaded/cleared, or \c NO and populates
+/// \c outError if the soundfont couldn't be loaded for any reason (in which
+/// case soundFontURL will remain unchanged.)
 - (BOOL) loadSoundFontWithContentsOfURL: (nullable NSURL *)URL error: (NSError **)outError;
 
 @end

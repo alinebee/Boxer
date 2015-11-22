@@ -16,6 +16,12 @@
 #import <Cocoa/Cocoa.h>
 
 
+/// BXScriptableWindow is a wrapper for NSWindow which transparently passes KVO scripting messages
+/// first to the window controller, then to the window itself if the window controller doesn't
+/// respond to that key (or doesn't exist in the first place).
+///
+/// This allows a unified Applescript interface for dealing with a window and its controller as a unit,
+/// without overloading the window with controller logic.
 @interface BXScriptableWindow : NSObject
 {
 	NSWindow *window;

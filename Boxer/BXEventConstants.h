@@ -28,11 +28,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-//! A sufficiently large number that exceeds the highest virtual keycode.
-//! Used as the arbitrary length for arrays of key mappings.
+/// A sufficiently large number that exceeds the highest virtual keycode.
+/// Used as the arbitrary length for arrays of key mappings.
 #define BXMaxSystemKeyCode 256
 
-//! These correspond to NSEvent's mouse button numbers
+/// These correspond to NSEvent's mouse button numbers
 typedef NS_ENUM(NSInteger, BXMouseButton) {
 	BXMouseButtonLeft	= 0,
 	BXMouseButtonRight	= 1,
@@ -41,7 +41,7 @@ typedef NS_ENUM(NSInteger, BXMouseButton) {
 };
 
 
-//! These correspond to NSEvent's pressedMouseButton masks
+/// These correspond to NSEvent's pressedMouseButton masks
 typedef NS_OPTIONS(NSUInteger, BXMouseButtonMask) {
 	BXNoMouseButtonsMask	= 0,
 	BXMouseButtonLeftMask	= 1U << BXMouseButtonLeft,

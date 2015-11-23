@@ -87,8 +87,6 @@ void boxer_suggestMIDIHandler(const char *handlerName, const char *configParams)
     [description setObject: [NSNumber numberWithInteger: musicType] forKey: BXMIDIMusicTypeKey];
     
     [[BXEmulator currentEmulator] setRequestedMIDIDeviceDescription: description];
-    
-    [description release];
 }
 
 bool boxer_MIDIAvailable()

@@ -253,7 +253,7 @@
 	[alert addButtonWithTitle: skipLabel];
 	[[alert addButtonWithTitle: cancelLabel] setKeyEquivalent: @"\e"];	//Ensure the cancel button always uses Escape
 	
-	return [alert autorelease];
+	return alert;
 }
 
 - (IBAction) cancelSourceFileImport: (id)sender

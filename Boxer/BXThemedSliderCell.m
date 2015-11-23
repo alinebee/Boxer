@@ -121,7 +121,7 @@
         [knob transformUsingAffineTransform: transform];
     }
     
-    return [knob autorelease];
+    return knob;
 }
 
 - (NSBezierPath *) roundKnobForRect: (NSRect)theRect

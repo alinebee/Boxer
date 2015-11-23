@@ -63,7 +63,7 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
 
 + (id) imageWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError
 {
-    return [[(ADBMountableImage *)[self alloc] initWithContentsOfURL: baseURL error: outError] autorelease];
+    return [(ADBMountableImage *)[self alloc] initWithContentsOfURL: baseURL error: outError];
 }
 
 - (id) initWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError
@@ -81,8 +81,7 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
                                         userInfo: @{ NSURLErrorKey: baseURL }];
         }
         
-        [self release];
-        self = nil;
+        return nil;
     }
     return self;
 }
@@ -124,7 +123,6 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
         [self unmountVolumeWithError: NULL];
     
     self.mountedVolumeURL = nil;
-    [super dealloc];
 }
 
 - (void) setMountedVolumeURL: (NSURL *)URL
@@ -134,7 +132,6 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
         if (_mountedVolumeURL)
             [self removeRepresentedURL: _mountedVolumeURL];
         
-        [_mountedVolumeURL release];
         _mountedVolumeURL = [URL copy];
         
         if (_mountedVolumeURL)
@@ -304,12 +301,12 @@ NSString * const ADBMountableImageErrorDomain = @"ADBMountableImageErrorDomain";
         //Refuse to enumerate URLs that aren't located within this filesystem.
         if ([URL isBasedInURL: mountedURL])
         {
-            return [[[ADBLocalDirectoryEnumerator alloc] initWithURL: URL
-                                                         inFilesytem: self
-                                          includingPropertiesForKeys: keys
-                                                             options: mask
-                                                          returnURLs: YES
-                                                        errorHandler: errorHandler] autorelease];
+            return [[ADBLocalDirectoryEnumerator alloc] initWithURL: URL
+                                                        inFilesytem: self
+                                         includingPropertiesForKeys: keys
+                                                            options: mask
+                                                         returnURLs: YES
+                                                       errorHandler: errorHandler];
         }
         else
         {

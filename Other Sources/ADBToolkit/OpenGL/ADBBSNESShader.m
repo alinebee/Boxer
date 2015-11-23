@@ -74,9 +74,9 @@ NSString * const ADBBSNESShaderErrorDomain = @"ADBBSNESShaderErrorDomain";
                              inContext: (CGLContextObj)context
                                  error: (NSError **)outError
 {
-    NSXMLDocument *definition = [[[NSXMLDocument alloc] initWithContentsOfURL: shaderURL
-                                                                      options: 0
-                                                                        error: outError] autorelease];
+    NSXMLDocument *definition = [[NSXMLDocument alloc] initWithContentsOfURL: shaderURL
+                                                                     options: 0
+                                                                       error: outError];
     
     if (definition)
     {
@@ -155,7 +155,6 @@ NSString * const ADBBSNESShaderErrorDomain = @"ADBBSNESShaderErrorDomain";
             }
             
             [shaders addObject: shader];
-            [shader release];
             
             //Fragment definitions also carry data about what kind of scaling and filtering
             //we should do when using the shader. Populate the shader with those now.

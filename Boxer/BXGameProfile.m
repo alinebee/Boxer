@@ -143,19 +143,19 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 
 + (id) genericProfile
 {
-    return [[[self alloc] init] autorelease];
+    return [[self alloc] init];
 }
 
 + (id) profileWithIdentifier: (NSString *)identifier
 {
     if ([identifier isEqualToString: BXGenericProfileIdentifier])
     {
-        return [[[self alloc] init] autorelease];
+        return [[self alloc] init];
     }
     else
     {
         NSDictionary *profileData = [[self _identifierIndex] objectForKey: identifier];
-        if (profileData) return [[[self alloc] initWithDictionary: profileData] autorelease];
+        if (profileData) return [[self alloc] initWithDictionary: profileData];
         else return nil;
     }
 }
@@ -182,13 +182,13 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 			//First check for an exact filename match
 			NSString *fileName	= path.lastPathComponent.lowercaseString;
 			if ((matchingProfile = [lookups objectForKey: fileName]))
-				return [[[self alloc] initWithDictionary: matchingProfile] autorelease];
+				return [[self alloc] initWithDictionary: matchingProfile];
 			
 			//Next, check if the base filename (sans extension) matches anything
 			//TODO: eliminate this branch, and just use explicit filenames in the profile telltales.
 			NSString *baseName	= [fileName.stringByDeletingPathExtension stringByAppendingString: @".*"];
 			if ((matchingProfile = [lookups objectForKey: baseName]))
-				return [[[self alloc] initWithDictionary: matchingProfile] autorelease];
+				return [[self alloc] initWithDictionary: matchingProfile];
 		}
 	}
 	
@@ -220,7 +220,7 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
             BXGameProfile *profile = [[self alloc] initWithDictionary: matchingProfile];
             profile.priority *= priorityMultiplier;
             
-            return [profile autorelease];
+            return profile;
         }
     }
     return nil;
@@ -335,21 +335,6 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 		self.driveLabelMappings	= [profileDict objectForKey: @"BXProfileDriveLabels"];
 	}
 	return self;
-}
-
-- (void) dealloc
-{
-    self.identifier = nil;
-    self.gameName = nil;
-    self.configurations = nil;
-    self.profileDescription = nil;
-	
-    self.driveLabelMappings = nil;
-    self.installerPatterns = nil;
-    self.ignoredInstallerPatterns = nil;
-    self.preferredInstallationFolderPath = nil;
-	
-	[super dealloc];
 }
 
 - (NSString *) description
@@ -470,7 +455,7 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
             [lookups setObject: profile forKey: telltale];
         }
 	}
-	return [lookups autorelease];
+	return lookups;
 }
 
 @end

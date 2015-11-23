@@ -136,9 +136,6 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
     self.delegate = nil;
     
 	CFRelease(_ioManager), _ioManager = NULL;
-	[_knownDevices release], _knownDevices = nil;
-	
-	[super dealloc];
 }
 
 
@@ -191,13 +188,11 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 	DDHidDevice *device = [_knownDevices objectForKey: key];
 	if (device)
 	{
-		[device retain];
 		[self willChangeValueForKey: @"matchedDevices"];
 		[_knownDevices removeObjectForKey: key];
 		[self didChangeValueForKey: @"matchedDevices"];
 		
 		[self deviceRemoved: device];
-		[device release];
 	}
 }
 

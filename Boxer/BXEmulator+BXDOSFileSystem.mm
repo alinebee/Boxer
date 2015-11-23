@@ -66,19 +66,19 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 + (NSArray *) floppyDriveLetters
 {
 	static NSArray *letters = nil;
-	if (!letters) letters = [[[self driveLetters] subarrayWithRange: NSMakeRange(0, 24)] retain];
+	if (!letters) letters = [[self driveLetters] subarrayWithRange: NSMakeRange(0, 24)];
 	return letters;
 }
 + (NSArray *) hardDriveLetters
 {
 	static NSArray *letters = nil;
-	if (!letters) letters = [[[self driveLetters] subarrayWithRange: NSMakeRange(2, 22)] retain];
+	if (!letters) letters = [[self driveLetters] subarrayWithRange: NSMakeRange(2, 22)];
 	return letters;
 }
 + (NSArray *) CDROMDriveLetters
 {
 	static NSArray *letters = nil;
-	if (!letters) letters = [[[self driveLetters] subarrayWithRange: NSMakeRange(3, 22)] retain];
+	if (!letters) letters = [[self driveLetters] subarrayWithRange: NSMakeRange(3, 22)];
 	return letters;	
 }
 
@@ -761,7 +761,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     NSUInteger subpathsAdded = 0;
 	for (NSString *fileName in subPath.pathComponents)
 	{
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
 		
         //We use DOSBox's own cache API to convert a real file path into its
         //corresponding DOS 8.3 name: starting at the base path of the drive,
@@ -815,7 +815,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
         //base path.
 		[frankenDirPath appendFormat: @"/%@", dosName];
 		
-		[pool release];
+        }
         subpathsAdded++;
 	}
 	return dosPath;

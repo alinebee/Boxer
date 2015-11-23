@@ -41,14 +41,6 @@
 {
     //Remove self-observation set up upstairs in windowDidLoad:
     [self removeObserver: self forKeyPath: @"document.importStage"];
-    
-	[self setDropzonePanel: nil],	[dropzonePanel release];
-	[self setLoadingPanel: nil],	[loadingPanel release];
-	[self setInstallerPanel: nil],	[installerPanel release];
-	[self setFinalizingPanel: nil],	[finalizingPanel release];
-	[self setFinishedPanel: nil],	[finishedPanel release];
-	
-	[super dealloc];
 }
 
 - (BOOL) windowShouldClose: (id)sender

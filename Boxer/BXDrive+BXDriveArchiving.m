@@ -29,8 +29,7 @@
 //during decoding and returns the decoded NSData object directly.
 - (id) initWithCoder: (NSCoder *)aDecoder
 {
-    [self release];
-    return (id)[[aDecoder decodeDataObject] retain];
+    return (id)[aDecoder decodeDataObject];
 }
 
 @end
@@ -58,7 +57,6 @@
             //and we shouldn't bother continuing.
             if (self.sourceURL == nil)
             {
-                [self release];
                 return nil;
             }
             
@@ -106,7 +104,6 @@
             
             if (self.sourceURL == nil)
             {
-                [self release];
                 return nil;
             }
             
@@ -202,7 +199,6 @@
         }
         
         [aCoder encodeObject: equivalentURLBookmarks forKey: @"equivalentURLBookmarks"];
-        [equivalentURLBookmarks release];
     }
     
     //For scalar properties, we only bother recording exceptions to the defaults

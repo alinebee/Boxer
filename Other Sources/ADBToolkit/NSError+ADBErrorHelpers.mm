@@ -66,7 +66,7 @@ NSString * const ADBCallstackSymbolPattern = @"^\\d+\\s+(\\S+)\\s+(0x[a-fA-F0-9]
                                                                        encoding: NSASCIIStringEncoding
                                                                    freeWhenDone: YES];
         
-        return [demangledFunctionName autorelease];
+        return demangledFunctionName;
     }
     else
     {

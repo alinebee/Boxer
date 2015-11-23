@@ -109,15 +109,6 @@
 	return self;
 }
 
-- (void) dealloc
-{
-    self.device = nil;
-    self.element = nil;
-    self.stick = nil;
-    
-	[super dealloc];
-}
-
 #pragma mark - Copying
 
 - (id) copyWithZone: (NSZone *)zone
@@ -283,7 +274,6 @@
 	event.axisDelta = value;
 	
 	[self dispatchHIDEvent: event];
-    [event release];
 }
 
 - (void) ddhidMouse: (DDHidMouse *)mouse xChanged: (SInt32)deltaX
@@ -313,7 +303,6 @@
 	event.element = button;
 		
 	[self dispatchHIDEvent: event];
-    [event release];
 }
 
 - (void) ddhidMouse: (DDHidMouse *)mouse buttonUp: (unsigned)buttonNumber
@@ -325,7 +314,6 @@
     event.element = button;
     
 	[self dispatchHIDEvent: event];
-    [event release];
 }
 
 
@@ -346,7 +334,6 @@
     event.axisPosition = value;
     
 	[self dispatchHIDEvent: event];
-    [event release];
 }
 
 - (void) ddhidJoystick: (DDHidJoystick *)joystick
@@ -395,7 +382,6 @@
     event.POVDirection = value;
 
 	[self dispatchHIDEvent: event];
-    [event release];
 }
 
 - (void) ddhidJoystick: (DDHidJoystick *)joystick
@@ -408,7 +394,6 @@
     event.element = button;
     
 	[self dispatchHIDEvent: event];
-    [event release];
 }
 
 - (void) ddhidJoystick: (DDHidJoystick *)joystick
@@ -421,7 +406,6 @@
     event.element = button;
     
 	[self dispatchHIDEvent: event];
-    [event release];
 }
 
 #pragma mark -
@@ -450,7 +434,6 @@
         event.element = matchingKey;
         
         [self dispatchHIDEvent: event];
-        [event release];
 	}
 }
 

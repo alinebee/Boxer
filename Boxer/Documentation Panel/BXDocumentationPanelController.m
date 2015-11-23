@@ -41,7 +41,7 @@
 
 + (BXDocumentationPanelController *) controller
 {
-    return [[[self alloc] initWithWindowNibName: @"DocumentationPanel"] autorelease];
+    return [[self alloc] initWithWindowNibName: @"DocumentationPanel"];
 }
 
 - (id) initWithWindow: (NSWindow *)window
@@ -52,16 +52,6 @@
         self.maxPopoverSize = NSMakeSize(640, 448);
     }
     return self;
-}
-
-- (void) dealloc
-{
-    self.session = nil;
-    self.popover = nil;
-    self.popoverBrowser = nil;
-    self.windowBrowser = nil;
-    
-    [super dealloc];
 }
 
 - (void) windowDidLoad
@@ -85,8 +75,7 @@
 {
     if (self.session != session)
     {
-        [_session release];
-        _session = [session retain];
+        _session = session;
         
         self.popoverBrowser.representedObject = session;
         self.windowBrowser.representedObject = session;
@@ -228,7 +217,7 @@
             self.popoverBrowser = [BXDocumentationBrowser browserForSession: session];
             self.popoverBrowser.delegate = self;
             
-            self.popover = [[[NSPopover alloc] init] autorelease];
+            self.popover = [[NSPopover alloc] init];
             //NSPopoverBehaviorSemitransient stays open when the application is inactive,
             //which allows files to be drag-dropped into the popover from Finder.
             self.popover.behavior = NSPopoverBehaviorSemitransient;

@@ -72,7 +72,7 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     {
         MT32s = [[NSArray alloc] initWithArray: _discoveredMT32s copyItems: YES];
     }
-    return [MT32s autorelease];
+    return MT32s;
 }
 
 - (id) init
@@ -128,14 +128,6 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     }
 }
 
-- (void) dealloc
-{
-    [_listeners release], _listeners = nil;
-    [_discoveredMT32s release], _discoveredMT32s = nil;
-    
-    [super dealloc];
-}
-
 
 #pragma mark -
 #pragma mark Request constants
@@ -148,7 +140,6 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
         //Perform an arbitrary request for a byte from patch memory.
         UInt8 address[3] = { BXMT32SysexAddressPatchMemory, 0x00, 0x00 };
         request = [BXExternalMT32 sysexRequestForDataOfLength: 1 fromAddress: address];
-        [request retain];
     }
     return request;
 }
@@ -377,8 +368,6 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
         {
             [listener stopListening];
         }
-        
-        [listener release];
     }
 }
 
@@ -466,9 +455,6 @@ void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void
 - (void) dealloc
 {
     [self stopListening];
-    [_receivedData release], _receivedData = nil;
-    
-    [super dealloc];
 }
 
 
@@ -525,8 +511,6 @@ void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void
     }
     
     [self _addPacketData: packetData];
-    
-    [packetData release];
 }
 
 - (BOOL) isListening

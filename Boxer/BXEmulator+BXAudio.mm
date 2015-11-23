@@ -56,8 +56,7 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 {
     if (device != self.activeMIDIDevice)
     {
-        [_activeMIDIDevice release];
-        _activeMIDIDevice = [device retain];
+        _activeMIDIDevice = device;
         
         //If the device supports mixing, create a DOSBox mixer channel for it.
         if ([device conformsToProtocol: @protocol(BXAudioSource)])
@@ -318,8 +317,7 @@ void _renderMIDIOutput(Bitu numFrames)
 {
     if (![_requestedMIDIDeviceDescription isEqual: newDescription])
     {
-        [_requestedMIDIDeviceDescription release];
-        _requestedMIDIDeviceDescription = [newDescription retain];
+        _requestedMIDIDeviceDescription = newDescription;
         
         //Enable MT-32 autodetection if the description doesn't have a specific music type in mind.
         BXMIDIMusicType musicType = [[newDescription objectForKey: BXMIDIMusicTypeKey] integerValue];

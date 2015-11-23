@@ -79,8 +79,6 @@
     NSString *path = [manager stringWithFileSystemRepresentation: representation
                                                           length: strlen(representation)];
     
-    [manager release];
-    
     return [NSURL fileURLWithPath: path];
 }
 
@@ -169,17 +167,17 @@
 
 + (NSString *) preferredExtensionForFileType: (NSString *)UTI
 {
-    CFStringRef extensionForUTI = UTTypeCopyPreferredTagWithClass((CFStringRef)UTI, kUTTagClassFilenameExtension);
-    return [(NSString *)extensionForUTI autorelease];
+    CFStringRef extensionForUTI = UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)UTI, kUTTagClassFilenameExtension);
+    return CFBridgingRelease(extensionForUTI);
 }
 
 + (NSString *) fileTypeForExtension: (NSString *)extension
 {
     CFStringRef UTIForExtension = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
-                                                                        (CFStringRef)extension,
+                                                                        (__bridge CFStringRef)extension,
                                                                         NULL);
     
-    return [(NSString *)UTIForExtension autorelease];
+    return CFBridgingRelease(UTIForExtension);
 }
 
 - (NSString *) typeIdentifier
@@ -207,7 +205,7 @@
 - (BOOL) conformsToFileType: (NSString *)comparisonUTI
 {
     NSString *reportedUTI = self.typeIdentifier;
-    if (reportedUTI != nil && UTTypeConformsTo((CFStringRef)reportedUTI, (CFStringRef)comparisonUTI))
+    if (reportedUTI != nil && UTTypeConformsTo((__bridge CFStringRef)reportedUTI, (__bridge CFStringRef)comparisonUTI))
         return YES;
     
     //Also check if the file extension is suitable for the given type, in case an overly generic
@@ -220,7 +218,7 @@
         NSString *UTIForExtension = [self.class fileTypeForExtension: extension];
         if (UTIForExtension != nil &&
             ![UTIForExtension isEqualToString: reportedUTI] &&
-            UTTypeConformsTo((CFStringRef)UTIForExtension, (CFStringRef)comparisonUTI))
+            UTTypeConformsTo((__bridge CFStringRef)UTIForExtension, (__bridge CFStringRef)comparisonUTI))
             return YES;
     }
     
@@ -234,7 +232,7 @@
     {
         for (NSString *comparisonUTI in UTIs)
         {
-            if (UTTypeConformsTo((CFStringRef)reportedUTI, (CFStringRef)comparisonUTI))
+            if (UTTypeConformsTo((__bridge CFStringRef)reportedUTI, (__bridge CFStringRef)comparisonUTI))
                 return comparisonUTI;
         }
     }
@@ -249,7 +247,7 @@
         {
             for (NSString *comparisonUTI in UTIs)
             {
-                if (UTTypeConformsTo((CFStringRef)UTIForExtension, (CFStringRef)comparisonUTI))
+                if (UTTypeConformsTo((__bridge CFStringRef)UTIForExtension, (__bridge CFStringRef)comparisonUTI))
                     return comparisonUTI;
             }
         }

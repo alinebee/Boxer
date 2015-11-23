@@ -31,10 +31,10 @@
 + (NSData *) bookmarkDataFromAliasRecord: (NSData *)aliasRecord
                                    error: (out NSError **)outError
 {
-    CFDataRef bookmarkDataRef = CFURLCreateBookmarkDataFromAliasRecord(kCFAllocatorDefault, (CFDataRef)aliasRecord);
+    CFDataRef bookmarkDataRef = CFURLCreateBookmarkDataFromAliasRecord(kCFAllocatorDefault, (__bridge CFDataRef)aliasRecord);
     if (bookmarkDataRef)
     {
-        return [((NSData *)bookmarkDataRef) autorelease];
+        return (NSData *)CFBridgingRelease(bookmarkDataRef);
     }
     else
     {

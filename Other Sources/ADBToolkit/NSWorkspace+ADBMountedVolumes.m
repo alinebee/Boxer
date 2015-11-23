@@ -189,9 +189,6 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
 	
 	int returnValue = hdiutil.terminationStatus;
     
-	[hdiutil release];
-    [arguments release];
-	
 	//If hdiutil couldn't mount the drive, populate an error object with the details
 	if (returnValue > 0)
 	{
@@ -201,8 +198,6 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
 		
 		NSDictionary *userInfo	= @{ NSLocalizedFailureReasonErrorKey: failureReason };
         
-		[failureReason release];
-		
         if (outError)
         {
             *outError = [ADBCouldNotMountImageError errorWithImageURL: URL
@@ -255,8 +250,6 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
     
 	int returnValue = hdiutil.terminationStatus;
     
-	[hdiutil release];
-	
     if (returnValue > 0)
     {
         if (outError)
@@ -266,8 +259,6 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
                                                             encoding: NSUTF8StringEncoding];
             
             NSDictionary *userInfo	= @{ NSLocalizedFailureReasonErrorKey: failureReason };
-            
-            [failureReason release];
             
             *outError = [ADBMountedVolumesError errorWithDomain: ADBMountedVolumesErrorDomain
                                                            code: ADBMountedVolumesHDIUtilInfoFailed

@@ -20,12 +20,6 @@
 	return self;
 }
 
-- (void) dealloc
-{
-    self.sourceImage = nil;
-	[super dealloc];
-}
-
 - (void) drawInRect: (NSRect)frame
 {
 	NSAssert(self.sourceImage != nil, @"[BXShelfArt -drawInRect:] called before source image was set.");
@@ -63,7 +57,7 @@
 		[self drawInRect: frame];
 	[image unlockFocus];
 	
-	return [image autorelease];
+	return image;
 }
 
 - (NSImage *) tiledImageWithPixelSize: (NSSize)pixelSize

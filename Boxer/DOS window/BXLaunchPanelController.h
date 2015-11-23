@@ -23,10 +23,6 @@
 
 @interface BXLaunchPanelController : NSViewController <NSCollectionViewDelegate, NSTextFieldDelegate, BXLauncherItemDelegate>
 {
-    NSCollectionView *_launcherList;
-    NSScrollView *_launcherScrollView;
-    NSSearchField *_filter;
-    
     NSMutableArray *_filterKeywords;
     
     NSMutableArray *_allProgramRows;
@@ -70,10 +66,6 @@
 //A custom collection view that uses a different prototype for drive 'headings'
 @class BXLauncherItem;
 @interface BXLauncherList : NSCollectionView
-{
-    BXLauncherItem *_headingPrototype;
-    BXLauncherItem *_favoritePrototype;
-}
 
 @property (assign, nonatomic) IBOutlet BXLauncherItem *headingPrototype;
 @property (assign, nonatomic) IBOutlet BXLauncherItem *favoritePrototype;
@@ -83,11 +75,10 @@
 @class BXLauncherItemView;
 @interface BXLauncherItem : BXCollectionItem
 {
-    id <BXLauncherItemDelegate> _delegate;
     BOOL _launchable;
     NSMenu *_menu;
 }
-@property (assign, nonatomic) IBOutlet id <BXLauncherItemDelegate> delegate;
+@property (weak, nonatomic) IBOutlet id <BXLauncherItemDelegate> delegate;
 @property (assign, nonatomic, getter=isLaunchable) BOOL launchable;
 @property (retain) IBOutlet NSMenu *menu; //The context menu to display for this item.
 

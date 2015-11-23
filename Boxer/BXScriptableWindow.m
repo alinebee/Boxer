@@ -31,7 +31,7 @@
 
 + (id) scriptableWindow: (NSWindow *)_window
 {
-	return [[[self alloc] initWithWindow: _window] autorelease];
+	return [[self alloc] initWithWindow: _window];
 }
 
 - (id) initWithWindow: (NSWindow *)_window
@@ -45,8 +45,7 @@
 
 - (void) dealloc
 {
-	[self setWindow: nil], [window release];
-	return [super dealloc];
+	[self setWindow: nil];
 }
 
 #pragma mark -

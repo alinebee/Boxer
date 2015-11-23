@@ -325,10 +325,6 @@
 	NSArray *effects = [[NSArray alloc] initWithObjects: fadeEffect, resizeEffect, nil];
 	NSViewAnimation *animation = [[NSViewAnimation alloc] initWithViewAnimations: effects];
 	
-	[fadeEffect release];
-	[resizeEffect release];
-	[effects release];
-    
     //Use our standard window-resize animation speed for the transition
     animation.animationBlockingMode = NSAnimationBlocking;
     animation.duration = [self animationResizeTime: toFrame];
@@ -338,7 +334,6 @@
     
     //Aaaaand action!
     [animation startAnimation];
-    [animation release];
     
     //Discard the blanking window once we're done
     [blankingWindow close];

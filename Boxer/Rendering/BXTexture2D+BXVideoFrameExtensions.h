@@ -14,15 +14,15 @@
 @interface ADBTexture2D (BXVideoFrameExtensions)
 
 //Create a new texture with the contents of the specified frame buffer.
-+ (id) textureWithType: (GLenum)type
-            videoFrame: (BXVideoFrame *)frame
-           inGLContext: (CGLContextObj)context
-                 error: (NSError **)outError;
++ (instancetype) textureWithType: (GLenum)type
+                      videoFrame: (BXVideoFrame *)frame
+                     inGLContext: (CGLContextObj)context
+                           error: (NSError **)outError;
 
-- (id) initWithType: (GLenum)type
-         videoFrame: (BXVideoFrame *)frame
-        inGLContext: (CGLContextObj)context
-              error: (NSError **)outError;
+- (instancetype) initWithType: (GLenum)type
+                   videoFrame: (BXVideoFrame *)frame
+                  inGLContext: (CGLContextObj)context
+                        error: (NSError **)outError;
 
 //Fill the frame with the specified frame buffer.
 //This takes into account 'dirty' regions of the frame buffer, and also updates the content region

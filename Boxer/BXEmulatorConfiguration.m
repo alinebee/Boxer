@@ -70,12 +70,12 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 
 + (id) configurationWithString: (NSString *)configuration
 {
-	return [[[self alloc] initWithString: configuration] autorelease];
+	return [(BXEmulatorConfiguration *)[self alloc] initWithString: configuration];
 }
 
 + (id) configurationWithContentsOfURL: (NSURL *)URL error: (out NSError **)outError
 {
-	return [[(BXEmulatorConfiguration *)[self alloc] initWithContentsOfURL: URL error: outError] autorelease];
+	return [(BXEmulatorConfiguration *)[self alloc] initWithContentsOfURL: URL error: outError];
 }
 
 + (id) configurationWithContentsOfFile: (NSString *)filePath error: (out NSError **)outError
@@ -85,7 +85,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 
 + (id) configuration
 {
-	return [[[self alloc] init] autorelease];
+	return [[self alloc] init];
 }
 
 
@@ -103,8 +103,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 	//If there was any problem loading the file, don't continue with initialization
 	else
 	{
-		[self release];
-		self = nil;
+		return nil;
 	}
     return self;
 }
@@ -134,14 +133,6 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 		_sections = [[NSMutableDictionary alloc] initWithCapacity: BXConfigurationNumKnownSections];
 	}
 	return self;
-}
-
-- (void) dealloc
-{
-    self.preamble = nil;
-    self.startupCommandsPreamble = nil;
-	[_sections release], _sections = nil;
-	[super dealloc];
 }
 
 
@@ -223,7 +214,6 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
     {
         NSMutableArray *mutableCommands = [commands mutableCopy];
         [_sections setObject: mutableCommands forKey: @"autoexec"];
-        [mutableCommands release];
     }
     else
     {
@@ -282,7 +272,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 	
 	//Remove the startup commands from our returned dictionary
 	[settings removeObjectForKey: @"autoexec"];
-	return [settings autorelease];
+	return settings;
 }
 
 - (BOOL) isEmpty
@@ -308,7 +298,6 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
     {
         NSMutableDictionary *section = [newSettings mutableCopy];
         [_sections setObject: section forKey: sectionName];
-        [section release];
     }
     else
     {

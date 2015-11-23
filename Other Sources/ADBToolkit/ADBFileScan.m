@@ -57,7 +57,7 @@ NSString * const ADBFileScanLastMatchKey = @"ADBFileScanLastMatch";
     ADBFileScan *scan = [[self alloc] init];
     scan.basePath = path;
     
-    return [scan autorelease];
+    return scan;
 }
 
 - (id) init
@@ -75,19 +75,6 @@ NSString * const ADBFileScanLastMatchKey = @"ADBFileScanLastMatch";
     }
     
     return self;
-}
-
-- (void) dealloc
-{
-    self.fileTypes = nil;
-    self.basePath = nil;
-    self.predicate = nil;
-    
-    [_matchingPaths release], _matchingPaths = nil;
-	[_manager release], _manager = nil;
-	[_workspace release], _workspace = nil;
-    
-    [super dealloc];
 }
 
 
@@ -173,9 +160,10 @@ NSString * const ADBFileScanLastMatchKey = @"ADBFileScanLastMatch";
     
     for (NSString *relativePath in enumerator)
     {
+        BOOL keepScanning;
         if (self.isCancelled) break;
         
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
         
         NSString *fileType = enumerator.fileAttributes.fileType;
         if ([fileType isEqualToString: NSFileTypeDirectory])
@@ -184,9 +172,9 @@ NSString * const ADBFileScanLastMatchKey = @"ADBFileScanLastMatch";
                 [enumerator skipDescendants];
         }
         
-        BOOL keepScanning = [self matchAgainstPath: relativePath];
+        keepScanning = [self matchAgainstPath: relativePath];
         
-        [pool drain];
+        }
         
         if (self.isCancelled || !keepScanning) break;
     }

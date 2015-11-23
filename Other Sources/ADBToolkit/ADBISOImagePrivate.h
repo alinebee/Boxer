@@ -184,7 +184,6 @@
 
 @interface ADBISOEnumerator : ADBTreeEnumerator <ADBFilesystemPathEnumeration>
 {
-    ADBISOImage *_parentImage;
     NSString *_currentDirectoryPath;
     BOOL _skipDescendants;
     NSDirectoryEnumerationOptions _enumerationOptions;
@@ -192,7 +191,7 @@
 }
 
 //The image which this enumerator is iterating.
-@property (assign, nonatomic) ADBISOImage *parentImage;
+@property (unsafe_unretained, nonatomic) ADBISOImage *parentImage;
 
 //The filesystem path of the directory we are currently iterating, relative to the root of the image.
 @property (copy, nonatomic) NSString *currentDirectoryPath;

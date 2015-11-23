@@ -173,14 +173,6 @@
 - (void) dealloc
 {
     [self.titleLayer unbind: @"string"];
-    
-    self.backgroundLayer = nil;
-    self.MT32Layer = nil;
-    self.CM32LLayer = nil;
-    self.highlightLayer = nil;
-    self.titleLayer = nil;
-    
-    [super dealloc];
 }
 
 @end

@@ -43,13 +43,6 @@
     return self;
 }
 
-- (void) dealloc
-{
-    self.mountedVolumePath = nil;
-    
-    [super dealloc];
-}
-
 - (NSString *) fullPathFromRelativePath: (NSString *)relativePath
 {
     //Return paths relative to the mounted volume instead, if available.

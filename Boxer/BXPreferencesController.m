@@ -187,8 +187,6 @@ enum {
     self.hotkeyCaptureDescription = nil;
     self.hotkeyCaptureExtraHelp = nil;
     self.hotkeyCapturePermissionsButton = nil;
-    
-	[super dealloc];
 }
 
 

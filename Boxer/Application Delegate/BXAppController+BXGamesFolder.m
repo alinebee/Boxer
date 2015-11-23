@@ -91,7 +91,6 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
             [userAppURL URLByAppendingPathComponent: defaultName],
             [appURL URLByAppendingPathComponent: defaultName],
         ];
-        [URLs retain];
     });
     
 	return URLs;
@@ -229,8 +228,6 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 		
 		NSImage *tiledShelf = [shelfArt tiledImageWithPixelSize: artworkPixelSize];
 		
-		[shelfArt release];
-		
         BOOL imageSaved = [tiledShelf saveToURL: artworkURL
                                        withType: NSJPEGFileType
                                      properties: @{ NSImageCompressionFactor: @(1.0)}
@@ -364,7 +361,7 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
         }
 	}
     
-	return [[_gamesFolderURL retain] autorelease];
+	return _gamesFolderURL;
 }
 
 - (void) setGamesFolderURL: (NSURL *)newURL
@@ -375,8 +372,7 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
     
 	if (![_gamesFolderURL isEqual: newURL])
 	{
-		[_gamesFolderURL release];
-		_gamesFolderURL = [newURL.fileReferenceURL retain];
+		_gamesFolderURL = newURL.fileReferenceURL;
 		
         //Store the new location in user defaults as a bookmark, so that users can safely move the folder around.
 		if (newURL != nil)
@@ -654,7 +650,6 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 	}
 	
 	[self.generalQueue addOperation: applicator];
-	[applicator release];
 }
 
 - (void) removeShelfAppearanceFromURL: (NSURL *)URL
@@ -684,7 +679,6 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 	}
 	
 	[self.generalQueue addOperation: remover];
-	[remover release];	
 }
 
 - (BOOL) appliesShelfAppearanceToGamesFolder
@@ -714,7 +708,6 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 			if ([operation isKindOfClass: [BXSampleGamesCopy class]] &&
 				[[operation sourceURL] isEqual: sourceURL])
 			{
-				[copyOperation release];
 				return;
 			}
 			
@@ -725,7 +718,6 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 	}
 	
 	[self.generalQueue addOperation: copyOperation];
-	[copyOperation release];
 }
 
 
@@ -758,8 +750,6 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 		NSInteger returnCode = [alert runModal];
 		[self _gamesFolderPromptDidEnd: alert returnCode: returnCode window: nil];
 	}
-    
-    [alert release];
 }
 
 - (void) _gamesFolderPromptDidEnd: (NSAlert *)alert

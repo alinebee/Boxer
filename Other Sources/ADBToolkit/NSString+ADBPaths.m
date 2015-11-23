@@ -98,7 +98,6 @@
 	
 	//Reverse the array to put the components back in their original order
 	NSArray *reverse = [[paths reverseObjectEnumerator] allObjects];
-	[paths release];
 	return reverse;
 }
 

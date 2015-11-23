@@ -9,7 +9,7 @@
 #import "NSAlert+BXAlert.h"
 
 @implementation NSAlert (BXAlert)
-+ (id) alert	{ return [[[self alloc] init] autorelease]; }
++ (id) alert	{ return [[self alloc] init]; }
 
 - (BOOL) adoptIconFromWindow: (NSWindow *)window
 {
@@ -21,7 +21,6 @@
 		icon = [icon copy];
 		[icon setSize: NSMakeSize(128, 128)];
 		[self setIcon: icon];
-		[icon release];
 		return YES;
 	}
 	return NO;

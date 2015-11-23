@@ -91,9 +91,9 @@ static NSMutableArray *_profileClasses = nil;
 {
 	Class profileClass = [self profileClassForDevice: device];
 	
-	return [[[profileClass alloc] initWithHIDDevice: device
-                                   emulatedJoystick: joystick
-                                           keyboard: keyboard] autorelease];
+	return [[profileClass alloc] initWithHIDDevice: device
+                                  emulatedJoystick: joystick
+                                          keyboard: keyboard];
 }
 
 
@@ -122,15 +122,6 @@ static NSMutableArray *_profileClasses = nil;
         [self generateBindings];
 	}
 	return self;
-}
-
-- (void) dealloc
-{
-    self.bindings = nil;
-    self.device = nil;
-    self.emulatedJoystick = nil;
-    
-	[super dealloc];
 }
 
 
@@ -597,7 +588,7 @@ static NSMutableArray *_profileClasses = nil;
         BXEmulatedPOVNorthWest,
     };
     
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     for (NSUInteger i=0; i<8; i++)
     {
         id outputBinding = [BXEmulatedJoystickPOVDirectionBinding bindingWithJoystick: self.emulatedJoystick
@@ -606,7 +597,7 @@ static NSMutableArray *_profileClasses = nil;
         
         [binding setBinding: outputBinding forDirection: from[i]];
     }
-    [pool drain];
+    }
     
     return binding;
 }

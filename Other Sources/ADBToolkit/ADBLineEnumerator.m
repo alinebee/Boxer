@@ -37,16 +37,10 @@
 	{
 		//IMPLEMENTATION NOTE: this retains rather than copies, though copying would be safer,
 		//because NSEnumerated objects are not meant to be modified during enumeration.
-		_enumeratedString = [theString retain];
+		_enumeratedString = theString;
 		_length = _enumeratedString.length;
 	}
 	return self;
-}
-
-- (void) dealloc
-{
-	[_enumeratedString release], _enumeratedString = nil;
-	[super dealloc];
 }
 
 - (NSString *) nextObject
@@ -68,14 +62,14 @@
 {
 	NSMutableArray *remainingEntries = [NSMutableArray arrayWithCapacity: 10];
 	
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
+    @autoreleasepool {
+        
 	NSString *line;
 	while ((line = self.nextObject) != nil)
         [remainingEntries addObject: line];
 	
-	[pool release];
-	
+    }
+    
 	return remainingEntries;
 }
 @end

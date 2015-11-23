@@ -97,8 +97,8 @@ extern const CGFloat BX4by3AspectRatio;
 #pragma mark -
 #pragma mark Initializers
 
-+ (id) frameWithSize: (NSSize)targetSize depth: (NSUInteger)depth;
-- (id) initWithSize: (NSSize)targetSize depth: (NSUInteger)depth;
++ (instancetype) frameWithSize: (NSSize)targetSize depth: (NSUInteger)depth;
+- (instancetype) initWithSize: (NSSize)targetSize depth: (NSUInteger)depth;
 
 
 #pragma mark -

@@ -67,15 +67,6 @@ NSString * const ADBOperationIndeterminateKey	= @"ADBOperationIndeterminateKey";
 	return self;
 }
 
-- (void) dealloc
-{
-    self.delegate = nil;
-    self.contextInfo = nil;
-    self.error = nil;
-	
-	[super dealloc];
-}
-
 - (void) start
 {
     [self _sendWillStartNotificationWithInfo: nil];

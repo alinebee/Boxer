@@ -53,13 +53,6 @@
     return self;
 }
 
-- (void) dealloc
-{
-    self.renderers = nil;
-    self.currentFrame = nil;
-    [super dealloc];
-}
-
 
 #pragma mark Renderer creation
 
@@ -119,7 +112,7 @@
     for (Class rendererClass in renderersToTry)
     {
         NSError *loadError = nil;
-        BXBasicRenderer *renderer = [[[rendererClass alloc] initWithContext: context error: &loadError] autorelease];
+        BXBasicRenderer *renderer = [[rendererClass alloc] initWithContext: context error: &loadError];
         
         if (renderer)
         {

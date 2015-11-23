@@ -38,8 +38,8 @@ NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
 + (id) scanWithEnumerator: (id <NSFastEnumeration>)enumerator
                usingBlock: (ADBScanCallback)matchCallback
 {
-    return [[(ADBScanOperation *)[self alloc] initWithEnumerator: enumerator
-                                                      usingBlock: matchCallback] autorelease];
+    return [(ADBScanOperation *)[self alloc] initWithEnumerator: enumerator
+                                                     usingBlock: matchCallback];
 }
 
 - (id) initWithEnumerator: (id <NSFastEnumeration>)enumerator
@@ -54,14 +54,6 @@ NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
     return self;
 }
 
-- (void) dealloc
-{
-    self.enumerator = nil;
-    self.matchCallback = nil;
-    self.matches = nil;
-    [super dealloc];
-}
-
 - (void) main
 {
     NSAssert(self.enumerator != nil, @"No enumerator provided.");
@@ -71,9 +63,7 @@ NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
     
     NSMutableDictionary *updateInfo = [NSMutableDictionary dictionaryWithCapacity: 2];
     for (id object in self.enumerator)
-    {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        
+    @autoreleasepool {
         BOOL stop = NO;
         id matchedObject = self.matchCallback(object, &stop);
         if (matchedObject != nil)
@@ -86,8 +76,6 @@ NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
         
         [updateInfo setObject: object forKey: ADBScanLatestScannedObjectKey];
         [self _sendInProgressNotificationWithInfo: updateInfo];
-        
-        [pool drain];
         
         if (stop || self.isCancelled)
             break;

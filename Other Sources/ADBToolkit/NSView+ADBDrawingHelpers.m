@@ -56,6 +56,6 @@
     NSImage *capture = [[NSImage alloc] init];
     [capture addRepresentation: rep];
     
-    return [capture autorelease];
+    return capture;
 }
 @end

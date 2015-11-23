@@ -63,7 +63,7 @@
 
 - (NSEnumerator *) lineEnumerator
 {
-	return [[[ADBLineEnumerator alloc] initWithString: self] autorelease];
+	return [[ADBLineEnumerator alloc] initWithString: self];
 }
 
 - (NSArray *) componentsSplitAtLineLength: (NSUInteger)maxLength atWordBoundaries: (BOOL)wordWrap
@@ -147,7 +147,6 @@
 	//Push the final line
 	if (currentLine.length) [lines addObject: [NSString stringWithString: currentLine]];
 	
-	[currentLine release];
 	return lines;
 }
 

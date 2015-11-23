@@ -16,7 +16,7 @@ extern CGPathRef CGContextCopyPath(CGContextRef context);
 
 static void CGPathCallback(void *info, const CGPathElement *element)
 {
-	NSBezierPath *path = (NSBezierPath *)info;
+	NSBezierPath *path = (__bridge NSBezierPath *)info;
 	CGPoint *points = element->points;
 	
 	switch (element->type) {
@@ -106,7 +106,6 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 	NSBezierPath *path = [self copy];
 	CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
 	CGPathRef pathRef = [path createCGPath];
-	[path release];
 	
 	CGContextSaveGState(context);
 		
@@ -183,9 +182,6 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 	[path fill];
 	
 	[NSGraphicsContext restoreGraphicsState];
-	
-	[path release];
-	[blurShadow release];
 }
 
 // Credit for the next two methods goes to Matt Gemmell

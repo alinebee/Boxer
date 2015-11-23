@@ -36,8 +36,7 @@
 {
     if (currentLayout != layout)
     {
-        [currentLayout release];
-        currentLayout = [layout retain];
+        currentLayout = layout;
         
         if (layout)
         {
@@ -75,9 +74,6 @@
     [appController removeObserver: self forKeyPath: @"currentSession.DOSWindowController.inputController"];
     
     [joypadManager stopFindingDevices];
-    [joypadManager release], joypadManager = nil;
-    [self setCurrentLayout: nil], [currentLayout release];
-    [super dealloc];
 }
 
 

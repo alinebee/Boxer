@@ -78,13 +78,6 @@ NSString * const ADBUserNotificationTypeKey = @"ADBUserNotificationType";
     return self;
 }
 
-- (void) dealloc
-{
-    self.activationHandlers = nil;
-    
-    [super dealloc];
-}
-
 - (void) scheduleNotification: (NSUserNotification *)notification
                        ofType: (id)typeKey
                    fromSender: (id)sender
@@ -100,7 +93,6 @@ NSString * const ADBUserNotificationTypeKey = @"ADBUserNotificationType";
         id handlerKey = @([activationHandler hash]);
         
         [self.activationHandlers setObject: activationHandler forKey: handlerKey];
-        [activationHandler release];
         
         [userInfo setObject: handlerKey forKey: ADBUserNotificationHandlerKey];
     }
@@ -140,7 +132,6 @@ NSString * const ADBUserNotificationTypeKey = @"ADBUserNotificationType";
         NSMutableArray *filteredNotifications = [center.scheduledNotifications mutableCopy];
         [filteredNotifications removeObject: notification];
         center.scheduledNotifications = filteredNotifications;
-        [filteredNotifications release];
         
         [center removeDeliveredNotification: notification];
     }
@@ -191,7 +182,6 @@ NSString * const ADBUserNotificationTypeKey = @"ADBUserNotificationType";
             }
         }
         center.scheduledNotifications = filteredNotifications;
-        [filteredNotifications release];
         
         for (NSUserNotification *notification in center.deliveredNotifications)
         {

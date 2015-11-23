@@ -38,17 +38,10 @@
     return self;
 }
 
-- (void) dealloc
-{
-    self.themeKey = nil;
-	[super dealloc];
-}
-
 - (void) setThemeKey: (NSString *)key
 {
     if (![key isEqual: self.themeKey])
     {
-        [_themeKey release];
         _themeKey = [key copy];
         
         [self.controlView setNeedsDisplay: YES];

@@ -64,7 +64,7 @@
                             [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.07f], 0.5f,
                             [NSColor clearColor], 0.55f,
                             nil];
-    return [lighting autorelease];
+    return lighting;
 }
 
 - (void) drawRect: (NSRect)dirtyRect
@@ -168,8 +168,6 @@
                            fraction: 1.0f
                      respectFlipped: YES
                               hints: nil];
-            
-            [maskedGlyph release];
         }
             
         characterRect.origin.x += characterSize.width + characterSpacing;

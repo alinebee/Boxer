@@ -53,7 +53,7 @@
         
         CGImageRelease(cgThumbnail);
         
-        return [image autorelease];
+        return image;
     }
     else
     {

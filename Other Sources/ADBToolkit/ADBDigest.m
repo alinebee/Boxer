@@ -48,13 +48,12 @@
 	
 	for (NSURL *fileURL in fileURLs)
 	{
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
 		NSFileHandle *file		= [NSFileHandle fileHandleForReadingFromURL: fileURL error: outError];
         
         //If there was an error opening the file, bail out.
         if (!file)
         {
-            [hash release];
             return nil;
 		}
         
@@ -69,11 +68,11 @@
 		}
 			   
 		[file closeFile];
-		[pool release];
-	}
+        }
+    }
 	CC_SHA1_Final(hash.mutableBytes, &context);
 	
-	return [hash autorelease];
+	return hash;
 }
 
 @end

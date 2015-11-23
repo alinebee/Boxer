@@ -40,14 +40,6 @@
 #pragma mark -
 #pragma mark Initialization and deallocation
 
-- (void) dealloc
-{
-    self.tabView = nil;
-    self.toolbarForTabs = nil;
-    
-	[super dealloc];
-}
-
 - (void) windowDidLoad
 {
 	//At load time, fire off initial notification handlers for the
@@ -132,7 +124,6 @@
             animation.animationBlockingMode = NSAnimationBlocking;
             
             [animation startAnimation];
-            [animation release];
             
             //The fade-out animation will have automatically hidden the view at the end.
             //Unhide it before we switch the tab so that it won't remain hidden when switching back.
@@ -156,7 +147,6 @@
             animation.animationBlockingMode = NSAnimationBlocking;
             
             [animation startAnimation];
-            [animation release];
             
             oldView.hidden = NO;
         }

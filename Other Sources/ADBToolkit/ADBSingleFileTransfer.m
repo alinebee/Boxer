@@ -98,21 +98,14 @@ NSString * const ADBFileTransferCurrentPathKey		= @"ADBFileTransferCurrentPathKe
 
 + (id) transferFromPath: (NSString *)sourcePath toPath: (NSString *)destinationPath copyFiles: (BOOL)copyFiles
 {
-	return [[[self alloc] initFromPath: sourcePath
+	return [[self alloc] initFromPath: sourcePath
 								toPath: destinationPath
-							 copyFiles: copyFiles] autorelease];
+							 copyFiles: copyFiles];
 }
 
 - (void) dealloc
 {
 	CFRelease(_fileOp);
-	[_manager release], _manager = nil;
-	
-    self.currentPath = nil;
-    self.sourcePath = nil;
-    self.destinationPath = nil;
-	
-	[super dealloc];
 }
 
 

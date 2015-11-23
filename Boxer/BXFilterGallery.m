@@ -140,7 +140,7 @@
 	
 	[title addAttributes: self.titleAttributes range: textRange];
 	
-	return [title autorelease];
+	return title;
 }
 
 - (NSRect) titleRectForBounds: (NSRect)theRect
@@ -218,7 +218,7 @@
 			NSRectFillUsingOperation(bounds, NSCompositeSourceAtop);
 		[shadedImage unlockFocus];
 		
-		image = [shadedImage autorelease];
+		image = shadedImage;
 	}
 	
 	//While we're here, let's override the image positioning with our own

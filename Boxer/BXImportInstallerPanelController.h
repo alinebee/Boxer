@@ -17,12 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BXImportInstallerPanelController : NSViewController < NSOpenSavePanelDelegate >
 {
-    __unsafe_unretained BXImportWindowController *_controller;
     NSPopUpButton *_installerSelector;
 }
 
 //A reference to our window controller.
-@property (assign, nonatomic, nullable) IBOutlet BXImportWindowController *controller;
+@property (weak, nonatomic, nullable) IBOutlet BXImportWindowController *controller;
 
 //The drop-down selector we populate with our installer program options
 @property (retain, nonatomic, nullable) IBOutlet NSPopUpButton *installerSelector;

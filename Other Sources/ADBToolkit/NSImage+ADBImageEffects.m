@@ -112,7 +112,7 @@
 					   fraction: 1.0f];
     [maskedImage unlockFocus];
 	
-    return [maskedImage autorelease];
+    return maskedImage;
 }
 
 - (NSImage *) imageMaskedByImage: (NSImage *)image atSize: (NSSize)targetSize
@@ -131,7 +131,7 @@
                  fraction: 1.0f];
     [maskedImage unlockFocus];
     
-    return [maskedImage autorelease];
+    return maskedImage;
 }
 
 - (void) drawInRect: (NSRect)drawRect

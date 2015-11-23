@@ -38,9 +38,8 @@
     [archiver encodeRootObject: rootObject];
     
     [archiver finishEncoding];
-    [archiver release];
     
-    return [data autorelease];
+    return data;
 }
 
 @end
@@ -56,7 +55,6 @@
     id object = [unarchiver decodeObject];
     
     [unarchiver finishDecoding];
-    [unarchiver release];
     
     return object;
 }

@@ -58,14 +58,6 @@
     }
 }
 
-- (void) dealloc
-{
-    self.launcherList = nil;
-    self.displayedRows = nil;
-    
-    [super dealloc];
-}
-
 
 #pragma mark -
 #pragma mark Populating program lists
@@ -113,7 +105,6 @@
     {
         NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
         title = [programNameFormatter transformedValue: URL.path];
-        [programNameFormatter release];
     }
     
     NSMutableDictionary *item = [NSMutableDictionary dictionaryWithDictionary: @{

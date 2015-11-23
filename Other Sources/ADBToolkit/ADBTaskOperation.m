@@ -38,7 +38,7 @@
 
 + (id) operationWithTask: (NSTask *)task
 {
-	return [[[self alloc] initWithTask: task] autorelease];
+	return [[self alloc] initWithTask: task];
 }
 
 - (id) init
@@ -57,12 +57,6 @@
         self.task = task;
 	}
 	return self;
-}
-
-- (void) dealloc
-{
-    self.task = nil;
-	[super dealloc];
 }
 
 #pragma mark -

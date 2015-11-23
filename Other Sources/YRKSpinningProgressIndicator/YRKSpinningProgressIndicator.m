@@ -42,11 +42,7 @@
 }
 
 - (void) dealloc {
-    [_foreColor release];
-    [_backColor release];
     if (_isAnimating) [self stopAnimation:self];
-    
-    [super dealloc];
 }
 
 - (void) viewDidMoveToWindow
@@ -115,7 +111,6 @@
             CGContextRotateCTM(currentContext, anglePerFin);
             alpha -= 1.0f / _numFins;
         }
-        [path release];
     }
     else
 	{
@@ -130,7 +125,6 @@
         [path setLineWidth:lineWidth];
         [path appendBezierPathWithOvalInRect:NSMakeRect(-circleRadius, -circleRadius, circleRadius*2, circleRadius*2)];
         [path stroke];
-        [path release];
 		
         path = [[NSBezierPath alloc] init];
         [path appendBezierPathWithArcWithCenter: circleCenter
@@ -140,7 +134,6 @@
 									  clockwise: YES];
         [path lineToPoint: circleCenter];
         [path fill];
-        [path release];
     }
 
     [NSGraphicsContext restoreGraphicsState];
@@ -167,7 +160,6 @@
 
 - (void) animateInBackgroundThread
 {
-	NSAutoreleasePool *animationPool = [[NSAutoreleasePool alloc] init];
 	
 	// Set up the animation speed to subtly change with size > 32.
 	// int animationDelay = 38000 + (2000 * ([self bounds].size.height / 32));
@@ -178,17 +170,15 @@
 	int poolFlushCounter = 0;
     
 	do {
+        @autoreleasepool {
 		[self updateFrame:nil];
 		usleep(animationDelay);
 		poolFlushCounter++;
 		if (poolFlushCounter > 256) {
-			[animationPool drain];
-			animationPool = [[NSAutoreleasePool alloc] init];
 			poolFlushCounter = 0;
 		}
-	} while (![[NSThread currentThread] isCancelled]); 
-    
-	[animationPool release];
+        }
+	} while (![[NSThread currentThread] isCancelled]);
 }
 
 - (BOOL) isAnimating
@@ -232,11 +222,11 @@
             [_animationThread start];
         }
         else {
-            _animationTimer = [[NSTimer timerWithTimeInterval: (NSTimeInterval)0.05
-                                                       target: self
-                                                     selector: @selector(updateFrame:)
-                                                     userInfo: nil
-                                                      repeats: YES] retain];
+            _animationTimer = [NSTimer timerWithTimeInterval: (NSTimeInterval)0.05
+                                                      target: self
+                                                    selector: @selector(updateFrame:)
+                                                    userInfo: nil
+                                                     repeats: YES];
             
             [[NSRunLoop currentRunLoop] addTimer: _animationTimer forMode: NSRunLoopCommonModes];
             [[NSRunLoop currentRunLoop] addTimer: _animationTimer forMode: NSDefaultRunLoopMode];
@@ -254,13 +244,11 @@
 			[[NSRunLoop currentRunLoop] runMode: NSModalPanelRunLoopMode
 									 beforeDate: [NSDate dateWithTimeIntervalSinceNow: 0.05]];
 		}
-		[_animationThread release];
         _animationThread = nil;
 	}
     else if (_animationTimer) {
         // we were using timer-based animation
         [_animationTimer invalidate];
-        [_animationTimer release];
         _animationTimer = nil;
     }
     [self setNeedsDisplay:YES];
@@ -282,13 +270,12 @@
 
 - (NSColor *) color
 {
-    return [[_foreColor retain] autorelease];
+    return _foreColor;
 }
 
 - (void) setColor: (NSColor *)value
 {
     if (_foreColor != value) {
-        [_foreColor release];
         _foreColor = [value copy];
         [self setNeedsDisplay: YES];
     }
@@ -296,14 +283,13 @@
 
 - (NSColor *) backgroundColor
 {
-    return [[_backColor retain] autorelease];
+    return _backColor;
 }
 
 - (void) setBackgroundColor: (NSColor *)value
 {
     if (_backColor != value)
 	{
-        [_backColor release];
         _backColor = [value copy];
         [self setNeedsDisplay: YES];
     }

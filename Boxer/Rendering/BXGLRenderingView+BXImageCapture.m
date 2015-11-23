@@ -32,17 +32,17 @@
     
     //IMPLEMENTATION NOTE: we use the device RGB rather than a calibrated or generic RGB,
     //so that the bitmap matches what the user is seeing.
-    NSBitmapImageRep *rep	= [[[NSBitmapImageRep alloc]
-                                initWithBitmapDataPlanes: nil
-                                pixelsWide: theRect.size.width
-                                pixelsHigh: theRect.size.height
-                                bitsPerSample: 8
-                                samplesPerPixel: 3
-                                hasAlpha: NO
-                                isPlanar: NO
-                                colorSpaceName: NSDeviceRGBColorSpace
-                                bytesPerRow: bytesPerRow
-                                bitsPerPixel: 32] autorelease];
+    NSBitmapImageRep *rep	= [[NSBitmapImageRep alloc]
+                               initWithBitmapDataPlanes: nil
+                               pixelsWide: theRect.size.width
+                               pixelsHigh: theRect.size.height
+                               bitsPerSample: 8
+                               samplesPerPixel: 3
+                               hasAlpha: NO
+                               isPlanar: NO
+                               colorSpaceName: NSDeviceRGBColorSpace
+                               bytesPerRow: bytesPerRow
+                               bitsPerPixel: 32];
     
     return rep;
 }

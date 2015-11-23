@@ -33,8 +33,7 @@
                                         userInfo: nil];
         }
         
-        [self dealloc];
-        self = nil;
+        return nil;
     }
     
     return self;

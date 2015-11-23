@@ -50,13 +50,6 @@ enum {
 	return self.sessionMediator.content;
 }
 
-- (void) dealloc
-{
-    self.sessionMediator = nil;
-    self.programSelector = nil;
-	[super dealloc];
-}
-
 - (void) setSessionMediator: (NSObjectController *)mediator
 {
 	if (mediator != self.sessionMediator)
@@ -69,8 +62,7 @@ enum {
 		for (NSString *path in observePaths)
 			[_sessionMediator removeObserver: self forKeyPath: path];
 	
-		[_sessionMediator release];
-		_sessionMediator = [mediator retain];
+		_sessionMediator = mediator;
 	
 		for (NSString *path in observePaths)
 			[mediator addObserver: self forKeyPath: path options: NSKeyValueObservingOptionInitial context: nil];
@@ -264,8 +256,7 @@ enum {
 	{
 		BXEmulator *emulator = self.session.emulator;
 		for (NSString *driveLetter in driveLetters)
-		{
-			NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+		@autoreleasepool {
 			
 			BXDrive *drive = [emulator driveAtLetter: driveLetter];
 			
@@ -293,7 +284,6 @@ enum {
                     [items addObject: [NSMenuItem separatorItem]];
                 }
             }
-			[pool release];
 		}
 	}
 	
@@ -322,9 +312,7 @@ enum {
 	item.representedObject = path;
 	item.title = [pathFormat transformedValue: displayPath];
 	
-	[pathFormat release];
-	
-	return [item autorelease];
+	return item;
 }
 
 @end

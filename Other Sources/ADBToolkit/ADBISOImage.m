@@ -177,7 +177,7 @@ int extdate_to_int(uint8_t *digits, int length)
 + (id) imageWithContentsOfURL: (NSURL *)URL
                         error: (NSError **)outError
 {
-    return [[(ADBISOImage *)[self alloc] initWithContentsOfURL: URL error: outError] autorelease];
+    return [(ADBISOImage *)[self alloc] initWithContentsOfURL: URL error: outError];
 }
 
 - (id) initWithContentsOfURL: (NSURL *)URL
@@ -189,8 +189,7 @@ int extdate_to_int(uint8_t *digits, int length)
         BOOL loaded = [self _loadImageAtURL: URL error: outError];
         if (!loaded)
         {
-            [self release];
-            self = nil;
+            return nil;
         }
     }
     return self;
@@ -203,11 +202,6 @@ int extdate_to_int(uint8_t *digits, int length)
         [(id)self.handle close];
     }
     self.handle = nil;
-    
-    self.baseURL = nil;
-    self.volumeName = nil;
-    self.pathCache = nil;
-    [super dealloc];
 }
 
 
@@ -235,8 +229,8 @@ int extdate_to_int(uint8_t *digits, int length)
 - (NSString *) typeOfFileAtPath: (NSString *)path
 {
     NSString *extension = path.pathExtension;
-    CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)extension, NULL);
-    return [(NSString *)UTI autorelease];
+    CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)extension, NULL);
+    return (NSString *)CFBridgingRelease(UTI);
 }
 
 - (NSString *) typeOfFileAtPath: (NSString *)path matchingTypes: (NSSet *)comparisonUTIs
@@ -246,7 +240,7 @@ int extdate_to_int(uint8_t *digits, int length)
     {
         for (NSString *comparisonUTI in comparisonUTIs)
         {
-            if (UTTypeConformsTo((CFStringRef)UTI, (CFStringRef)comparisonUTI))
+            if (UTTypeConformsTo((__bridge CFStringRef)UTI, (__bridge CFStringRef)comparisonUTI))
                 return comparisonUTI;
         }
     }
@@ -256,7 +250,7 @@ int extdate_to_int(uint8_t *digits, int length)
 - (BOOL) fileAtPath: (NSString *)path conformsToType: (NSString *)comparisonUTI
 {
     NSString *UTI = [self typeOfFileAtPath: path];
-    return (UTI != nil && UTTypeConformsTo((CFStringRef)UTI, (CFStringRef)comparisonUTI));
+    return (UTI != nil && UTTypeConformsTo((__bridge CFStringRef)UTI, (__bridge CFStringRef)comparisonUTI));
 }
 
 
@@ -356,10 +350,10 @@ int extdate_to_int(uint8_t *digits, int length)
                                 options: (NSDirectoryEnumerationOptions)mask
                            errorHandler: (ADBFilesystemPathErrorHandler)errorHandler
 {
-    return [[[ADBISOEnumerator alloc] initWithPath: path
-                                       parentImage: self
-                                           options: mask
-                                      errorHandler: errorHandler] autorelease];
+    return [[ADBISOEnumerator alloc] initWithPath: path
+                                      parentImage: self
+                                          options: mask
+                                     errorHandler: errorHandler];
 }
 
 
@@ -416,11 +410,10 @@ int extdate_to_int(uint8_t *digits, int length)
     
     if (populated)
     {
-        return [data autorelease];
+        return data;
     }
     else
     {
-        [data release];
         return nil;
     }
 }
@@ -464,9 +457,9 @@ int extdate_to_int(uint8_t *digits, int length)
     
     //If we got this far, then we succeeded in loading the image. Hurrah!
     //Get on with parsing out whatever other info interests us from the primary volume descriptor.
-    self.volumeName = [[[NSString alloc] initWithBytes: descriptor.volumeID
-                                                length: ADBISOVolumeIdentifierLength
-                                              encoding: NSASCIIStringEncoding] autorelease];
+    self.volumeName = [[NSString alloc] initWithBytes: descriptor.volumeID
+                                               length: ADBISOVolumeIdentifierLength
+                                             encoding: NSASCIIStringEncoding];
     
     //Prepare the path cache starting with the root directory file entry.
     ADBISODirectoryRecord rootDirectoryRecord;
@@ -668,7 +661,7 @@ int extdate_to_int(uint8_t *digits, int length)
 {
     BOOL isDirectory = (record.fileFlags & ADBISOFileIsDirectory);
     Class entryClass = isDirectory ? [ADBISODirectoryEntry class] : [ADBISOFileEntry class];
-    return [[[entryClass alloc] initWithDirectoryRecord: record inImage: image] autorelease];
+    return [[entryClass alloc] initWithDirectoryRecord: record inImage: image];
 }
 
 - (id) initWithDirectoryRecord: (ADBISODirectoryRecord)record
@@ -736,22 +729,12 @@ int extdate_to_int(uint8_t *digits, int length)
                 if ([self.fileName hasSuffix: @"."])
                     self.fileName = self.fileName.stringByDeletingPathExtension;
             }
-            
-            [identifier release];
         }
         
         self.creationDate = [ADBISOImage _dateFromDateTime: record.recordingTime];
         self.hidden = (record.fileFlags & ADBISOFileIsHidden) == ADBISOFileIsHidden;
     }
     return self;
-}
-
-- (void) dealloc
-{
-    self.fileName = nil;
-    self.creationDate = nil;
-    
-    [super dealloc];
 }
 
 - (BOOL) isDirectory
@@ -796,12 +779,6 @@ int extdate_to_int(uint8_t *digits, int length)
 
 @implementation ADBISODirectoryEntry
 @synthesize cachedSubentries = _cachedSubentries;
-
-- (void) dealloc
-{
-    self.cachedSubentries = nil;
-    [super dealloc];
-}
 
 - (BOOL) isDirectory
 {
@@ -910,19 +887,9 @@ int extdate_to_int(uint8_t *digits, int length)
     else
     {
         errorHandler(path, error);
-        [self release];
-        self = nil;
+        return nil;
     }
     return self;
-}
-
-- (void) dealloc
-{
-    self.parentImage = nil;
-    self.currentDirectoryPath = nil;
-    self.errorHandler = nil;
-    
-    [super dealloc];
 }
 
 #pragma mark - ADBFilesystemPathEnumeration protocol implementations

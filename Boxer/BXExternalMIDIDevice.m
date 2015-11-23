@@ -78,8 +78,7 @@
         BOOL succeeded = [self _connectToDestination: destination error: outError];
         if (!succeeded)
         {
-            [self release];
-            self = nil;
+            return nil;
         }
     }
     return self;
@@ -95,8 +94,7 @@
                                                       error: outError];
         if (!succeeded)
         {
-            [self release];
-            self = nil;
+            return nil;
         }
     }
     return self;
@@ -111,7 +109,6 @@
                                                          error: outError];
         if (!succeeded)
         {
-            [self release];
             self = nil;
         }
     }
@@ -122,10 +119,6 @@
 - (void) dealloc
 {
     [self close];
-    
-    self.dateWhenReady = nil;
-    
-    [super dealloc];
 }
 
 - (void) close

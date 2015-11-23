@@ -31,21 +31,6 @@
 - (void) dealloc
 {
 	[NSThread cancelPreviousPerformRequestsWithTarget: self];
-	
-	[self setProgramList: nil],			[programList release];
-	[self setProgramScroller: nil],		[programScroller release];
-    [self setScanSpinner: nil],         [scanSpinner release];
-	
-	[self setDefaultProgramPanel: nil],         [defaultProgramPanel release];
-	[self setInitialDefaultProgramPanel: nil],  [initialDefaultProgramPanel release];
-	[self setProgramChooserPanel: nil],         [programChooserPanel release];
-	[self setNoProgramsPanel: nil],             [noProgramsPanel release];
-	[self setScanningForProgramsPanel: nil],    [scanningForProgramsPanel release];
-    
-	[self setPanelExecutables: nil],	[panelExecutables release];
-    [self setLastActiveProgramPath: nil], [lastActiveProgramPath release];
-	
-	[super dealloc];
 }
 
 - (NSString *) nibName	{ return @"ProgramPanel"; }
@@ -59,9 +44,6 @@
 
         [NSValueTransformer setValueTransformer: displayPath forName: @"BXProgramDisplayPath"];
         [NSValueTransformer setValueTransformer: fileName forName: @"BXDOSFilename"];
-        
-        [displayPath release];
-        [fileName release];
     }
 }
 
@@ -214,8 +196,6 @@
             [animation setViewAnimations: [NSArray arrayWithObject: fadeOut]];
             [animation setDuration: 0.25];
             [animation startAnimation];
-            
-            [animation release];
         }
         [previousPanel removeFromSuperview];
         [mainView setNeedsDisplay: YES];
@@ -361,7 +341,6 @@
 			
 			[programNames addObject: fileName];
 			[listedPrograms addObject: data];
-			[data release];
 		}
 	}
     
@@ -369,9 +348,6 @@
     //unnecessary redraws in the program panel.
     if (![[self panelExecutables] isEqualToArray: listedPrograms])
 	    [self setPanelExecutables: listedPrograms];
-	
-	[programNames release];
-	[listedPrograms release];
 }
 
 - (NSArray *) executableSortDescriptors
@@ -382,10 +358,7 @@
 																   ascending: YES
 																	selector: @selector(caseInsensitiveCompare:)];
 	
-	return  [NSArray arrayWithObjects:
-			 [sortDefaultFirst autorelease],
-			 [sortByFilename autorelease],
-			 nil];
+    return @[sortDefaultFirst, sortByFilename];
 }
 
 @end

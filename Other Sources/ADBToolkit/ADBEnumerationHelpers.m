@@ -44,14 +44,6 @@
     return self;
 }
 
-- (void) dealloc
-{
-    [_levels release]; _levels = nil;
-    self.currentNode = nil;
-    
-    [super dealloc];
-}
-
 - (NSUInteger) level
 {
     return self.levels.count;
@@ -190,14 +182,7 @@
 
 + (id) enumeratorWithEnumerator: (id <ADBStepwiseEnumeration>)enumerator usingBlock: (ADBScanCallback)scanCallback
 {
-    return [[[self alloc] initWithEnumerator: enumerator usingBlock: scanCallback] autorelease];
-}
-
-- (void) dealloc
-{
-    self.scanCallback = nil;
-    self.innerEnumerator = nil;
-    [super dealloc];
+    return [[self alloc] initWithEnumerator: enumerator usingBlock: scanCallback];
 }
 
 @end
@@ -217,7 +202,7 @@
 
 + (id) chainWithEnumerators: (NSArray *)enumerators
 {
-    return [[[self alloc] initWithEnumerators: enumerators] autorelease];
+    return [[self alloc] initWithEnumerators: enumerators];
 }
 
 - (id) initWithEnumerators: (NSArray *)enumerators
@@ -232,12 +217,6 @@
         }
     }
     return self;
-}
-
-- (void) dealloc
-{
-    self.enumerators = nil;
-    [super dealloc];
 }
 
 - (id) nextObject

@@ -28,13 +28,6 @@
     return self;
 }
 
-- (void) dealloc
-{
-    self.formatter = nil;
-    
-    [super dealloc];
-}
-
 - (NSString *) transformedValue: (NSDate *)value
 {
     return [self.formatter stringFromDate: value];
@@ -353,17 +346,9 @@
 	if (shortened && self.ellipsis)
         displayPath = [self.ellipsis stringByAppendingString: displayPath];
 	
-	[components release];
 	return displayPath;
 }
 
-- (void) dealloc
-{
-    self.joiner = nil;
-    self.ellipsis = nil;
-
-	[super dealloc];
-}
 @end
 
 
@@ -393,14 +378,6 @@
                                nil];
 	}
 	return self;
-}
-
-- (void) dealloc
-{
-    self.missingFileIcon = nil;
-    self.textAttributes = nil;
-    self.iconAttributes = nil;
-	[super dealloc];
 }
 
 - (NSAttributedString *) componentForPath: (NSString *)path
@@ -443,10 +420,7 @@
 	
 	[component appendAttributedString: label];
 	
-	[iconAttachment release];
-	[label release];
-	
-	return [component autorelease];
+	return component;
 }
 
 - (NSAttributedString *) transformedValue: (NSString *)path
@@ -458,8 +432,7 @@
 	//Bail out early if the path is empty
 	if (!components.count)
     {
-        [components release];
-		return [[[NSAttributedString alloc] init] autorelease];
+		return [[NSAttributedString alloc] init];
 	}
 	//Hide common system root directories
 	if (self.hidesSystemRoots)
@@ -482,15 +455,12 @@
 		NSAttributedString *attributedEllipsis = [[NSAttributedString alloc] initWithString: self.ellipsis
                                                                                  attributes: self.textAttributes];
 		[displayPath appendAttributedString: attributedEllipsis];
-		[attributedEllipsis release];
 	}
 
 	NSImage *folderIcon = [NSImage imageNamed: @"NSFolder"];
 	NSUInteger i, numComponents = components.count;
 	for (i = 0; i < numComponents; i++)
-	{
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		
+	@autoreleasepool {
 		NSString *subPath = [components objectAtIndex: i];
 		
 		//Use regular folder icon for all missing path components except for the final one
@@ -500,14 +470,9 @@
 		
 		if (i > 0) [displayPath appendAttributedString: attributedJoiner];
 		[displayPath appendAttributedString: componentString];
-		
-		[pool release];
 	}
 	
-	[attributedJoiner release];
-	[components release];
-	
-	return [displayPath autorelease];
+	return displayPath;
 }
 @end
 
@@ -534,7 +499,7 @@
 {
 	NSImage *resizedImage = [image copy];
 	resizedImage.size = self.size;
-	return [resizedImage autorelease];
+	return resizedImage;
 }
 
 @end

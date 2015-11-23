@@ -80,11 +80,11 @@
            inGLContext: (CGLContextObj)context
                  error: (NSError **)outError
 {
-    return [[[self alloc] initWithType: type
-                           contentSize: contentSize
-                                 bytes: bytes
-                           inGLContext: context
-                                 error: outError] autorelease];
+    return [[self alloc] initWithType: type
+                          contentSize: contentSize
+                                bytes: bytes
+                          inGLContext: context
+                                error: outError];
 }
             
 - (id) initWithType: (GLenum)type
@@ -195,7 +195,6 @@
         //If texture creation failed, clean up after ourselves and return nil.
         if (!succeeded)
         {
-            [self release];
             return nil;
         }        
     }
@@ -222,8 +221,6 @@
         CGLReleaseContext(_context);
         _context = NULL;
     }
-    
-    [super dealloc];
 }
 
 

@@ -40,7 +40,6 @@
         }
         else
         {
-            [self release];
             self = nil;
         }
     }
@@ -50,10 +49,6 @@
 - (void) dealloc
 {
     [self close];
-    
-    self.soundFontURL = nil;
-    
-    [super dealloc];
 }
 
 - (void) close

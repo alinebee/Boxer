@@ -41,7 +41,7 @@
 + (id) transferForPaths: (NSDictionary *)paths
 			  copyFiles: (BOOL)copy
 {
-	return [[[self alloc] initForPaths: paths copyFiles: copy] autorelease];
+	return [[self alloc] initForPaths: paths copyFiles: copy];
 }
 
 - (id) initForPaths: (NSDictionary *)paths copyFiles: (BOOL)copy

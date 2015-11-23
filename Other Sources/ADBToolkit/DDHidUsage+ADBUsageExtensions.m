@@ -86,7 +86,7 @@
 - (id) copyWithZone: (NSZone *)zone
 {
 	//DDHidUsage is immutable, so it's OK for us to retain rather than copying
-	return [self retain];
+	return self;
 }
 
 - (BOOL) isEqualToUsage: (DDHidUsage *)usage

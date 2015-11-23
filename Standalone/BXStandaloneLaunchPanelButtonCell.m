@@ -150,8 +150,6 @@
         textRect.size = textSize;
         
         [newTitle drawInRect: textRect];
-        
-        [newTitle release];
 	}
 	
 	return textRect;
@@ -285,8 +283,6 @@
         if (innerBevel)
             [bezel fillWithInnerShadow: innerBevel];
     [NSGraphicsContext restoreGraphicsState];
-    
-    [bezelGradient release];
 }
 
 - (NSRect) imageRectForBounds: (NSRect)theRect
@@ -300,13 +296,13 @@
     
     if (self.isHighlighted)
     {
-        fill = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.6]
-                                              endingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.4]] autorelease];
+        fill = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.6]
+                                             endingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.4]];
     }
     else
     {
-        fill = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.3]
-                                              endingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.4]] autorelease];
+        fill = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.3]
+                                             endingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.4]];
     }
     
     NSColor *indentColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.33f];

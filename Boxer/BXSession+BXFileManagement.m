@@ -177,7 +177,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     dispatch_once(&onceToken, ^{
         NSSet *imageTypes	= [BXFileTypes mountableImageTypes];
         NSSet *folderTypes	= [self preferredMountPointTypes];
-        types = [[imageTypes setByAddingObjectsFromSet: folderTypes] retain];
+        types = [imageTypes setByAddingObjectsFromSet: folderTypes];
     });
 	return types;
 }
@@ -673,7 +673,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	NSUInteger optionKeyDown = ([NSApp currentEvent].modifierFlags & NSAlternateKeyMask) == NSAlternateKeyMask;
 	if (optionKeyDown) return YES;
 
-	NSMutableArray *drivesInUse = [[[NSMutableArray alloc] initWithCapacity: selectedDrives.count] autorelease];
+	NSMutableArray *drivesInUse = [[NSMutableArray alloc] initWithCapacity: selectedDrives.count];
 	for (BXDrive *drive in selectedDrives)
 	{
         //If the drive is importing, refuse to unmount/dequeue it altogether.
@@ -704,10 +704,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 		[alert beginSheetModalForWindow: self.windowForDriveSheet
 						  modalDelegate: self
 						 didEndSelector: @selector(drivesInUseAlertDidEnd:returnCode:contextInfo:)
-							contextInfo: (__bridge void *)([contextInfo retain])];
+							contextInfo: (void*)CFBridgingRetain(contextInfo)];
 
-        [alert release];
-        
 		return NO;
 	}
 	return YES;
@@ -715,9 +713,10 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 
 - (void) drivesInUseAlertDidEnd: (BXDrivesInUseAlert *)alert
 					 returnCode: (NSInteger)returnCode
-                    contextInfo: (NSDictionary *)contextInfo
+                    contextInfo: (CFDictionaryRef)contextInfo2
 {
-	if (returnCode == NSAlertFirstButtonReturn)
+    NSDictionary *contextInfo = CFBridgingRelease(contextInfo2);
+    if (returnCode == NSAlertFirstButtonReturn)
     {
         NSArray *selectedDrives = [contextInfo objectForKey: @"drives"];
         BXDriveMountOptions options = [[contextInfo objectForKey: @"options"] unsignedIntegerValue];
@@ -739,8 +738,6 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
                    contextInfo: NULL];
         }
     }
-    //Release the context dictionary that was previously retained in the beginSheetModalForWindow: call.
-	[contextInfo release];
 }
 
 - (BOOL) validateDriveURL: (NSURL **)ioValue
@@ -2166,8 +2163,6 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
                                                                       ofType: BXDriveImportedNotificationType
                                                                   fromSender: self
                                                                 onActivation: activationHandler];
-            
-            [notification release];
         }
 	}
     

@@ -112,8 +112,6 @@
 					toCenter: endPoint radius: endRadius
 					 options: NSGradientDrawsBeforeStartingLocation | NSGradientDrawsAfterEndingLocation];
 	
-	[lighting release];
-    
     //Augment the main lighting with shadows at the top and bottom edge of the window.
     NSRect topShadowRect = backgroundRect, bottomShadowRect = backgroundRect;
     topShadowRect.size.height = 6;
@@ -132,7 +130,6 @@
                                  nil];
         
         [topShadow drawInRect: topShadowRect angle: 270];
-        [topShadow release];
     }
     
     /*
@@ -242,12 +239,6 @@
 - (BOOL) isOpaque
 {
     return YES;
-}
-
-- (void) dealloc
-{
-    self.snapshot = nil;
-    [super dealloc];
 }
 
 @end

@@ -44,7 +44,6 @@
     {
         BXImageSizeTransformer *welcomeButtonImageSize = [[BXImageSizeTransformer alloc] initWithSize: NSMakeSize(128, 128)];
         [NSValueTransformer setValueTransformer: welcomeButtonImageSize forName: @"BXWelcomeButtonImageSize"];
-        [welcomeButtonImageSize release];
     }
 }
 
@@ -138,8 +137,7 @@
 	
 	//Then, repopulate it with the new recent documents
 	for (NSURL *url in documents)
-	{
-		NSAutoreleasePool *pool	= [[NSAutoreleasePool alloc] init];
+	@autoreleasepool {
 		NSMenuItem *item		= [[NSMenuItem alloc] init];
 		
         item.representedObject = url;
@@ -156,10 +154,6 @@
         item.title = title;
 		
 		[menu insertItem: item atIndex: insertionPoint++];
-		
-        [icon release];
-		[item release];
-		[pool drain];
 	}
     
 	//Finish off the list with a separator

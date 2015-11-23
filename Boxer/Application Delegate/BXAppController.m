@@ -74,8 +74,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (void) dealloc
 {
     self.gamesFolderURL = nil;
-	
-	[super dealloc];
 }
 
 - (BXInspectorController *) inspectorController
@@ -329,7 +327,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 				[importer showWindows];
 			}
 		}
-		return [importer autorelease];
+		return importer;
 	}
     //If it's too late for us to open an import session, launch a new Boxer process to do it
 	else
@@ -364,7 +362,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 				[importer showWindows];
 			}
 		}
-		return [importer autorelease];
+		return importer;
 	}
     else
     {

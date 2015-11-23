@@ -41,14 +41,6 @@
 	return self;
 }
 
-- (void) dealloc
-{
-    self.finder = nil;
-    self.targetURL = nil;
-    
-	[super dealloc];
-}
-
 - (FinderFinderWindow *)_finderWindowForFolderAtURL: (NSURL *)folderURL
 {
 	//IMPLEMENTATION NOTE: [folder containerWindow] returns an SBObject instead of a FinderWindow.
@@ -135,17 +127,6 @@
 	return self;
 }
 
-- (void) dealloc
-{
-    self.targetURL = nil;
-    self.backgroundImageURL = nil;
-    self.icon = nil;
-    
-    self.backgroundPicture = nil;
-    
-	[super dealloc];
-}
-
 - (void) _applyAppearanceToFolderAtURL: (NSURL *)folderURL
 {
 	NSAssert(self.backgroundImageURL != nil, @"BXShelfAppearanceApplicator _applyAppearanceToFolder called without background image.");
@@ -216,14 +197,6 @@
         self.sourceURL = sourceURL;
 	}
 	return self;
-}
-
-- (void) dealloc
-{
-    self.sourceURL = nil;
-    self.sourceOptions = nil;
-    
-	[super dealloc];
 }
 
 - (void) _applyAppearanceToFolderAtURL: (NSURL *)folderURL

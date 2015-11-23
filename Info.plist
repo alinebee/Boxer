@@ -129,7 +129,7 @@
 	<key>CFBundleHelpBookName</key>
 	<string>net.washboardabs.boxer.help</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.washboardabs.boxer</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

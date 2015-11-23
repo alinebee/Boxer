@@ -84,15 +84,6 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	return self;
 }
 
-- (void) dealloc
-{
-    self.drive = nil;
-    self.destinationFolderURL = nil;
-    self.destinationURL = nil;
-    
-	[super dealloc];
-}
-
 
 #pragma mark -
 #pragma mark The actual operation
@@ -201,7 +192,6 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	hdiutil.standardError = [NSPipe pipe];
 	
 	self.task = hdiutil;
-	[hdiutil release];
 	
 	//Run the task to completion and monitor its progress
     _hasWrittenFiles = NO;
@@ -249,7 +239,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	NSString *currentOutput = [[NSString alloc] initWithData: outputHandle.availableData
                                                     encoding: NSUTF8StringEncoding];
 	NSArray *progressValues = [currentOutput componentsMatchedByRegex: @"PERCENT:(-?[0-9\\.]+)" capture: 1];
-	[currentOutput release];
+	currentOutput = nil;
 	
 	ADBOperationProgress latestProgress = [progressValues.lastObject floatValue];
 	

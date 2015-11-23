@@ -219,7 +219,7 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
             BXSession *session = [[BXSession alloc] initWithContentsOfURL: gameboxURL
                                                                    ofType: typeName
                                                                     error: outError];
-            return [session autorelease];
+            return session;
         }
         else
         {
@@ -256,7 +256,7 @@ NSString * const BXOrganizationWebsiteURLInfoPlistKey = @"BXOrganizationWebsiteU
 
 - (Class) documentClassForType: (NSString *)UTI
 {
-    if (UTTypeConformsTo((CFStringRef)UTI, (CFStringRef)BXGameboxType))
+    if (UTTypeConformsTo((__bridge CFStringRef)UTI, (__bridge CFStringRef)BXGameboxType))
     {
         return [BXSession class];
     }

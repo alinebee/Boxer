@@ -19,12 +19,6 @@ enum {
 };
 
 @interface BXStatusBarController : NSViewController
-{
-	NSSegmentedControl *_statusBarControls;
-	NSTextField *_notificationMessage;
-    NSButton *_mouseLockButton;
-    NSView *_volumeControls;
-}
 
 @property (assign, nonatomic) IBOutlet NSSegmentedControl *statusBarControls;
 @property (assign, nonatomic) IBOutlet NSTextField *notificationMessage;

@@ -43,7 +43,7 @@
 { 
 	NSImage *shine = [[NSImage imageNamed: @"BoxArtShine"] copy];
 	[shine setSize: iconSize];
-	return [shine autorelease];
+	return shine;
 }
 
 - (id) initWithSourceImage: (NSImage *)image
@@ -77,8 +77,8 @@
 	//Fuck 10.5.
 	if (isRunningOnLeopard())
 	{
-		image = [[image copy] autorelease];
-		shine = [[shine copy] autorelease];
+		image = [image copy];
+		shine = [shine copy];
 	}
 	
 	//Allow enough room around the image for our drop shadow
@@ -136,9 +136,8 @@
 		[self drawInRect: frame];
 		NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initWithFocusedViewRect: frame];
 	[canvas unlockFocus];
-	[canvas release];
 	
-	return [rep autorelease];
+	return rep;
 }
 
 - (NSImage *) coverArt
@@ -158,12 +157,12 @@
 	[coverArt addRepresentation: [self representationForSize: NSMakeSize(128, 128)]];
 	[coverArt addRepresentation: [self representationForSize: NSMakeSize(32, 32)]];
 	
-	return [coverArt autorelease];
+	return coverArt;
 }
 
 + (NSImage *) coverArtWithImage: (NSImage *)image
 {
-	id generator = [[[self alloc] initWithSourceImage: image] autorelease];
+	id generator = [[self alloc] initWithSourceImage: image];
 	return [generator coverArt];
 }
 

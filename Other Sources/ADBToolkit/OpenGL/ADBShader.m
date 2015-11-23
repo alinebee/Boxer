@@ -312,10 +312,10 @@ NSString * const ADBShaderUniformSizeKey = @"Size";
     NSURL *vertexURL    = [[NSBundle mainBundle] URLForResource: shaderName withExtension: @"vert"];
     NSURL *fragmentURL  = [[NSBundle mainBundle] URLForResource: shaderName withExtension: @"frag"];
     
-    return [[[self alloc] initWithContentsOfVertexShaderURL: vertexURL
-                                         fragmentShaderURLs: [NSArray arrayWithObject: fragmentURL]
-                                                  inContext: context
-                                                      error: outError] autorelease];
+    return [[self alloc] initWithContentsOfVertexShaderURL: vertexURL
+                                        fragmentShaderURLs: [NSArray arrayWithObject: fragmentURL]
+                                                 inContext: context
+                                                     error: outError];
 }
 
 + (id) shaderNamed: (NSString *)shaderName
@@ -330,10 +330,10 @@ NSString * const ADBShaderUniformSizeKey = @"Size";
                                                   withExtension: @"frag"
                                                    subdirectory: subdirectory];
     
-    return [[[self alloc] initWithContentsOfVertexShaderURL: vertexURL
-                                         fragmentShaderURLs: [NSArray arrayWithObject: fragmentURL]
-                                                  inContext: context
-                                                      error: outError] autorelease];
+    return [[self alloc] initWithContentsOfVertexShaderURL: vertexURL
+                                        fragmentShaderURLs: @[fragmentURL]
+                                                 inContext: context
+                                                     error: outError];
 }
 
 - (id) initWithContentsOfVertexShaderURL: (NSURL *)vertexShaderURL
@@ -349,7 +349,6 @@ NSString * const ADBShaderUniformSizeKey = @"Size";
                                                    error: outError];
         if (!vertexSource)
         {
-            [self release];
             return nil;
         }
     }
@@ -367,7 +366,6 @@ NSString * const ADBShaderUniformSizeKey = @"Size";
         }
         else
         {
-            [self release];
             return nil;
         }
     }
@@ -399,7 +397,6 @@ NSString * const ADBShaderUniformSizeKey = @"Size";
         //pack up and go home.
         if (!self.shaderProgram)
         {
-            [self release];
             self = nil;
         }
     }
@@ -410,8 +407,6 @@ NSString * const ADBShaderUniformSizeKey = @"Size";
 - (void) dealloc
 {
     self.shaderProgram = NULL;
-    
-    [super dealloc];
 }
 
 - (void) deleteShaderProgram

@@ -31,13 +31,6 @@
 @implementation ADBMultiPanelWindowController
 @synthesize panelContainer = _panelContainer;
 
-- (void) dealloc
-{
-    self.panelContainer = nil;
-    
-	[super dealloc];
-}
-
 - (NSView *) currentPanel
 {
 	return self.panelContainer.subviews.lastObject;
@@ -95,9 +88,7 @@
             
             animation.animationBlockingMode = NSAnimationBlocking;
             
-            [animation retain];
 			[animation startAnimation];
-			[animation release];
 			
 			//Reset the properties of the original panel once the animation is complete
 			[oldPanel removeFromSuperview];
@@ -137,7 +128,7 @@
     };
 	
 	NSViewAnimation *animation = [[NSViewAnimation alloc] initWithViewAnimations: @[fadeOut]];
-	return [animation autorelease];
+	return animation;
 }
 
 - (NSViewAnimation *) hidePanel: (NSView *)oldPanel
@@ -151,7 +142,7 @@
 	
     oldPanel.hidden = YES;
 	NSViewAnimation *animation = [[NSViewAnimation alloc] initWithViewAnimations: @[fadeIn]];
-	return [animation autorelease];
+	return animation;
 }
 
 - (NSViewAnimation *) transitionFromPanel: (NSView *)oldPanel

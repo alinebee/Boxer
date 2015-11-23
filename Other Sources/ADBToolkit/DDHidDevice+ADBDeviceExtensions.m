@@ -88,7 +88,7 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 						error: (NSError **)outError
 {
 	Class deviceClass = [self classForHIDDeviceRef: deviceRef];
-	return [[[deviceClass alloc] initWithHIDDeviceRef: deviceRef error: outError] autorelease];
+	return [[deviceClass alloc] initWithHIDDeviceRef: deviceRef error: outError];
 }
 
 - (id) initWithHIDDeviceRef: (IOHIDDeviceRef)deviceRef
@@ -105,7 +105,6 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 	else
 	{
 		//TODO: populate outError
-		[self release];
 		return nil;
 	}
 }
@@ -147,7 +146,7 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 
 - (NSArray *) sticks
 {
-	return [[mSticks retain] autorelease];
+	return mSticks;
 }
 
 - (NSArray *) axisElements
@@ -157,7 +156,7 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 	for (DDHidJoystickStick *stick in self.sticks)
 		[axes addObjectsFromArray: stick.axisElements];
 
-	return [axes autorelease];
+	return axes;
 }
 
 - (NSArray *) povElements
@@ -167,7 +166,7 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 	for (DDHidJoystickStick *stick in self.sticks)
 		[povs addObjectsFromArray: stick.povElements];
 
-	return [povs autorelease];
+	return povs;
 }
 
 - (NSArray *) axisElementsWithUsageID: (unsigned)usageID
@@ -208,12 +207,12 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 
 - (NSArray *) axisElements
 {
-    return [[mStickElements retain] autorelease];
+    return mStickElements;
 }
 
 - (NSArray *) povElements
 {
-	return [[mPovElements retain] autorelease];
+	return mPovElements;
 }
 
 - (NSArray *) axisElementsWithUsageID: (unsigned)usageID

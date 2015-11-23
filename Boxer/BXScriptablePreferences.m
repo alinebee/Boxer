@@ -43,6 +43,6 @@
 																					 containerSpecifier: nil
 																									key: @"Boxer preferences"];
 	
-	return [specifier autorelease];
+	return specifier;
 }
 @end

@@ -135,7 +135,7 @@ NSString * const BXDOCFileType      = @"com.microsoft.word.doc";
 	static NSSet *types;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        types = [[[self mountableImageTypes] setByAddingObject: (NSString *)kUTTypeDirectory] retain];
+        types = [[self mountableImageTypes] setByAddingObject: (NSString *)kUTTypeDirectory];
     });
     
 	return types;
@@ -195,7 +195,6 @@ NSString * const BXDOCFileType      = @"com.microsoft.word.doc";
             //and Pages (maybe other rich-text editors too?) will choke on them
             @"doc": @"com.apple.TextEdit",
         };
-        [handlers retain];
     });
 	return handlers;
 }
@@ -220,7 +219,6 @@ NSString * const BXDOCFileType      = @"com.microsoft.word.doc";
 - (id) init
 {
     [self doesNotRecognizeSelector: _cmd];
-    [self release];
     return nil;
 }
 

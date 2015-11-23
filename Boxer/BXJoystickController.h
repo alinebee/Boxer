@@ -10,11 +10,10 @@
 //active DOS session's input controller.
 
 #import <Foundation/Foundation.h>
+#import <DDHidLib/DDHidJoystick.h>
 #import "ADBHIDMonitor.h"
 
-@class DDHidJoystick;
-
-@interface BXJoystickController: NSObject <ADBHIDMonitorDelegate>
+@interface BXJoystickController: NSObject <ADBHIDMonitorDelegate, DDHidJoystickDelegate>
 {
 	ADBHIDMonitor *_HIDMonitor;
     NSArray *_recentHIDRemappers;

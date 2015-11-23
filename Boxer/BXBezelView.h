@@ -9,6 +9,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-//! A custom view used for drawing a rounded translucent bezel background.
+/// A custom view used for drawing a rounded translucent bezel background.
 @interface BXBezelView: NSView
 @end

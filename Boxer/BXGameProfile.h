@@ -27,7 +27,7 @@ typedef NS_ENUM(NSInteger, BXReleaseMedium) {
 };
 
 
-//The default identifier string used for game profiles that don't match a known profile.
+/// The default identifier string used for game profiles that don't match a known profile.
 extern NSString * const BXGenericProfileIdentifier;
 
 @class ADBScanOperation;

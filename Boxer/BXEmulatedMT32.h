@@ -18,8 +18,8 @@
     #import "MT32Emu/mt32emu.h"
 
 @class BXEmulatedMT32;
-//! MT32Emu has a C++ callback class for handling emulated synth notifications.
-//! We implement a thin C++ wrapper that sends messages back to BXEmulatedMT32 for handling.
+/// MT32Emu has a C++ callback class for handling emulated synth notifications.
+/// We implement a thin C++ wrapper that sends messages back to BXEmulatedMT32 for handling.
     class BXEmulatedMT32ReportHandler : public MT32Emu::ReportHandler
     {
     public:
@@ -113,14 +113,14 @@ typedef NS_OPTIONS(NSUInteger, BXMT32ROMType) {
 #pragma mark -
 #pragma mark Helper class methods
 
-//! Returns the exact type of ROM at the specified URL: PCM/Control, MT32/CM32L.
-//! Returns \c BXMT32ROMTypeUnknown and populates outError if the type of ROM could
-//! not be determined.
+/// Returns the exact type of ROM at the specified URL: PCM/Control, MT32/CM32L.
+/// Returns \c BXMT32ROMTypeUnknown and populates outError if the type of ROM could
+/// not be determined.
 + (BXMT32ROMType) typeOfROMAtURL: (NSURL *)URL error: (out NSError **)outError;
 
-//! Returns whether the specified pair of ROMs is MT32 or CM32L.
-//! Returns \c BXMT32ROMTypeUnknown and populates outError if there was an error
-//! determining the types of the ROMs or if they are mismatched.
+/// Returns whether the specified pair of ROMs is MT32 or CM32L.
+/// Returns \c BXMT32ROMTypeUnknown and populates outError if there was an error
+/// determining the types of the ROMs or if they are mismatched.
 + (BXMT32ROMType) typeOfROMPairWithControlROMURL: (NSURL *)controlROMURL
                                        PCMROMURL: (NSURL *)PCMROMURL
                                            error: (out NSError **)outError;

@@ -23,7 +23,7 @@
                 <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="0.0" verticalPageScroll="0.0" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="11">
                     <rect key="frame" x="0.0" y="30" width="480" height="192"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                    <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="CPF-D1-Fr6">
+                    <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="eXJ-gi-FKI">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="192"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>

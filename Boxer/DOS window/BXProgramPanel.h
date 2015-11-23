@@ -6,8 +6,8 @@
  */
 
 
-//! BXProgramPanel defines minor NSView subclasses to customise the appearance and behaviour of
-//! program picker panel views.
+/// BXProgramPanel defines minor NSView subclasses to customise the appearance and behaviour of
+/// program picker panel views.
 
 #import <Cocoa/Cocoa.h>
 #import "BXCollectionItemView.h"
@@ -24,12 +24,12 @@ enum {
 	BXProgramPanelButtons		= 4
 };
 
-//! BXProgramPanel is the containing view for all other panel content. This class draws
-//! itself as a shaded grey gradient background with a grille at the top.
+/// BXProgramPanel is the containing view for all other panel content. This class draws
+/// itself as a shaded grey gradient background with a grille at the top.
 @interface BXProgramPanel : NSView
 @end
 
-//! The tracking item for individual programs in the program panel collection view.
+/// The tracking item for individual programs in the program panel collection view.
 @interface BXProgramItem : BXCollectionItem
 {
     NSButton *programButton;
@@ -37,11 +37,11 @@ enum {
 @property (retain, nonatomic) NSButton *programButton;
 @end
 
-//! Overridden to fix button hover state behaviour when scrolling.
+/// Overridden to fix button hover state behaviour when scrolling.
 @interface BXProgramItemButton : NSButton
 @end
 
-//! Custom button appearance for buttons in the program panel collection view.
+/// Custom button appearance for buttons in the program panel collection view.
 @interface BXProgramItemButtonCell : BXThemedButtonCell
 {
     BOOL mouseIsInside;
@@ -52,8 +52,8 @@ enum {
 @end
 
 
-//! A subclass to fix some hugely annoying redraw bugs
-//! in 10.5's implementation of NSCollectionView
+/// A subclass to fix some hugely annoying redraw bugs
+/// in 10.5's implementation of NSCollectionView
 @interface BXProgramListView : NSCollectionView
 {
     @private

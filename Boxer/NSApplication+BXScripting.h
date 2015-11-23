@@ -13,12 +13,13 @@
 @class BXScriptablePreferences;
 @class BXScriptableWindow;
 
+/// The BXScripting category exposes a scripting API on NSApplication for top-level objects.
 @interface NSApplication (BXScripting)
 
-//An Applescript API object for modifying Boxer’s application preferences and accessing the preferences window.
+/// An Applescript API object for modifying Boxer’s application preferences and accessing the preferences window.
 @property (readonly) BXScriptablePreferences *scriptablePreferences;
 
-//An Applescript API object representing the Inspector panel.
+/// An Applescript API object representing the Inspector panel.
 @property (readonly) BXScriptableWindow *scriptableInspectorWindow;
 
 @end

@@ -31,6 +31,11 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+/// ADBLineEnumerator allows easy enumeration of the lines of an NSString.
+/// It is exposed as a method on \c NSString by the \c ADBStringFormatting category,
+/// but can be used separately also.
 @interface ADBLineEnumerator : NSEnumerator
 {
 	NSUInteger _lineStart;
@@ -40,10 +45,12 @@
 	NSString *_enumeratedString;
 }
 
-//Create a new line enumerator for the specified string.
-- (id) initWithString: (NSString *)theString;
+/// Create a new line enumerator for the specified string.
+- (instancetype) initWithString: (NSString *)theString;
 
-//ADBLineEnumerator always returns strings.
-- (NSString *) nextObject;
+/// ADBLineEnumerator always returns strings.
+- (nullable NSString *) nextObject;
 
 @end
+
+NS_ASSUME_NONNULL_END

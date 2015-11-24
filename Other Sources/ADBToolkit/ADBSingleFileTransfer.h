@@ -33,9 +33,12 @@
 #import "ADBOperation.h"
 #import "ADBFileTransfer.h"
 
-//The default interval in seconds at which to poll the progress of the file transfer.
+/// The default interval in seconds at which to poll the progress of the file transfer.
 #define ADBFileTransferDefaultPollInterval 0.5
 
+/// ADBFileTransfer is an ADBOperation subclass class for performing asynchronous file copy/move.
+/// ADBFileTransfer transfers only a single file/directory to a single destination: see also
+/// ADBFileTransferSet for a batch transfer operation.
 @interface ADBSingleFileTransfer : ADBOperation <ADBFileTransfer>
 {
 	BOOL _copyFiles;
@@ -60,31 +63,31 @@
 #pragma mark -
 #pragma mark Configuration properties
 
-//The full source path to transfer from.
+/// The full source path to transfer from.
 @property (copy) NSString *sourcePath;
 
-//The full destination path to transfer to, including filename.
+/// The full destination path to transfer to, including filename.
 @property (copy) NSString *destinationPath;
 
-//The interval at which to check the progress of the file transfer
-//and issue overall progress updates.
-//Our overall running time will be a multiple of this interval.
+/// The interval at which to check the progress of the file transfer
+/// and issue overall progress updates.
+/// Our overall running time will be a multiple of this interval.
 @property (assign) NSTimeInterval pollInterval;
 
-//Whether to copy or move the file(s) in the transfer.
-@property (assign) BOOL copyFiles;
+/// Whether to copy or move the file(s) in the transfer.
+@property (assign, nonatomic) BOOL copyFiles;
 
 #pragma mark -
 #pragma mark Initialization
 
-//Create/initialize a suitable file transfer operation from the specified source path
-//to the specified destination.
-+ (id) transferFromPath: (NSString *)source
-				 toPath: (NSString *)destination
-			  copyFiles: (BOOL)copy;
+/// Create/initialize a suitable file transfer operation from the specified source path
+/// to the specified destination.
++ (instancetype) transferFromPath: (NSString *)source
+                           toPath: (NSString *)destination
+                        copyFiles: (BOOL)copy;
 
-- (id) initFromPath: (NSString *)source
-			 toPath: (NSString *)destination
-		  copyFiles: (BOOL)copy;
+- (instancetype) initFromPath: (NSString *)source
+                       toPath: (NSString *)destination
+                    copyFiles: (BOOL)copy;
 
 @end

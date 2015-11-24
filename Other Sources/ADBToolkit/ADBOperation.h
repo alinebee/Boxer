@@ -31,6 +31,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef float ADBOperationProgress;
 
 #define ADBUnknownTimeRemaining -1
@@ -54,25 +56,25 @@ extern NSString * const ADBOperationWasCancelled;
 #pragma mark -
 #pragma mark Notification user info dictionary keys
 
-//An arbitrary object representing the context for the operation.
-//Included in all notifications, if contextInfo was set.
+/// An arbitrary object representing the context for the operation.
+/// Included in all notifications, if \c contextInfo was set.
 extern NSString * const ADBOperationContextInfoKey;
 
-//An NSNumber boolean indicating whether the operation succeeded or failed.
-//Included with ADBOperationFinished.
+/// An \c NSNumber boolean indicating whether the operation succeeded or failed.
+/// Included with ADBOperationFinished.
 extern NSString * const ADBOperationSuccessKey;
 
-//An NSError containing the details of a failed operation.
-//Included with ADBOperationFinished if the operation failed.
+/// An \c NSError containing the details of a failed operation.
+/// Included with \c ADBOperationFinished if the operation failed.
 extern NSString * const ADBOperationErrorKey;
 
-//An NSNumber float from 0.0 to 1.0 indicating the progress of the operation.
-//Included with ADBOperationInProgress.
+/// An \c NSNumber float from 0.0 to 1.0 indicating the progress of the operation.
+/// Included with ADBOperationInProgress.
 extern NSString * const ADBOperationProgressKey;
 
-//An NSNumber boolean indicating whether the operation cannot currently
-//measure its progress in a meaningful way.
-//Included with ADBOperationInProgress.
+/// An \c NSNumber boolean indicating whether the operation cannot currently
+/// measure its progress in a meaningful way.
+/// Included with ADBOperationInProgress.
 extern NSString * const ADBOperationIndeterminateKey;
 
 
@@ -96,52 +98,52 @@ extern NSString * const ADBOperationIndeterminateKey;
 #pragma mark -
 #pragma mark Configuration properties
 
-//The delegate that will receive notification messages about this operation.
-@property (assign) id <ADBOperationDelegate> delegate;
+/// The delegate that will receive notification messages about this operation.
+@property (assign, nullable) id <ADBOperationDelegate> delegate;
 
-//The callback methods that will be called on the delegate for progress notifications.
-//These default to ADBOperationDelegate operationInProgress:, operationDidFinish: etc.
-//and must have the same signatures as those methods.
+/// The callback methods that will be called on the delegate for progress notifications.
+/// These default to ADBOperationDelegate operationInProgress:, operationDidFinish: etc.
+/// and must have the same signatures as those methods.
 @property (assign) SEL willStartSelector;
 @property (assign) SEL inProgressSelector;
 @property (assign) SEL wasCancelledSelector;
 @property (assign) SEL didFinishSelector;
 
-//Arbitrary context info for this operation. Included in notification dictionaries
-//for controlling contexts to use. Note that this is an NSObject and will be retained.
-@property (retain) id contextInfo;
+/// Arbitrary context info for this operation. Included in notification dictionaries
+/// for controlling contexts to use. Note that this is an NSObject and will be retained.
+@property (retain, nullable) id contextInfo;
 
-//Whether delegate and NSNotificationCenter notifications should be sent on the main
-//thread or on the operation's current thread. Defaults to YES (the main thread).
+/// Whether delegate and \c NSNotificationCenter notifications should be sent on the main
+/// thread or on the operation's current thread. Defaults to \c YES (the main thread).
 @property (assign) BOOL notifiesOnMainThread;
 
 #pragma mark -
 #pragma mark Operation status properties
 
-//A float from 0.0f to 1.0f indicating how far through its process the operation is.
+/// A float from 0.0f to 1.0f indicating how far through its process the operation is.
 @property (readonly) ADBOperationProgress currentProgress;
 
-//An estimate of how long remains before the operation completes.
-//Will be 0.0 if the operation has already finished, or ADBUnknownTimeRemaining
-//if no estimate can be provided (which usually means isIndeterminate is YES also.)
+/// An estimate of how long remains before the operation completes.
+/// Will be 0.0 if the operation has already finished, or ADBUnknownTimeRemaining
+/// if no estimate can be provided (which usually means isIndeterminate is YES also.)
 @property (readonly) NSTimeInterval timeRemaining;
 
-//Indicates whether the process cannot currently provide a meaningful indication
-//of progress (and thus whether the value of currentProgress should be ignored).
-//Returns YES by default; intended to be overridden by subclasses that can offer
-//meaningful progress tracking.
+/// Indicates whether the process cannot currently provide a meaningful indication
+/// of progress (and thus whether the value of currentProgress should be ignored).
+/// Returns YES by default; intended to be overridden by subclasses that can offer
+/// meaningful progress tracking.
 @property (readonly, getter=isIndeterminate) BOOL indeterminate;
 
-//Whether the operation has succeeeded or failed: only applicable once the operation
-//finishes, though it can be called at any time.
-//In the base implementation, this will return NO if the operation has generated
-//an error, or YES otherwise (even if the operation has not yet finished.)
-//This can be overridden by subclasses.
+/// Whether the operation has succeeeded or failed: only applicable once the operation
+/// finishes, though it can be called at any time.
+/// In the base implementation, this will return \c NO if the operation has generated
+/// an error, or \c YES otherwise (even if the operation has not yet finished.)
+/// This can be overridden by subclasses.
 @property (readonly) BOOL succeeded;
 
-//Any showstopping error that occurred when performing the operation.
-//If this is set, succeeded will be NO.
-@property (retain) NSError *error;
+/// Any showstopping error that occurred when performing the operation.
+/// If this is set, succeeded will be NO.
+@property (retain, nullable) NSError *error;
 
 @end
 
@@ -152,15 +154,17 @@ extern NSString * const ADBOperationIndeterminateKey;
 //These methods are for the use of ADBOperation subclasses only.
 @interface ADBOperation ()
 
-//Post one of the corresponding notifications.
-- (void) _sendWillStartNotificationWithInfo: (NSDictionary *)info;
-- (void) _sendInProgressNotificationWithInfo: (NSDictionary *)info;
-- (void) _sendWasCancelledNotificationWithInfo: (NSDictionary *)info;
-- (void) _sendDidFinishNotificationWithInfo: (NSDictionary *)info;
+///Post one of the corresponding notifications.
+- (void) _sendWillStartNotificationWithInfo: (nullable NSDictionary *)info;
+- (void) _sendInProgressNotificationWithInfo: (nullable NSDictionary *)info;
+- (void) _sendWasCancelledNotificationWithInfo: (nullable NSDictionary *)info;
+- (void) _sendDidFinishNotificationWithInfo: (nullable NSDictionary *)info;
 
-//Shortcut method for sending a notification both to the default notification center
-//and to a selector on our delegate. The object of the notification will be self.
+///Shortcut method for sending a notification both to the default notification center
+///and to a selector on our delegate. The object of the notification will be self.
 - (void) _postNotificationName: (NSString *)name
 			  delegateSelector: (SEL)selector
-					  userInfo: (NSDictionary *)userInfo;
+					  userInfo: (nullable NSDictionary *)userInfo;
 @end
+
+NS_ASSUME_NONNULL_END

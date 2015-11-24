@@ -264,9 +264,7 @@ enum {
 	{
 		BXEmulator *emulator = self.session.emulator;
 		for (NSString *driveLetter in driveLetters)
-		{
-			NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-			
+		@autoreleasepool {
 			BXDrive *drive = [emulator driveAtLetter: driveLetter];
 			
 			//Skip drives that aren't located inside the gamebox
@@ -293,7 +291,6 @@ enum {
                     [items addObject: [NSMenuItem separatorItem]];
                 }
             }
-			[pool release];
 		}
 	}
 	

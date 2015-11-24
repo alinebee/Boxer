@@ -68,14 +68,14 @@
 {
 	NSMutableArray *remainingEntries = [NSMutableArray arrayWithCapacity: 10];
 	
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
 	
 	NSString *line;
 	while ((line = self.nextObject) != nil)
         [remainingEntries addObject: line];
 	
-	[pool release];
-	
+    }
+    
 	return remainingEntries;
 }
 @end

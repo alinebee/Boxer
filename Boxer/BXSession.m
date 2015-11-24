@@ -1288,7 +1288,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 {
 	if (!_hasConfigured)
 	{
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
         
         if ([self _shouldAllowSkippingStartupProgram])
         {
@@ -1302,8 +1302,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		//Flag that we have completed our initial game configuration.
 		_hasConfigured = YES;
         
-        [pool drain];
-	}
+        }
+    }
 }
 
 - (void) runLaunchCommandsForEmulator: (BXEmulator *)theEmulator
@@ -1614,9 +1614,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                                                       untilDate: untilDate
                                                          inMode: NSDefaultRunLoopMode
                                                         dequeue: YES]))
-	{
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        
+	@autoreleasepool {
         //Listen for key-up events for our fast-forward key and handle them ourselves.
         //Swallow all key-down events while this is happening.
         //IMPLEMENTATION NOTE: this is essentially a standard Cocoa event-listening loop
@@ -1638,8 +1636,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         //will be after the first batch of events has been processed,
         //if requestedDate was nil or in the past.)
 		untilDate = self.isSuspended ? [NSDate distantFuture] : requestedDate;
-        
-        [pool drain];
 	}
     
     [requestedDate release];

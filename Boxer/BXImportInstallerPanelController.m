@@ -101,14 +101,10 @@
 	if (installerURLs)
 	{		
 		for (NSURL *installerURL in installerURLs)
-		{
-			NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-			
+		@autoreleasepool {
 			NSMenuItem *item = [self _installerSelectorItemForURL: installerURL];
 			
             [menu insertItem: item atIndex: insertionPoint++];
-			
-			[pool release];
 		}
 		
 		//Always select the first installer in the list, as this is the preferred installer

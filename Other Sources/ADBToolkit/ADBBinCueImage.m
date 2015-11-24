@@ -54,8 +54,7 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
 	NSArray *matches = [cueContents arrayOfCaptureComponentsMatchedByRegex: ADBCueFileDescriptorSyntax];
 	
 	for (NSArray *components in matches)
-	{
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	@autoreleasepool {
 		for (NSString *fileName in [components subarrayWithRange: usefulComponents])
 		{
 			if (fileName.length)
@@ -66,7 +65,6 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
 				break;
 			}
 		}
-		[pool release];
 	}
 	
 	return paths;
@@ -89,9 +87,7 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
     
     NSMutableArray *resolvedURLs = [NSMutableArray arrayWithCapacity: rawPaths.count];
     for (NSString *rawPath in rawPaths)
-    {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        
+    @autoreleasepool {
         //Rewrite Windows-style paths
         NSString *normalizedPath = [rawPath stringByReplacingOccurrencesOfString: @"\\" withString: @"/"];
         
@@ -99,8 +95,6 @@ NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[
         NSURL *resourceURL = [baseURL URLByAppendingPathComponent: normalizedPath].URLByStandardizingPath;
         
         [resolvedURLs addObject: resourceURL];
-        
-        [pool drain];
     }
     return resolvedURLs;
 }

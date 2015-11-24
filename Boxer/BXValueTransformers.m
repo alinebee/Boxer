@@ -488,9 +488,7 @@
 	NSImage *folderIcon = [NSImage imageNamed: @"NSFolder"];
 	NSUInteger i, numComponents = components.count;
 	for (i = 0; i < numComponents; i++)
-	{
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		
+	@autoreleasepool {
 		NSString *subPath = [components objectAtIndex: i];
 		
 		//Use regular folder icon for all missing path components except for the final one
@@ -500,8 +498,6 @@
 		
 		if (i > 0) [displayPath appendAttributedString: attributedJoiner];
 		[displayPath appendAttributedString: componentString];
-		
-		[pool release];
 	}
 	
 	[attributedJoiner release];

@@ -597,7 +597,7 @@ static NSMutableArray *_profileClasses = nil;
         BXEmulatedPOVNorthWest,
     };
     
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     for (NSUInteger i=0; i<8; i++)
     {
         id outputBinding = [BXEmulatedJoystickPOVDirectionBinding bindingWithJoystick: self.emulatedJoystick
@@ -606,7 +606,7 @@ static NSMutableArray *_profileClasses = nil;
         
         [binding setBinding: outputBinding forDirection: from[i]];
     }
-    [pool drain];
+    }
     
     return binding;
 }

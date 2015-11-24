@@ -548,15 +548,15 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
                                void* displayLinkContext)
 {
 	//Needed because we're operating in a different thread
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
 	
 	BXGLRenderingView *view = (__bridge BXGLRenderingView *)displayLinkContext;
     
     if (view.needsCVLinkDisplay && !view.inViewAnimation)
         [view display];
     
-	[pool drain];
-	return kCVReturnSuccess;
+    }
+    return kCVReturnSuccess;
 }
 
 @end

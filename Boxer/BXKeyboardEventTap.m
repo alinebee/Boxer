@@ -267,7 +267,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 
 - (void) _runTapInDedicatedThread
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     
     BOOL installed = [self _installEventTapOnCurrentThread];
     [self.delegate eventTapDidFinishAttaching: self];
@@ -282,7 +282,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
         [self _removeEventTapFromCurrentThread];
     }
     
-    [pool drain];
+    }
 }
 
 - (void) _stopTapping
@@ -400,13 +400,13 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 {
     CGEventRef returnedEvent = event;
     
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     BXKeyboardEventTap *tap = (__bridge BXKeyboardEventTap *)userInfo;
     if (tap)
     {
         returnedEvent = [tap _handleEvent: event ofType: type fromProxy: proxy];
     }
-    [pool drain];
+    }
     
     return returnedEvent;
 }

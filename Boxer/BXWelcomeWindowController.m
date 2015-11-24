@@ -138,8 +138,7 @@
 	
 	//Then, repopulate it with the new recent documents
 	for (NSURL *url in documents)
-	{
-		NSAutoreleasePool *pool	= [[NSAutoreleasePool alloc] init];
+	@autoreleasepool {
 		NSMenuItem *item		= [[NSMenuItem alloc] init];
 		
         item.representedObject = url;
@@ -159,7 +158,6 @@
 		
         [icon release];
 		[item release];
-		[pool drain];
 	}
     
 	//Finish off the list with a separator

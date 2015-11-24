@@ -61,13 +61,13 @@
 
 + (void) registerWithName: (NSString *)name
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     if (!name) name = NSStringFromClass(self);
     BGTheme *theme = [[self alloc] init];
     [[BGThemeManager keyedManager] setTheme: theme
                                      forKey: name];
     [theme release];
-    [pool drain];
+    }
 }
 
 - (NSShadow *) sliderTrackInnerShadow

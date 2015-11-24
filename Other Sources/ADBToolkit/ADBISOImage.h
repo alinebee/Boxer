@@ -38,6 +38,8 @@
 #import "ADBFilesystemBase.h"
 #import "ADBISOImageConstants.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 #pragma mark -
 #pragma mark Public interface
 
@@ -52,25 +54,27 @@
     NSMutableDictionary *_pathCache;
 }
 
-//The name of the image volume.
+/// The name of the image volume.
 @property (readonly, copy, nonatomic) NSString *volumeName;
 
-//The sector layout format of this ISO, detected when the ISO is first loaded.
-//See ADBISOImageConstants for available constants.
+/// The sector layout format of this ISO, detected when the ISO is first loaded.
+/// See \c ADBISOImageConstants for available constants.
 @property (readonly, nonatomic) ADBISOFormat format;
 
 #pragma mark - Constructors
 
-//Return an image loaded from the image file at the specified source URL.
-//Returns nil and populates outError if the specified image could not be read.
-+ (id) imageWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
-- (id) initWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
+/// Return an image loaded from the image file at the specified source URL.
+/// Returns \c nil and populates \c outError if the specified image could not be read.
++ (nullable instancetype) imageWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
+- (nullable instancetype) initWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
 
 #pragma mark - ADBFilesystem API
 
 //Clarify method signature to indicate that only readable, not writeable, file handles will be returned.
-- (id <ADBFileHandleAccess, ADBReadable, ADBSeekable>) fileHandleAtPath: (NSString *)path
+- (nullable id <ADBFileHandleAccess, ADBReadable, ADBSeekable>) fileHandleAtPath: (NSString *)path
                                                                 options: (ADBHandleOptions)options
                                                                   error: (out NSError **)outError;
 
 @end
+
+NS_ASSUME_NONNULL_END

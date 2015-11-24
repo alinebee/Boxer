@@ -32,6 +32,7 @@
 #import <DDHidLib/DDHidLib.h>
 #import <IOKit/hid/IOHIDLib.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface DDHidDevice (ADBDeviceExtensions)
 
@@ -91,3 +92,5 @@
 - (DDHidElement *) axisElementWithUsageID: (unsigned)usageID;
 
 @end
+
+NS_ASSUME_NONNULL_END

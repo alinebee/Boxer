@@ -27,9 +27,10 @@
 #import <Foundation/Foundation.h>
 #import "ADBFilesystemBase.h"
 
-//ADBLocalFilesystem is a thin implementation of ADBFilesystem protocols which wraps
-//a location on the OS X filesystem.
+NS_ASSUME_NONNULL_BEGIN
 
+/// ADBLocalFilesystem is a thin implementation of ADBFilesystem protocols which wraps
+/// a location on the OS X filesystem.
 @interface ADBLocalFilesystem : ADBFilesystemBase <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess, ADBFilesystemFileURLAccess>
 {
     NSFileManager *_manager;
@@ -37,12 +38,14 @@
 
 #pragma mark - Constructors
 
-//Return a new filesystem manager initialised with the specified URL.
-+ (id) filesystemWithBaseURL: (NSURL *)baseURL;
-- (id) initWithBaseURL: (NSURL *)baseURL;
+/// Return a new filesystem manager initialised with the specified URL.
++ (instancetype) filesystemWithBaseURL: (NSURL *)baseURL;
+- (instancetype) initWithBaseURL: (NSURL *)baseURL;
 
 //Redeclared to make explicit the ADB*Handle protocols the handle will support.
-- (id <ADBFileHandleAccess, ADBReadable, ADBWritable, ADBSeekable>) fileHandleAtPath: (NSString *)path
-                                                                             options: (ADBHandleOptions)options
-                                                                               error: (out NSError **)outError;
+- (nullable id <ADBFileHandleAccess, ADBReadable, ADBWritable, ADBSeekable>) fileHandleAtPath: (NSString *)path
+                                                                                      options: (ADBHandleOptions)options
+                                                                                        error: (out NSError **)outError;
 @end
+
+NS_ASSUME_NONNULL_END

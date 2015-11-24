@@ -30,6 +30,10 @@
 
 #import <Cocoa/Cocoa.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+/// A delegate protocol for \c ADBOperation to simplify progress observation.
+/// See \c ADBOperation for notification details.
 @protocol ADBOperationDelegate <NSObject>
 
 @optional
@@ -39,3 +43,5 @@
 - (void) operationDidFinish: (NSNotification *)notification;
 
 @end
+
+NS_ASSUME_NONNULL_END

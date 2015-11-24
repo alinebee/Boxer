@@ -28,6 +28,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NSError (ADBErrorHelpers)
 
 //Returns YES if the error has the specified error domain and code, NO otherwise.
@@ -52,9 +54,11 @@ extern NSString * const ADBCallstackSymbolOffset;               //An NSNumber re
 
 //Takes a mangled C++ function name produced by callstackSymbols or backtrace_symbols and returns a demangled version.
 //Returns nil if the provided string could not be resolved (which will be the case if it is a C or Objective C symbol name.)
-+ (NSString *) demangledFunctionName: (NSString *)functionName;
++ (nullable NSString *) demangledFunctionName: (NSString *)functionName;
 
 //Returns the results of -callstackSymbols parsed into NSDictionaries with the attributes listed above.
-- (NSArray *) callStackDescriptions;
+- (NSArray<NSDictionary<NSString*, id>*> *) callStackDescriptions;
 
 @end
+
+NS_ASSUME_NONNULL_END

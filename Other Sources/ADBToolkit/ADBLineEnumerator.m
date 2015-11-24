@@ -63,7 +63,7 @@
 	NSMutableArray *remainingEntries = [NSMutableArray arrayWithCapacity: 10];
 	
     @autoreleasepool {
-        
+	
 	NSString *line;
 	while ((line = self.nextObject) != nil)
         [remainingEntries addObject: line];

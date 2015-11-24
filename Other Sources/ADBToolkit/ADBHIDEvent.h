@@ -32,6 +32,8 @@
 
 #import <DDHidLib/DDHidLib.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef NS_ENUM(NSInteger, ADBHIDEventType) {
 	ADBHIDUnknownEventType = -1,
 	ADBHIDKeyDown,
@@ -140,7 +142,7 @@ typedef NS_ENUM(NSInteger, ADBHIDPOVSwitchDirection) {
 //taking into account which cardinal POV direction it was in before. This makes the corners
 //'sticky' to avoid unintentional switching.
 + (ADBHIDPOVSwitchDirection) closest4WayDirectionForPOV: (NSInteger)direction
-										   previousPOV: (ADBHIDPOVSwitchDirection)oldDirection;
+                                            previousPOV: (ADBHIDPOVSwitchDirection)oldDirection;
 @end
 
 
@@ -171,3 +173,5 @@ typedef NS_ENUM(NSInteger, ADBHIDPOVSwitchDirection) {
 - (void) dispatchHIDEvent: (ADBHIDEvent *)event;
 
 @end
+
+NS_ASSUME_NONNULL_END

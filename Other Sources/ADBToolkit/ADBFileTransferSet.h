@@ -32,12 +32,15 @@
 #import "ADBOperationSet.h"
 #import "ADBFileTransfer.h"
 
-//Limit the number of file transfers we will undertake at once:
-//set as the default maxConcurrentOperations for ADBFileTransferSets.
-//Large numbers of file transfers may otherwise flood OS X with threads and result in deadlocking.
-//This was observed in OS X 10.7.3 with 63 file transfers.
+/// Limit the number of file transfers we will undertake at once:
+/// set as the default \c maxConcurrentOperations for ADBFileTransferSets.
+/// Large numbers of file transfers may otherwise flood OS X with threads and result in deadlocking.
+/// This was observed in OS X 10.7.3 with 63 file transfers.
 #define ADBDefaultMaxConcurrentFileTransfers 10
 
+/// ADBFileTransferSet manages a set of individual file transfer operations and reports on their
+/// progress as a whole. The actual transfer operations can be anything, as long as they conform
+/// to ADBFileTransfer.
 @interface ADBFileTransferSet : ADBOperationSet <ADBFileTransfer>
 {
     BOOL _copyFiles;
@@ -47,20 +50,20 @@
 #pragma mark -
 #pragma mark Initialization
 
-//Create/initialize a suitable file transfer operation for the specified
-//source->destination mappings.
-+ (id) transferForPaths: (NSDictionary *)paths
-			  copyFiles: (BOOL)copy;
+/// Create/initialize a suitable file transfer operation for the specified
+/// source->destination mappings.
++ (instancetype) transferForPaths: (NSDictionary *)paths
+                        copyFiles: (BOOL)copy;
 
-- (id) initForPaths: (NSDictionary *)paths
-		  copyFiles: (BOOL)copy;
+- (instancetype) initForPaths: (NSDictionary *)paths
+                    copyFiles: (BOOL)copy;
 
-//Adds a SingleFileTransfer operation into the set for the specified set of files.
+/// Adds a SingleFileTransfer operation into the set for the specified set of files.
 - (void) addTransferFromPath: (NSString *)sourcePath
                       toPath: (NSString *)destinationPath;
 
-//Adds ADBSingleFileTransfer operations for each pair of source->destination mappings
-//in the specified dictionary.
+/// Adds \c ADBSingleFileTransfer operations for each pair of source->destination mappings
+/// in the specified dictionary.
 - (void) addTransfers: (NSDictionary *)paths;
 
 @end

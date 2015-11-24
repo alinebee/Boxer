@@ -28,6 +28,8 @@
 #import <OpenGL/OpenGL.h>
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 //ADBGLTexture wraps an OpenGL texture, tracks information about its size
 //and parameters, and provides easy methods to write to and draw from it.
 
@@ -82,7 +84,7 @@
 @property (assign, nonatomic) GLenum horizontalWrapping;
 @property (assign, nonatomic) GLenum verticalWrapping;
 
-//Set the min and mag filter and texture wrapping mode simultaneously, which is more efficient.
+/// Set the min and mag filter and texture wrapping mode simultaneously, which is more efficient.
 - (void) setMinFilter: (GLenum)minFilter
             magFilter: (GLenum)magFilter
              wrapping: (GLenum)wrappingMode;
@@ -90,32 +92,32 @@
 #pragma mark -
 #pragma mark Initialization and texture copying
 
-//Returns a newly initialized texture for the specified content size and data.
-//If provided, the texture will be filled with bytes, assumed to be in the format
-//GL_BGRA and GL_UNSIGNED_INT_8_8_8_8_REV.
-//Returns nil and populates outError if there was an error and outError was provided.
-+ (id) textureWithType: (GLenum)type
-           contentSize: (CGSize)size
-                 bytes: (const GLvoid *)bytes
-           inGLContext: (CGLContextObj)context
-                 error: (NSError **)outError;
+/// Returns a newly initialized texture for the specified content size and data.
+/// If provided, the texture will be filled with bytes, assumed to be in the format
+/// \c GL_BGRA and <code>GL_UNSIGNED_INT_8_8_8_8_REV</code>.
+/// Returns \c nil and populates \c outError if there was an error and \c outError was provided.
++ (nullable instancetype) textureWithType: (GLenum)type
+                              contentSize: (CGSize)size
+                                    bytes: (nullable const GLvoid *)bytes
+                              inGLContext: (CGLContextObj)context
+                                    error: (NSError **)outError;
 
-- (id) initWithType: (GLenum)type
-        contentSize: (CGSize)size
-              bytes: (const GLvoid *)bytes
-        inGLContext: (CGLContextObj)context
-              error: (NSError **)outError;
+- (nullable instancetype) initWithType: (GLenum)type
+                           contentSize: (CGSize)size
+                                 bytes: (nullable const GLvoid *)bytes
+                           inGLContext: (CGLContextObj)context
+                                 error: (NSError **)outError;
 
-//Fills the specified region of the texture (expressed in texels)
-//with the specified bytes, assumed to be in the format GL_BGRA
-//and GL_UNSIGNED_INT_8_8_8_8_REV.
-//Returns NO and populates outError if there was an error and outError was provided.
+/// Fills the specified region of the texture (expressed in texels)
+/// with the specified bytes, assumed to be in the format \c GL_BGRA
+/// and <code>GL_UNSIGNED_INT_8_8_8_8_REV</code>.<br>
+/// Returns \c NO and populates \c outError if there was an error and \c outError was provided.
 - (BOOL) fillRegion: (CGRect)region
           withBytes: (const GLvoid *)bytes
               error: (NSError **)outError;
 
-//Fills the specified region of the texture with the specified color values (ranging from 0 to 1).
-//Mostly used for blanking the texture.
+/// Fills the specified region of the texture with the specified color values (ranging from 0 to 1).
+/// Mostly used for blanking the texture.
 - (BOOL) fillRegion: (CGRect)region
             withRed: (CGFloat)red
               green: (CGFloat)green
@@ -123,25 +125,25 @@
               alpha: (CGFloat)alpha
               error: (NSError **)outError;
 
-//Cleans up the texture resource. After this, the texture should not be used.
+/// Cleans up the texture resource. After this, the texture should not be used.
 - (void) deleteTexture;
 
 #pragma mark -
 #pragma mark Drawing
 
-//Draw the specified region of the texture (expressed in normalized 0-1 coordinates)
-//onto the specified vertices (expressed as an array of coordinate pairs).
-//Returns NO and populates outError if there was an error and outError was provided.
+/// Draw the specified region of the texture (expressed in normalized 0-1 coordinates)
+/// onto the specified vertices (expressed as an array of coordinate pairs).
+/// Returns NO and populates outError if there was an error and outError was provided.
 - (BOOL) drawFromNormalizedRegion: (CGRect)region
                      ontoVertices: (GLfloat *)vertices
                             error: (NSError **)outError;
 
-//As above, but for a texture region expressed in texels. 
+/// As above, but for a texture region expressed in texels.
 - (BOOL) drawFromTexelRegion: (CGRect)region
                 ontoVertices: (GLfloat *)vertices
                        error: (NSError **)outError;
 
-//Draws the entire content region of the texture onto the specified vertices.
+/// Draws the entire content region of the texture onto the specified vertices.
 - (BOOL) drawOntoVertices: (GLfloat *)vertices
                     error: (NSError **)outError;
 
@@ -156,8 +158,8 @@
 #pragma mark -
 #pragma mark Framebuffers
 
-//Binds the texture to the specified framebuffer at the specified attachment point and level.
-//Returns NO and populates outError if the texture could not be bound.
+/// Binds the texture to the specified framebuffer at the specified attachment point and level.
+/// Returns NO and populates outError if the texture could not be bound.
 - (BOOL) bindToFrameBuffer: (GLuint)framebuffer
                 attachment: (GLenum)attachment
                      level: (GLint)level
@@ -167,14 +169,14 @@
 #pragma mark -
 #pragma mark Coordinates
 
-//Whether the texture's extents contain the specified texel region.
+/// Whether the texture's extents contain the specified texel region.
 - (BOOL) containsRegion: (CGRect)region;
 
-//Whether the texture can contain the specified content size.
+/// Whether the texture can contain the specified content size.
 - (BOOL) canAccommodateContentSize: (CGSize)contentSize;
 
-//Functions to convert to and from texels (coordinates expressed as pixel measurements)
-//and normalized texture coordinates (coordinates in which the texture size is {1, 1}).
+/// Functions to convert to and from texels (coordinates expressed as pixel measurements)
+/// and normalized texture coordinates (coordinates in which the texture size is {1, 1}).
 - (CGRect) normalizedRectFromTexelRect: (CGRect)rect;
 - (CGSize) normalizedSizeFromTexelSize: (CGSize)size;
 - (CGPoint) normalizedPointFromTexelPoint: (CGPoint)point;
@@ -183,30 +185,32 @@
 - (CGSize) texelSizeFromNormalizedSize: (CGSize)size;
 - (CGPoint) texelPointFromNormalizedPoint: (CGPoint)point;
 
-//Converts from normalized/texel coordinates into whatever system the texture uses natively.
-//(This means texels for GL_TEXTURE_RECTANGLE textures and normalized coordinates for everyone else.)
+/// Converts from normalized/texel coordinates into whatever system the texture uses natively.
+/// (This means texels for \c GL_TEXTURE_RECTANGLE textures and normalized coordinates for everyone else.)
 - (CGRect) nativeRectFromTexelRect: (CGRect)rect;
 - (CGRect) nativeRectFromNormalizedRect: (CGRect)rect;
 
 #pragma mark -
 #pragma mark Class helper methods
 
-//Returns the minimum size of texture required to accomodate the specified content size
-//given the specified texture type. Will return the original size for GL_TEXTURE_RECTANGLE type,
-//or the nearest larger power-of-two size for other types.
+/// Returns the minimum size of texture required to accomodate the specified content size
+/// given the specified texture type. Will return the original size for \c GL_TEXTURE_RECTANGLE type,
+/// or the nearest larger power-of-two size for other types.
 + (CGSize) textureSizeNeededForContentSize: (CGSize)size
                                   withType: (GLenum)textureType;
 
 @end
 
 
-//Private methods, intended for internal use by subclasses
+/// Private methods, intended for internal use by subclasses
 @interface ADBTexture2D (ADBTexture2DPrivate)
 
-//Convenience method for checking if an error occurred in the previous operation.
-//Returns YES if no error occurred or if outError is NULL (which indicates that no
-//error-checking is desired by the calling context), or NO and populates outError
-//if an error has occurred.
+/// Convenience method for checking if an error occurred in the previous operation.
+/// Returns \c YES if no error occurred or if \c outError is \c NULL (which indicates that no
+/// error-checking is desired by the calling context), or \c NO and populates \c outError
+/// if an error has occurred.
 - (BOOL) _checkForGLError: (NSError **)outError;
 
 @end
+
+NS_ASSUME_NONNULL_END

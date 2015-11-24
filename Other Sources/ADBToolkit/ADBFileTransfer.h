@@ -30,51 +30,56 @@
 
 #import "ADBOperation.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 #pragma mark -
 #pragma mark Notification user info dictionary keys
 
-//NSNumber unsigned integers with the number of files total and transferred so far.
-//Included with ADBOperationInProgress.
+/// \cNSNumber unsigned integers with the number of files total and transferred so far.
+/// Included with ADBOperationInProgress.
 extern NSString * const ADBFileTransferFilesTotalKey;
 extern NSString * const ADBFileTransferFilesTransferredKey;
 
-//NSNumber unsigned long longs with the size in bytes of the files in total and transferred so far.
-//Included with ADBOperationInProgress.
+/// \c NSNumber unsigned long longs with the size in bytes of the files in total and transferred so far.
+/// Included with ADBOperationInProgress.
 extern NSString * const ADBFileTransferBytesTotalKey;
 extern NSString * const ADBFileTransferBytesTransferredKey;
 
-//An NSString path indicating the current file being transferred.
-//Included with ADBOperationInProgress.
+/// An \c NSString path indicating the current file being transferred.
+/// Included with ADBOperationInProgress.
 extern NSString * const ADBFileTransferCurrentPathKey;
 
 
 #pragma mark -
 #pragma mark Interface
 
+/// ADBFileTransfer is an interface for \c ADBOperations implemented by \c ADBSingleFileTransfer
+/// and \c ADBFileTransferSet (which have different parent classes.)
 @protocol ADBFileTransfer <NSObject>
 
-//Whether the files in the transfer should be copied or moved.
-- (BOOL) copyFiles;
-- (void) setCopyFiles: (BOOL)copy;
+/// Whether the files in the transfer should be copied or moved.
+@property (readwrite, nonatomic) BOOL copyFiles;
 
-//The number of bytes that will be copied in total, and have been copied so far.
-- (unsigned long long) numBytes;
-- (unsigned long long) bytesTransferred;
+/// The number of bytes that will be copied in total, and have been copied so far.
+@property (readonly) unsigned long long numBytes;
+@property (readonly) unsigned long long bytesTransferred;
 
-//Undo the file operation. Called automatically if the operation is cancelled
-//or encounters an unrecoverable error.
-//Returns YES if the transfer was undone, NO if there was nothing to undo
-//(e.g. the operation hadn't successfully copied anything.)
+/// Undo the file operation. Called automatically if the operation is cancelled
+/// or encounters an unrecoverable error.
+/// Returns \c YES if the transfer was undone, \c NO if there was nothing to undo
+/// (e.g. the operation hadn't successfully copied anything.)
 - (BOOL) undoTransfer;
 
-//The number of files that will be copied in total.
-- (NSUInteger) numFiles;
+/// The number of files that will be copied in total.
+@property (readonly) NSUInteger numFiles;
 
-//The number of files that have been copied so far.
-- (NSUInteger) filesTransferred;
+/// The number of files that have been copied so far.
+@property (readonly) NSUInteger filesTransferred;
 
-//The file path of the current file being transferred,
-//or nil if no path is currently being transferred (or this cannot be determined.)
-- (NSString *) currentPath;
+/// The file path of the current file being transferred,
+/// or nil if no path is currently being transferred (or this cannot be determined.)
+@property (readonly, retain, nullable) NSString *currentPath;
 
 @end
+
+NS_ASSUME_NONNULL_END

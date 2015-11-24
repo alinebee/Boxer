@@ -32,6 +32,8 @@
 #import <IOKit/hid/IOHIDLib.h>
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 #pragma mark -
 #pragma mark Notification constants
 
@@ -39,8 +41,8 @@
 extern NSString * const ADBHIDDeviceAdded;
 extern NSString * const ADBHIDDeviceRemoved;
 
-//Included in the userInfo dictionary for above notifications.
-//Value is a DDHIDDevice subclass corresponding to the device that was added/removed.
+/// Included in the userInfo dictionary for above notifications.
+/// Value is a \c DDHIDDevice subclass corresponding to the device that was added/removed.
 extern NSString * const ADBHIDDeviceKey;
 
 
@@ -62,7 +64,7 @@ extern NSString * const ADBHIDDeviceKey;
 @property (readonly, nonatomic) NSArray *matchedDevices;
 
 //This delegate will receive messages directly whenever devices are added or removed.
-@property (assign, nonatomic) id <ADBHIDMonitorDelegate> delegate;
+@property (assign, nonatomic, nullable) id <ADBHIDMonitorDelegate> delegate;
 
 
 #pragma mark -
@@ -109,3 +111,5 @@ extern NSString * const ADBHIDDeviceKey;
 - (void) monitor: (ADBHIDMonitor *)monitor didRemoveHIDDevice: (DDHidDevice *)device;
 
 @end
+
+NS_ASSUME_NONNULL_END

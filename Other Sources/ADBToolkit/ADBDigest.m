@@ -47,8 +47,7 @@
 	CC_SHA1_Init(&context);
 	
 	for (NSURL *fileURL in fileURLs)
-	{
-        @autoreleasepool {
+	@autoreleasepool {
 		NSFileHandle *file		= [NSFileHandle fileHandleForReadingFromURL: fileURL error: outError];
         
         //If there was an error opening the file, bail out.
@@ -68,8 +67,7 @@
 		}
 			   
 		[file closeFile];
-        }
-    }
+	}
 	CC_SHA1_Final(hash.mutableBytes, &context);
 	
 	return hash;

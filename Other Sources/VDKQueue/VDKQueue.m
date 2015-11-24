@@ -215,8 +215,7 @@ NSString * VDKQueueAccessRevocationNotification = @"VDKQueueAccessWasRevokedNoti
 #endif
 	
     while(_keepWatcherThreadRunning)
-    {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
         @try
         {
             n = kevent(theFD, NULL, 0, &ev, 1, &timeout);
@@ -299,8 +298,6 @@ NSString * VDKQueueAccessRevocationNotification = @"VDKQueueAccessWasRevokedNoti
         {
             NSLog(@"Error in VDKQueue watcherThread: %@", localException);
         }
-        
-        [pool drain];
     }
     
 	// Close our kqueue's file descriptor

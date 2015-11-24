@@ -42,6 +42,6 @@
 
 //Returns a bitmap image snapshot of the specified rectangle of the view
 //(as expressed in the view's coordinate system.)
-- (NSImage *) imageWithContentsOfRect: (NSRect)rect;
+- (nonnull NSImage *) imageWithContentsOfRect: (NSRect)rect;
 
 @end

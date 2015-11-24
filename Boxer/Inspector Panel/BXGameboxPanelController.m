@@ -257,7 +257,6 @@ enum {
 		BXEmulator *emulator = self.session.emulator;
 		for (NSString *driveLetter in driveLetters)
 		@autoreleasepool {
-			
 			BXDrive *drive = [emulator driveAtLetter: driveLetter];
 			
 			//Skip drives that aren't located inside the gamebox

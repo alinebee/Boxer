@@ -35,7 +35,7 @@
 #pragma mark -
 #pragma mark Constants
 
-//Included in in-progress notification dictionary to mark the last matching path found.
+/// Included in in-progress notification dictionary to mark the last matching path found.
 extern NSString * const ADBFileScanLastMatchKey;
 
 
@@ -100,8 +100,8 @@ extern NSString * const ADBFileScanLastMatchKey;
 #pragma mark -
 #pragma mark Methods
 
-//Returns an autoreleased file scan operation with the specified base path.
-+ (id) scanWithBasePath: (NSString *)basePath;
+/// Returns an autoreleased file scan operation with the specified base path.
++ (instancetype) scanWithBasePath: (NSString *)basePath;
 
 //Returns a new autoreleased instance of the enumerator to scan with.
 //By default this returns an NSDirectoryEnumerator instance configured

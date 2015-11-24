@@ -760,9 +760,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     //into its DOS 8.3 equivalent.
     NSUInteger subpathsAdded = 0;
 	for (NSString *fileName in subPath.pathComponents)
-	{
-        @autoreleasepool {
-		
+	@autoreleasepool {
         //We use DOSBox's own cache API to convert a real file path into its
         //corresponding DOS 8.3 name: starting at the base path of the drive,
         //and converting each component of the desired path into its DOS 8.3
@@ -815,7 +813,6 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
         //base path.
 		[frankenDirPath appendFormat: @"/%@", dosName];
 		
-        }
         subpathsAdded++;
 	}
 	return dosPath;

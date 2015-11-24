@@ -37,21 +37,22 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 #pragma mark Helper class methods
     
-//Returns an array of the track files specified in the specified CUE,
-//as absolute OS X filesystem URLs resolved relative to the CUE's location.
+/// Returns an array of the track files specified in the specified CUE,
+/// as absolute OS X filesystem URLs resolved relative to the CUE's location.
 + (nullable NSArray<NSURL*> *) resourceURLsInCueAtURL: (NSURL *)cueURL error: (out NSError **)outError;
 
-//Returns the location of the binary image for the specified CUE file,
-//as an absolute OS X filesystem URL resolved relative to the CUE's location.
-//Returns nil if the binary image path could not be determined.
+/// Returns the location of the binary image for the specified CUE file,
+/// as an absolute OS X filesystem URL resolved relative to the CUE's location.
+/// Returns \c nil if the binary image path could not be determined.
 + (nullable NSURL *) dataImageURLInCueAtURL: (NSURL *)cueURL error: (out NSError **)outError;
 
-//Given a string representing the contents of a cue file, returns the raw paths in the exact
-//form they are written.
+/// Given a string representing the contents of a cue file, returns the raw paths in the exact
+/// form they are written.
 + (NSArray<NSString*> *) rawPathsInCueContents: (NSString *)cueContents;
 
-//Returns YES if the specified path contains a parseable cue file, NO otherwise.
-//Populates outError if there is a problem accessing the file.
+/// Returns \c YES if the specified path contains a parseable cue file, \c NO otherwise.
+/// Populates \c outError if there is a problem accessing the file.
+///FIXME: returning \NO will make Swift look for the error!
 + (BOOL) isCueAtURL: (NSURL *)cueURL error: (out NSError **)outError;
 
 @end

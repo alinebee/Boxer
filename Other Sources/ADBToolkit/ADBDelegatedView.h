@@ -31,7 +31,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface ADBDelegatedView : NSView
+@interface ADBDelegatedView : NSView <NSDraggingDestination>
 {
     __unsafe_unretained id _delegate;
 	NSDragOperation _draggingEnteredResponse;

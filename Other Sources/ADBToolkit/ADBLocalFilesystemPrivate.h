@@ -30,7 +30,7 @@
 
 @interface ADBLocalFilesystem () <NSFileManagerDelegate>
 
-//Our own file manager for internal use.
+///Our own file manager for internal use.
 @property (retain, nonatomic) NSFileManager *manager;
 
 //A base implementation for copyItemAtPath:toPath:error: and moveItemAtPath:toPath:error:,

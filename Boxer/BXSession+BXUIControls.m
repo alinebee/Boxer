@@ -753,7 +753,7 @@
         NSURL *destinationURL = [self URLForCaptureOfType: @"Screenshot" fileExtension: @"png"];
         BOOL saved = [screenshot saveToURL: destinationURL
                                   withType: NSPNGFileType
-                                properties: nil
+                                properties: @{}
                                      error: NULL];
         
         if (saved)

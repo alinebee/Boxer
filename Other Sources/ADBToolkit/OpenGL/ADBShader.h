@@ -30,6 +30,7 @@
 #import <Foundation/Foundation.h>
 #import <OpenGL/OpenGL.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 #pragma mark Error constants
@@ -41,10 +42,10 @@ enum {
                                             //vertex and/or fragment shader.
 };
 
-//The domain for errors produced by ADBShader.
+/// The domain for errors produced by ADBShader.
 extern NSString * const ADBShaderErrorDomain;
 
-//For compilation errors, contains the source code and info log of the offending shader.
+/// For compilation errors, contains the source code and info log of the offending shader.
 extern NSString * const ADBShaderErrorSourceKey;
 extern NSString * const ADBShaderErrorInfoLogKey;
 
@@ -52,24 +53,24 @@ extern NSString * const ADBShaderErrorInfoLogKey;
 #pragma mark -
 #pragma mark Shader description constants
 
-//Returned by locationOfUniform: for unrecognised uniform names.
+/// Returned by locationOfUniform: for unrecognised uniform names.
 #define ADBShaderUnsupportedUniformLocation -1
 
 //Keys for uniform description dictionaries.
 
-//An NSString representing the name of the uniform.
+/// An NSString representing the name of the uniform.
 extern NSString * const ADBShaderUniformNameKey;
 
-//An NSNumber representing the location at which values can be assigned to the uniform.
+/// An NSNumber representing the location at which values can be assigned to the uniform.
 extern NSString * const ADBShaderUniformLocationKey;
 
-//An NSNumber representing the uniform's index in the list of active uniforms.
+/// An NSNumber representing the uniform's index in the list of active uniforms.
 extern NSString * const ADBShaderUniformIndexKey;
 
-//An NSNumber representing the uniform's type.
+/// An NSNumber representing the uniform's type.
 extern NSString * const ADBShaderUniformTypeKey;
 
-//An NSNumber representing the uniform's size.
+/// An NSNumber representing the uniform's size.
 extern NSString * const ADBShaderUniformSizeKey;
 
 
@@ -86,10 +87,10 @@ extern NSString * const ADBShaderUniformSizeKey;
     BOOL _freeProgramWhenDone;
 }
 
-//The program underpinning this shader.
-@property (readonly, nonatomic) GLhandleARB shaderProgram;
+/// The program underpinning this shader.
+@property (readonly, nonatomic, nullable) GLhandleARB shaderProgram;
 
-//The context in which this shader was created.
+/// The context in which this shader was created.
 @property (readonly, nonatomic) CGLContextObj context;
 
 
@@ -99,84 +100,86 @@ extern NSString * const ADBShaderUniformSizeKey;
 //Returns an array of dictionaries describing the active uniforms
 //defined in the specified shader program.
 //See the key constants above for what is included in this dictionary.
-+ (NSArray *) uniformDescriptionsForShaderProgram: (GLhandleARB)shaderProgram
-                                        inContext: (CGLContextObj)context;
++ (NSArray<NSDictionary<NSString*,id>*> *) uniformDescriptionsForShaderProgram: (GLhandleARB)shaderProgram
+                                                                     inContext: (CGLContextObj)context;
 
 //Returns the contents of the info log for the specified object
 //(normally a shader or shader program).
 + (NSString *) infoLogForObject: (GLhandleARB)objectHandle inContext: (CGLContextObj)context;
 
-//Compiles the specified shader source code of the specified type,
-//and returns a handle for the new shader object.
-//Returns NULL and populates outError if the shader could not be compiled.
-+ (GLhandleARB) createShaderWithSource: (NSString *)source
-                                  type: (GLenum)shaderType
-                             inContext: (CGLContextObj)context
-                                 error: (NSError **)outError;
+/// Compiles the specified shader source code of the specified type,
+/// and returns a handle for the new shader object.
+/// Returns \c NULL and populates \c outError if the shader could not be compiled.
++ (nullable GLhandleARB) createShaderWithSource: (NSString *)source
+                                           type: (GLenum)shaderType
+                                      inContext: (CGLContextObj)context
+                                          error: (NSError **)outError;
 
-//Returns a shader program compiled and linked with the specified vertex shader
-//and/or fragment shaders, provided as source strings.
-//Returns NULL and populates outError if the shaders could not be compiled
-//or the program could not be linked.
-+ (GLhandleARB) createProgramWithVertexShader: (NSString *)vertexSource
-                              fragmentShaders: (NSArray *)fragmentSources
-                                    inContext: (CGLContextObj)context
-                                        error: (NSError **)outError;
+/// Returns a shader program compiled and linked with the specified vertex shader
+/// and/or fragment shaders, provided as source strings.
+/// Returns \c NULL and populates \c outError if the shaders could not be compiled
+/// or the program could not be linked.
++ (nullable GLhandleARB) createProgramWithVertexShader: (NSString *)vertexSource
+                                       fragmentShaders: (NSArray<NSString*> *)fragmentSources
+                                             inContext: (CGLContextObj)context
+                                                 error: (NSError **)outError;
 
 
 #pragma mark -
 #pragma mark Initialization
 
-//Shorthands for loading a shader from the main bundle,
-//composed of a [shaderName].frag+[shaderName].vert pair.
-+ (id) shaderNamed: (NSString *)shaderName
-           context: (CGLContextObj)context
-             error: (NSError **)outError;
+/// Shorthands for loading a shader from the main bundle,
+/// composed of a [shaderName].frag+[shaderName].vert pair.
++ (nullable instancetype) shaderNamed: (NSString *)shaderName
+                     context: (CGLContextObj)context
+                       error: (NSError **)outError;
 
-+ (id) shaderNamed: (NSString *)shaderName
-      subdirectory: (NSString *)subdirectory
-           context: (CGLContextObj)context
-             error: (NSError **)outError;
++ (nullable instancetype) shaderNamed: (NSString *)shaderName
+                subdirectory: (NSString *)subdirectory
+                     context: (CGLContextObj)context
+                       error: (NSError **)outError;
 
-//Returns a new shader compiled from the specified vertex shader and/or fragment shaders,
-//passed as source code. Returns nil and populates outError if the shader could not be compiled.
-- (id) initWithVertexShader: (NSString *)vertexSource
-            fragmentShaders: (NSArray *)fragmentSources
-                  inContext: (CGLContextObj)context
-                      error: (NSError **)outError;
+/// Returns a new shader compiled from the specified vertex shader and/or fragment shaders,
+/// passed as source code. Returns \c nil and populates \c outError if the shader could not be compiled.
+- (nullable instancetype) initWithVertexShader: (NSString *)vertexSource
+                               fragmentShaders: (NSArray<NSString*> *)fragmentSources
+                                     inContext: (CGLContextObj)context
+                                         error: (NSError **)outError;
 
-//Same as above, but loading the shader data from files on disk.
-- (id) initWithContentsOfVertexShaderURL: (NSURL *)vertexShaderURL
-                      fragmentShaderURLs: (NSArray *)fragmentShaderURLs
-                               inContext: (CGLContextObj)context
-                                   error: (NSError **)outError;
+/// Same as above, but loading the shader data from files on disk.
+- (nullable instancetype) initWithContentsOfVertexShaderURL: (NSURL *)vertexShaderURL
+                                         fragmentShaderURLs: (NSArray<NSURL*> *)fragmentShaderURLs
+                                                  inContext: (CGLContextObj)context
+                                                      error: (NSError **)outError;
 
 
 #pragma mark -
 #pragma mark Behaviour
 
-//Set this shader to use the specified shader program (deleting any previous one if appropriate.)
-//If freeWhenDone is YES, the program will be deleted once the shader is deallocated.
+/// Set this shader to use the specified shader program (deleting any previous one if appropriate.)
+/// If freeWhenDone is YES, the program will be deleted once the shader is deallocated.
 - (void) setShaderProgram: (GLhandleARB)shaderProgram
              freeWhenDone: (BOOL)freeWhenDone;
 
-//Clears the shader program and all related resources, deleting the shader itself if freeWhenDone
-//was YES at the time the shader was assigned.
-//After this, the shader should not be used unless setShaderProgram:freeWhenDone:
-//is called with another shader.
+/// Clears the shader program and all related resources, deleting the shader itself if \c freeWhenDone
+/// was \c YES at the time the shader was assigned.<br>
+/// After this, the shader should not be used unless \c setShaderProgram:freeWhenDone:
+/// is called with another shader.
 - (void) deleteShaderProgram;
 
-//Returns the location of the specified uniform, for calls to glUniformXxARB().
-//Returns ADBShaderUnsupportedUniformLocation if the shader program does not
-//contain that uniform.
+/// Returns the location of the specified uniform, for calls to \c glUniformXxARB().
+/// Returns \c ADBShaderUnsupportedUniformLocation if the shader program does not
+/// contain that uniform.
 - (GLint) locationOfUniform: (const GLcharARB *)uniformName;
 
-//Returns an array of NSDictionaries describing all of the active uniforms defined
-//in the shader program.
-//See the key constants above for what data is included in each dictionary.
-- (NSArray *) uniformDescriptions;
+/// Returns an array of NSDictionaries describing all of the active uniforms defined
+/// in the shader program.
+/// See the key constants above for what data is included in each dictionary.
+- (NSArray<NSDictionary<NSString*, id>*> *) uniformDescriptions;
 
-//The info log for this shader program.
+/// The info log for this shader program.
 - (NSString *) infoLog;
 
 @end
+
+NS_ASSUME_NONNULL_END

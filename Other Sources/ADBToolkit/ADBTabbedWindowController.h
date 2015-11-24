@@ -31,7 +31,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-//How long a fade+resize transition will take when switching tabs.
+NS_ASSUME_NONNULL_BEGIN
+
+/// How long a fade+resize transition will take when switching tabs.
 #define ADBTabbedWindowControllerTransitionDuration 0.25
 
 @interface ADBTabbedWindowController : NSWindowController <NSTabViewDelegate, NSToolbarDelegate>
@@ -51,10 +53,10 @@
 @property (assign, nonatomic) NSInteger selectedTabViewItemIndex;
 
 //Select the tab whose index corresponds to the tag of the sender.
-- (IBAction) takeSelectedTabViewItemFromTag: (id <NSValidatedUserInterfaceItem>)sender;
+- (IBAction) takeSelectedTabViewItemFromTag: (null_unspecified id <NSValidatedUserInterfaceItem>)sender;
 
 //Select the tab whose index corresponds to the tag of the selected control segment.
-- (IBAction) takeSelectedTabViewItemFromSegment: (NSSegmentedControl *)sender;
+- (IBAction) takeSelectedTabViewItemFromSegment: (null_unspecified NSSegmentedControl *)sender;
 
 //Whether the controller should set the window title to the specified label
 //(taken from the selected tab.)
@@ -64,3 +66,5 @@
 - (BOOL) shouldSyncWindowTitleToTabLabel: (NSString *)label;
 
 @end
+
+NS_ASSUME_NONNULL_END

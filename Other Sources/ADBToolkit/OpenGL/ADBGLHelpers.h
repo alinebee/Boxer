@@ -27,14 +27,15 @@
 #import <Foundation/Foundation.h>
 #import <OpenGL/OpenGL.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 #pragma mark Error constants
 
-//The error domain for errors produced by standard GL calls.
+/// The error domain for errors produced by standard GL calls.
 extern NSString * const ADBGLErrorDomain;
 
-//The error domain for errors produced by GL_EXT_framebuffer_object extension.
+/// The error domain for errors produced by \c GL_EXT_framebuffer_object extension.
 extern NSString * const ADBGLFramebufferExtensionErrorDomain;
 
 
@@ -42,18 +43,20 @@ extern NSString * const ADBGLFramebufferExtensionErrorDomain;
 #pragma mark -
 #pragma mark Helper functions
 
-//Returns a Cocoa error object representing the specified GL error code.
-//The error will be in the ADBGLErrorDomain.
-NSError *errorForGLErrorCode(GLenum errorCode);
+/// Returns a Cocoa error object representing the specified GL error code.
+/// The error will be in the ADBGLErrorDomain.
+NSError *__nullable errorForGLErrorCode(GLenum errorCode);
 
-//Returns a Cocoa error object representing the specified status code
-//from the GL_FRAMEBUFFER_EXT extension. The error will be in the
-//ADBGLFramebufferExtensionErrorDomain.
-//Will return nil if the status is GL_FRAMEBUFFER_COMPLETE_EXT, as this
-//indicates a successful operation.
-NSError *errorForGLFramebufferExtensionStatus(GLenum status);
+/// Returns a Cocoa error object representing the specified status code
+/// from the \c GL_FRAMEBUFFER_EXT extension. The error will be in the
+/// \c ADBGLFramebufferExtensionErrorDomain.
+/// Will return nil if the status is \c GL_FRAMEBUFFER_COMPLETE_EXT, as this
+/// indicates a successful operation.
+NSError *__nullable errorForGLFramebufferExtensionStatus(GLenum status);
 
-//Returns a Cocoa error object representing the OpenGL error that occurred
-//when processing the most recent GL command in the specified context.
-//Returns nil if no error has occurred.
-NSError *latestErrorInCGLContext(CGLContextObj context);
+/// Returns a Cocoa error object representing the OpenGL error that occurred
+/// when processing the most recent GL command in the specified context.
+/// Returns nil if no error has occurred.
+NSError *__nullable latestErrorInCGLContext(CGLContextObj context);
+
+NS_ASSUME_NONNULL_END

@@ -30,6 +30,8 @@
 #import "ADBShader.h"
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 #pragma mark -
 #pragma mark Constants
 
@@ -103,34 +105,36 @@ extern const GLcharARB * const ADBBSNESShaderFrameCountUniform;
 #pragma mark -
 #pragma mark Loader methods
 
-//Returns an array of ADBBSNESShaders loaded from the specified OpenGLShader XML definition,
-//in the order they were defined. Returns nil and populates outError if the file could not
-//be parsed or if one or more shaders failed to compile.
-+ (NSArray<ADBBSNESShader*> *) shadersWithContentsOfURL: (NSURL *)shaderURL
-                             inContext: (CGLContextObj)context
-                                 error: (NSError **)outError;
+/// Returns an array of ADBBSNESShaders loaded from the specified OpenGLShader XML definition,
+/// in the order they were defined. Returns \c nil and populates \c outError if the file could not
+/// be parsed or if one or more shaders failed to compile.
++ (nullable NSArray<ADBBSNESShader*> *) shadersWithContentsOfURL: (NSURL *)shaderURL
+                                                       inContext: (CGLContextObj)context
+                                                           error: (NSError **)outError;
 
-+ (NSArray<ADBBSNESShader*> *) shadersWithDefinition: (NSXMLDocument *)shaderDefinition
-                          inContext: (CGLContextObj)context
-                              error: (NSError **)outError;
++ (nullable NSArray<ADBBSNESShader*> *) shadersWithDefinition: (NSXMLDocument *)shaderDefinition
+                                                    inContext: (CGLContextObj)context
+                                                        error: (NSError **)outError;
 
 
 #pragma mark -
 #pragma mark Rendering behaviour
 
-//Returns how large an output surface this shader wants to render the specified input size
-//(what the emulator or previous pipeline stage produced) to the specified final output size
-//(what the user will see.)
-//This is calculated by the shader based on the scaling parameters included in the definition.
+/// Returns how large an output surface this shader wants to render the specified input size
+/// (what the emulator or previous pipeline stage produced) to the specified final output size
+/// (what the user will see.)<br>
+/// This is calculated by the shader based on the scaling parameters included in the definition.
 - (CGSize) outputSizeForInputSize: (CGSize)inputSize
                   finalOutputSize: (CGSize)finalOutputSize;
 
 
-//Apply the specified values into the shader's uniforms.
-//(Note that these are write-only).
+/// Apply the specified values into the shader's uniforms.
+/// (Note that these are write-only).
 - (void) setTextureIndex: (GLint)texture;
 - (void) setTextureSize: (CGSize)textureSize;
 - (void) setInputSize: (CGSize)size;
 - (void) setOutputSize: (CGSize)size;
 
 @end
+
+NS_ASSUME_NONNULL_END

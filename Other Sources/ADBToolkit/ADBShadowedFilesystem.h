@@ -27,12 +27,14 @@
 #import <Foundation/Foundation.h>
 #import "ADBLocalFilesystem.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 //ADBShadowedFilesystem mediates access to filesystem resources that are
 //write-shadowed to another location. Files are initially read from a source
 //path, but writes and deletions are applied to a separate shadowed path
 //which is then used in future for reads and writes of that file.
 
-//The file extension that will be used for flagging source files as deleted.
+/// The file extension that will be used for flagging source files as deleted.
 extern NSString * const ADBShadowedDeletionMarkerExtension;
 
          
@@ -45,36 +47,38 @@ extern NSString * const ADBShadowedDeletionMarkerExtension;
 #pragma mark -
 #pragma mark Properties
 
-//The location to which shadows will be committed.
-//The contents of this location can be mapped directly onto the source location.
+/// The location to which shadows will be committed.
+/// The contents of this location can be mapped directly onto the source location.
 @property (readonly, copy, nonatomic) NSURL *shadowURL;
 
 
 #pragma mark - Constructors
 
-//Return a new filesystem manager rooted in the specified base URL but using
-//the specified shadow URL to store shadowed files and deletion markers.
-+ (id) filesystemWithBaseURL: (NSURL *)baseURL shadowURL: (NSURL *)shadowURL;
-- (id) initWithBaseURL: (NSURL *)baseURL shadowURL: (NSURL *)shadowURL;
+/// Return a new filesystem manager rooted in the specified base URL but using
+/// the specified shadow URL to store shadowed files and deletion markers.
++ (instancetype) filesystemWithBaseURL: (NSURL *)baseURL shadowURL: (NSURL *)shadowURL;
+- (instancetype) initWithBaseURL: (NSURL *)baseURL shadowURL: (NSURL *)shadowURL;
 
 
 #pragma mark - Housekeeping
 
-//Cleans up the shadow contents for the specified filesystem-relative path: this removes
-//any redundant deletion markers for files that don't exist in the source location,
-//and any empty folders that already exist in the source location.
-//FIXME: currently this assumes the source is a folder.
+/// Cleans up the shadow contents for the specified filesystem-relative path: this removes
+/// any redundant deletion markers for files that don't exist in the source location,
+/// and any empty folders that already exist in the source location.
+/// FIXME: currently this assumes the source is a folder.
 - (BOOL) tidyShadowContentsForPath: (NSString *)path error: (out NSError **)outError;
 
-//Removes the shadowed version for the specified path, and its subpaths if it is a directory.
+/// Removes the shadowed version for the specified path, and its subpaths if it is a directory.
 - (BOOL) clearShadowContentsForPath: (NSString *)path error: (out NSError **)outError;
 
-//Merge any shadowed changes for the specified path and its subdirectories
-//back into the original source location, and deletes the merged shadow files.
-//Returns YES if the merge was successful, or NO and populates outError
-//if one or more files or folders could not be merged.
-//The merge operation will be halted as soon as an error is encountered,
-//leaving behind any unmerged files in the shadow location.
+/// Merge any shadowed changes for the specified path and its subdirectories
+/// back into the original source location, and deletes the merged shadow files.
+/// Returns \c YES if the merge was successful, or \c NO and populates \c outError
+/// if one or more files or folders could not be merged.<br>
+/// The merge operation will be halted as soon as an error is encountered,
+/// leaving behind any unmerged files in the shadow location.
 - (BOOL) mergeShadowContentsForPath: (NSString *)path error: (out NSError **)outError;
 
 @end
+
+NS_ASSUME_NONNULL_END

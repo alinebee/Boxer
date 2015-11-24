@@ -43,7 +43,7 @@ typedef void(^ADBUserNotificationActivationHandler)(NSUserNotification *notifica
 + (BOOL) userNotificationsAvailable;
 
 //Returns the singleton instance of the notification dispatcher.
-+ (ADBUserNotificationDispatcher *) dispatcher;
++ (instancetype) dispatcher;
 
 //Schedules the specified notification for display, giving it the specified type key
 //(which must be an NSString, NSNumber or other plist type) and sender.

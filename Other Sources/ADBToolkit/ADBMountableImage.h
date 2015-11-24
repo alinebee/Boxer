@@ -31,15 +31,17 @@
 #import "ADBLocalFilesystem.h"
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 #pragma mark - Error constants
 extern NSString * const ADBMountableImageErrorDomain;
 
-enum {
-    //Returned by if the specified image is not 
+typedef NS_ENUM(NSInteger, ADBMountableImageErrors) {
+    /// Returned by if the specified image is not
     ADBMountableImageUnsupportedImageType = 1,
     
-    //Returned by volumeURLMountingIfNeeded:error: when the image is not mounted
-    //and the filesystem has not been given permission to mount it.
+    /// Returned by \c volumeURLMountingIfNeeded:error: when the image is not mounted
+    /// and the filesystem has not been given permission to mount it.
     ADBMountableImageVolumeUnavailable = 2,
 };
 
@@ -50,21 +52,21 @@ enum {
     BOOL _unmountWhenDone;
 }
 
-//Returns a list of all image types mountable by this class.
-+ (NSSet *) supportedImageTypes;
+/// Returns a list of all image types mountable by this class.
++ (NSSet<NSString*> *) supportedImageTypes;
 
-//Whether to unmount the volume when this instance goes out of scope.
-//This will be automatically set to YES whenever the filesystem mounts
-//the image itself, and reset to NO if the filesystem is unmounted.
+/// Whether to unmount the volume when this instance goes out of scope.
+/// This will be automatically set to YES whenever the filesystem mounts
+/// the image itself, and reset to NO if the filesystem is unmounted.
 @property (assign, nonatomic) BOOL unmountWhenDone;
 
 
 #pragma mark - Constructors
 
-//Returns a new instance using the image at the specified URL.
-//Returns nil and populates outError if the URL was not a supported image.
-+ (id) imageWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
-- (id) initWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
+/// Returns a new instance using the image at the specified URL.
+/// Returns nil and populates outError if the URL was not a supported image.
++ (nullable instancetype) imageWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
+- (nullable instancetype) initWithContentsOfURL: (NSURL *)baseURL error: (out NSError **)outError;
 
 
 #pragma mark - Internal methods
@@ -85,8 +87,8 @@ enum {
 //if it's not already, returning nil and populating outError if the image could
 //not be mounted. If mountIfNeeded is NO and the image is not already mounted,
 //it will return nil and populate outError.
-- (NSURL *) volumeURLMountingIfNeeded: (BOOL)mountIfNeeded
-                                error: (out NSError **)outError;
+- (nullable NSURL *) volumeURLMountingIfNeeded: (BOOL)mountIfNeeded
+                                         error: (out NSError **)outError;
 
 //Unmount the backing volume for the image if it is mounted. Returns YES on success
 //and NO and populates outError upon failure.
@@ -94,3 +96,5 @@ enum {
 - (BOOL) unmountVolumeWithError: (out NSError **)outError;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -30,16 +30,16 @@
     IOHIDEventStruct mEvent;
 }
 
-+ (DDHidEvent *) eventWithIOHIDEvent: (IOHIDEventStruct *) event;
++ (instancetype) eventWithIOHIDEvent: (IOHIDEventStruct *) event;
 
-- (id) initWithIOHIDEvent: (IOHIDEventStruct *) event;
+- (instancetype) initWithIOHIDEvent: (IOHIDEventStruct *) event;
 
-- (IOHIDElementType) type;
-- (IOHIDElementCookie) elementCookie;
-- (unsigned) elementCookieAsUnsigned;
-- (SInt32) value;
-- (AbsoluteTime) timestamp;
-- (UInt32) longValueSize;
-- (void *) longValue;
+@property (readonly) IOHIDElementType type;
+@property (readonly) IOHIDElementCookie elementCookie;
+@property (readonly) unsigned elementCookieAsUnsigned;
+@property (readonly) SInt32 value;
+@property (readonly) AbsoluteTime timestamp;
+@property (readonly) UInt32 longValueSize;
+@property (readonly) void *longValue;
 
 @end

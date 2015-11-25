@@ -48,30 +48,30 @@
     int mLogicalDeviceNumber;
 }
 
-- (id) initWithDevice: (io_object_t) device error: (NSError **) error;
-- (id) initLogicalWithDevice: (io_object_t) device
-         logicalDeviceNumber: (int) logicalDeviceNumber
-                       error: (NSError **) error;
-- (int) logicalDeviceCount;
+- (instancetype) initWithDevice: (io_object_t) device error: (NSError **) error;
+- (instancetype) initLogicalWithDevice: (io_object_t) device
+                   logicalDeviceNumber: (int) logicalDeviceNumber
+                                 error: (NSError **) error;
+- (NSInteger) logicalDeviceCount;
 
 #pragma mark -
 #pragma mark Finding Devices
 
-+ (NSArray *) allDevices;
++ (NSArray<DDHidDevice*> *) allDevices;
 
-+ (NSArray *) allDevicesMatchingUsagePage: (unsigned) usagePage
-                                  usageId: (unsigned) usageId
-                                withClass: (Class) hidClass
-                        skipZeroLocations: (BOOL) emptyLocation;
++ (NSArray<DDHidDevice*> *) allDevicesMatchingUsagePage: (unsigned) usagePage
+                                                usageId: (unsigned) usageId
+                                              withClass: (Class) hidClass
+                                      skipZeroLocations: (BOOL) emptyLocation;
 
-+ (NSArray *) allDevicesMatchingCFDictionary: (CFDictionaryRef) matchDictionary
-                                   withClass: (Class) hidClass
-                           skipZeroLocations: (BOOL) emptyLocation;
++ (NSArray<DDHidDevice*> *) allDevicesMatchingCFDictionary: (CFDictionaryRef) matchDictionary
+                                                 withClass: (Class) hidClass
+                                         skipZeroLocations: (BOOL) emptyLocation;
 
 #pragma mark -
 #pragma mark I/O Kit Objects
 
-- (io_object_t) ioDevice;
+@property (readonly) io_object_t ioDevice;
 - (IOHIDDeviceInterface122**) deviceInterface;
 
 #pragma mark -
@@ -86,14 +86,13 @@
 #pragma mark -
 #pragma mark Asynchronous Notification
 
-- (BOOL) listenInExclusiveMode;
-- (void) setListenInExclusiveMode: (BOOL) flag;
+@property BOOL listenInExclusiveMode;
 
 - (void) startListening;
 
 - (void) stopListening;
 
-- (BOOL) isListening;
+@property (readonly, getter=isListening) BOOL listening;
 
 #pragma mark -
 #pragma mark Properties
@@ -103,23 +102,22 @@
 - (NSArray *) elements;
 - (DDHidElement *) elementForCookie: (IOHIDElementCookie) cookie;
 
-- (NSString *) productName;
-- (NSString *) manufacturer;
-- (NSString *) serialNumber;
-- (NSString *) transport;
-- (long) vendorId;
-- (long) productId;
-- (long) version;
-- (long) locationId;
-- (long) usagePage;
-- (long) usage;
-- (DDHidUsage *) primaryUsage;
-- (NSArray *) usages;
+@property (readonly, assign) NSString *productName;
+@property (readonly, assign) NSString *manufacturer;
+@property (readonly, assign) NSString *serialNumber;
+@property (readonly, assign) NSString *transport;
+@property (readonly) long vendorId;
+@property (readonly) long productId;
+@property (readonly) long version;
+@property (readonly) long locationId;
+@property (readonly) long usagePage;
+@property (readonly) long usage;
+@property (readonly, retain) DDHidUsage *primaryUsage;
+- (NSArray<DDHidUsage*> *) usages;
 
 - (NSComparisonResult) compareByLocationId: (DDHidDevice *) device;
 
-- (int) tag;
-- (void) setTag: (int) theTag;
+@property int tag;
 
 @end
 

@@ -25,18 +25,11 @@
 #ifndef _SDL_NET_H
 #define _SDL_NET_H
 
-/*
 #include "SDL.h"
 #include "SDL_endian.h"
 #include "SDL_version.h"
 #include "begin_code.h"
-*/
-//Replaced 2009-02-26 by Alun Bestor: use framework links instead to fix missing header problems when compiling via makefile
-#import <SDL/SDL.h>
-#import <SDL/SDL_endian.h>
-#import <SDL/SDL_version.h>
-#include <SDL/begin_code.h>
-//--End of modifications
+
 
 
 /* Set up for C function definitions, even when using C++ */
@@ -446,10 +439,6 @@ do					\
 #ifdef __cplusplus
 }
 #endif
-
-//Replaced 2009-02-26 by Alun Bestor: use framework links instead to fix missing header problems when compiling via makefile
-//#include "close_code.h"
-#include <SDL/close_code.h>
-//--End of modifications
+#include "close_code.h"
 
 #endif /* _SDL_NET_H */

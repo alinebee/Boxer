@@ -27,37 +27,38 @@
 
 @class DDHidElement;
 @class DDHidQueue;
+@protocol DDHidKeyboardDelegate;
 
 @interface DDHidKeyboard : DDHidDevice
 {
     NSMutableArray * mKeyElements;
     
-    id mDelegate;
+    id<DDHidKeyboardDelegate> mDelegate;
 }
 
-+ (NSArray *) allKeyboards;
++ (NSArray<DDHidKeyboard*> *) allKeyboards;
 
-- (id) initWithDevice: (io_object_t) device error: (NSError **) error_;
+- (instancetype) initWithDevice: (io_object_t) device error: (NSError **) error_;
 
 #pragma mark -
 #pragma mark Keyboards Elements
 
-- (NSArray *) keyElements;
+@property (readonly, assign) NSArray *keyElements;
 
-- (unsigned) numberOfKeys;
+@property (readonly) NSInteger numberOfKeys;
 
 - (void) addElementsToQueue: (DDHidQueue *) queue;
 
 #pragma mark -
 #pragma mark Asynchronous Notification
 
-- (void) setDelegate: (id) delegate;
+@property (assign) id<DDHidKeyboardDelegate> delegate;
 
 - (void) addElementsToDefaultQueue;
 
 @end
 
-@interface NSObject (DDHidKeyboardDelegate)
+@protocol DDHidKeyboardDelegate <NSObject>
 
 - (void) ddhidKeyboard: (DDHidKeyboard *) keyboard
                keyDown: (unsigned) usageId;

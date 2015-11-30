@@ -29,7 +29,7 @@
 
 @property (retain, nonatomic) NSWindow *window;
 
-+ (instancetype) scriptableWindow: (NSWindow *)window;
-- (instancetype) initWithWindow: (NSWindow *)window;
++ (id) scriptableWindow: (NSWindow *)window;
+- (id) initWithWindow: (NSWindow *)window;
 
 @end

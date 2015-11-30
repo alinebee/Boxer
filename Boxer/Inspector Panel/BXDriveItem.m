@@ -124,6 +124,22 @@
     }
 }
 
+- (void) dealloc
+{
+    self.progressMeter = nil;
+    self.progressMeterLabel = nil;
+    self.cancelButton = nil;
+    self.typeLabel = nil;
+    self.titleLabel = nil;
+    self.letterLabel = nil;
+    self.toggleButton = nil;
+    self.revealButton = nil;
+    self.importButton = nil;
+    self.icon = nil;
+    
+    [super dealloc];
+}
+
 
 #pragma mark - UI bindings
 

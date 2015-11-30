@@ -274,6 +274,15 @@ enum {
     return self;
 }
 
+- (void) dealloc
+{
+    self.currentSession = nil;
+    self.textAttributes = nil;
+    self.bitmapData = nil;
+    
+    [super dealloc];
+}
+
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -959,7 +968,7 @@ enum {
 
 - (void) _startNewPrintSession
 {
-    self.currentSession = [[BXPrintSession alloc] init];
+    self.currentSession = [[[BXPrintSession alloc] init] autorelease];
     
     if ([self.delegate respondsToSelector: @selector(printer:willBeginSession:)])
     {

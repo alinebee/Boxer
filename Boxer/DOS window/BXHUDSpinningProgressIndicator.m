@@ -21,6 +21,12 @@
                                                color: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5]];
 }
 
+- (void) dealloc
+{
+    self.dropShadow = nil;
+    [super dealloc];
+}
+
 - (void) drawRect: (NSRect)dirtyRect
 {
     [NSGraphicsContext saveGraphicsState];

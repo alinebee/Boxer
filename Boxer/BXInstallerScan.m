@@ -53,6 +53,16 @@
     return self;
 }
 
+- (void) dealloc
+{
+    self.windowsExecutables = nil;
+    self.DOSExecutables = nil;
+    self.macOSApps = nil;
+    self.detectedProfile = nil;
+    
+    [super dealloc];
+}
+
 //Overridden to gather additional data besides just matching installers.
 - (BOOL) matchAgainstPath: (NSString *)relativePath
 {
@@ -229,8 +239,10 @@
             //Bump the preferred installer up to the first entry in the list of installers.
             if (preferredInstallerPath)
             {
+                [preferredInstallerPath retain];
                 [_matchingPaths removeObject: preferredInstallerPath];
                 [_matchingPaths insertObject: preferredInstallerPath atIndex: 0];
+                [preferredInstallerPath autorelease];
             }
             
             [self didChangeValueForKey: @"matchingPaths"];

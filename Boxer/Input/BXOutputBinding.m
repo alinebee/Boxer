@@ -34,7 +34,7 @@
 
 + (id) binding
 {
-    return [[self alloc] init];
+    return [[[self alloc] init] autorelease];
 }
 
 - (void) applyInputValue: (float)value
@@ -81,6 +81,12 @@
 
 @implementation BXBaseEmulatedJoystickBinding
 @synthesize joystick = _joystick;
+
+- (void) dealloc
+{
+    self.joystick = nil;
+    [super dealloc];
+}
 
 @end
 
@@ -160,6 +166,12 @@
         self.polarity = kBXAxisPositive;
     }
     return self;
+}
+
+- (void) dealloc
+{
+    self.axisName = nil;
+    [super dealloc];
 }
 
 - (NSString *)description
@@ -242,6 +254,12 @@
     binding.keyboard = keyboard;
     binding.keyCode = keyCode;
     return binding;
+}
+
+- (void) dealloc
+{
+    self.keyboard = nil;
+    [super dealloc];
 }
 
 - (NSString *)description
@@ -335,6 +353,8 @@
 - (void) dealloc
 {
     [self _stopUpdating];
+    
+    [super dealloc];
 }
 
 @end
@@ -373,6 +393,13 @@
     binding.axisName = axisName;
     binding.ratePerSecond = ratePerSecond;
     return binding;
+}
+
+- (void) dealloc
+{
+    self.joystick = nil;
+    self.axisName = nil;
+    [super dealloc];
 }
 
 - (NSString *)description

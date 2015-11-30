@@ -208,7 +208,7 @@ NSString * const BXEmulatorUnrecoverableException = @"BXEmulatorUnrecoverableExc
 + (id) exceptionWithName: (NSString *)name
        originalException: (boxer_emulatorException *)cppException
 {
-    return [[self alloc] initWithName: name originalException: cppException];
+    return [[[self alloc] initWithName: name originalException: cppException] autorelease];
 }
 
 - (id) initWithName: (NSString *)name
@@ -259,6 +259,13 @@ NSString * const BXEmulatorUnrecoverableException = @"BXEmulatorUnrecoverableExc
         }
     }
     return self;
+}
+
+- (void) dealloc
+{
+    self.callStackSymbols = nil;
+    self.callStackReturnAddresses = nil;
+    [super dealloc];
 }
 
 @end

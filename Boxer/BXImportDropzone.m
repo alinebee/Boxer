@@ -121,6 +121,11 @@
 	if (![self superview]) [self setHighlighted: NO];
 }
 
+- (void) dealloc
+{
+	[super dealloc];
+}
+
 - (void) setImage: (NSImage *)newImage
 {
 	//Turn off the highlighting once we receive an image to display

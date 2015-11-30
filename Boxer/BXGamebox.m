@@ -104,12 +104,18 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 + (BXGamebox *) bundleWithURL: (NSURL *)URL
 {
-	return [[self alloc] initWithURL: URL];
+	return [[[self alloc] initWithURL: URL] autorelease];
 }
 
 - (void) dealloc
 {
     [self.undoDelegate removeAllUndoActionsForClient: self];
+    
+    self.gameInfo = nil;
+    
+    [_launchers release], _launchers = nil;
+    
+	[super dealloc];
 }
 
 #pragma mark - Launchers
@@ -134,6 +140,8 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
                 [resolvedLauncher setObject: absoluteURL forKey: BXLauncherURLKey];
                 
                 [_launchers addObject: resolvedLauncher];
+                
+                [resolvedLauncher release];
             }
         }
         
@@ -170,6 +178,8 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
         //Strip out the absolute URL: we don't want to persist this into the plist.
         [sanitisedLauncher removeObjectForKey: BXLauncherURLKey];
         [sanitisedLaunchers addObject: sanitisedLauncher];
+        
+        [sanitisedLauncher release];
     }
     
     [self setGameInfo: sanitisedLaunchers
@@ -217,7 +227,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     NSString *relativePath = [URL pathRelativeToURL: self.resourceURL];
     
     if (title.length)
-        title = [title copy];
+        title = [[title copy] autorelease];
     else
         title = relativePath.lastPathComponent;
     
@@ -229,11 +239,12 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     
     if (launchArguments.length)
     {
-        launchArguments = [launchArguments copy];
+        launchArguments = [[launchArguments copy] autorelease];
         [launcher setObject: launchArguments forKey: BXLauncherArgsKey];
     }
     
     [self insertLauncher: launcher atIndex: index];
+    [launcher release];
 }
 
 - (void) addLauncherWithURL: (NSURL *)URL
@@ -884,7 +895,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
                             ifExists: (BXGameboxDocumentationConflictBehaviour)conflictBehaviour
                                error: (out NSError **)outError
 {    
-    NSFileManager *manager = [[NSFileManager alloc] init];
+    NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
     NSURL *docsURL = self.documentationFolderURL;
     
     //Do not import files that are already rooted in the documentation folder itself.
@@ -1243,7 +1254,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 + (BXGamebox *) bundleWithPath: (NSString *)path
 {
-	return [[self alloc] initWithPath: path];
+	return [[[self alloc] initWithPath: path] autorelease];
 }
 
 - (NSArray *) hddVolumes	{ return [self volumesOfTypes: [BXFileTypes hddVolumeTypes]]; }

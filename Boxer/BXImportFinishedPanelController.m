@@ -19,6 +19,14 @@
 @synthesize iconView = _iconView;
 @synthesize nameField = _nameField;
 
+- (void) dealloc
+{
+    self.iconView = nil;
+    self.nameField = nil;
+    
+	[super dealloc];
+}
+
 + (NSSet *) keyPathsForValuesAffectingGameboxIcon
 {
 	return [NSSet setWithObject: @"controller.document.representedIcon"];

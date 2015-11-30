@@ -18,24 +18,31 @@
 {
     NSArray *_documentationURLs;
     NSIndexSet *_documentationSelectionIndexes;
+    
+    __unsafe_unretained NSScrollView *_documentationScrollView;
+    __unsafe_unretained BXDocumentationList *_documentationList;
+    __unsafe_unretained NSTextField *_titleLabel;
+    __unsafe_unretained NSTextField *_helpTextLabel;
+    
+    __unsafe_unretained id <BXDocumentationBrowserDelegate> _delegate;
 }
 
 #pragma mark - Properties
 
 //The delegate to which we will send BXDocumentationBrowserDelegate messages.
-@property (weak, nonatomic) IBOutlet id <BXDocumentationBrowserDelegate> delegate;
+@property (assign, nonatomic) IBOutlet id <BXDocumentationBrowserDelegate> delegate;
 
 //The scrolling wrapper in which our documenation list is displayed.
-@property (weak, nonatomic) IBOutlet NSScrollView *documentationScrollView;
+@property (assign, nonatomic) IBOutlet NSScrollView *documentationScrollView;
 
 //The title at the top of the browser.
-@property (weak, nonatomic) IBOutlet NSTextField *titleLabel;
+@property (assign, nonatomic) IBOutlet NSTextField *titleLabel;
 
 //The help text displayed at the bottom of the browser.
-@property (weak, nonatomic) IBOutlet NSTextField *helpTextLabel;
+@property (assign, nonatomic) IBOutlet NSTextField *helpTextLabel;
 
 //The collection view in which our documentation will be displayed.
-@property (weak, nonatomic) IBOutlet BXDocumentationList *documentationList;
+@property (assign, nonatomic) IBOutlet BXDocumentationList *documentationList;
 
 //An array of NSURLs for the documentation files included in this gamebox.
 //This is mapped directly to the documentation URLs reported by the gamebox.

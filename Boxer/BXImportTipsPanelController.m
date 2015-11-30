@@ -16,6 +16,13 @@
 
 - (NSString *) nibName	{ return @"ImportTipsPanel"; }
 
+- (void) dealloc
+{
+	[self setFinishImportingPanel: nil],[finishImportingPanel release];
+	[self setInstallerTipsPanel: nil],	[installerTipsPanel release];
+	[super dealloc];
+}
+
 - (void) syncActivePanel
 {
 	BXImportSession *session = [self representedObject];

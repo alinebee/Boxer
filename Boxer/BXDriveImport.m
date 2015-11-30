@@ -42,9 +42,9 @@ NSString * const BXUniqueDriveNameFormat = @"%1$@ (%3$lu).%2$@";
 	{
         NSAssert1([importClass conformsToProtocol: @protocol(BXDriveImport)], @"Non-conforming drive import class provided: %@", importClass);
         
-		return [(id <BXDriveImport>)[importClass alloc] initForDrive: drive
-                                                destinationFolderURL: destinationFolderURL
-                                                           copyFiles: copyFiles];
+		return [[(id <BXDriveImport>)[importClass alloc] initForDrive: drive
+                                                 destinationFolderURL: destinationFolderURL
+                                                            copyFiles: copyFiles] autorelease];
 	}
 	else return nil;
 }
@@ -62,9 +62,9 @@ NSString * const BXUniqueDriveNameFormat = @"%1$@ (%3$lu).%2$@";
 	if (fallbackClass)
 	{
 		//Create a new import operation with the same parameters as the old one
-		return [[fallbackClass alloc] initForDrive: failedImport.drive
-                              destinationFolderURL: failedImport.destinationFolderURL
-                                         copyFiles: failedImport.copyFiles];
+		return [[[fallbackClass alloc] initForDrive: failedImport.drive
+                               destinationFolderURL: failedImport.destinationFolderURL
+										  copyFiles: failedImport.copyFiles] autorelease];
 	}
 	//No fallback could be found
 	return nil;
@@ -106,6 +106,7 @@ NSString * const BXUniqueDriveNameFormat = @"%1$@ (%3$lu).%2$@";
 - (id) init
 {
     [self doesNotRecognizeSelector: _cmd];
+    [self release];
     return nil;
 }
 @end

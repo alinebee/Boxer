@@ -117,6 +117,22 @@
     }
 }
 
+- (void) dealloc
+{
+    self.allProgramRows = nil;
+    self.favoriteProgramRows = nil;
+    self.recentProgramRows = nil;
+    self.displayedRows = nil;
+    
+    self.favoritesHeading = nil;
+    self.recentProgramsHeading = nil;
+    self.allProgramsHeading = nil;
+    
+    self.filterKeywords = nil;
+    
+    [super dealloc];
+}
+
 
 #pragma mark - Populating the launcher list
 
@@ -275,6 +291,7 @@
         [annotatedItem setObject: programDetails forKey: @"recentProgram"];
         
         [self.recentProgramRows addObject: annotatedItem];
+        [annotatedItem release];
     }
     
     _recentProgramRowsDirty = NO;
@@ -377,7 +394,7 @@
                                   @"isHeading": @(YES),
                                   };
     }
-    return _favoritesHeading;
+    return [[_favoritesHeading retain] autorelease];
 }
 
 - (NSDictionary *) recentProgramsHeading
@@ -391,7 +408,7 @@
                                        @"isHeading": @(YES),
                                        };
     }
-    return _recentProgramsHeading;
+    return [[_recentProgramsHeading retain] autorelease];
 }
 
 - (NSDictionary *) allProgramsHeading
@@ -405,7 +422,7 @@
                                     @"isHeading": @(YES),
                                     };
     }
-    return _allProgramsHeading;
+    return [[_allProgramsHeading retain] autorelease];
 }
 
 - (NSDictionary *) _listItemForProgramAtURL: (NSURL *)URL
@@ -426,6 +443,7 @@
     {
         NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
         title = [programNameFormatter transformedValue: URL.path];
+        [programNameFormatter release];
         
         //Also append the arguments to the title, if available
         if (arguments.length > 0)
@@ -508,6 +526,7 @@
     {
         NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
         title = [programNameFormatter transformedValue: URL.path];
+        [programNameFormatter release];
     }
     
     NSMutableDictionary *item = [NSMutableDictionary dictionaryWithDictionary: @{
@@ -824,6 +843,13 @@
     return clone;
 }
 
+- (void) dealloc
+{
+    self.delegate = nil;
+    self.menu = nil;
+    [super dealloc];
+}
+
 - (IBAction) openItemInDOS: (id)sender
 {
     [self.delegate openItemInDOS: self];
@@ -896,6 +922,7 @@
     
     //Set up a tracking rect so that we receive mouseEntered/exited events
     [self addTrackingArea: trackingArea];
+    [trackingArea release];
 }
 
 - (void) setDelegate: (BXLauncherItem *)delegate
@@ -1041,6 +1068,8 @@
                             toCenter: centerPoint
                               radius: self.bounds.size.width * 0.5
                              options: NSGradientDrawsBeforeStartingLocation | NSGradientDrawsAfterEndingLocation];
+            
+            [gradient release];
         }
     }
 }

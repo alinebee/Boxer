@@ -57,6 +57,11 @@
         [NSValueTransformer setValueTransformer: speedBanding forName: @"BXSpeedSliderTransformer"];
         [NSValueTransformer setValueTransformer: invertFramerate forName: @"BXFrameRateSliderTransformer"];
         [NSValueTransformer setValueTransformer: screenshotDater forName: @"BXCaptureDateTransformer"];
+        
+        [speedBanding release];
+        [invertFramerate release];
+        [screenshotDater release];
+        [screenshotDateFormatter release];
     }
 }
 
@@ -485,8 +490,9 @@
                                                                      attributes: driveTitleAttrs];
     
     [title appendAttributedString: driveTitle];
+    [driveTitle release];
     
-    return title;
+    return [title autorelease];
 }
 
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem
@@ -799,7 +805,7 @@
         [confirmation beginSheetModalForWindow: self.windowForSheet
                                  modalDelegate: self
                                 didEndSelector: @selector(_restartConfirmationDidEnd:returnCode:contextInfo:)
-                                   contextInfo: (void*)CFBridgingRetain(restartOptions)];
+                                   contextInfo: (void *)[restartOptions retain]];
     }
     //If we're already at the DOS prompt then go ahead and restart already.
     else
@@ -812,12 +818,14 @@
                          returnCode: (NSInteger)returnCode
                         contextInfo: (void *)contextInfo
 {
-    NSDictionary *restartOptions = CFBridgingRelease(contextInfo);
+    NSDictionary *restartOptions = (NSDictionary *)contextInfo;
     if (returnCode == NSAlertFirstButtonReturn)
     {
         BOOL showLaunchPanel = [[restartOptions objectForKey: @"showLaunchPanel"] boolValue];
         [self restartShowingLaunchPanel: showLaunchPanel];
     }
+    //Retained back when we called beginSheetModalForWindow
+    [restartOptions release];
 }
 
 
@@ -872,6 +880,8 @@
                                  modalDelegate: self
                                 didEndSelector: @selector(_revertConfirmationDidEnd:returnCode:contextInfo:)
                                    contextInfo: NULL];
+        
+        [confirmation release];
     }
 }
 
@@ -905,6 +915,8 @@
                                  modalDelegate: self
                                 didEndSelector: @selector(_mergeConfirmationDidEnd:returnCode:contextInfo:)
                                    contextInfo: NULL];
+        
+        [confirmation release];
     }
 }
 

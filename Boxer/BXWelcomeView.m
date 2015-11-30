@@ -34,6 +34,8 @@
 	[background drawFromCenter: center radius: innerRadius
 					  toCenter: center radius: outerRadius
 					   options: NSGradientDrawsBeforeStartingLocation | NSGradientDrawsAfterEndingLocation];
+	
+	[background release];
 }
 
 @end
@@ -50,6 +52,7 @@
                                                                userInfo: nil];
     
     [self addTrackingArea: trackingArea];
+    [trackingArea release];
 }
 
 - (void) setHighlighted: (BOOL)flag

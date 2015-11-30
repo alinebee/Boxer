@@ -42,7 +42,7 @@
     
     if (!self.printStatusController)
     {
-        self.printStatusController = [[BXPrintStatusPanelController alloc] initWithWindowNibName: @"PrintStatusPanel"];
+        self.printStatusController = [[[BXPrintStatusPanelController alloc] initWithWindowNibName: @"PrintStatusPanel"] autorelease];
     }
     
     //Update the properties of the window just before showing it
@@ -181,6 +181,8 @@
             //Once the user has clicked on the notification, remove it from the notification area
             [dispatcher removeNotification: deliveredNotification];
         }];
+        
+        [notification release];
     }
     //If notifications are unsupported, then just bounce to notify the user that we need their input.
     else
@@ -214,6 +216,8 @@
                                      delegate: nil
                                didRunSelector: NULL
                                   contextInfo: NULL];
+        
+        [PDF release];
     }
     
     ADBUserNotificationDispatcher *dispatcher = [ADBUserNotificationDispatcher dispatcher];

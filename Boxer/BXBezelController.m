@@ -127,7 +127,7 @@
     bezelWindow.level = NSPopUpMenuWindowLevel;
     bezelWindow.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces | NSWindowCollectionBehaviorFullScreenAuxiliary;
     
-    self.window = bezelWindow;
+    self.window = [bezelWindow autorelease];
 }
 
 - (BOOL) showBezel: (NSView *)bezel

@@ -25,6 +25,7 @@
 - (void) dealloc
 {
 	[(BXBaseAppController *)[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.representedIcon"];
+	[super dealloc];
 }
 
 //Whenever the represented icon changes, force a redraw of our icon view
@@ -40,7 +41,7 @@
 - (void) syncIconWithActiveSession
 {
 	BXSession *session = [(BXBaseAppController *)[NSApp delegate] currentSession];
-	NSImage *icon = [session.representedIcon copy];
+	NSImage *icon = [[session.representedIcon copy] autorelease];
     
     //If the session didn't have an icon of its own, generate a bootleg one
     //based on the size and age of the files in the gamebox.

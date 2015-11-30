@@ -61,6 +61,13 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @synthesize renderingStyle = _renderingStyle;
 @synthesize inViewAnimation = _inViewAnimation;
 
+- (void) dealloc
+{
+    self.currentFrame = nil;
+    self.renderer = nil;
+	[super dealloc];
+}
+
 
 //Pass on various events that would otherwise be eaten by the default NSView implementation
 - (void) rightMouseDown: (NSEvent *)theEvent
@@ -119,7 +126,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     for (Class rendererClass in renderersToTry)
     {
         NSError *loadError = nil;
-        BXBasicRenderer *renderer = [[rendererClass alloc] initWithContext: context error: &loadError];
+        BXBasicRenderer *renderer = [[[rendererClass alloc] initWithContext: context error: &loadError] autorelease];
         if (renderer)
             return renderer;
         else
@@ -345,7 +352,8 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
             //Tell the old renderer to dispose of its assets immediately.
             [self.renderer tearDownContext];
             
-            _renderer = renderer;
+            [_renderer release];
+            _renderer = [renderer retain];
         
             self.renderer.delegate = self;
         

@@ -44,6 +44,7 @@
     {
         BXImageSizeTransformer *welcomeButtonImageSize = [[BXImageSizeTransformer alloc] initWithSize: NSMakeSize(128, 128)];
         [NSValueTransformer setValueTransformer: welcomeButtonImageSize forName: @"BXWelcomeButtonImageSize"];
+        [welcomeButtonImageSize release];
     }
 }
 
@@ -154,6 +155,9 @@
         item.title = title;
 		
 		[menu insertItem: item atIndex: insertionPoint++];
+		
+        [icon release];
+		[item release];
 	}
     
 	//Finish off the list with a separator

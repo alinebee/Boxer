@@ -61,6 +61,12 @@ const char* DOS_GetLoadedLayout(void);
 	return self;
 }
 
+- (void) dealloc
+{
+    self.preferredLayout = nil;
+	[super dealloc];
+}
+
 
 #pragma mark -
 #pragma mark Keyboard input

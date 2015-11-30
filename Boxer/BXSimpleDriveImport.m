@@ -106,6 +106,15 @@
 	return self;
 }
 
+- (void) dealloc
+{
+    self.drive = nil;
+    self.destinationFolderURL = nil;
+    self.destinationURL = nil;
+    
+	[super dealloc];
+}
+
 
 #pragma mark -
 #pragma mark The actual operation, finally

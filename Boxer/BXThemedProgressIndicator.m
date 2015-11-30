@@ -26,6 +26,11 @@
 - (void) dealloc
 {
     [self stopAnimation: self];
+    
+    self.animationTimer = nil;
+    self.themeKey = nil;
+    
+    [super dealloc];
 }
 
 - (BOOL) isOpaque
@@ -70,7 +75,7 @@
         offset.x += (stripeWidth * 2);
     }
     
-    return stripePath;
+    return [stripePath autorelease];
 }
 
 - (void) drawSlotInRect: (NSRect)dirtyRect
@@ -127,7 +132,7 @@
             [stripePath fill];
         [NSGraphicsContext restoreGraphicsState];
         
-        progressGradient;
+        [progressGradient release];
     }
 }
 
@@ -156,6 +161,8 @@
             [progressGradient drawInBezierPath: progressPath
                                          angle: 90.0f];
         [NSGraphicsContext restoreGraphicsState];
+        
+        [progressGradient release];
     }
 }
 

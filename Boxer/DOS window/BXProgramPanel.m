@@ -31,6 +31,7 @@
 	
     [NSBezierPath clipRect: dirtyRect];
 	[background drawInRect: self.bounds angle: 90.0f];
+	[background release];
 }
 
 - (void) _drawGrilleInRect: (NSRect)dirtyRect
@@ -112,6 +113,9 @@
 - (void) dealloc
 {
     [self.programButton.cell unbind: @"programIsDefault"];
+    self.programButton = nil;
+    
+    [super dealloc];
 }
 @end
 
@@ -243,6 +247,8 @@
 		[newTitle endEditing];
         
         [newTitle drawInRect: textRect];
+        
+        [newTitle release];
 	}
 	
 	return textRect;
@@ -346,6 +352,8 @@
         if (self.isHighlighted)
             [bezel fillWithInnerShadow: innerShadow];
     [NSGraphicsContext restoreGraphicsState];
+    
+    [bezelGradient release];
 }
 
 @end
@@ -362,12 +370,19 @@
 //"BXCollectionView" with other fixes however.)
 @implementation BXProgramListView
 
+- (void) dealloc
+{
+    [_pendingContent release], _pendingContent = nil;
+    [super dealloc];
+}
+
 - (void) _syncPendingContent
 {
 	[NSObject cancelPreviousPerformRequestsWithTarget: self selector: _cmd object: nil];
 	if (self.canDraw)
 	{
 		[super setContent: _pendingContent];
+		[_pendingContent release];
 		_pendingContent = nil;
 	}
 	else
@@ -380,7 +395,8 @@
 {
     if (isRunningOnLeopard())
     {
-        _pendingContent = content;
+        [_pendingContent release];
+        _pendingContent = [content retain];
         [self _syncPendingContent];
     }
     else

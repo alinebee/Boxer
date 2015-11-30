@@ -36,6 +36,13 @@
     }
 }
 
+- (void) dealloc
+{
+    self.localizedPaperName = nil;
+    self.preview = nil;
+    [super dealloc];
+}
+
 
 #pragma mark -
 #pragma mark UI bindings
@@ -284,6 +291,8 @@
     
     CGImageRelease(_paperTexture);
     _paperTexture = NULL;
+    
+    [super dealloc];
 }
 
 - (void) drawLayer: (CALayer *)layer inContext: (CGContextRef)ctx

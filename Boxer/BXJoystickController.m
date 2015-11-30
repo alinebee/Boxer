@@ -32,7 +32,7 @@
     self = [super init];
     if (self)
     {
-        self.HIDMonitor = [[ADBHIDMonitor alloc] init];
+        self.HIDMonitor = [[[ADBHIDMonitor alloc] init] autorelease];
         
         self.HIDMonitor.delegate = self;
         NSArray *deviceProfiles = @[[ADBHIDMonitor joystickDescriptor], [ADBHIDMonitor gamepadDescriptor]];
@@ -51,6 +51,11 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     [self.HIDMonitor stopObserving];
+    
+    self.recentHIDRemappers = nil;
+    self.HIDMonitor = nil;
+	
+	[super dealloc];
 }
 
 + (NSSet *) keyPathsForValuesAffectingJoystickDevices
@@ -103,9 +108,9 @@
     //Populate the remapper array the first time we are asked
     if (!_recentHIDRemappers)
     {
-        _recentHIDRemappers = [self.class runningHIDRemapperIdentifiers];
+        _recentHIDRemappers = [[self.class runningHIDRemapperIdentifiers] retain];
     }
-    return _recentHIDRemappers;
+    return [[_recentHIDRemappers retain] autorelease];
 }
 
 - (void) clearRecentHIDRemappers

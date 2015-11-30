@@ -192,7 +192,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 		CFStringRef pathRef = CFDictionaryGetValue(description, kDADiskDescriptionDevicePathKey);
 		CFNumberRef sizeRef = CFDictionaryGetValue(description, kDADiskDescriptionMediaSizeKey);
 		
-		devicePath	= [(__bridge NSString *)pathRef copy];
+		devicePath	= [[(__bridge NSString *)pathRef copy] autorelease];
 		diskSize	= [(__bridge NSNumber *)sizeRef unsignedLongLongValue];
 		
 		CFRelease(description);
@@ -270,6 +270,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	cdrdao.arguments = arguments;
 	
 	self.task = cdrdao;
+	[cdrdao release];
 	
 	//Run the task to completion and monitor its progress
 	[super main];
@@ -291,6 +292,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 			//toc2cue takes hardly any time to run, so just block until it finishes.
 			[toc2cue launch];
 			[toc2cue waitUntilExit];
+			[toc2cue release];
 			
 			//Once the CUE file is ready, delete the original TOC.
 			if ([cueURL checkResourceIsReachableAndReturnError: NULL])

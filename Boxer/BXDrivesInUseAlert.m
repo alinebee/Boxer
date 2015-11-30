@@ -25,7 +25,7 @@
         //Use the session's own icon for the alert
         NSImage *icon = [session.representedIcon copy];
         icon.size = NSMakeSize(128, 128);
-        self.icon = icon;
+        self.icon = [icon autorelease];
         
 		NSString *processName = session.processDisplayName;
         if (!processName)

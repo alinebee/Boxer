@@ -50,6 +50,13 @@ enum {
 	return self.sessionMediator.content;
 }
 
+- (void) dealloc
+{
+    self.sessionMediator = nil;
+    self.programSelector = nil;
+	[super dealloc];
+}
+
 - (void) setSessionMediator: (NSObjectController *)mediator
 {
 	if (mediator != self.sessionMediator)
@@ -62,7 +69,8 @@ enum {
 		for (NSString *path in observePaths)
 			[_sessionMediator removeObserver: self forKeyPath: path];
 	
-		_sessionMediator = mediator;
+		[_sessionMediator release];
+		_sessionMediator = [mediator retain];
 	
 		for (NSString *path in observePaths)
 			[mediator addObserver: self forKeyPath: path options: NSKeyValueObservingOptionInitial context: nil];
@@ -311,7 +319,9 @@ enum {
 	item.representedObject = path;
 	item.title = [pathFormat transformedValue: displayPath];
 	
-	return item;
+	[pathFormat release];
+	
+	return [item autorelease];
 }
 
 @end

@@ -66,6 +66,7 @@
     BGTheme *theme = [[self alloc] init];
     [[BGThemeManager keyedManager] setTheme: theme
                                      forKey: name];
+    [theme release];
     }
 }
 
@@ -107,7 +108,7 @@
 
 - (NSGradient *) imageFill
 {
-    return [[NSGradient alloc] initWithStartingColor: self.textColor endingColor: self.textColor];
+    return [[[NSGradient alloc] initWithStartingColor: self.textColor endingColor: self.textColor] autorelease];
 }
 - (NSShadow *) imageDropShadow  { return self.dropShadow; }
 - (NSShadow *) imageInnerShadow { return nil; }
@@ -126,7 +127,7 @@
 
 - (NSGradient *) disabledImageFill
 {
-    return [[NSGradient alloc] initWithStartingColor: self.disabledTextColor endingColor: self.disabledTextColor];
+    return [[[NSGradient alloc] initWithStartingColor: self.disabledTextColor endingColor: self.disabledTextColor] autorelease];
 }
 - (NSShadow *) disabledImageDropShadow  { return self.imageDropShadow; }
 - (NSShadow *) disabledImageInnerShadow { return self.imageInnerShadow; }
@@ -221,7 +222,7 @@
 							bottomColor,	1.0f,
 							nil];
 	
-	return gradient;
+	return [gradient autorelease];
 }
 
 - (NSGradient *) highlightGradient
@@ -240,7 +241,7 @@
 							bottomColor,	1.0f,
 							nil];
 	
-	return gradient;
+	return [gradient autorelease];
 }
 
 
@@ -261,7 +262,7 @@
 							bottomColor,	1.0f,
 							nil];
 	
-	return gradient;
+	return [gradient autorelease];
 }
 
 - (NSGradient *) highlightKnobColor
@@ -281,7 +282,7 @@
 							bottomColor,	1.0f,
 							nil];
 	
-	return gradient;
+	return [gradient autorelease];
 }
 
 - (NSColor *) sliderTrackColor
@@ -371,7 +372,7 @@
 							bottomColor,	1.0f,
 							nil];
     
-    return gradient;
+    return [gradient autorelease];
 }
 
 - (NSGradient *) normalComplexGradient
@@ -395,7 +396,7 @@
 							bottomColor,	1.0f,
 							nil];
 	
-	return gradient;
+	return [gradient autorelease];
 }
 
 - (NSGradient *) pushedGradient
@@ -427,7 +428,7 @@
 							bottomColor,	1.0f,
 							nil];
     
-    return gradient;
+    return [gradient autorelease];
 }
 
 - (NSGradient *) disabledKnobColor
@@ -444,7 +445,7 @@
 							bottomColor,	1.0f,
 							nil];
     
-    return gradient;
+    return [gradient autorelease];
 }
 
 - (NSGradient *) highlightKnobColor
@@ -495,8 +496,8 @@
 
 - (NSGradient *) imageFill
 {
-    return [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.33]
-                                         endingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.10]];
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.33]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.10]] autorelease];
 }
 
 - (NSShadow *) imageDropShadow
@@ -514,8 +515,8 @@
 
 - (NSGradient *) disabledImageFill
 {
-    return [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.10]
-                                         endingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.05]];
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.10]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.05]] autorelease];
 }
 - (NSShadow *) disabledImageInnerShadow
 {
@@ -526,8 +527,8 @@
 
 - (NSGradient *) highlightedImageFill
 {
-    return [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]
-                                         endingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.15]];
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 0 alpha: 0.15]] autorelease];
 }
 - (NSShadow *) highlightedImageInnerShadow
 {
@@ -571,8 +572,8 @@
 
 - (NSGradient *) imageFill
 {
-    return [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.75]
-                                         endingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.50]];
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.75]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.50]] autorelease];
 }
 
 - (NSShadow *) imageDropShadow
@@ -582,8 +583,8 @@
 
 - (NSGradient *) highlightedImageFill
 {
-    return [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.90]
-                                         endingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.80]];
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.90]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.80]] autorelease];
 }
 
 - (NSShadow *) highlightedImageDropShadow
@@ -595,8 +596,8 @@
 
 - (NSGradient *) pushedImageFill
 {
-    return [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 1.00]
-                                         endingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.90]];
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 1.00]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 1.0 alpha: 0.90]] autorelease];
 }
 
 @end
@@ -733,8 +734,8 @@
 
 - (NSGradient *) imageFill
 {
-    return [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.25]
-                                         endingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.33]];
+    return [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.25]
+                                          endingColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.33]] autorelease];
 }
 
 - (NSShadow *) imageDropShadow

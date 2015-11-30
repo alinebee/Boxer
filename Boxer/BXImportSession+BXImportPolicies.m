@@ -313,7 +313,7 @@
     
 	if (iconURL)
 	{
-		NSImage *icon = [[NSImage alloc] initWithContentsOfURL: iconURL];
+		NSImage *icon = [[[NSImage alloc] initWithContentsOfURL: iconURL] autorelease];
 		
 		//TWEAK: strip out the 16x16 and 32x32 versions from GOG icons 
 		//as these are usually terrible 16-colour Windows 3.1 icons.
@@ -326,6 +326,7 @@
 			if (size.width <= 32.0f && size.height <= 32.0f)
                 [icon removeRepresentation: rep];
 		}
+		[reps release];
 		
 		//Sanity check: if there are no representations left, forget about the icon
 		if (icon.representations.count)
@@ -391,6 +392,7 @@
 		[words replaceObjectAtIndex: i withObject: word];
 	}
 	filename = [words componentsJoinedByString: @" "];
+	[words release];
 	
 	
 	//If all these substitutions somehow ended up with an empty string, then fall back on the original filename
@@ -517,7 +519,7 @@
         if (![self _startupCommand: command matchesPatterns: patternsToIgnore])
             [matches addObject: command];
     }
-    return matches;
+    return [matches autorelease];
 }
 
 + (NSArray *) mountCommandsFromConfiguration: (BXEmulatorConfiguration *)configuration
@@ -533,7 +535,7 @@
         if ([self _startupCommand: command matchesPatterns: patternsToMatch])
             [matches addObject: command];
     }
-    return matches;
+    return [matches autorelease];
 }
 
 @end

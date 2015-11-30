@@ -50,6 +50,7 @@
         BXDisplayPathTransformer *nameTransformer = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];
         
         [NSValueTransformer setValueTransformer: nameTransformer forName: @"BXImportInstallerMenuTitle"];
+        [nameTransformer release];
     }
 }
 
@@ -61,6 +62,10 @@
 - (void) dealloc
 {
 	[self.controller removeObserver: self forKeyPath: @"document.installerURLs"];
+
+    self.installerSelector = nil;
+	
+	[super dealloc];
 }
 
 - (void) observeValueForKeyPath: (NSString *)keyPath
@@ -130,7 +135,7 @@
 	item.representedObject = URL;
     item.title = title;
 	
-	return item;
+	return [item autorelease];
 }
 
 

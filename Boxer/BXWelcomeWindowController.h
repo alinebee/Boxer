@@ -14,18 +14,24 @@
 @class BXWelcomeButton;
 
 @interface BXWelcomeWindowController : NSWindowController <BXWelcomeButtonDraggingDelegate>
+{
+	IBOutlet NSPopUpButton *recentDocumentsButton;
+	IBOutlet BXWelcomeButton *importGameButton;
+	IBOutlet BXWelcomeButton *openPromptButton;
+	IBOutlet BXWelcomeButton *showGamesFolderButton;
+}
 
 //The Open Recent popup button.
-@property (weak, nonatomic) NSPopUpButton *recentDocumentsButton;
+@property (assign, nonatomic) NSPopUpButton *recentDocumentsButton;
 
 //The import-a-new-game button. Drag-drop events onto this button will be handled by this controller.
-@property (weak, nonatomic) BXWelcomeButton *importGameButton;
+@property (assign, nonatomic) BXWelcomeButton *importGameButton;
 
 //The open-DOS-prompt button. Drag-drop events onto this button will be handled by this controller.
-@property (weak, nonatomic) BXWelcomeButton *openPromptButton;
+@property (assign, nonatomic) BXWelcomeButton *openPromptButton;
 
 //The browse-games-folder button. Has no special behaviour.
-@property (weak, nonatomic) BXWelcomeButton *showGamesFolderButton;
+@property (assign, nonatomic) BXWelcomeButton *showGamesFolderButton;
 
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime

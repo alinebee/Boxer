@@ -33,6 +33,7 @@
                                         userInfo: nil];
         }
         
+        [self release];
         return nil;
     }
     

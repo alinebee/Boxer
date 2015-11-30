@@ -230,6 +230,7 @@
         {
             [emulator setJoystick: joystick];
         }
+        [joystick release];
     }
 }
 

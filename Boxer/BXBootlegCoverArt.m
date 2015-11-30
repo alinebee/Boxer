@@ -65,7 +65,7 @@
 	NSColor *color		= [self textColor];
 	NSFont *font		= [NSFont fontWithName: [self fontName] size: fontSize];
 	
-	NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+	NSMutableParagraphStyle *style = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
 	[style setAlignment: NSCenterTextAlignment];
 	[style setMaximumLineHeight: lineHeight];
 	[style setMinimumLineHeight: lineHeight];
@@ -104,7 +104,7 @@
 		//To work around this, we draw a copy of the image instead of the original.
 		//Fuck 10.5.
 		if (isRunningOnLeopard())
-			baseLayer = [baseLayer copy];
+			baseLayer = [[baseLayer copy] autorelease];
 		
 		[baseLayer drawInRect: frame
 					 fromRect: NSZeroRect
@@ -121,7 +121,7 @@
 	if (topLayer)
 	{
 		if (isRunningOnLeopard())
-			topLayer = [topLayer copy];
+			topLayer = [[topLayer copy] autorelease];
 		
 		[topLayer drawInRect: frame
 					fromRect: NSZeroRect
@@ -142,8 +142,9 @@
 		[self drawInRect: frame];
 		NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initWithFocusedViewRect: frame];
 		[canvas unlockFocus];
+	[canvas release];
 	
-	return rep;
+	return [rep autorelease];
 }
 
 - (NSImage *) coverArt
@@ -153,12 +154,12 @@
 	[coverArt addRepresentation: [self representationForSize: NSMakeSize(128, 128)]];
 	[coverArt addRepresentation: [self representationForSize: NSMakeSize(32, 32)]];
 	[coverArt addRepresentation: [self representationForSize: NSMakeSize(16, 16)]];
-	return coverArt;
+	return [coverArt autorelease];
 }
 
 + (NSImage *) coverArtWithTitle: (NSString *)coverTitle
 {
-	id generator = [[self alloc] initWithTitle: coverTitle];
+	id generator = [[[self alloc] initWithTitle: coverTitle] autorelease];
 	return [generator coverArt];
 }
 

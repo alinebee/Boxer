@@ -29,6 +29,13 @@
     }
 }
 
+- (void) dealloc
+{
+    self.indicatorColor = nil;
+    self.indicatorShadow = nil;
+	[super dealloc];
+}
+
 - (void) awakeFromNib
 {
 	if (!self.indicatorColor)

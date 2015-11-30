@@ -13,6 +13,12 @@
 @implementation BXCursorFadeAnimation
 @synthesize originalCursor;
 
+- (void) dealloc
+{
+	[originalCursor release], originalCursor = nil;
+	[super dealloc];
+}
+
 - (void) setCurrentProgress: (NSAnimationProgress)progress
 {
 	[super setCurrentProgress: progress];
@@ -42,7 +48,8 @@
 	}
 	
 	NSCursor *fadedCursor = [[NSCursor alloc] initWithImage: fadedImage hotSpot: [cursor hotSpot]];
-	return fadedCursor;
+	[fadedImage release];
+	return [fadedCursor autorelease];
 }
 
 @end

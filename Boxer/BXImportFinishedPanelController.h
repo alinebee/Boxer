@@ -15,12 +15,13 @@
 /// your-gamebox-is-finished panel of the import process.
 @interface BXImportFinishedPanelController : NSViewController
 {
+	__unsafe_unretained BXImportWindowController *_controller;
 	BXImportIconDropzone *_iconView;
 	NSTextField *_nameField;
 }
 
 /// A reference to our window controller.
-@property (weak, nonatomic) IBOutlet BXImportWindowController *controller;
+@property (assign, nonatomic) IBOutlet BXImportWindowController *controller;
 
 /// The image well that displays the gamebox icon.
 @property (retain, nonatomic) IBOutlet BXImportIconDropzone *iconView;

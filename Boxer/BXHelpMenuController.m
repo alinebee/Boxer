@@ -53,6 +53,8 @@
     self.replacementDocsItem = nil;
     self.documentationDivider = nil;
     self.helpLinksDivider = nil;
+    
+    [super dealloc];
 }
 
 - (void) observeValueForKeyPath: (NSString *)keyPath
@@ -288,6 +290,7 @@
         icon = [icon copy];
         icon.size = iconSize;
         newItem.image = icon;
+        [icon release];
     }
     
 	return newItem;
@@ -306,6 +309,7 @@
 											selector: comparison];
 	
 	NSArray *sortDescriptors = @[sortByType, sortByName];
+	[sortByType release], [sortByName release];
 	return sortDescriptors;
 }
 

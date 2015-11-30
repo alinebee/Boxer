@@ -17,10 +17,10 @@
            inGLContext: (CGLContextObj)context
                  error: (NSError **)outError
 {
-    return [[self alloc] initWithType: type
-                           videoFrame: frame
-                          inGLContext: context
-                                error: outError];
+    return [[[self alloc] initWithType: type
+                            videoFrame: frame
+                           inGLContext: context
+                                 error: outError] autorelease];
 }
 
 - (id) initWithType: (GLenum)type 

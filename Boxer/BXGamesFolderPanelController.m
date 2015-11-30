@@ -29,6 +29,13 @@
 	return singleton;
 }
 
+- (void) dealloc
+{
+    self.sampleGamesToggle = nil;
+    self.useShelfAppearanceToggle = nil;
+	[super dealloc];
+}
+
 - (void) showGamesFolderPanelForWindow: (NSWindow *)window
 {
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];

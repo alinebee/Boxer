@@ -66,19 +66,19 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 + (NSArray *) floppyDriveLetters
 {
 	static NSArray *letters = nil;
-	if (!letters) letters = [[self driveLetters] subarrayWithRange: NSMakeRange(0, 24)];
+	if (!letters) letters = [[[self driveLetters] subarrayWithRange: NSMakeRange(0, 24)] retain];
 	return letters;
 }
 + (NSArray *) hardDriveLetters
 {
 	static NSArray *letters = nil;
-	if (!letters) letters = [[self driveLetters] subarrayWithRange: NSMakeRange(2, 22)];
+	if (!letters) letters = [[[self driveLetters] subarrayWithRange: NSMakeRange(2, 22)] retain];
 	return letters;
 }
 + (NSArray *) CDROMDriveLetters
 {
 	static NSArray *letters = nil;
-	if (!letters) letters = [[self driveLetters] subarrayWithRange: NSMakeRange(3, 22)];
+	if (!letters) letters = [[[self driveLetters] subarrayWithRange: NSMakeRange(3, 22)] retain];
 	return letters;	
 }
 

@@ -18,7 +18,7 @@
 
 + (id) binding
 {
-    return [[self alloc] init];
+    return [[[self alloc] init] autorelease];
 }
 
 + (id) bindingWithOutputBinding: (id <BXOutputBinding>)outputBinding
@@ -26,6 +26,12 @@
     BXHIDButtonBinding *binding = [self binding];
     binding.outputBinding = outputBinding;
     return binding;
+}
+
+- (void) dealloc
+{
+    self.outputBinding = nil;
+    [super dealloc];
 }
 
 - (void) processEvent: (ADBHIDEvent *)event
@@ -53,7 +59,7 @@
 
 + (id) binding
 {
-    return [[self alloc] init];
+    return [[[self alloc] init] autorelease];
 }
 
 + (id) bindingWithPositiveBinding: (id< BXOutputBinding>)positiveBinding
@@ -73,6 +79,13 @@
         self.deadzone = BXDefaultAxisDeadzone;
     }
     return self;
+}
+
+- (void) dealloc
+{
+    self.positiveBinding = nil;
+    self.negativeBinding = nil;
+    [super dealloc];
 }
 
 - (float) _normalizedAxisValue: (NSInteger)axisValue
@@ -137,7 +150,7 @@
 
 + (id) binding
 {
-    return [[self alloc] init];
+    return [[[self alloc] init] autorelease];
 }
 
 + (id) bindingWithOutputBindingsAndDirections: (id <BXOutputBinding>)subBinding, ... NS_REQUIRES_NIL_TERMINATION
@@ -177,6 +190,12 @@
 		_previousDirection = ADBHIDPOVCentered;
     }
     return self;
+}
+
+- (void) dealloc
+{
+    self.outputBindings = nil;
+    [super dealloc];
 }
 
 - (id <BXHIDInputBinding>) bindingForDirection: (ADBHIDPOVSwitchDirection)direction

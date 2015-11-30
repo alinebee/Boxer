@@ -39,7 +39,7 @@ static NSMutableDictionary *layoutClasses = nil;
 + (JoypadControllerLayout *) layout
 {
     //Override this in your subclass to construct buttons and so forth.
-    return [[JoypadControllerLayout alloc] init];
+    return [[[JoypadControllerLayout alloc] init] autorelease];
 }
 
 @end

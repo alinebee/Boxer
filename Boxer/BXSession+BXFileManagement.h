@@ -378,7 +378,7 @@ typedef NS_OPTIONS(NSUInteger, BXDriveMountOptions) {
 //Called when the "are you sure you want to unmount this drive?" alert is closed.
 - (void) drivesInUseAlertDidEnd: (BXDrivesInUseAlert *)alert
 					 returnCode: (NSInteger)returnCode
-                    contextInfo: (CFDictionaryRef)contextInfo;
+                    contextInfo: (NSDictionary *)contextInfo;
 
 
 #pragma mark -

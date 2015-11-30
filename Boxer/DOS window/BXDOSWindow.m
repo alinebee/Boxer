@@ -16,7 +16,8 @@
 
 - (void) dealloc
 {
-    [self setActualContentView: nil];
+    [self setActualContentView: nil], [actualContentView release];
+    [super dealloc];
 }
 
 //Overridden to smooth out the speed of shorter resize animations,

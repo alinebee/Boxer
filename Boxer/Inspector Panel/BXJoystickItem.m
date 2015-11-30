@@ -20,6 +20,14 @@
 @synthesize descriptionLabel = _descriptionLabel;
 @synthesize icon = _icon;
 
+- (void) dealloc
+{
+    self.titleLabel = nil;
+    self.descriptionLabel = nil;
+    self.icon = nil;
+    [super dealloc];
+}
+
 - (void) setSelected: (BOOL)selected
 {
     [super setSelected: selected];

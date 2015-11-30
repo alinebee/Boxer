@@ -17,6 +17,7 @@
 
 @interface BXImportDropzonePanelController : NSViewController <NSOpenSavePanelDelegate>
 {
+    __unsafe_unretained BXImportWindowController *_controller;
 	BXImportDropzone *_dropzone;
 	BXBlueprintProgressIndicator *_spinner;
 }
@@ -30,7 +31,7 @@
 @property (retain, nonatomic, nullable) IBOutlet BXBlueprintProgressIndicator *spinner;
 
 //A reference to our window controller
-@property (weak, nonatomic, nullable) IBOutlet BXImportWindowController *controller;
+@property (assign, nonatomic, nullable) IBOutlet BXImportWindowController *controller;
 
 
 //Display a file picker for choosing a folder or disc image to import

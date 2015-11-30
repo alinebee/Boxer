@@ -69,6 +69,7 @@
     }
     else
     {
+        [self release];
         return nil;
     }
     return self;
@@ -81,6 +82,7 @@
         free(_scales);
         _scales = NULL;
     }
+    [super dealloc];
 }
 
 - (void) tearDownContext

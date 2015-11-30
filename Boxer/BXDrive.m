@@ -195,7 +195,7 @@
                        letter: (NSString *)driveLetter
                          type: (BXDriveType)driveType
 {
-    return [[self alloc] initWithContentsOfURL: sourceURL letter: driveLetter type: driveType];
+    return [[[self alloc] initWithContentsOfURL: sourceURL letter: driveLetter type: driveType] autorelease];
 }
 
 - (id) initWithContentsOfURL: (NSURL *)sourceURL
@@ -233,6 +233,24 @@
     return [self driveWithContentsOfURL: nil letter: driveLetter type: BXDriveVirtual];
 }
 
+- (void) dealloc
+{
+    //Avoid using our setter methods as they have a lot of magic in them.
+    [_sourceURL release], _sourceURL = nil;
+    [_shadowURL release], _shadowURL = nil;
+    [_mountPointURL release], _mountPointURL = nil;
+    [_equivalentURLs release], _equivalentURLs = nil;
+    [_filesystem release], _filesystem = nil;
+    
+    [_volumeLabel release], _volumeLabel = nil;
+    [_DOSVolumeLabel release], _DOSVolumeLabel = nil;
+    [_title release], _title = nil;
+    [_letter release], _letter = nil;
+    
+	[super dealloc];
+}
+
+
 #pragma mark - Setters and getters
 
 //Pretty much all our properties depend on our source URL, so we add it here
@@ -250,6 +268,7 @@
     sourceURL = sourceURL.URLByStandardizingPath;
 	if (![_sourceURL isEqual: sourceURL])
 	{
+		[_sourceURL release];
 		_sourceURL = [sourceURL copy];
 		
 		if (_sourceURL)
@@ -287,6 +306,7 @@
     mountPointURL = mountPointURL.URLByStandardizingPath;
     if (![_mountPointURL isEqual: mountPointURL])
 	{
+		[_mountPointURL release];
 		_mountPointURL = [mountPointURL copy];
 		
         _hasAutodetectedMountPoint = NO;
@@ -301,6 +321,7 @@
     shadowURL = shadowURL.URLByStandardizingPath;
     if (![_shadowURL isEqual: shadowURL])
 	{
+		[_shadowURL release];
 		_shadowURL = [shadowURL copy];
         
         //Clear our old filesystem, if it was shadowed: it will be recreated when needed.
@@ -318,6 +339,7 @@
 	
 	if (![self.letter isEqualToString: driveLetter])
 	{
+		[_letter release];
 		_letter = [driveLetter copy];
         
         _hasAutodetectedLetter = NO;
@@ -328,6 +350,7 @@
 {
 	if (![_volumeLabel isEqualToString: newLabel])
 	{
+		[_volumeLabel release];
 		_volumeLabel = [newLabel copy];
 		
         _hasAutodetectedVolumeLabel = NO;
@@ -338,6 +361,7 @@
 {
     if (![_title isEqualToString: title])
 	{
+		[_title release];
 		_title = [title copy];
 		
         _hasAutodetectedTitle = NO;
@@ -367,7 +391,7 @@
             [self.filesystem addRepresentedURL: self.sourceURL];
         
     }
-    return _filesystem;
+    return [[_filesystem retain] autorelease];
 }
 
 

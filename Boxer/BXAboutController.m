@@ -35,6 +35,12 @@
     self.version.stringValue = versionString;
 }
 
+- (void) dealloc
+{
+    self.version = nil;
+    [super dealloc];
+}
+
 - (IBAction) showAcknowledgements: (id)sender
 {
 	[(BXBaseAppController *)[NSApp delegate] showHelpAnchor: @"acknowledgements"];
@@ -62,6 +68,8 @@
     
     [lighting drawInRect: self.bounds
   relativeCenterPosition: NSMakePoint(0.25f, 0.5f)];
+    
+    [lighting release];
 }
 
 @end

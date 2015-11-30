@@ -55,6 +55,9 @@ enum {
         
         [NSValueTransformer setValueTransformer: fullDisplayPath forName: @"BXDriveDisplayPath"];
         [NSValueTransformer setValueTransformer: displayName forName: @"BXDriveDisplayName"];
+        
+        [fullDisplayPath release];
+        [displayName release];
     }
 }
 
@@ -99,12 +102,14 @@ enum {
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center removeObserver: self];
     
-    _selectedDriveIndexes = nil;
-    _driveList = nil;
-    _driveControls = nil;
-    _driveActionsMenu = nil;
+    self.selectedDriveIndexes = nil;
+    self.driveList = nil;
+    self.driveControls = nil;
+    self.driveActionsMenu = nil;
     
     [_driveRemovalDropzone close], _driveRemovalDropzone = nil;
+    
+	[super dealloc];
 }
 
 - (void) observeValueForKeyPath: (NSString *)keyPath
@@ -160,7 +165,8 @@ enum {
 {
     if (![indexes isEqualToIndexSet: self.selectedDriveIndexes])
     {
-        _selectedDriveIndexes = indexes;
+        [_selectedDriveIndexes release];
+        _selectedDriveIndexes = [indexes retain];
         
         //Sync the action buttons whenever our selection changes
         [self syncButtonStates];

@@ -39,6 +39,8 @@
                                                                                                     count: 3];
         
         [NSValueTransformer setValueTransformer: mouseSensitivity forName: @"BXMouseSensitivitySlider"];
+        
+        [mouseSensitivity release];
     }
 }
 

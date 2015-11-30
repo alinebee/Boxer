@@ -70,6 +70,9 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     
     [self _stopTapping];
+    self.tapThread = nil;
+    
+    [super dealloc];
 }
 
 - (void) setEnabled: (BOOL)flag
@@ -247,9 +250,9 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
         if (self.usesDedicatedThread)
         {
             NSLog(@"Installing event tap on dedicated thread.");
-            self.tapThread = [[ADBContinuousThread alloc] initWithTarget: self
-                                                                selector: @selector(_runTapInDedicatedThread)
-                                                                  object: nil];
+            self.tapThread = [[[ADBContinuousThread alloc] initWithTarget: self
+                                                                 selector: @selector(_runTapInDedicatedThread)
+                                                                   object: nil] autorelease];
             
             [self.tapThread start];
         }

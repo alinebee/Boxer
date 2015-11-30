@@ -42,6 +42,14 @@
 	[self.spinner startAnimation: self];
 }
 
+- (void) dealloc
+{
+    self.dropzone = nil;
+    self.spinner = nil;
+	
+	[super dealloc];
+}
+
 
 #pragma mark -
 #pragma mark UI actions

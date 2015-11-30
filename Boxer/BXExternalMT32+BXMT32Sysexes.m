@@ -66,6 +66,7 @@
                                             nil];
                 
                 *supportConfirmed = (![ignoredMessages containsObject: LCDMessage]);
+                [LCDMessage release];
             }
             
             //Otherwise, assume it confirms support.

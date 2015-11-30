@@ -89,11 +89,12 @@
 															   userInfo: nil];
 	
 	[self.view addTrackingArea: trackingArea];
+	[trackingArea release];
 	 
 	
 	//Set up our cursor fade animation
-	self.cursorFade = [[BXCursorFadeAnimation alloc] initWithDuration: BXCursorFadeDuration
-                                                       animationCurve: NSAnimationEaseIn];
+	self.cursorFade = [[[BXCursorFadeAnimation alloc] initWithDuration: BXCursorFadeDuration
+                                                        animationCurve: NSAnimationEaseIn] autorelease];
     
     self.cursorFade.delegate = self;
     self.cursorFade.originalCursor = [NSCursor arrowCursor];
@@ -107,6 +108,12 @@
     self.view.nextResponder = self.nextResponder;
     
 	[self.cursorFade stopAnimation];
+    
+    self.cursorFade = nil;
+    self.controllerProfiles = nil;
+    self.availableJoystickTypes = nil;
+    
+	[super dealloc];
 }
 
 - (BXSession *)representedObject

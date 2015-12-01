@@ -935,7 +935,7 @@ static BOOL _hasStartedEmulator = NO;
         //before it starts will stay alive until it finishes. To mitigate this we wrap the
         //emulator startup sequence in an autorelease block, so that at least those objects
         //will get released before we begin emulating in earnest.
-        @autoreleasepool {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         
             //Create a new configuration instance and feed it an empty set of parameters.
             char const *argv[0];
@@ -960,7 +960,7 @@ static BOOL _hasStartedEmulator = NO;
             
             [self _didInitialize];
 		
-        }
+        [pool drain];
         
 		//Start up the main machine.
 		control->StartUp();

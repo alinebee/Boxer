@@ -78,7 +78,7 @@ extern NSString * const ADBFileTransferCurrentPathKey;
 
 /// The file path of the current file being transferred,
 /// or nil if no path is currently being transferred (or this cannot be determined.)
-@property (readonly, retain, nullable) NSString *currentPath;
+@property (readonly, copy, nullable) NSString *currentPath;
 
 @end
 

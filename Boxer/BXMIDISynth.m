@@ -49,11 +49,14 @@
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     [self close];
     
     self.soundFontURL = nil;
     
     [super dealloc];
+#pragma clang diagnostic pop
 }
 
 - (void) close

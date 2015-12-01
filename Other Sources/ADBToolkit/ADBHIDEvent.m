@@ -109,6 +109,18 @@
 	return self;
 }
 
+- (void) dealloc
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    self.device = nil;
+    self.element = nil;
+    self.stick = nil;
+    
+	[super dealloc];
+#pragma clang diagnostic pop
+}
+
 #pragma mark - Copying
 
 - (id) copyWithZone: (NSZone *)zone

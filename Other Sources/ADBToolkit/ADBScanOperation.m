@@ -54,6 +54,17 @@ NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
     return self;
 }
 
+- (void) dealloc
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    self.enumerator = nil;
+    self.matchCallback = nil;
+    self.matches = nil;
+    [super dealloc];
+#pragma clang diagnostic pop
+}
+
 - (void) main
 {
     NSAssert(self.enumerator != nil, @"No enumerator provided.");

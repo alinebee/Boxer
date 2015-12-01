@@ -75,7 +75,7 @@
 
 + (id) enumeratorAtPath: (NSString *)filePath
 {
-	return [[self alloc] initWithPath: filePath];
+	return [[[self alloc] initWithPath: filePath] autorelease];
 }
 
 - (void) dealloc
@@ -86,12 +86,18 @@
     self.currentPath = nil;
     self.relativePath = nil;
     self.predicate = nil;
+	
+	[_manager release], _manager = nil;
+	[_workspace release], _workspace = nil;
+	
+	[super dealloc];
 }
 
 - (void) setBasePath: (NSString *)path
 {
     if (_basePath != path)
     {
+        [_basePath release];
         _basePath = [path copy];
         
         //Create an enumerator for the specified path

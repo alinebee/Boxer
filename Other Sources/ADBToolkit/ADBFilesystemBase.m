@@ -42,6 +42,17 @@
     return self;
 }
 
+- (void) dealloc
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    self.baseURL = nil;
+    self.mutableRepresentedURLs = nil;
+    
+    [super dealloc];
+#pragma clang diagnostic pop
+}
+
 //Include the base URL as one of our represented URLs.
 - (void) setBaseURL: (NSURL *)URL
 {
@@ -50,6 +61,7 @@
         if (_baseURL)
             [self removeRepresentedURL: _baseURL];
         
+        [_baseURL release];
         _baseURL = [URL copy];
         
         if (_baseURL)

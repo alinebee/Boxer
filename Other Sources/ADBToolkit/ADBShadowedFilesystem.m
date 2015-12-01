@@ -102,7 +102,7 @@ includingPropertiesForKeys: (NSArray *)keys
 
 + (id) filesystemWithBaseURL: (NSURL *)sourceURL shadowURL: (NSURL *)shadowURL
 {
-    return [[self alloc] initWithBaseURL: sourceURL shadowURL: shadowURL];
+    return [[[self alloc] initWithBaseURL: sourceURL shadowURL: shadowURL] autorelease];
 }
 
 - (id) initWithBaseURL: (NSURL *)sourceURL shadowURL: (NSURL *)shadowURL
@@ -114,6 +114,16 @@ includingPropertiesForKeys: (NSArray *)keys
         self.shadowURL = shadowURL;
     }
     return self;
+}
+
+- (void) dealloc
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    self.shadowURL = nil;
+    
+    [super dealloc];
+#pragma clang diagnostic pop
 }
 
 - (void) setShadowURL: (NSURL *)URL
@@ -131,6 +141,7 @@ includingPropertiesForKeys: (NSArray *)keys
         if (_shadowURL)
             [self removeRepresentedURL: _shadowURL];
         
+        [_shadowURL release];
         _shadowURL = [URL copy];
         
         if (_shadowURL)
@@ -298,13 +309,13 @@ includingPropertiesForKeys: (NSArray *)keys
         else
             wrappedHandler = nil;
         
-        return [[ADBShadowedDirectoryEnumerator alloc] initWithLocalURL: sourceURL
-                                                            shadowedURL: shadowedURL
-                                                            inFilesytem: self
-                                             includingPropertiesForKeys: nil
-                                                                options: options
-                                                             returnURLs: NO
-                                                           errorHandler: wrappedHandler];
+        return [[[ADBShadowedDirectoryEnumerator alloc] initWithLocalURL: sourceURL
+                                                             shadowedURL: shadowedURL
+                                                             inFilesytem: self
+                                              includingPropertiesForKeys: nil
+                                                                 options: options
+                                                              returnURLs: NO
+                                                            errorHandler: wrappedHandler] autorelease];
     }
     else
     {
@@ -571,13 +582,13 @@ includingPropertiesForKeys: (NSArray *)keys
             NSURL *sourceURL = [self _sourceURLForLogicalPath: path];
             NSURL *shadowedURL = [self _shadowedURLForLogicalPath: path];
             
-            return [[ADBShadowedDirectoryEnumerator alloc] initWithLocalURL: sourceURL
-                                                                shadowedURL: shadowedURL
-                                                                inFilesytem: self
-                                                 includingPropertiesForKeys: keys
-                                                                    options: options
-                                                                 returnURLs: YES
-                                                               errorHandler: errorHandler];
+            return [[[ADBShadowedDirectoryEnumerator alloc] initWithLocalURL: sourceURL
+                                                                 shadowedURL: shadowedURL
+                                                                 inFilesytem: self
+                                                  includingPropertiesForKeys: keys
+                                                                     options: options
+                                                                  returnURLs: YES
+                                                                errorHandler: errorHandler] autorelease];
         }
         else
         {
@@ -1069,6 +1080,19 @@ includingPropertiesForKeys: (NSArray *)keys
         }
     }
     return self;
+}
+
+- (void) dealloc
+{
+    self.localEnumerator = nil;
+    self.shadowEnumerator = nil;
+    self.currentEnumerator = nil;
+    self.shadowedPaths = nil;
+    self.deletedPaths = nil;
+    self.filesystem = nil;
+    self.currentURL = nil;
+    
+    [super dealloc];
 }
 
 - (void) skipDescendants

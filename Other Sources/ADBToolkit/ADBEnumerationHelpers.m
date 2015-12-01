@@ -44,6 +44,17 @@
     return self;
 }
 
+- (void) dealloc
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    [_levels release]; _levels = nil;
+    self.currentNode = nil;
+    
+    [super dealloc];
+#pragma clang diagnostic pop
+}
+
 - (NSUInteger) level
 {
     return self.levels.count;

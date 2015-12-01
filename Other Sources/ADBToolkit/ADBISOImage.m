@@ -197,11 +197,19 @@ int extdate_to_int(uint8_t *digits, int length)
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     if ([self.handle respondsToSelector: @selector(close)])
     {
         [(id)self.handle close];
     }
     self.handle = nil;
+    
+    self.baseURL = nil;
+    self.volumeName = nil;
+    self.pathCache = nil;
+    [super dealloc];
+#pragma clang diagnostic pop
 }
 
 

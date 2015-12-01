@@ -32,7 +32,7 @@
 
 + (id) filesystemWithBaseURL: (NSURL *)baseURL
 {
-    return [[self alloc] initWithBaseURL: baseURL];
+    return [[[self alloc] initWithBaseURL: baseURL] autorelease];
 }
 
 - (id) initWithBaseURL: (NSURL *)baseURL
@@ -50,12 +50,24 @@
     self = [super init];
     if (self)
     {
-        self.manager = [[NSFileManager alloc] init];
+        self.manager = [[[NSFileManager alloc] init] autorelease];
         self.manager.delegate = self;
         
         self.mutableRepresentedURLs = [NSMutableArray arrayWithCapacity: 1];
     }
     return self;
+}
+
+- (void) dealloc
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    self.mutableRepresentedURLs = nil;
+    self.baseURL = nil;
+    self.manager = nil;
+    
+    [super dealloc];
+#pragma clang diagnostic pop
 }
 
 - (void) setBaseURL: (NSURL *)URL
@@ -109,12 +121,12 @@
     //Refuse to enumerate URLs that aren't located within this filesystem.
     if ([self exposesFileURL: URL])
     {
-        return [[ADBLocalDirectoryEnumerator alloc] initWithURL: URL
-                                                    inFilesytem: self
-                                     includingPropertiesForKeys: keys
-                                                        options: mask
-                                                     returnURLs: YES
-                                                   errorHandler: errorHandler];
+        return [[[ADBLocalDirectoryEnumerator alloc] initWithURL: URL
+                                                     inFilesytem: self
+                                      includingPropertiesForKeys: keys
+                                                         options: mask
+                                                      returnURLs: YES
+                                                    errorHandler: errorHandler] autorelease];
     }
     else
     {
@@ -244,12 +256,12 @@
         wrappedHandler = nil;
     }
     
-    return [[ADBLocalDirectoryEnumerator alloc] initWithURL: localURL
-                                                inFilesytem: self
-                                 includingPropertiesForKeys: nil
-                                                    options: mask
-                                                 returnURLs: NO
-                                               errorHandler: wrappedHandler];
+    return [[[ADBLocalDirectoryEnumerator alloc] initWithURL: localURL
+                                                 inFilesytem: self
+                                  includingPropertiesForKeys: nil
+                                                     options: mask
+                                                  returnURLs: NO
+                                                errorHandler: wrappedHandler] autorelease];
 }
 
 @end
@@ -280,6 +292,15 @@ includingPropertiesForKeys: (NSArray *)keys
                                                       errorHandler: errorHandler];
     }
     return self;
+}
+
+- (void) dealloc
+{
+    self.enumerator = nil;
+    self.filesystem = nil;
+    self.currentURL = nil;
+    
+    [super dealloc];
 }
 
 - (id) nextObject

@@ -26,10 +26,13 @@
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     self.sourceURL = nil;
     self.targetURL = nil;
     
 	[super dealloc];
+#pragma clang diagnostic pop
 }
 
 - (void) main

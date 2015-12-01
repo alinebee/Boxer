@@ -44,10 +44,13 @@
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     self.baseURL = nil;
     self.mutableRepresentedURLs = nil;
     
     [super dealloc];
+#pragma clang diagnostic pop
 }
 
 //Include the base URL as one of our represented URLs.

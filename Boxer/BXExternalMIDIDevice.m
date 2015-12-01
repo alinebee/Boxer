@@ -121,11 +121,14 @@
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     [self close];
     
     self.dateWhenReady = nil;
     
     [super dealloc];
+#pragma clang diagnostic pop
 }
 
 - (void) close

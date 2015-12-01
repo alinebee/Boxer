@@ -42,10 +42,13 @@
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     self.tabView = nil;
     self.toolbarForTabs = nil;
     
 	[super dealloc];
+#pragma clang diagnostic pop
 }
 
 - (void) windowDidLoad

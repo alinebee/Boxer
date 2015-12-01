@@ -118,9 +118,12 @@ includingPropertiesForKeys: (NSArray *)keys
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     self.shadowURL = nil;
     
     [super dealloc];
+#pragma clang diagnostic pop
 }
 
 - (void) setShadowURL: (NSURL *)URL

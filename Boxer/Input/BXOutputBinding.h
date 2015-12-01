@@ -9,6 +9,8 @@
 #import "BXEmulatedJoystick.h"
 #import "BXEmulatedKeyboard.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 //BXOutputBindings take a scalar input value from 0.0 to 1.0 and trigger a signal on an emulated input device:
 //e.g. an emulated joystick or keyboard.
 
@@ -32,12 +34,14 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 
 #pragma mark - Protocols
 
+/// BXOutputBindings take a scalar input value from 0.0 to 1.0 and trigger a signal on an emulated input device:
+/// e.g. an emulated joystick or keyboard.
 @protocol BXOutputBinding <NSObject>
 
-//Returns an autoreleased instance of the class.
+/// Returns an autoreleased instance of the class.
 + (instancetype) binding;
 
-//Receives a raw input value.
+/// Receives a raw input value.
 - (void) applyInputValue: (float)value;
 
 @end
@@ -85,18 +89,18 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 
 #pragma mark - Joystick bindings
 
-//The base class for all joystick output bindings. Should not be used directly.
+/// The base class for all joystick output bindings. Should not be used directly.
 @interface BXBaseEmulatedJoystickBinding : BXBaseOutputBinding
 {
     id <BXEmulatedJoystick> _joystick;
 }
-//The joystick to which we send input signals.
+/// The joystick to which we send input signals.
 @property (retain, nonatomic) id <BXEmulatedJoystick> joystick;
 
 @end
 
 
-//Presses a joystick button when input > 0, releases it when input = 0.
+/// Presses a joystick button when input > 0, releases it when input = 0.
 @interface BXEmulatedJoystickButtonBinding : BXBaseEmulatedJoystickBinding
 {
     BXEmulatedJoystickButton _button;
@@ -108,7 +112,7 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 @end
 
 
-//Maps the input value as input on a particular joystick axis and polarity.
+/// Maps the input value as input on a particular joystick axis and polarity.
 @interface BXEmulatedJoystickAxisBinding : BXBaseEmulatedJoystickBinding
 {
     NSString *_axisName;
@@ -169,11 +173,11 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
     SEL _pressedAction;
     SEL _releasedAction;
 }
-@property (assign, nonatomic) id target;
-@property (assign, nonatomic) SEL pressedAction;
-@property (assign, nonatomic) SEL releasedAction;
+@property (assign, nonatomic, nullable) id target;
+@property (assign, nonatomic, nullable) SEL pressedAction;
+@property (assign, nonatomic, nullable) SEL releasedAction;
 
-+ (instancetype) bindingWithTarget: (id)target pressedAction: (SEL)pressedAction releasedAction: (SEL)releasedAction;
++ (instancetype) bindingWithTarget: (id)target pressedAction: (SEL)pressedAction releasedAction: (nullable SEL)releasedAction;
 
 @end
 
@@ -194,7 +198,7 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 }
 
 //The delegate to whom we will send BXPeriodicOutputBindingDelegate messages whenever the binding fires.
-@property (assign, nonatomic) id <BXPeriodicOutputBindingDelegate> delegate;
+@property (assign, nonatomic, nullable) id <BXPeriodicOutputBindingDelegate> delegate;
 
 //The frequency with which to fire signals. Defaults to 1 / 30.0, i.e. 30 times a second.
 @property (assign, nonatomic) NSTimeInterval period;
@@ -239,3 +243,5 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 + (instancetype) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick axis: (NSString *)axisName rate: (float)ratePerSecond;
 
 @end
+
+NS_ASSUME_NONNULL_END

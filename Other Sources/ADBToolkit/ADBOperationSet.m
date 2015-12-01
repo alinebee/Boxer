@@ -76,9 +76,12 @@
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     self.operations = nil;
     
 	[super dealloc];
+#pragma clang diagnostic pop
 }
 
 

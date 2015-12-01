@@ -33,9 +33,12 @@
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     self.panelContainer = nil;
     
 	[super dealloc];
+#pragma clang diagnostic pop
 }
 
 - (NSView *) currentPanel

@@ -13,6 +13,8 @@
 #import "ADBHIDEvent.h"
 #import "BXOutputBinding.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 #pragma mark - Protocols
 
 @protocol BXHIDInputBinding <NSObject>
@@ -51,11 +53,11 @@
 
 /// This binding will be sent the absolute axis value when the axis is positive,
 /// and 0.0 when the axis is centered or negative.
-@property (retain, nonatomic) id <BXOutputBinding> positiveBinding;
+@property (retain, nonatomic, nullable) id <BXOutputBinding> positiveBinding;
 
 /// This binding will be sent the absolute axis value when the axis is negative,
 /// and 0.0 when the axis is centered or positive.
-@property (retain, nonatomic) id <BXOutputBinding> negativeBinding;
+@property (retain, nonatomic, nullable) id <BXOutputBinding> negativeBinding;
 
 /// If <code>YES</code>, axis input will be flipped (meaning the negative binding will be triggered
 /// when the axis is positive, and vice-versa).
@@ -68,8 +70,8 @@
 /// If YES, the full -1.0->1.0 input range will be mapped to 0.0->1.0 before inverting.
 @property (assign, nonatomic, getter=isUnidirectional) BOOL unidirectional;
 
-+ (instancetype) bindingWithPositiveBinding: (id <BXOutputBinding>)positiveBinding
-                            negativeBinding: (id <BXOutputBinding>)negativeBinding;
++ (instancetype) bindingWithPositiveBinding: (nullable id <BXOutputBinding>)positiveBinding
+                            negativeBinding: (nullable id <BXOutputBinding>)negativeBinding;
 
 @end
 
@@ -426,3 +428,5 @@
 @end
 
 */
+
+NS_ASSUME_NONNULL_END

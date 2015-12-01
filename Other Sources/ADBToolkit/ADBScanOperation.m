@@ -56,10 +56,13 @@ NSString * const ADBScanLatestMatchKey = @"ADBScanLatestMatch";
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     self.enumerator = nil;
     self.matchCallback = nil;
     self.matches = nil;
     [super dealloc];
+#pragma clang diagnostic pop
 }
 
 - (void) main

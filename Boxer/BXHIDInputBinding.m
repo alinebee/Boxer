@@ -30,8 +30,11 @@
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     self.outputBinding = nil;
     [super dealloc];
+#pragma clang diagnostic pop
 }
 
 - (void) processEvent: (ADBHIDEvent *)event

@@ -84,8 +84,11 @@
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     self.joystick = nil;
     [super dealloc];
+#pragma clang diagnostic pop
 }
 
 @end
@@ -170,8 +173,11 @@
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     self.axisName = nil;
     [super dealloc];
+#pragma clang diagnostic pop
 }
 
 - (NSString *)description
@@ -258,8 +264,11 @@
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     self.keyboard = nil;
     [super dealloc];
+#pragma clang diagnostic pop
 }
 
 - (NSString *)description
@@ -397,9 +406,12 @@
 
 - (void) dealloc
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     self.joystick = nil;
     self.axisName = nil;
     [super dealloc];
+#pragma clang diagnostic pop
 }
 
 - (NSString *)description

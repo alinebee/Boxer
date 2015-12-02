@@ -33,10 +33,10 @@
 
 NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
-//Boxer 1.3.x and below stored the games folder as a serialized alias record under this user defaults key.
+/// Boxer 1.3.x and below stored the games folder as a serialized alias record under this user defaults key.
 NSString * const BXGamesFolderAliasUserDefaultsKey = @"gamesFolder";
 
-//Modern versions of Boxer store the games folder as NSURL bookmark data under this user defaults key.
+/// Modern versions of Boxer store the games folder as NSURL bookmark data under this user defaults key.
 NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark";
 
 
@@ -45,21 +45,21 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 
 @interface BXAppController (BXGamesFolderPrivate)
 
-//The maximum size of artwork to generate.
-//This corresponds to Finder's own builtin max size, independent of hardware.
+/// The maximum size of artwork to generate.
+/// This corresponds to Finder's own builtin max size, independent of hardware.
 + (NSSize) _maxArtworkSize;
 
-//The size of shelf artwork to generate.
-//This is dependent on the Finder version and the current graphics chipset.
+/// The size of shelf artwork to generate.
+/// This is dependent on the Finder version and the current graphics chipset.
 - (NSSize) _shelfArtworkSize;
 
-//Callback for the 'we-couldnt-find-your-games-folder' sheet.
+/// Callback for the 'we-couldnt-find-your-games-folder' sheet.
 - (void) _gamesFolderPromptDidEnd: (NSAlert *)alert
 					   returnCode: (NSInteger)returnCode
 						   window: (NSWindow *)window;
 
-//Returns whether the specified path is a reserved system directory.
-//Used by validateGamesFolderURL:error:
+/// Returns whether the specified path is a reserved system directory.
+/// Used by validateGamesFolderURL:error:
 + (BOOL) _isReservedURL: (NSURL *)URL;
 
 @end
@@ -741,10 +741,10 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 	
 	if (window)
 	{
-		[alert beginSheetModalForWindow: window
-						  modalDelegate: self
-						 didEndSelector: @selector(_gamesFolderPromptDidEnd:returnCode:window:)
-							contextInfo: (__bridge void *)(window)];
+        [alert beginSheetModalForWindow: window
+                      completionHandler: ^(NSModalResponse returnCode) {
+                          [self _gamesFolderPromptDidEnd:alert returnCode:returnCode window:window];
+        }];
 	}
 	else
 	{

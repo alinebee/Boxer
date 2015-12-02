@@ -795,11 +795,13 @@
         else
             confirmation = [BXCloseAlert restartAlertWhileSessionIsEmulating: self];
         
-        NSDictionary *restartOptions = @{@"showLaunchPanel": @(showLaunchPanel)};
         [confirmation beginSheetModalForWindow: self.windowForSheet
-                                 modalDelegate: self
-                                didEndSelector: @selector(_restartConfirmationDidEnd:returnCode:contextInfo:)
-                                   contextInfo: (void *)restartOptions];
+                             completionHandler: ^(NSModalResponse returnCode) {
+                                 if (returnCode == NSAlertFirstButtonReturn)
+                                 {
+                                     [self restartShowingLaunchPanel: showLaunchPanel];
+                                 }
+                             }];
     }
     //If we're already at the DOS prompt then go ahead and restart already.
     else
@@ -807,20 +809,6 @@
         [self restartShowingLaunchPanel: showLaunchPanel];
     }    
 }
-
-- (void) _restartConfirmationDidEnd: (NSAlert *)alert
-                         returnCode: (NSInteger)returnCode
-                        contextInfo: (void *)contextInfo
-{
-    NSDictionary *restartOptions = (NSDictionary *)CFBridgingRelease(contextInfo);
-    if (returnCode == NSAlertFirstButtonReturn)
-    {
-        BOOL showLaunchPanel = [[restartOptions objectForKey: @"showLaunchPanel"] boolValue];
-        [self restartShowingLaunchPanel: showLaunchPanel];
-    }
-    //Retained back when we called beginSheetModalForWindow
-}
-
 
 - (IBAction) revertShadowedChanges: (id)sender
 {

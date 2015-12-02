@@ -28,20 +28,20 @@
 #pragma mark Properties
 
 //The dropzone panel, displayed initially when no import source has been selected 
-@property (retain, nonatomic) NSView *dropzonePanel;
+@property (strong, nonatomic) NSView *dropzonePanel;
 
 //The indeterminate progress panel shown while scanning a game folder for installers.
-@property (retain, nonatomic) NSView *loadingPanel;
+@property (strong, nonatomic) NSView *loadingPanel;
 
 //The choose-thine-installer panel, displayed if the chosen game source contains
 //installers to choose from.
-@property (retain, nonatomic) NSView *installerPanel;
+@property (strong, nonatomic) NSView *installerPanel;
 
 //The finalizing-gamebox panel, which shows the progress of the import operation.
-@property (retain, nonatomic) NSView *finalizingPanel;
+@property (strong, nonatomic) NSView *finalizingPanel;
 
 //The final gamebox panel, which displays the finished gamebox for the user to launch.
-@property (retain, nonatomic) NSView *finishedPanel;
+@property (strong, nonatomic) NSView *finishedPanel;
 
 
 //Recast NSWindowController's standard accessors so that we get our own classes

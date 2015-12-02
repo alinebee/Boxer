@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic, nullable) IBOutlet BXImportWindowController *controller;
 
 //The drop-down selector we populate with our installer program options
-@property (retain, nonatomic, nullable) IBOutlet NSPopUpButton *installerSelector;
+@property (strong, nonatomic, nullable) IBOutlet NSPopUpButton *installerSelector;
 
 //Whether we can show a menu option to let the user pick an installer from an open panel.
 //Will be NO if the source URL of the import is a disk image, rather than a folder.

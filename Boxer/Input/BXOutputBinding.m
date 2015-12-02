@@ -34,7 +34,7 @@
 
 + (id) binding
 {
-    return [[[self alloc] init] autorelease];
+    return [[self alloc] init];
 }
 
 - (void) applyInputValue: (float)value
@@ -81,15 +81,6 @@
 
 @implementation BXBaseEmulatedJoystickBinding
 @synthesize joystick = _joystick;
-
-- (void) dealloc
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
-    self.joystick = nil;
-    [super dealloc];
-#pragma clang diagnostic pop
-}
 
 @end
 
@@ -169,15 +160,6 @@
         self.polarity = kBXAxisPositive;
     }
     return self;
-}
-
-- (void) dealloc
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
-    self.axisName = nil;
-    [super dealloc];
-#pragma clang diagnostic pop
 }
 
 - (NSString *)description
@@ -260,15 +242,6 @@
     binding.keyboard = keyboard;
     binding.keyCode = keyCode;
     return binding;
-}
-
-- (void) dealloc
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
-    self.keyboard = nil;
-    [super dealloc];
-#pragma clang diagnostic pop
 }
 
 - (NSString *)description
@@ -362,8 +335,6 @@
 - (void) dealloc
 {
     [self _stopUpdating];
-    
-    [super dealloc];
 }
 
 @end
@@ -402,16 +373,6 @@
     binding.axisName = axisName;
     binding.ratePerSecond = ratePerSecond;
     return binding;
-}
-
-- (void) dealloc
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
-    self.joystick = nil;
-    self.axisName = nil;
-    [super dealloc];
-#pragma clang diagnostic pop
 }
 
 - (NSString *)description

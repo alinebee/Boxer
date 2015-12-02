@@ -60,12 +60,6 @@
 	return self;
 }
 
-- (void) dealloc
-{	
-    self.currentFrame = nil;
-	[super dealloc];
-}
-
 - (NSSize) resolution
 {
 	NSSize size = NSZeroSize;

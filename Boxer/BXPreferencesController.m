@@ -172,23 +172,6 @@ enum {
     [appController removeObserver: self forKeyPath: @"needsRestartForHotkeyCapture"];
     
 	[self.currentGamesFolderItem unbind: @"attributedTitle"];
-	
-    self.gamesFolderSelector = nil;
-    self.currentGamesFolderItem = nil;
-    
-    self.missingMT32ROMHelp = nil;
-    self.realMT32Help = nil;
-    self.MT32ROMOptions = nil;
-    self.MT32ROMDropzone = nil;
-    
-    self.filterGallery = nil;
-    
-    self.hotkeyCaptureToggle = nil;
-    self.hotkeyCaptureDescription = nil;
-    self.hotkeyCaptureExtraHelp = nil;
-    self.hotkeyCapturePermissionsButton = nil;
-    
-	[super dealloc];
 }
 
 

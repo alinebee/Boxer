@@ -144,10 +144,10 @@ typedef NS_ENUM(NSInteger, BXDriveType) {
 @property (readonly, nonatomic) BOOL isHardDisk;
 
 //A filesystem instance appropriate for the backing medium of this drive.
-@property (readonly, retain, nonatomic) id <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess> filesystem;
+@property (readonly, strong, nonatomic) id <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess> filesystem;
 
 //A localized human-readable title for the drive's type, for display in the UI.
-@property (readonly, nonatomic) NSString *localizedTypeDescription;
+@property (weak, readonly, nonatomic) NSString *localizedTypeDescription;
 
 
 #pragma mark - Class methods

@@ -16,7 +16,7 @@
 @interface BXScriptablePreferences : NSObject
 
 /// Boxer’s global preferences window.
-@property (readonly) NSWindow *window;
+@property (weak, readonly) NSWindow *window;
 
 /// The URL path to Boxer’s DOS Games folder.
 @property (copy) NSURL *gamesFolderURL;

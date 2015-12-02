@@ -19,7 +19,7 @@
 {
     NSDateFormatter *_formatter;
 }
-@property (retain, nonatomic) NSDateFormatter *formatter;
+@property (strong, nonatomic) NSDateFormatter *formatter;
 
 - (id) initWithDateFormatter: (NSDateFormatter *)formatter;
 @end
@@ -131,11 +131,11 @@
 
 //The NSAttributedString attributes to apply to the final text.
 //Defaults to the standard system font.
-@property (retain, nonatomic) NSMutableDictionary *textAttributes;
+@property (strong, nonatomic) NSMutableDictionary *textAttributes;
 
 //The NSAttributedString attributes to apply to the icons within the text.
 //Defaults to a baseline offset of -4.0.
-@property (retain, nonatomic) NSMutableDictionary *iconAttributes;
+@property (strong, nonatomic) NSMutableDictionary *iconAttributes;
 
 //The pixel size at which to display icons. Defaults to 16x16.
 @property (assign, nonatomic) NSSize iconSize;

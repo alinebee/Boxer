@@ -43,11 +43,6 @@
 	return self;
 }
 
-- (void) dealloc
-{
-	[self setWindow: nil];
-}
-
 #pragma mark -
 #pragma mark Key/value dispatch
 

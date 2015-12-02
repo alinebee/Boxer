@@ -23,12 +23,12 @@
 }
 
 //The dropzone within the dropzone panel
-@property (retain, nonatomic, nullable) IBOutlet BXImportDropzone *dropzone;
+@property (strong, nonatomic, nullable) IBOutlet BXImportDropzone *dropzone;
 
 //The progress indicator shown when scanning a game for installers.
 //(This now lives on a separate interstitial view and not the Dropzone
 //view, but I can't be bothered making a second controller for it.)
-@property (retain, nonatomic, nullable) IBOutlet BXBlueprintProgressIndicator *spinner;
+@property (strong, nonatomic, nullable) IBOutlet BXBlueprintProgressIndicator *spinner;
 
 //A reference to our window controller
 @property (assign, nonatomic, nullable) IBOutlet BXImportWindowController *controller;

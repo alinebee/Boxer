@@ -29,10 +29,10 @@
 
 //The relative paths of all DOS and Windows executables and DOSBox configuration files
 //discovered during scanning.
-@property (readonly, retain, nonatomic) NSArray<NSString*> *windowsExecutables;
-@property (readonly, retain, nonatomic) NSArray<NSString*> *DOSExecutables;
-@property (readonly, retain, nonatomic) NSArray<NSString*> *macOSApps;
-@property (readonly, retain, nonatomic) NSArray<NSString*> *DOSBoxConfigurations;
+@property (readonly, strong, nonatomic) NSArray<NSString*> *windowsExecutables;
+@property (readonly, strong, nonatomic) NSArray<NSString*> *DOSExecutables;
+@property (readonly, strong, nonatomic) NSArray<NSString*> *macOSApps;
+@property (readonly, strong, nonatomic) NSArray<NSString*> *DOSBoxConfigurations;
 
 //The path which the scanner recommends as the base path to import from.
 //This will usually be the same as the base path, but may point to a mounted
@@ -41,7 +41,7 @@
 
 //The profile of the game at the base path, used for discovery of additional installers.
 //If left unspecified, this will be autodetected during scanning.
-@property (readonly, retain, nonatomic) BXGameProfile *detectedProfile;
+@property (readonly, strong, nonatomic) BXGameProfile *detectedProfile;
 
 //Whether the game at the base path appears to be already installed.
 @property (readonly, nonatomic, getter=isAlreadyInstalled) BOOL alreadyInstalled;

@@ -45,10 +45,10 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Properties
 
 /// The currently-displayed panel.
-@property (assign, nonatomic, nullable) NSView *currentPanel;
+@property (weak, nonatomic, nullable) NSView *currentPanel;
 
 /// The view into which the current panel will be added.
-@property (retain, nonatomic) IBOutlet NSView *panelContainer;
+@property (strong, nonatomic) IBOutlet NSView *panelContainer;
 
 #pragma mark -
 #pragma mark Animation methods

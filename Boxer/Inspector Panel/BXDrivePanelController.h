@@ -29,22 +29,22 @@
 #pragma mark -
 #pragma mark Properties
 
-@property (retain, nonatomic) IBOutlet BXDriveList *driveList;
-@property (retain, nonatomic) IBOutlet NSSegmentedControl *driveControls;
-@property (retain, nonatomic) IBOutlet NSMenu *driveActionsMenu;
+@property (strong, nonatomic) IBOutlet BXDriveList *driveList;
+@property (strong, nonatomic) IBOutlet NSSegmentedControl *driveControls;
+@property (strong, nonatomic) IBOutlet NSMenu *driveActionsMenu;
 
 //The list of drives to display for the current session.
 //This is pre-filtered with driveFilterPredicate.
-@property (readonly, nonatomic) NSArray *drives;
+@property (weak, readonly, nonatomic) NSArray *drives;
 
 //The currently-selected drives, formatted for our array controller.
-@property (retain, nonatomic) NSIndexSet *selectedDriveIndexes;
+@property (strong, nonatomic) NSIndexSet *selectedDriveIndexes;
 
 //How our array controller should filter our drives.
-@property (readonly, nonatomic) NSPredicate *driveFilterPredicate;
+@property (weak, readonly, nonatomic) NSPredicate *driveFilterPredicate;
 
 //The currently-selected drives, formatted for our personal use.
-@property (readonly, nonatomic) NSArray *selectedDrives;
+@property (weak, readonly, nonatomic) NSArray *selectedDrives;
 
 
 #pragma mark -

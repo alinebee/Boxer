@@ -95,7 +95,7 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
     id <BXEmulatedJoystick> _joystick;
 }
 /// The joystick to which we send input signals.
-@property (retain, nonatomic) id <BXEmulatedJoystick> joystick;
+@property (strong, nonatomic) id <BXEmulatedJoystick> joystick;
 
 @end
 
@@ -154,7 +154,7 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 }
 
 //The keyboard to which we send key signals.
-@property (retain, nonatomic) BXEmulatedKeyboard *keyboard;
+@property (strong, nonatomic) BXEmulatedKeyboard *keyboard;
 
 //The key code to press/release when this binding is activated.
 @property (assign, nonatomic) BXDOSKeyCode keyCode;
@@ -229,7 +229,7 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 }
 
 //The joystick and axis this binding will increment/decrement.
-@property (retain, nonatomic) id <BXEmulatedJoystick> joystick;
+@property (strong, nonatomic) id <BXEmulatedJoystick> joystick;
 @property (copy, nonatomic) NSString *axisName;
 
 //Output axis values below this amount will be snapped to zero.

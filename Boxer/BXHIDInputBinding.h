@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 /// This binding will be sent 1.0 when the joystick button is pressed, and 0.0 when released.
-@property (retain, nonatomic) id <BXOutputBinding> outputBinding;
+@property (strong, nonatomic) id <BXOutputBinding> outputBinding;
 
 + (instancetype) bindingWithOutputBinding: (id <BXOutputBinding>)outputBinding;
 
@@ -53,11 +53,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// This binding will be sent the absolute axis value when the axis is positive,
 /// and 0.0 when the axis is centered or negative.
-@property (retain, nonatomic, nullable) id <BXOutputBinding> positiveBinding;
+@property (strong, nonatomic, nullable) id <BXOutputBinding> positiveBinding;
 
 /// This binding will be sent the absolute axis value when the axis is negative,
 /// and 0.0 when the axis is centered or positive.
-@property (retain, nonatomic, nullable) id <BXOutputBinding> negativeBinding;
+@property (strong, nonatomic, nullable) id <BXOutputBinding> negativeBinding;
 
 /// If <code>YES</code>, axis input will be flipped (meaning the negative binding will be triggered
 /// when the axis is positive, and vice-versa).

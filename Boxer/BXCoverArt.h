@@ -17,7 +17,7 @@
 	NSImage *sourceImage;
 }
 //The original image we will render into cover art
-@property (retain) NSImage *sourceImage;
+@property (strong) NSImage *sourceImage;
 
 
 #pragma mark -

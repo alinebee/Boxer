@@ -21,13 +21,13 @@
 /// How big a margin to leave between the edge of the scroller and the visible track
 @property (readonly) NSSize slotMargin;
 /// The color with which to fill the scroller track
-@property (readonly, assign) NSColor *slotFill;
+@property (readonly, weak) NSColor *slotFill;
 /// The inner shadow to give the scroller track
-@property (readonly, assign) NSShadow *slotShadow;
+@property (readonly, weak) NSShadow *slotShadow;
 /// The color with which to stroke the scroller knob (quiet you)
-@property (readonly, assign) NSColor *knobStroke;
+@property (readonly, weak) NSColor *knobStroke;
 /// The gradient with which to fill the scroller knob
-@property (readonly, assign) NSGradient *knobGradient;
+@property (readonly, weak) NSGradient *knobGradient;
 @end
 
 /// A recoloured variant for use in HUD-style panels.

@@ -23,9 +23,9 @@
 
 @interface BXLaunchPanelController : NSViewController <NSCollectionViewDelegate, NSTextFieldDelegate, BXLauncherItemDelegate>
 {
-    NSCollectionView *_launcherList;
-    NSScrollView *_launcherScrollView;
-    NSSearchField *_filter;
+    NSCollectionView *__weak _launcherList;
+    NSScrollView *__weak _launcherScrollView;
+    NSSearchField *__weak _filter;
     
     NSMutableArray *_filterKeywords;
     
@@ -45,15 +45,15 @@
     BOOL _shouldUpdateImmediately;
 }
 
-@property (assign, nonatomic) IBOutlet NSCollectionView *launcherList;
-@property (assign, nonatomic) IBOutlet NSScrollView *launcherScrollView;
-@property (assign, nonatomic) IBOutlet NSSearchField *filter;
+@property (weak, nonatomic) IBOutlet NSCollectionView *launcherList;
+@property (weak, nonatomic) IBOutlet NSScrollView *launcherScrollView;
+@property (weak, nonatomic) IBOutlet NSSearchField *filter;
 
 //An array of NSDictionaries for every item to display in the list.
-@property (readonly, retain, nonatomic) NSMutableArray *displayedRows;
+@property (readonly, strong, nonatomic) NSMutableArray *displayedRows;
 
 //An array of sanitised NSStrings derived from the contents of the search field. 
-@property (readonly, retain, nonatomic) NSMutableArray *filterKeywords;
+@property (readonly, strong, nonatomic) NSMutableArray *filterKeywords;
 
 #pragma mark - Actions
 
@@ -71,25 +71,25 @@
 @class BXLauncherItem;
 @interface BXLauncherList : NSCollectionView
 {
-    BXLauncherItem *_headingPrototype;
-    BXLauncherItem *_favoritePrototype;
+    BXLauncherItem *__weak _headingPrototype;
+    BXLauncherItem *__weak _favoritePrototype;
 }
 
-@property (assign, nonatomic) IBOutlet BXLauncherItem *headingPrototype;
-@property (assign, nonatomic) IBOutlet BXLauncherItem *favoritePrototype;
+@property (weak, nonatomic) IBOutlet BXLauncherItem *headingPrototype;
+@property (weak, nonatomic) IBOutlet BXLauncherItem *favoritePrototype;
 
 @end
 
 @class BXLauncherItemView;
 @interface BXLauncherItem : BXCollectionItem
 {
-    id <BXLauncherItemDelegate> _delegate;
+    id <BXLauncherItemDelegate> __unsafe_unretained _delegate;
     BOOL _launchable;
     NSMenu *_menu;
 }
-@property (assign, nonatomic) IBOutlet id <BXLauncherItemDelegate> delegate;
+@property (unsafe_unretained, nonatomic) IBOutlet id <BXLauncherItemDelegate> delegate;
 @property (assign, nonatomic, getter=isLaunchable) BOOL launchable;
-@property (retain, nonatomic) IBOutlet NSMenu *menu; //The context menu to display for this item.
+@property (strong, nonatomic) IBOutlet NSMenu *menu; //The context menu to display for this item.
 
 - (IBAction) openItemInDOS: (id)sender;
 - (IBAction) revealItemInFinder: (id)sender;
@@ -109,7 +109,7 @@
 }
 
 //Typecast to indicate the type of delegate this view expects.
-@property (assign, nonatomic) BXLauncherItem *delegate;
+@property (weak, nonatomic) BXLauncherItem *delegate;
 
 //Whether the mouse cursor is currently inside the view.
 @property (assign, nonatomic, getter=isMouseInside) BOOL mouseInside;

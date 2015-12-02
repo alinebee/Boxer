@@ -125,10 +125,6 @@ GLfloat viewportVerticesFlipped[8] = {
         CGLReleaseContext(_context);
         _context = NULL;
     }
-    
-    self.currentFrame = nil;
-    
-	[super dealloc];
 }
 
 

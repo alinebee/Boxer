@@ -20,8 +20,8 @@
 	NSButton *_useShelfAppearanceToggle;
 }
 
-@property (retain, nonatomic) IBOutlet NSButton *sampleGamesToggle;
-@property (retain, nonatomic) IBOutlet NSButton *useShelfAppearanceToggle;
+@property (strong, nonatomic) IBOutlet NSButton *sampleGamesToggle;
+@property (strong, nonatomic) IBOutlet NSButton *useShelfAppearanceToggle;
 
 //Returns a singleton instance, which loads the view from the NIB file the first time.
 + (id) controller;

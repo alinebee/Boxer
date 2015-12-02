@@ -60,7 +60,6 @@
 - (void) dealloc
 {
     self.delegate = nil;
-    [super dealloc];
 }
 @end
 
@@ -112,8 +111,6 @@
 		//Draw the glow last on top of everything else
 		if (innerGlow)
             [backgroundPath fillWithInnerShadow: innerGlow];
-		
-		[background release];
 	}
 }
 
@@ -163,7 +160,6 @@
 - (void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver: self];
-    [super dealloc];
 }
 
 - (void) drawRect: (NSRect)dirtyRect
@@ -192,8 +188,6 @@
         
         [shadowColor set];
         NSRectFill(bottomGroove);
-        
-        [background release];
 	}
 }
 @end

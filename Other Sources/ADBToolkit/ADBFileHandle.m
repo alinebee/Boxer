@@ -109,7 +109,7 @@
 
 @interface ADBAbstractHandle ()
 
-@property (retain, nonatomic) id handleCookie;
+@property (strong, nonatomic) id handleCookie;
 
 @end
 
@@ -619,7 +619,7 @@ int _ADBHandleClose(void *cookie)
 
 @interface ADBDataHandle ()
 
-@property (retain, nonatomic) id data;
+@property (strong, nonatomic) id data;
 @property (assign, nonatomic) long long offset;
 
 @end
@@ -773,7 +773,7 @@ int _ADBHandleClose(void *cookie)
 
 @interface ADBBlockHandle ()
 
-@property (retain, nonatomic) id <ADBReadable, ADBSeekable> sourceHandle;
+@property (strong, nonatomic) id <ADBReadable, ADBSeekable> sourceHandle;
 @property (assign, nonatomic) NSUInteger blockSize;
 @property (assign, nonatomic) NSUInteger blockLeadIn;
 @property (assign, nonatomic) NSUInteger blockLeadOut;
@@ -944,7 +944,7 @@ int _ADBHandleClose(void *cookie)
 
 @interface ADBSubrangeHandle ()
 
-@property (retain, nonatomic) id <ADBReadable, ADBSeekable> sourceHandle;
+@property (strong, nonatomic) id <ADBReadable, ADBSeekable> sourceHandle;
 @property (assign, nonatomic) NSRange range;
 
 @end
@@ -972,11 +972,6 @@ int _ADBHandleClose(void *cookie)
 - (void) close
 {
     [super close];
-    self.sourceHandle = nil;
-}
-
-- (void) dealloc
-{
     self.sourceHandle = nil;
 }
 

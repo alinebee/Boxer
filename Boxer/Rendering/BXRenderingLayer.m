@@ -19,8 +19,8 @@
 
 @interface BXRenderingLayer ()
 
-@property (retain, nonatomic) NSMutableArray *renderers;
-@property (retain, nonatomic) BXVideoFrame *currentFrame;
+@property (strong, nonatomic) NSMutableArray *renderers;
+@property (strong, nonatomic) BXVideoFrame *currentFrame;
 
 + (BOOL) contextSupportsAdvancedShaders: (CGLContextObj)context;
 + (Class) rendererClassForStyle: (BXRenderingStyle)style;
@@ -51,13 +51,6 @@
         self.renderers = [NSMutableArray arrayWithCapacity: 1];
     }
     return self;
-}
-
-- (void) dealloc
-{
-    self.renderers = nil;
-    self.currentFrame = nil;
-    [super dealloc];
 }
 
 
@@ -119,7 +112,7 @@
     for (Class rendererClass in renderersToTry)
     {
         NSError *loadError = nil;
-        BXBasicRenderer *renderer = [[[rendererClass alloc] initWithContext: context error: &loadError] autorelease];
+        BXBasicRenderer *renderer = [[rendererClass alloc] initWithContext: context error: &loadError];
         
         if (renderer)
         {

@@ -40,9 +40,9 @@
 @property (copy, nonatomic) NSString *volumeName;
 @property (assign, nonatomic) ADBISOFormat format;
 
-@property (retain, nonatomic) id <ADBReadable, ADBSeekable> handle;
+@property (strong, nonatomic) id <ADBReadable, ADBSeekable> handle;
 
-@property (retain, nonatomic) NSMutableDictionary *pathCache;
+@property (strong, nonatomic) NSMutableDictionary *pathCache;
 
 
 #pragma mark - Private helper class methods
@@ -132,7 +132,7 @@
 
 //The standard file attributes of this file.
 //Equivalent to the output of NSFileManager's attributesOfFileAtPath:.
-@property (readonly, nonatomic) NSDictionary *attributes;
+@property (weak, readonly, nonatomic) NSDictionary *attributes;
 
 //The image in which this file is located.
 @property (assign, nonatomic) ADBISOImage *parentImage;
@@ -172,7 +172,7 @@
     NSArray *_cachedSubentries;
 }
 //Populated by subrecordsWithError: the first time it is needed.
-@property (retain, nonatomic) NSArray *cachedSubentries;
+@property (strong, nonatomic) NSArray *cachedSubentries;
 
 //Returns an array of ADBISOFileEntry and ADBISODirectoryEntry objects
 //for all files within this directory (except the spurious . and .. entries.)

@@ -75,7 +75,7 @@ extern NSString * const ADBFileScanLastMatchKey;
 @property (assign, nonatomic) NSUInteger maxMatches;
 
 //The last path that was matched by the scan.
-@property (readonly, nonatomic) NSString *lastMatch;
+@property (weak, readonly, nonatomic) NSString *lastMatch;
 
 
 //Optional: only files whose paths (relative to basePath) match the specified predicate will be returned.

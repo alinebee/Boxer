@@ -12,6 +12,6 @@
 @interface BXDrive ()
 
 @property (readwrite, assign, nonatomic) BXDriveType type;
-@property (readwrite, retain, nonatomic) id <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess> filesystem;
+@property (readwrite, strong, nonatomic) id <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess> filesystem;
 
 @end

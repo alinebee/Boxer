@@ -74,16 +74,6 @@
 	return self;
 }
 
-- (void) dealloc
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
-    self.operations = nil;
-    
-	[super dealloc];
-#pragma clang diagnostic pop
-}
-
 #pragma mark -
 #pragma mark Running the operations
 

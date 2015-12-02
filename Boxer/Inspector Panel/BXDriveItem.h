@@ -27,31 +27,31 @@
 }
 
 #pragma mark - Outlet properties
-@property (retain, nonatomic) IBOutlet NSProgressIndicator *progressMeter;
-@property (retain, nonatomic) IBOutlet NSTextField *progressMeterLabel;
-@property (retain, nonatomic) IBOutlet NSImageView *icon;
-@property (retain, nonatomic) IBOutlet NSTextField *letterLabel;
-@property (retain, nonatomic) IBOutlet NSTextField *titleLabel;
-@property (retain, nonatomic) IBOutlet NSTextField *typeLabel;
-@property (retain, nonatomic) IBOutlet NSButton *toggleButton;
-@property (retain, nonatomic) IBOutlet NSButton *revealButton;
-@property (retain, nonatomic) IBOutlet NSButton *importButton;
-@property (retain, nonatomic) IBOutlet NSButton *cancelButton;
+@property (strong, nonatomic) IBOutlet NSProgressIndicator *progressMeter;
+@property (strong, nonatomic) IBOutlet NSTextField *progressMeterLabel;
+@property (strong, nonatomic) IBOutlet NSImageView *icon;
+@property (strong, nonatomic) IBOutlet NSTextField *letterLabel;
+@property (strong, nonatomic) IBOutlet NSTextField *titleLabel;
+@property (strong, nonatomic) IBOutlet NSTextField *typeLabel;
+@property (strong, nonatomic) IBOutlet NSButton *toggleButton;
+@property (strong, nonatomic) IBOutlet NSButton *revealButton;
+@property (strong, nonatomic) IBOutlet NSButton *importButton;
+@property (strong, nonatomic) IBOutlet NSButton *cancelButton;
 
 #pragma mark - Description properties
 
 //The drive to which this item corresponds. Derived automatically from representedObject.
-@property (readonly, nonatomic) BXDrive *drive;
+@property (weak, readonly, nonatomic) BXDrive *drive;
 
 //The icon to display for the drive we represent.
-@property (readonly, nonatomic) NSImage *driveImage;
+@property (weak, readonly, nonatomic) NSImage *driveImage;
 
 //The type description to display for our drive.
-@property (readonly, nonatomic) NSString *typeDescription;
+@property (weak, readonly, nonatomic) NSString *typeDescription;
 
 //The icon and tooltip to display on the insert/eject toggle.
-@property (readonly, nonatomic) NSImage *iconForToggle;
-@property (readonly, nonatomic) NSString *tooltipForToggle;
+@property (weak, readonly, nonatomic) NSImage *iconForToggle;
+@property (weak, readonly, nonatomic) NSString *tooltipForToggle;
 
 #pragma mark - Status properties
 

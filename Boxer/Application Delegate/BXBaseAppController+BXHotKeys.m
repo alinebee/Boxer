@@ -148,7 +148,7 @@
 - (void) prepareHotkeyTap
 {
     //Set up our keyboard event tap
-    self.hotkeySuppressionTap = [[[BXKeyboardEventTap alloc] init] autorelease];
+    self.hotkeySuppressionTap = [[BXKeyboardEventTap alloc] init];
     self.hotkeySuppressionTap.delegate = self;
     
     //When we first set up the tap at application startup, check if Boxer already has permission to capture hotkeys.
@@ -368,7 +368,7 @@
     hotkeyWarning.showsHelp = YES;
     hotkeyWarning.helpAnchor = @"spaces-shortcuts";
     
-    return [hotkeyWarning autorelease];
+    return hotkeyWarning;
 }
 
 

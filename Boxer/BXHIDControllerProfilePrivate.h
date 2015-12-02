@@ -56,7 +56,7 @@ extern NSString * const BXControllerProfileDPadDown;
 @interface BXHIDControllerProfile () <BXPeriodicOutputBindingDelegate>
 
 //Overridden to be settable in object constructor/destructor
-@property (retain, nonatomic) NSMutableDictionary *bindings;
+@property (strong, nonatomic) NSMutableDictionary *bindings;
 @property (assign, nonatomic) BXControllerStyle controllerStyle;
 
 

@@ -18,7 +18,7 @@
 
 
 @interface BXProgramPanelController ()
-@property (readwrite, retain, nonatomic) NSArray *panelExecutables;
+@property (readwrite, strong, nonatomic) NSArray *panelExecutables;
 @end
 
 @implementation BXProgramPanelController
@@ -32,20 +32,18 @@
 {
 	[NSThread cancelPreviousPerformRequestsWithTarget: self];
 	
-	[self setProgramList: nil],			[programList release];
-	[self setProgramScroller: nil],		[programScroller release];
-    [self setScanSpinner: nil],         [scanSpinner release];
+	[self setProgramList: nil];
+	[self setProgramScroller: nil];
+    [self setScanSpinner: nil];
 	
-	[self setDefaultProgramPanel: nil],         [defaultProgramPanel release];
-	[self setInitialDefaultProgramPanel: nil],  [initialDefaultProgramPanel release];
-	[self setProgramChooserPanel: nil],         [programChooserPanel release];
-	[self setNoProgramsPanel: nil],             [noProgramsPanel release];
-	[self setScanningForProgramsPanel: nil],    [scanningForProgramsPanel release];
+	[self setDefaultProgramPanel: nil];
+	[self setInitialDefaultProgramPanel: nil];
+	[self setProgramChooserPanel: nil];
+	[self setNoProgramsPanel: nil];
+	[self setScanningForProgramsPanel: nil];
     
-	[self setPanelExecutables: nil],	[panelExecutables release];
-    [self setLastActiveProgramPath: nil], [lastActiveProgramPath release];
-	
-	[super dealloc];
+	[self setPanelExecutables: nil];
+    [self setLastActiveProgramPath: nil];
 }
 
 - (NSString *) nibName	{ return @"ProgramPanel"; }
@@ -59,9 +57,6 @@
 
         [NSValueTransformer setValueTransformer: displayPath forName: @"BXProgramDisplayPath"];
         [NSValueTransformer setValueTransformer: fileName forName: @"BXDOSFilename"];
-        
-        [displayPath release];
-        [fileName release];
     }
 }
 
@@ -214,8 +209,6 @@
             [animation setViewAnimations: [NSArray arrayWithObject: fadeOut]];
             [animation setDuration: 0.25];
             [animation startAnimation];
-            
-            [animation release];
         }
         [previousPanel removeFromSuperview];
         [mainView setNeedsDisplay: YES];
@@ -361,7 +354,6 @@
 			
 			[programNames addObject: fileName];
 			[listedPrograms addObject: data];
-			[data release];
 		}
 	}
     
@@ -369,9 +361,6 @@
     //unnecessary redraws in the program panel.
     if (![[self panelExecutables] isEqualToArray: listedPrograms])
 	    [self setPanelExecutables: listedPrograms];
-	
-	[programNames release];
-	[listedPrograms release];
 }
 
 - (NSArray *) executableSortDescriptors
@@ -382,8 +371,7 @@
 																   ascending: YES
 																	selector: @selector(caseInsensitiveCompare:)];
 	
-    return @[[sortDefaultFirst autorelease],
-             [sortByFilename autorelease]];
+    return @[sortDefaultFirst, sortByFilename];
 }
 
 @end

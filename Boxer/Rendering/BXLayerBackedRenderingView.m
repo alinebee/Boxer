@@ -10,7 +10,7 @@
 
 @interface BXLayerBackedRenderingView ()
 
-@property (retain, nonatomic) BXRenderingLayer *layer;
+@property (strong, nonatomic) BXRenderingLayer *layer;
 
 //Returns the rectangular region of the view into which the specified frame will be drawn.
 //This will be equal to the view bounds if managesAspectRatio is NO; otherwise, it will

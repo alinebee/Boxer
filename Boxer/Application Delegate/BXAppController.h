@@ -28,7 +28,7 @@ enum {
 + (BOOL) otherBoxersActive;
 
 //A reference to the app's shared inspector panel controller, used for UI bindings.
-@property (readonly, nonatomic) BXInspectorController *inspectorController;
+@property (weak, readonly, nonatomic) BXInspectorController *inspectorController;
 
 #pragma mark -
 #pragma mark Opening documents

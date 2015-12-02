@@ -92,25 +92,6 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 - (void) dealloc
 {	
     [self _removeObservers];
-    
-    self.programPanelController = nil;
-    self.inputController = nil;
-    self.statusBarController = nil;
-    self.launchPanelController = nil;
-    self.panelWrapper = nil;
-    
-    self.inputView = nil;
-    self.renderingView = nil;
-    
-    self.programPanel = nil;
-    self.statusBar = nil;
-    self.launchPanel = nil;
-    self.loadingPanel = nil;
-    self.loadingSpinner = nil;
-    
-    self.autosaveNameBeforeFullScreen = nil;
-    
-	[super dealloc];
 }
 
 - (void) _addObservers
@@ -238,7 +219,6 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
             menuRep.title = toolbarItem.label;
             toolbarItem.view.menu = nil;
             toolbarItem.menuFormRepresentation = menuRep;
-            [menuRep release];
         }
         //Otherwise, synthesize a menu representation from the target-action of the toolbar item itself.
         else if (toolbarItem.action)
@@ -248,7 +228,6 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
             menuRep.action = toolbarItem.action;
             menuRep.title = toolbarItem.label;
             toolbarItem.menuFormRepresentation = menuRep;
-            [menuRep release];
         }
     }
     
@@ -1120,8 +1099,6 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
             if (involvesRenderingView && [self.renderingView respondsToSelector: @selector(viewAnimationDidEnd:)])
                 [self.renderingView viewAnimationDidEnd: animation];
             
-            [animation release];
-            
             //Once we're done sliding, restore the frames to what they were.
             [self.window disableFlushWindow];
             
@@ -1172,8 +1149,6 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
             
             if (involvesRenderingView && [self.renderingView respondsToSelector: @selector(viewAnimationDidEnd:)])
                 [self.renderingView viewAnimationDidEnd: animation];
-            
-            [animation release];
         }
         
         [[NSNotificationCenter defaultCenter] postNotificationName: BXDidFinishInterruptionNotification object: self];

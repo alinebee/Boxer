@@ -42,8 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
     NSToolbar *_toolbarForTabs;
     BOOL _animatesTabTransitionsWithFade;
 }
-@property (retain, nonatomic) IBOutlet NSTabView *tabView;
-@property (retain, nonatomic) IBOutlet NSToolbar *toolbarForTabs;
+@property (strong, nonatomic) IBOutlet NSTabView *tabView;
+@property (strong, nonatomic) IBOutlet NSToolbar *toolbarForTabs;
 
 //Whether to animate the switch between tabs with a fade-out as well as a resize.
 //NO by default, as this does not play nice with layer-backed views.

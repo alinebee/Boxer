@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// The operations within this set.
 /// These will be added to an operation queue only when this operation is started.
 /// After starting, it is not safe to modify this array.
-@property (retain, nonatomic) NSMutableArray<ADBOperation*> *operations;
+@property (strong, nonatomic) NSMutableArray<ADBOperation*> *operations;
 
 /// The maximum number of operations we should execute at once.
 /// Defaults to NSOperationQueueDefaultMaxConcurrentOperationCount.

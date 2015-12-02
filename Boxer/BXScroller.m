@@ -63,7 +63,7 @@
 	[slotShadow setShadowBlurRadius: 3];
 	[slotShadow setShadowColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f]];
     
-	return [slotShadow autorelease];
+	return slotShadow;
 }
 
 - (NSColor *) knobStroke
@@ -76,7 +76,7 @@
 	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.6f alpha: 1.0f]
 															 endingColor: [NSColor colorWithCalibratedWhite: 0.5f alpha: 1.0f]
 								];
-	return [knobGradient autorelease];
+	return knobGradient;
 }
 
 
@@ -218,7 +218,7 @@
 	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.5f alpha: 1.0f]
 															 endingColor: [NSColor colorWithCalibratedWhite: 0.4f alpha: 1.0f]
 								];
-	return [knobGradient autorelease];
+	return knobGradient;
 }
 
 @end

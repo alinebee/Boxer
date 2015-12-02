@@ -14,7 +14,7 @@
 {
 	NSCursor *originalCursor;
 }
-@property (retain) NSCursor *originalCursor;
+@property (strong) NSCursor *originalCursor;
 
 - (NSCursor *) cursorWithOpacity: (CGFloat)opacity;
 

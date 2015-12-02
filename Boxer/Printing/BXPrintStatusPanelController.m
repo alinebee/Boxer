@@ -36,13 +36,6 @@
     }
 }
 
-- (void) dealloc
-{
-    self.localizedPaperName = nil;
-    self.preview = nil;
-    [super dealloc];
-}
-
 
 #pragma mark -
 #pragma mark UI bindings
@@ -139,10 +132,10 @@
 
 @interface BXPrintPreview ()
 
-@property (retain, nonatomic) CALayer *currentPage;
-@property (retain, nonatomic) CALayer *previousPage;
-@property (retain, nonatomic) CALayer *paperFeed;
-@property (retain, nonatomic) CALayer *head;
+@property (strong, nonatomic) CALayer *currentPage;
+@property (strong, nonatomic) CALayer *previousPage;
+@property (strong, nonatomic) CALayer *paperFeed;
+@property (strong, nonatomic) CALayer *head;
 
 @property (assign, nonatomic) CGSize pageSize;
 @property (assign, nonatomic) CGSize dpi;
@@ -284,15 +277,8 @@
 
 - (void) dealloc
 {
-    self.currentPage = nil;
-    self.previousPage = nil;
-    self.paperFeed = nil;
-    self.head = nil;
-    
     CGImageRelease(_paperTexture);
     _paperTexture = NULL;
-    
-    [super dealloc];
 }
 
 - (void) drawLayer: (CALayer *)layer inContext: (CGContextRef)ctx

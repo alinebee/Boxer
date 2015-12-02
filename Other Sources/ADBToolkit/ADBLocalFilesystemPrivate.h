@@ -31,7 +31,7 @@
 @interface ADBLocalFilesystem () <NSFileManagerDelegate>
 
 ///Our own file manager for internal use.
-@property (retain, nonatomic) NSFileManager *manager;
+@property (strong, nonatomic) NSFileManager *manager;
 
 //A base implementation for copyItemAtPath:toPath:error: and moveItemAtPath:toPath:error:,
 //which share 95% of their logic.
@@ -54,8 +54,8 @@
 }
 
 @property (copy, nonatomic) NSURL *currentURL;
-@property (retain, nonatomic) NSDirectoryEnumerator *enumerator;
-@property (retain, nonatomic) ADBLocalFilesystem *filesystem;
+@property (strong, nonatomic) NSDirectoryEnumerator *enumerator;
+@property (strong, nonatomic) ADBLocalFilesystem *filesystem;
 
 - (instancetype) initWithURL: (NSURL *)localURL
        inFilesytem: (ADBLocalFilesystem *)filesystem

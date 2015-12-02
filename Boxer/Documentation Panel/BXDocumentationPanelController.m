@@ -15,13 +15,13 @@
 
 //The popover for this documentation panel. Created the first time it is needed.
 //Unused on 10.6, which does not support popovers.
-@property (retain, nonatomic) NSPopover *popover;
+@property (strong, nonatomic) NSPopover *popover;
 
 //The documentation browsers for our popover and window respectively.
 //Populated the first time the documentation list is displayed in either mode.
 //(These cannot be shared, as the two may be displayed at the same time.)
-@property (retain, nonatomic) BXDocumentationBrowser *popoverBrowser;
-@property (retain, nonatomic) BXDocumentationBrowser *windowBrowser;
+@property (strong, nonatomic) BXDocumentationBrowser *popoverBrowser;
+@property (strong, nonatomic) BXDocumentationBrowser *windowBrowser;
 
 
 //Resize the window/popover to accommodate the specified number of documentation items.
@@ -41,7 +41,7 @@
 
 + (BXDocumentationPanelController *) controller
 {
-    return [[[self alloc] initWithWindowNibName: @"DocumentationPanel"] autorelease];
+    return [[self alloc] initWithWindowNibName: @"DocumentationPanel"];
 }
 
 - (id) initWithWindow: (NSWindow *)window
@@ -57,11 +57,6 @@
 - (void) dealloc
 {
     self.session = nil;
-    self.popover = nil;
-    self.popoverBrowser = nil;
-    self.windowBrowser = nil;
-    
-    [super dealloc];
 }
 
 - (void) windowDidLoad
@@ -85,8 +80,7 @@
 {
     if (self.session != session)
     {
-        [_session release];
-        _session = [session retain];
+        _session = session;
         
         self.popoverBrowser.representedObject = session;
         self.windowBrowser.representedObject = session;
@@ -228,7 +222,7 @@
             self.popoverBrowser = [BXDocumentationBrowser browserForSession: session];
             self.popoverBrowser.delegate = self;
             
-            self.popover = [[[NSPopover alloc] init] autorelease];
+            self.popover = [[NSPopover alloc] init];
             //NSPopoverBehaviorSemitransient stays open when the application is inactive,
             //which allows files to be drag-dropped into the popover from Finder.
             self.popover.behavior = NSPopoverBehaviorSemitransient;

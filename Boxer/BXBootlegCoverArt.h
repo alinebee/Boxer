@@ -40,7 +40,7 @@
 {
 	NSString *title;
 }
-@property (retain) NSString *title;
+@property (strong) NSString *title;
 
 //Returns the font family name used for printing the title.
 + (NSString *) fontName;

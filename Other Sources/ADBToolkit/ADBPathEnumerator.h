@@ -51,7 +51,7 @@
 #pragma mark Properties
 
 /// The enumerator we use internally for iterating the directory contents.
-@property (readonly, retain, nonatomic) NSDirectoryEnumerator *enumerator;
+@property (readonly, strong, nonatomic) NSDirectoryEnumerator *enumerator;
 
 /// The base path to iterate. Should not be modified during iteration.
 @property (copy, nonatomic) NSString *basePath;
@@ -79,8 +79,8 @@
 
 
 /// Passthroughs for NSDirectoryEnumerator methods.
-@property (readonly, nonatomic) NSDictionary *fileAttributes;
-@property (readonly, nonatomic) NSDictionary *directoryAttributes;
+@property (weak, readonly, nonatomic) NSDictionary *fileAttributes;
+@property (weak, readonly, nonatomic) NSDictionary *directoryAttributes;
 
 
 #pragma mark -

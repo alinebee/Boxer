@@ -111,7 +111,7 @@ extern NSString * const ADBOperationIndeterminateKey;
 
 /// Arbitrary context info for this operation. Included in notification dictionaries
 /// for controlling contexts to use. Note that this is an NSObject and will be retained.
-@property (retain, nullable) id contextInfo;
+@property (strong, nullable) id contextInfo;
 
 /// Whether delegate and \c NSNotificationCenter notifications should be sent on the main
 /// thread or on the operation's current thread. Defaults to \c YES (the main thread).
@@ -143,7 +143,7 @@ extern NSString * const ADBOperationIndeterminateKey;
 
 /// Any showstopping error that occurred when performing the operation.
 /// If this is set, succeeded will be NO.
-@property (retain, nullable) NSError *error;
+@property (strong, nullable) NSError *error;
 
 @end
 

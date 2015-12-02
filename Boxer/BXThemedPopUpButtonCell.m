@@ -148,8 +148,6 @@
     
     [super drawTitle: formattedTitle withFrame: titleFrame inView: controlView];
     
-    [formattedTitle release];
-    
     return titleFrame;
 }
 
@@ -258,9 +256,8 @@
     [bottomArrow closePath];
     
     [topArrow appendBezierPath: bottomArrow];
-    [bottomArrow release];
     
-    return [topArrow autorelease]; 
+    return topArrow; 
 }
 
 - (NSBezierPath *) pullDownArrowForFrame: (NSRect)frame
@@ -302,7 +299,7 @@
     [arrow appendBezierPathWithPoints: points count: 3];
     [arrow closePath];
     
-    return [arrow autorelease];
+    return arrow;
 }
 
 - (void) drawArrowsWithFrame: (NSRect)frame inView: (NSView *)controlView

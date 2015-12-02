@@ -34,7 +34,7 @@ enum {
 {
     NSButton *programButton;
 }
-@property (retain, nonatomic) NSButton *programButton;
+@property (strong, nonatomic) NSButton *programButton;
 @end
 
 /// Overridden to fix button hover state behaviour when scrolling.

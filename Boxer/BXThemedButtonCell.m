@@ -242,7 +242,7 @@
                 break;
         }
         
-        path = [[[NSBezierPath alloc] init] autorelease];
+        path = [[NSBezierPath alloc] init];
         [path appendBezierPathWithOvalInRect: dotFrame];
         
         //Indicates to the drawing context that this must be filled,
@@ -260,7 +260,7 @@
     {
 		case NSMixedState:
             {
-                path = [[[NSBezierPath alloc] init] autorelease];
+                path = [[NSBezierPath alloc] init];
                 NSPoint pointsMixed[2];
                 
                 pointsMixed[0] = NSMakePoint(NSMinX(frame) + 3, NSMidY(frame));
@@ -274,7 +274,7 @@
 			
 		case NSOnState:
             {
-                path = [[[NSBezierPath alloc] init] autorelease];
+                path = [[NSBezierPath alloc] init];
                 NSPoint points[4];
                 
                 points[0] = NSMakePoint(NSMinX(frame) + 3, NSMidY(frame) - 2);

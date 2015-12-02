@@ -121,27 +121,27 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 
 /// Returns a dictionary of gamebox metadata loaded from Boxer.plist.
 /// Keys in this dictionary also be retrieved with gameInfoForKey:, and set with setGameInfo:forKey:.
-@property (readonly, retain, nonatomic, nullable) NSDictionary *gameInfo;
+@property (readonly, strong, nonatomic, nullable) NSDictionary *gameInfo;
 
 /// The name of the game, suitable for display. This is the gamebox's filename minus any ".boxer" extension.
-@property (readonly, nonatomic) NSString *gameName;
+@property (weak, readonly, nonatomic) NSString *gameName;
 
 /// The unique identifier of this game.
 @property (copy, nonatomic) NSString *gameIdentifier;
 
 /// URLs to bundled drives and images of the specified types.
-@property (readonly, nonatomic) NSArray<NSURL*> *hddVolumeURLs;
-@property (readonly, nonatomic) NSArray<NSURL*> *cdVolumeURLs;
-@property (readonly, nonatomic) NSArray<NSURL*> *floppyVolumeURLs;
+@property (weak, readonly, nonatomic) NSArray<NSURL*> *hddVolumeURLs;
+@property (weak, readonly, nonatomic) NSArray<NSURL*> *cdVolumeURLs;
+@property (weak, readonly, nonatomic) NSArray<NSURL*> *floppyVolumeURLs;
 
 /// An array of drives bundled inside this gamebox, ordered by drive letter and filename.
-@property (readonly, nonatomic) NSArray *bundledDrives;
+@property (weak, readonly, nonatomic) NSArray *bundledDrives;
 
 /// Returns the URL at which the configuration file is stored (which may not yet exist.)
-@property (readonly, nonatomic) NSURL *configurationFileURL;
+@property (weak, readonly, nonatomic) NSURL *configurationFileURL;
 
 /// Returns the URL of the target program saved under Boxer 1.3.x and below.
-@property (readonly, nonatomic) NSURL *legacyTargetURL;
+@property (weak, readonly, nonatomic) NSURL *legacyTargetURL;
 
 /// Whether the emulation should finish once the default launcher exits,
 /// rather than returning to the DOS prompt. No longer supported.
@@ -152,11 +152,11 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 @property (copy, nonatomic) NSImage *coverArt;
 
 /// Program launchers for this gamebox, displayed as favorites in the launch panel.
-@property (readonly, nonatomic) NSArray *launchers;
+@property (weak, readonly, nonatomic) NSArray *launchers;
 
 /// The default launcher for this gamebox, which should be launched the first time the gamebox is run.
 /// This will be nil if the gamebox has no default launcher.
-@property (readonly, nonatomic) NSDictionary *defaultLauncher;
+@property (weak, readonly, nonatomic) NSDictionary *defaultLauncher;
 
 /// The index in the launchers array of the default launcher.
 /// Will be NSNotFound if no default launcher has been set.

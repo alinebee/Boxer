@@ -51,7 +51,7 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 
 + (id) frameWithSize: (NSSize)targetSize depth: (NSUInteger)depth
 {
-	return [[[self alloc] initWithSize: targetSize depth: depth] autorelease];
+	return [[self alloc] initWithSize: targetSize depth: depth];
 }
 
 - (id) initWithSize: (NSSize)targetSize depth: (NSUInteger)depth
@@ -67,12 +67,6 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 		_frameData = [[NSMutableData alloc] initWithLength: requiredLength];
 	}
 	return self;
-}
-
-- (void) dealloc
-{
-	[_frameData release], _frameData = nil;
-	[super dealloc];
 }
 
 - (NSUInteger) pitch

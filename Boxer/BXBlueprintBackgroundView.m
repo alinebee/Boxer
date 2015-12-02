@@ -58,8 +58,6 @@
 	[lighting drawFromCenter: startPoint radius: startRadius
 					toCenter: endPoint radius: endRadius
 					 options: NSGradientDrawsBeforeStartingLocation | NSGradientDrawsAfterEndingLocation];
-	
-	[lighting release];	
 }
 
 - (void) _drawShadowInRect: (NSRect)dirtyRect
@@ -73,7 +71,6 @@
 															  endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.0f]];
 		
 		[topShadow drawInRect: shadowRect angle: 270.0f];
-		[topShadow release];
 	}
 }
 

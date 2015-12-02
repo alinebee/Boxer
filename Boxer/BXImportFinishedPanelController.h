@@ -24,13 +24,13 @@
 @property (assign, nonatomic) IBOutlet BXImportWindowController *controller;
 
 /// The image well that displays the gamebox icon.
-@property (retain, nonatomic) IBOutlet BXImportIconDropzone *iconView;
+@property (strong, nonatomic) IBOutlet BXImportIconDropzone *iconView;
 
 /// The text field that allows the gamebox's name to be edited.
-@property (retain, nonatomic) IBOutlet NSTextField *nameField;
+@property (strong, nonatomic) IBOutlet NSTextField *nameField;
 
 /// The gamebox’s icon itself.
-@property (retain, nonatomic) NSImage *gameboxIcon;
+@property (strong, nonatomic) NSImage *gameboxIcon;
 
 /// Reveal the newly-minted gamebox in Finder.
 - (IBAction) revealGamebox: (id)sender;

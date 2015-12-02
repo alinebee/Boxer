@@ -11,7 +11,7 @@
 
 @interface BXSteppedShaderRenderer ()
 
-@property (retain, nonatomic) NSMutableArray *shaderSets;
+@property (strong, nonatomic) NSMutableArray *shaderSets;
 
 //Returns the set of shaders most appropriate for the specified frame and viewport.
 - (NSArray *) _shadersForFrame: (BXVideoFrame *)frame scaledToViewport: (CGRect)viewport;
@@ -69,7 +69,6 @@
     }
     else
     {
-        [self release];
         return nil;
     }
     return self;
@@ -82,7 +81,6 @@
         free(_scales);
         _scales = NULL;
     }
-    [super dealloc];
 }
 
 - (void) tearDownContext

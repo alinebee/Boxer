@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// All logical paths and URLs will be resolved relative to this location,
 /// and the filesystem will not provide access to locations outside of this
 /// root folder.
-@property (readonly, copy, nonatomic) NSURL *baseURL;
+@property (readonly, copy, nonatomic, nullable) NSURL *baseURL;
 
 @end
 
@@ -56,10 +56,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ADBFilesystemBase ()
 
 /// An array of represented URLs sorted by length, used for logical URL resolution.
-@property (retain, nonatomic) NSMutableArray<NSURL*> *mutableRepresentedURLs;
+@property (strong, nonatomic) NSMutableArray<NSURL*> *mutableRepresentedURLs;
 
 /// Overridden to be read-writable.
-@property (copy, nonatomic) NSURL *baseURL;
+@property (copy, nonatomic, nullable) NSURL *baseURL;
 
 @end
 

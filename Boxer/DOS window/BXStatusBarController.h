@@ -20,13 +20,13 @@ enum {
 
 @interface BXStatusBarController : NSViewController
 
-@property (assign, nonatomic) IBOutlet NSSegmentedControl *statusBarControls;
-@property (assign, nonatomic) IBOutlet NSTextField *notificationMessage;
-@property (assign, nonatomic) IBOutlet NSButton *mouseLockButton;
-@property (assign, nonatomic) IBOutlet NSView *volumeControls;
+@property (weak, nonatomic) IBOutlet NSSegmentedControl *statusBarControls;
+@property (weak, nonatomic) IBOutlet NSTextField *notificationMessage;
+@property (weak, nonatomic) IBOutlet NSButton *mouseLockButton;
+@property (weak, nonatomic) IBOutlet NSView *volumeControls;
 
 //The window controller for the window containing this statusbar
-@property (readonly, nonatomic) BXDOSWindowController *controller;
+@property (weak, readonly, nonatomic) BXDOSWindowController *controller;
 
 //Processes the selection/deselection of segments in the segmented button.
 //Called via statusBarControl's action.

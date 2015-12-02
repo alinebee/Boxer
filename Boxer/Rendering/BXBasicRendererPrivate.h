@@ -32,10 +32,10 @@ extern GLfloat viewportVerticesFlipped[8];
 @interface BXBasicRenderer ()
 
 //Redefined to allow reading and writing.
-@property (readwrite, retain) BXVideoFrame *currentFrame;
+@property (readwrite, strong) BXVideoFrame *currentFrame;
 
 //The texture into which we draw video frames.
-@property (retain) ADBTexture2D *frameTexture;
+@property (strong) ADBTexture2D *frameTexture;
 
 //The texture type we use for frame textures. Either GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE.
 @property (readonly, nonatomic) GLenum frameTextureType;
@@ -77,7 +77,7 @@ extern GLfloat viewportVerticesFlipped[8];
 @interface BXSupersamplingRenderer ()
 
 //The texture into which we render for supersampling.
-@property (retain) ADBTexture2D *supersamplingBufferTexture;
+@property (strong) ADBTexture2D *supersamplingBufferTexture;
 
 //The texture type we use for buffer textures. Either GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE.
 @property (readonly, nonatomic) GLenum bufferTextureType;
@@ -113,12 +113,12 @@ extern GLfloat viewportVerticesFlipped[8];
 @interface BXShaderRenderer ()
 
 //The shader programs we are currently rendering with.
-@property (retain, nonatomic) NSArray *shaders;
+@property (strong, nonatomic) NSArray *shaders;
 
 //The secondary buffer texture we shall use when rendering with shaders.
 //(When rendering with a series of shaders, we bounce back and forth between
 //our two buffer textures.)
-@property (retain, nonatomic) ADBTexture2D *auxiliaryBufferTexture;
+@property (strong, nonatomic) ADBTexture2D *auxiliaryBufferTexture;
 
 //Called during _renderFrame: to check whether to render with shaders
 //or fall back on supersampled/direct rendering.

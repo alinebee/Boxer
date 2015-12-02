@@ -17,7 +17,7 @@
 
 @interface BXDOSWindowBackgroundView ()
 
-@property (retain, nonatomic) NSBitmapImageRep *snapshot;
+@property (strong, nonatomic) NSBitmapImageRep *snapshot;
 
 //Separate functions for drawing each component of the view, called during drawRect:.
 //These should not be called directly: they are intended for overriding by subclasses.

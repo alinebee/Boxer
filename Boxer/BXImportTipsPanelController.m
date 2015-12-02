@@ -18,9 +18,8 @@
 
 - (void) dealloc
 {
-	[self setFinishImportingPanel: nil],[finishImportingPanel release];
-	[self setInstallerTipsPanel: nil],	[installerTipsPanel release];
-	[super dealloc];
+	[self setFinishImportingPanel: nil];
+	[self setInstallerTipsPanel: nil];
 }
 
 - (void) syncActivePanel

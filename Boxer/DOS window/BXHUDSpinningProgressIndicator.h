@@ -15,6 +15,6 @@
     NSShadow *_dropShadow;
 }
 
-@property (retain, nonatomic) NSShadow *dropShadow;
+@property (strong, nonatomic) NSShadow *dropShadow;
 
 @end

@@ -63,9 +63,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (void) dealloc
 {
-    self.currentFrame = nil;
     self.renderer = nil;
-	[super dealloc];
 }
 
 
@@ -126,7 +124,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     for (Class rendererClass in renderersToTry)
     {
         NSError *loadError = nil;
-        BXBasicRenderer *renderer = [[[rendererClass alloc] initWithContext: context error: &loadError] autorelease];
+        BXBasicRenderer *renderer = [[rendererClass alloc] initWithContext: context error: &loadError];
         if (renderer)
             return renderer;
         else
@@ -352,8 +350,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
             //Tell the old renderer to dispose of its assets immediately.
             [self.renderer tearDownContext];
             
-            [_renderer release];
-            _renderer = [renderer retain];
+            _renderer = renderer;
         
             self.renderer.delegate = self;
         

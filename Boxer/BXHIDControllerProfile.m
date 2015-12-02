@@ -91,9 +91,9 @@ static NSMutableArray *_profileClasses = nil;
 {
 	Class profileClass = [self profileClassForDevice: device];
 	
-	return [[[profileClass alloc] initWithHIDDevice: device
+	return [[profileClass alloc] initWithHIDDevice: device
                                    emulatedJoystick: joystick
-                                           keyboard: keyboard] autorelease];
+                                           keyboard: keyboard];
 }
 
 
@@ -122,15 +122,6 @@ static NSMutableArray *_profileClasses = nil;
         [self generateBindings];
 	}
 	return self;
-}
-
-- (void) dealloc
-{
-    self.bindings = nil;
-    self.device = nil;
-    self.emulatedJoystick = nil;
-    
-	[super dealloc];
 }
 
 

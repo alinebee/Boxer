@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Properties
 
 /// The task we will be running.
-@property (retain) NSTask *task;
+@property (strong) NSTask *task;
 
 /// The interval at which to check the progress of the task and issue progress updates.
 /// The operation's running time will roughly be a multiple of this interval.

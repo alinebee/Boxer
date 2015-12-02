@@ -100,7 +100,7 @@ typedef NS_ENUM(NSInteger, BXHerculesTintMode) {
 @property (assign, nonatomic) BXEmulator *emulator;
 
 //The framebuffer we render our frames into.
-@property (retain, nonatomic) BXVideoFrame *currentFrame;
+@property (strong, nonatomic) BXVideoFrame *currentFrame;
 
 //The current rendering style as a DOSBox filter type constant.
 @property (assign, nonatomic) BXFilterType filterType;

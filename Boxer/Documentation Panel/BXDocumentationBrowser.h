@@ -51,13 +51,13 @@
 //An array of criteria for how the documentation files should be sorted in the UI.
 //Documentation will be sorted by type and then by name, to group similar types
 //of documentation files together.
-@property (readonly, nonatomic) NSArray *sortCriteria;
+@property (weak, readonly, nonatomic) NSArray *sortCriteria;
 
 //The currently selected documentation items. Normally, only one item can be selected at a time.
-@property (retain, nonatomic) NSIndexSet *documentationSelectionIndexes;
+@property (strong, nonatomic) NSIndexSet *documentationSelectionIndexes;
 
 //An array of the currently-selected documentation items.
-@property (readonly, nonatomic) NSArray *selectedDocumentationURLs;
+@property (weak, readonly, nonatomic) NSArray *selectedDocumentationURLs;
 
 //The ideal size for displaying the browser without clipping.
 //This varies based on the number of documentation items and the length of the title.
@@ -65,7 +65,7 @@
 
 //The text that will be displayed in the help text label at the foot of the view.
 //Changes depending on how many documentation items there are and whether adding new documentation is possible.
-@property (readonly, nonatomic) NSString *helpText;
+@property (weak, readonly, nonatomic) NSString *helpText;
 
 //Whether we are able to add or remove documentation from the gamebox.
 //This is determined from the locked status of the gamebox,
@@ -165,11 +165,11 @@
 //The icon for the documentation file.
 //This will initially be the Finder file icon, but will be replaced with a Spotlight image preview
 //asynchronously.
-@property (retain, nonatomic) NSImage *icon;
+@property (strong, nonatomic) NSImage *icon;
 
 //The display name of the documentation file.
 //This will be the filename of the documentation file sans extension.
-@property (readonly, nonatomic) NSString *displayName;
+@property (weak, readonly, nonatomic) NSString *displayName;
 
 @end
 

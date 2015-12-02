@@ -29,7 +29,7 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMType";
 #pragma mark Private method declarations
 
 @interface BXEmulatedMT32 ()
-@property (retain, nonatomic) NSError *synthError;
+@property (strong, nonatomic) NSError *synthError;
 
 - (BOOL) _prepareMT32EmulatorWithError: (NSError **)outError;
 
@@ -200,8 +200,7 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMType";
         
         if (![self _prepareMT32EmulatorWithError: outError])
         {
-            [self release];
-            self = nil;
+            return nil;
         }
     }
     return self;
@@ -242,12 +241,6 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMType";
 - (void) dealloc
 {
     [self close];
-    
-    self.synthError = nil;
-    self.PCMROMURL = nil;
-    self.controlROMURL = nil;
-    
-    [super dealloc];
 }
 
 

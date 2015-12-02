@@ -61,7 +61,7 @@ extern NSString * const ADBHIDDeviceKey;
 
 //The devices enumerated by this input manager,
 //matching the criteria specified to observeDevicesMatching:
-@property (readonly, nonatomic) NSArray *matchedDevices;
+@property (weak, readonly, nonatomic) NSArray *matchedDevices;
 
 //This delegate will receive messages directly whenever devices are added or removed.
 @property (assign, nonatomic, nullable) id <ADBHIDMonitorDelegate> delegate;

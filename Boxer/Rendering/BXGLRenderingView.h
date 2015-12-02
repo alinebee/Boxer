@@ -37,7 +37,7 @@
     BOOL _isLowSpecGPU;
 }
 
-@property (retain, nonatomic) BXBasicRenderer *renderer;
+@property (strong, nonatomic) BXBasicRenderer *renderer;
 @property (assign, nonatomic) BXRenderingStyle renderingStyle;
 
 @property (assign, nonatomic) BOOL managesViewport;

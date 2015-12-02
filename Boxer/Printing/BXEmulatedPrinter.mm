@@ -68,8 +68,8 @@ enum {
 #pragma mark Internal properties
 
 //Overridden to make them read-write internally.
-@property (retain, nonatomic) NSMutableDictionary *textAttributes;
-@property (retain, nonatomic) BXPrintSession *currentSession;
+@property (strong, nonatomic) NSMutableDictionary *textAttributes;
+@property (strong, nonatomic) BXPrintSession *currentSession;
 
 //The effective pitch in characters-per-inch, counting the current font settings.
 @property (readonly, nonatomic) double effectivePitch;
@@ -85,7 +85,7 @@ enum {
 //is active, in which case it will be doubled also.
 @property (readonly, nonatomic) double effectiveLetterSpacing;
 
-@property (retain, nonatomic) NSMutableData *bitmapData;
+@property (strong, nonatomic) NSMutableData *bitmapData;
 
 
 #pragma mark -
@@ -272,15 +272,6 @@ enum {
         //which is only called once printing support has actually been requested.
     }
     return self;
-}
-
-- (void) dealloc
-{
-    self.currentSession = nil;
-    self.textAttributes = nil;
-    self.bitmapData = nil;
-    
-    [super dealloc];
 }
 
 
@@ -968,7 +959,7 @@ enum {
 
 - (void) _startNewPrintSession
 {
-    self.currentSession = [[[BXPrintSession alloc] init] autorelease];
+    self.currentSession = [[BXPrintSession alloc] init];
     
     if ([self.delegate respondsToSelector: @selector(printer:willBeginSession:)])
     {

@@ -177,7 +177,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
     dispatch_once(&onceToken, ^{
         NSSet *imageTypes	= [BXFileTypes mountableImageTypes];
         NSSet *folderTypes	= [self preferredMountPointTypes];
-        types = [[imageTypes setByAddingObjectsFromSet: folderTypes] retain];
+        types = [imageTypes setByAddingObjectsFromSet: folderTypes];
     });
 	return types;
 }
@@ -673,7 +673,7 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 	NSUInteger optionKeyDown = ([NSApp currentEvent].modifierFlags & NSAlternateKeyMask) == NSAlternateKeyMask;
 	if (optionKeyDown) return YES;
 
-	NSMutableArray *drivesInUse = [[[NSMutableArray alloc] initWithCapacity: selectedDrives.count] autorelease];
+	NSMutableArray *drivesInUse = [[NSMutableArray alloc] initWithCapacity: selectedDrives.count];
 	for (BXDrive *drive in selectedDrives)
 	{
         //If the drive is importing, refuse to unmount/dequeue it altogether.
@@ -704,9 +704,8 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
 		[alert beginSheetModalForWindow: self.windowForDriveSheet
 						  modalDelegate: self
 						 didEndSelector: @selector(drivesInUseAlertDidEnd:returnCode:contextInfo:)
-							contextInfo: (__bridge void *)([contextInfo retain])];
+							contextInfo: (__bridge void *)(contextInfo)];
 
-        [alert release];
         
 		return NO;
 	}
@@ -740,7 +739,6 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
         }
     }
     //Release the context dictionary that was previously retained in the beginSheetModalForWindow: call.
-	[contextInfo release];
 }
 
 - (BOOL) validateDriveURL: (NSURL **)ioValue
@@ -2167,7 +2165,6 @@ NSString * const BXGameStateEmulatorVersionKey = @"BXEmulatorVersion";
                                                                   fromSender: self
                                                                 onActivation: activationHandler];
             
-            [notification release];
         }
 	}
     

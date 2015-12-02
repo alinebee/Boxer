@@ -24,10 +24,10 @@
     BOOL _needsHelpLinksRefresh;
     BOOL _needsSessionDocsRefresh;
 }
-@property (retain, nonatomic) IBOutlet NSMenuItem *mobygamesItem;
-@property (retain, nonatomic) IBOutlet NSMenuItem *replacementDocsItem;
-@property (retain, nonatomic) IBOutlet NSMenuItem *helpLinksDivider;
-@property (retain, nonatomic) IBOutlet NSMenuItem *documentationDivider;
+@property (strong, nonatomic) IBOutlet NSMenuItem *mobygamesItem;
+@property (strong, nonatomic) IBOutlet NSMenuItem *replacementDocsItem;
+@property (strong, nonatomic) IBOutlet NSMenuItem *helpLinksDivider;
+@property (strong, nonatomic) IBOutlet NSMenuItem *documentationDivider;
 
 //The array of sort descriptors we use to order documentation in the doc list.
 //These are ordered by extension and then by filename.

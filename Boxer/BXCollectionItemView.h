@@ -30,7 +30,7 @@
 @property (assign, nonatomic) IBOutlet NSCollectionViewItem *delegate;
 
 //The view prototype we were copied from.
-@property (readonly, nonatomic) NSView *prototype;
+@property (weak, readonly, nonatomic) NSView *prototype;
 
 //Called by BXCollectionItem when the item's selected status changes.
 //By default, flags the view as needing to be displayed.

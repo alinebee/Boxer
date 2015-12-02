@@ -84,14 +84,14 @@ typedef NS_ENUM(NSInteger, ADBHIDPOVSwitchDirection) {
 @property (assign, nonatomic) ADBHIDEventType type;
 
 //The device on which the element that triggered the event is located.
-@property (retain, nonatomic) DDHidDevice *device;
+@property (strong, nonatomic) DDHidDevice *device;
 
 //The element that triggered the event.
-@property (retain, nonatomic) DDHidElement *element;
+@property (strong, nonatomic) DDHidElement *element;
 
 //The stick on which the element that triggered the event is located.
 //Only relevant for joystick events.
-@property (retain, nonatomic) DDHidJoystickStick *stick;
+@property (strong, nonatomic) DDHidJoystickStick *stick;
 
 //The order of the stick in the device's enumeration order.
 //Only relevant for joystick events.

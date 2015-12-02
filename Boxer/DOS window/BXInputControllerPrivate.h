@@ -51,18 +51,18 @@
 #pragma mark Internal properties
 
 //Make the available types internally modifiable
-@property (readwrite, retain, nonatomic) NSArray *availableJoystickTypes;
+@property (readwrite, strong, nonatomic) NSArray *availableJoystickTypes;
 
-@property (retain, nonatomic) BXCursorFadeAnimation *cursorFade;
-@property (retain, nonatomic) NSMutableDictionary *controllerProfiles;
+@property (strong, nonatomic) BXCursorFadeAnimation *cursorFade;
+@property (strong, nonatomic) NSMutableDictionary *controllerProfiles;
 
 #pragma mark -
 #pragma mark Convenience accessors
 
-@property (readonly, nonatomic) BXDOSWindowController *windowController;
-@property (readonly, nonatomic) BXEmulatedKeyboard *emulatedKeyboard;
-@property (readonly, nonatomic) BXEmulatedMouse *emulatedMouse;
-@property (readonly, nonatomic) id <BXEmulatedJoystick> emulatedJoystick;
+@property (weak, readonly, nonatomic) BXDOSWindowController *windowController;
+@property (weak, readonly, nonatomic) BXEmulatedKeyboard *emulatedKeyboard;
+@property (weak, readonly, nonatomic) BXEmulatedMouse *emulatedMouse;
+@property (unsafe_unretained, readonly, nonatomic) id <BXEmulatedJoystick> emulatedJoystick;
 
 
 #pragma mark -

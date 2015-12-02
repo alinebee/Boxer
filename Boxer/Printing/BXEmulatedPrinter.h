@@ -293,7 +293,7 @@ typedef enum {
 
 //The current print session that the printer is working on.
 //Will be nil before the printer has received anything to print.
-@property (readonly, retain, nonatomic, nullable) BXPrintSession *currentSession;
+@property (readonly, strong, nonatomic, nullable) BXPrintSession *currentSession;
 
 //The standard page size in inches. Defaults to US Letter (8.5 x 11").
 @property (assign, nonatomic) NSSize defaultPageSize;

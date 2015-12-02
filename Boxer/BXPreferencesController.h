@@ -31,42 +31,42 @@
 }
 
 /// The filter gallery view from which the user can choose the active rendering style.
-@property (retain, nonatomic) IBOutlet BXFilterGallery *filterGallery;
+@property (strong, nonatomic) IBOutlet BXFilterGallery *filterGallery;
 
 /// The drop-down selector from which the user can choose the location of their games folder.
-@property (retain, nonatomic) IBOutlet NSPopUpButton *gamesFolderSelector;
+@property (strong, nonatomic) IBOutlet NSPopUpButton *gamesFolderSelector;
 
 /// The menu item in the drop-down games folder selector that corresponds to the current games folder.
 /// The preferences controller keeps the title of this menu item up-to-date whenever the games folder is changed.
-@property (retain, nonatomic) IBOutlet NSMenuItem *currentGamesFolderItem;
+@property (strong, nonatomic) IBOutlet NSMenuItem *currentGamesFolderItem;
 
 /// The shelf dropzone onto which the user can drop MT-32 ROMs to install them.
-@property (retain, nonatomic) IBOutlet BXMT32ROMDropzone *MT32ROMDropzone;
+@property (strong, nonatomic) IBOutlet BXMT32ROMDropzone *MT32ROMDropzone;
 
 /// The how-to-find-ROMs instructions shown in the Audio panel when no ROMs have been installed yet.
-@property (retain, nonatomic) IBOutlet NSView *missingMT32ROMHelp;
+@property (strong, nonatomic) IBOutlet NSView *missingMT32ROMHelp;
 
 /// The how-to-set-up-your-game instructions shown in the Audio panel when a real MT-32 has been detected as plugged in.
-@property (retain, nonatomic) IBOutlet NSView *realMT32Help;
+@property (strong, nonatomic) IBOutlet NSView *realMT32Help;
 
 /// The preferences for MT-32 emulation. Only shown when ROMs are installed.
-@property (retain, nonatomic) IBOutlet NSView *MT32ROMOptions;
+@property (strong, nonatomic) IBOutlet NSView *MT32ROMOptions;
 
 /// The checkbox for enabling/disabling hotkey capture on the Keyboard panel.
-@property (retain, nonatomic) IBOutlet NSButton *hotkeyCaptureToggle;
+@property (strong, nonatomic) IBOutlet NSButton *hotkeyCaptureToggle;
 
 /// The explanation shown beneath the hotkey capture toggle on the Keyboard panel.
-@property (retain, nonatomic) IBOutlet NSTextField *hotkeyCaptureDescription;
+@property (strong, nonatomic) IBOutlet NSTextField *hotkeyCaptureDescription;
 
 /// Additional instructions shown on Keyboard panel. If the hotkey capture is available,
 /// this shows instructions for activating function keys with the Fn modifier;
 /// if the hotkey capture is unavailable, this shows instructions on giving Boxer
 /// permission to capture hotkeys.
-@property (retain, nonatomic) IBOutlet NSTextField *hotkeyCaptureExtraHelp;
+@property (strong, nonatomic) IBOutlet NSTextField *hotkeyCaptureExtraHelp;
 
 /// The button to open the Accessibility Preferences, shown in the Keyboard panel when Boxer
 /// is not allowed to activate its hotkey capture event tap.
-@property (retain, nonatomic) IBOutlet NSButton *hotkeyCapturePermissionsButton;
+@property (strong, nonatomic) IBOutlet NSButton *hotkeyCapturePermissionsButton;
 
 
 /// Provides a singleton instance of the window controller which stays retained for the lifetime

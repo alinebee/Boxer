@@ -18,15 +18,15 @@
 	ADBHIDMonitor *_HIDMonitor;
     NSArray *_recentHIDRemappers;
 }
-@property (readonly, retain, nonatomic) ADBHIDMonitor *HIDMonitor;
+@property (readonly, strong, nonatomic) ADBHIDMonitor *HIDMonitor;
 
 //An array of DDHIDJoystick instances for each joystick currently connected.
 //Corresponds to hidMonitor matchedDevices.
-@property (readonly, nonatomic) NSArray<DDHidJoystick*> *joystickDevices;
+@property (weak, readonly, nonatomic) NSArray<DDHidJoystick*> *joystickDevices;
 
 //An array of bundle identifiers of known HID remappers that were running last we checked.
 //(This will be cached, and the cache cleared whenever Boxer loses the application focus.)
-@property (readonly, retain, nonatomic) NSArray<NSString*> *recentHIDRemappers;
+@property (readonly, strong, nonatomic) NSArray<NSString*> *recentHIDRemappers;
 
 
 #pragma mark -

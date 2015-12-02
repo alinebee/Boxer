@@ -68,15 +68,6 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	return self;
 }
 
-- (void) dealloc
-{
-    self.drive = nil;
-    self.destinationFolderURL = nil;
-    self.destinationURL = nil;
-    
-	[super dealloc];
-}
-
 - (NSURL *) preferredDestinationURL
 {
     if (!self.drive || !self.destinationFolderURL) return nil;
@@ -107,9 +98,9 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	NSURL *destinationURL	= self.destinationURL;
 	
 	NSError *readError = nil;
-	NSString *cueContents = [[[NSString alloc] initWithContentsOfURL: sourceURL
+	NSString *cueContents = [[NSString alloc] initWithContentsOfURL: sourceURL
                                                         usedEncoding: NULL
-                                                               error: &readError] autorelease];
+                                                               error: &readError];
     
 	if (!cueContents)
 	{
@@ -182,7 +173,6 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
                                       atomically: YES
                                         encoding: NSUTF8StringEncoding
                                            error: &cueError];
-        [revisedCue release];
         
         if (!cueWritten)
         {

@@ -45,7 +45,7 @@ enum {
 
 + (id) browserForSession: (BXSession *)session
 {
-    return [[[self alloc] initWithSession: session] autorelease];
+    return [[self alloc] initWithSession: session];
 }
 
 - (id) initWithSession: (BXSession *)session
@@ -108,10 +108,7 @@ enum {
     self.representedObject = nil;
     self.view.nextResponder = self.nextResponder;
     
-    self.documentationURLs = nil;
     self.documentationSelectionIndexes = nil;
-    
-    [super dealloc];
 }
 
 #pragma mark - Error handling
@@ -194,8 +191,6 @@ enum {
         //Flash the scrollbars (if any) to indicate that the content of the scroller has changed.
         if ([self.documentationScrollView respondsToSelector: @selector(flashScrollers)])
             [self.documentationScrollView flashScrollers];
-        
-        [oldURLs release];
     }
 }
 
@@ -277,7 +272,6 @@ enum {
                                               selector: comparison];
 	
 	NSArray *sortDescriptors = @[sortByType, sortByName];
-	[sortByType release], [sortByName release];
 	return sortDescriptors;
 }
 
@@ -652,18 +646,12 @@ enum {
 {
     BXDocumentationBrowserPreviewItem *previewItem = [[self alloc] init];
     previewItem.originalURL = URL;
-    return [previewItem autorelease];
+    return previewItem;
 }
 
 - (NSURL *) previewItemURL
 {
     return self.originalURL.URLByResolvingSymlinksInPath;
-}
-
-- (void) dealloc
-{   
-    self.originalURL = nil;
-    [super dealloc];
 }
 
 @end
@@ -751,8 +739,7 @@ enum {
 {
     if (![self.documentationSelectionIndexes isEqualToIndexSet: indexes])
     {
-        [_documentationSelectionIndexes release];
-        _documentationSelectionIndexes = [indexes retain];
+        _documentationSelectionIndexes = indexes;
     }
     
     [self synchronizePreviewToSelection];
@@ -1081,8 +1068,6 @@ enum {
                                                          endingColor: [NSColor clearColor]];
     
     [gradient drawInRect: self.bounds relativeCenterPosition: NSZeroPoint];
-    
-    [gradient release];
 }
 
 @end

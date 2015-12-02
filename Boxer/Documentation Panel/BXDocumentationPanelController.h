@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Properties
 
 //The session whose documents are being displayed in the panel.
-@property (retain, nonatomic, nullable) BXSession *session;
+@property (strong, nonatomic, nullable) BXSession *session;
 
 //Whether the panel is currently visible, either as a popover or as a window.
 @property (readonly, nonatomic, getter=isShown) BOOL shown;

@@ -127,7 +127,7 @@
 	//Now, repopulate the menu
 	for (NSString *letter in driveLetters)
 	{
-    	NSMenuItem *option	= [[[NSMenuItem alloc] init] autorelease];
+    	NSMenuItem *option	= [[NSMenuItem alloc] init];
 		NSString *title		= [NSString stringWithFormat: @"%@:", letter];
 		BXDrive *drive      = [theEmulator driveAtLetter: letter];
 		

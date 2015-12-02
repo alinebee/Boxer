@@ -17,11 +17,11 @@
 
 @interface BXInstallerScan ()
 
-@property (retain, nonatomic) NSArray<NSString*> *windowsExecutables;
-@property (retain, nonatomic) NSArray<NSString*> *DOSExecutables;
-@property (retain, nonatomic) NSArray<NSString*> *DOSBoxConfigurations;
-@property (retain, nonatomic) NSArray<NSString*> *macOSApps;
-@property (retain, nonatomic) BXGameProfile *detectedProfile;
+@property (strong, nonatomic) NSArray<NSString*> *windowsExecutables;
+@property (strong, nonatomic) NSArray<NSString*> *DOSExecutables;
+@property (strong, nonatomic) NSArray<NSString*> *DOSBoxConfigurations;
+@property (strong, nonatomic) NSArray<NSString*> *macOSApps;
+@property (strong, nonatomic) BXGameProfile *detectedProfile;
 @property (nonatomic, getter=isAlreadyInstalled) BOOL alreadyInstalled;
 
 //Helper methods for adding executables to their appropriate match arrays,
@@ -51,16 +51,6 @@
         self.DOSBoxConfigurations   = [NSMutableArray arrayWithCapacity: 2];
     }
     return self;
-}
-
-- (void) dealloc
-{
-    self.windowsExecutables = nil;
-    self.DOSExecutables = nil;
-    self.macOSApps = nil;
-    self.detectedProfile = nil;
-    
-    [super dealloc];
 }
 
 //Overridden to gather additional data besides just matching installers.
@@ -239,10 +229,8 @@
             //Bump the preferred installer up to the first entry in the list of installers.
             if (preferredInstallerPath)
             {
-                [preferredInstallerPath retain];
                 [_matchingPaths removeObject: preferredInstallerPath];
                 [_matchingPaths insertObject: preferredInstallerPath atIndex: 0];
-                [preferredInstallerPath autorelease];
             }
             
             [self didChangeValueForKey: @"matchingPaths"];

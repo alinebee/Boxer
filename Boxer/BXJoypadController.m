@@ -20,7 +20,7 @@
 @interface BXJoypadController ()
 
 @property (readwrite, nonatomic) BOOL hasJoypadDevices;
-@property (readonly, nonatomic) BXInputController *activeWindowController;
+@property (weak, readonly, nonatomic) BXInputController *activeWindowController;
 
 @end
 
@@ -36,8 +36,7 @@
 {
     if (currentLayout != layout)
     {
-        [currentLayout release];
-        currentLayout = [layout retain];
+        currentLayout = layout;
         
         if (layout)
         {
@@ -75,9 +74,7 @@
     [appController removeObserver: self forKeyPath: @"currentSession.DOSWindowController.inputController"];
     
     [joypadManager stopFindingDevices];
-    [joypadManager release], joypadManager = nil;
-    [self setCurrentLayout: nil], [currentLayout release];
-    [super dealloc];
+    [self setCurrentLayout: nil];
 }
 
 

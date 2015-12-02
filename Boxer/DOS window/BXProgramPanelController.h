@@ -39,19 +39,19 @@
 #pragma mark -
 #pragma mark Properties
 
-@property (retain, nonatomic) NSView *programChooserPanel;
-@property (retain, nonatomic) NSView *defaultProgramPanel;
-@property (retain, nonatomic) NSView *initialDefaultProgramPanel;
-@property (retain, nonatomic) NSView *noProgramsPanel;
-@property (retain, nonatomic) NSView *scanningForProgramsPanel;
+@property (strong, nonatomic) NSView *programChooserPanel;
+@property (strong, nonatomic) NSView *defaultProgramPanel;
+@property (strong, nonatomic) NSView *initialDefaultProgramPanel;
+@property (strong, nonatomic) NSView *noProgramsPanel;
+@property (strong, nonatomic) NSView *scanningForProgramsPanel;
 
-@property (retain, nonatomic) NSProgressIndicator *scanSpinner;
+@property (strong, nonatomic) NSProgressIndicator *scanSpinner;
 
-@property (retain, nonatomic) NSCollectionView *programList;
-@property (retain, nonatomic) NSScrollView *programScroller;
+@property (strong, nonatomic) NSCollectionView *programList;
+@property (strong, nonatomic) NSScrollView *programScroller;
 
 //The currently displayed view in the program panel.
-@property (assign, nonatomic) NSView *activePanel;
+@property (weak, nonatomic) NSView *activePanel;
 
 //Whether the currently executing program is the default program for its gamebox.
 @property (assign, nonatomic) BOOL activeProgramIsDefault;
@@ -60,14 +60,14 @@
 @property (readonly, nonatomic) BOOL hasDefaultTarget;
 
 //The localised display string used for the "Open this program every time" toggles.
-@property (readonly, nonatomic) NSString *labelForDefaultProgramToggle;
-@property (readonly, nonatomic) NSString *labelForInitialDefaultProgramToggle;
+@property (weak, readonly, nonatomic) NSString *labelForDefaultProgramToggle;
+@property (weak, readonly, nonatomic) NSString *labelForInitialDefaultProgramToggle;
 
 //An array of {@path, @isDefault} pairs representing executables to display in the program panel.
-@property (readonly, retain, nonatomic) NSArray *panelExecutables;
+@property (readonly, strong, nonatomic) NSArray *panelExecutables;
 
 //An array of descriptors for consumers to sort panelExecutables with
-@property (readonly, retain, nonatomic) NSArray *executableSortDescriptors;
+@property (readonly, strong, nonatomic) NSArray *executableSortDescriptors;
 
 //A record of the last program that was running. This is kept up-to-date whenever
 //the current program changes, but the last value remains after we have quit back to DOS.

@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, nonatomic) NSArray *levels;
 
 /// The latest object returned by the enumeration.
-@property (retain, nonatomic) id currentNode;
+@property (strong, nonatomic) id currentNode;
 
 /// Set to \c YES when the enumeration has run out of objects, or should otherwise stop
 /// iterating for any reason (for instance, encountering an error).
@@ -133,7 +133,7 @@ typedef id __nullable (^ADBScanCallback)(id scannedObject, BOOL *stop);
     id <ADBStepwiseEnumeration> _innerEnumerator;
     ADBScanCallback _scanCallback;
 }
-@property (retain, nonatomic, nullable) id <ADBStepwiseEnumeration> innerEnumerator;
+@property (strong, nonatomic, nullable) id <ADBStepwiseEnumeration> innerEnumerator;
 @property (copy, nonatomic, nullable) ADBScanCallback scanCallback;
 
 + (instancetype) enumeratorWithEnumerator: (id <ADBStepwiseEnumeration>)enumerator usingBlock: (ADBScanCallback)scanCallback;

@@ -27,9 +27,9 @@
 	NSCellStateValue _previousReadOnlyState;
 	NSMenuItem *_previousDriveTypeSelection;
 }
-@property (retain) IBOutlet NSPopUpButton *driveType;	//The drive type selector in the accessory view.
-@property (retain) IBOutlet NSPopUpButton *driveLetter;	//The drive letter selector in the accessory view.
-@property (retain) IBOutlet NSButton *readOnlyToggle;	//The read-only checkbox toggle in the accessory view.
+@property (strong) IBOutlet NSPopUpButton *driveType;	//The drive type selector in the accessory view.
+@property (strong) IBOutlet NSPopUpButton *driveLetter;	//The drive letter selector in the accessory view.
+@property (strong) IBOutlet NSButton *readOnlyToggle;	//The read-only checkbox toggle in the accessory view.
 
 //Returns a singleton instance, which loads the view from the NIB file the first time.
 + (id) controller;

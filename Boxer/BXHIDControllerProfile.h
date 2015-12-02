@@ -45,14 +45,14 @@ typedef NS_ENUM(NSInteger, BXControllerStyle) {
 }
 
 //The HID controller whose inputs we are converting from.
-@property (retain, nonatomic) DDHidJoystick *device;
+@property (strong, nonatomic) DDHidJoystick *device;
 
 //The emulated joystick and keyboard whose inputs we are converting to.
-@property (retain, nonatomic) id <BXEmulatedJoystick> emulatedJoystick;
-@property (retain, nonatomic) BXEmulatedKeyboard *emulatedKeyboard;
+@property (strong, nonatomic) id <BXEmulatedJoystick> emulatedJoystick;
+@property (strong, nonatomic) BXEmulatedKeyboard *emulatedKeyboard;
 
 //A dictionary of DDHidUsage -> BXHIDInputBinding mappings.
-@property (readonly, retain, nonatomic) NSMutableDictionary *bindings;
+@property (readonly, strong, nonatomic) NSMutableDictionary *bindings;
 
 //The style of this controller. Used for tweaking certain mapping behaviours.
 @property (readonly, nonatomic) BXControllerStyle controllerStyle;

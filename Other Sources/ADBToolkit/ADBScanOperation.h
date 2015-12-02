@@ -59,7 +59,7 @@ extern NSString * const ADBScanLatestMatchKey;
 #pragma mark - Public properties
 
 /// The enumerator which this scan will traverse.
-@property (retain) id <NSFastEnumeration> enumerator;
+@property (strong) id <NSFastEnumeration> enumerator;
 
 /// The callback block this scan will call with each object returned by the enumerator,
 /// to determine whether it is a match or not.
@@ -68,7 +68,7 @@ extern NSString * const ADBScanLatestMatchKey;
 /// An array of all objects that were matched in this search.
 /// This property is KVO observable, and will send out notifications
 /// on the operation's own thread as new objects are added.
-@property (retain) NSMutableArray *matches;
+@property (strong) NSMutableArray *matches;
 
 /// Optional: the maximum number of matches to find. If greater than 0,
 /// enumeration will stop after this many matches are found. Defaults to 0.

@@ -27,7 +27,7 @@
 	NSWindow *window;
 }
 
-@property (retain, nonatomic) NSWindow *window;
+@property (strong, nonatomic) NSWindow *window;
 
 + (id) scriptableWindow: (NSWindow *)window;
 - (id) initWithWindow: (NSWindow *)window;

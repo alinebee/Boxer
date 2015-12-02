@@ -16,7 +16,7 @@
 @interface BXKeyboardEventTap ()
 
 /// The dedicated thread on which our tap runs. Only used if @c usesDedicatedThread is YES.
-@property (retain) ADBContinuousThread *tapThread;
+@property (strong) ADBContinuousThread *tapThread;
 
 //Overridden to be read-write.
 @property (readwrite, getter=isTapping) BXKeyboardEventTapStatus status;
@@ -70,9 +70,6 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     
     [self _stopTapping];
-    self.tapThread = nil;
-    
-    [super dealloc];
 }
 
 - (void) setEnabled: (BOOL)flag
@@ -250,9 +247,9 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
         if (self.usesDedicatedThread)
         {
             NSLog(@"Installing event tap on dedicated thread.");
-            self.tapThread = [[[ADBContinuousThread alloc] initWithTarget: self
+            self.tapThread = [[ADBContinuousThread alloc] initWithTarget: self
                                                                  selector: @selector(_runTapInDedicatedThread)
-                                                                   object: nil] autorelease];
+                                                                   object: nil];
             
             [self.tapThread start];
         }

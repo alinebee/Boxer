@@ -67,7 +67,7 @@
     //Use a dummy MIDI device if MIDI music is disabled.
     if (musicType == BXMIDIMusicDisabled)
     {
-        return [[[BXDummyMIDIDevice alloc] init] autorelease];
+        return [[BXDummyMIDIDevice alloc] init];
     }
     
     //If the emulator wants an external MIDI device if available, try and find the one
@@ -88,13 +88,13 @@
         BXExternalMIDIDevice *externalDevice;
         if (uniqueID)
         {
-            externalDevice = [[[deviceClass alloc] initWithDestinationAtUniqueID: uniqueID error: NULL] autorelease];
+            externalDevice = [[deviceClass alloc] initWithDestinationAtUniqueID: uniqueID error: NULL];
         }
         //If neither unique ID nor destination index were specified, we'll implicitly
         //fall back on a destination index of 0 (i.e. the first destination we can find.)
         else
         {
-            externalDevice = [[[deviceClass alloc] initWithDestinationAtIndex: destinationIndex error: NULL] autorelease];
+            externalDevice = [[deviceClass alloc] initWithDestinationAtIndex: destinationIndex error: NULL];
         }
         
         if (externalDevice)
@@ -112,8 +112,8 @@
         
         for (NSNumber *deviceID in deviceIDs)
         {
-            BXExternalMT32 *externalMT32 = [[[BXExternalMT32 alloc] initWithDestinationAtUniqueID: (MIDIUniqueID)deviceID.integerValue
-                                                                                      error: NULL] autorelease];
+            BXExternalMT32 *externalMT32 = [[BXExternalMT32 alloc] initWithDestinationAtUniqueID: (MIDIUniqueID)deviceID.integerValue
+                                                                                      error: NULL];
             
             if (externalMT32)
                 return externalMT32;
@@ -122,10 +122,10 @@
         NSError *emulatedMT32Error = nil;
         NSURL *PCMROMURL        = [(BXBaseAppController *)[NSApp delegate] MT32PCMROMURL];
         NSURL *controlROMURL    = [(BXBaseAppController *)[NSApp delegate] MT32ControlROMURL];
-        BXEmulatedMT32 *emulatedMT32 = [[[BXEmulatedMT32 alloc] initWithPCMROM: PCMROMURL
+        BXEmulatedMT32 *emulatedMT32 = [[BXEmulatedMT32 alloc] initWithPCMROM: PCMROMURL
                                                                     controlROM: controlROMURL
                                                                       delegate: theEmulator
-                                                                         error: &emulatedMT32Error] autorelease];
+                                                                         error: &emulatedMT32Error];
         
         if (emulatedMT32)
             return emulatedMT32;
@@ -159,7 +159,7 @@
     }
     else
     {
-        fallbackSynth = [[[BXMIDISynth alloc] initWithError: NULL] autorelease];
+        fallbackSynth = [[BXMIDISynth alloc] initWithError: NULL];
     }
     
     //If a custom soundfont has been specified for the MIDI synth, load that now also.

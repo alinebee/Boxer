@@ -86,37 +86,37 @@ extern NSString * const BXViewDidLiveResizeNotification;
 #pragma mark Controllers
 
 //Our subsidiary view controllers, defined inside the XIB.
-@property (retain, nonatomic) IBOutlet BXProgramPanelController *programPanelController;
-@property (retain, nonatomic) IBOutlet BXInputController *inputController;
-@property (retain, nonatomic) IBOutlet BXStatusBarController *statusBarController;
-@property (retain, nonatomic) IBOutlet BXLaunchPanelController *launchPanelController;
-@property (retain, nonatomic) IBOutlet NSToolbarItem *documentationButton;
+@property (strong, nonatomic) IBOutlet BXProgramPanelController *programPanelController;
+@property (strong, nonatomic) IBOutlet BXInputController *inputController;
+@property (strong, nonatomic) IBOutlet BXStatusBarController *statusBarController;
+@property (strong, nonatomic) IBOutlet BXLaunchPanelController *launchPanelController;
+@property (strong, nonatomic) IBOutlet NSToolbarItem *documentationButton;
 
 #pragma mark Views
 
 //The view that wraps our main UI panels.
-@property (retain, nonatomic) IBOutlet NSView *panelWrapper;
+@property (strong, nonatomic) IBOutlet NSView *panelWrapper;
 
 //The slide-out program picker panel.
-@property (retain, nonatomic) IBOutlet NSView *programPanel;
+@property (strong, nonatomic) IBOutlet NSView *programPanel;
 
 //The full-window program launcher panel.
-@property (retain, nonatomic) IBOutlet NSView *launchPanel;
+@property (strong, nonatomic) IBOutlet NSView *launchPanel;
 
 //The loading spinner panel.
-@property (retain, nonatomic) IBOutlet NSView *loadingPanel;
+@property (strong, nonatomic) IBOutlet NSView *loadingPanel;
 
 //The status bar at the bottom of the window.
-@property (retain, nonatomic) IBOutlet NSView *statusBar;
+@property (strong, nonatomic) IBOutlet NSView *statusBar;
 
 //The view which displays the emulator's graphical output.
-@property (retain, nonatomic) IBOutlet NSView <BXFrameRenderingView> *renderingView;
+@property (strong, nonatomic) IBOutlet NSView <BXFrameRenderingView> *renderingView;
 
 //The view that tracks user input.
-@property (retain, nonatomic) IBOutlet BXInputView *inputView;
+@property (strong, nonatomic) IBOutlet BXInputView *inputView;
 
 //Our loading indicator.
-@property (retain, nonatomic) IBOutlet YRKSpinningProgressIndicator *loadingSpinner;
+@property (strong, nonatomic) IBOutlet YRKSpinningProgressIndicator *loadingSpinner;
 
 
 #pragma mark View options

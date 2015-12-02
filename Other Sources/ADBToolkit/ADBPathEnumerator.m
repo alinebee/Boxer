@@ -33,7 +33,7 @@
 #pragma mark Private method declarations
 
 @interface ADBPathEnumerator ()
-@property (readwrite, retain, nonatomic) NSDirectoryEnumerator *enumerator;
+@property (readwrite, strong, nonatomic) NSDirectoryEnumerator *enumerator;
 @property (readwrite, copy, nonatomic) NSString *currentPath;
 @property (readwrite, copy, nonatomic) NSString *relativePath;
 
@@ -75,29 +75,21 @@
 
 + (id) enumeratorAtPath: (NSString *)filePath
 {
-	return [[[self alloc] initWithPath: filePath] autorelease];
+	return [[self alloc] initWithPath: filePath];
 }
 
 - (void) dealloc
 {
-    self.fileTypes = nil;
-    self.enumerator = nil;
     self.basePath = nil;
-    self.currentPath = nil;
-    self.relativePath = nil;
-    self.predicate = nil;
 	
-	[_manager release], _manager = nil;
-	[_workspace release], _workspace = nil;
-	
-	[super dealloc];
+	_manager = nil;
+	_workspace = nil;
 }
 
 - (void) setBasePath: (NSString *)path
 {
     if (_basePath != path)
     {
-        [_basePath release];
         _basePath = [path copy];
         
         //Create an enumerator for the specified path

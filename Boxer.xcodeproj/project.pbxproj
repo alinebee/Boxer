@@ -46,12 +46,12 @@
 		9F18133B129990D5009BC4B2 /* BXGamesFolderPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F18133A129990D5009BC4B2 /* BXGamesFolderPanelController.m */; };
 		9F18BE9513EB07190047C217 /* BXInstallerScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F18BE9413EB07190047C217 /* BXInstallerScan.m */; };
 		9F19E7E112B3F48200496BCF /* SDL_sound.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9F1CBA58120C796C00C5E926 /* BXImportSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA57120C796C00C5E926 /* BXImportSession.m */; };
+		9F1CBA58120C796C00C5E926 /* BXImportSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA57120C796C00C5E926 /* BXImportSession.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */; };
 		9F1CBAAB120C830600C5E926 /* BXImportSession+BXImportPolicies.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBAAA120C830600C5E926 /* BXImportSession+BXImportPolicies.m */; };
 		9F1CBB59120CAA5500C5E926 /* BXBlueprintPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBB58120CAA5500C5E926 /* BXBlueprintPanel.m */; };
 		9F1CBBA8120CB99D00C5E926 /* BXImportDropzone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBBA7120CB99D00C5E926 /* BXImportDropzone.m */; };
-		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
+		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9F1DE9B214FB7F3800F9C91E /* NSObject+ADBPerformExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1DE9B114FB7F3800F9C91E /* NSObject+ADBPerformExtensions.m */; };
 		9F1E8CDA16E16C0400F1C908 /* ADBScanOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1E8CD916E16C0400F1C908 /* ADBScanOperation.m */; };
 		9F1E8CDB16E16C0400F1C908 /* ADBScanOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1E8CD916E16C0400F1C908 /* ADBScanOperation.m */; };
@@ -463,7 +463,7 @@
 		9F70C19C129036C900A3627F /* Boxer.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 9F70C19B129036C900A3627F /* Boxer.sdef */; };
 		9F731B2E136323D2005E564F /* ADBHIDMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F731B2D136323D2005E564F /* ADBHIDMonitor.m */; };
 		9F731B52136331A9005E564F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731B51136331A9005E564F /* IOKit.framework */; };
-		9F740BDE142A24A400BA66B4 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F740BDD142A24A400BA66B4 /* RegexKitLite.m */; };
+		9F740BDE142A24A400BA66B4 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F740BDD142A24A400BA66B4 /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9F7472D61BE7D96E00B9C9ED /* StandaloneAbout.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F7472D41BE7D96E00B9C9ED /* StandaloneAbout.xib */; };
 		9F7472FE1BE7DCF200B9C9ED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F7472FA1BE7DBEF00B9C9ED /* InfoPlist.strings */; };
 		9F765649119403520082A06A /* BXInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F765648119403520082A06A /* BXInputController.m */; };
@@ -660,7 +660,7 @@
 		9FBC32120F56C3E9001811F2 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC32110F56C3E9001811F2 /* Carbon.framework */; };
 		9FBC352B0F56C7B7001811F2 /* BXAboutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC351D0F56C7B7001811F2 /* BXAboutController.m */; };
 		9FBC352C0F56C7B7001811F2 /* BXAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC351E0F56C7B7001811F2 /* BXAppController.m */; };
-		9FBC352F0F56C7B7001811F2 /* BXSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35210F56C7B7001811F2 /* BXSession.m */; };
+		9FBC352F0F56C7B7001811F2 /* BXSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35210F56C7B7001811F2 /* BXSession.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9FBC35310F56C7B7001811F2 /* BXEmulator+BXShell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */; };
 		9FBC35320F56C7B7001811F2 /* BXDOSWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35240F56C7B7001811F2 /* BXDOSWindow.m */; };
 		9FBC35330F56C7B7001811F2 /* BXDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */; };
@@ -703,7 +703,7 @@
 		9FCA937F16FF38EC00720B81 /* DocumentationBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F631D8016947B2C00AD06C4 /* DocumentationBrowser.xib */; };
 		9FCA938016FF38F800720B81 /* DocumentationPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F125C42169842F4003B5B2B /* DocumentationPanel.xib */; };
 		9FCB7B0D15B842E000CC7CC7 /* BXStandaloneAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0C15B842E000CC7CC7 /* BXStandaloneAppController.m */; };
-		9FCB7B1015B844AB00CC7CC7 /* BXBaseAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0F15B844AA00CC7CC7 /* BXBaseAppController.m */; };
+		9FCB7B1015B844AB00CC7CC7 /* BXBaseAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0F15B844AA00CC7CC7 /* BXBaseAppController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9FCB7B1115B844AB00CC7CC7 /* BXBaseAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7B0F15B844AA00CC7CC7 /* BXBaseAppController.m */; };
 		9FCB7B1215B856A300CC7CC7 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9FCB7B1415B856FC00CC7CC7 /* BXDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA6E0134A21A50092BF95 /* BXDriveImport.m */; };
@@ -752,7 +752,7 @@
 		9FDB601710C0707F00C15CF4 /* BXDockTileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDB601610C0707F00C15CF4 /* BXDockTileController.m */; };
 		9FDC544E120EBFE70063B33D /* BXImportDropzonePanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDC544D120EBFE70063B33D /* BXImportDropzonePanelController.m */; };
 		9FDC5476120EC8B40063B33D /* BXImportInstallerPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDC5475120EC8B40063B33D /* BXImportInstallerPanelController.m */; };
-		9FDCA790118F2B7900E2FD74 /* BXCoalface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */; };
+		9FDCA790118F2B7900E2FD74 /* BXCoalface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9FDCDEFD11B5B83B0032DA4E /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */; };
 		9FDE341F1351DE26000DCE44 /* BXBlueprintBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDE341E1351DE26000DCE44 /* BXBlueprintBackgroundView.m */; };
 		9FDE34341351DFD4000DCE44 /* BXImportTipsPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDE34331351DFD4000DCE44 /* BXImportTipsPanelController.m */; };
@@ -787,7 +787,7 @@
 		9FF91EB616CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF91EB516CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m */; };
 		9FF91EB716CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF91EB516CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m */; };
 		9FF91EB816CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF91EB516CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m */; };
-		9FF982111646C7640080F763 /* BXPrintSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF982101646C7640080F763 /* BXPrintSession.m */; };
+		9FF982111646C7640080F763 /* BXPrintSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF982101646C7640080F763 /* BXPrintSession.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9FF982121646C7640080F763 /* BXPrintSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF982101646C7640080F763 /* BXPrintSession.m */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
@@ -4964,7 +4964,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = boxer;
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
@@ -5004,7 +5004,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = boxer;
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";

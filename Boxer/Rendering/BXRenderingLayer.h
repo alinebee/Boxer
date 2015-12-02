@@ -25,7 +25,7 @@
 }
 
 @property (assign, nonatomic) BXRenderingStyle renderingStyle;
-@property (retain, readonly, nonatomic) BXVideoFrame *currentFrame;
+@property (strong, readonly, nonatomic) BXVideoFrame *currentFrame;
 
 - (void) updateWithFrame: (BXVideoFrame *)currentFrame;
 - (BOOL) supportsRenderingStyle: (BXRenderingStyle)style;

@@ -11,11 +11,11 @@
 #pragma mark Private method declarations
 
 @interface BXMT32ROMDropzone ()
-@property (retain, nonatomic) CALayer *backgroundLayer;
-@property (retain, nonatomic) CALayer *CM32LLayer;
-@property (retain, nonatomic) CALayer *MT32Layer;
-@property (retain, nonatomic) CALayer *highlightLayer;
-@property (retain, nonatomic) CATextLayer *titleLayer;
+@property (strong, nonatomic) CALayer *backgroundLayer;
+@property (strong, nonatomic) CALayer *CM32LLayer;
+@property (strong, nonatomic) CALayer *MT32Layer;
+@property (strong, nonatomic) CALayer *highlightLayer;
+@property (strong, nonatomic) CATextLayer *titleLayer;
 
 //Set up which device is displayed and how it should be highlighted.
 //Called whenever the ROM type changes or we highlight/unhighlight the field.
@@ -173,14 +173,6 @@
 - (void) dealloc
 {
     [self.titleLayer unbind: @"string"];
-    
-    self.backgroundLayer = nil;
-    self.MT32Layer = nil;
-    self.CM32LLayer = nil;
-    self.highlightLayer = nil;
-    self.titleLayer = nil;
-    
-    [super dealloc];
 }
 
 @end

@@ -32,7 +32,7 @@ NSString * const ADBUserNotificationTypeKey = @"ADBUserNotificationType";
 
 @interface ADBUserNotificationDispatcher ()
 
-@property (retain, nonatomic) NSMutableDictionary *activationHandlers;
+@property (strong, nonatomic) NSMutableDictionary *activationHandlers;
 
 //Called to remove an activation handler for the specified notification, usually because
 //the notification itself is being removed.

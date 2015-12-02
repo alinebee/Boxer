@@ -32,15 +32,15 @@
 @property (assign, nonatomic) BXEmulatedPrinterPort activePrinterPort;
 
 //The preview view into which page previews will be rendered.
-@property (retain, nonatomic) IBOutlet BXPrintPreview *preview;
+@property (strong, nonatomic) IBOutlet BXPrintPreview *preview;
 
 //State properties for UI bindings
 //The bold status text to display in the panel: e.g. "Printer is idle", "Printing page 6", etc.
-@property (readonly, nonatomic) NSString *printerStatus;
+@property (weak, readonly, nonatomic) NSString *printerStatus;
 
 //The small explanatory text to display in the panel,
 //explaining which port to print to and which paper size to use.
-@property (readonly, nonatomic) NSString *printerInstructions;
+@property (weak, readonly, nonatomic) NSString *printerInstructions;
 
 //Whether any pages have been printed so far.
 @property (readonly, nonatomic) BOOL hasPages;
@@ -68,8 +68,8 @@
 }
 
 //The preview images for the current and previous page.
-@property (retain, nonatomic) NSImage *currentPagePreview;
-@property (retain, nonatomic) NSImage *previousPagePreview;
+@property (strong, nonatomic) NSImage *currentPagePreview;
+@property (strong, nonatomic) NSImage *previousPagePreview;
 
 //The X offset of the print head, as a percentage of
 //the total printable page width from 0.0 to 1.0.

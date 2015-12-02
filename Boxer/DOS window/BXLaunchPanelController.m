@@ -24,16 +24,16 @@
 
 @interface BXLaunchPanelController ()
 
-@property (retain, nonatomic) NSMutableArray *allProgramRows;
-@property (retain, nonatomic) NSMutableArray *favoriteProgramRows;
-@property (retain, nonatomic) NSMutableArray *recentProgramRows;
-@property (retain, nonatomic) NSMutableArray *displayedRows;
+@property (strong, nonatomic) NSMutableArray *allProgramRows;
+@property (strong, nonatomic) NSMutableArray *favoriteProgramRows;
+@property (strong, nonatomic) NSMutableArray *recentProgramRows;
+@property (strong, nonatomic) NSMutableArray *displayedRows;
 
-@property (retain, nonatomic) NSDictionary *favoritesHeading;
-@property (retain, nonatomic) NSDictionary *recentProgramsHeading;
-@property (retain, nonatomic) NSDictionary *allProgramsHeading;
+@property (strong, nonatomic) NSDictionary *favoritesHeading;
+@property (strong, nonatomic) NSDictionary *recentProgramsHeading;
+@property (strong, nonatomic) NSDictionary *allProgramsHeading;
 
-@property (retain, nonatomic) NSMutableArray *filterKeywords;
+@property (strong, nonatomic) NSMutableArray *filterKeywords;
 
 @end
 
@@ -115,22 +115,6 @@
             
         }
     }
-}
-
-- (void) dealloc
-{
-    self.allProgramRows = nil;
-    self.favoriteProgramRows = nil;
-    self.recentProgramRows = nil;
-    self.displayedRows = nil;
-    
-    self.favoritesHeading = nil;
-    self.recentProgramsHeading = nil;
-    self.allProgramsHeading = nil;
-    
-    self.filterKeywords = nil;
-    
-    [super dealloc];
 }
 
 
@@ -291,7 +275,6 @@
         [annotatedItem setObject: programDetails forKey: @"recentProgram"];
         
         [self.recentProgramRows addObject: annotatedItem];
-        [annotatedItem release];
     }
     
     _recentProgramRowsDirty = NO;
@@ -394,7 +377,7 @@
                                   @"isHeading": @(YES),
                                   };
     }
-    return [[_favoritesHeading retain] autorelease];
+    return _favoritesHeading;
 }
 
 - (NSDictionary *) recentProgramsHeading
@@ -408,7 +391,7 @@
                                        @"isHeading": @(YES),
                                        };
     }
-    return [[_recentProgramsHeading retain] autorelease];
+    return _recentProgramsHeading;
 }
 
 - (NSDictionary *) allProgramsHeading
@@ -422,7 +405,7 @@
                                     @"isHeading": @(YES),
                                     };
     }
-    return [[_allProgramsHeading retain] autorelease];
+    return _allProgramsHeading;
 }
 
 - (NSDictionary *) _listItemForProgramAtURL: (NSURL *)URL
@@ -443,7 +426,6 @@
     {
         NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
         title = [programNameFormatter transformedValue: URL.path];
-        [programNameFormatter release];
         
         //Also append the arguments to the title, if available
         if (arguments.length > 0)
@@ -526,7 +508,6 @@
     {
         NSValueTransformer *programNameFormatter = [[BXDOSFilenameTransformer alloc] init];
         title = [programNameFormatter transformedValue: URL.path];
-        [programNameFormatter release];
     }
     
     NSMutableDictionary *item = [NSMutableDictionary dictionaryWithDictionary: @{
@@ -846,8 +827,6 @@
 - (void) dealloc
 {
     self.delegate = nil;
-    self.menu = nil;
-    [super dealloc];
 }
 
 - (IBAction) openItemInDOS: (id)sender
@@ -922,7 +901,6 @@
     
     //Set up a tracking rect so that we receive mouseEntered/exited events
     [self addTrackingArea: trackingArea];
-    [trackingArea release];
 }
 
 - (void) setDelegate: (BXLauncherItem *)delegate
@@ -1068,8 +1046,6 @@
                             toCenter: centerPoint
                               radius: self.bounds.size.width * 0.5
                              options: NSGradientDrawsBeforeStartingLocation | NSGradientDrawsAfterEndingLocation];
-            
-            [gradient release];
         }
     }
 }

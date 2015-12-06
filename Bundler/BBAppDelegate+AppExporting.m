@@ -257,6 +257,17 @@ NSString * const BBAppExportCodeSigningIdentityKey = @"BBAppExportCodeSigningIde
         //decide what to do about partial success.
         if (!codesigned && signingError != nil)
         {
+            //TWEAK: re-sign the bundle with an 'ad-hoc' identity.
+            //This is not sufficient for Gatekeeper and the like,
+            //but it will at least ensure the code signature is valid.
+            //(Otherwise the app will be left with whatever signature
+            //Boxer Standalone was built with, and will not pass validation
+            //because the app's resources were modified by the export
+            //process.)
+            [self _signBundleAtURL: tempAppURL
+                      withIdentity: @"-"
+                             error: NULL];
+            
             *outError = signingError;
         }
     }

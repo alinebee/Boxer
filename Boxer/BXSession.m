@@ -311,10 +311,25 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         //Check if the user opened the gamebox itself or a specific file/folder inside the gamebox.
         BOOL hasCustomTarget = ![self.targetURL isEqual: gameboxURL];
         
-        //Check if we are flagged to show the launch panel at startup for this game (instead of looking for a target program.)
-        BOOL startWithLaunchPanel = [[self.gameSettings objectForKey: BXGameboxSettingsShowLaunchPanelKey] boolValue];
-        BOOL alwaysStartWithLaunchPanel = [[self.gameSettings objectForKey: BXGameboxSettingsAlwaysShowLaunchPanelKey] boolValue];
-        if (alwaysStartWithLaunchPanel) startWithLaunchPanel = YES;
+        //Check if we are flagged to show the launch panel at startup for this game,
+        //instead of looking for a target program.
+        BOOL startWithLaunchPanel;
+        if (self.allowsLauncherPanel)
+        {
+            BOOL alwaysStartWithLaunchPanel = [self.gameSettings[BXGameboxSettingsAlwaysShowLaunchPanelKey] boolValue];
+            if (alwaysStartWithLaunchPanel)
+            {
+                startWithLaunchPanel = YES;
+            }
+            else
+            {
+                startWithLaunchPanel = [self.gameSettings[BXGameboxSettingsShowLaunchPanelKey] boolValue];
+            }
+        }
+        else
+        {
+            startWithLaunchPanel = NO;
+        }
         
 		//If the user opened the gamebox itself instead of a specific file inside it,
         //and we're not flagged to show the launch panel in this situation, then try

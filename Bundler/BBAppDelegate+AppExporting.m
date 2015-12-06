@@ -103,28 +103,15 @@
     
     NSString *year = [NSString stringWithFormat: @"%04d", currentDate.year];
     
-    NSDictionary *substitutions;
-    if (self.isUnbranded)
-    {
-        substitutions = @{
-            @"{{BUNDLE_IDENTIFIER}}":   self.appBundleIdentifier,
-            @"{{APPLICATION_NAME}}":    self.appName,
-            @"{{APPLICATION_VERSION}}": self.appVersion,
-            @"{{YEAR}}":                year
-        };
-    }
-    else
-    {
-        substitutions = @{
-            @"{{ORGANIZATION_NAME}}":   self.organizationName ? self.organizationName : @"",
-            @"{{ORGANIZATION_URL}}":    self.organizationURL ? self.organizationURL : @"",
-            @"{{BUNDLE_IDENTIFIER}}":   self.appBundleIdentifier,
-            @"{{APPLICATION_NAME}}":    self.appName,
-            @"{{APPLICATION_VERSION}}": self.appVersion,
-            @"{{YEAR}}":                year
-        };
-    }
-    
+    NSDictionary *substitutions = @{
+                                    @"{{ORGANIZATION_NAME}}":   self.organizationName ?: @"",
+                                    @"{{ORGANIZATION_URL}}":    self.organizationURL ?: @"",
+                                    @"{{BUNDLE_IDENTIFIER}}":   self.appBundleIdentifier,
+                                    @"{{APPLICATION_NAME}}":    self.appName,
+                                    @"{{APPLICATION_VERSION}}": self.appVersion,
+                                    @"{{YEAR}}":                year
+                                    };
+
     [self _rewritePlist: appInfo withSubstitutions: substitutions];
     
     //Manually replace the version and bundle identifier.

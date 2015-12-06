@@ -2,7 +2,7 @@
 "CFBundleName" = "{{APPLICATION_NAME}}";
 
 /* (No Commment) */
-"CFBundleShortVersionString" = "2.0alpha";
+"CFBundleShortVersionString" = "{{APPLICATION_VERSION}}";
 
 /* (No Commment) */
 "NSHumanReadableCopyright" = "© {{YEAR}} {{ORGANIZATION_NAME}}, všechna práva vyhrazena.";

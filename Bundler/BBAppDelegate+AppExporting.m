@@ -11,6 +11,9 @@
 #import "NSImage+ADBSaveImages.h"
 #import "BBIconDropzone.h"
 
+NSString * const BBAppExportErrorDomain = @"BBAppExportErrorDomain";
+NSString * const BBAppExportCodeSigningIdentityKey = @"BBAppExportCodeSigningIdentityKey";
+
 @implementation BBAppDelegate (AppExporting)
 
 - (void) createAppAtDestinationURL: (NSURL *)destinationURL completion: (void(^)(NSURL *appURL, NSError *error))completionHandler
@@ -19,7 +22,7 @@
     
     dispatch_queue_t queue = dispatch_queue_create("AppCreationQueue", DISPATCH_QUEUE_SERIAL);
     dispatch_async(queue, ^{
-        NSError *creationError;
+        NSError *creationError = nil;
         NSURL *newAppURL = [self createAppAtDestinationURL: destinationURL
                                                      error: &creationError];
         
@@ -237,24 +240,29 @@
     //Write all of our changes to the app's plist back into the app.
     [appInfo writeToURL: appInfoURL atomically: YES];
     
-    //Code-sign the application with the developer's ID, if they have one.
-    NSString *codeSignPath = @"/usr/bin/codesign";
-    NSArray *codeSignArgs  = @[@"--force",
-                               @"--deep",
-                               @"--sign",
-                               @"Mac Developer",
-                               tempAppURL.path];
-    NSTask *signApp = [NSTask launchedTaskWithLaunchPath: codeSignPath
-                                               arguments: codeSignArgs];
+    //Sign the app using the default Apple developer identity, if available.
+    //TODO: allow the user to choose the identity from a list or opt-out of signing.
+    NSString *signingIdentity = @"Mac Developer";
     
-    [signApp waitUntilExit];
+    if (signingIdentity != nil)
+    {
+        NSError *signingError = nil;
+        BOOL codesigned = [self _signBundleAtURL: tempAppURL
+                                    withIdentity: signingIdentity
+                                           error: &signingError];
+        
+        //Technically we ought to bail out at this point; however,
+        //we currently treat code signing failure as a partial success.
+        //Pass the error on to the calling context at least so that it can
+        //decide what to do about partial success.
+        if (!codesigned && signingError != nil)
+        {
+            *outError = signingError;
+        }
+    }
     
-    //TODO: notify the user if the app failed
-    NSLog(@"Code signing finished with status code: %i using arguments: %@",
-          signApp.terminationStatus,
-          codeSignArgs);
-    
-    //Finally, move the finished and codesigned app from the temporary location to the final destination.
+    //Finally, move the finished and (hopefully) codesigned app
+    //from the temporary location to the final destination.
     NSURL *finalDestinationURL = nil;
     BOOL swapped = [manager replaceItemAtURL: destinationURL
                                withItemAtURL: tempAppURL
@@ -271,6 +279,47 @@
     {
         return nil;
     }
+}
+
+- (BOOL) _signBundleAtURL: (NSURL *)bundleURL
+             withIdentity: (NSString *)signingIdentity
+                    error: (NSError **)outError
+{
+    //Code-sign the application with the developer's ID, if they have one.
+    NSString *codeSignPath = @"/usr/bin/codesign";
+    NSArray *codeSignArgs  = @[@"--force",
+                               @"--deep",
+                               @"--sign",
+                               signingIdentity,
+                               bundleURL.path];
+    
+    NSTask *signApp = [[NSTask alloc] init];
+    signApp.launchPath = codeSignPath;
+    signApp.arguments = codeSignArgs;
+    
+    NSPipe *errorPipe = [NSPipe pipe];
+    signApp.standardError = errorPipe;
+    
+    [signApp launch];
+    [signApp waitUntilExit];
+    
+    if (signApp.terminationStatus != 0)
+    {
+        if (outError != NULL)
+        {
+            NSData *errorData = errorPipe.fileHandleForReading.availableData;
+            NSString *errorString = [[NSString alloc] initWithData: errorData encoding: NSUTF8StringEncoding];
+            
+            *outError = [NSError errorWithDomain: BBAppExportErrorDomain
+                                            code: BBAppExportCodeSignFailed
+                                        userInfo: @{ NSLocalizedFailureReasonErrorKey: errorString,
+                                                     BBAppExportCodeSigningIdentityKey: signingIdentity,
+                                                     }];
+        }
+        
+        return NO;
+    }
+    else return YES;
 }
 
 - (NSURL *) _importGameboxFromURL: (NSURL *)gameboxURL

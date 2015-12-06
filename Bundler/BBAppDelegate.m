@@ -694,18 +694,47 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
             self.busy = YES;
             [self createAppAtDestinationURL: panel.URL completion: ^(NSURL *appURL, NSError *error) {
                 self.busy = NO;
-                if (appURL)
+                
+                //Present any export errors to the user, even if the overall export actually succeeded.
+                if (error != nil)
                 {
-                    [[NSSound soundNamed: @"Glass"] play];
-                    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: @[appURL]];
-                }
-                else
-                {
+                    //Reformat code-signing errors to present them more clearly.
+                    if (error.domain == BBAppExportErrorDomain && error.code == BBAppExportCodeSignFailed)
+                    {
+                        NSString *identity = error.userInfo[BBAppExportCodeSigningIdentityKey];
+                        NSString *descriptionFormat = NSLocalizedString(@"The app was exported successfully but could not be code-signed with the “%@” identity.", @"Explanatory message shown when code-signing failed. %@ is the identity used for code-signing.");
+                        
+                        NSString *description = [NSString stringWithFormat: descriptionFormat, identity];
+                        
+                        NSString *failureReason = error.localizedFailureReason;
+                        NSString *detailsFormat = NSLocalizedString(@"The codesigning tool reported the following error:\n%@",
+                                                                    @"Error shown when code-signing failed. %@ is the error message returned by the code-signing tool.");
+                        NSString *details = [NSString stringWithFormat: detailsFormat, failureReason];
+                        
+                        NSDictionary *userInfo = @{
+                                                   NSUnderlyingErrorKey: error,
+                                                   NSLocalizedDescriptionKey: description,
+                                                   //This only uses the "recovery suggestion" key because this
+                                                   //is presented in NSAlerts in smaller text.
+                                                   //NSLocalizedFailureReason would be more suitable
+                                                   //but is not shown at all in NSAlerts.
+                                                   NSLocalizedRecoverySuggestionErrorKey: details,
+                                                  };
+                        
+                        error = [NSError errorWithDomain: error.domain code: error.code userInfo: userInfo];
+                    }
+                    
                     [NSApp presentError: error
                          modalForWindow: self.window
                                delegate: nil
                      didPresentSelector: NULL
                             contextInfo: NULL];
+                }
+                //If no error was encountered, display the exported app to the user in Finder.
+                else if (appURL != nil)
+                {
+                    [[NSSound soundNamed: @"Glass"] play];
+                    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: @[appURL]];
                 }
             }];
         }

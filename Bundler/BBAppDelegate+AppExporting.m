@@ -142,6 +142,15 @@
     
     //Also rewrite the strings files for every localization within the app,
     //to use the substituted app and organization info.
+    BOOL rewroteStrings = [self _rewriteStringsFilesInBundleAtURL: appResourceURL
+                                                withSubstitutions: substitutions
+                                                            error: outError];
+    if (!rewroteStrings)
+    {
+        [manager removeItemAtURL: baseTempURL error: NULL];
+        return nil;
+    }
+    
     NSEnumerator *enumerator = [manager enumeratorAtURL: appResourceURL
                              includingPropertiesForKeys: nil
                                                 options: 0
@@ -164,60 +173,45 @@
     NSString *helpbookName = appInfo[@"CFBundleHelpBookFolder"];
     if (helpbookName)
     {
-        NSURL *helpbookSouceURL = [appResourceURL URLByAppendingPathComponent: helpbookName];
+        NSURL *helpbookURL = [appResourceURL URLByAppendingPathComponent: helpbookName];
         
-        //TWEAK: if this is a branding-less app, delete the help file on the presumption that it's brand-specific.
-        //Disabled for now because we finally have brandingless help files.
-        /*
-        if (self.isUnbranded)
+        //Rewrite various variables in the helpbook's own info.plist.
+        NSURL *helpbookInfoURL = [helpbookURL URLByAppendingPathComponent: @"Contents/Info.plist"];
+        NSURL *helpbookResourceURL = [helpbookURL URLByAppendingPathComponent: @"Contents/Resources/"];
+        NSMutableDictionary *helpbookInfo = [NSMutableDictionary dictionaryWithContentsOfURL: helpbookInfoURL];
+        
+        [self _rewritePlist: helpbookInfo withSubstitutions: substitutions];
+        
+        //Update the help book's icons.
+        if (self.appIconURL)
         {
-            [appInfo removeObjectForKey: @"CFBundleHelpBookFolder"];
-            [manager removeItemAtURL: helpbookSouceURL error: NULL];
-        }
-        else
-         */
-        {
-            //While we're at it, rename the help book to reflect the application name.
-            NSString *destinationHelpbookName = [self.sanitisedAppName stringByAppendingPathExtension: @"help"];
+            NSURL *helpbookIconURL = [self _applyIconFromURL: self.appIconURL
+                                             toHelpbookAtURL: helpbookURL
+                                                       error: outError];
             
-            NSURL *helpbookURL = [self _importHelpbookFromURL: helpbookSouceURL
-                                                 intoAppAtURL: tempAppURL
-                                                     withName: destinationHelpbookName
-                                                        error: outError];
-            
-            if (helpbookURL == nil)
+            if (helpbookIconURL == nil)
             {
                 [manager removeItemAtURL: baseTempURL error: NULL];
                 return nil;
             }
             
-            appInfo[@"CFBundleHelpBookFolder"] = destinationHelpbookName;
-            
-            //Rewrite various variables in the helpbook's own info.plist.
-            NSURL *helpbookInfoURL = [helpbookURL URLByAppendingPathComponent: @"Contents/Info.plist"];
-            NSURL *helpbookResourceURL = [helpbookURL URLByAppendingPathComponent: @"Contents/Resources/"];
-            NSMutableDictionary *helpbookInfo = [NSMutableDictionary dictionaryWithContentsOfURL: helpbookInfoURL];
-            
-            [self _rewritePlist: helpbookInfo withSubstitutions: substitutions];
-            
-            //Update the help book's icons.
-            if (self.appIconURL)
-            {
-                NSURL *helpbookIconURL = [self _applyIconFromURL: self.appIconURL
-                                                 toHelpbookAtURL: helpbookURL
-                                                           error: outError];
-                
-                if (helpbookIconURL == nil)
-                {
-                    return nil;
-                }
-                
-                NSString *relativeHelpbookIconPath = [helpbookIconURL pathRelativeToURL: helpbookResourceURL];
-                helpbookInfo[@"HPDBookIconPath"] = relativeHelpbookIconPath;
-            }
-            
-            //Write all of our changes to the helpbook's plist back into the helpbook.
-            [helpbookInfo writeToURL: helpbookInfoURL atomically: YES];
+            NSString *relativeHelpbookIconPath = [helpbookIconURL pathRelativeToURL: helpbookResourceURL];
+            helpbookInfo[@"HPDBookIconPath"] = relativeHelpbookIconPath;
+        }
+        
+        //Write all of our changes to the helpbook's plist back into the helpbook.
+        [helpbookInfo writeToURL: helpbookInfoURL atomically: YES];
+        
+        
+        //As with the main bundle, rewrite the strings files for every localization within the helpbook,
+        //to use the substituted app and organization info.
+        BOOL rewroteHelpbookStrings = [self _rewriteStringsFilesInBundleAtURL: helpbookURL
+                                                            withSubstitutions: substitutions
+                                                                        error: outError];
+        if (!rewroteHelpbookStrings)
+        {
+            [manager removeItemAtURL: baseTempURL error: NULL];
+            return nil;
         }
     }
     
@@ -227,9 +221,6 @@
         NSArray *brandedResources = @[
             @"StandaloneLogo.png",
             @"StandaloneLogo@2x.png",
-            //These resources are now brand-neutral
-            //@"English.lproj/Credits.html",
-            //@"Help.help",
         ];
         
         for (NSString *resourceName in brandedResources)
@@ -325,41 +316,6 @@
     }
     
     return destinationURL;
-}
-
-- (NSURL *) _importHelpbookFromURL: (NSURL *)helpbookURL
-                      intoAppAtURL: (NSURL *)appURL
-                          withName: (NSString *)helpbookName
-                             error: (NSError **)outError
-{
-    NSFileManager *manager = [[NSFileManager alloc] init];
-    
-    if (!helpbookName)
-        helpbookName = helpbookURL.lastPathComponent;
-    if (!helpbookName.pathExtension.length)
-        helpbookName = [helpbookName stringByAppendingPathExtension: @"help"];
-    
-    NSURL *appResourceURL = [appURL URLByAppendingPathComponent: @"Contents/Resources/"];
-    
-    NSURL *destinationURL = [appResourceURL URLByAppendingPathComponent: helpbookName];
-    
-    if (![destinationURL isEqual: helpbookURL])
-    {
-        [manager removeItemAtURL: destinationURL error: nil];
-        BOOL copied = [manager copyItemAtURL: helpbookURL toURL: destinationURL error: outError];
-        if (copied)
-        {
-            return destinationURL;
-        }
-        else
-        {
-            return nil;
-        }
-    }
-    else
-    {
-        return helpbookURL;
-    }
 }
 
 
@@ -519,6 +475,27 @@
             }
             
             plist[key] = value;
+        }
+    }
+    return YES;
+}
+
+- (BOOL) _rewriteStringsFilesInBundleAtURL: (NSURL *)bundleURL
+                         withSubstitutions: (NSDictionary *)substitutions
+                                     error: (NSError **)outError;
+{
+    NSEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL: bundleURL
+                                                    includingPropertiesForKeys: nil
+                                                                       options: 0
+                                                                  errorHandler: NULL];
+    for (NSURL *URL in enumerator)
+    {
+        if ([URL.pathExtension.lowercaseString isEqualToString: @"strings"])
+        {
+            BOOL rewrote = [self _rewriteStringsFileAtURL: URL withSubstitutions: substitutions error: outError];
+            //Bail out if any read/write errors are encountered
+            if (!rewrote)
+                return NO;
         }
     }
     return YES;

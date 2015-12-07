@@ -32,4 +32,5 @@
 #import "DDHidJoystick.h"
 #import "DDHidKeyboard.h"
 #import "DDHidAppleRemote.h"
+#import "DDHidAppleMikey.h"
 #import "DDHidKeyboardBarcodeScanner.h"

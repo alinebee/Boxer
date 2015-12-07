@@ -631,7 +631,7 @@ int _ADBHandleClose(void *cookie)
 
 @implementation ADBDataHandle
 @synthesize data = _data;
-@synthesize offset = _offset;
+@dynamic offset;
 
 + (id) handleForData: (NSData *)data
 {

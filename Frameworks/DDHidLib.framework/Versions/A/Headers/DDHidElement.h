@@ -34,32 +34,29 @@
     NSArray * mElements;
 }
 
-+ (NSArray *) elementsWithPropertiesArray: (NSArray *) propertiesArray;
++ (NSArray<DDHidElement*> *) elementsWithPropertiesArray: (NSArray *) propertiesArray;
 
-+ (DDHidElement *) elementWithProperties: (NSDictionary *) properties;
++ (instancetype) elementWithProperties: (NSDictionary *) properties;
 
-- (id) initWithProperties: (NSDictionary *) properties;
+- (instancetype) initWithProperties: (NSDictionary *) properties;
 
 - (NSDictionary *) properties;
 
 - (NSString *) stringForKey: (NSString *) key;
 
-- (NSString *) description;
-
-- (IOHIDElementCookie) cookie;
-- (unsigned) cookieAsUnsigned;
+@property (readonly) IOHIDElementCookie cookie;
+@property (readonly) unsigned cookieAsUnsigned;
 
 - (NSArray *) elements;
-- (DDHidUsage *) usage;
-- (NSString *) name;
-- (BOOL) hasNullState;
-- (BOOL) hasPreferredState;
-- (BOOL) isArray;
-- (BOOL) isRelative;
-- (BOOL) isWrapping;
+@property (readonly, retain) DDHidUsage *usage;
+@property (readonly, assign) NSString *name;
+@property (readonly) BOOL hasNullState;
+@property (readonly) BOOL hasPreferredState;
+@property (readonly, getter=isArray) BOOL array;
+@property (readonly, getter=isRelative) BOOL relative;
+@property (readonly, getter=isWrapping) BOOL wrapping;
 - (long) maxValue;
 - (long) minValue;
-- (IOHIDElementType) type;
 
 - (NSComparisonResult) compareByUsage: (DDHidElement *) device;
 

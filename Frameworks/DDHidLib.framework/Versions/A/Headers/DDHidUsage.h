@@ -31,19 +31,16 @@
     unsigned mUsageId;
 }
 
-+ (DDHidUsage *) usageWithUsagePage: (unsigned) usagePage
++ (instancetype) usageWithUsagePage: (unsigned) usagePage
                             usageId: (unsigned) usageId;
 
-- (id) initWithUsagePage: (unsigned) usagePage
-                 usageId: (unsigned) usageId;
+- (instancetype) initWithUsagePage: (unsigned) usagePage
+                           usageId: (unsigned) usageId;
 
-- (unsigned) usagePage;
-
-- (unsigned) usageId;
-
-- (NSString *) usageName;
-
-- (NSString *) usageNameWithIds;
+@property (readonly) unsigned usagePage;
+@property (readonly) unsigned usageId;
+@property (readonly, assign) NSString *usageName;
+@property (readonly, assign) NSString *usageNameWithIds;
 
 - (NSString *) description;
 

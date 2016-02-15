@@ -240,34 +240,37 @@ NSString * const BBAppExportCodeSigningIdentityKey = @"BBAppExportCodeSigningIde
     //Write all of our changes to the app's plist back into the app.
     [appInfo writeToURL: appInfoURL atomically: YES];
     
-    //Sign the app using the default Apple developer identity, if available.
-    //TODO: allow the user to choose the identity from a list or opt-out of signing.
-    NSString *signingIdentity = @"Mac Developer";
+    //Attempt to sign the app using a Gatekeeper-ready Developer ID identity;
+    //If that fails, fall back on the standard Mac Developer identity;
+    //If that fails, fall back on an ad-hoc identity (which will at least ensure
+    //that the code signing is internally consistent, and not whatever broken
+    //leftovers are inherited from the Boxer Standalone bundle.)
+    //TODO: allow the user to choose the identity from a list or opt-out of signing altogether.
+    NSArray *preferredIdentities = @[
+                                     @"Developer ID Application",
+                                     @"Mac Developer",
+                                     @"-",
+                                     ];
     
-    if (signingIdentity != nil)
+    for (NSString *signingIdentity in preferredIdentities)
     {
         NSError *signingError = nil;
+        NSLog(@"Attempting to sign application bundle using '%@' identity...", signingIdentity);
         BOOL codesigned = [self _signBundleAtURL: tempAppURL
                                     withIdentity: signingIdentity
                                            error: &signingError];
         
-        //Technically we ought to bail out at this point; however,
-        //we currently treat code signing failure as a partial success.
-        //Pass the error on to the calling context at least so that it can
-        //decide what to do about partial success.
-        if (!codesigned && signingError != nil)
+        //If this identity worked for signing, continue.
+        if (codesigned)
         {
-            //TWEAK: re-sign the bundle with an 'ad-hoc' identity.
-            //This is not sufficient for Gatekeeper and the like,
-            //but it will at least ensure the code signature is valid.
-            //(Otherwise the app will be left with whatever signature
-            //Boxer Standalone was built with, and will not pass validation
-            //because the app's resources were modified by the export
-            //process.)
-            [self _signBundleAtURL: tempAppURL
-                      withIdentity: @"-"
-                             error: NULL];
-            
+            NSLog(@"Application bundle successfully signed with '%@' identity.", signingIdentity);
+            break;
+        }
+        //Otherwise, flag that a signing error occurred and pass the error upstream,
+        //but continue trying any remaining identities.
+        else
+        {
+            NSLog(@"Signing failed with '%@' identity: %@", signingIdentity, signingError);
             *outError = signingError;
         }
     }

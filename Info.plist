@@ -173,7 +173,7 @@
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
-				<string>com.apple.folder</string>
+				<string>public.folder</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>Boxer mountable folder</string>
@@ -183,7 +183,7 @@
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
-				<string>com.apple.folder</string>
+				<string>public.folder</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>Boxer disk bundle</string>

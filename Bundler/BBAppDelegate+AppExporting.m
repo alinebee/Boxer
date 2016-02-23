@@ -82,14 +82,18 @@ NSString * const BBAppExportCodeSigningIdentityKey = @"BBAppExportCodeSigningIde
     
     appInfo[@"BXBundledGameboxName"] = importedGameboxURL.lastPathComponent;
     
-    //Copy across the application icon.
-    if (self.appIconURL || self.iconDropzone.image)
+    //If an icon has been provided, either copy across the icon file as-is
+    //(if it was a valid ICNS-format icon) or recreate an ICNs from the NSImage.
+    BOOL hasURLToValidIcon = [self.appIconURL conformsToFileType: (NSString *)kUTTypeAppleICNS];
+    
+    if (hasURLToValidIcon || self.iconDropzone.image)
     {
         NSURL *iconURL;
-        if (self.appIconURL)
+        if (hasURLToValidIcon)
             iconURL = [self _applyIconFromURL: self.appIconURL toAppAtURL: tempAppURL error: outError];
         else
             iconURL = [self _applyIcon: self.iconDropzone.image toAppAtURL: tempAppURL error: outError];
+        
         if (iconURL == nil)
         {
             [manager removeItemAtURL: baseTempURL error: NULL];
@@ -275,7 +279,7 @@ NSString * const BBAppExportCodeSigningIdentityKey = @"BBAppExportCodeSigningIde
         }
     }
     
-    //Finally, move the finished and (hopefully) codesigned app
+    //Once the app is ready, move the finished and (hopefully) codesigned app
     //from the temporary location to the final destination.
     NSURL *finalDestinationURL = nil;
     BOOL swapped = [manager replaceItemAtURL: destinationURL
@@ -287,6 +291,20 @@ NSString * const BBAppExportCodeSigningIdentityKey = @"BBAppExportCodeSigningIde
     
     if (swapped)
     {
+        //TODO: once it's in place, update the resulting file's modification date.
+        NSError *touchError;
+        BOOL touched = [destinationURL setResourceValue: [NSDate date]
+                                                 forKey: NSURLContentModificationDateKey
+                                                  error: &touchError];
+        if (touched)
+        {
+            NSLog(@"Touched file successfully.");
+        }
+        else
+        {
+            NSLog(@"Touch failed with error: %@", touchError);
+        }
+        
         return finalDestinationURL;
     }
     else

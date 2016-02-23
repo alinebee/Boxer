@@ -778,6 +778,14 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
         if (result == NSFileHandlingPanelOKButton)
         {
             self.appIconURL = panel.URL;
+            if (self.appIconURL != nil)
+            {
+                self.iconDropzone.image = [[NSImage alloc] initWithContentsOfURL: self.appIconURL];
+            }
+            else
+            {
+                self.iconDropzone.image = nil;
+            }
         }
     }];
 }

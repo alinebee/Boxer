@@ -105,9 +105,11 @@
 		[self.representedObject resume: self];
         
         //Check the separate key-mapping layer for numpad simulation for this key,
-        //if the numpad simulation toggle is on or the user is holding down the Fn key.
+        //if the numpad simulation toggle is on XOR the user is holding down the Fn key.
+        //Why XOR? Then, with the simulation toggle on, the original keys "below" the
+        //numpad simulation can be accessed by holding the Fn key. (!= is logical XOR)
         BOOL fnModified = (theEvent.modifierFlags & NSFunctionKeyMask) == NSFunctionKeyMask;
-        BOOL simulateNumpad = self.simulatedNumpadActive || fnModified;
+        BOOL simulateNumpad = self.simulatedNumpadActive != fnModified;
         
         CGKeyCode OSXKeyCode = theEvent.keyCode;
         BXDOSKeyCode dosKeyCode = KBD_NONE;

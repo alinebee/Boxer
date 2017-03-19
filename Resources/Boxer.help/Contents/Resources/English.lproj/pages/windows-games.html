@@ -37,12 +37,21 @@
 			
 			<p>Rereleased game collections, and online stores like <a href="http://gog.com/" rel="external">GOG.com</a>, often <strong>package MS-DOS games inside Windows-only installer programs</strong>. Even though Boxer will be able to run the game itself, <strong>it cannot open the Windows installer to get the game out</strong>, and so cannot import the game directly.</p>
 			
-			<p>Instead, you should:</p>
+			<p>Instead, you could:</p>
 			
 			<ol class="steps">
 				<li>Run the installer on a Windows PC or inside a <a href="#windows-emulators">Windows emulator</a>, then:</li>
 				<li>Import the installed game files afterwards into Boxer on your Mac.</li>
 			</ol>
+			
+			<p>Alternatively, if you're comfortable using the Mac command line, you can:</p>
+			
+			<ol class="steps">
+				<li>Download and install <a href="http://constexpr.org/innoextract/install#homebrew">innoextract</a>.</li>
+				<li>Use innoextract to get the DOS version out of the Windows installer.</li>
+				<li>Import the extracted game files into Boxer.</li>
+			</ol>
+
 		</section>
 		
 		<script type="text/javascript" src="../../shared/scripts/zepto.min.js"></script>

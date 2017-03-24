@@ -120,6 +120,62 @@ NSRect alignInRectWithAnchor(NSRect innerRect, NSRect outerRect, NSPoint anchor)
 	return alignedRect;	
 }
 
+NSRect alignRectanglesWithAlignment(NSRect innerRect, NSRect outerRect, ADBRectAlignment alignment)
+{
+	NSPoint anchor;
+	
+	switch (alignment) {
+		case ADBRectAlignBottomLeft:
+			anchor.x = 0.0f;
+			anchor.y = 0.0f;
+			break;
+			
+		case ADBRectAlignBottomCenter:
+			anchor.x = 0.5f;
+			anchor.y = 0.0f;
+			break;
+			
+		case ADBRectAlignBottomRight:
+			anchor.x = 1.0f;
+			anchor.y = 0.0f;
+			break;
+			
+		case ADBRectAlignLeftCenter:
+			anchor.x = 0.0f;
+			anchor.y = 0.5f;
+			break;
+			
+		case ADBRectAlignCenter:
+		default:
+			anchor.x = 0.5f;
+			anchor.y = 0.5f;
+			break;
+			
+		case ADBRectAlignRightCenter:
+			anchor.x = 1.0f;
+			anchor.y = 0.5f;
+			break;
+			
+		case ADBRectAlignTopLeft:
+			anchor.x = 0.0f;
+			anchor.y = 1.0f;
+			break;
+			
+		case ADBRectAlignTopCenter:
+			anchor.x = 0.5f;
+			anchor.y = 1.0f;
+			break;
+			
+		case ADBRectAlignTopRight:
+			anchor.x = 1.0f;
+			anchor.y = 1.0f;
+			break;
+	}
+	
+	return alignInRectWithAnchor(innerRect, outerRect, anchor);
+}
+
+
 NSRect centerInRect(NSRect innerRect, NSRect outerRect)
 {
 	return alignInRectWithAnchor(innerRect, outerRect, NSMakePoint(0.5f, 0.5f));

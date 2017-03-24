@@ -368,6 +368,10 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMType";
         return NO;
     }
     
+    // Make sure MT32 is loud enough.
+    // 5.0 seems to be about right with SoundBlaster sfx
+    _synth->setOutputGain(5.0f);
+    
     return YES;
 }
 

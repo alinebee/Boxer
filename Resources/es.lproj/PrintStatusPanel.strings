@@ -1,0 +1,18 @@
+
+/* Class = "NSTextFieldCell"; title = "[6 pages ready to print.]"; ObjectID = "27"; */
+"27.title" = "[6 pages ready to print.]";
+
+/* Class = "NSWindow"; title = "Printer Status"; ObjectID = "50"; */
+"50.title" = "Estado de impresora";
+
+/* Class = "NSButtonCell"; title = "Print"; ObjectID = "53"; */
+"53.title" = "Imprimir";
+
+/* Class = "NSButtonCell"; title = "Discard"; ObjectID = "55"; */
+"55.title" = "Descartar";
+
+/* Class = "NSTextFieldCell"; title = "Instruct your DOS program to print to LPT1 using A4 paper."; ObjectID = "94"; */
+"94.title" = "Configure su programa DOS para imprimir por LPT1 usando papel A4.";
+
+/* Class = "NSTextFieldCell"; title = "The emulated printer is currently idle."; ObjectID = "95"; */
+"95.title" = "La impresora emulada está actualmente inactiva.";

@@ -1,0 +1,12 @@
+
+/* Class = "NSSegmentedCell"; 908.ibShadowedToolTips[0] = "Toggle the Inspector Panel"; ObjectID = "908"; */
+"908.ibShadowedToolTips[0]" = "Cambiar a panel inspector";
+
+/* Class = "NSSegmentedCell"; 908.ibShadowedToolTips[1] = "Toggle the Programs Panel"; ObjectID = "908"; */
+"908.ibShadowedToolTips[1]" = "Cambiar a panel programas";
+
+/* Class = "NSSegmentedCell"; 908.ibShadowedToolTips[2] = "Lock the mouse to the window"; ObjectID = "908"; */
+"908.ibShadowedToolTips[2]" = "Bloquear ratón en ventana";
+
+/* Class = "NSTextFieldCell"; title = "Cmd-click to lock the mouse to the window."; ObjectID = "910"; */
+"910.title" = "Cmd-clic para bloquear el ratón en la ventana.";

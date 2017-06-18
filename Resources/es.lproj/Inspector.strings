@@ -1,0 +1,255 @@
+
+/* Class = "NSWindow"; title = "Inspector"; ObjectID = "47"; */
+"47.title" = "Inspector";
+
+/* Class = "NSMenuItem"; title = "Copy"; ObjectID = "877"; */
+"877.title" = "Copiar";
+
+/* Class = "NSMenuItem"; title = "Paste"; ObjectID = "879"; */
+"879.title" = "Pegar";
+
+/* Class = "NSMenuItem"; title = "Clear Icon"; ObjectID = "880"; */
+"880.title" = "Vaciar icono";
+
+/* Class = "NSMenuItem"; title = "Eject"; ObjectID = "1284"; */
+"1284.title" = "Expulsar";
+
+/* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "1287"; */
+"1287.title" = "Mostrar en Finder";
+
+/* Class = "NSMenuItem"; title = "Add Drive…"; ObjectID = "1289"; */
+"1289.title" = "Añadir unidad…";
+
+/* Class = "NSMenuItem"; title = "Import into Gamebox"; ObjectID = "1352"; */
+"1352.title" = "Importar en Gamebox";
+
+/* Class = "NSMenuItem"; title = "Cancel Import"; ObjectID = "1398"; */
+"1398.title" = "Cancelar Importar";
+
+/* Class = "NSTabViewItem"; label = "Gamebox Inspector"; ObjectID = "1422"; */
+"1422.label" = "Inspector de gamebox";
+
+/* Class = "NSTabViewItem"; label = "CPU Inspector"; ObjectID = "1423"; */
+"1423.label" = "Inspector de CPU";
+
+/* Class = "NSTabViewItem"; label = "Mouse Inspector"; ObjectID = "1426"; */
+"1426.label" = "Inspector de ratón";
+
+/* Class = "NSTabViewItem"; label = "Drives Inspector"; ObjectID = "1428"; */
+"1428.label" = "Inspector de unidades";
+
+/* Class = "NSMenuItem"; title = "Show gamebox in Finder"; ObjectID = "1435"; */
+"1435.title" = "Mostrar gamebox en Finder";
+
+/* Class = "NSMenuItem"; title = "Search for cover art"; ObjectID = "1546"; */
+"1546.title" = "Buscar carátula";
+
+/* Class = "NSTabViewItem"; label = "Joystick Inspector"; ObjectID = "1548"; */
+"1548.label" = "Inspector de joystick";
+
+/* Class = "NSTextFieldCell"; title = "Mouse speed"; ObjectID = "1962"; */
+"1962.title" = "Velocidad de ratón";
+
+/* Class = "NSTextFieldCell"; title = "Fast"; ObjectID = "1964"; */
+"1964.title" = "Rápida";
+
+/* Class = "NSTextFieldCell"; title = "Normal"; ObjectID = "1966"; */
+"1966.title" = "Normal";
+
+/* Class = "NSTextFieldCell"; title = "Slow"; ObjectID = "1968"; */
+"1968.title" = "Lenta";
+
+/* Class = "NSTextFieldCell"; title = "Mouse speed will only take effect while\nthe mouse pointer is locked to the window."; ObjectID = "1970"; */
+"1970.title" = "La velocidad de ratón solo tendrá efecto mientras el puntero de ratón está bloqueado en la ventana.";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1982"; */
+"1982.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Use seamless mouse pointer"; ObjectID = "1984"; */
+"1984.title" = "Usar puntero de ratón sin problemas";
+
+/* Class = "NSTextFieldCell"; title = "Lets the OS X mouse pointer interact with the DOS window even when the pointer is unlocked."; ObjectID = "1986"; */
+"1986.title" = "Permitir al puntero de ratón de OS X interactuar con la ventana DOS cuando el puntero está desbloqueado.";
+
+/* Class = "NSTextFieldCell"; title = "Mouse button shortcuts"; ObjectID = "1991"; */
+"1991.title" = "Atajos de botones de ratón";
+
+/* Class = "NSTextFieldCell"; title = "Click right button:"; ObjectID = "1993"; */
+"1993.title" = "Clic botón derecho:";
+
+/* Class = "NSTextFieldCell"; title = "Click both buttons:"; ObjectID = "1995"; */
+"1995.title" = "Clic ambos botones:";
+
+/* Class = "NSTextFieldCell"; title = "Change these shortcuts if they conflict\nwith the game’s own keyboard controls."; ObjectID = "1997"; */
+"1997.title" = "Cambie estos atajos si hay conflicto\ncon los controles de teclado del juego.";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "2000"; */
+"2000.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "--"; ObjectID = "2004"; */
+"2004.title" = "--";
+
+/* Class = "NSMenuItem"; title = "⌃ Click"; ObjectID = "2005"; */
+"2005.title" = "Clic ⌃";
+
+/* Class = "NSMenuItem"; title = "⌥ Click"; ObjectID = "2006"; */
+"2006.title" = "Clic ⌥";
+
+/* Class = "NSMenuItem"; title = "⇧ Click"; ObjectID = "2007"; */
+"2007.title" = "Clic ⇧";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "2013"; */
+"2013.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "--"; ObjectID = "2022"; */
+"2022.title" = "--";
+
+/* Class = "NSMenuItem"; title = "⌃⌥ Click"; ObjectID = "2023"; */
+"2023.title" = "Clic ⌃⌥";
+
+/* Class = "NSMenuItem"; title = "⌃⇧ Click"; ObjectID = "2024"; */
+"2024.title" = "Clic ⌃⇧";
+
+/* Class = "NSMenuItem"; title = "⇧⌥ Click"; ObjectID = "2025"; */
+"2025.title" = "Clic ⇧⌥";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "2030"; */
+"2030.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Optimize for newer games"; ObjectID = "2033"; */
+"2033.title" = "Optimizar para nuevos juegos";
+
+/* Class = "NSTextFieldCell"; title = "Turn off optimized emulation if the game crashes or behaves unreliably."; ObjectID = "2034"; */
+"2034.title" = "Desactivar emulación optimizada si el juego se bloquea o comporta inestablemente.";
+
+/* Class = "NSTextFieldCell"; title = "Frame rate:"; ObjectID = "2039"; */
+"2039.title" = "Tasa de fotogramas:";
+
+/* Class = "NSTextFieldCell"; title = "[Current framerate]"; ObjectID = "2041"; */
+"2041.title" = "[Current framerate]";
+
+/* Class = "NSTextFieldCell"; title = "Max"; ObjectID = "2073"; */
+"2073.title" = "Máx";
+
+/* Class = "NSTextFieldCell"; title = "Pentium"; ObjectID = "2075"; */
+"2075.title" = "Pentium";
+
+/* Class = "NSTextFieldCell"; title = "486"; ObjectID = "2077"; */
+"2077.title" = "486";
+
+/* Class = "NSTextFieldCell"; title = "386"; ObjectID = "2079"; */
+"2079.title" = "386";
+
+/* Class = "NSTextFieldCell"; title = "AT"; ObjectID = "2081"; */
+"2081.title" = "AT";
+
+/* Class = "NSTextFieldCell"; title = "XT"; ObjectID = "2083"; */
+"2083.title" = "XT";
+
+/* Class = "NSTextFieldCell"; title = "[Current CPU speed]"; ObjectID = "2086"; */
+"2086.title" = "[Current CPU speed]";
+
+/* Class = "NSTextFieldCell"; title = "CPU speed:"; ObjectID = "2087"; */
+"2087.title" = "Velocidad de CPU:";
+
+/* Class = "NSButtonCell"; title = "Use strict gameport timing"; ObjectID = "2093"; */
+"2093.title" = "Usar sincronización estricta de juego";
+
+/* Class = "NSTextFieldCell"; title = "Enable this option and recalibrate in-game,\nif the joystick drifts or behaves erratically."; ObjectID = "2101"; */
+"2101.title" = "Activa esta opción y recalibra en el juego,\nsi el joystick se desvía o comporta irregularmente.";
+
+/* Class = "NSTextFieldCell"; title = "Connect a game controller to your Mac to begin."; ObjectID = "2141"; */
+"2141.title" = "Conectar un mando a su Mac para comenzar.";
+
+/* Class = "NSTextFieldCell"; title = "You can also connect an iPhone\nor iPod Touch running Joypad."; ObjectID = "2143"; */
+"2143.title" = "Puede conectar un iPhone\no iPod Touch funcionando como Joypad.";
+
+/* Class = "NSButtonCell"; title = "Get Joypad…"; ObjectID = "2145"; */
+"2145.title" = "Obtener Joypad…";
+
+/* Class = "NSTextFieldCell"; title = "Drop your own cover art here\nto change this game’s icon."; ObjectID = "2150"; */
+"2150.title" = "Arrastre su propia carátula aquí\npara cambiar el icono del juego.";
+
+/* Class = "NSTextFieldCell"; title = "When starting up, launch:"; ObjectID = "2154"; */
+"2154.title" = "Al iniciar, ejecutar:";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "2157"; */
+"2157.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Nothing (show a DOS prompt)"; ObjectID = "2169"; */
+"2169.title" = "Nada (mostrar símbolo del DOS)";
+
+/* Class = "NSMenuItem"; title = "Other…"; ObjectID = "2171"; */
+"2171.title" = "Otro…";
+
+/* Class = "NSButtonCell"; title = "Close window after exiting"; ObjectID = "2174"; */
+"2174.title" = "Cerrar ventana al salir";
+
+/* Class = "NSTextFieldCell"; title = "Hold down Option while exiting to return\nto the DOS prompt instead."; ObjectID = "2181"; */
+"2181.title" = "Mantiene la opción al salir en lugar de volver al simbolo del DOS.";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "2188"; */
+"2188.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Drop folders, CD-ROMs or disc images here\nto add them as DOS drives."; ObjectID = "2190"; */
+"2190.title" = "Arrastre carpetas, CD-ROMs o imágenes de disco aquí para añadirlas como unidades DOS.";
+
+/* Class = "NSSegmentedCell"; 2192.ibShadowedToolTips[0] = "Add a new drive"; ObjectID = "2192"; */
+"2192.ibShadowedToolTips[0]" = "Añadir nueva unidad";
+
+/* Class = "NSSegmentedCell"; 2192.ibShadowedToolTips[1] = "Remove selected drives from list"; ObjectID = "2192"; */
+"2192.ibShadowedToolTips[1]" = "Borrar unidades seleccionadas de la lista";
+
+/* Class = "NSSegmentedCell"; 2192.ibShadowedToolTips[2] = "Show drive actions menu"; ObjectID = "2192"; */
+"2192.ibShadowedToolTips[2]" = "Mostrar menú de acciones de unidades";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "2196"; */
+"2196.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Reduce the frame rate if the game’s\nsound or animation are stuttering."; ObjectID = "2226"; */
+"2226.title" = "Reducir tasa de fotogramas si el sonido o la animación del juego se entrecorta.";
+
+/* Class = "NSToolbarItem"; label = "Gamebox"; ObjectID = "2250"; */
+"2250.label" = "Gamebox";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Gamebox"; ObjectID = "2250"; */
+"2250.paletteLabel" = "Gamebox";
+
+/* Class = "NSToolbarItem"; label = "CPU "; ObjectID = "2251"; */
+"2251.label" = "CPU ";
+
+/* Class = "NSToolbarItem"; paletteLabel = "CPU "; ObjectID = "2251"; */
+"2251.paletteLabel" = "CPU ";
+
+/* Class = "NSToolbarItem"; label = "Mouse "; ObjectID = "2252"; */
+"2252.label" = "Ratón ";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Mouse "; ObjectID = "2252"; */
+"2252.paletteLabel" = "Ratón ";
+
+/* Class = "NSToolbarItem"; label = "Joystick "; ObjectID = "2253"; */
+"2253.label" = "Joystick ";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Joystick "; ObjectID = "2253"; */
+"2253.paletteLabel" = "Joystick ";
+
+/* Class = "NSToolbarItem"; label = "Drives "; ObjectID = "2254"; */
+"2254.label" = "Unidades ";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Drives "; ObjectID = "2254"; */
+"2254.paletteLabel" = "Unidades ";
+
+/* Class = "NSMenuItem"; title = "Eject"; ObjectID = "2270"; */
+"2270.title" = "Expulsar";
+
+/* Class = "NSMenuItem"; title = "Cancel Import"; ObjectID = "2271"; */
+"2271.title" = "Cancelar Importar";
+
+/* Class = "NSMenuItem"; title = "Import into Gamebox"; ObjectID = "2272"; */
+"2272.title" = "Importar en Gamebox";
+
+/* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "2274"; */
+"2274.title" = "Mostrar en Finder";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "2308"; */
+"2308.title" = "Box";

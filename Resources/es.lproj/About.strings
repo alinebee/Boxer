@@ -1,0 +1,15 @@
+
+/* Class = "NSTextFieldCell"; title = "Punching some sense\ninto DOS emulation."; ObjectID = "36"; */
+"36.title" = "Empujando algún sentido\ndentro de la emulación DOS.";
+
+/* Class = "NSButtonCell"; title = "Acknowledgements"; ObjectID = "47"; */
+"47.title" = "Agradecimientos";
+
+/* Class = "NSButtonCell"; title = "Boxer Website"; ObjectID = "49"; */
+"49.title" = "Página web de Boxer";
+
+/* Class = "NSTextFieldCell"; title = "Boxer is designed by\nAlun Bestor & released under the GNU Public License.\n\nBoxer is based on DOSBox 0.74, which is \n© 2002–2010 by the DOSBox Team."; ObjectID = "56"; */
+"56.title" = "Boxer está diseñado por\nAlun Bestor & publicado bajo la licencia pública GNU.\n\nBoxer está basado en DOSBox 0.74, el cual es \n© 2002–2010 por el equipo DOSBox.";
+
+/* Class = "NSTextFieldCell"; title = "[Version 1.2 | build 20111031.1]"; ObjectID = "58"; */
+"58.title" = "[Version 1.2 | build 20111031.1]";

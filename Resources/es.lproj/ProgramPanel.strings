@@ -1,0 +1,30 @@
+
+/* Class = "NSButtonCell"; title = "Not now"; ObjectID = "420"; */
+"420.title" = "Ahora no";
+
+/* Class = "NSButtonCell"; title = "Launch every time"; ObjectID = "422"; */
+"422.title" = "Ejecutar cada vez";
+
+/* Class = "NSTextFieldCell"; title = "Click a program to launch:"; ObjectID = "469"; */
+"469.title" = "Haga clic en un programa para ejecutar:";
+
+/* Class = "NSTextFieldCell"; title = "Hold down Option during startup to get the DOS prompt instead."; ObjectID = "475"; */
+"475.title" = "Mantenga pulsado Opción durante el inicio para obtener el símbolo del DOS en su lugar.";
+
+/* Class = "NSButtonCell"; title = "Launch wwwwwww.exe every time I start this gamebox."; ObjectID = "477"; */
+"477.title" = "Ejecutar wwwwwww.exe cada vez que inicia este gamebox.";
+
+/* Class = "NSTextFieldCell"; title = "Launch wwwwwwww.exe every time?"; ObjectID = "483"; */
+"483.title" = "¿Ejecutar wwwwwwww.exe cada vez?";
+
+/* Class = "NSTextFieldCell"; title = "You can change your choice later from the Inspector Panel."; ObjectID = "487"; */
+"487.title" = "Puede cambiar su opción más tarde desde el panel Inspector.";
+
+/* Class = "NSTextFieldCell"; title = "There are no programs in this gamebox."; ObjectID = "489"; */
+"489.title" = "No hay programas en este gamebox.";
+
+/* Class = "NSTextFieldCell"; title = "Once you’ve installed some programs, they will be listed here."; ObjectID = "491"; */
+"491.title" = "Una vez haya instalado algunos programas, aparecerán aquí.";
+
+/* Class = "NSButtonCell"; title = "[filename.exe]"; ObjectID = "495"; */
+"495.title" = "[filename.exe]";

@@ -1,0 +1,144 @@
+
+/* Class = "NSWindow"; title = "Boxer Preferences"; ObjectID = "1"; */
+"1.title" = "Preferencias de Boxer";
+
+/* Class = "NSButtonCell"; title = "Start up games in Full Screen mode"; ObjectID = "76"; */
+"76.title" = "Iniciar juegos en modo pantalla completa";
+
+/* Class = "NSTextFieldCell"; title = "You can switch to and from Full Screen at any time from the View menu or by pressing Cmd-F."; ObjectID = "77"; */
+"77.title" = "Puede cambiar desde pantalla completa en cualquier momento desde el menú visualización o pulsando Cmd-F.";
+
+/* Class = "NSButtonCell"; title = "Always use 4:3 aspect ratio"; ObjectID = "78"; */
+"78.title" = "Usar siempre relación de aspecto 4:3";
+
+/* Class = "NSTextFieldCell"; title = "When enabled, games will be stretched to match their original aspect ratio on old PC monitors."; ObjectID = "79"; */
+"79.title" = "Al activar, los juegos se estirarán para coincidir con su relación de aspecto original en los monitores de PC antiguos.";
+
+/* Class = "NSButtonCell"; title = "Original"; ObjectID = "86"; */
+"86.title" = "Original";
+
+/* Class = "NSButtonCell"; title = "Smooth"; ObjectID = "87"; */
+"87.title" = "Smooth";
+
+/* Class = "NSButtonCell"; title = "CRT Display"; ObjectID = "88"; */
+"88.title" = "Pantalla CRT";
+
+/* Class = "NSToolbarItem"; label = "General   "; ObjectID = "108"; */
+"108.label" = "General   ";
+
+/* Class = "NSToolbarItem"; paletteLabel = "General   "; ObjectID = "108"; */
+"108.paletteLabel" = "General   ";
+
+/* Class = "NSToolbarItem"; label = "Display   "; ObjectID = "109"; */
+"109.label" = "Pantalla   ";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Display   "; ObjectID = "109"; */
+"109.paletteLabel" = "Pantalla   ";
+
+/* Class = "NSTextFieldCell"; title = "Keep my DOS games in:"; ObjectID = "141"; */
+"141.title" = "Mantener juegos DOS en:";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "144"; */
+"144.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "(No folder specified)"; ObjectID = "145"; */
+"145.title" = "(No hay carpeta especificada)";
+
+/* Class = "NSMenuItem"; title = "Other…"; ObjectID = "146"; */
+"146.title" = "Otro…";
+
+/* Class = "NSButtonCell"; title = "Use shelf appearance in Finder’s icon view"; ObjectID = "150"; */
+"150.title" = "Usar apariencia de estantería en vista de icono de Finder";
+
+/* Class = "NSTabViewItem"; label = "General Preferences"; ObjectID = "175"; */
+"175.label" = "Preferencias generales";
+
+/* Class = "NSTabViewItem"; label = "Display Preferences"; ObjectID = "176"; */
+"176.label" = "Preferencias de pantalla";
+
+/* Class = "NSButtonCell"; title = "When a program is still running"; ObjectID = "223"; */
+"223.title" = "Cuando un programa se está ejecutando";
+
+/* Class = "NSTextFieldCell"; title = "Prompt before closing:"; ObjectID = "225"; */
+"225.title" = "Preguntar antes de cerrar:";
+
+/* Class = "NSToolbarItem"; label = "Audio   "; ObjectID = "266"; */
+"266.label" = "Audio   ";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Audio   "; ObjectID = "266"; */
+"266.paletteLabel" = "Audio   ";
+
+/* Class = "NSTabViewItem"; label = "Audio Preferences"; ObjectID = "268"; */
+"268.label" = "Preferencias de audio";
+
+/* Class = "NSTextFieldCell"; title = "Boxer does not come with the ROMs needed to play\nMT-32 music, as these are not legal to distribute."; ObjectID = "276"; */
+"276.title" = "Boxer no viene con las ROMs necesarias para reproducir\nmúsica MT-32, ya que no es legal distribuirlas.";
+
+/* Class = "NSTextFieldCell"; title = "But if one should stumble across MT-32 ROMs on the internet, then acccidentally download them, one could drag them onto this shelf to bring one’s MT-32 games to life."; ObjectID = "278"; */
+"278.title" = "Pero si se encuentra con ROMs MT-32 en internet, entonces descárguelos accidentalmente, podrá arrastrarlos a esta estantería para llevar los juegos MT-32 a la vida.";
+
+/* Class = "NSMenuItem"; title = "[Show ROMs in Finder]"; ObjectID = "296"; */
+"296.title" = "[Show ROMs in Finder]";
+
+/* Class = "NSMenuItem"; title = "[Add MT-32 ROMs…]"; ObjectID = "299"; */
+"299.title" = "[Add MT-32 ROMs…]";
+
+/* Class = "NSButtonCell"; title = "[Drop MT-32 ROMs here to enable MT-32 emulation]"; ObjectID = "309"; */
+"309.title" = "[Drop MT-32 ROMs here to enable MT-32 emulation]";
+
+/* Class = "NSButtonCell"; title = "Show messages from the MT-32’s LCD"; ObjectID = "317"; */
+"317.title" = "Mostrar mensajes desde el LCD de MT-32";
+
+/* Class = "NSTextFieldCell"; title = "Some games will print secret messages on the MT-32’s LCD panel. When enabled, Boxer will display these on-screen."; ObjectID = "319"; */
+"319.title" = "Algunos juegos escribirán mensajes secretos en el panel LCD de MT-32. Al activar, Boxer los visualizará en pantalla.";
+
+/* Class = "NSTextFieldCell"; title = "Music in supporting games will be played through your Roland MT-32 Sound Module."; ObjectID = "333"; */
+"333.title" = "La música de los juegos compatibles se reproducirá a través de su módulo de sonido Roland MT-32.";
+
+/* Class = "NSTextFieldCell"; title = "As an MT-32 owner, you are also a person of taste and distinction."; ObjectID = "334"; */
+"334.title" = "Como propietario de una MT-32, también es una persona de gusto y distinción.";
+
+/* Class = "NSTextFieldCell"; title = "Choose a rendering style for DOS games:"; ObjectID = "348"; */
+"348.title" = "Elija un tipo de renderizado para los juegos DOS:";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "349"; */
+"349.title" = "Box";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "353"; */
+"353.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Open my games folder in Finder"; ObjectID = "354"; */
+"354.title" = "Abrir carpeta de juegos en Finder";
+
+/* Class = "NSMenuItem"; title = "Show welcome panel"; ObjectID = "355"; */
+"355.title" = "Mostrar panel de bienvenida";
+
+/* Class = "NSMenuItem"; title = "Do nothing"; ObjectID = "356"; */
+"356.title" = "No hacer nada";
+
+/* Class = "NSTextFieldCell"; title = "When Boxer starts:"; ObjectID = "357"; */
+"357.title" = "Al iniciar Boxer:";
+
+/* Class = "NSTabViewItem"; label = "Keyboard Preferences"; ObjectID = "363"; */
+"363.label" = "Preferencias de teclado";
+
+/* Class = "NSButtonCell"; title = "Capture function keys and arrow keys for games"; ObjectID = "367"; */
+"367.title" = "Capturar teclas de función y cursores de juegos";
+
+/* Class = "NSTextFieldCell"; title = "Prevents OS X system hotkeys from interfering with the keyboard controls in your DOS games."; ObjectID = "369"; */
+"369.title" = "Evita que las teclas de acceso del sistema OS X interfieran con los controles de teclado en los juegos DOS.";
+
+/* Class = "NSTextFieldCell"; title = "“Enable access for assistive devices” must also\nbe enabled in the Universal Access preferences."; ObjectID = "373"; */
+"373.title" = "“Activar acceso para dispositivos de asistencia” debe estar\ntambién activado en preferencias de accesibilidad.";
+
+/* Class = "NSButtonCell"; title = "Open System Preferences"; ObjectID = "377"; */
+"377.title" = "Abrir preferencias del sistema";
+
+/* Class = "NSToolbarItem"; label = "Keyboard"; ObjectID = "396"; */
+"396.label" = "Teclado";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Keyboard"; ObjectID = "396"; */
+"396.paletteLabel" = "Teclado";
+
+/* Class = "NSMenuItem"; title = "Open a DOS prompt"; ObjectID = "cba-8m-oxX"; */
+"cba-8m-oxX.title" = "Abrir símbolo del DOS";

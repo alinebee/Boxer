@@ -137,11 +137,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0alpha</string>
+	<string>2.0.0-alpha</string>
 	<key>CFBundleSignature</key>
 	<string>Boxr</string>
 	<key>CFBundleVersion</key>
-	<string>20141123.1</string>
+	<string>2.0.0-alpha+20160215.1</string>
 	<key>ContactEmail</key>
 	<string>support@boxerapp.com</string>
 	<key>CoverArtSearchURL</key>
@@ -159,7 +159,7 @@
 	<key>NSAppleScriptEnabled</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
-	<string>© 2011 Alun Bestor. Released under the GNU Public License 2.0.</string>
+	<string>© 2016 Alun Bestor. Released under the GNU Public License 2.0.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -175,7 +175,7 @@
 	<key>SUEnableSystemProfiling</key>
 	<false/>
 	<key>SUFeedURL</key>
-	<string>http://boxerapp.com/appcast</string>
+	<string>https://updates.boxerapp.com/appcast-dev</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
 	<key>SUScheduledCheckInterval</key>

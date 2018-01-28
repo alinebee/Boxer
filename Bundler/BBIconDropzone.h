@@ -8,9 +8,11 @@
 
 #import <Cocoa/Cocoa.h>
 
+/// An image well that captures the original file URL (if any) of any image that is dropped or pasted into it.
 @interface BBIconDropzone : NSImageView
 
-///Returns the URL of the image currently displayed in the image view.
-@property (copy, nonatomic) NSURL *imageURL;
+/// The URL of the image currently displayed in the image view.
+/// NOTE: for consistency reasons, changing this will not change the displayed image.
+@property (copy, nonatomic) NSURL *lastDroppedImageURL;
 
 @end

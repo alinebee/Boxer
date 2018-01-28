@@ -8,6 +8,22 @@
 
 #import "BBAppDelegate.h"
 
+
+#pragma mark - Error constants
+
+extern NSString * const BBAppExportErrorDomain;
+
+typedef NS_ENUM(NSInteger, BBAppExportErrorCode) {
+    /// The app could not be code-signed successfully.
+    BBAppExportCodeSignFailed,
+};
+
+/// The NSError userInfo key listing the code signing identity used for a failed code sign.
+extern NSString * const BBAppExportCodeSigningIdentityKey;
+
+
+#pragma mark - BBAppDelegate interface
+
 @interface BBAppDelegate (AppExporting)
 
 //Begin asynchronously creating a new app at the specified destination URL.

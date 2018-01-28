@@ -11,6 +11,9 @@
 #import "NSImage+ADBSaveImages.h"
 #import "BBIconDropzone.h"
 
+NSString * const BBAppExportErrorDomain = @"BBAppExportErrorDomain";
+NSString * const BBAppExportCodeSigningIdentityKey = @"BBAppExportCodeSigningIdentityKey";
+
 @implementation BBAppDelegate (AppExporting)
 
 - (void) createAppAtDestinationURL: (NSURL *)destinationURL completion: (void(^)(NSURL *appURL, NSError *error))completionHandler
@@ -19,7 +22,7 @@
     
     dispatch_queue_t queue = dispatch_queue_create("AppCreationQueue", DISPATCH_QUEUE_SERIAL);
     dispatch_async(queue, ^{
-        NSError *creationError;
+        NSError *creationError = nil;
         NSURL *newAppURL = [self createAppAtDestinationURL: destinationURL
                                                      error: &creationError];
         
@@ -79,14 +82,18 @@
     
     appInfo[@"BXBundledGameboxName"] = importedGameboxURL.lastPathComponent;
     
-    //Copy across the application icon.
-    if (self.appIconURL || self.iconDropzone.image)
+    //If an icon has been provided, either copy across the icon file as-is
+    //(if it was a valid ICNS-format icon) or recreate an ICNs from the NSImage.
+    BOOL hasURLToValidIcon = [self.appIconURL conformsToFileType: (NSString *)kUTTypeAppleICNS];
+    
+    if (hasURLToValidIcon || self.iconDropzone.image)
     {
         NSURL *iconURL;
-        if (self.appIconURL)
+        if (hasURLToValidIcon)
             iconURL = [self _applyIconFromURL: self.appIconURL toAppAtURL: tempAppURL error: outError];
         else
             iconURL = [self _applyIcon: self.iconDropzone.image toAppAtURL: tempAppURL error: outError];
+        
         if (iconURL == nil)
         {
             [manager removeItemAtURL: baseTempURL error: NULL];
@@ -103,28 +110,15 @@
     
     NSString *year = [NSString stringWithFormat: @"%04d", currentDate.year];
     
-    NSDictionary *substitutions;
-    if (self.isUnbranded)
-    {
-        substitutions = @{
-            @"{{BUNDLE_IDENTIFIER}}":   self.appBundleIdentifier,
-            @"{{APPLICATION_NAME}}":    self.appName,
-            @"{{APPLICATION_VERSION}}": self.appVersion,
-            @"{{YEAR}}":                year
-        };
-    }
-    else
-    {
-        substitutions = @{
-            @"{{ORGANIZATION_NAME}}":   self.organizationName ? self.organizationName : @"",
-            @"{{ORGANIZATION_URL}}":    self.organizationURL ? self.organizationURL : @"",
-            @"{{BUNDLE_IDENTIFIER}}":   self.appBundleIdentifier,
-            @"{{APPLICATION_NAME}}":    self.appName,
-            @"{{APPLICATION_VERSION}}": self.appVersion,
-            @"{{YEAR}}":                year
-        };
-    }
-    
+    NSDictionary *substitutions = @{
+                                    @"{{ORGANIZATION_NAME}}":   self.organizationName ?: @"",
+                                    @"{{ORGANIZATION_URL}}":    self.organizationURL ?: @"",
+                                    @"{{BUNDLE_IDENTIFIER}}":   self.appBundleIdentifier,
+                                    @"{{APPLICATION_NAME}}":    self.appName,
+                                    @"{{APPLICATION_VERSION}}": self.appVersion,
+                                    @"{{YEAR}}":                year
+                                    };
+
     [self _rewritePlist: appInfo withSubstitutions: substitutions];
     
     //Manually replace the version and bundle identifier.
@@ -155,6 +149,15 @@
     
     //Also rewrite the strings files for every localization within the app,
     //to use the substituted app and organization info.
+    BOOL rewroteStrings = [self _rewriteStringsFilesInBundleAtURL: appResourceURL
+                                                withSubstitutions: substitutions
+                                                            error: outError];
+    if (!rewroteStrings)
+    {
+        [manager removeItemAtURL: baseTempURL error: NULL];
+        return nil;
+    }
+    
     NSEnumerator *enumerator = [manager enumeratorAtURL: appResourceURL
                              includingPropertiesForKeys: nil
                                                 options: 0
@@ -177,60 +180,45 @@
     NSString *helpbookName = appInfo[@"CFBundleHelpBookFolder"];
     if (helpbookName)
     {
-        NSURL *helpbookSouceURL = [appResourceURL URLByAppendingPathComponent: helpbookName];
+        NSURL *helpbookURL = [appResourceURL URLByAppendingPathComponent: helpbookName];
         
-        //TWEAK: if this is a branding-less app, delete the help file on the presumption that it's brand-specific.
-        //Disabled for now because we finally have brandingless help files.
-        /*
-        if (self.isUnbranded)
+        //Rewrite various variables in the helpbook's own info.plist.
+        NSURL *helpbookInfoURL = [helpbookURL URLByAppendingPathComponent: @"Contents/Info.plist"];
+        NSURL *helpbookResourceURL = [helpbookURL URLByAppendingPathComponent: @"Contents/Resources/"];
+        NSMutableDictionary *helpbookInfo = [NSMutableDictionary dictionaryWithContentsOfURL: helpbookInfoURL];
+        
+        [self _rewritePlist: helpbookInfo withSubstitutions: substitutions];
+        
+        //Update the help book's icons.
+        if (self.appIconURL)
         {
-            [appInfo removeObjectForKey: @"CFBundleHelpBookFolder"];
-            [manager removeItemAtURL: helpbookSouceURL error: NULL];
-        }
-        else
-         */
-        {
-            //While we're at it, rename the help book to reflect the application name.
-            NSString *destinationHelpbookName = [self.sanitisedAppName stringByAppendingPathExtension: @"help"];
+            NSURL *helpbookIconURL = [self _applyIconFromURL: self.appIconURL
+                                             toHelpbookAtURL: helpbookURL
+                                                       error: outError];
             
-            NSURL *helpbookURL = [self _importHelpbookFromURL: helpbookSouceURL
-                                                 intoAppAtURL: tempAppURL
-                                                     withName: destinationHelpbookName
-                                                        error: outError];
-            
-            if (helpbookURL == nil)
+            if (helpbookIconURL == nil)
             {
                 [manager removeItemAtURL: baseTempURL error: NULL];
                 return nil;
             }
             
-            appInfo[@"CFBundleHelpBookFolder"] = destinationHelpbookName;
-            
-            //Rewrite various variables in the helpbook's own info.plist.
-            NSURL *helpbookInfoURL = [helpbookURL URLByAppendingPathComponent: @"Contents/Info.plist"];
-            NSURL *helpbookResourceURL = [helpbookURL URLByAppendingPathComponent: @"Contents/Resources/"];
-            NSMutableDictionary *helpbookInfo = [NSMutableDictionary dictionaryWithContentsOfURL: helpbookInfoURL];
-            
-            [self _rewritePlist: helpbookInfo withSubstitutions: substitutions];
-            
-            //Update the help book's icons.
-            if (self.appIconURL)
-            {
-                NSURL *helpbookIconURL = [self _applyIconFromURL: self.appIconURL
-                                                 toHelpbookAtURL: helpbookURL
-                                                           error: outError];
-                
-                if (helpbookIconURL == nil)
-                {
-                    return nil;
-                }
-                
-                NSString *relativeHelpbookIconPath = [helpbookIconURL pathRelativeToURL: helpbookResourceURL];
-                helpbookInfo[@"HPDBookIconPath"] = relativeHelpbookIconPath;
-            }
-            
-            //Write all of our changes to the helpbook's plist back into the helpbook.
-            [helpbookInfo writeToURL: helpbookInfoURL atomically: YES];
+            NSString *relativeHelpbookIconPath = [helpbookIconURL pathRelativeToURL: helpbookResourceURL];
+            helpbookInfo[@"HPDBookIconPath"] = relativeHelpbookIconPath;
+        }
+        
+        //Write all of our changes to the helpbook's plist back into the helpbook.
+        [helpbookInfo writeToURL: helpbookInfoURL atomically: YES];
+        
+        
+        //As with the main bundle, rewrite the strings files for every localization within the helpbook,
+        //to use the substituted app and organization info.
+        BOOL rewroteHelpbookStrings = [self _rewriteStringsFilesInBundleAtURL: helpbookURL
+                                                            withSubstitutions: substitutions
+                                                                        error: outError];
+        if (!rewroteHelpbookStrings)
+        {
+            [manager removeItemAtURL: baseTempURL error: NULL];
+            return nil;
         }
     }
     
@@ -240,9 +228,6 @@
         NSArray *brandedResources = @[
             @"StandaloneLogo.png",
             @"StandaloneLogo@2x.png",
-            //These resources are now brand-neutral
-            //@"English.lproj/Credits.html",
-            //@"Help.help",
         ];
         
         for (NSString *resourceName in brandedResources)
@@ -259,24 +244,43 @@
     //Write all of our changes to the app's plist back into the app.
     [appInfo writeToURL: appInfoURL atomically: YES];
     
-    //Code-sign the application with the developer's ID, if they have one.
-    NSString *codeSignPath = @"/usr/bin/codesign";
-    NSArray *codeSignArgs  = @[@"--force",
-                               @"--deep",
-                               @"--sign",
-                               @"Mac Developer",
-                               tempAppURL.path];
-    NSTask *signApp = [NSTask launchedTaskWithLaunchPath: codeSignPath
-                                               arguments: codeSignArgs];
+    //Attempt to sign the app using a Gatekeeper-ready Developer ID identity;
+    //If that fails, fall back on the standard Mac Developer identity;
+    //If that fails, fall back on an ad-hoc identity (which will at least ensure
+    //that the code signing is internally consistent, and not whatever broken
+    //leftovers are inherited from the Boxer Standalone bundle.)
+    //TODO: allow the user to choose the identity from a list or opt-out of signing altogether.
+    NSArray *preferredIdentities = @[
+                                     @"Developer ID Application",
+                                     @"Mac Developer",
+                                     @"-",
+                                     ];
     
-    [signApp waitUntilExit];
+    for (NSString *signingIdentity in preferredIdentities)
+    {
+        NSError *signingError = nil;
+        NSLog(@"Attempting to sign application bundle using '%@' identity...", signingIdentity);
+        BOOL codesigned = [self _signBundleAtURL: tempAppURL
+                                    withIdentity: signingIdentity
+                                           error: &signingError];
+        
+        //If this identity worked for signing, continue.
+        if (codesigned)
+        {
+            NSLog(@"Application bundle successfully signed with '%@' identity.", signingIdentity);
+            break;
+        }
+        //Otherwise, flag that a signing error occurred and pass the error upstream,
+        //but continue trying any remaining identities.
+        else
+        {
+            NSLog(@"Signing failed with '%@' identity: %@", signingIdentity, signingError);
+            *outError = signingError;
+        }
+    }
     
-    //TODO: notify the user if the app failed
-    NSLog(@"Code signing finished with status code: %i using arguments: %@",
-          signApp.terminationStatus,
-          codeSignArgs);
-    
-    //Finally, move the finished and codesigned app from the temporary location to the final destination.
+    //Once the app is ready, move the finished and (hopefully) codesigned app
+    //from the temporary location to the final destination.
     NSURL *finalDestinationURL = nil;
     BOOL swapped = [manager replaceItemAtURL: destinationURL
                                withItemAtURL: tempAppURL
@@ -287,12 +291,67 @@
     
     if (swapped)
     {
+        //TODO: once it's in place, update the resulting file's modification date.
+        NSError *touchError;
+        BOOL touched = [destinationURL setResourceValue: [NSDate date]
+                                                 forKey: NSURLContentModificationDateKey
+                                                  error: &touchError];
+        if (touched)
+        {
+            NSLog(@"Touched file successfully.");
+        }
+        else
+        {
+            NSLog(@"Touch failed with error: %@", touchError);
+        }
+        
         return finalDestinationURL;
     }
     else
     {
         return nil;
     }
+}
+
+- (BOOL) _signBundleAtURL: (NSURL *)bundleURL
+             withIdentity: (NSString *)signingIdentity
+                    error: (NSError **)outError
+{
+    //Code-sign the application with the developer's ID, if they have one.
+    NSString *codeSignPath = @"/usr/bin/codesign";
+    NSArray *codeSignArgs  = @[@"--force",
+                               @"--deep",
+                               @"--sign",
+                               signingIdentity,
+                               bundleURL.path];
+    
+    NSTask *signApp = [[NSTask alloc] init];
+    signApp.launchPath = codeSignPath;
+    signApp.arguments = codeSignArgs;
+    
+    NSPipe *errorPipe = [NSPipe pipe];
+    signApp.standardError = errorPipe;
+    
+    [signApp launch];
+    [signApp waitUntilExit];
+    
+    if (signApp.terminationStatus != 0)
+    {
+        if (outError != NULL)
+        {
+            NSData *errorData = errorPipe.fileHandleForReading.availableData;
+            NSString *errorString = [[NSString alloc] initWithData: errorData encoding: NSUTF8StringEncoding];
+            
+            *outError = [NSError errorWithDomain: BBAppExportErrorDomain
+                                            code: BBAppExportCodeSignFailed
+                                        userInfo: @{ NSLocalizedFailureReasonErrorKey: errorString,
+                                                     BBAppExportCodeSigningIdentityKey: signingIdentity,
+                                                     }];
+        }
+        
+        return NO;
+    }
+    else return YES;
 }
 
 - (NSURL *) _importGameboxFromURL: (NSURL *)gameboxURL
@@ -338,41 +397,6 @@
     }
     
     return destinationURL;
-}
-
-- (NSURL *) _importHelpbookFromURL: (NSURL *)helpbookURL
-                      intoAppAtURL: (NSURL *)appURL
-                          withName: (NSString *)helpbookName
-                             error: (NSError **)outError
-{
-    NSFileManager *manager = [[NSFileManager alloc] init];
-    
-    if (!helpbookName)
-        helpbookName = helpbookURL.lastPathComponent;
-    if (!helpbookName.pathExtension.length)
-        helpbookName = [helpbookName stringByAppendingPathExtension: @"help"];
-    
-    NSURL *appResourceURL = [appURL URLByAppendingPathComponent: @"Contents/Resources/"];
-    
-    NSURL *destinationURL = [appResourceURL URLByAppendingPathComponent: helpbookName];
-    
-    if (![destinationURL isEqual: helpbookURL])
-    {
-        [manager removeItemAtURL: destinationURL error: nil];
-        BOOL copied = [manager copyItemAtURL: helpbookURL toURL: destinationURL error: outError];
-        if (copied)
-        {
-            return destinationURL;
-        }
-        else
-        {
-            return nil;
-        }
-    }
-    else
-    {
-        return helpbookURL;
-    }
 }
 
 
@@ -532,6 +556,27 @@
             }
             
             plist[key] = value;
+        }
+    }
+    return YES;
+}
+
+- (BOOL) _rewriteStringsFilesInBundleAtURL: (NSURL *)bundleURL
+                         withSubstitutions: (NSDictionary *)substitutions
+                                     error: (NSError **)outError;
+{
+    NSEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL: bundleURL
+                                                    includingPropertiesForKeys: nil
+                                                                       options: 0
+                                                                  errorHandler: NULL];
+    for (NSURL *URL in enumerator)
+    {
+        if ([URL.pathExtension.lowercaseString isEqualToString: @"strings"])
+        {
+            BOOL rewrote = [self _rewriteStringsFileAtURL: URL withSubstitutions: substitutions error: outError];
+            //Bail out if any read/write errors are encountered
+            if (!rewrote)
+                return NO;
         }
     }
     return YES;

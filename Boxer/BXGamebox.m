@@ -14,6 +14,7 @@
 #import "NSData+HexStrings.h"
 #import "NSURL+ADBFilesystemHelpers.h"
 #import "NSError+ADBErrorHelpers.h"
+#import "BXBaseAppController.h"
 
 
 #pragma mark - Constants
@@ -606,7 +607,8 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 //Write the game info back to the plist file
 - (void) _persistGameInfo
 {
-	if (_gameInfo)
+    //TWEAK: standalone games should not modify their plists.
+	if (_gameInfo && ![(BXBaseAppController *)[NSApp delegate] isStandaloneGameBundle])
 	{
 		NSString *infoName = [BXGameInfoFileName stringByAppendingPathExtension: BXGameInfoFileExtension];
 		NSString *infoPath = [self.resourcePath stringByAppendingPathComponent: infoName];

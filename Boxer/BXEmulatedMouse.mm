@@ -95,7 +95,7 @@
 		   toState: (BOOL)pressed
 {
     NSAssert1(button < BXMouseButtonMax,
-              @"Invalid mouse button number %d passed to setButton:toState:", button);
+              @"Invalid mouse button number %ld passed to setButton:toState:", (long)button);
     
 	//Ignore button presses while we're inactive
 	if (!self.isActive) return;
@@ -162,7 +162,7 @@
 - (BOOL) buttonIsDown: (BXMouseButton)button
 {
     NSAssert1(button < BXMouseButtonMax,
-              @"Invalid mouse button number %d passed to setButton:toState:", button);
+              @"Invalid mouse button number %ld passed to setButton:toState:", (long)button);
     
 	NSUInteger buttonMask = 1U << button;
 	

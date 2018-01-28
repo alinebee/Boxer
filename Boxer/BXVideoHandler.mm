@@ -372,7 +372,7 @@
 
 - (const BXFilterDefinition *) _paramsForFilterType: (BXFilterType)type
 {
-	NSAssert1(type <= BXMaxFilters, @"Invalid filter type provided to paramsForFilterType: %i", type);
+	NSAssert1(type <= BXMaxFilters, @"Invalid filter type provided to paramsForFilterType: %li", (long)type);
 	
     return BXFilters[type];
 }

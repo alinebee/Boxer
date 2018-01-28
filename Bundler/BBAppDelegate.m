@@ -50,10 +50,6 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
     [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
     
     [self _loadParamsFromUserDefaults];
-    
-    //Set up the two-way binding for our dropzone
-    [self.iconDropzone bind: @"imageURL" toObject: self withKeyPath: @"appIconURL" options: nil];
-    [self bind: @"appIconURL" toObject: self.iconDropzone withKeyPath: @"imageURL" options: nil];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
@@ -73,7 +69,6 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
     [self _persistParamsIntoUserDefaults];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
-
 
 #pragma mark -
 #pragma mark Property persistence
@@ -118,6 +113,15 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
                                               relativeToURL: nil
                                         bookmarkDataIsStale: NULL
                                                       error: NULL];
+        
+        if (self.appIconURL)
+        {
+            self.iconDropzone.image = [[NSImage alloc] initWithContentsOfURL: self.appIconURL];
+        }
+        else
+        {
+            self.iconDropzone.image = nil;
+        }
     }
     
     //The help links array needs to be deeply mutable, so we need to do extra work when loading it in.
@@ -164,9 +168,13 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
     
     if (gameboxBookmark)
         [defaults setObject: gameboxBookmark forKey: @"gameboxURLBookmark"];
+    else
+        [defaults removeObjectForKey: @"gameboxURLBookmark"];
     
     if (appIconBookmark)
         [defaults setObject: appIconBookmark forKey: @"appIconURLBookmark"];
+    else
+        [defaults removeObjectForKey: @"appIconURLBookmark"];
     
     [defaults setObject: self.helpLinks forKey: @"helpLinks"];
 }
@@ -212,6 +220,7 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
     if (!iconName.pathExtension.length)
         iconName = [iconName stringByAppendingPathExtension: @"icns"];
     self.appIconURL = [app URLForResource: iconName withExtension: nil];
+    self.iconDropzone.image = self.appIconURL != nil ? [[NSImage alloc] initWithContentsOfURL: self.appIconURL] : nil;
     
     self.organizationName = [appInfo objectForKey: @"BXOrganizationName"];
     self.organizationURL = [appInfo objectForKey: @"BXOrganizationWebsiteURL"];
@@ -280,28 +289,32 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
 
 - (void) setGameboxURL: (NSURL *)URL
 {
-    if (![URL isEqual: self.gameboxURL])
+    _gameboxURL = URL;
+    
+    //Check what launch options are available for this gamebox.
+    if (URL != nil)
     {
-        _gameboxURL = URL;
+        NSArray *launchers = [self.class launchersForGameboxAtURL: URL];
+        self.launchPanelAvailable = (launchers.count > 1);
         
-        //Check what launch options are available for this gamebox.
-        if (URL)
+        //Update the application name whenever the gamebox changes
+        self.appName = URL.lastPathComponent.stringByDeletingPathExtension;
+        
+        //Update the icon to match the gamebox
+        NSWorkspace *ws = [NSWorkspace sharedWorkspace];
+        NSString *filePath = URL.path;
+        BOOL hasCustomIcon = [ws fileHasCustomIcon: filePath];
+        if (hasCustomIcon)
         {
-            NSArray *launchers = [self.class launchersForGameboxAtURL: URL];
-            self.launchPanelAvailable = (launchers.count > 1);
-            
-            //Update the application name whenever the gamebox changes
-            self.appName = URL.lastPathComponent.stringByDeletingPathExtension;
-            
-            //Update the icon to match the gamebox
-            NSWorkspace *ws = [NSWorkspace sharedWorkspace];
-            NSString *filePath = URL.path;
-            BOOL hasCustomIcon = [ws fileHasCustomIcon: filePath];
-            if (hasCustomIcon)
-            {
-                self.iconDropzone.image = [ws iconForFile: filePath];
-            }
+            //FIX: when setting the icon image directly from the gamebox, clear any previous icon URL.
+            self.appIconURL = nil;
+            self.iconDropzone.image = [ws iconForFile: filePath];
         }
+    }
+    else
+    {
+        self.iconDropzone.image = nil;
+        self.appIconURL = nil;
     }
 }
 
@@ -670,6 +683,18 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
 #pragma mark -
 #pragma mark Actions
 
+- (IBAction) changeIcon: (BBIconDropzone *)sender
+{
+    if (sender.image != nil)
+    {
+        self.appIconURL = sender.lastDroppedImageURL;
+    }
+    else
+    {
+        self.appIconURL = nil;
+    }
+}
+
 - (IBAction) exportApp: (id)sender
 {
     //Try to clear the first responder, so that if we were in the middle of editing a field
@@ -694,18 +719,47 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
             self.busy = YES;
             [self createAppAtDestinationURL: panel.URL completion: ^(NSURL *appURL, NSError *error) {
                 self.busy = NO;
-                if (appURL)
+                
+                //Present any export errors to the user, even if the overall export actually succeeded.
+                if (error != nil)
                 {
-                    [[NSSound soundNamed: @"Glass"] play];
-                    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: @[appURL]];
-                }
-                else
-                {
+                    //Reformat code-signing errors to present them more clearly.
+                    if (error.domain == BBAppExportErrorDomain && error.code == BBAppExportCodeSignFailed)
+                    {
+                        NSString *identity = error.userInfo[BBAppExportCodeSigningIdentityKey];
+                        NSString *descriptionFormat = NSLocalizedString(@"The app was exported successfully but could not be code-signed with the “%@” identity.", @"Explanatory message shown when code-signing failed. %@ is the identity used for code-signing.");
+                        
+                        NSString *description = [NSString stringWithFormat: descriptionFormat, identity];
+                        
+                        NSString *failureReason = error.localizedFailureReason;
+                        NSString *detailsFormat = NSLocalizedString(@"The codesigning tool reported the following error:\n%@",
+                                                                    @"Error shown when code-signing failed. %@ is the error message returned by the code-signing tool.");
+                        NSString *details = [NSString stringWithFormat: detailsFormat, failureReason];
+                        
+                        NSDictionary *userInfo = @{
+                                                   NSUnderlyingErrorKey: error,
+                                                   NSLocalizedDescriptionKey: description,
+                                                   //This only uses the "recovery suggestion" key because this
+                                                   //is presented in NSAlerts in smaller text.
+                                                   //NSLocalizedFailureReason would be more suitable
+                                                   //but is not shown at all in NSAlerts.
+                                                   NSLocalizedRecoverySuggestionErrorKey: details,
+                                                  };
+                        
+                        error = [NSError errorWithDomain: error.domain code: error.code userInfo: userInfo];
+                    }
+                    
                     [NSApp presentError: error
                          modalForWindow: self.window
                                delegate: nil
                      didPresentSelector: NULL
                             contextInfo: NULL];
+                }
+                //If no error was encountered, display the exported app to the user in Finder.
+                else if (appURL != nil)
+                {
+                    [[NSSound soundNamed: @"Glass"] play];
+                    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: @[appURL]];
                 }
             }];
         }
@@ -724,6 +778,14 @@ NSString * const kBBValidationErrorDomain = @"net.washboardabs.boxer-bundler.val
         if (result == NSFileHandlingPanelOKButton)
         {
             self.appIconURL = panel.URL;
+            if (self.appIconURL != nil)
+            {
+                self.iconDropzone.image = [[NSImage alloc] initWithContentsOfURL: self.appIconURL];
+            }
+            else
+            {
+                self.iconDropzone.image = nil;
+            }
         }
     }];
 }

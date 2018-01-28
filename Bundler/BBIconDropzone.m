@@ -9,7 +9,6 @@
 #import "BBIconDropzone.h"
 
 @implementation BBIconDropzone
-@synthesize imageURL = _imageURL;
 
 - (id) initWithFrame: (NSRect)frame
 {
@@ -38,22 +37,12 @@
             
             if (dropSucceeded)
             {
-                self.imageURL = [NSURL fileURLWithPath: lastFilePath isDirectory: NO];
+                self.lastDroppedImageURL = [NSURL fileURLWithPath: lastFilePath isDirectory: NO];
                 return YES;
             }
         }
     }
     return NO;
-}
-
-- (void) setImageURL: (NSURL *)imageURL
-{
-    if (![imageURL isEqual: self.imageURL])
-    {
-        _imageURL = imageURL;
-        
-        self.image = [[NSImage alloc] initWithContentsOfURL: imageURL];
-    }
 }
 
 @end

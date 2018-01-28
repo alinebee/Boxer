@@ -211,10 +211,10 @@ static BOOL _hasStartedEmulator = NO;
     self.videoHandler = nil;
     self.keyBuffer = nil;
     
-    [_runningProcesses release], _runningProcesses = nil;
-	[_driveCache release], _driveCache = nil;
-	[_commandQueue release], _commandQueue = nil;
-    [_pendingSysexMessages release], _pendingSysexMessages = nil;
+    [_runningProcesses release]; _runningProcesses = nil;
+    [_driveCache release]; _driveCache = nil;
+    [_commandQueue release]; _commandQueue = nil;
+    [_pendingSysexMessages release]; _pendingSysexMessages = nil;
 	
 	[super dealloc];
 }
@@ -749,6 +749,65 @@ static BOOL _hasStartedEmulator = NO;
 	return YES;
 }
 
+#pragma mark -
+#pragma mark Audio setter methods
+
+
+- (void) setMasterVolume: (float)volume
+{
+    volume = MAX(0.0f, volume);
+    volume = MIN(volume, 1.0f);
+    
+    if (self.masterVolume != volume)
+    {
+        _masterVolume = volume;
+        [self _syncVolume];
+    }
+}
+
+- (void) setRequestedMIDIDeviceDescription: (NSDictionary *)newDescription
+{
+    if (![_requestedMIDIDeviceDescription isEqual: newDescription])
+    {
+        _requestedMIDIDeviceDescription = newDescription;
+        
+        //Enable MT-32 autodetection if the description doesn't have a specific music type in mind.
+        BXMIDIMusicType musicType = [[newDescription objectForKey: BXMIDIMusicTypeKey] integerValue];
+        self.autodetectsMT32 = (musicType == BXMIDIMusicAutodetect);
+    }
+}
+
+- (void) setActiveMIDIDevice: (id<BXMIDIDevice>)device
+{
+    if (device != self.activeMIDIDevice)
+    {
+        _activeMIDIDevice = device;
+        
+        //If the device supports mixing, create a DOSBox mixer channel for it.
+        if ([device conformsToProtocol: @protocol(BXAudioSource)])
+        {
+            [self _addMIDIMixerChannelWithSampleRate: [(id <BXAudioSource>)device sampleRate]];
+        }
+        //Otherwise, disable and remove any existing mixer channel.
+        else
+        {
+            [self _removeMIDIMixerChannel];
+        }
+        
+#ifdef BOXER_DEBUG
+        //When debugging, display an LCD message so that we know MT-32 mode has kicked in
+        if (device.supportsMT32Music)
+            [self sendMT32LCDMessage: @"BOXER:::MT-32 Active"];
+#endif
+    }
+}
+
+- (void) setDelegate: (id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate, BXEmulatedPrinterDelegate>)delegate
+{
+    _delegate = delegate;
+    self.printer.delegate = delegate;
+}
+
 @end
 
 
@@ -1002,11 +1061,6 @@ static BOOL _hasStartedEmulator = NO;
 
 @implementation BXEmulator (BXParallelInternals)
 
-- (void) setDelegate: (id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate, BXEmulatedPrinterDelegate>)delegate
-{
-    _delegate = delegate;
-    self.printer.delegate = delegate;
-}
 - (void) _didRequestPrinterOnLPTPort: (NSUInteger)portNumber
 {
     if (!self.printer)

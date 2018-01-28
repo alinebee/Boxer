@@ -238,7 +238,7 @@
     }
 }
 
-- (void) terminateWithHandler: (void (^)())postTerminationHandler
+- (void) terminateWithHandler: (void (^)(void))postTerminationHandler
 {
     self.postTerminationHandler = postTerminationHandler;
     

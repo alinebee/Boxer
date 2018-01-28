@@ -96,4 +96,5 @@ enum {
 
 //Given the URL of a gamebox, returns an array of launch options found inside that gamebox.
 + (NSArray *) launchersForGameboxAtURL: (NSURL *)gameboxURL;
+
 @end

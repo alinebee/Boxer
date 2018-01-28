@@ -101,7 +101,7 @@ enum {
     
     self.selectedDriveIndexes = nil;
     
-    [_driveRemovalDropzone close], _driveRemovalDropzone = nil;
+    [_driveRemovalDropzone close]; _driveRemovalDropzone = nil;
 }
 
 - (void) observeValueForKeyPath: (NSString *)keyPath

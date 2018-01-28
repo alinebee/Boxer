@@ -369,7 +369,7 @@ na vlastních osách.";
 "Import a Game" = "Importovat hru";
 
 /* Label for confirmation button on open panel when importing a game state. */
-"Import and Relaunch" = "Importovat a resetovat";
+"Import and Relaunch" = "Importovat a restartovat";
 
 /* Import window title once an import has finished. */
 "Import complete" = "Import dokončen";

@@ -71,7 +71,7 @@
 		NSLocalizedString(@"internal system disk",	@"Label for DOSBox virtual drives (i.e. Z)."),	//BXDriveTypeInternal
 	nil];
 	NSAssert1(driveType >= BXDriveHardDisk && (NSUInteger)driveType < descriptions.count,
-			  @"Unknown drive type supplied to BXDrive descriptionForType: %i", driveType);
+			  @"Unknown drive type supplied to BXDrive descriptionForType: %li", (long)driveType);
 	
 	return [descriptions objectAtIndex: (NSUInteger)driveType];
 }

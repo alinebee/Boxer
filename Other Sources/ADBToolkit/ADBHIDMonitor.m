@@ -135,7 +135,7 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 	
     self.delegate = nil;
     
-	CFRelease(_ioManager), _ioManager = NULL;
+    CFRelease(_ioManager); _ioManager = NULL;
 }
 
 

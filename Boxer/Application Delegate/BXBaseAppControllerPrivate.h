@@ -13,7 +13,7 @@
 @interface BXBaseAppController ()
 
 /// A block to run once the application has finished terminating. Used by @c -terminateWithHandler:.
-@property (copy, nonatomic) void(^postTerminationHandler)();
+@property (copy, nonatomic) void(^postTerminationHandler)(void);
 
 /// Captures incoming hotkey and media key events, to allow Boxer to make use of play/pause/fast-forward keys
 /// and to prevent conflicting OS X hotkeys from interfering with DOS games.
@@ -74,7 +74,7 @@
 /// @param postTerminationHandler   The block to execute once the app is ready to terminate.
 ///                                 This will only be executed if the app really will terminate;
 ///                                 if the user cancels termination, the handler will be discarded unused.
-- (void) terminateWithHandler: (void (^)())postTerminationHandler;
+- (void) terminateWithHandler: (void (^)(void))postTerminationHandler;
 
 
 @end

@@ -6,6 +6,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import <QuartzCore/CALayer.h>
 #import "BXEmulatedPrinter.h"
 
 @class BXPrintPreview;
@@ -51,7 +52,7 @@
 @end
 
 
-@interface BXPrintPreview : NSView
+@interface BXPrintPreview : NSView <CALayerDelegate>
 {
     CALayer *_currentPage;
     CALayer *_previousPage;

@@ -16,29 +16,33 @@ let kBBValidationErrorDomain = "net.washboardabs.boxer-bundler.validationErrorDo
 
 final class BBAppDelegate : NSObject, NSApplicationDelegate, NSTableViewDataSource, NSWindowDelegate {
     
-    enum VaidationValue {
-        case Missing
-        case Invalid
-        case UnsupportedApplication
-    };
+    enum VaidationError: Error {
+        case missing
+        case invalid
+        case unsupportedApplication
+        
+        var _domain: String {
+            return kBBValidationErrorDomain
+        }
+    }
     
     enum GameIdentifier: Int {
-        ///Manually specified type.
-        case UserSpecified	= 0
-        ///Standard UUID. Generated for empty gameboxes.
-        case UUID
-        ///SHA1 digest of each EXE file in the gamebox.
-        case EXEDigest
-        ///Reverse-DNS (net.washboardabs.boxer)-style identifer.
-        case ReverseDNS
-    };
+        /// Manually specified type.
+        case userSpecified	= 0
+        /// Standard UUID. Generated for empty gameboxes.
+        case uuid
+        /// SHA1 digest of each EXE file in the gamebox.
+        case exeDigest
+        /// Reverse-DNS (net.washboardabs.boxer)-style identifer.
+        case reverseDNS
+    }
 
     
     @IBOutlet weak var window: NSWindow?
-    @IBOutlet weak var iconDropzone: BBIconDropzone?
+    @IBOutlet weak var iconDropzone: BBIconDropzone!
     
-    dynamic var gameboxURL: NSURL!
-    dynamic var appIconURL: NSURL!
+    dynamic var gameboxURL: URL?
+    dynamic var appIconURL: URL?
     dynamic var appName: String = ""
     dynamic var appBundleIdentifier: String = ""
     dynamic var appVersion: String = ""
@@ -57,56 +61,81 @@ final class BBAppDelegate : NSObject, NSApplicationDelegate, NSTableViewDataSour
     dynamic private(set) var busy = false
     
     var unbranded: Bool {
-        return organizationName.characters.count == 0
+        return organizationName.count == 0
     }
 
     ///A version of the app name suitable for use as a filename.
     ///This replaces or removes restricted characters like `:`, `/` and `\`.
     var sanitisedAppName: String {
         var sanitisedName = appName
-        sanitisedName = sanitisedName.stringByReplacingOccurrencesOfString(":", withString: "-")
-        sanitisedName = sanitisedName.stringByReplacingOccurrencesOfString("/", withString: "-")
-        sanitisedName = sanitisedName.stringByReplacingOccurrencesOfString("\\", withString: "-")
+        sanitisedName = sanitisedName.replacingOccurrences(of: ":", with: "-")
+        sanitisedName = sanitisedName.replacingOccurrences(of: "/", with: "-")
+        sanitisedName = sanitisedName.replacingOccurrences(of: "\\", with: "-")
 
         return sanitisedName
     }
     
-    /*
+    
 
-//Whether the launch panel is available for this gamebox:
-//will be NO if the gamebox has only one launch option.
-//Used for selectively disabling launch-related options.
-public var launchPanelAvailable: Bool { get }
+    /// Whether the launch panel is available for this gamebox:
+    /// will be `false` if the gamebox has only one launch option.
+    /// Used for selectively disabling launch-related options.
+    private(set) var launchPanelAvailable: Bool = false
 
+     /*
 //An editable array of help links.
 public var helpLinks: NSMutableArray!
 
 //Given the URL of a gamebox, returns an array of launch options found inside that gamebox.
-public class func launchersForGameboxAtURL(gameboxURL: NSURL!) -> [AnyObject]!
+     public class func launchersForGameboxAtURL(gameboxURL: NSURL!) -> [[String: Any]]!
 */
     
+    private func validationError(withCode errCode: VaidationError, message: String, recoverySuggestion: String?) -> Error {
+        var userInfo: [String : Any] = [NSLocalizedDescriptionKey: message]
+        if let recoverySuggestion = recoverySuggestion {
+            userInfo[NSLocalizedRecoverySuggestionErrorKey] = recoverySuggestion
+        }
+        let err = errCode as NSError
+        return NSError(domain: err.domain, code: err.code, userInfo: userInfo)
+    }
+    
     ///Create a bundle.
-    @IBAction func exportApp(sender: AnyObject!) {
+    @IBAction func exportApp(sender: Any?) {
         
     }
     
-    @IBAction func chooseIconURL(sender: AnyObject!) {
+    @IBAction func chooseIconURL(sender: Any?) {
+        let panel = NSOpenPanel()
         
+        panel.allowedFileTypes = [kUTTypeAppleICNS as String]
+        panel.allowsMultipleSelection = false
+        panel.treatsFilePackagesAsDirectories = true
+        
+        panel.beginSheetModal(for: window!) { (result) in
+            if result == NSFileHandlingPanelOKButton {
+                self.appIconURL = panel.url
+                if let iconURL = self.appIconURL {
+                    self.iconDropzone.image = NSImage(contentsOf: iconURL)
+                } else {
+                    self.iconDropzone.image = nil;
+                }
+            }
+        }
     }
     
-    @IBAction func importSettingsFromExistingApp(sender: AnyObject!) {
+    @IBAction func importSettingsFromExistingApp(sender: Any?) {
         
     }
 
 }
 
 ///Given a filename, returns a name suitable for inclusion in a bundle identifier.
-private func bundleIdentifierFragmentFromString(inString: String) -> String {
-    let baseName = (inString as NSString).stringByDeletingPathExtension
+private func bundleIdentifierFragment(from inString: String) -> String {
+    let baseName = (inString as NSString).deletingPathExtension
     
-    var identifier = baseName.lowercaseString.stringByReplacingOccurrencesOfString(" ", withString: "-")
-    identifier = identifier.stringByReplacingOccurrencesOfString("_", withString: "-")
-    identifier = identifier.stringByReplacingOccurrencesOfString(".", withString: "")
+    var identifier = baseName.lowercased().replacingOccurrences(of: " ", with: "-")
+    identifier = identifier.replacingOccurrences(of: "_", with: "-")
+    identifier = identifier.replacingOccurrences(of: ".", with: "")
 
     return identifier
 }

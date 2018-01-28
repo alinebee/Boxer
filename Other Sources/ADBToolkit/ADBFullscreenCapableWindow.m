@@ -142,7 +142,7 @@
 
 //The code below applies only to Lion and above, which handles
 //its own fullscreen toggling via setStyleMask:.
-- (void) setStyleMask: (NSUInteger)styleMask
+- (void) setStyleMask: (NSWindowStyleMask)styleMask
 {
     //This is a no-op on Leopard, which does not support runtime modification of the style mask.
     if (![NSWindow instancesRespondToSelector: @selector(setStyleMask:)]) return;

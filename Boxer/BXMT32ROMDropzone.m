@@ -147,6 +147,11 @@
     }
 }
 
+- (BOOL)isHighlighted
+{
+    return _highlighted;
+}
+
 - (void) _syncDisplayedDevice
 {
     [CATransaction begin];

@@ -242,7 +242,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
                 break;
                 
             default:
-                NSAssert1(NO, @"Drive type cannot be mounted: %i", drive.type);
+                NSAssert1(NO, @"Drive type cannot be mounted: %li", (long)drive.type);
         }
     }
     else

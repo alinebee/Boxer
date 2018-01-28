@@ -161,7 +161,7 @@ extern NSStringEncoding BXDirectStringEncoding;
 #pragma mark - Properties
 
 /// The delegate responsible for this emulator.
-@property (assign) id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate, BXEmulatedPrinterDelegate> delegate;
+@property (nonatomic, assign) id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate, BXEmulatedPrinterDelegate> delegate;
 
 /// The handler for DOSBox's video emulation and rendering output.
 @property (readonly, retain) BXVideoHandler *videoHandler;
@@ -279,11 +279,11 @@ extern NSStringEncoding BXDirectStringEncoding;
 /// The properties requested by the game for what kind of MIDI playback
 /// device we should use.
 /// @see BXEmulator+BXAudio for keys and constants.
-@property (retain) NSDictionary * requestedMIDIDeviceDescription;
+@property (nonatomic, retain) NSDictionary * requestedMIDIDeviceDescription;
 
 /// The device to which we are currently sending MIDI signals.
 /// One of MT32MIDIDevice, MIDISynth or externalMIDIDevice.
-@property (retain) id <BXMIDIDevice> activeMIDIDevice;
+@property (nonatomic, retain) id <BXMIDIDevice> activeMIDIDevice;
 
 /// Whether to autodetect when a game is playing MT-32 music.
 /// If YES, the game's MIDI output will be sniffed to see if it is using MT-32 music:
@@ -291,7 +291,7 @@ extern NSStringEncoding BXDirectStringEncoding;
 @property (assign) BOOL autodetectsMT32;
 
 /// The volume by which to scale all sound output, ranging from 0.0 to 1.0.
-@property (assign) float masterVolume;
+@property (nonatomic, assign) float masterVolume;
 
 
 #pragma mark - Methods

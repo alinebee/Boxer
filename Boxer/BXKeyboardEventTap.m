@@ -19,7 +19,7 @@
 @property (strong) ADBContinuousThread *tapThread;
 
 //Overridden to be read-write.
-@property (readwrite, getter=isTapping) BXKeyboardEventTapStatus status;
+@property (readwrite) BXKeyboardEventTapStatus status;
 @property (readwrite) BOOL restartNeeded;
 
 ///Our CGEventTap callback. Receives the BXKeyboardEventTap instance as the userInfo parameter, and passes handling directly on to it.

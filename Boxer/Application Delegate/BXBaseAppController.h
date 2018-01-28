@@ -27,7 +27,7 @@
     
     BXMIDIDeviceMonitor *_MIDIDeviceMonitor;
     
-    void (^_postTerminationHandler)();
+    void (^_postTerminationHandler)(void);
     
     BXKeyboardEventTap *_hotkeySuppressionTap;
     NSAlert *_activeHotkeyAlert;

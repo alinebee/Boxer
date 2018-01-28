@@ -31,6 +31,10 @@ enum {
 
 @end
 
+@interface BXDocumentationBrowser (BXDocumentPreviews)
+- (void) synchronizePreviewToSelection;
+@end
+
 @implementation BXDocumentationBrowser
 @synthesize documentationScrollView = _documentationScrollView;
 @synthesize documentationList = _documentationList;
@@ -40,6 +44,16 @@ enum {
 @synthesize documentationURLs = _documentationURLs;
 @synthesize documentationSelectionIndexes = _documentationSelectionIndexes;
 @synthesize delegate = _delegate;
+
+- (void) setDocumentationSelectionIndexes: (NSIndexSet *)indexes
+{
+    if (![self.documentationSelectionIndexes isEqualToIndexSet: indexes])
+    {
+        _documentationSelectionIndexes = indexes;
+    }
+    
+    [self synchronizePreviewToSelection];
+}
 
 #pragma mark - Initialization and deallocation
 
@@ -733,16 +747,6 @@ enum {
         return snapshot;
     }
     else return nil;
-}
-
-- (void) setDocumentationSelectionIndexes: (NSIndexSet *)indexes
-{
-    if (![self.documentationSelectionIndexes isEqualToIndexSet: indexes])
-    {
-        _documentationSelectionIndexes = indexes;
-    }
-    
-    [self synchronizePreviewToSelection];
 }
 
 - (void) synchronizePreviewToSelection

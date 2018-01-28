@@ -14,10 +14,11 @@
 //- It slows down whenever notification bezels appear over it
 
 #import <Cocoa/Cocoa.h>
+#import <QuartzCore/CALayer.h>
 #import "BXFrameRenderingView.h"
 
 @class BXRenderingLayer;
-@interface BXLayerBackedRenderingView : NSView <BXFrameRenderingView>
+@interface BXLayerBackedRenderingView : NSView <BXFrameRenderingView, CALayerDelegate>
 {
     BOOL _managesViewport;
     NSSize _maxViewportSize;

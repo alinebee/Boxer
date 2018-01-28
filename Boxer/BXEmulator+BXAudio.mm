@@ -52,31 +52,6 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
     return [[self.requestedMIDIDeviceDescription objectForKey: BXMIDIMusicTypeKey] integerValue];
 }
 
-- (void) setActiveMIDIDevice: (id<BXMIDIDevice>)device
-{
-    if (device != self.activeMIDIDevice)
-    {
-        _activeMIDIDevice = device;
-        
-        //If the device supports mixing, create a DOSBox mixer channel for it.
-        if ([device conformsToProtocol: @protocol(BXAudioSource)])
-        {
-            [self _addMIDIMixerChannelWithSampleRate: [(id <BXAudioSource>)device sampleRate]];
-        }
-        //Otherwise, disable and remove any existing mixer channel.
-        else
-        {
-            [self _removeMIDIMixerChannel];
-        }
-        
-#ifdef BOXER_DEBUG
-        //When debugging, display an LCD message so that we know MT-32 mode has kicked in
-        if (device.supportsMT32Music)
-            [self sendMT32LCDMessage: @"BOXER:::MT-32 Active"];
-#endif
-    }
-}
-
 - (id <BXMIDIDevice>) attachMIDIDeviceForDescription: (NSDictionary *)description
 {
     id <BXMIDIDevice> device = [self.delegate MIDIDeviceForEmulator: self
@@ -313,18 +288,6 @@ void _renderMIDIOutput(Bitu numFrames)
     }
 }
 
-- (void) setRequestedMIDIDeviceDescription: (NSDictionary *)newDescription
-{
-    if (![_requestedMIDIDeviceDescription isEqual: newDescription])
-    {
-        _requestedMIDIDeviceDescription = newDescription;
-        
-        //Enable MT-32 autodetection if the description doesn't have a specific music type in mind.
-        BXMIDIMusicType musicType = [[newDescription objectForKey: BXMIDIMusicTypeKey] integerValue];
-        self.autodetectsMT32 = (musicType == BXMIDIMusicAutodetect);
-    }
-}
-
 - (void) _resetMIDIDevice
 {
     [self _clearPendingSysexMessages];
@@ -395,18 +358,6 @@ void _renderMIDIOutput(Bitu numFrames)
 
 #pragma mark -
 #pragma mark Volume and muting
-
-- (void) setMasterVolume: (float)volume
-{
-    volume = MAX(0.0f, volume);
-    volume = MIN(volume, 1.0f);
-    
-    if (self.masterVolume != volume)
-    {
-        _masterVolume = volume;
-        [self _syncVolume];
-    }
-}
 
 - (void) _syncVolume
 {

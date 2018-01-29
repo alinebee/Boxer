@@ -214,7 +214,7 @@
 			<key>UTTypeDescription</key>
 			<string>Boxer gamebox</string>
 			<key>UTTypeIconFile</key>
-			<string>package.icns</string>
+			<string>package</string>
 			<key>UTTypeIdentifier</key>
 			<string>net.washboardabs.boxer-game-package</string>
 			<key>UTTypeTagSpecification</key>
@@ -303,7 +303,7 @@
 			<key>UTTypeDescription</key>
 			<string>Boxer game state</string>
 			<key>UTTypeIconFile</key>
-			<string>package.icns</string>
+			<string>package</string>
 			<key>UTTypeIdentifier</key>
 			<string>net.washboardabs.boxer-game-state</string>
 			<key>UTTypeTagSpecification</key>

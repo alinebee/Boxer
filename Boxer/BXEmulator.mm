@@ -769,8 +769,9 @@ static BOOL _hasStartedEmulator = NO;
 {
     if (![_requestedMIDIDeviceDescription isEqual: newDescription])
     {
-        _requestedMIDIDeviceDescription = newDescription;
-        
+        [_requestedMIDIDeviceDescription release];
+        _requestedMIDIDeviceDescription = [newDescription retain];
+
         //Enable MT-32 autodetection if the description doesn't have a specific music type in mind.
         BXMIDIMusicType musicType = [[newDescription objectForKey: BXMIDIMusicTypeKey] integerValue];
         self.autodetectsMT32 = (musicType == BXMIDIMusicAutodetect);
@@ -781,8 +782,9 @@ static BOOL _hasStartedEmulator = NO;
 {
     if (device != self.activeMIDIDevice)
     {
-        _activeMIDIDevice = device;
-        
+        [_activeMIDIDevice release];
+        _activeMIDIDevice = [device retain];
+
         //If the device supports mixing, create a DOSBox mixer channel for it.
         if ([device conformsToProtocol: @protocol(BXAudioSource)])
         {

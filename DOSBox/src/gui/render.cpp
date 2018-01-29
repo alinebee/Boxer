@@ -539,7 +539,7 @@ static void IncreaseFrameSkip(bool pressed) {
 	if (!pressed)
 		return;
 	if (render.frameskip.max<10) render.frameskip.max++;
-	LOG_MSG("Frame Skip at %d",render.frameskip.max);
+	LOG_MSG("Frame Skip at %lu",(unsigned long)render.frameskip.max);
 	GFX_SetTitle(-1,render.frameskip.max,false);
 }
 
@@ -547,7 +547,7 @@ static void DecreaseFrameSkip(bool pressed) {
 	if (!pressed)
 		return;
 	if (render.frameskip.max>0) render.frameskip.max--;
-	LOG_MSG("Frame Skip at %d",render.frameskip.max);
+	LOG_MSG("Frame Skip at %lu",(unsigned long)render.frameskip.max);
 	GFX_SetTitle(-1,render.frameskip.max,false);
 }
 /* Disabled as I don't want to waste a keybind for that. Might be used in the future (Qbix)

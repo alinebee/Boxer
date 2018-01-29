@@ -314,7 +314,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 - (void) setRenderingStyle: (BXRenderingStyle)renderingStyle
 {
     NSAssert1(renderingStyle >= 0 && renderingStyle < BXNumRenderingStyles,
-              @"Unrecognised rendering style: %i", renderingStyle);
+              @"Unrecognised rendering style: %li", (long)renderingStyle);
     
     if (self.renderingStyle != renderingStyle)
     {

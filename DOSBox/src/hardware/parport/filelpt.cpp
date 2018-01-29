@@ -48,7 +48,7 @@ CFileLPT::CFileLPT (Bitu nr, Bit8u initIrq, CommandLine* cmd)
 	codepage_ptr = NULL;
 	if(cmd->FindStringBegin("cp:",str,false)) {
 		if(sscanf(str.c_str(), "%u",&temp)!=1) {
-			LOG_MSG("parallel%d: Invalid codepage parameter.",nr+1);
+			LOG_MSG("parallel%ld: Invalid codepage parameter.",(long)(nr+1));
 			return;
 		} else {
 			Bitu i = 0;
@@ -65,7 +65,7 @@ CFileLPT::CFileLPT (Bitu nr, Bit8u initIrq, CommandLine* cmd)
 	temp=0;
 	if(cmd->FindStringBegin("timeout:",str,false)) {
 		if(sscanf(str.c_str(), "%u",&timeout)!=1) {
-			LOG_MSG("parallel%d: Invalid timeout parameter.",nr+1);
+			LOG_MSG("parallel%ld: Invalid timeout parameter.",(long)(nr+1));
 			return;
 		}
 	} else timeout = 500;
@@ -105,7 +105,7 @@ bool CFileLPT::OpenFile() {
 	if(timeout != 0) setEvent(0, (float)(timeout + 1));
 
 	if(file==NULL) {
-		LOG_MSG("Parallel %d: Failed to open %s",port_nr+1,name.c_str());
+		LOG_MSG("Parallel %ld: Failed to open %s",(long)(port_nr+1),name.c_str());
 		fileOpen = false;
 		return false;
 	} else {
@@ -181,7 +181,7 @@ void CFileLPT::handleUpperEvent(Bit16u type) {
 			fclose(file);
 			lastChar = 0;
 			fileOpen=false;
-			LOG_MSG("Parallel %d: File closed.",port_nr+1);
+			LOG_MSG("Parallel %ld: File closed.",(long)(port_nr+1));
 		} else {
 			// Port has been touched in the meantime, try again later
 			float new_delay = (float)((timeout + 1) - (PIC_Ticks - lastUsedTick));

@@ -317,7 +317,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     
 	if ([self _canOpenDocumentOfClass: [BXImportSession class]])
 	{
-		BXImportSession *importer = [[BXImportSession alloc] initWithType: nil error: outError];
+		BXImportSession *importer = [[BXImportSession alloc] initWithType: @"net.washboardabs.boxer-game-package" error: outError];
 		if (importer)
 		{
 			[self addDocument: importer];
@@ -351,7 +351,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if ([self _canOpenDocumentOfClass: [BXImportSession class]])
 	{
 		BXImportSession *importer = [[BXImportSession alloc] initWithContentsOfURL: url
-                                                                            ofType: nil
+                                                                            ofType: @"net.washboardabs.boxer-game-package"
                                                                              error: outError];
 		if (importer)
 		{

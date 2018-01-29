@@ -28,6 +28,7 @@
 		55E6A0C71C00C88A00285593 /* DDHidLib.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A0AC1C00C80A00285593 /* DDHidLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		55E6A0CA1C00C88A00285593 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A09C1C00C7F900285593 /* BGHUDAppKit.framework */; };
 		55E6A0CB1C00C88A00285593 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A09C1C00C7F900285593 /* BGHUDAppKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		55F8BC23201F9940004057D2 /* pci_bus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55DEBB21201E875500F1092F /* pci_bus.cpp */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9F0497C01334C5970001FEE4 /* ADBForwardCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0497BF1334C5970001FEE4 /* ADBForwardCompatibility.m */; };
@@ -4291,6 +4292,7 @@
 				9F2D305E15B8233800FAE848 /* misc_util.cpp in Sources */,
 				9F2D305F15B8233800FAE848 /* nullmodem.cpp in Sources */,
 				9F2D306015B8233800FAE848 /* serialdummy.cpp in Sources */,
+				55F8BC23201F9940004057D2 /* pci_bus.cpp in Sources */,
 				9F2D306115B8233800FAE848 /* serialport.cpp in Sources */,
 				9F2D306215B8233800FAE848 /* softmodem.cpp in Sources */,
 				9F2D306315B8233800FAE848 /* tandy_sound.cpp in Sources */,

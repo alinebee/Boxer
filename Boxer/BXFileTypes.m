@@ -406,7 +406,7 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
 			
 			//File is not long enough to accomodate expected header: assume what we thought was a type marker
 			//was just coincidental random data, and this is actually a DOS executable.
-			if (handle.maxOffset < (newHeaderAddress + minHeaderLength))
+			if (handle.maxOffset < (long long)(newHeaderAddress + minHeaderLength))
 				return BXExecutableTypeDOS;
             
 			//Otherwise, assume it's Windows.

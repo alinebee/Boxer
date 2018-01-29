@@ -270,16 +270,16 @@ void CSerialModem::EnterIdleState(void){
 	}
 	// get rid of everything
 	if(serversocket) {
-		while(waitingclientsocket=serversocket->Accept())
+		while((waitingclientsocket=serversocket->Accept()))
 			delete waitingclientsocket;
 	} else if (listenport) {
 		
 		serversocket=new TCPServerSocket(listenport);	
 		if(!serversocket->isopen) {
-			LOG_MSG("Serial%d: Modem could not open TCP port %d.",COMNUMBER,listenport);
+			LOG_MSG("Serial%ld: Modem could not open TCP port %ld.",(long)(COMNUMBER),(long)listenport);
 			delete serversocket;
 			serversocket=0;
-		} else LOG_MSG("Serial%d: Modem listening on port %d...",COMNUMBER,listenport);
+		} else LOG_MSG("Serial%ld: Modem listening on port %ld...",(long)(COMNUMBER),(long)listenport);
 	}
 	waitingclientsocket=0;
 	
@@ -527,7 +527,7 @@ void CSerialModem::DoCommand() {
 					SendRes(ResERROR);
 					return;
 				default:
-					LOG_MSG("Modem: Unhandled command: &%c%d",cmdchar,ScanNumber(scanbuf));
+					LOG_MSG("Modem: Unhandled command: &%c%ld",cmdchar,(unsigned long)ScanNumber(scanbuf));
 					break;
 			}
 			break;
@@ -547,7 +547,7 @@ void CSerialModem::DoCommand() {
 					SendRes(ResERROR);
 					return;
 				default:
-					LOG_MSG("Modem: Unhandled command: \\%c%d",cmdchar, ScanNumber(scanbuf));
+					LOG_MSG("Modem: Unhandled command: \\%c%lu",cmdchar, (unsigned long)ScanNumber(scanbuf));
 					break;
 			}
 			break;
@@ -556,7 +556,7 @@ void CSerialModem::DoCommand() {
 			SendRes(ResOK);
 			return;
 		default:
-			LOG_MSG("Modem: Unhandled command: %c%d",chr,ScanNumber(scanbuf));
+			LOG_MSG("Modem: Unhandled command: %c%lu",chr,(unsigned long)ScanNumber(scanbuf));
 			break;
 		}
 	}

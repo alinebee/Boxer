@@ -623,7 +623,7 @@
 - (void) importFromSourceURL: (NSURL *)URL
 {
 	NSError *readError = nil;
-	BOOL readSucceeded = [self readFromURL: URL ofType: nil error: &readError];
+	BOOL readSucceeded = [self readFromURL: URL ofType: @"net.washboardabs.boxer-game-package" error: &readError];
     
     if (readSucceeded)
     {

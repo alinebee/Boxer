@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1080" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BXBezelController">
@@ -38,7 +39,6 @@
                 <textField verticalHuggingPriority="750" tag="7" id="5" customClass="BXHUDLabel">
                     <rect key="frame" x="20" y="23" width="523" height="44"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="6">
                         <font key="font" metaFont="system" size="18"/>
                         <string key="title">Stiskem Cmd+F ukončíte režim celé obrazovky.
@@ -48,7 +48,6 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                     </textFieldCell>
                 </textField>
             </subviews>
-            <animations/>
             <point key="canvasLocation" x="283" y="315"/>
         </customView>
         <customView id="7" userLabel="CPU Speed Bezel" customClass="BXBezelView">
@@ -58,7 +57,6 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                 <textField verticalHuggingPriority="750" tag="3" id="8" customClass="BXHUDLabel">
                     <rect key="frame" x="20" y="12" width="260" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="[rychlost 386 (3000 cyklů)]" id="9">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -68,7 +66,6 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                 <levelIndicator verticalHuggingPriority="750" tag="2" id="10">
                     <rect key="frame" x="41" y="43" width="219" height="20"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <levelIndicatorCell key="cell" alignment="left" maxValue="1" warningValue="4" criticalValue="4" numberOfTickMarks="6" levelIndicatorStyle="continuousCapacity" id="11" customClass="BXHUDLevelIndicatorCell">
                         <font key="font" metaFont="system"/>
                     </levelIndicatorCell>
@@ -76,17 +73,14 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                 <imageView id="15">
                     <rect key="frame" x="16" y="40" width="24" height="24"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="TurtleTemplate" id="16" customClass="BXHUDImageCell"/>
                 </imageView>
                 <imageView id="17">
                     <rect key="frame" x="260" y="41" width="24" height="24"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="BunnyTemplate" id="18" customClass="BXHUDImageCell"/>
                 </imageView>
             </subviews>
-            <animations/>
         </customView>
         <customView id="19" userLabel="Throttle Bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="240" height="80"/>
@@ -95,7 +89,6 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                 <textField verticalHuggingPriority="750" tag="3" id="20" customClass="BXHUDLabel">
                     <rect key="frame" x="20" y="15" width="200" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="[100 % plynu]" id="27">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -105,13 +98,11 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                 <levelIndicator verticalHuggingPriority="750" tag="2" id="21">
                     <rect key="frame" x="20" y="45" width="200" height="20"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <levelIndicatorCell key="cell" alignment="left" maxValue="100" warningValue="200" criticalValue="200" numberOfTickMarks="3" levelIndicatorStyle="continuousCapacity" id="26" customClass="BXHUDLevelIndicatorCell">
                         <font key="font" metaFont="system"/>
                     </levelIndicatorCell>
                 </levelIndicator>
             </subviews>
-            <animations/>
         </customView>
         <customView id="29" userLabel="Drive Added Bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="268" height="200"/>
@@ -120,7 +111,6 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                 <textField verticalHuggingPriority="750" tag="4" id="30" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="45" width="234" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="[Disk D přidán]" id="31">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -130,7 +120,6 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                 <textField verticalHuggingPriority="750" tag="5" id="67" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="24" width="234" height="18"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingHead" sendsActionOnEndEditing="YES" alignment="center" title="[Need For Speed.iso]" id="68">
                         <font key="font" metaFont="system" size="14"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -140,11 +129,9 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                 <imageView tag="1" id="34">
                     <rect key="frame" x="83" y="75" width="102" height="102"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="35" customClass="BXHUDImageCell"/>
                 </imageView>
             </subviews>
-            <animations/>
         </customView>
         <customView id="37" userLabel="Drive Removed Bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="268" height="200"/>
@@ -153,7 +140,6 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                 <textField verticalHuggingPriority="750" tag="4" id="38" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="45" width="234" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="[Disk D vysunut]" id="43">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -163,13 +149,11 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                 <imageView tag="1" id="39">
                     <rect key="frame" x="83" y="75" width="102" height="102"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="EjectTemplate" id="42" customClass="BXHUDImageCell"/>
                 </imageView>
                 <textField verticalHuggingPriority="750" tag="5" id="69" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="24" width="234" height="18"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingHead" sendsActionOnEndEditing="YES" alignment="center" title="[Need For Speed.iso]" id="70">
                         <font key="font" metaFont="system" size="14"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -177,7 +161,6 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                     </textFieldCell>
                 </textField>
             </subviews>
-            <animations/>
         </customView>
         <customView id="44" userLabel="Drive Imported Bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="268" height="200"/>
@@ -186,7 +169,6 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                 <textField verticalHuggingPriority="750" tag="4" id="46" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="45" width="234" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="[Disk D naimportován]" id="47">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -196,13 +178,11 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                 <imageView tag="1" id="45">
                     <rect key="frame" x="83" y="75" width="102" height="102"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="48" customClass="BXHUDImageCell"/>
                 </imageView>
                 <textField verticalHuggingPriority="750" tag="5" id="71" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="24" width="234" height="18"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingHead" sendsActionOnEndEditing="YES" alignment="center" title="[Need For Speed.iso]" id="72">
                         <font key="font" metaFont="system" size="14"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -210,7 +190,6 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                     </textFieldCell>
                 </textField>
             </subviews>
-            <animations/>
             <point key="canvasLocation" x="263" y="1067"/>
         </customView>
         <customView id="51" userLabel="Joystick Ignored Bezel" customClass="BXBezelView">
@@ -220,7 +199,6 @@ Kombinací Cmd+kliknutí získáte přístup k řádku nabídek.</string>
                 <textField verticalHuggingPriority="750" id="52" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="64" width="306" height="44"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="53">
                         <font key="font" metaFont="system" size="18"/>
                         <string key="title">Tato hra nereaguje na
@@ -232,7 +210,6 @@ ovládání joystickem.</string>
                 <textField verticalHuggingPriority="750" id="55" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="20" width="306" height="36"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="56">
                         <font key="font" metaFont="system" size="14"/>
                         <string key="title">Možná budete muset ovládání
@@ -242,7 +219,6 @@ joystickem zapnout přímo ve hře.</string>
                     </textFieldCell>
                 </textField>
             </subviews>
-            <animations/>
         </customView>
         <customView id="57" userLabel="Pause Bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="160" height="160"/>
@@ -251,11 +227,9 @@ joystickem zapnout přímo ve hře.</string>
                 <imageView tag="1" id="58">
                     <rect key="frame" x="29" y="29" width="102" height="102"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="PauseTemplate" id="61" customClass="BXHUDImageCell"/>
                 </imageView>
             </subviews>
-            <animations/>
         </customView>
         <customView id="62" userLabel="Play Bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="160" height="160"/>
@@ -264,11 +238,9 @@ joystickem zapnout přímo ve hře.</string>
                 <imageView tag="1" id="63">
                     <rect key="frame" x="29" y="29" width="102" height="102"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="PlayTemplate" id="64" customClass="BXHUDImageCell"/>
                 </imageView>
             </subviews>
-            <animations/>
         </customView>
         <customView id="73" userLabel="Drive Swapped Bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="268" height="200"/>
@@ -277,7 +249,6 @@ joystickem zapnout přímo ve hře.</string>
                 <textField verticalHuggingPriority="750" tag="4" id="75" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="45" width="234" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="[Disk D vyměněn]" id="78">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -287,7 +258,6 @@ joystickem zapnout přímo ve hře.</string>
                 <textField verticalHuggingPriority="750" tag="5" id="74" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="24" width="234" height="18"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingHead" sendsActionOnEndEditing="YES" alignment="center" title="[Need For Speed.iso]" id="79">
                         <font key="font" metaFont="system" size="14"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -297,23 +267,19 @@ joystickem zapnout přímo ve hře.</string>
                 <imageView tag="1" id="76">
                     <rect key="frame" x="27.5" y="92" width="70" height="70"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="77" customClass="BXHUDImageCell"/>
                 </imageView>
                 <imageView tag="6" id="80">
                     <rect key="frame" x="170.5" y="92" width="70" height="70"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="81" customClass="BXHUDImageCell"/>
                 </imageView>
                 <imageView id="83">
                     <rect key="frame" x="100" y="115" width="24" height="24"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="proportionallyUpOrDown" image="NSRightFacingTriangleTemplate" id="84" customClass="BXHUDImageCell"/>
                 </imageView>
             </subviews>
-            <animations/>
         </customView>
         <customView id="85" userLabel="MT-32 Message Bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="423" height="90"/>
@@ -322,7 +288,6 @@ joystickem zapnout přímo ve hře.</string>
                 <textField verticalHuggingPriority="750" tag="7" id="86" customClass="BXMT32LCDDisplay">
                     <rect key="frame" x="20" y="20" width="380" height="47"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="VLOŽTE BUCKAZOID" id="87">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -330,7 +295,6 @@ joystickem zapnout přímo ve hře.</string>
                     </textFieldCell>
                 </textField>
             </subviews>
-            <animations/>
         </customView>
         <customView id="89" userLabel="MT-32 Missing Bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="340" height="128"/>
@@ -339,7 +303,6 @@ joystickem zapnout přímo ve hře.</string>
                 <textField verticalHuggingPriority="750" id="90" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="42" width="306" height="66"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Ke správnému přehrávání hudby v této hře jsou zapotřebí ROM MT-32." id="93">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -349,7 +312,6 @@ joystickem zapnout přímo ve hře.</string>
                 <textField verticalHuggingPriority="750" id="91" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="20" width="306" height="36"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="92">
                         <font key="font" metaFont="system" size="14"/>
                         <string key="title">ROM MT-32 můžete přidat
@@ -359,7 +321,6 @@ v nastavení zvuku Boxeru.</string>
                     </textFieldCell>
                 </textField>
             </subviews>
-            <animations/>
         </customView>
         <customView id="95" userLabel="Numpad Active Bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="420" height="172"/>
@@ -368,7 +329,6 @@ v nastavení zvuku Boxeru.</string>
                 <textField verticalHuggingPriority="750" tag="4" id="97" customClass="BXHUDLabel">
                     <rect key="frame" x="-3" y="20" width="426" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Simulovaná numerická klávesnice je aktivní" id="100">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -378,11 +338,9 @@ v nastavení zvuku Boxeru.</string>
                 <imageView tag="1" id="98">
                     <rect key="frame" x="151" y="39" width="118" height="118"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NumpadActiveTemplate" id="99" customClass="BXHUDImageCell"/>
                 </imageView>
             </subviews>
-            <animations/>
             <point key="canvasLocation" x="-565" y="680"/>
         </customView>
         <customView id="105" userLabel="Numpad Inactive Bezel" customClass="BXBezelView">
@@ -392,7 +350,6 @@ v nastavení zvuku Boxeru.</string>
                 <textField verticalHuggingPriority="750" tag="4" id="107" customClass="BXHUDLabel">
                     <rect key="frame" x="-14" y="20" width="447" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Simulovaná numerická klávesnice je neaktivní" id="108">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -402,11 +359,9 @@ v nastavení zvuku Boxeru.</string>
                 <imageView tag="1" id="106">
                     <rect key="frame" x="151" y="39" width="118" height="118"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NumpadInactiveTemplate" id="109" customClass="BXHUDImageCell"/>
                 </imageView>
             </subviews>
-            <animations/>
         </customView>
         <customView id="113" userLabel="Numpad Active Bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="420" height="172"/>
@@ -415,7 +370,6 @@ v nastavení zvuku Boxeru.</string>
                 <textField verticalHuggingPriority="750" tag="4" id="115" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="20" width="386" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Zámek numerické klávesnice je aktivní" id="116">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -425,11 +379,9 @@ v nastavení zvuku Boxeru.</string>
                 <imageView tag="1" id="114">
                     <rect key="frame" x="159" y="47" width="102" height="102"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NumlockActiveTemplate" id="117" customClass="BXHUDImageCell"/>
                 </imageView>
             </subviews>
-            <animations/>
             <point key="canvasLocation" x="-404" y="206"/>
         </customView>
         <customView id="118" userLabel="Numpad Active Bezel" customClass="BXBezelView">
@@ -439,7 +391,6 @@ v nastavení zvuku Boxeru.</string>
                 <textField verticalHuggingPriority="750" tag="4" id="119" customClass="BXHUDLabel">
                     <rect key="frame" x="17" y="20" width="386" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Zámek numerické klávesnice je neaktivní" id="122">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -449,11 +400,9 @@ v nastavení zvuku Boxeru.</string>
                 <imageView tag="1" id="120">
                     <rect key="frame" x="159" y="47" width="102" height="102"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NumlockInactiveTemplate" id="121" customClass="BXHUDImageCell"/>
                 </imageView>
             </subviews>
-            <animations/>
         </customView>
         <customView id="125" userLabel="Screenshot Bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="160" height="160"/>
@@ -462,11 +411,9 @@ v nastavení zvuku Boxeru.</string>
                 <imageView tag="1" id="126">
                     <rect key="frame" x="29" y="29" width="102" height="102"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="ScreenshotTemplate" id="127" customClass="BXHUDImageCell"/>
                 </imageView>
             </subviews>
-            <animations/>
         </customView>
         <customView id="129" userLabel="Fast Forward Bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="160" height="160"/>
@@ -475,11 +422,9 @@ v nastavení zvuku Boxeru.</string>
                 <imageView tag="1" id="130">
                     <rect key="frame" x="29" y="29" width="102" height="102"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="FastForwardTemplate" id="131" customClass="BXHUDImageCell"/>
                 </imageView>
             </subviews>
-            <animations/>
         </customView>
         <customView id="133" userLabel="Volume bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="240" height="172"/>
@@ -488,7 +433,6 @@ v nastavení zvuku Boxeru.</string>
                 <levelIndicator verticalHuggingPriority="750" tag="2" id="135">
                     <rect key="frame" x="20" y="21" width="200" height="20"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <animations/>
                     <levelIndicatorCell key="cell" alignment="left" maxValue="1" warningValue="4" criticalValue="4" numberOfTickMarks="7" levelIndicatorStyle="continuousCapacity" id="140" customClass="BXHUDLevelIndicatorCell">
                         <font key="font" metaFont="system"/>
                     </levelIndicatorCell>
@@ -496,11 +440,9 @@ v nastavení zvuku Boxeru.</string>
                 <imageView tag="1" id="142">
                     <rect key="frame" x="69" y="50" width="102" height="102"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="Volume0PercentTemplate" id="143" customClass="BXHUDImageCell"/>
                 </imageView>
             </subviews>
-            <animations/>
         </customView>
         <customView id="145" userLabel="Mouse Locked bezel" customClass="BXBezelView">
             <rect key="frame" x="0.0" y="0.0" width="452" height="65"/>
@@ -509,7 +451,6 @@ v nastavení zvuku Boxeru.</string>
                 <textField verticalHuggingPriority="750" tag="7" id="146" customClass="BXHUDLabel">
                     <rect key="frame" x="49" y="20" width="386" height="22"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                    <animations/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="Kombinací Cmd+kliknutí uvolníte kurzor myši." id="147">
                         <font key="font" metaFont="system" size="18"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -519,11 +460,9 @@ v nastavení zvuku Boxeru.</string>
                 <imageView id="148">
                     <rect key="frame" x="20" y="21" width="24" height="24"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="proportionallyUpOrDown" image="NSLockLockedTemplate" id="149" customClass="BXHUDImageCell"/>
                 </imageView>
             </subviews>
-            <animations/>
             <point key="canvasLocation" x="-849" y="-299.5"/>
         </customView>
     </objects>

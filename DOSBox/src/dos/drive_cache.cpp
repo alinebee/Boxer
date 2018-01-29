@@ -524,7 +524,7 @@ void DOS_Drive_Cache::CreateShortName(CFileInfo* curDir, CFileInfo* info) {
 		// Create number
 		char buffer[8];
 		info->shortNr = CreateShortNameID(curDir,tmpName);
-		sprintf(buffer,"%d",info->shortNr);
+		sprintf(buffer,"%lu",(unsigned long)info->shortNr);
 		// Copy first letters
 		Bits tocopy = 0;
 		size_t buflen = strlen(buffer);

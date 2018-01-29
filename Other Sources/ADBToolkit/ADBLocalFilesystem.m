@@ -60,12 +60,12 @@
 
 - (void) dealloc
 {
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wnonnull"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     self.mutableRepresentedURLs = nil;
     self.baseURL = nil;
     
-//#pragma clang diagnostic pop
+#pragma clang diagnostic pop
 }
 
 - (void) setBaseURL: (NSURL *)URL

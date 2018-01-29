@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dos_system.h,v 1.47 2009-03-04 21:08:22 c2woody Exp $ */
 
 #ifndef DOSBOX_DOS_SYSTEM_H
 #define DOSBOX_DOS_SYSTEM_H
@@ -79,10 +78,6 @@ public:
 	virtual void	AddRef()					{ refCtr++; };
 	virtual Bits	RemoveRef()					{ return --refCtr; };
 	virtual bool	UpdateDateTimeFromHost()	{ return true; }
-    //--Added 2011-11-03 by Alun Bestor to let Boxer inform open file handles
-    //that their physical backing media will be removed.
-    virtual void    willBecomeUnavailable()     { }
-    //--End of modifications
 	void SetDrive(Bit8u drv) { hdrive=drv;}
 	Bit8u GetDrive(void) { return hdrive;}
 	Bit32u flags;
@@ -122,33 +117,45 @@ private:
 	Bitu devnum;
 };
 
+class localFile : public DOS_File {
+public:
+	localFile(const char* name, FILE * handle);
+	bool Read(Bit8u * data,Bit16u * size);
+	bool Write(Bit8u * data,Bit16u * size);
+	bool Seek(Bit32u * pos,Bit32u type);
+	bool Close();
+	Bit16u GetInformation(void);
+	bool UpdateDateTimeFromHost(void);   
+	void FlagReadOnlyMedium(void);
+	void Flush(void);
+private:
+	FILE * fhandle;
+	bool read_only_medium;
+	enum { NONE,READ,WRITE } last_action;
+};
+
 /* The following variable can be lowered to free up some memory.
  * The negative side effect: The stored searches will be turned over faster.
  * Should not have impact on systems with few directory entries. */
-class DOS_Drive;
 #define MAX_OPENDIRS 2048
 //Can be high as it's only storage (16 bit variable)
 
 class DOS_Drive_Cache {
 public:
 	DOS_Drive_Cache					(void);
-	DOS_Drive_Cache					(const char* path, DOS_Drive *drive); 
+	DOS_Drive_Cache					(const char* path);
 	~DOS_Drive_Cache				(void);
 
 	enum TDirSort { NOSORT, ALPHABETICAL, DIRALPHABETICAL, ALPHABETICALREV, DIRALPHABETICALREV };
 
-	void		SetBaseDir			(const char* path, DOS_Drive *drive);
+	void		SetBaseDir			(const char* path);
 	void		SetDirSort			(TDirSort sort) { sortDirType = sort; };
 	bool		OpenDir				(const char* path, Bit16u& id);
 	bool		ReadDir				(Bit16u id, char* &result);
 
 	void		ExpandName			(char* path);
 	char*		GetExpandName		(const char* path);
-
-	//--Modified 2009-10-06 by Alun Bestor: changed function signature to correspond to new implementation in drive_cache.cpp.
-	bool		GetShortName		(const char* dirpath, const char* filename, char* shortname);
-	//bool		GetShortName		(const char* fullname, char* shortname);
-	//--End of modifications
+	bool		GetShortName		(const char* fullname, char* shortname);
 
 	bool		FindFirst			(char* path, Bit16u& id);
 	bool		FindNext			(Bit16u id, char* &result);
@@ -165,8 +172,9 @@ public:
 	public:
 		CFileInfo(void) {
 			orgname[0] = shortname[0] = 0;
-			nextEntry = shortNr = 0;
 			isDir = false;
+			id = MAX_OPENDIRS;
+			nextEntry = shortNr = 0;
 		}
 		~CFileInfo(void) {
 			for (Bit32u i=0; i<fileList.size(); i++) delete fileList[i];
@@ -176,6 +184,7 @@ public:
 		char		orgname		[CROSS_LEN];
 		char		shortname	[DOS_NAMELENGTH_ASCII];
 		bool		isDir;
+		Bit16u		id;
 		Bitu		nextEntry;
 		Bitu		shortNr;
 		// contents
@@ -184,6 +193,8 @@ public:
 	};
 
 private:
+	void ClearFileInfo(CFileInfo *dir);
+	void DeleteFileInfo(CFileInfo *dir);
 
 	bool		RemoveTrailingDot	(char* shortname);
 	Bits		GetLongName		(CFileInfo* info, char* shortname);
@@ -202,7 +213,6 @@ private:
 
 	CFileInfo*	dirBase;
 	char		dirPath				[CROSS_LEN];
-	DOS_Drive*	drive;
 	char		basePath			[CROSS_LEN];
 	bool		dirFirstTime;
 	TDirSort	sortDirType;
@@ -213,7 +223,6 @@ private:
 	Bit16u		srchNr;
 	CFileInfo*	dirSearch			[MAX_OPENDIRS];
 	char		dirSearchName		[MAX_OPENDIRS];
-	bool		free				[MAX_OPENDIRS];
 	CFileInfo*	dirFindFirst		[MAX_OPENDIRS];
 	Bit16u		nextFreeFindFirst;
 
@@ -225,56 +234,39 @@ class DOS_Drive {
 public:
 	DOS_Drive();
 	virtual ~DOS_Drive(){};
-	virtual bool FileOpen(DOS_File * * file,const char * name,Bit32u flags)=0;
-	virtual bool FileCreate(DOS_File * * file,const char * name,Bit16u attributes)=0;
-	virtual bool FileUnlink(const char * _name)=0;
-	virtual bool RemoveDir(const char * _dir)=0;
-	virtual bool MakeDir(const char * _dir)=0;
-	virtual bool TestDir(const char * _dir)=0;
-	virtual bool FindFirst(const char * _dir,DOS_DTA & dta,bool fcb_findfirst=false)=0;
+	virtual bool FileOpen(DOS_File * * file,char * name,Bit32u flags)=0;
+	virtual bool FileCreate(DOS_File * * file,char * name,Bit16u attributes)=0;
+	virtual bool FileUnlink(char * _name)=0;
+	virtual bool RemoveDir(char * _dir)=0;
+	virtual bool MakeDir(char * _dir)=0;
+	virtual bool TestDir(char * _dir)=0;
+	virtual bool FindFirst(char * _dir,DOS_DTA & dta,bool fcb_findfirst=false)=0;
 	virtual bool FindNext(DOS_DTA & dta)=0;
-	virtual bool GetFileAttr(const char * name,Bit16u * attr)=0;
-	virtual bool Rename(const char * oldname,const char * newname)=0;
+	virtual bool GetFileAttr(char * name,Bit16u * attr)=0;
+	virtual bool Rename(char * oldname,char * newname)=0;
 	virtual bool AllocationInfo(Bit16u * _bytes_sector,Bit8u * _sectors_cluster,Bit16u * _total_clusters,Bit16u * _free_clusters)=0;
 	virtual bool FileExists(const char* name)=0;
 	virtual bool FileStat(const char* name, FileStat_Block * const stat_block)=0;
 	virtual Bit8u GetMediaByte(void)=0;
 	virtual void SetDir(const char* path) { strcpy(curdir,path); };
-//	virtual void EmptyCache(void) { dirCache.EmptyCache(); };
+	virtual void EmptyCache(void) { dirCache.EmptyCache(); };
 	virtual bool isRemote(void)=0;
 	virtual bool isRemovable(void)=0;
 	virtual Bits UnMount(void)=0;
 
-	/* these 4 may only be used by DOS_Drive_Cache because they have special calling conventions */
-	virtual void *opendir(const char *dir) {return NULL;};
-	virtual void closedir(void *handle) {};
-	virtual bool read_directory_first(void *handle, char* entry_name, bool& is_directory) { return false; };
-	virtual bool read_directory_next(void *handle, char* entry_name, bool& is_directory) { return false; };
-
-	virtual const char * GetInfo(void);
+	char * GetInfo(void);
 	char curdir[DOS_PATHLENGTH];
 	char info[256];
-	
 	/* Can be overridden for example in iso images */
-	virtual char const * GetLabel() {return "NOLABEL";}; 
-	virtual void SetLabel(const char *label, bool iscdrom, bool updatable) {}; 
-	virtual void EmptyCache() {};
+	virtual char const * GetLabel(){return dirCache.GetLabel();};
 
-	//--Added 2009-10-25 by Alun Bestor to access the base system path for a drive
-	char systempath[CROSS_LEN];
-	char * getSystemPath(void);
-	
-	//Added 2010-12-11 by Alun Bestor to give Boxer the ability to do directory cache lookups
-	virtual bool getShortName(const char* dirpath, const char*filename, char* shortname) { return false; };
-	//--End of modifications
-	
 	DOS_Drive_Cache dirCache;
 
 	// disk cycling functionality (request resources)
 	virtual void Activate(void) {};
 };
 
-enum { OPEN_READ=0,OPEN_WRITE=1,OPEN_READWRITE=2, DOS_NOT_INHERIT=128};
+enum { OPEN_READ=0, OPEN_WRITE=1, OPEN_READWRITE=2, OPEN_READ_NO_MOD=4, DOS_NOT_INHERIT=128};
 enum { DOS_SEEK_SET=0,DOS_SEEK_CUR=1,DOS_SEEK_END=2};
 
 

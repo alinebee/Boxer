@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: directserial.cpp,v 1.2 2009-09-26 09:15:19 h-a-l-9000 Exp $ */
 
 #include "dosbox.h"
 
@@ -303,9 +302,9 @@ void CDirectSerial::setBreak (bool value) {
 }
 
 // updateModemControlLines(mcr) sets DTR and RTS. 
-void CDirectSerial::setRTSDTR(bool _rts, bool _dtr) {
-	SERIAL_setRTS(comport,_rts);
-	SERIAL_setDTR(comport,_dtr);
+void CDirectSerial::setRTSDTR(bool rts, bool dtr) {
+	SERIAL_setRTS(comport,rts);
+	SERIAL_setDTR(comport,dtr);
 }
 
 void CDirectSerial::setRTS(bool val) {

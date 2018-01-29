@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: debug_gui.cpp,v 1.38 2009-05-27 09:15:41 qbix79 Exp $ */
 
 #include "dosbox.h"
 
@@ -87,6 +86,7 @@ void DEBUG_RefreshPage(char scroll) {
 	list<string>::iterator i = logBuffPos;
 	int maxy, maxx; getmaxyx(dbg.win_out,maxy,maxx);
 	int rem_lines = maxy;
+	if(rem_lines == -1) return;
 
 	wclear(dbg.win_out);
 
@@ -110,7 +110,7 @@ void LOG::operator() (char const* format, ...){
 
 	if (d_type>=LOG_MAX) return;
 	if ((d_severity!=LOG_ERROR) && (!loggrp[d_type].enabled)) return;
-	DEBUG_ShowMsg("%10u: %s:%s\n",cycle_count,loggrp[d_type].front,buf);
+	DEBUG_ShowMsg("%10u: %s:%s\n",static_cast<Bit32u>(cycle_count),loggrp[d_type].front,buf);
 }
 
 
@@ -146,40 +146,42 @@ static void DrawBars(void) {
 		attrset(COLOR_PAIR(PAIR_BLACK_BLUE));
 	}
 	/* Show the Register bar */
-	mvaddstr(dbg.win_reg->_begy-1,0, "---(Register Overview                   )---");
+	mvaddstr(1-1,0, "-----(Register Overview                   )-----                                ");
 	/* Show the Data Overview bar perhaps with more special stuff in the end */
-	mvaddstr(dbg.win_data->_begy-1,0,"---(Data Overview   Scroll: page up/down)---");
-	/* Show the Code Overview perhaps with special stuff in bar too */
-	mvaddstr(dbg.win_code->_begy-1,0,"---(Code Overview   Scroll: up/down     )---");
+	mvaddstr(6-1,0, "-----(Data Overview   Scroll: page up/down)-----                                ");
+	/* Show the Code Overview perhaps with special stuff in bar too */  
+	mvaddstr(15-1,0,"-----(Code Overview   Scroll: up/down     )-----                                ");
 	/* Show the Variable Overview bar */
-	mvaddstr(dbg.win_var->_begy-1,0, "---(Variable Overview                   )---");
+	mvaddstr(27-1,0,"-----(Variable Overview                   )-----                                ");
 	/* Show the Output OverView */
-	mvaddstr(dbg.win_out->_begy-1,0, "---(OutPut/Input    Scroll: home/end    )---");
+	mvaddstr(32-1,0,"-----(Output          Scroll: home/end    )-----                                ");
 	attrset(0);
+	//Match values with below. So we don't need to touch the internal window structures
 }
 
 
 
 static void MakeSubWindows(void) {
-	/* The Std output win should go in bottem */
+	/* The Std output win should go at the bottom */
 	/* Make all the subwindows */
 	int win_main_maxy, win_main_maxx; getmaxyx(dbg.win_main,win_main_maxy,win_main_maxx);
-	int outy=1;
+	int outy=1; //Match values with above
 	/* The Register window  */
 	dbg.win_reg=subwin(dbg.win_main,4,win_main_maxx,outy,0);
-	outy+=5;
+	outy+=5; // 6
 	/* The Data Window */
-	dbg.win_data=subwin(dbg.win_main,10,win_main_maxx,outy,0);
-	outy+=11;
+	dbg.win_data=subwin(dbg.win_main,8,win_main_maxx,outy,0);
+	outy+=9; // 15
 	/* The Code Window */
 	dbg.win_code=subwin(dbg.win_main,11,win_main_maxx,outy,0);
-	outy+=12;
+	outy+=12; // 27
 	/* The Variable Window */
 	dbg.win_var=subwin(dbg.win_main,4,win_main_maxx,outy,0);
-	outy+=5;
+	outy+=5; // 32
 	/* The Output Window */	
-	dbg.win_out=subwin(dbg.win_main,win_main_maxy-outy-1,win_main_maxx,outy,0);
-	dbg.input_y=win_main_maxy-1;
+	dbg.win_out=subwin(dbg.win_main,win_main_maxy-outy,win_main_maxx,outy,0);
+	if(!dbg.win_reg ||!dbg.win_data || !dbg.win_code || !dbg.win_var || !dbg.win_out) E_Exit("Setting up windows failed");
+//	dbg.input_y=win_main_maxy-1;
 	scrollok(dbg.win_out,TRUE);
 	DrawBars();
 	Draw_RegisterLayout();
@@ -195,20 +197,21 @@ static void MakePairs(void) {
 }
 static void LOG_Destroy(Section*) {
 	if(debuglog) fclose(debuglog);
+	debuglog = 0;
 }
 
 static void LOG_Init(Section * sec) {
-	Section_prop * sect=static_cast<Section_prop *>(sec);
-	const char * blah=sect->Get_string("logfile");
-	if(blah && blah[0] &&(debuglog = fopen(blah,"wt+"))){
-	}else{
-		debuglog=0;
+	Section_prop * sect = static_cast<Section_prop *>(sec);
+	const char * blah = sect->Get_string("logfile");
+	if(blah && blah[0] && (debuglog = fopen(blah,"wt+"))){
+		;
+	} else {
+		debuglog = 0;
 	}
 	sect->AddDestroyFunction(&LOG_Destroy);
-	char buf[1024];
-	for (Bitu i=1;i<LOG_MAX;i++) {
-		strcpy(buf,loggrp[i].front);
-		buf[strlen(buf)]=0;
+	char buf[64];
+	for (Bitu i = LOG_ALL + 1;i < LOG_MAX;i++) { //Skip LOG_ALL, it is always enabled
+		safe_strncpy(buf,loggrp[i].front,sizeof(buf));
 		lowcase(buf);
 		loggrp[i].enabled=sect->Get_bool(buf);
 	}
@@ -245,19 +248,20 @@ void LOG_StartUp(void) {
 	loggrp[LOG_MISC].front="MISC";
 
 	loggrp[LOG_IO].front="IO";
+	loggrp[LOG_PCI].front="PCI";
 	
 	/* Register the log section */
 	Section_prop * sect=control->AddSection_prop("log",LOG_Init);
 	Prop_string* Pstring = sect->Add_string("logfile",Property::Changeable::Always,"");
 	Pstring->Set_help("file where the log messages will be saved to");
-	char buf[1024];
-	for (Bitu i=1;i<LOG_MAX;i++) {
-		strcpy(buf,loggrp[i].front);
+	char buf[64];
+	for (Bitu i = LOG_ALL + 1;i < LOG_MAX;i++) {
+		safe_strncpy(buf,loggrp[i].front, sizeof(buf));
 		lowcase(buf);
 		Prop_bool* Pbool = sect->Add_bool(buf,Property::Changeable::Always,true);
 		Pbool->Set_help("Enable/Disable logging of this type.");
 	}
-	MSG_Add("LOG_CONFIGFILE_HELP","Logging related options for the debugger.\n");
+//	MSG_Add("LOG_CONFIGFILE_HELP","Logging related options for the debugger.\n");
 }
 
 
@@ -271,6 +275,8 @@ void DBGUI_StartUp(void) {
 	nodelay(dbg.win_main,true);
 	keypad(dbg.win_main,true);
 	#ifndef WIN32
+	printf("\e[8;50;80t");
+	fflush(NULL);
 	resizeterm(50,80);
 	touchwin(dbg.win_main);
 	#endif

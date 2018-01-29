@@ -76,10 +76,10 @@ Bitu boxer_idealOutputMode(Bitu flags)
 	return GFX_CAN_32 | GFX_SCALING;
 }
 
-bool boxer_startFrame(Bit8u **frameBuffer, Bitu *pitch)
+bool boxer_startFrame(Bit8u * &frameBuffer, Bitu & pitch)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [[emulator videoHandler] startFrameWithBuffer: (void **)frameBuffer pitch: (NSUInteger *)pitch];
+	return [[emulator videoHandler] startFrameWithBuffer: (void **)&frameBuffer pitch: (NSUInteger *)&pitch];
 }
 
 void boxer_finishFrame(const uint16_t *dirtyBlocks)
@@ -558,6 +558,10 @@ void boxer_die(const char *functionName, const char *fileName, int lineNumber, c
     throw boxer_emulatorException(errorReason, fileName, functionName, lineNumber);
 }
 
+void restart_program(std::vector<std::string> & parameters) {
+    // TODO: re-write?
+    E_Exit("Restarting failed");
+}
 
 #pragma mark - No-ops
 

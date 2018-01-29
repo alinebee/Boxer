@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: setup.h,v 1.41 2009-05-27 09:15:41 qbix79 Exp $ */
 
 #ifndef DOSBOX_SETUP_H
 #define DOSBOX_SETUP_H
@@ -40,6 +39,11 @@
 #ifndef CH_STRING
 #define CH_STRING
 #include <string>
+#endif
+
+#ifndef CH_CSTDIO
+#define CH_CSTDIO
+#include <cstdio>
 #endif
 
 
@@ -82,7 +86,7 @@ public:
 	Value(char const * const in) :_string(new std::string(in)),type(V_STRING) { };
 	Value(Value const& in):_string(0) {plaincopy(in);}
 	~Value() { destroy();};
-	Value(std::string const& in,Etype _t) :_string(0),type(V_NONE) {SetValue(in,_t);}
+	Value(std::string const& in,Etype _t) :_hex(0),_bool(false),_int(0),_string(0),_double(0),type(V_NONE) {SetValue(in,_t);}
 	
 	/* Assigment operators */
 	Value& operator= (Hex in) throw(WrongType)                { return copy(Value(in));}
@@ -99,18 +103,18 @@ public:
 	operator int () const throw(WrongType);
 	operator double () const throw(WrongType);
 	operator char const* () const throw(WrongType);
-	void SetValue(std::string const& in,Etype _type = V_CURRENT) throw(WrongType);
+	bool SetValue(std::string const& in,Etype _type = V_CURRENT) throw(WrongType);
 	std::string ToString() const;
 
 private:
 	void destroy() throw();
 	Value& copy(Value const& in) throw(WrongType);
 	void plaincopy(Value const& in) throw();
-	void set_hex(std::string const& in);
-	void set_int(std::string const&in);
-	void set_bool(std::string const& in);
+	bool set_hex(std::string const& in);
+	bool set_int(std::string const&in);
+	bool set_bool(std::string const& in);
 	void set_string(std::string const& in);
-	void set_double(std::string const& in);
+	bool set_double(std::string const& in);
 };
 
 class Property {
@@ -122,20 +126,29 @@ public:
 	void Set_values(const char * const * in);
 	void Set_help(std::string const& str);
 	char const* Get_help();
-	virtual	void SetValue(std::string const& str)=0;
+	virtual	bool SetValue(std::string const& str)=0;
 	Value const& GetValue() const { return value;}
 	Value const& Get_Default_Value() const { return default_value; }
-	//CheckValue returns true  if value is in suggested_values;
+	//CheckValue returns true, if value is in suggested_values;
 	//Type specific properties are encouraged to override this and check for type
 	//specific features.
 	virtual bool CheckValue(Value const& in, bool warn);
-	//Set interval value to in or default if in is invalid. force always sets the value.
-	void SetVal(Value const& in, bool forced,bool warn=true) {if(forced || CheckValue(in,warn)) value = in; else value = default_value;}
+public:
 	virtual ~Property(){ } 
 	virtual const std::vector<Value>& GetValues() const;
 	Value::Etype Get_type(){return default_value.type;}
+	Changeable::Value getChange() {return change;}
 
 protected:
+	//Set interval value to in or default if in is invalid. force always sets the value.
+	//Can be overriden to set a different value if invalid.
+	virtual bool SetVal(Value const& in, bool forced,bool warn=true) {
+		if(forced || CheckValue(in,warn)) { 
+			value = in; return true;
+		} else { 
+			value = default_value; return false;
+		}
+	}
 	Value value;
 	std::vector<Value> suggested_values;
 	typedef std::vector<Value>::iterator iter;
@@ -156,10 +169,15 @@ public:
 		min = _min;
 		max = _max;
 	}
-	void SetMinMax(Value const& minVal,Value const& maxVal) {this->min = minVal; this->max=maxVal;}
-	void SetValue(std::string const& in);
+	int getMin() { return min;}
+	int getMax() { return max;}
+	void SetMinMax(Value const& min,Value const& max) {this->min = min; this->max=max;}
+	bool SetValue(std::string const& in);
 	~Prop_int(){ }
 	virtual bool CheckValue(Value const& in, bool warn);
+	// Override SetVal, so it takes min,max in account when there are no suggested values
+	virtual bool SetVal(Value const& in, bool forced,bool warn=true);
+	
 private:
 	Value min,max;
 };
@@ -170,7 +188,7 @@ public:
 		:Property(_propname,when){
 		default_value = value = _value;
 	}
-	void SetValue(std::string const& input);
+	bool SetValue(std::string const& input);
 	~Prop_double(){ }
 };
 
@@ -180,7 +198,7 @@ public:
 		:Property(_propname,when) { 
 		default_value = value = _value;
 	}
-	void SetValue(std::string const& in);
+	bool SetValue(std::string const& in);
 	~Prop_bool(){ }
 };
 
@@ -190,7 +208,7 @@ public:
 		:Property(_propname,when) { 
 		default_value = value = _value;
 	}
-	void SetValue(std::string const& in);
+	bool SetValue(std::string const& in);
 	virtual bool CheckValue(Value const& in, bool warn);
 	~Prop_string(){ }
 };
@@ -202,7 +220,7 @@ public:
 		default_value = value = _value;
 		realpath = _value;
 	}
-	void SetValue(std::string const& in);
+	bool SetValue(std::string const& in);
 	~Prop_path(){ }
 };
 
@@ -212,7 +230,7 @@ public:
 		:Property(_propname,when) { 
 		default_value = value = _value;
 	}
-	void SetValue(std::string const& in);
+	bool SetValue(std::string const& in);
 	~Prop_hex(){ }
 };
 
@@ -243,7 +261,7 @@ public:
 	const char* GetName() const {return sectionname.c_str();}
 
 	virtual std::string GetPropValue(std::string const& _property) const =0;
-	virtual void HandleInputline(std::string const& _line)=0;
+	virtual bool HandleInputline(std::string const& _line)=0;
 	virtual void PrintData(FILE* outfile) const =0;
 	virtual ~Section() { /*Children must call executedestroy ! */}
 };
@@ -276,7 +294,7 @@ public:
 	Prop_path* Get_path(std::string const& _propname) const;
 	Prop_multival* Get_multival(std::string const& _propname) const;
 	Prop_multival_remain* Get_multivalremain(std::string const& _propname) const;
-	void HandleInputline(std::string const& gegevens);
+	bool HandleInputline(std::string const& gegevens);
 	void PrintData(FILE* outfile) const;
 	virtual std::string GetPropValue(std::string const& _property) const;
 	//ExecuteDestroy should be here else the destroy functions use destroyed properties
@@ -286,15 +304,15 @@ public:
 class Prop_multival:public Property{
 protected:
 	Section_prop* section;
-	std::string seperator;
+	std::string separator;
 	void make_default_value();
 public:
-	Prop_multival(std::string const& _propname, Changeable::Value when,std::string const& sep):Property(_propname,when), section(new Section_prop("")),seperator(sep) {
+	Prop_multival(std::string const& _propname, Changeable::Value when,std::string const& sep):Property(_propname,when), section(new Section_prop("")),separator(sep) {
 		default_value = value = "";
 	}
 	Section_prop *GetSection() { return section; }
 	const Section_prop *GetSection() const { return section; }
-	virtual void SetValue(std::string const& input);
+	virtual bool SetValue(std::string const& input);
 	virtual const std::vector<Value>& GetValues() const;
 	~Prop_multival() { delete section; }
 }; //value bevat totale string. setvalue zet elk van de sub properties en checked die.
@@ -303,7 +321,7 @@ class Prop_multival_remain:public Prop_multival{
 public:
 	Prop_multival_remain(std::string const& _propname, Changeable::Value when,std::string const& sep):Prop_multival(_propname,when,sep){ }
 
-	virtual void SetValue(std::string const& input);
+	virtual bool SetValue(std::string const& input);
 };
 
    
@@ -311,7 +329,7 @@ class Section_line: public Section{
 public:
 	Section_line(std::string const& _sectionname):Section(_sectionname){}
 	~Section_line(){ExecuteDestroy(true);}
-	void HandleInputline(std::string const& gegevens);
+	bool HandleInputline(std::string const& gegevens);
 	void PrintData(FILE* outfile) const;
 	virtual std::string GetPropValue(std::string const& _property) const;
 	std::string data;

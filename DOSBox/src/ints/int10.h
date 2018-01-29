@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: int10.h,v 1.42 2009-09-06 19:25:34 c2woody Exp $ */
 
 #include "vga.h"
 
@@ -100,6 +99,8 @@
 extern Bit8u int10_font_08[256 * 8];
 extern Bit8u int10_font_14[256 * 14];
 extern Bit8u int10_font_16[256 * 16];
+extern Bit8u int10_font_14_alternate[20 * 15 + 1];
+extern Bit8u int10_font_16_alternate[19 * 17 + 1];
 
 struct VideoModeBlock {
 	Bit16u	mode;
@@ -132,6 +133,8 @@ typedef struct {
 		RealPt video_dcc_table;
 		RealPt oemstring;
 		RealPt vesa_modes;
+		RealPt wait_retrace;
+		RealPt set_window;
 		RealPt pmode_interface;
 		Bit16u pmode_interface_size;
 		Bit16u pmode_interface_start;
@@ -155,6 +158,7 @@ static Bit8u CURSOR_POS_ROW(Bit8u page) {
 }
 
 bool INT10_SetVideoMode(Bit16u mode);
+void INT10_SetCurMode(void);
 
 void INT10_ScrollWindow(Bit8u rul,Bit8u cul,Bit8u rlr,Bit8u clr,Bit8s nlines,Bit8u attr,Bit8u page);
 
@@ -187,8 +191,8 @@ void INT10_ToggleBlinkingBit(Bit8u state);
 void INT10_GetSinglePaletteRegister(Bit8u reg,Bit8u * val);
 void INT10_GetOverscanBorderColor(Bit8u * val);
 void INT10_GetAllPaletteRegisters(PhysPt data);
-void INT10_SetSingleDacRegister(Bit8u index,Bit8u red,Bit8u green,Bit8u blue);
-void INT10_GetSingleDacRegister(Bit8u index,Bit8u * red,Bit8u * green,Bit8u * blue);
+void INT10_SetSingleDACRegister(Bit8u index,Bit8u red,Bit8u green,Bit8u blue);
+void INT10_GetSingleDACRegister(Bit8u index,Bit8u * red,Bit8u * green,Bit8u * blue);
 void INT10_SetDACBlock(Bit16u index,Bit16u count,PhysPt data);
 void INT10_GetDACBlock(Bit16u index,Bit16u count,PhysPt data);
 void INT10_SelectDACPage(Bit8u function,Bit8u mode);
@@ -206,9 +210,9 @@ Bit8u VESA_GetSVGAMode(Bit16u & mode);
 Bit8u VESA_SetCPUWindow(Bit8u window,Bit8u address);
 Bit8u VESA_GetCPUWindow(Bit8u window,Bit16u & address);
 Bit8u VESA_ScanLineLength(Bit8u subcall, Bit16u val, Bit16u & bytes,Bit16u & pixels,Bit16u & lines);
-Bit8u VESA_SetDisplayStart(Bit16u x,Bit16u y);
+Bit8u VESA_SetDisplayStart(Bit16u x,Bit16u y,bool wait);
 Bit8u VESA_GetDisplayStart(Bit16u & x,Bit16u & y);
-Bit8u VESA_SetPalette(PhysPt data,Bitu index,Bitu count);
+Bit8u VESA_SetPalette(PhysPt data,Bitu index,Bitu count,bool wait);
 Bit8u VESA_GetPalette(PhysPt data,Bitu index,Bitu count);
 
 /* Sub Groups */

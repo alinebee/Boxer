@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: vga_xga.cpp,v 1.17 2009-05-27 09:15:41 qbix79 Exp $ */
 
 #include <string.h>
 #include "dosbox.h"
@@ -353,11 +352,11 @@ void XGA_DrawLineBresenham(Bitu val) {
 	// Probably a lot easier way to do this, but this works.
 
 	dminor = (Bits)((Bit16s)xga.desty);
-	if(xga.desty&0x2000) dminor |= 0xffffe000;
+	if(xga.desty&0x2000) dminor |= ~0x1fff;
 	dminor >>= 1;
 
 	destxtmp=(Bits)((Bit16s)xga.destx);
-	if(xga.destx&0x2000) destxtmp |= 0xffffe000;
+	if(xga.destx&0x2000) destxtmp |= ~0x1fff;
 
 
 	dmajor = -(destxtmp - (dminor << 1)) >> 1;
@@ -375,7 +374,7 @@ void XGA_DrawLineBresenham(Bitu val) {
 		sy = -1;
 	}
 	e = (Bits)((Bit16s)xga.ErrTerm);
-	if(xga.ErrTerm&0x2000) e |= 0xffffe000;
+	if(xga.ErrTerm&0x2000) e |= ~0x1fff;
 	xat = xga.curx;
 	yat = xga.cury;
 
@@ -672,6 +671,7 @@ void XGA_DrawWait(Bitu val, Bitu len) {
 					for(Bitu k = 0; k < chunks; k++) { // chunks counter
 						xga.waitcmd.newline = false;
 						for(Bitu n = 0; n < chunksize; n++) { // pixels
+							Bitu mixmode;
 							
 							// This formula can rule the world ;)
 							Bitu mask = 1 << ((((n&0xF8)+(8-(n&0x7)))-1)+chunksize*k);

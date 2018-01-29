@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: vga_memory.cpp,v 1.53 2009-07-04 21:23:35 qbix79 Exp $ */
 
 #include <stdlib.h>
 #include <string.h>
@@ -161,19 +160,19 @@ public:
 		addr = PAGING_GetPhysicalAddress(addr) & vgapages.mask;
 		addr += vga.svga.bank_read_full;
 		addr = CHECKED2(addr);
-		return 
-			(readHandler(addr+0) << 0) |
-			(readHandler(addr+1) << 8);
+		Bitu ret = (readHandler(addr+0) << 0);
+		ret     |= (readHandler(addr+1) << 8);
+		return  ret;
 	}
 	Bitu readd(PhysPt addr) {
 		addr = PAGING_GetPhysicalAddress(addr) & vgapages.mask;
 		addr += vga.svga.bank_read_full;
 		addr = CHECKED2(addr);
-		return 
-			(readHandler(addr+0) << 0)  |
-			(readHandler(addr+1) << 8)  |
-			(readHandler(addr+2) << 16) |
-			(readHandler(addr+3) << 24);
+		Bitu ret = (readHandler(addr+0) << 0);
+		ret     |= (readHandler(addr+1) << 8);
+		ret     |= (readHandler(addr+2) << 16);
+		ret     |= (readHandler(addr+3) << 24);
+		return ret;
 	}
 };
 
@@ -247,19 +246,19 @@ public:
 		addr = PAGING_GetPhysicalAddress(addr) & vgapages.mask;
 		addr += vga.svga.bank_read_full;
 		addr = CHECKED(addr);
-		return 
-			(readHandler(addr+0) << 0) |
-			(readHandler(addr+1) << 8);
+		Bitu ret = (readHandler(addr+0) << 0);
+		ret     |= (readHandler(addr+1) << 8);
+		return ret;
 	}
 	Bitu readd(PhysPt addr) {
 		addr = PAGING_GetPhysicalAddress(addr) & vgapages.mask;
 		addr += vga.svga.bank_read_full;
 		addr = CHECKED(addr);
-		return 
-			(readHandler(addr+0) << 0)  |
-			(readHandler(addr+1) << 8)  |
-			(readHandler(addr+2) << 16) |
-			(readHandler(addr+3) << 24);
+		Bitu ret = (readHandler(addr+0) << 0);
+		ret     |= (readHandler(addr+1) << 8);
+		ret     |= (readHandler(addr+2) << 16);
+		ret     |= (readHandler(addr+3) << 24);
+		return ret;
 	}
 };
 
@@ -356,24 +355,24 @@ public:
 		addr = PAGING_GetPhysicalAddress(addr) & vgapages.mask;
 		addr += vga.svga.bank_read_full;
 		addr = CHECKED(addr);
-		if (GCC_UNLIKELY(addr & 1))
-			return
-				(readHandler<Bit8u>( addr+0 ) << 0 ) | 
-				(readHandler<Bit8u>( addr+1 ) << 8 );
-		else
+		if (GCC_UNLIKELY(addr & 1)) {
+			Bitu ret = (readHandler<Bit8u>( addr+0 ) << 0 );
+			ret     |= (readHandler<Bit8u>( addr+1 ) << 8 );
+			return ret;
+		} else
 			return readHandler<Bit16u>( addr );
 	}
 	Bitu readd(PhysPt addr ) {
 		addr = PAGING_GetPhysicalAddress(addr) & vgapages.mask;
 		addr += vga.svga.bank_read_full;
 		addr = CHECKED(addr);
-		if (GCC_UNLIKELY(addr & 3))
-			return
-				(readHandler<Bit8u>( addr+0 ) << 0 ) | 
-				(readHandler<Bit8u>( addr+1 ) << 8 ) | 
-				(readHandler<Bit8u>( addr+2 ) << 16 ) | 
-				(readHandler<Bit8u>( addr+3 ) << 24 );
-		else
+		if (GCC_UNLIKELY(addr & 3)) {
+			Bitu ret = (readHandler<Bit8u>( addr+0 ) << 0 );
+			ret     |= (readHandler<Bit8u>( addr+1 ) << 8 );
+			ret     |= (readHandler<Bit8u>( addr+2 ) << 16 );
+			ret     |= (readHandler<Bit8u>( addr+3 ) << 24 );
+			return ret;
+		} else
 			return readHandler<Bit32u>( addr );
 	}
 	void writeb(PhysPt addr, Bitu val ) {
@@ -466,12 +465,29 @@ public:
 	}
 	Bitu readb(PhysPt addr) {
 		addr = PAGING_GetPhysicalAddress(addr) & vgapages.mask;
-		return vga.draw.font[addr];
+		switch(vga.gfx.read_map_select) {
+		case 0: // character index
+			return vga.mem.linear[CHECKED3(vga.svga.bank_read_full+addr)];
+		case 1: // character attribute
+			return vga.mem.linear[CHECKED3(vga.svga.bank_read_full+addr+1)];
+		case 2: // font map
+			return vga.draw.font[addr];
+		default: // 3=unused, but still RAM that could save values
+			return 0;
+		}
 	}
 	void writeb(PhysPt addr,Bitu val){
 		addr = PAGING_GetPhysicalAddress(addr) & vgapages.mask;
-		if (vga.seq.map_mask & 0x4) {
+		
+		if (GCC_LIKELY(vga.seq.map_mask == 0x4)) {
 			vga.draw.font[addr]=(Bit8u)val;
+		} else {
+			if (vga.seq.map_mask & 0x4) // font map
+				vga.draw.font[addr]=(Bit8u)val;
+			if (vga.seq.map_mask & 0x2) // character attribute
+				vga.mem.linear[CHECKED3(vga.svga.bank_read_full+addr+1)]=(Bit8u)val;
+			if (vga.seq.map_mask & 0x1) // character index
+				vga.mem.linear[CHECKED3(vga.svga.bank_read_full+addr)]=(Bit8u)val;
 		}
 	}
 };
@@ -572,18 +588,18 @@ public:
 	Bitu readw(PhysPt addr) {
 		addr = vga.svga.bank_read_full + (PAGING_GetPhysicalAddress(addr) & 0xffff);
 		addr = CHECKED4(addr);
-		return 
-			(readHandler(addr+0) << 0) |
-			(readHandler(addr+1) << 8);
+		Bitu ret = (readHandler(addr+0) << 0);
+		ret     |= (readHandler(addr+1) << 8);
+		return ret;
 	}
 	Bitu readd(PhysPt addr) {
 		addr = vga.svga.bank_read_full + (PAGING_GetPhysicalAddress(addr) & 0xffff);
 		addr = CHECKED4(addr);
-		return 
-			(readHandler(addr+0) << 0)  |
-			(readHandler(addr+1) << 8)  |
-			(readHandler(addr+2) << 16) |
-			(readHandler(addr+3) << 24);
+		Bitu ret = (readHandler(addr+0) << 0);
+		ret     |= (readHandler(addr+1) << 8);
+		ret     |= (readHandler(addr+2) << 16);
+		ret     |= (readHandler(addr+3) << 24);
+		return ret;
 	}
 };
 
@@ -684,6 +700,7 @@ public:
 //			|PFLAG_NOCODE;
 	}
 	HostPt GetHostReadPt(Bitu phys_page) {
+		// Odd banks are limited to 16kB and repeated
 		if (vga.tandy.mem_bank & 1) 
 			phys_page&=0x03;
 		else 
@@ -703,10 +720,24 @@ public:
 	}
 	HostPt GetHostReadPt(Bitu phys_page) {
 		phys_page-=0xb8;
-		//test for a unaliged bank, then replicate 2x16kb
-		if (vga.tandy.mem_bank & 1) 
-			phys_page&=0x03;
+		// The 16kB map area is repeated in the 32kB range
+		// On CGA CPU A14 is not decoded so it repeats there too
+		phys_page&=0x03;
 		return vga.tandy.mem_base + (phys_page * 4096);
+	}
+	HostPt GetHostWritePt(Bitu phys_page) {
+		return GetHostReadPt( phys_page );
+	}
+};
+
+class VGA_HERC_Handler : public PageHandler {
+public:
+	VGA_HERC_Handler() {
+		flags=PFLAG_READABLE|PFLAG_WRITEABLE;
+	}
+	HostPt GetHostReadPt(Bitu phys_page) {
+		// The 4kB map area is repeated in the 32kB range
+		return &vga.mem.linear[0];
 	}
 	HostPt GetHostWritePt(Bitu phys_page) {
 		return GetHostReadPt( phys_page );
@@ -737,6 +768,7 @@ static struct vg {
 	VGA_UnchainedEGA_Handler	uega;
 	VGA_UnchainedVGA_Handler	uvga;
 	VGA_PCJR_Handler			pcjr;
+	VGA_HERC_Handler			herc;
 	VGA_LIN4_Handler			lin4;
 	VGA_LFB_Handler				lfb;
 	VGA_LFBChanges_Handler		lfbchanges;
@@ -762,17 +794,24 @@ void VGA_SetupHandlers(void) {
 	switch (machine) {
 	case MCH_CGA:
 	case MCH_PCJR:
+		MEM_SetPageHandler( VGA_PAGE_A0, 16, &vgaph.empty );
+		MEM_SetPageHandler( VGA_PAGE_B0, 8, &vgaph.empty );
 		MEM_SetPageHandler( VGA_PAGE_B8, 8, &vgaph.pcjr );
 		goto range_done;
 	case MCH_HERC:
+		MEM_SetPageHandler( VGA_PAGE_A0, 16, &vgaph.empty );
 		vgapages.base=VGA_PAGE_B0;
 		if (vga.herc.enable_bits & 0x2) {
 			vgapages.mask=0xffff;
 			MEM_SetPageHandler(VGA_PAGE_B0,16,&vgaph.map);
 		} else {
 			vgapages.mask=0x7fff;
-			/* With hercules in 32kb mode it leaves a memory hole on 0xb800 */
-			MEM_SetPageHandler(VGA_PAGE_B0,8,&vgaph.map);
+			// With hercules in 32kB mode it leaves a memory hole on 0xb800
+			// and has MDA-compatible address wrapping when graphics are disabled
+			if (vga.herc.enable_bits & 0x1)
+				MEM_SetPageHandler(VGA_PAGE_B0,8,&vgaph.map);
+			else
+				MEM_SetPageHandler(VGA_PAGE_B0,8,&vgaph.herc);
 			MEM_SetPageHandler(VGA_PAGE_B8,8,&vgaph.empty);
 		}
 		goto range_done;
@@ -789,7 +828,7 @@ void VGA_SetupHandlers(void) {
 		} else {
 			vga.tandy.draw_base = TANDY_VIDBASE( vga.tandy.draw_bank * 16 * 1024);
 			vga.tandy.mem_base = TANDY_VIDBASE( vga.tandy.mem_bank * 16 * 1024);
-			MEM_SetPageHandler( 0xb8, 8, &vgaph.tandy );
+			MEM_SetPageHandler( VGA_PAGE_B8, 8, &vgaph.tandy );
 		}
 		goto range_done;
 //		MEM_SetPageHandler(vga.tandy.mem_bank<<2,vga.tandy.is_32k_mode ? 0x08 : 0x04,range_handler);
@@ -867,21 +906,21 @@ void VGA_SetupHandlers(void) {
 		vgapages.base = VGA_PAGE_A0;
 		vgapages.mask = 0xffff;
 		MEM_SetPageHandler( VGA_PAGE_A0, 16, newHandler );
-		MEM_ResetPageHandler( VGA_PAGE_B0, 16);
+		MEM_SetPageHandler( VGA_PAGE_B0, 16, &vgaph.empty );
 		break;
 	case 2:
 		vgapages.base = VGA_PAGE_B0;
 		vgapages.mask = 0x7fff;
 		MEM_SetPageHandler( VGA_PAGE_B0, 8, newHandler );
-		MEM_ResetPageHandler( VGA_PAGE_A0, 16 );
-		MEM_ResetPageHandler( VGA_PAGE_B8, 8 );
+		MEM_SetPageHandler( VGA_PAGE_A0, 16, &vgaph.empty );
+		MEM_SetPageHandler( VGA_PAGE_B8, 8, &vgaph.empty );
 		break;
 	case 3:
 		vgapages.base = VGA_PAGE_B8;
 		vgapages.mask = 0x7fff;
 		MEM_SetPageHandler( VGA_PAGE_B8, 8, newHandler );
-		MEM_ResetPageHandler( VGA_PAGE_A0, 16 );
-		MEM_ResetPageHandler( VGA_PAGE_B0, 8 );
+		MEM_SetPageHandler( VGA_PAGE_A0, 16, &vgaph.empty );
+		MEM_SetPageHandler( VGA_PAGE_B0, 8, &vgaph.empty );
 		break;
 	}
 	if(svgaCard == SVGA_S3Trio && (vga.s3.ext_mem_ctrl & 0x10))

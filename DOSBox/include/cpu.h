@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: cpu.h,v 1.57 2009-05-27 09:15:40 qbix79 Exp $ */
 
 #ifndef DOSBOX_CPU_H
 #define DOSBOX_CPU_H
@@ -38,7 +37,7 @@
 #define CPU_AUTODETERMINE_SHIFT		0x02
 #define CPU_AUTODETERMINE_MASK		0x03
 
-#define CPU_CYCLES_LOWER_LIMIT		100
+#define CPU_CYCLES_LOWER_LIMIT		200
 
 
 #define CPU_ARCHTYPE_MIXED			0xff

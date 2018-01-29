@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -96,6 +96,7 @@ static void write_p3c8(Bitu port,Bitu val,Bitu iolen) {
 	vga.dac.write_index=val;
 	vga.dac.pel_index=0;
 	vga.dac.state=DAC_WRITE;
+	vga.dac.read_index= val - 1;
 }
 
 static Bitu read_p3c8(Bitu port, Bitu iolen){
@@ -213,19 +214,5 @@ void VGA_SetupDAC(void) {
 		IO_RegisterReadHandler(0x3c8,read_p3c8,IO_MB);
 		IO_RegisterWriteHandler(0x3c9,write_p3c9,IO_MB);
 		IO_RegisterReadHandler(0x3c9,read_p3c9,IO_MB);
-	} else if (machine==MCH_EGA) {
-		for (Bitu i=0;i<64;i++) {
-			if ((i&4)>0) vga.dac.rgb[i].red=0x2a;
-			else vga.dac.rgb[i].red=0;
-			if ((i&32)>0) vga.dac.rgb[i].red+=0x15;
-
-			if ((i&2)>0) vga.dac.rgb[i].green=0x2a;
-			else vga.dac.rgb[i].green=0;
-			if ((i&16)>0) vga.dac.rgb[i].green+=0x15;
-
-			if ((i&1)>0) vga.dac.rgb[i].blue=0x2a;
-			else vga.dac.rgb[i].blue=0;
-			if ((i&8)>0) vga.dac.rgb[i].blue+=0x15;
-		}
 	}
 }

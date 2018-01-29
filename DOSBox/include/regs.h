@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 #define FLAG_ID		0x00200000
 
 #define FMASK_TEST		(FLAG_CF | FLAG_PF | FLAG_AF | FLAG_ZF | FLAG_SF | FLAG_OF)
-#define FMASK_NORMAL	(FMASK_TEST | FLAG_DF | FLAG_TF | FLAG_IF | FLAG_AC )	
+#define FMASK_NORMAL	(FMASK_TEST | FLAG_DF | FLAG_TF | FLAG_IF )	
 #define FMASK_ALL		(FMASK_NORMAL | FLAG_IOPL | FLAG_NT)
 
 #define SETFLAGBIT(TYPE,TEST) if (TEST) reg_flags|=FLAG_ ## TYPE; else reg_flags&=~FLAG_ ## TYPE
@@ -59,7 +59,7 @@ struct Segment {
 enum SegNames { es=0,cs,ss,ds,fs,gs};
 
 struct Segments {
-	Bitu val[8];
+	Bit16u val[8];
 	PhysPt phys[8];
 };
 

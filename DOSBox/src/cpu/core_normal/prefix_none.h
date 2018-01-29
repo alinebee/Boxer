@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -879,7 +879,7 @@
 		{	
 			Bitu port=Fetchb();
 			if (CPU_IO_Exception(port,2)) RUNEXCEPTION();
-			reg_al=IO_ReadW(port);
+			reg_ax=IO_ReadW(port);
 			break;
 		}
 	CASE_B(0xe6)												/* OUT Ib,AL */

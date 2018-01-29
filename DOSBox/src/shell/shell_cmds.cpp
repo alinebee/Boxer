@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,12 +16,12 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: shell_cmds.cpp,v 1.93 2009-09-21 21:04:25 h-a-l-9000 Exp $ */
 
 #include "dosbox.h"
 #include "shell.h"
 #include "callback.h"
 #include "regs.h"
+#include "bios.h"
 #include "../dos/drives.h"
 #include "support.h"
 #include "control.h"
@@ -30,7 +30,7 @@
 #include <cstdlib>
 #include <vector>
 #include <string>
-
+#include <time.h>
 
 static SHELL_Cmd cmd_list[]={
 {	"DIR",		0,			&DOS_Shell::CMD_DIR,		"SHELL_CMD_DIR_HELP"},
@@ -41,6 +41,7 @@ static SHELL_Cmd cmd_list[]={
 {	"CHOICE",	1,			&DOS_Shell::CMD_CHOICE,		"SHELL_CMD_CHOICE_HELP"},
 {	"CLS",		0,			&DOS_Shell::CMD_CLS,		"SHELL_CMD_CLS_HELP"},
 {	"COPY",		0,			&DOS_Shell::CMD_COPY,		"SHELL_CMD_COPY_HELP"},
+{	"DATE",		0,			&DOS_Shell::CMD_DATE,		"SHELL_CMD_DATE_HELP"},
 {	"DEL",		0,			&DOS_Shell::CMD_DELETE,		"SHELL_CMD_DELETE_HELP"},
 {	"DELETE",	1,			&DOS_Shell::CMD_DELETE,		"SHELL_CMD_DELETE_HELP"},
 {	"ERASE",	1,			&DOS_Shell::CMD_DELETE,		"SHELL_CMD_DELETE_HELP"},
@@ -63,6 +64,7 @@ static SHELL_Cmd cmd_list[]={
 {	"SET",		1,			&DOS_Shell::CMD_SET,		"SHELL_CMD_SET_HELP"},
 {	"SHIFT",	1,			&DOS_Shell::CMD_SHIFT,		"SHELL_CMD_SHIFT_HELP"},
 {	"SUBST",	1,			&DOS_Shell::CMD_SUBST,		"SHELL_CMD_SUBST_HELP"},
+{	"TIME",		0,			&DOS_Shell::CMD_TIME,		"SHELL_CMD_TIME_HELP"},
 {	"TYPE",		0,			&DOS_Shell::CMD_TYPE,		"SHELL_CMD_TYPE_HELP"},
 {	"VER",		0,			&DOS_Shell::CMD_VER,		"SHELL_CMD_VER_HELP"},
 {0,0,0,0}
@@ -109,7 +111,7 @@ bool DOS_Shell::CheckConfig(char* cmd_in,char*line) {
 		if(val != NO_SUCH_PROPERTY) WriteOut("%s\n",val.c_str());
 		return true;
 	}
-	char newcom[1024]; newcom[0] = 0; strcpy(newcom,"z:\\config ");
+	char newcom[1024]; newcom[0] = 0; strcpy(newcom,"z:\\config -set ");
 	strcat(newcom,test->GetName());	strcat(newcom," ");
 	strcat(newcom,cmd_in);strcat(newcom,line);
 	DoCommand(newcom);
@@ -122,11 +124,12 @@ void DOS_Shell::DoCommand(char * line) {
 	char cmd_buffer[CMD_MAXLINE];
 	char * cmd_write=cmd_buffer;
 	while (*line) {
-		if (*line==32) break;
-		if (*line=='/') break;
-		if (*line=='\t') break;
-		if (*line=='=') break;
-		if ((*line=='.') ||(*line =='\\')) {  //allow stuff like cd.. and dir.exe cd\kees
+		if (*line == 32) break;
+		if (*line == '/') break;
+		if (*line == '\t') break;
+		if (*line == '=') break;
+//		if (*line == ':') break; //This breaks drive switching as that is handled at a later stage. 
+		if ((*line == '.') ||(*line == '\\')) {  //allow stuff like cd.. and dir.exe cd\kees
 			*cmd_write=0;
 			Bit32u cmd_index=0;
 			while (cmd_list[cmd_index].name) {
@@ -211,7 +214,7 @@ void DOS_Shell::CMD_DELETE(char * args) {
 	*/
 	//--End of modification
 
-	/* If delete accept switches mind the space infront of them. See the dir /p code */ 
+	/* If delete accept switches mind the space infront of them. See the dir /p code */
 
 	char full[DOS_PATHLENGTH];
 	char buffer[CROSS_LEN];
@@ -262,34 +265,38 @@ void DOS_Shell::CMD_RENAME(char * args){
 	//--End of modifications
 	
 	StripSpaces(args);
-	if(!*args) {SyntaxError();return;}
-	if((strchr(args,'*')!=NULL) || (strchr(args,'?')!=NULL) ) { WriteOut(MSG_Get("SHELL_CMD_NO_WILD"));return;}
+	if (!*args) {SyntaxError();return;}
+	if ((strchr(args,'*')!=NULL) || (strchr(args,'?')!=NULL) ) { WriteOut(MSG_Get("SHELL_CMD_NO_WILD"));return;}
 	char * arg1=StripWord(args);
+	StripSpaces(args);
+	if (!*args) {SyntaxError();return;}
 	char* slash = strrchr(arg1,'\\');
-	if(slash) { 
-		slash++;
+	if (slash) { 
 		/* If directory specified (crystal caves installer)
 		 * rename from c:\X : rename c:\abc.exe abc.shr. 
-		 * File must appear in C:\ */ 
+		 * File must appear in C:\ 
+		 * Ren X:\A\B C => ren X:\A\B X:\A\C */ 
 		
-		char dir_source[DOS_PATHLENGTH]={0};
+		char dir_source[DOS_PATHLENGTH + 4] = {0}; //not sure if drive portion is included in pathlength
 		//Copy first and then modify, makes GCC happy
-		strcpy(dir_source,arg1);
+		safe_strncpy(dir_source,arg1,DOS_PATHLENGTH + 4);
 		char* dummy = strrchr(dir_source,'\\');
-		*dummy=0;
-
-		if((strlen(dir_source) == 2) && (dir_source[1] == ':')) 
-			strcat(dir_source,"\\"); //X: add slash
-
-		char dir_current[DOS_PATHLENGTH + 1];
-		dir_current[0] = '\\'; //Absolute addressing so we can return properly
-		DOS_GetCurrentDir(0,dir_current + 1);
-		if(!DOS_ChangeDir(dir_source)) {
+		if (!dummy) { //Possible due to length
 			WriteOut(MSG_Get("SHELL_ILLEGAL_PATH"));
 			return;
 		}
-		DOS_Rename(slash,args);
-		DOS_ChangeDir(dir_current);
+		dummy++;
+		*dummy = 0;
+
+		//Maybe check args for directory, as I think that isn't allowed
+
+		//dir_source and target are introduced for when we support multiple files being renamed.
+		char target[DOS_PATHLENGTH+CROSS_LEN + 5] = {0};
+		strcpy(target,dir_source);
+		strncat(target,args,CROSS_LEN);
+
+		DOS_Rename(arg1,target);
+
 	} else {
 		DOS_Rename(arg1,args);
 	}
@@ -318,7 +325,7 @@ void DOS_Shell::CMD_ECHO(char * args){
 	args++;//skip first character. either a slash or dot or space
 	size_t len = strlen(args); //TODO check input of else ook nodig is.
 	if(len && args[len - 1] == '\r') {
-		LOG(LOG_MISC,LOG_WARN)("Hu ? carriage return allready present. Is this possible?");
+		LOG(LOG_MISC,LOG_WARN)("Hu ? carriage return already present. Is this possible?");
 		WriteOut("%s\n",args);
 	} else WriteOut("%s\r\n",args);
 }
@@ -333,35 +340,26 @@ void DOS_Shell::CMD_CHDIR(char * args) {
 	//--Note 2009-02-24 by Alun Bestor: I would like to add implicit help for CD, but there's the possibility that batchfiles would
 	//send the output of CD to a file or env variable...
 	HELP("CHDIR");
-	
 	StripSpaces(args);
+	Bit8u drive = DOS_GetDefaultDrive()+'A';
+	char dir[DOS_PATHLENGTH];
 	if (!*args) {
-		Bit8u drive=DOS_GetDefaultDrive()+'A';
-		char dir[DOS_PATHLENGTH];
 		DOS_GetCurrentDir(0,dir);
 		WriteOut("%c:\\%s\n",drive,dir);
-	}
-	
-	//--Modified 2009-02-24 by Alun Bestor: instead of telling the user they can just type C: why don't you do what they wanted to do in the first place
-	//Also tweaked it so that if the path is prefixed with a drive letter, we switch to that drive first
-	else if(strlen(args) >= 2 && args[1]==':') {
-	//else if(strlen(args) == 2 && args[1]==':') {
-		//WriteOut(MSG_Get("SHELL_CMD_CHDIR_HINT"),toupper(*reinterpret_cast<unsigned char*>(&args[0])));
-		
-		//Extract the drive letter and change to it
-		std::string driveLetter(args, 2);
-		DoCommand(const_cast<char*>(driveLetter.c_str()));
-
-		//If there's more path on the end, run CD again with that as the arguments
-		if (strlen(args) > 2)
-		{
-			std::string path(args);
-			path = path.substr(2);
-			CMD_CHDIR(const_cast<char*>(path.c_str()));
+	} else if(strlen(args) == 2 && args[1]==':') {
+		Bit8u targetdrive = (args[0] | 0x20)-'a' + 1;
+		unsigned char targetdisplay = *reinterpret_cast<unsigned char*>(&args[0]);
+		if(!DOS_GetCurrentDir(targetdrive,dir)) {
+			if(drive == 'Z') {
+				WriteOut(MSG_Get("SHELL_EXECUTE_DRIVE_NOT_FOUND"),toupper(targetdisplay));
+			} else {
+				WriteOut(MSG_Get("SHELL_ILLEGAL_PATH"));
+			}
+			return;
 		}
-		else return;
-	//--End of modifications
-		
+		WriteOut("%c:\\%s\n",toupper(targetdisplay),dir);
+		if(drive == 'Z')
+			WriteOut(MSG_Get("SHELL_CMD_CHDIR_HINT"),toupper(targetdisplay));
 	} else 	if (!DOS_ChangeDir(args)) {
 		/* Changedir failed. Check if the filename is longer then 8 and/or contains spaces */
 	   
@@ -386,8 +384,7 @@ void DOS_Shell::CMD_CHDIR(char * args) {
 			temps += "~1";
 			WriteOut(MSG_Get("SHELL_CMD_CHDIR_HINT_2"),temps.insert(0,slashpart).c_str());
 		} else {
-			Bit8u drive=DOS_GetDefaultDrive()+'A';
-			if (drive=='Z') {
+			if (drive == 'Z') {
 				WriteOut(MSG_Get("SHELL_CMD_CHDIR_HINT_3"));
 			} else {
 				WriteOut(MSG_Get("SHELL_CMD_CHDIR_ERROR"),args);
@@ -442,8 +439,8 @@ void DOS_Shell::CMD_RMDIR(char * args) {
 	}
 }
 
-static void FormatNumber(Bitu num,char * buf) {
-	Bitu numm,numk,numb,numg;
+static void FormatNumber(Bit32u num,char * buf) {
+	Bit32u numm,numk,numb,numg;
 	numb=num % 1000;
 	num/=1000;
 	numk=num % 1000;
@@ -489,7 +486,7 @@ void DOS_Shell::CMD_DIR(char * args) {
 	bool optAD=ScanCMDBool(args,"AD");
 
 	//--Disabled 2009-02-24 by Alun Bestor: bailing out upon encountering unrecognised switches was preventing the use of unix/style/paths
-	/*	
+	/*
 	char * rem=ScanCMDRemain(args);
 	if (rem) {
 		WriteOut(MSG_Get("SHELL_ILLEGAL_SWITCH"),rem);
@@ -661,6 +658,7 @@ void DOS_Shell::CMD_COPY(char * args) {
 	while(ScanCMDBool(args,"A")) ;
 	ScanCMDBool(args,"Y");
 	ScanCMDBool(args,"-Y");
+	ScanCMDBool(args,"V");
 
 	//--Disabled 2009-02-24 by Alun Bestor: bailing out upon encountering unrecognised switches was preventing the use of unix/style/paths
 	/*
@@ -670,17 +668,25 @@ void DOS_Shell::CMD_COPY(char * args) {
 		dos.dta(save_dta);
 		return;
 	}
-	*/
+	 */
 	//--End of modifications
 	
-	// Gather all sources (extension to copy more then 1 file specified at commandline)
-	// Concatating files go as follows: All parts except for the last bear the concat flag.
+	// Gather all sources (extension to copy more then 1 file specified at command line)
+	// Concatenating files go as follows: All parts except for the last bear the concat flag.
 	// This construction allows them to be counted (only the non concat set)
 	char* source_p = NULL;
 	char source_x[DOS_PATHLENGTH+CROSS_LEN];
 	while ( (source_p = StripWord(args)) && *source_p ) {
 		do {
 			char* plus = strchr(source_p,'+');
+			// If StripWord() previously cut at a space before a plus then
+			// set concatenate flag on last source and remove leading plus.
+			if (plus == source_p && sources.size()) {
+				sources[sources.size()-1].concat = true;
+				// If spaces also followed plus then item is only a plus.
+				if (strlen(++source_p)==0) break;
+				plus = strchr(source_p,'+');
+			}
 			if (plus) *plus++ = 0;
 			safe_strncpy(source_x,source_p,CROSS_LEN);
 			bool has_drive_spec = false;
@@ -688,10 +694,10 @@ void DOS_Shell::CMD_COPY(char * args) {
 			if (source_x_len>0) {
 				if (source_x[source_x_len-1]==':') has_drive_spec = true;
 			}
-			if (!has_drive_spec) {
+			if (!has_drive_spec  && !strpbrk(source_p,"*?") ) { //doubt that fu*\*.* is valid
 				if (DOS_FindFirst(source_p,0xffff & ~DOS_ATTR_VOLUME)) {
 					dta.GetResult(name,size,date,time,attr);
-					if (attr & DOS_ATTR_DIRECTORY && !strstr(source_p,"*.*"))
+					if (attr & DOS_ATTR_DIRECTORY)
 						strcat(source_x,"\\*.*");
 				}
 			}
@@ -752,14 +758,17 @@ void DOS_Shell::CMD_COPY(char * args) {
 		char* temp = strstr(pathTarget,"*.*");
 		if(temp) *temp = 0;//strip off *.* from target
 	
-		// add '\\' if target is a directoy
+		// add '\\' if target is a directory
+		bool target_is_file = true;
 		if (pathTarget[strlen(pathTarget)-1]!='\\') {
 			if (DOS_FindFirst(pathTarget,0xffff & ~DOS_ATTR_VOLUME)) {
 				dta.GetResult(name,size,date,time,attr);
-				if (attr & DOS_ATTR_DIRECTORY)	
+				if (attr & DOS_ATTR_DIRECTORY) {
 					strcat(pathTarget,"\\");
+					target_is_file = false;
+				}
 			}
-		};
+		} else target_is_file = false;
 
 		//Find first sourcefile
 		bool ret = DOS_FindFirst(const_cast<char*>(source.filename.c_str()),0xffff & ~DOS_ATTR_VOLUME);
@@ -772,7 +781,8 @@ void DOS_Shell::CMD_COPY(char * args) {
 		Bit16u sourceHandle,targetHandle;
 		char nameTarget[DOS_PATHLENGTH];
 		char nameSource[DOS_PATHLENGTH];
-
+		
+		bool second_file_of_current_source = false;
 		while (ret) {
 			dta.GetResult(name,size,date,time,attr);
 
@@ -785,7 +795,11 @@ void DOS_Shell::CMD_COPY(char * args) {
 					strcpy(nameTarget,pathTarget);
 					if (nameTarget[strlen(nameTarget)-1]=='\\') strcat(nameTarget,name);
 
-					//Don't create a newfile when in concat mode
+					//Special variable to ensure that copy * a_file, where a_file is not a directory concats.
+					bool special = second_file_of_current_source && target_is_file;
+					second_file_of_current_source = true; 
+					if (special) oldsource.concat = true;
+					//Don't create a new file when in concat mode
 					if (oldsource.concat || DOS_CreateFile(nameTarget,0,&targetHandle)) {
 						Bit32u dummy=0;
 						//In concat mode. Open the target and seek to the eof
@@ -802,7 +816,7 @@ void DOS_Shell::CMD_COPY(char * args) {
 							failed |= DOS_CloseFile(sourceHandle);
 							failed |= DOS_CloseFile(targetHandle);
 							WriteOut(" %s\n",name);
-							if(!source.concat) count++; //Only count concat files once
+							if(!source.concat && !special) count++; //Only count concat files once
 						} else {
 							DOS_CloseFile(sourceHandle);
 							WriteOut(MSG_Get("SHELL_CMD_COPY_FAILURE"),const_cast<char*>(target.filename.c_str()));
@@ -813,8 +827,9 @@ void DOS_Shell::CMD_COPY(char * args) {
 					}
 				} else WriteOut(MSG_Get("SHELL_CMD_COPY_FAILURE"),const_cast<char*>(source.filename.c_str()));
 			};
-			//On the next file
-			ret = DOS_FindNext();
+			//On to the next file if the previous one wasn't a device
+			if ((attr&DOS_ATTR_DEVICE) == 0) ret = DOS_FindNext();
+			else ret = false;
 		};
 	}
 
@@ -834,6 +849,11 @@ void DOS_Shell::CMD_SET(char * args) {
 		}
 		return;
 	}
+	//There are args:
+	char * pcheck = args;
+	while ( *pcheck && (*pcheck == ' ' || *pcheck == '\t')) pcheck++;
+	if (*pcheck && strlen(pcheck) >3 && (strncasecmp(pcheck,"/p ",3) == 0)) E_Exit("Set /P is not supported. Use Choice!");
+
 	char * p=strpbrk(args, "=");
 	if (!p) {
 		if (!GetEnvStr(args,line)) WriteOut(MSG_Get("SHELL_CMD_SET_NOT_SET"),args);
@@ -960,11 +980,7 @@ void DOS_Shell::CMD_IF(char * args) {
 }
 
 void DOS_Shell::CMD_GOTO(char * args) {
-	//--Modified 2009-02-24 by Alun Bestor to show help text when no arguments were given
-	//HELP("GOTO");
-	HELP_IF_NO_ARGS("GOTO");
-	//--End of modifications
-	
+	HELP("GOTO");
 	StripSpaces(args);
 	if (!bf) return;
 	if (*args &&(*args==':')) args++;
@@ -997,7 +1013,6 @@ void DOS_Shell::CMD_TYPE(char * args) {
 	//--End of modifications
 	
 	StripSpaces(args);
-	
 	if (!*args) {
 		WriteOut(MSG_Get("SHELL_SYNTAXERROR"));
 		return;
@@ -1014,6 +1029,7 @@ nextfile:
 	do {
 		n=1;
 		DOS_ReadFile(handle,&c,&n);
+		if (c==0x1a) break; // stop at EOF
 		DOS_WriteFile(STDOUT,&c,&n);
 	} while (n);
 	DOS_CloseFile(handle);
@@ -1028,7 +1044,8 @@ void DOS_Shell::CMD_PAUSE(char * args){
 	HELP("PAUSE");
 	WriteOut(MSG_Get("SHELL_CMD_PAUSE"));
 	Bit8u c;Bit16u n=1;
-	DOS_ReadFile (STDIN,&c,&n);
+	DOS_ReadFile(STDIN,&c,&n);
+	if (c==0) DOS_ReadFile(STDIN,&c,&n); // read extended key
 }
 
 void DOS_Shell::CMD_CALL(char * args){
@@ -1041,6 +1058,107 @@ void DOS_Shell::CMD_CALL(char * args){
 	this->ParseLine(args);
 	this->call=false;
 }
+
+void DOS_Shell::CMD_DATE(char * args) {
+	HELP("DATE");	
+	if(ScanCMDBool(args,"H")) {
+		// synchronize date with host parameter
+		time_t curtime;
+		struct tm *loctime;
+		curtime = time (NULL);
+		loctime = localtime (&curtime);
+		
+		reg_cx = loctime->tm_year+1900;
+		reg_dh = loctime->tm_mon+1;
+		reg_dl = loctime->tm_mday;
+
+		reg_ah=0x2b; // set system date
+		CALLBACK_RunRealInt(0x21);
+		return;
+	}
+	// check if a date was passed in command line
+	Bit32u newday,newmonth,newyear;
+	if(sscanf(args,"%u-%u-%u",&newmonth,&newday,&newyear)==3) {
+		reg_cx = static_cast<Bit16u>(newyear);
+		reg_dh = static_cast<Bit8u>(newmonth);
+		reg_dl = static_cast<Bit8u>(newday);
+
+		reg_ah=0x2b; // set system date
+		CALLBACK_RunRealInt(0x21);
+		if(reg_al==0xff) WriteOut(MSG_Get("SHELL_CMD_DATE_ERROR"));
+		return;
+	}
+	// display the current date
+	reg_ah=0x2a; // get system date
+	CALLBACK_RunRealInt(0x21);
+
+	const char* datestring = MSG_Get("SHELL_CMD_DATE_DAYS");
+	Bit32u length;
+	char day[6] = {0};
+	if(sscanf(datestring,"%u",&length) && (length<5) && (strlen(datestring)==(length*7+1))) {
+		// date string appears valid
+		for(Bit32u i = 0; i < length; i++) day[i] = datestring[reg_al*length+1+i];
+	}
+	bool dateonly = ScanCMDBool(args,"T");
+	if(!dateonly) WriteOut(MSG_Get("SHELL_CMD_DATE_NOW"));
+
+	const char* formatstring = MSG_Get("SHELL_CMD_DATE_FORMAT");
+	if(strlen(formatstring)!=5) return;
+	char buffer[15] = {0};
+	Bitu bufferptr=0;
+	for(Bitu i = 0; i < 5; i++) {
+		if(i==1 || i==3) {
+			buffer[bufferptr] = formatstring[i];
+			bufferptr++;
+		} else {
+			if(formatstring[i]=='M') bufferptr += sprintf(buffer+bufferptr,"%02u",(Bit8u) reg_dh);
+			if(formatstring[i]=='D') bufferptr += sprintf(buffer+bufferptr,"%02u",(Bit8u) reg_dl);
+			if(formatstring[i]=='Y') bufferptr += sprintf(buffer+bufferptr,"%04u",(Bit16u) reg_cx);
+		}
+	}
+	WriteOut("%s %s\n",day, buffer);
+	if(!dateonly) WriteOut(MSG_Get("SHELL_CMD_DATE_SETHLP"));
+};
+
+void DOS_Shell::CMD_TIME(char * args) {
+	HELP("TIME");
+	if(ScanCMDBool(args,"H")) {
+		// synchronize time with host parameter
+		time_t curtime;
+		struct tm *loctime;
+		curtime = time (NULL);
+		loctime = localtime (&curtime);
+		
+		//reg_cx = loctime->;
+		//reg_dh = loctime->;
+		//reg_dl = loctime->;
+
+		// reg_ah=0x2d; // set system time TODO
+		// CALLBACK_RunRealInt(0x21);
+		
+		Bit32u ticks=(Bit32u)(((double)(loctime->tm_hour*3600+
+										loctime->tm_min*60+
+										loctime->tm_sec))*18.206481481);
+		mem_writed(BIOS_TIMER,ticks);
+		return;
+	}
+	bool timeonly = ScanCMDBool(args,"T");
+
+	reg_ah=0x2c; // get system time
+	CALLBACK_RunRealInt(0x21);
+/*
+		reg_dl= // 1/100 seconds
+		reg_dh= // seconds
+		reg_cl= // minutes
+		reg_ch= // hours
+*/
+	if(timeonly) {
+		WriteOut("%2u:%02u\n",reg_ch,reg_cl);
+	} else {
+		WriteOut(MSG_Get("SHELL_CMD_TIME_NOW"));
+		WriteOut("%2u:%02u:%02u,%02u\n",reg_ch,reg_cl,reg_dh,reg_dl);
+	}
+};
 
 void DOS_Shell::CMD_SUBST (char * args) {
 /* If more that one type can be substed think of something else 
@@ -1061,17 +1179,22 @@ void DOS_Shell::CMD_SUBST (char * args) {
 		CommandLine command(0,args);
 
 		if (command.GetCount() != 2) throw 0 ;
-		command.FindCommand(2,arg);
-		if((arg=="/D" ) || (arg=="/d")) throw 1; //No removal (one day)
   
 		command.FindCommand(1,arg);
 		if( (arg.size()>1) && arg[1] !=':')  throw(0);
 		temp_str[0]=(char)toupper(args[0]);
+		command.FindCommand(2,arg);
+		if((arg=="/D") || (arg=="/d")) {
+			if(!Drives[temp_str[0]-'A'] ) throw 1; //targetdrive not in use
+			strcat(mountstring,"-u ");
+			strcat(mountstring,temp_str);
+			this->ParseLine(mountstring);
+			return;
+		}
 		if(Drives[temp_str[0]-'A'] ) throw 0; //targetdrive in use
 		strcat(mountstring,temp_str);
 		strcat(mountstring," ");
 
-		command.FindCommand(2,arg);
    		Bit8u drive;char fulldir[DOS_PATHLENGTH];
 		if (!DOS_MakeName(const_cast<char*>(arg.c_str()),fulldir,&drive)) throw 0;
 	
@@ -1211,7 +1334,16 @@ void DOS_Shell::CMD_VER(char *args) {
 		char* word = StripWord(args);
 		if(strcasecmp(word,"set")) return;
 		word = StripWord(args);
-		dos.version.major = (Bit8u)(atoi(word));
-		dos.version.minor = (Bit8u)(atoi(args));
+		if (!*args && !*word) { //Reset
+			dos.version.major = 5;
+			dos.version.minor = 0;
+		} else if (*args == 0 && *word && (strchr(word,'.') != 0)) { //Allow: ver set 5.1
+			const char * p = strchr(word,'.');
+			dos.version.major = (Bit8u)(atoi(word));
+			dos.version.minor = (Bit8u)(atoi(p+1));
+		} else { //Official syntax: ver set 5 2
+			dos.version.major = (Bit8u)(atoi(word));
+			dos.version.minor = (Bit8u)(atoi(args));
+		}
 	} else WriteOut(MSG_Get("SHELL_CMD_VER_VER"),VERSION,dos.version.major,dos.version.minor);
 }

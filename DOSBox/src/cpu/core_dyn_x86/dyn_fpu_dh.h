@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dyn_fpu_dh.h,v 1.7 2009-09-23 20:55:19 c2woody Exp $ */
 
 #include "dosbox.h"
 #if C_FPU
@@ -315,8 +314,8 @@ static void dh_fpu_esc3(){
 
 static void dh_fpu_esc4(){
 	dyn_get_modrm();  
-	//Bitu group=(decode.modrm.val >> 3) & 7;
-	//Bitu sub=(decode.modrm.val & 7);
+	Bitu group=(decode.modrm.val >> 3) & 7;
+	Bitu sub=(decode.modrm.val & 7);
 	if (decode.modrm.val >= 0xc0) { 
 		cache_addb(0xdc);
 		cache_addb(decode.modrm.val);
@@ -388,8 +387,8 @@ static void dh_fpu_esc5(){
 
 static void dh_fpu_esc6(){
 	dyn_get_modrm();  
-	//Bitu group=(decode.modrm.val >> 3) & 7;
-	//Bitu sub=(decode.modrm.val & 7);
+	Bitu group=(decode.modrm.val >> 3) & 7;
+	Bitu sub=(decode.modrm.val & 7);
 	if (decode.modrm.val >= 0xc0) { 
 		cache_addb(0xde);
 		cache_addb(decode.modrm.val);

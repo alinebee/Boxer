@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: mouse.h,v 1.15 2009-05-27 09:15:41 qbix79 Exp $ */
 
 
 #ifndef DOSBOX_MOUSE_H
@@ -37,6 +36,7 @@ void Mouse_ButtonPressed(Bit8u button);
 void Mouse_ButtonReleased(Bit8u button);
 
 void Mouse_AutoLock(bool enable);
-void Mouse_NewVideoMode(void);
+void Mouse_BeforeNewVideoMode(bool setmode);
+void Mouse_AfterNewVideoMode(bool setmode);
 
 #endif

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dos_keyboard_layout.cpp,v 1.22 2009-09-06 19:25:33 c2woody Exp $ */
 
 #include "dosbox.h"
 #include "bios.h"
@@ -450,7 +449,14 @@ Bitu keyboard_layout::read_keyboard_file(const char* keyboard_file_name, Bit32s 
 					}
 				}
 
-				current_layout[scan*layout_pages+layout_pages-1]=read_buf[read_buf_pos-2];	// flags
+				// calculate max length of entries, taking into account old number of entries
+				Bit8u new_flags=current_layout[scan*layout_pages+layout_pages-1]&0x7;
+				if ((read_buf[read_buf_pos-2]&0x7) > new_flags) new_flags = read_buf[read_buf_pos-2]&0x7;
+
+				// merge flag bits in as well
+				new_flags |= (read_buf[read_buf_pos-2] | current_layout[scan*layout_pages+layout_pages-1]) & 0xf0;
+
+				current_layout[scan*layout_pages+layout_pages-1]=new_flags;
 				if (read_buf[read_buf_pos-2]&0x80) scan_length*=2;		// granularity flag (S)
 			}
 			i+=scan_length;		// advance pointer
@@ -756,9 +762,9 @@ Bitu keyboard_layout::read_codepage_file(const char* codepage_file_name, Bit32s 
 		}
 	}
 
-	//--Modified 2011-06-20 by Alun Bestor: there is no reason in the world for this to be static
-	/* static */Bit8u cpi_buf[65536];
-	//--End of modifications
+    //--Modified 2011-06-20 by Alun Bestor: there is no reason in the world for this to be static
+    /* static */Bit8u cpi_buf[65536];
+    //--End of modifications
 	Bit32u cpi_buf_size=0,size_of_cpxdata=0;;
 	bool upxfound=false;
 	Bit16u found_at_pos=5;
@@ -878,11 +884,11 @@ Bitu keyboard_layout::read_codepage_file(const char* codepage_file_name, Bit32s 
 
 
 	start_pos=host_readd(&cpi_buf[0x13]);
-	
-	//--Added 2011-06-20 by Alun Bestor as a sanity check, preventing crashes in the event that a codepage file cannot be parsed
-	if (start_pos > cpi_buf_size) return KEYB_INVALIDCPFILE;
-	//--End of modifications
-	
+
+    //--Added 2011-06-20 by Alun Bestor as a sanity check, preventing crashes in the event that a codepage file cannot be parsed
+    if (start_pos > cpi_buf_size) return KEYB_INVALIDCPFILE;
+    //--End of modifications
+
 	number_of_codepages=host_readw(&cpi_buf[start_pos]);
 	start_pos+=4;
 
@@ -919,6 +925,8 @@ Bitu keyboard_layout::read_codepage_file(const char* codepage_file_name, Bit32s 
 					for (Bitu i=0;i<256*16;i++) {
 						phys_writeb(font16pt+i,cpi_buf[font_data_start+i]);
 					}
+					// terminate alternate list to prevent loading
+					phys_writeb(Real2Phys(int10.rom.font_16_alternate),0);
 					font_changed=true;
 				} else if (font_height==0x0e) {
 					// 14x8 font
@@ -926,6 +934,8 @@ Bitu keyboard_layout::read_codepage_file(const char* codepage_file_name, Bit32s 
 					for (Bitu i=0;i<256*14;i++) {
 						phys_writeb(font14pt+i,cpi_buf[font_data_start+i]);
 					}
+					// terminate alternate list to prevent loading
+					phys_writeb(Real2Phys(int10.rom.font_14_alternate),0);
 					font_changed=true;
 				} else if (font_height==0x08) {
 					// 8x8 fonts
@@ -1174,7 +1184,7 @@ public:
 		loaded_layout=new keyboard_layout();
 
 		const char * layoutname=section->Get_string("keyboardlayout");
-        
+
 		Bits wants_dos_codepage = -1;
 		if (!strncmp(layoutname,"auto",4)) {
 #if defined (WIN32)
@@ -1328,7 +1338,7 @@ public:
                 layoutname = preferredLayout;
             //--End of modifications
 		}
-		
+
 		bool extract_codepage = true;
 		if (wants_dos_codepage>0) {
 			if ((loaded_layout->read_codepage_file("auto", (Bitu)wants_dos_codepage)) == KEYB_NOERROR) {
@@ -1341,7 +1351,7 @@ public:
 			Bitu req_codepage = loaded_layout->extract_codepage(layoutname);
 			loaded_layout->read_codepage_file("auto", req_codepage);
 		}
-        
+
 /*		if (strncmp(layoutname,"auto",4) && strncmp(layoutname,"none",4)) {
 			LOG_MSG("Loading DOS keyboard layout %s ...",layoutname);
 		} */

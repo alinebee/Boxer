@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "SDL.h"
 
 #include "dosbox.h"
+#include "midi.h"
 #include "cross.h"
 #include "support.h"
 #include "setup.h"
@@ -37,7 +38,6 @@
 #include "BXCoalfaceAudio.h"
 //--End of modifications
 
-#define SYSEX_SIZE 1024
 #define RAWBUF	1024
 
 Bit8u MIDI_evt_len[256] = {
@@ -63,23 +63,11 @@ Bit8u MIDI_evt_len[256] = {
   0,2,3,2, 0,0,1,0, 1,0,1,1, 1,0,1,0   // 0xf0
 };
 
-class MidiHandler;
+MidiHandler * handler_list = 0;
 
-MidiHandler * handler_list=0;
-
-class MidiHandler {
-public:
-	MidiHandler() {
-		next=handler_list;
-		handler_list=this;
-	};
-	virtual bool Open(const char * /*conf*/) { return true; };
-	virtual void Close(void) {};
-	virtual void PlayMsg(Bit8u * /*msg*/) {};
-	virtual void PlaySysex(Bit8u * /*sysex*/,Bitu /*len*/) {};
-	virtual const char * GetName(void) { return "none"; };
-	virtual ~MidiHandler() { };
-	MidiHandler * next;
+MidiHandler::MidiHandler(){
+	next = handler_list;
+	handler_list = this;
 };
 
 MidiHandler Midi_none;
@@ -112,21 +100,7 @@ MidiHandler Midi_none;
 //--End of modifications
 
 
-static struct {
-	Bitu status;
-	Bitu cmd_len;
-	Bitu cmd_pos;
-	Bit8u cmd_buf[8];
-	Bit8u rt_buf[8];
-	struct {
-		Bit8u buf[SYSEX_SIZE];
-		Bitu used;
-		Bitu delay;
-		Bit32u start;
-	} sysex;
-	bool available;
-	MidiHandler * handler;
-} midi;
+DB_Midi midi;
 
 void MIDI_RawOutByte(Bit8u data) {
 	if (midi.sysex.start) {
@@ -142,10 +116,10 @@ void MIDI_RawOutByte(Bit8u data) {
         boxer_sendMIDIMessage(midi.rt_buf);
         //--End of modifications
 		return;
-	}	 
+	}
 	/* Test for a active sysex tranfer */
 	if (midi.status==0xf0) {
-		if (!(data&0x80)) { 
+		if (!(data&0x80)) {
 			if (midi.sysex.used<(SYSEX_SIZE-1)) midi.sysex.buf[midi.sysex.used++] = data;
 			return;
 		} else {
@@ -155,12 +129,12 @@ void MIDI_RawOutByte(Bit8u data) {
 				LOG(LOG_ALL,LOG_ERROR)("MIDI:Skipping invalid MT-32 SysEx midi message (too short to contain a checksum)");
 			} else {
 //				LOG(LOG_ALL,LOG_NORMAL)("Play sysex; address:%02X %02X %02X, length:%4d, delay:%3d", midi.sysex.buf[5], midi.sysex.buf[6], midi.sysex.buf[7], midi.sysex.used, midi.sysex.delay);
-                
+
                 //--Replaced 2011-09-25 by Alun Bestor to pass messages on to our own MIDI handling
 				//midi.handler->PlaySysex(midi.sysex.buf, midi.sysex.used);
                 boxer_sendMIDISysex(midi.sysex.buf, midi.sysex.used);
                 //--End of modifications
-                
+
 				if (midi.sysex.start) {
 					if (midi.sysex.buf[5] == 0x7F) {
 						midi.sysex.delay = 290; // All Parameters reset
@@ -179,7 +153,7 @@ void MIDI_RawOutByte(Bit8u data) {
 				}
 			}
 
-			LOG(LOG_ALL,LOG_NORMAL)("Sysex message size %d",midi.sysex.used);
+			LOG(LOG_ALL,LOG_NORMAL)("Sysex message size %d", static_cast<int>(midi.sysex.used));
 			if (CaptureState & CAPTURE_MIDI) {
 				CAPTURE_AddMidi( true, midi.sysex.used-1, &midi.sysex.buf[1]);
 			}
@@ -213,7 +187,7 @@ void MIDI_RawOutByte(Bit8u data) {
 
 //--Disabled 2011-09-25 by Alun Bestor to let Boxer field such questions itself
 //bool MIDI_Available(void)  {
-//	return midi.available;
+//    return midi.available;
 //}
 //--End of modifications
 
@@ -236,11 +210,10 @@ public:
         /*
 		midi.sysex.delay = 0;
 		midi.sysex.start = 0;
-        
 		if (fullconf.find("delaysysex") != std::string::npos) {
 			midi.sysex.start = GetTicks();
 			fullconf.erase(fullconf.find("delaysysex"));
-			LOG_MSG("MIDI:Using delayed SysEx processing");
+			LOG_MSG("MIDI: Using delayed SysEx processing");
 		}
          */
         //--End of modifications
@@ -261,24 +234,24 @@ public:
 		while (handler) {
 			if (!strcasecmp(dev,handler->GetName())) {
 				if (!handler->Open(conf)) {
-					LOG_MSG("MIDI:Can't open device:%s with config:%s.",dev,conf);	
+					LOG_MSG("MIDI: Can't open device:%s with config:%s.",dev,conf);
 					goto getdefault;
 				}
 				midi.handler=handler;
-				midi.available=true;	
-				LOG_MSG("MIDI:Opened device:%s",handler->GetName());
+				midi.available=true;
+				LOG_MSG("MIDI: Opened device:%s",handler->GetName());
 				return;
 			}
 			handler=handler->next;
 		}
-		LOG_MSG("MIDI:Can't find device:%s, finding default handler.",dev);	
-getdefault:	
+		LOG_MSG("MIDI: Can't find device:%s, finding default handler.",dev);
+getdefault:
 		handler=handler_list;
 		while (handler) {
 			if (handler->Open(conf)) {
-				midi.available=true;	
+				midi.available=true;
 				midi.handler=handler;
-				LOG_MSG("MIDI:Opened device:%s",handler->GetName());
+				LOG_MSG("MIDI: Opened device:%s",handler->GetName());
 				return;
 			}
 			handler=handler->next;

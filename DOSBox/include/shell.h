@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: shell.h,v 1.28 2009-07-03 19:36:57 qbix79 Exp $ */
 
 #ifndef DOSBOX_SHELL_H
 #define DOSBOX_SHELL_H
@@ -39,7 +38,6 @@ extern Bitu call_shellstop;
 /* first_shell is used to add and delete stuff from the shell env 
  * by "external" programs. (config) */
 extern Program * first_shell;
-
 
 class DOS_Shell;
 
@@ -71,7 +69,7 @@ private:
 
 	char *completion_start;
 	Bit16u completion_index;
-    
+	
 public:
 
 	DOS_Shell();
@@ -93,6 +91,8 @@ public:
 	void CMD_HELP(char * args);
 	void CMD_CLS(char * args);
 	void CMD_COPY(char * args);
+	void CMD_DATE(char * args);
+	void CMD_TIME(char * args);
 	void CMD_DIR(char * args);
 	void CMD_DELETE(char * args);
 	void CMD_ECHO(char * args);

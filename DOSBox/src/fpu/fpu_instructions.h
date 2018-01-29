@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: fpu_instructions.h,v 1.33 2009-05-27 09:15:41 qbix79 Exp $ */
 
 
 static void FPU_FINIT(void) {
@@ -42,21 +41,22 @@ static void FPU_FNOP(void){
 	return;
 }
 
-static void FPU_PUSH(double in){
+static void FPU_PREP_PUSH(void){
 	TOP = (TOP - 1) &7;
-	//actually check if empty
+	if (GCC_UNLIKELY(fpu.tags[TOP] != TAG_Empty)) E_Exit("FPU stack overflow");
 	fpu.tags[TOP] = TAG_Valid;
+}
+
+static void FPU_PUSH(double in){
+	FPU_PREP_PUSH();
 	fpu.regs[TOP].d = in;
 //	LOG(LOG_FPU,LOG_ERROR)("Pushed at %d  %g to the stack",newtop,in);
 	return;
 }
 
-static void FPU_PREP_PUSH(void){
-	TOP = (TOP - 1) &7;
-	fpu.tags[TOP] = TAG_Valid;
-}
 
 static void FPU_FPOP(void){
+	if (GCC_UNLIKELY(fpu.tags[TOP] == TAG_Empty)) E_Exit("FPU stack underflow");
 	fpu.tags[TOP]=TAG_Empty;
 	//maybe set zero in it as well
 	TOP = ((TOP+1)&7);
@@ -97,7 +97,7 @@ static Real64 FPU_FLD80(PhysPt addr) {
 	test.eind.l.lower = mem_readd(addr);
 	test.eind.l.upper = mem_readd(addr+4);
 	test.begin = mem_readw(addr+8);
-
+   
 	Bit64s exp64 = (((test.begin&0x7fff) - BIAS80));
 	Bit64s blah = ((exp64 >0)?exp64:-exp64)&0x3ff;
 	Bit64s exp64final = ((exp64 >0)?blah:-blah) +BIAS64;
@@ -106,6 +106,11 @@ static Real64 FPU_FLD80(PhysPt addr) {
 	Bit64s sign = (test.begin&0x8000)?1:0;
 	FPU_Reg result;
 	result.ll = (sign <<63)|(exp64final << 52)| mant64;
+
+	if(test.eind.l.lower == 0 && test.eind.l.upper == 0x80000000 && (test.begin&0x7fff) == 0x7fff) {
+		//Detect INF and -INF (score 3.11 when drawing a slur.)
+		result.d = sign?-HUGE_VAL:HUGE_VAL;
+	}
 	return result.d;
 
 	//mant64= test.mant80/2***64    * 2 **53 

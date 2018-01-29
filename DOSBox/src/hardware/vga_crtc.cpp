@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: vga_crtc.cpp,v 1.34 2009-03-18 18:08:16 c2woody Exp $ */
 
 #include <stdlib.h>
 #include "dosbox.h"
@@ -302,10 +301,14 @@ void vga_write_p3d5(Bitu port,Bitu val,Bitu iolen) {
 		*/
 		break;
 	case 0x16:	/*  End Vertical Blank Register */
-		crtc(end_vertical_blanking)=val;
-		 /*
+		if (val!=crtc(end_vertical_blanking)) {
+			crtc(end_vertical_blanking)=val;
+			VGA_StartResize();
+		}
+		/*
 			0-6	Vertical blanking stops when the lower 7 bits of the line counter
 				equals this field. Some SVGA chips uses all 8 bits!
+				IBM actually says bits 0-7.
 		*/
 		break;
 	case 0x17:	/* Mode Control Register */

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: drives.cpp,v 1.15 2009-05-27 09:15:41 qbix79 Exp $ */
 
 #include "dosbox.h"
 #include "dos_system.h"
@@ -112,21 +111,11 @@ void Set_Label(char const * const input, char * const output, bool cdrom) {
 DOS_Drive::DOS_Drive() {
 	curdir[0]=0;
 	info[0]=0;
-	//--Added 2009-10-25 by Alun Bestor to record the base system path for a drive
-	systempath[0]=0;
-	//--End of modifications
 }
 
-const char * DOS_Drive::GetInfo(void) {
+char * DOS_Drive::GetInfo(void) {
 	return info;
 }
-
-//--Added 2009-10-25 by Alun Bestor to retrieve the base system path for a drive
-char * DOS_Drive::getSystemPath(void) {
-	return systempath;
-}
-//--End of modifications
-
 
 // static members variables
 int DriveManager::currentDrive;

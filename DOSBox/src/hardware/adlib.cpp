@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: adlib.cpp,v 1.42 2009-11-03 20:17:42 qbix79 Exp $ */
 
 #include <stdlib.h>
 #include <string.h>
@@ -409,36 +408,66 @@ Bit8u Chip::Read( ) {
 
 }
 
-void Module::CacheWrite( Bit32u _reg, Bit8u val ) {
+void Module::CacheWrite( Bit32u reg, Bit8u val ) {
 	//capturing?
 	if ( capture ) {
-		capture->DoWrite( _reg, val );
+		capture->DoWrite( reg, val );
 	}
 	//Store it into the cache
-	cache[ _reg ] = val;
+	cache[ reg ] = val;
 }
 
-void Module::DualWrite( Bit8u index, Bit8u _reg, Bit8u val ) {
+void Module::DualWrite( Bit8u index, Bit8u reg, Bit8u val ) {
 	//Make sure you don't use opl3 features
 	//Don't allow write to disable opl3		
-	if ( _reg == 5 ) {
+	if ( reg == 5 ) {
 		return;
 	}
 	//Only allow 4 waveforms
-	if ( _reg >= 0xE0 ) {
+	if ( reg >= 0xE0 ) {
 		val &= 3;
 	} 
 	//Write to the timer?
-	if ( chip[index].Write( _reg, val ) ) 
+	if ( chip[index].Write( reg, val ) ) 
 		return;
 	//Enabling panning
-	if ( _reg >= 0xc0 && _reg <=0xc8 ) {
+	if ( reg >= 0xc0 && reg <=0xc8 ) {
 		val &= 0x0f;
 		val |= index ? 0xA0 : 0x50;
 	}
-	Bit32u fullReg = _reg + (index ? 0x100 : 0);
+	Bit32u fullReg = reg + (index ? 0x100 : 0);
 	handler->WriteReg( fullReg, val );
 	CacheWrite( fullReg, val );
+}
+
+void Module::CtrlWrite( Bit8u val ) {
+	switch ( ctrl.index ) {
+	case 0x09: /* Left FM Volume */
+		ctrl.lvol = val;
+		goto setvol;
+	case 0x0a: /* Right FM Volume */
+		ctrl.rvol = val;
+setvol:
+		if ( ctrl.mixer ) {
+			//Dune cdrom uses 32 volume steps in an apparent mistake, should be 128
+			mixerChan->SetVolume( (float)(ctrl.lvol&0x1f)/31.0f, (float)(ctrl.rvol&0x1f)/31.0f );
+		}
+		break;
+	}
+}
+
+Bitu Module::CtrlRead( void ) {
+	switch ( ctrl.index ) {
+	case 0x00: /* Board Options */
+		return 0x70; //No options installed
+	case 0x09: /* Left FM Volume */
+		return ctrl.lvol;
+	case 0x0a: /* Right FM Volume */
+		return ctrl.rvol;
+	case 0x15: /* Audio Relocation */
+		return 0x388 >> 3; //Cryo installer detection
+	}
+	return 0xff;
 }
 
 
@@ -451,6 +480,14 @@ void Module::PortWrite( Bitu port, Bitu val, Bitu iolen ) {
 	}
 	if ( port&1 ) {
 		switch ( mode ) {
+		case MODE_OPL3GOLD:
+			if ( port == 0x38b ) {
+				if ( ctrl.active ) {
+					CtrlWrite( val );
+					break;
+				}
+			}
+			//Fall-through if not handled by control chip
 		case MODE_OPL2:
 		case MODE_OPL3:
 			if ( !chip[0].Write( reg.normal, val ) ) {
@@ -477,6 +514,20 @@ void Module::PortWrite( Bitu port, Bitu val, Bitu iolen ) {
 		case MODE_OPL2:
 			reg.normal = handler->WriteAddr( port, val ) & 0xff;
 			break;
+		case MODE_OPL3GOLD:
+			if ( port == 0x38a ) {
+				if ( val == 0xff ) {
+					ctrl.active = true;
+					break;
+				} else if ( val == 0xfe ) {
+					ctrl.active = false;
+					break;
+				} else if ( ctrl.active ) {
+					ctrl.index = val & 0xff;
+					break;
+				}
+			}
+			//Fall-through if not handled by control chip
 		case MODE_OPL3:
 			reg.normal = handler->WriteAddr( port, val ) & 0x1ff;
 			break;
@@ -505,6 +556,15 @@ Bitu Module::PortRead( Bitu port, Bitu iolen ) {
 		} else {
 			return 0xff;
 		}
+	case MODE_OPL3GOLD:
+		if ( ctrl.active ) {
+			if ( port == 0x38a ) {
+				return 0; //Control status, not busy
+			} else if ( port == 0x38b ) {
+				return CtrlRead();
+			}
+		}
+		//Fall-through if not handled by control chip
 	case MODE_OPL3:
 		//We allocated 4 ports, so just return -1 for the higher ones
 		if ( !(port & 3 ) ) {
@@ -528,6 +588,7 @@ void Module::Init( Mode m ) {
 	mode = m;
 	switch ( mode ) {
 	case MODE_OPL3:
+	case MODE_OPL3GOLD:
 	case MODE_OPL2:
 		break;
 	case MODE_DUALOPL2:
@@ -628,6 +689,10 @@ Module::Module( Section* configuration ) : Module_base(configuration) {
 	reg.dual[0] = 0;
 	reg.dual[1] = 0;
 	reg.normal = 0;
+	ctrl.active = false;
+	ctrl.index = 0;
+	ctrl.lvol = 0xff;
+	ctrl.rvol = 0xff;
 	handler = 0;
 	capture = 0;
 
@@ -638,9 +703,12 @@ Module::Module( Section* configuration ) : Module_base(configuration) {
 	if ( rate < 8000 )
 		rate = 8000;
 	std::string oplemu( section->Get_string( "oplemu" ) );
+	ctrl.mixer = section->Get_bool("sbmixer");
 
 	mixerChan = mixerObject.Install(OPL_CallBack,rate,"FM");
-	mixerChan->SetScale( 2.0f );
+	//Used to be 2.0, which was measured to be too high. Exact value depends on card/clone.
+	mixerChan->SetScale( 1.5f );  
+
 	if (oplemu == "fast") {
 		handler = new DBOPL::Handler();
 	} else if (oplemu == "compat") {
@@ -664,6 +732,9 @@ Module::Module( Section* configuration ) : Module_base(configuration) {
 		break;
 	case OPL_opl3:
 		Init( Adlib::MODE_OPL3 );
+		break;
+	case OPL_opl3gold:
+		Init( Adlib::MODE_OPL3GOLD );
 		break;
 	}
 	//0x388 range

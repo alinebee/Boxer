@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ typedef struct {
 	FPU_Tag		tags[9];
 	Bit16u		cw,cw_mask_all;
 	Bit16u		sw;
-	Bitu		top;
+	Bit32u		top;
 	FPU_Round	round;
 } FPU_rec;
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dyn_fpu.h,v 1.5 2009-09-23 20:55:19 c2woody Exp $ */
 
 #include "dosbox.h"
 #if C_FPU
@@ -99,7 +98,7 @@ static void dyn_fpu_esc0(){
 	if (decode.modrm.val >= 0xc0) { 
 		dyn_fpu_top();
 		Bitu group=(decode.modrm.val >> 3) & 7;
-		//Bitu sub=(decode.modrm.val & 7);
+		Bitu sub=(decode.modrm.val & 7);
 		switch (group){
 		case 0x00:		//FADD ST,STi /
 			gen_call_function((void*)&FPU_FADD,"%Ddr%Ddr",DREG(TMPB),DREG(EA));
@@ -425,7 +424,7 @@ static void dyn_fpu_esc3(){
 static void dyn_fpu_esc4(){
 	dyn_get_modrm();  
 	Bitu group=(decode.modrm.val >> 3) & 7;
-	//Bitu sub=(decode.modrm.val & 7);
+	Bitu sub=(decode.modrm.val & 7);
 	if (decode.modrm.val >= 0xc0) { 
 		dyn_fpu_top();
 		switch(group){

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: disney.cpp,v 1.17 2009-05-14 17:04:37 qbix79 Exp $ */
 
 #include <string.h>
 #include "dosbox.h"
@@ -24,8 +23,6 @@
 #include "mixer.h"
 #include "pic.h"
 #include "setup.h"
-#include "bios.h"
-#include "mem.h"
 
 #define DISNEY_BASE 0x0378
 
@@ -72,11 +69,9 @@ static void DISNEY_disable(Bitu) {
 	if(disney.mo) {
 		disney.chan->AddSilence();
 		disney.chan->Enable(false);
-		delete disney.mo;
 	}
 	disney.leader = 0;
 	disney.last_used = 0;
-	disney.mo = 0;
 	disney.state = DS_IDLE;
 	disney.interface_det = 0;
 	disney.interface_det_ext = 0;
@@ -93,8 +88,7 @@ static void DISNEY_enable(Bitu freq) {
 		if(disney.stereo) LOG(LOG_MISC,LOG_NORMAL)("disney enable %d Hz, stereo",freq);
 		else LOG(LOG_MISC,LOG_NORMAL)("disney enable %d Hz, mono",freq);
 #endif
-		disney.mo = new MixerObject();
-		disney.chan=disney.mo->Install(&DISNEY_CallBack,freq,"DISNEY");
+		disney.chan->SetFreq(freq);
 		disney.chan->Enable(true);
 		disney.state = DS_RUNNING;
 	}
@@ -372,12 +366,6 @@ public:
 	DISNEY(Section* configuration):Module_base(configuration) {
 		Section_prop * section=static_cast<Section_prop *>(configuration);
 		if(!section->Get_bool("disney")) return;
-		if(mem_readw(BIOS_ADDRESS_LPT1) != 0)
-        {
-            printf("Disney conflicts with existing LPT1 hardware");
-            return;
-        }
-		BIOS_SetLPTPort(0,DISNEY_BASE);
 	
 		WriteHandler.Install(DISNEY_BASE,disney_write,IO_MB,3);
 		ReadHandler.Install(DISNEY_BASE,disney_read,IO_MB,3);
@@ -386,12 +374,16 @@ public:
 		disney.control=0;
 		disney.last_used=0;
 
-		disney.mo=0;
+		disney.mo = new MixerObject();
+		disney.chan=disney.mo->Install(&DISNEY_CallBack,10000,"DISNEY");
 		DISNEY_disable(0);
+
+
 	}
 	~DISNEY(){
-		BIOS_SetLPTPort(0,0);
 		DISNEY_disable(0);
+		if (disney.mo)
+			delete disney.mo;
 	}
 };
 

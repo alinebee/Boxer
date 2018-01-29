@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: midi_win32.h,v 1.16 2009-05-27 09:15:41 qbix79 Exp $ */
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -42,16 +41,31 @@ public:
 		if(conf && *conf) {
 			std::string strconf(conf);
 			std::istringstream configmidi(strconf);
-			unsigned int nummer = midiOutGetNumDevs();
+			unsigned int total = midiOutGetNumDevs();
+			unsigned int nummer = total;
 			configmidi >> nummer;
-			if(nummer < midiOutGetNumDevs()){
+			if (configmidi.fail() && total) {
+				lowcase(strconf);
+				for(unsigned int i = 0; i< total;i++) {
+					MIDIOUTCAPS mididev;
+					midiOutGetDevCaps(i, &mididev, sizeof(MIDIOUTCAPS));
+					std::string devname(mididev.szPname);
+					lowcase(devname);
+					if (devname.find(strconf) != std::string::npos) {
+						nummer = i;
+						break;
+					}
+				}
+			}
+
+			if (nummer < total) {
 				MIDIOUTCAPS mididev;
 				midiOutGetDevCaps(nummer, &mididev, sizeof(MIDIOUTCAPS));
-				LOG_MSG("MIDI:win32 selected %s",mididev.szPname);
-				res = midiOutOpen(&m_out, nummer, (DWORD)m_event, 0, CALLBACK_EVENT);
+				LOG_MSG("MIDI: win32 selected %s",mididev.szPname);
+				res = midiOutOpen(&m_out, nummer, (DWORD_PTR)m_event, 0, CALLBACK_EVENT);
 			}
 		} else {
-			res = midiOutOpen(&m_out, MIDI_MAPPER, (DWORD)m_event, 0, CALLBACK_EVENT);
+			res = midiOutOpen(&m_out, MIDI_MAPPER, (DWORD_PTR)m_event, 0, CALLBACK_EVENT);
 		}
 		if (res != MMSYSERR_NOERROR) return false;
 		isOpen=true;
@@ -71,9 +85,9 @@ public:
 		if (WaitForSingleObject (m_event, 2000) == WAIT_TIMEOUT) {
 			LOG(LOG_MISC,LOG_ERROR)("Can't send midi message");
 			return;
-		}		
+		}
 		midiOutUnprepareHeader (m_out, &m_hdr, sizeof (m_hdr));
-	
+
 		m_hdr.lpData = (char *) sysex;
 		m_hdr.dwBufferLength = len ;
 		m_hdr.dwBytesRecorded = len ;
@@ -88,8 +102,16 @@ public:
 			return;
 		}
 	}
+	void ListAll(Program* base) {
+		unsigned int total = midiOutGetNumDevs();
+		for(unsigned int i = 0;i < total;i++) {
+			MIDIOUTCAPS mididev;
+			midiOutGetDevCaps(i, &mididev, sizeof(MIDIOUTCAPS));
+			base->WriteOut("%2d\t \"%s\"\n",i,mididev.szPname);
+		}
+	}
 };
 
-MidiHandler_win32 Midi_win32; 
+MidiHandler_win32 Midi_win32;
 
 

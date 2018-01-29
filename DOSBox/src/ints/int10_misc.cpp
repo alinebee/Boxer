@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: int10_misc.cpp,v 1.21 2009-05-27 09:15:42 qbix79 Exp $ */
 
 #include "dosbox.h"
 #include "mem.h"
@@ -155,7 +154,7 @@ RealPt INT10_EGA_RIL_GetVersionPt(void) {
 	return RealMake(0xc000,0x30);
 }
 
-static void EGA_RIL(Bit16u dx, Bitu& port, Bitu& regs) {
+static void EGA_RIL(Bit16u dx, Bit16u& port, Bit16u& regs) {
 	port = 0;
 	regs = 0; //if nul is returned it's a single register port
 	switch(dx) {
@@ -194,8 +193,8 @@ static void EGA_RIL(Bit16u dx, Bitu& port, Bitu& regs) {
 }
 
 void INT10_EGA_RIL_ReadRegister(Bit8u & bl, Bit16u dx) {
-	Bitu port = 0;
-	Bitu regs = 0;
+	Bit16u port = 0;
+	Bit16u regs = 0;
 	EGA_RIL(dx,port,regs);
 	if(regs == 0) {
 		if(port) bl = IO_Read(port);
@@ -209,8 +208,8 @@ void INT10_EGA_RIL_ReadRegister(Bit8u & bl, Bit16u dx) {
 }
 
 void INT10_EGA_RIL_WriteRegister(Bit8u & bl, Bit8u bh, Bit16u dx) {
-	Bitu port = 0;
-	Bitu regs = 0;
+	Bit16u port = 0;
+	Bit16u regs = 0;
 	EGA_RIL(dx,port,regs);
 	if(regs == 0) {
 		if(port) IO_Write(port,bl);
@@ -229,8 +228,8 @@ void INT10_EGA_RIL_WriteRegister(Bit8u & bl, Bit8u bh, Bit16u dx) {
 }
 
 void INT10_EGA_RIL_ReadRegisterRange(Bit8u ch, Bit8u cl, Bit16u dx, PhysPt dst) {
-	Bitu port = 0;
-	Bitu regs = 0;
+	Bit16u port = 0;
+	Bit16u regs = 0;
 	EGA_RIL(dx,port,regs);
 	if(regs == 0) {
 		LOG(LOG_INT10,LOG_ERROR)("EGA RIL range read with port %x called",port);
@@ -248,8 +247,8 @@ void INT10_EGA_RIL_ReadRegisterRange(Bit8u ch, Bit8u cl, Bit16u dx, PhysPt dst) 
 }
 
 void INT10_EGA_RIL_WriteRegisterRange(Bit8u ch, Bit8u cl, Bit16u dx, PhysPt src) {
-	Bitu port = 0;
-	Bitu regs = 0;
+	Bit16u port = 0;
+	Bit16u regs = 0;
 	EGA_RIL(dx,port,regs);
 	if(regs == 0) {
 		LOG(LOG_INT10,LOG_ERROR)("EGA RIL range write called with port %x",port);
@@ -279,7 +278,7 @@ void INT10_EGA_RIL_WriteRegisterRange(Bit8u ch, Bit8u cl, Bit16u dx, PhysPt src)
 */
 void INT10_EGA_RIL_ReadRegisterSet(Bit16u cx, PhysPt tbl) {
 	/* read cx register sets */
-	for (Bitu i=0; i<cx; i++) {
+	for (Bit16u i=0; i<cx; i++) {
 		Bit8u vl=mem_readb(tbl+2);
 		INT10_EGA_RIL_ReadRegister(vl, mem_readw(tbl));
 		mem_writeb(tbl+3, vl);
@@ -289,9 +288,9 @@ void INT10_EGA_RIL_ReadRegisterSet(Bit16u cx, PhysPt tbl) {
 
 void INT10_EGA_RIL_WriteRegisterSet(Bit16u cx, PhysPt tbl) {
 	/* write cx register sets */
-	Bitu port = 0;
-	Bitu regs = 0;
-	for (Bitu i=0; i<cx; i++) {
+	Bit16u port = 0;
+	Bit16u regs = 0;
+	for (Bit16u i=0; i<cx; i++) {
 		EGA_RIL(mem_readw(tbl),port,regs);
 		Bit8u vl=mem_readb(tbl+3);
 		if(regs == 0) {

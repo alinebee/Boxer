@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: risc_x86.h,v 1.32 2009-05-27 09:15:41 qbix79 Exp $ */
 
 static void gen_init(void);
 
@@ -368,7 +367,6 @@ static void gen_dop_byte_imm(DualOps op,DynReg * dr1,Bit8u di1,Bitu imm) {
 					goto finish;
 	default:
 		IllegalOption("gen_dop_byte_imm");
-        return;
 	}
 	dr1->flags|=DYNFLG_CHANGED;
 nochange:
@@ -393,7 +391,6 @@ static void gen_dop_byte_imm_mem(DualOps op,DynReg * dr1,Bit8u di1,void* data) {
 	case DOP_MOV:	tmp=0x0585; break;
 	default:
 		IllegalOption("gen_dop_byte_imm_mem");
-        return;
 	}
 	dr1->flags|=DYNFLG_CHANGED;
 nochange:
@@ -546,7 +543,6 @@ static void gen_dop_word_imm(DualOps op,bool dword,DynReg * dr1,Bits imm) {
 	case DOP_MOV:	cache_addb(0xb8+(gr1->index)); dr1->flags|=DYNFLG_CHANGED; goto finish;
 	default:
 		IllegalOption("gen_dop_word_imm");
-        return;
 	}
 	dr1->flags|=DYNFLG_CHANGED;
 nochange:
@@ -575,7 +571,6 @@ static void gen_dop_word_imm_mem(DualOps op,bool dword,DynReg * dr1,void* data) 
 		return;
 	default:
 		IllegalOption("gen_dop_word_imm_mem");
-        return;
 	}
 	dr1->flags|=DYNFLG_CHANGED;
 nochange:

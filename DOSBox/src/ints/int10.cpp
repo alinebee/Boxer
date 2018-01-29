@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: int10.cpp,v 1.56 2009-09-06 19:25:34 c2woody Exp $ */
 
 #include "dosbox.h"
 #include "mem.h"
@@ -24,6 +23,7 @@
 #include "regs.h"
 #include "inout.h"
 #include "int10.h"
+#include "mouse.h"
 #include "setup.h"
 
 Int10Data int10;
@@ -48,10 +48,13 @@ static Bitu INT10_Handler(void) {
 		break;
 	}
 #endif
+	INT10_SetCurMode();
 
 	switch (reg_ah) {
 	case 0x00:								/* Set VideoMode */
+		Mouse_BeforeNewVideoMode(true);
 		INT10_SetVideoMode(reg_al);
+		Mouse_AfterNewVideoMode(true);
 		break;
 	case 0x01:								/* Set TextMode Cursor Shape */
 		INT10_SetCursorShape(reg_ch,reg_cl);
@@ -107,7 +110,9 @@ static Bitu INT10_Handler(void) {
 		INT10_ReadCharAttr(&reg_ax,reg_bh);
 		break;						
 	case 0x09:								/* Write Character & Attribute at cursor CX times */
-		INT10_WriteChar(reg_al,reg_bl,reg_bh,reg_cx,true);
+		if (real_readb(BIOSMEM_SEG,BIOSMEM_CURRENT_MODE)==0x11)
+			INT10_WriteChar(reg_al,(reg_bl&0x80)|0x3f,reg_bh,reg_cx,true);
+		else INT10_WriteChar(reg_al,reg_bl,reg_bh,reg_cx,true);
 		break;
 	case 0x0A:								/* Write Character at cursor CX times */
 		INT10_WriteChar(reg_al,reg_bl,reg_bh,reg_cx,false);
@@ -138,8 +143,8 @@ static Bitu INT10_Handler(void) {
 		reg_ah=(Bit8u)real_readw(BIOSMEM_SEG,BIOSMEM_NB_COLS);
 		break;					
 	case 0x10:								/* Palette functions */
-		if ((machine==MCH_CGA) || ((!IS_VGA_ARCH) && (reg_al>0x02))) break;
-		//TODO: subfunction 0x03 for ega
+		if (!IS_EGAVGA_ARCH && (reg_al>0x02)) break;
+		else if (!IS_VGA_ARCH && (reg_al>0x03)) break;
 		switch (reg_al) {
 		case 0x00:							/* SET SINGLE PALETTE REGISTER */
 			INT10_SetSinglePaletteRegister(reg_bl,reg_bh);
@@ -163,7 +168,7 @@ static Bitu INT10_Handler(void) {
 			INT10_GetAllPaletteRegisters(SegPhys(es)+reg_dx);
 			break;
 		case 0x10:							/* SET INDIVIDUAL DAC REGISTER */
-			INT10_SetSingleDacRegister(reg_bl,reg_dh,reg_ch,reg_cl);
+			INT10_SetSingleDACRegister(reg_bl,reg_dh,reg_ch,reg_cl);
 			break;
 		case 0x12:							/* SET BLOCK OF DAC REGISTERS */
 			INT10_SetDACBlock(reg_bx,reg_cx,SegPhys(es)+reg_dx);
@@ -172,7 +177,7 @@ static Bitu INT10_Handler(void) {
 			INT10_SelectDACPage(reg_bl,reg_bh);
 			break;
 		case 0x15:							/* GET INDIVIDUAL DAC REGISTER */
-			INT10_GetSingleDacRegister(reg_bl,&reg_dh,&reg_ch,&reg_cl);
+			INT10_GetSingleDACRegister(reg_bl,&reg_dh,&reg_ch,&reg_cl);
 			break;
 		case 0x17:							/* GET BLOCK OF DAC REGISTER */
 			INT10_GetDACBlock(reg_bx,reg_cx,SegPhys(es)+reg_dx);
@@ -201,19 +206,20 @@ static Bitu INT10_Handler(void) {
 	case 0x11:								/* Character generator functions */
 		if (!IS_EGAVGA_ARCH) 
 			break;
+		if ((reg_al&0xf0)==0x10) Mouse_BeforeNewVideoMode(false);
 		switch (reg_al) {
 /* Textmode calls */
 		case 0x00:			/* Load user font */
 		case 0x10:
-			INT10_LoadFont(SegPhys(es)+reg_bp,reg_al==0x10,reg_cx,reg_dx,reg_bl,reg_bh);
+			INT10_LoadFont(SegPhys(es)+reg_bp,reg_al==0x10,reg_cx,reg_dx,reg_bl&0x7f,reg_bh);
 			break;
 		case 0x01:			/* Load 8x14 font */
 		case 0x11:
-			INT10_LoadFont(Real2Phys(int10.rom.font_14),reg_al==0x11,256,0,0,14);
+			INT10_LoadFont(Real2Phys(int10.rom.font_14),reg_al==0x11,256,0,reg_bl&0x7f,14);
 			break;
 		case 0x02:			/* Load 8x8 font */
 		case 0x12:
-			INT10_LoadFont(Real2Phys(int10.rom.font_8_first),reg_al==0x12,256,0,0,8);
+			INT10_LoadFont(Real2Phys(int10.rom.font_8_first),reg_al==0x12,256,0,reg_bl&0x7f,8);
 			break;
 		case 0x03:			/* Set Block Specifier */
 			IO_Write(0x3c4,0x3);IO_Write(0x3c5,reg_bl);
@@ -221,7 +227,7 @@ static Bitu INT10_Handler(void) {
 		case 0x04:			/* Load 8x16 font */
 		case 0x14:
 			if (!IS_VGA_ARCH) break;
-			INT10_LoadFont(Real2Phys(int10.rom.font_16),reg_al==0x14,256,0,0,16);
+			INT10_LoadFont(Real2Phys(int10.rom.font_16),reg_al==0x14,256,0,reg_bl&0x7f,16);
 			break;
 /* Graphics mode calls */
 		case 0x20:			/* Set User 8x8 Graphics characters */
@@ -283,7 +289,6 @@ graphics_chars:
 				reg_bp=RealOff(int10.rom.font_8_second);
 				break;
 			case 0x05:	/* alpha alternate 9x14 */
-				if (!IS_VGA_ARCH) break;
 				SegSet16(es,RealSeg(int10.rom.font_14_alternate));
 				reg_bp=RealOff(int10.rom.font_14_alternate);
 				break;
@@ -302,19 +307,15 @@ graphics_chars:
 				break;
 			}
 			if ((reg_bh<=7) || (svgaCard==SVGA_TsengET4K)) {
-				if (machine==MCH_EGA) {
-					reg_cx=0x0e;
-					reg_dl=0x18;
-				} else {
-					reg_cx=real_readw(BIOSMEM_SEG,BIOSMEM_CHAR_HEIGHT);
-					reg_dl=real_readb(BIOSMEM_SEG,BIOSMEM_NB_ROWS);
-				}
+				reg_cx=real_readw(BIOSMEM_SEG,BIOSMEM_CHAR_HEIGHT);
+				reg_dl=real_readb(BIOSMEM_SEG,BIOSMEM_NB_ROWS);
 			}
 			break;
 		default:
 			LOG(LOG_INT10,LOG_ERROR)("Function 11:Unsupported character generator call %2X",reg_al);
 			break;
 		}
+		if ((reg_al&0xf0)==0x10) Mouse_AfterNewVideoMode(false);
 		break;
 	case 0x12:								/* alternate function select */
 		if (!IS_EGAVGA_ARCH) 
@@ -379,7 +380,7 @@ graphics_chars:
 				reg_al=0x12;
 				break;	
 			}		
-		case 0x32:							/* Video adressing */
+		case 0x32:							/* Video addressing */
 			if (!IS_VGA_ARCH) break;
 			LOG(LOG_INT10,LOG_ERROR)("Function 12:Call %2X not handled",reg_bl);
 			if (svgaCard==SVGA_TsengET4K) reg_al&=1;
@@ -540,8 +541,10 @@ graphics_chars:
 			reg_ah=VESA_GetSVGAModeInformation(reg_cx,SegValue(es),reg_di);
 			break;
 		case 0x02:							/* Set videomode */
+			Mouse_BeforeNewVideoMode(true);
 			reg_al=0x4f;
 			reg_ah=VESA_SetSVGAMode(reg_bx);
+			Mouse_AfterNewVideoMode(true);
 			break;
 		case 0x03:							/* Get videomode */
 			reg_al=0x4f;
@@ -589,10 +592,10 @@ graphics_chars:
 			break;
 		case 0x07:
 			switch (reg_bl) {
-			case 0x80:						/* Set Display Start during retrace ?? */
+			case 0x80:						/* Set Display Start during retrace */
 			case 0x00:						/* Set display Start */
 				reg_al=0x4f;
-				reg_ah=VESA_SetDisplayStart(reg_cx,reg_dx);
+				reg_ah=VESA_SetDisplayStart(reg_cx,reg_dx,reg_bl==0x80);
 				break;
 			case 0x01:
 				reg_al=0x4f;
@@ -608,9 +611,8 @@ graphics_chars:
 		case 0x09:
 			switch (reg_bl) {
 			case 0x80:						/* Set Palette during retrace */
-				//TODO
 			case 0x00:						/* Set Palette */
-				reg_ah=VESA_SetPalette(SegPhys(es)+reg_di,reg_dx,reg_cx);
+				reg_ah=VESA_SetPalette(SegPhys(es)+reg_di,reg_dx,reg_cx,reg_bl==0x80);
 				reg_al=0x4f;
 				break;
 			case 0x01:						/* Get Palette */
@@ -630,27 +632,27 @@ graphics_chars:
 			}
 			switch (reg_bl) {
 			case 0x00:
-				reg_edi=RealOff(int10.rom.pmode_interface);
 				SegSet16(es,RealSeg(int10.rom.pmode_interface));
+				reg_di=RealOff(int10.rom.pmode_interface);
 				reg_cx=int10.rom.pmode_interface_size;
 				reg_ax=0x004f;
 				break;
 			case 0x01:						/* Get code for "set window" */
-				reg_edi=RealOff(int10.rom.pmode_interface)+int10.rom.pmode_interface_window;
 				SegSet16(es,RealSeg(int10.rom.pmode_interface));
-				reg_cx=0x10;		//0x10 should be enough for the callbacks
+				reg_di=RealOff(int10.rom.pmode_interface)+int10.rom.pmode_interface_window;
+				reg_cx=int10.rom.pmode_interface_start-int10.rom.pmode_interface_window;
 				reg_ax=0x004f;
 				break;
 			case 0x02:						/* Get code for "set display start" */
-				reg_edi=RealOff(int10.rom.pmode_interface)+int10.rom.pmode_interface_start;
 				SegSet16(es,RealSeg(int10.rom.pmode_interface));
-				reg_cx=0x10;		//0x10 should be enough for the callbacks
+				reg_di=RealOff(int10.rom.pmode_interface)+int10.rom.pmode_interface_start;
+				reg_cx=int10.rom.pmode_interface_palette-int10.rom.pmode_interface_start;
 				reg_ax=0x004f;
 				break;
 			case 0x03:						/* Get code for "set palette" */
-				reg_edi=RealOff(int10.rom.pmode_interface)+int10.rom.pmode_interface_palette;
 				SegSet16(es,RealSeg(int10.rom.pmode_interface));
-				reg_cx=0x10;		//0x10 should be enough for the callbacks
+				reg_di=RealOff(int10.rom.pmode_interface)+int10.rom.pmode_interface_palette;
+				reg_cx=int10.rom.pmode_interface_size-int10.rom.pmode_interface_palette;
 				reg_ax=0x004f;
 				break;
 			default:
@@ -712,15 +714,24 @@ static void INT10_Seg40Init(void) {
 	real_writeb(BIOSMEM_SEG,BIOSMEM_MODESET_CTL,0x51);
 	// Set the  default MSR
 	real_writeb(BIOSMEM_SEG,BIOSMEM_CURRENT_MSR,0x09);
+	// Set the pointer to video save pointer table
+	real_writed(BIOSMEM_SEG,BIOSMEM_VS_POINTER,int10.rom.video_save_pointers);
 }
 
 
 static void INT10_InitVGA(void) {
-/* switch to color mode and enable CPU access 480 lines */
-	IO_Write(0x3c2,0xc3);
-	/* More than 64k */
-	IO_Write(0x3c4,0x04);
-	IO_Write(0x3c5,0x02);
+	if (IS_EGAVGA_ARCH) {
+		/* switch to color mode and enable CPU access 480 lines */
+		IO_Write(0x3c2,0xc3);
+		/* More than 64k */
+		IO_Write(0x3c4,0x04);
+		IO_Write(0x3c5,0x02);
+		if (IS_VGA_ARCH) {
+			/* Initialize DAC */
+			IO_Write(0x3c8,0);
+			for (Bitu i=0;i<3*256;i++) IO_Write(0x3c9,0);
+		}
+	}
 }
 
 static void SetupTandyBios(void) {
@@ -754,7 +765,5 @@ void INT10_Init(Section* /*sec*/) {
 	//Init the 0x40 segment and init the datastructures in the the video rom area
 	INT10_SetupRomMemory();
 	INT10_Seg40Init();
-	INT10_SetupVESA();
-	INT10_SetupRomMemoryChecksum();//SetupVesa modifies the rom as well.
 	INT10_SetVideoMode(0x3);
 }

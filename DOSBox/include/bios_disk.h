@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -65,15 +65,19 @@ public:
 
 	Bit32u sector_size;
 	Bit32u heads,cylinders,sectors;
+private:
+	Bit32u current_fpos;
+	enum { NONE,READ,WRITE } last_action;
 };
 
 void updateDPT(void);
+void incrementFDD(void);
 
 #define MAX_HDD_IMAGES 2
 
 extern imageDisk *imageDiskList[2 + MAX_HDD_IMAGES];
 extern imageDisk *diskSwap[20];
-extern Bits swapPosition;
+extern Bit32s swapPosition;
 extern Bit16u imgDTASeg; /* Real memory location of temporary DTA pointer for fat image disk access */
 extern RealPt imgDTAPtr; /* Real memory location of temporary DTA pointer for fat image disk access */
 extern DOS_DTA *imgDTA;

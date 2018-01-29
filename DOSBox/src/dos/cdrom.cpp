@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: cdrom.cpp,v 1.27 2009-04-26 18:24:36 qbix79 Exp $ */
 
 // ******************************************************
 // SDL CDROM 
@@ -51,14 +50,6 @@ bool CDROM_Interface_SDL::SetDevice(char* path, int forceCD) {
 	int num = SDL_CDNumDrives();
 	if ((forceCD>=0) && (forceCD<num)) {
 		driveID = forceCD;
-			//--Added 2009-12-31 by Alun Bestor: shut down and restart the CDROM subsystem to reset SDL's
-			//cached file information about the CD-ROM volumes
-			//This is needed otherwise SDL persists invalid file pointers to the CD-ROM and its tracks,
-			//way to go guys
-			SDL_QuitSubSystem(SDL_INIT_CDROM);
-			SDL_Init(SDL_INIT_CDROM);
-			//--End of modifications
-		
 	        cd = SDL_CDOpen(driveID);
 	        SDL_CDStatus(cd);
 	   	return true;
@@ -68,14 +59,6 @@ bool CDROM_Interface_SDL::SetDevice(char* path, int forceCD) {
 	for (int i=0; i<num; i++) {
 		cdname = SDL_CDName(i);
 		if (strcmp(buffer,cdname)==0) {
-			//--Added 2009-12-31 by Alun Bestor: shut down and restart the CDROM subsystem to reset SDL's
-			//cached file information about the CD-ROM volumes
-			//This is needed otherwise SDL persists invalid file pointers to the CD-ROM and its tracks,
-			//way to go guys
-			SDL_QuitSubSystem(SDL_INIT_CDROM);
-			SDL_Init(SDL_INIT_CDROM);
-			//--End of modifications
-			
 			cd = SDL_CDOpen(i);
 			SDL_CDStatus(cd);
 			driveID = i;
@@ -134,13 +117,8 @@ bool CDROM_Interface_SDL::GetMediaTrayStatus(bool& mediaPresent, bool& mediaChan
 
 bool CDROM_Interface_SDL::PlayAudioSector(unsigned long start,unsigned long len) { 
 	// Has to be there, otherwise wrong cd status report (dunno why, sdl bug ?)
-	//--Disabled 2009-12-30 by Alun Bestor: no it doesn't, in fact disabling and reenabling the CD like this
-	//kills the track listing in OS X owing to another SDL bug.
-	/*
 	SDL_CDClose(cd);
 	cd = SDL_CDOpen(driveID);
-	*/
-	//--End of modifications
 	bool success = (SDL_CDPlay(cd,start+150,len)==0);
 	return success;
 }
@@ -154,13 +132,8 @@ bool CDROM_Interface_SDL::PauseAudio(bool resume) {
 
 bool CDROM_Interface_SDL::StopAudio(void) {
 	// Has to be there, otherwise wrong cd status report (dunno why, sdl bug ?)
-	//--Disabled 2009-12-30 by Alun Bestor: no it doesn't, in fact disabling and reenabling the CD like this
-	//kills the track listing in OS X owing to another SDL bug.
-	/*
 	SDL_CDClose(cd);
 	cd = SDL_CDOpen(driveID);
-	*/
-	//--End of modifications
 	bool success = (SDL_CDStop(cd)==0);
 	return success;
 }

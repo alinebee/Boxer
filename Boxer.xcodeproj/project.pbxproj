@@ -15,6 +15,7 @@
 		557A24EC1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24EB1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets */; };
 		558A661B1BFFD7630043F15C /* BBAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558A661A1BFFD7630043F15C /* BBAppDelegate.swift */; };
 		55B22BA21A1BD9760007665E /* Bundler.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55B22BA11A1BD9760007665E /* Bundler.xcassets */; };
+		55DEBB23201E875600F1092F /* pci_bus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55DEBB21201E875500F1092F /* pci_bus.cpp */; };
 		55E6A0B61C00C86200285593 /* MT32Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A0B51C00C81E00285593 /* MT32Emu.framework */; };
 		55E6A0B71C00C86200285593 /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A0B51C00C81E00285593 /* MT32Emu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		55E6A0BA1C00C86200285593 /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A0AC1C00C80A00285593 /* DDHidLib.framework */; };
@@ -950,6 +951,10 @@
 		558A66191BFFD7630043F15C /* Boxer Bundler-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Boxer Bundler-Bridging-Header.h"; sourceTree = "<group>"; };
 		558A661A1BFFD7630043F15C /* BBAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BBAppDelegate.swift; sourceTree = "<group>"; };
 		55B22BA11A1BD9760007665E /* Bundler.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Bundler.xcassets; sourceTree = "<group>"; };
+		55DEBB1A201E81C200F1092F /* midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midi.h; sourceTree = "<group>"; };
+		55DEBB20201E81DF00F1092F /* pci_bus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pci_bus.h; sourceTree = "<group>"; };
+		55DEBB21201E875500F1092F /* pci_bus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pci_bus.cpp; sourceTree = "<group>"; };
+		55DEBB22201E875500F1092F /* pci_devices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pci_devices.h; sourceTree = "<group>"; };
 		55E6A0971C00C7F900285593 /* BGHUDAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BGHUDAppKit.xcodeproj; path = Vendor/BGHUDAppKit/BGHUDAppKit.xcodeproj; sourceTree = SOURCE_ROOT; };
 		55E6A09D1C00C80A00285593 /* DDHidLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DDHidLib.xcodeproj; path = Vendor/DDHidLib/DDHidLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		55E6A0AD1C00C81D00285593 /* Boxer-MT32Emu.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "Boxer-MT32Emu.xcodeproj"; path = "Vendor/MT32Emu/Boxer-MT32Emu.xcodeproj"; sourceTree = SOURCE_ROOT; };
@@ -1257,7 +1262,7 @@
 		9F77207A12B38C4400072AE8 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		9F77207B12B38C4400072AE8 /* dma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dma.h; sourceTree = "<group>"; };
 		9F77207C12B38C4400072AE8 /* dos_inc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dos_inc.h; sourceTree = "<group>"; };
-		9F77207D12B38C4400072AE8 /* dos_system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dos_system.h; sourceTree = "<group>"; };
+		9F77207D12B38C4400072AE8 /* dos_system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dos_system.h; sourceTree = "<group>"; usesTabs = 1; };
 		9F77207E12B38C4400072AE8 /* dosbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dosbox.h; sourceTree = "<group>"; };
 		9F77207F12B38C4400072AE8 /* fpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fpu.h; sourceTree = "<group>"; };
 		9F77208012B38C4400072AE8 /* hardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hardware.h; sourceTree = "<group>"; };
@@ -1306,7 +1311,6 @@
 		9F7720AF12B38C4400072AE8 /* operators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = operators.h; sourceTree = "<group>"; };
 		9F7720B012B38C4400072AE8 /* risc_armv4le-common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "risc_armv4le-common.h"; sourceTree = "<group>"; };
 		9F7720B112B38C4400072AE8 /* risc_armv4le-o3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "risc_armv4le-o3.h"; sourceTree = "<group>"; };
-		9F7720B212B38C4400072AE8 /* risc_armv4le-s3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "risc_armv4le-s3.h"; sourceTree = "<group>"; };
 		9F7720B312B38C4400072AE8 /* risc_armv4le-thumb-iw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "risc_armv4le-thumb-iw.h"; sourceTree = "<group>"; };
 		9F7720B412B38C4400072AE8 /* risc_armv4le-thumb-niw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "risc_armv4le-thumb-niw.h"; sourceTree = "<group>"; };
 		9F7720B512B38C4400072AE8 /* risc_armv4le-thumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "risc_armv4le-thumb.h"; sourceTree = "<group>"; };
@@ -1380,13 +1384,13 @@
 		9F7720FD12B38C4400072AE8 /* drives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = drives.h; sourceTree = "<group>"; };
 		9F7720FE12B38C4400072AE8 /* scsidefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scsidefs.h; sourceTree = "<group>"; };
 		9F7720FF12B38C4400072AE8 /* wnaspi32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wnaspi32.h; sourceTree = "<group>"; };
-		9F77210012B38C4400072AE8 /* dosbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dosbox.cpp; sourceTree = "<group>"; };
+		9F77210012B38C4400072AE8 /* dosbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dosbox.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		9F77210212B38C4400072AE8 /* fpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fpu.cpp; sourceTree = "<group>"; };
 		9F77210312B38C4400072AE8 /* fpu_instructions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fpu_instructions.h; sourceTree = "<group>"; };
 		9F77210412B38C4400072AE8 /* fpu_instructions_x86.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fpu_instructions_x86.h; sourceTree = "<group>"; };
 		9F77210612B38C4400072AE8 /* dosbox_logo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dosbox_logo.h; sourceTree = "<group>"; };
 		9F77210712B38C4400072AE8 /* dosbox_splash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dosbox_splash.h; sourceTree = "<group>"; };
-		9F77210812B38C4400072AE8 /* midi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = midi.cpp; sourceTree = "<group>"; };
+		9F77210812B38C4400072AE8 /* midi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = midi.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		9F77210912B38C4400072AE8 /* midi_alsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midi_alsa.h; sourceTree = "<group>"; };
 		9F77210A12B38C4400072AE8 /* midi_coreaudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midi_coreaudio.h; sourceTree = "<group>"; };
 		9F77210B12B38C4400072AE8 /* midi_coremidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midi_coremidi.h; sourceTree = "<group>"; };
@@ -1414,11 +1418,11 @@
 		9F77212212B38C4400072AE8 /* dma.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dma.cpp; sourceTree = "<group>"; };
 		9F77212312B38C4400072AE8 /* gameblaster.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gameblaster.cpp; sourceTree = "<group>"; };
 		9F77212412B38C4400072AE8 /* gus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gus.cpp; sourceTree = "<group>"; };
-		9F77212512B38C4400072AE8 /* hardware.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hardware.cpp; sourceTree = "<group>"; };
+		9F77212512B38C4400072AE8 /* hardware.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hardware.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		9F77212612B38C4400072AE8 /* iohandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = iohandler.cpp; sourceTree = "<group>"; };
 		9F77212712B38C4400072AE8 /* ipx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ipx.cpp; sourceTree = "<group>"; };
 		9F77212812B38C4400072AE8 /* ipxserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ipxserver.cpp; sourceTree = "<group>"; };
-		9F77212912B38C4400072AE8 /* joystick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = joystick.cpp; sourceTree = "<group>"; };
+		9F77212912B38C4400072AE8 /* joystick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = joystick.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		9F77212A12B38C4400072AE8 /* keyboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = keyboard.cpp; sourceTree = "<group>"; };
 		9F77212B12B38C4400072AE8 /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memory.cpp; sourceTree = "<group>"; };
 		9F77212C12B38C4400072AE8 /* mixer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mixer.cpp; sourceTree = "<group>"; };
@@ -1484,7 +1488,7 @@
 		9F77216E12B38C4400072AE8 /* programs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = programs.cpp; sourceTree = "<group>"; };
 		9F77216F12B38C4400072AE8 /* setup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = setup.cpp; sourceTree = "<group>"; };
 		9F77217012B38C4400072AE8 /* support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = support.cpp; sourceTree = "<group>"; };
-		9F77217212B38C4400072AE8 /* shell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell.cpp; sourceTree = "<group>"; };
+		9F77217212B38C4400072AE8 /* shell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		9F77217312B38C4400072AE8 /* shell_batch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell_batch.cpp; sourceTree = "<group>"; };
 		9F77217412B38C4400072AE8 /* shell_cmds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell_cmds.cpp; sourceTree = "<group>"; };
 		9F77217512B38C4400072AE8 /* shell_misc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell_misc.cpp; sourceTree = "<group>"; };
@@ -2538,6 +2542,8 @@
 		9F77207312B38C4400072AE8 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				55DEBB20201E81DF00F1092F /* pci_bus.h */,
+				55DEBB1A201E81C200F1092F /* midi.h */,
 				9FD6AA1D16314AC6002B774E /* parport.h */,
 				9F77207412B38C4400072AE8 /* bios.h */,
 				9F77207512B38C4400072AE8 /* bios_disk.h */,
@@ -2583,6 +2589,7 @@
 			);
 			path = include;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		9F77209D12B38C4400072AE8 /* src */ = {
 			isa = PBXGroup;
@@ -2652,7 +2659,6 @@
 				9F7720AF12B38C4400072AE8 /* operators.h */,
 				9F7720B012B38C4400072AE8 /* risc_armv4le-common.h */,
 				9F7720B112B38C4400072AE8 /* risc_armv4le-o3.h */,
-				9F7720B212B38C4400072AE8 /* risc_armv4le-s3.h */,
 				9F7720B312B38C4400072AE8 /* risc_armv4le-thumb-iw.h */,
 				9F7720B412B38C4400072AE8 /* risc_armv4le-thumb-niw.h */,
 				9F7720B512B38C4400072AE8 /* risc_armv4le-thumb.h */,
@@ -2787,6 +2793,8 @@
 		9F77211B12B38C4400072AE8 /* hardware */ = {
 			isa = PBXGroup;
 			children = (
+				55DEBB21201E875500F1092F /* pci_bus.cpp */,
+				55DEBB22201E875500F1092F /* pci_devices.h */,
 				9FD6A9FF16314A5B002B774E /* parport */,
 				9F77211C12B38C4400072AE8 /* adlib.cpp */,
 				9F77211D12B38C4400072AE8 /* adlib.h */,
@@ -3163,6 +3171,7 @@
 			);
 			path = DOSBox;
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		9FBC3C130F56D6E8001811F2 /* Bundled Frameworks */ = {
 			isa = PBXGroup;
@@ -3815,6 +3824,7 @@
 				9F61931B1233D8F000F35AB4 /* ADBTabbedWindowController.m in Sources */,
 				9F160E711236B2A600F8768E /* BXAppController+BXGamesFolder.m in Sources */,
 				9F511502129055FE00BEC0B9 /* BXImportCommand.m in Sources */,
+				55DEBB23201E875600F1092F /* pci_bus.cpp in Sources */,
 				9F1812BF12996340009BC4B2 /* YRKSpinningProgressIndicator.m in Sources */,
 				9F18133B129990D5009BC4B2 /* BXGamesFolderPanelController.m in Sources */,
 				9FD23D55129AE3B600B2100B /* NSWindow+ADBWindowEffects.m in Sources */,
@@ -4796,7 +4806,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.0;

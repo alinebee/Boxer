@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ public:
 		CacheBlockDynRec * to;		// this block can transfer control to the to-block
 		CacheBlockDynRec * next;
 		CacheBlockDynRec * from;	// the from-block can transfer control to this block
-	} link[2];	// maximal two links (conditional jumps)
+	} link[2];	// maximum two links (conditional jumps)
 	CacheBlockDynRec * crossblock;
 };
 
@@ -596,7 +596,7 @@ static void cache_init(bool enable) {
 			if(!cache_code_start_ptr) E_Exit("Allocating dynamic cache failed");
 
 			// align the cache at a page boundary
-			cache_code=(Bit8u*)(((long)cache_code_start_ptr + PAGESIZE_TEMP-1) & ~(PAGESIZE_TEMP-1)); //MEM LEAK. store old pointer if you want to free it.
+			cache_code=(Bit8u*)(((Bitu)cache_code_start_ptr + PAGESIZE_TEMP-1) & ~(PAGESIZE_TEMP-1));//Bitu is same size as a pointer.
 
 			cache_code_link_blocks=cache_code;
 			cache_code=cache_code+PAGESIZE_TEMP;

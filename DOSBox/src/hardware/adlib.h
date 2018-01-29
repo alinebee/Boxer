@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: adlib.h,v 1.5 2009-04-28 21:45:43 c2woody Exp $ */
 
 #ifndef DOSBOX_ADLIB_H
 #define DOSBOX_ADLIB_H
@@ -91,7 +90,8 @@ struct Chip {
 typedef enum {
 	MODE_OPL2,
 	MODE_DUALOPL2,
-	MODE_OPL3
+	MODE_OPL3,
+	MODE_OPL3GOLD
 } Mode;
 
 class Handler {
@@ -126,8 +126,17 @@ class Module: public Module_base {
 		Bit32u normal;
 		Bit8u dual[2];
 	} reg;
+	struct {
+		bool active;
+		Bit8u index;
+		Bit8u lvol;
+		Bit8u rvol;
+		bool mixer;
+	} ctrl;
 	void CacheWrite( Bit32u reg, Bit8u val );
 	void DualWrite( Bit8u index, Bit8u reg, Bit8u val );
+	void CtrlWrite( Bit8u val );
+	Bitu CtrlRead( void );
 public:
 	static OPL_Mode oplmode;
 	MixerChannel* mixerChan;

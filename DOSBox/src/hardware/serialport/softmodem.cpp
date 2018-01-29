@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: softmodem.cpp,v 1.12 2009-10-04 20:57:40 h-a-l-9000 Exp $ */
 
 #include "dosbox.h"
 
@@ -148,14 +147,13 @@ void CSerialModem::SendRes(ResTypes response) {
 	char const * string;Bitu code;
 	switch (response)
 	{
+		case ResNONE:		return;
 		case ResOK:			string="OK"; code=0; break;
 		case ResERROR:		string="ERROR"; code=4; break;
 		case ResRING:		string="RING"; code=2; break;
 		case ResNODIALTONE: string="NO DIALTONE"; code=6; break;
 		case ResNOCARRIER:	string="NO CARRIER" ;code=3; break;
 		case ResCONNECT:	string="CONNECT 57600"; code=1; break;
-		case ResNONE:
-		default:			return;
 	}
 	
 	if(doresponse!=1) {
@@ -272,7 +270,7 @@ void CSerialModem::EnterIdleState(void){
 	}
 	// get rid of everything
 	if(serversocket) {
-		while((waitingclientsocket=serversocket->Accept()))
+		while(waitingclientsocket=serversocket->Accept())
 			delete waitingclientsocket;
 	} else if (listenport) {
 		
@@ -364,18 +362,23 @@ void CSerialModem::DoCommand() {
 				helper[0]=0;
 				helper--;
 			}
+
+			//Large enough scope, so the buffers are still valid when reaching Dail.
+			char buffer[128];
+			char obuffer[128];
 			if (strlen(foundstr) >= 12) {
 				// Check if supplied parameter only consists of digits
 				bool isNum = true;
-				for (Bitu i=0; i<strlen(foundstr); i++)
+				size_t fl = strlen(foundstr);
+				for (size_t i = 0; i < fl; i++)
 					if (foundstr[i] < '0' || foundstr[i] > '9') isNum = false;
 				if (isNum) {
 					// Parameter is a number with at least 12 digits => this cannot
 					// be a valid IP/name
 					// Transform by adding dots
-					char buffer[128];
-					Bitu j = 0;
-					for (Bitu i=0; i<strlen(foundstr); i++) {
+					size_t j = 0;
+					size_t foundlen = strlen(foundstr);
+					for (size_t i = 0; i < foundlen; i++) {
 						buffer[j++] = foundstr[i];
 						// Add a dot after the third, sixth and ninth number
 						if (i == 2 || i == 5 || i == 8)
@@ -387,6 +390,19 @@ void CSerialModem::DoCommand() {
 					}
 					buffer[j] = 0;
 					foundstr = buffer;
+
+					// Remove Zeros from beginning of octets
+					size_t k = 0;
+					size_t foundlen2 = strlen(foundstr);
+					for (size_t i = 0; i < foundlen2; i++) {
+						if (i == 0 && foundstr[0] == '0') continue;
+						if (i == 1 && foundstr[0] == '0' && foundstr[1] == '0') continue;
+						if (foundstr[i] == '0' && foundstr[i-1] == '.') continue;
+						if (foundstr[i] == '0' && foundstr[i-1] == '0' && foundstr[i-2] == '.') continue;
+						obuffer[k++] = foundstr[i];
+						}
+					obuffer[k] = 0;
+					foundstr = obuffer;
 				}
 			}
 			Dial(foundstr);
@@ -394,8 +410,8 @@ void CSerialModem::DoCommand() {
 		}
 		case 'I': // Some strings about firmware
 			switch (ScanNumber(scanbuf)) {
-			case 3: SendLine("DosBox Emulated Modem Firmware V1.00"); break;
-			case 4: SendLine("Modem compiled for DosBox version " VERSION); break;
+			case 3: SendLine("DOSBox Emulated Modem Firmware V1.00"); break;
+			case 4: SendLine("Modem compiled for DOSBox version " VERSION); break;
 			}
 			break;
 		case 'E': // Echo on/off
@@ -649,7 +665,7 @@ void CSerialModem::TelnetEmulation(Bit8u * data, Bitu size) {
 
 void CSerialModem::Timer2(void) {
 
-	//unsigned long args = 1;
+	unsigned long args = 1;
 	bool sendbyte = true;
 	Bitu usesize;
 	Bit8u txval;
@@ -784,8 +800,8 @@ void CSerialModem::setBreak(bool) {
 	// TODO: handle this
 }
 
-void CSerialModem::setRTSDTR(bool _rts, bool _dtr) {
-	setDTR(_dtr);
+void CSerialModem::setRTSDTR(bool rts, bool dtr) {
+	setDTR(dtr);
 }
 void CSerialModem::setRTS(bool val) {
 	

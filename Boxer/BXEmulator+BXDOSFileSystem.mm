@@ -283,8 +283,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 			if (!isImage && driveLabel)
 			{
 				const char *cLabel = [driveLabel cStringUsingEncoding: BXDirectStringEncoding];
-				if (cLabel)
-					DOSBoxDrive->SetLabel(cLabel, drive.isCDROM, false);
+                if (cLabel) {
+					//DOSBoxDrive->SetLabel(cLabel, drive.isCDROM, false);
+                }
 			}
 			
 			//Populate the drive with the settings we ended up using, and add the drive to our own drives cache
@@ -527,7 +528,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     //Otherwise, ask the drive itself
     const char *cPath = [dosPath cStringUsingEncoding: BXDirectStringEncoding];
     
-    return dosDrive->FileExists(cPath) || dosDrive->TestDir(cPath);
+    return dosDrive->FileExists(cPath) || dosDrive->TestDir((char*)cPath);
 }
 
 - (BXDrive *) currentDrive
@@ -783,7 +784,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
             //FIXME: getShortName will always fail for ISO9660 images, which do not (cannot) track long
             //filenames but instead use the ISO filesystem's names. To correctly resolve the paths that
             //OS X sees, we would need to be able to compare ISO vs Joliet names in the image's filesystem.
-			hasShortName = DOSBoxDrive->getShortName(cDirPath, cFileName, buffer);
+            hasShortName = YES;//DOSBoxDrive->getShortName(cDirPath, cFileName, buffer);
 		}
         
 		if (hasShortName)
@@ -973,7 +974,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
             //Tell the file that its backing media may become unavailable.
             //(Currently only necessary for files with a folder or volume backing,
             //but harmless for others.)
-            origFile->willBecomeUnavailable();
+            //origFile->willBecomeUnavailable();
         }
     }
 }
@@ -997,7 +998,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 		}
 		else
 		{
-            NSString *drivePath = [NSString stringWithCString: dosboxDrive->getSystemPath()
+            NSString *drivePath = [NSString stringWithCString: "bleh"//dosboxDrive->getSystemPath()
                                                      encoding: BXDirectStringEncoding];
             
             NSURL *driveURL, *baseURL = self.baseURL;

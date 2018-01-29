@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: memory.cpp,v 1.56 2009-05-27 09:15:41 qbix79 Exp $ */
 
 #include "dosbox.h"
 #include "mem.h"
@@ -74,7 +73,7 @@ public:
 			LOG_MSG("Illegal read from %x, CS:IP %8x:%8x",addr,SegValue(cs),reg_eip);
 		}
 #endif
-		return 0;
+		return 0xff;
 	} 
 	void writeb(PhysPt addr,Bitu val) {
 #if C_DEBUG
@@ -428,15 +427,17 @@ void MEM_A20_Enable(bool enabled) {
 
 /* Memory access functions */
 Bit16u mem_unalignedreadw(PhysPt address) {
-	return mem_readb_inline(address) |
-		mem_readb_inline(address+1) << 8;
+	Bit16u ret = mem_readb_inline(address);
+	ret       |= mem_readb_inline(address+1) << 8;
+	return ret;
 }
 
 Bit32u mem_unalignedreadd(PhysPt address) {
-	return mem_readb_inline(address) |
-		(mem_readb_inline(address+1) << 8) |
-		(mem_readb_inline(address+2) << 16) |
-		(mem_readb_inline(address+3) << 24);
+	Bit32u ret = mem_readb_inline(address);
+	ret       |= mem_readb_inline(address+1) << 8;
+	ret       |= mem_readb_inline(address+2) << 16;
+	ret       |= mem_readb_inline(address+3) << 24;
+	return ret;
 }
 
 

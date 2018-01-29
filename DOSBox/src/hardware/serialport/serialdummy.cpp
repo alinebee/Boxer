@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: serialdummy.cpp,v 1.5 2009-05-27 09:15:41 qbix79 Exp $ */
 
 #include "dosbox.h"
 
@@ -85,9 +84,9 @@ void CSerialDummy::setBreak(bool value) {
 /*****************************************************************************/
 /* setRTSDTR sets the modem control lines                                   **/
 /*****************************************************************************/
-void CSerialDummy::setRTSDTR(bool _rts, bool _dtr) {
-	setRTS(_rts);
-	setDTR(_dtr);
+void CSerialDummy::setRTSDTR(bool rts, bool dtr) {
+	setRTS(rts);
+	setDTR(dtr);
 }
 void CSerialDummy::setRTS(bool val) {
 #ifdef CHECKIT_TESTPLUG

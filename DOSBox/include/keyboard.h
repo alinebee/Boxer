@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -53,5 +53,5 @@ typedef enum KBD_KEYS KBD_KEYS;
 
 void KEYBOARD_ClrBuffer(void);
 void KEYBOARD_AddKey(KBD_KEYS keytype,bool pressed);
- 
+
 #endif

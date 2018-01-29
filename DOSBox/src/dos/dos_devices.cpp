@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dos_devices.cpp,v 1.22 2009-05-27 09:15:41 qbix79 Exp $ */ 
 
 #include <string.h>
 #include "dosbox.h"
@@ -26,7 +25,6 @@
 #include "bios.h"
 #include "dos_inc.h"
 #include "support.h"
-#include "parport.h"
 #include "drives.h" //Wildcmp
 /* Include all the devices */
 
@@ -39,8 +37,7 @@ class device_NUL : public DOS_Device {
 public:
 	device_NUL() { SetName("NUL"); };
 	virtual bool Read(Bit8u * data,Bit16u * size) {
-		for(Bitu i = 0; i < *size;i++) 
-			data[i]=0; 
+		*size = 0; //Return success and no data read. 
 		LOG(LOG_IOCTL,LOG_NORMAL)("%s:READ",GetName());
 		return true;
 	}
@@ -58,39 +55,14 @@ public:
 	virtual bool WriteToControlChannel(PhysPt bufptr,Bit16u size,Bit16u * retcode){return false;}
 };
 
-class device_PRN : public DOS_Device {
+class device_LPT1 : public device_NUL {
 public:
-	device_PRN() {
-		SetName("PRN");
-	}
-	bool Read(Bit8u * data,Bit16u * size) {
-		*size=0;
-		LOG(LOG_DOSMISC,LOG_NORMAL)("PRNDEVICE:Read called");
-		return true;
-	}
-	bool Write(Bit8u * data,Bit16u * size) {
-		for(int i = 0; i < 3; i++) {
-			// look up a parallel port
-			if(parallelPortObjects[i] != NULL) {
-				// send the data
-				for (Bit16u j=0; j<*size; j++) {
-					if(!parallelPortObjects[i]->Putchar(data[j])) return false;
-				}
-				return true;
-			}
-		}
+   	device_LPT1() { SetName("LPT1");}
+	Bit16u GetInformation(void) { return 0x80A0; }
+	bool Read(Bit8u* data,Bit16u * size){
+		DOS_SetError(DOSERR_ACCESS_DENIED);
 		return false;
-	}
-	bool Seek(Bit32u * pos,Bit32u type) {
-		*pos = 0;
-		return true;
-	}
-	Bit16u GetInformation(void) {
-		return 0x80A0;
-	}
-	bool Close() {
-		return false;
-	}
+	}	
 };
 
 bool DOS_Device::Read(Bit8u * data,Bit16u * size) {
@@ -128,6 +100,7 @@ DOS_File::DOS_File(const DOS_File& orig) {
 	attr=orig.attr;
 	refCtr=orig.refCtr;
 	open=orig.open;
+	hdrive=orig.hdrive;
 	name=0;
 	if(orig.name) {
 		name=new char [strlen(orig.name) + 1];strcpy(name,orig.name);
@@ -141,6 +114,7 @@ DOS_File & DOS_File::operator= (const DOS_File & orig) {
 	attr=orig.attr;
 	refCtr=orig.refCtr;
 	open=orig.open;
+	hdrive=orig.hdrive;
 	if(name) {
 		delete [] name; name=0;
 	}
@@ -217,6 +191,6 @@ void DOS_SetupDevices(void) {
 	newdev2=new device_NUL();
 	DOS_AddDevice(newdev2);
 	DOS_Device * newdev3;
-	newdev3=new device_PRN();
+	newdev3=new device_LPT1();
 	DOS_AddDevice(newdev3);
 }

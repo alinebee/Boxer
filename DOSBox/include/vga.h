@@ -1,5 +1,5 @@
  /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: vga.h,v 1.48 2009-11-03 21:06:59 h-a-l-9000 Exp $ */
 
 #ifndef DOSBOX_VGA_H
 #define DOSBOX_VGA_H
@@ -113,8 +112,8 @@ typedef struct {
 
 typedef enum {
 	PART,
-	LINE,
-	//EGALINE
+	DRAWLINE,
+	EGALINE
 } Drawmode;
 
 typedef struct {
@@ -157,6 +156,8 @@ typedef struct {
 	Bit8u font[64*1024];
 	Bit8u * font_tables[2];
 	Bitu blinking;
+	bool blink;
+	bool char9dot;
 	struct {
 		Bitu address;
 		Bit8u sline,eline;
@@ -165,14 +166,15 @@ typedef struct {
 	} cursor;
 	Drawmode mode;
 	bool vret_triggered;
+	bool vga_override;
 } VGA_Draw;
 
 typedef struct {
 	Bit8u curmode;
 	Bit16u originx, originy;
 	Bit8u fstackpos, bstackpos;
-	Bit8u forestack[3];
-	Bit8u backstack[3];
+	Bit8u forestack[4];
+	Bit8u backstack[4];
 	Bit16u startaddr;
 	Bit8u posx, posy;
 	Bit8u mc[64][64];
@@ -425,6 +427,10 @@ void VGA_DAC_CombineColor(Bit8u attr,Bit8u pal);
 void VGA_DAC_SetEntry(Bitu entry,Bit8u red,Bit8u green,Bit8u blue);
 void VGA_ATTR_SetPalette(Bit8u index,Bit8u val);
 
+typedef enum {CGA, EGA, MONO} EGAMonitorMode;
+
+void VGA_ATTR_SetEGAMonitorPalette(EGAMonitorMode m);
+
 /* The VGA Subfunction startups */
 void VGA_SetupAttr(void);
 void VGA_SetupMemory(Section* sec);
@@ -446,6 +452,8 @@ void VGA_SetCGA2Table(Bit8u val0,Bit8u val1);
 void VGA_SetCGA4Table(Bit8u val0,Bit8u val1,Bit8u val2,Bit8u val3);
 void VGA_ActivateHardwareCursor(void);
 void VGA_KillDrawing(void);
+
+void VGA_SetOverride(bool vga_override);
 
 extern VGA_Type vga;
 

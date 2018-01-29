@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,12 +16,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dos_memory.cpp,v 1.45 2009-07-15 17:05:07 c2woody Exp $ */
 
 #include "dosbox.h"
 #include "mem.h"
 #include "dos_inc.h"
-#include "callback.h"
 
 #define UMB_START_SEG 0x9fff
 
@@ -31,14 +29,11 @@ static void DOS_CompressMemory(void) {
 	Bit16u mcb_segment=dos.firstMCB;
 	DOS_MCB mcb(mcb_segment);
 	DOS_MCB mcb_next(0);
-    
-    //--Modified 2013-03-24 by Alun Bestor: safer loop in case the MCB chain
-    //has gotten corrupted. See note below under DOS_FreeProcessMemory for explanation.
-	//while (mcb.GetType()!=0x5a) {
-    while (mcb.GetType() == 0x4d) {
-    //--End of modifications
-    	mcb_next.SetPt((Bit16u)(mcb_segment+mcb.GetSize()+1));
-		if ((mcb.GetPSPSeg()==0) && (mcb_next.GetPSPSeg()==0)) {
+
+	while (mcb.GetType()!=0x5a) {
+		mcb_next.SetPt((Bit16u)(mcb_segment+mcb.GetSize()+1));
+		if (GCC_UNLIKELY((mcb_next.GetType()!=0x4d) && (mcb_next.GetType()!=0x5a))) E_Exit("Corrupt MCB chain");
+		if ((mcb.GetPSPSeg()==MCB_FREE) && (mcb_next.GetPSPSeg()==MCB_FREE)) {
 			mcb.SetSize(mcb.GetSize()+mcb_next.GetSize()+1);
 			mcb.SetType(mcb_next.GetType());
 		} else {
@@ -55,24 +50,15 @@ void DOS_FreeProcessMemory(Bit16u pspseg) {
 		if (mcb.GetPSPSeg()==pspseg) {
 			mcb.SetPSPSeg(MCB_FREE);
 		}
-        //--Modified 2013-03-24 by Alun Bestor: previous versions looped through the MCBs
-        //until they found the one explicitly marked as the last entry, but it seems at least
-        //Tyrian 2000 was occasionally fucking up the MCB chain such that the last entry
-        //isn't marked as such, causing an infinite loop.
-        //This was changed to check instead if the MCB is *not* marked as an intermediate MCB,
-        //which should break out safely in the case of memory corruption.
-        Bit8u mcbType = mcb.GetType();
-		//if (mcb.GetType()==0x5a) {
-        if (mcbType != 0x4d) {
+		if (mcb.GetType()==0x5a) {
 			/* check if currently last block reaches up to the PCJr graphics memory */
-			if (mcbType == 0x5a && (machine==MCH_PCJR) && (mcb_segment+mcb.GetSize()==0x17fe) &&
+			if ((machine==MCH_PCJR) && (mcb_segment+mcb.GetSize()==0x17fe) &&
 			   (real_readb(0x17ff,0)==0x4d) && (real_readw(0x17ff,1)==8)) {
 				/* re-enable the memory past segment 0x2000 */
 				mcb.SetType(0x4d);
 			} else break;
 		}
-        //--End of modifications
-        
+		if (GCC_UNLIKELY(mcb.GetType()!=0x4d)) E_Exit("Corrupt MCB chain");
 		mcb_segment+=mcb.GetSize()+1;
 		mcb.SetPt(mcb_segment);
 	}
@@ -126,7 +112,7 @@ bool DOS_AllocateMemory(Bit16u * segment,Bit16u * blocks) {
 	Bit16u found_seg=0,found_seg_size=0;
 	for (;;) {
 		mcb.SetPt(mcb_segment);
-		if (mcb.GetPSPSeg()==0) {
+		if (mcb.GetPSPSeg()==MCB_FREE) {
 			/* Check for enough free memory in current block */
 			Bit16u block_size=mcb.GetSize();			
 			if (block_size<(*blocks)) {
@@ -260,6 +246,7 @@ bool DOS_ResizeMemory(Bit16u segment,Bit16u * blocks) {
 		mcb_new_next.SetSize(total-*blocks-1);
 		mcb_new_next.SetPSPSeg(MCB_FREE);
 		mcb.SetPSPSeg(dos.psp());
+		DOS_CompressMemory();
 		return true;
 	}
 	/* MCB will grow, try to join with following MCB */
@@ -399,35 +386,18 @@ bool DOS_LinkUMBsToMemChain(Bit16u linkstate) {
 }
 
 
-static Bitu DOS_default_handler(void) {
-	LOG(LOG_CPU,LOG_ERROR)("DOS rerouted Interrupt Called %X",lastint);
-	return CBRET_NONE;
-}
-
-//--Modified 2009-12-20 by Alun Bestor to make callbackhandler a local instead of a static global,
-//to prevent CALLBACK_HandlerObject.Allocate dying with an already-installed error after shutdown-and-restart.
-//I have no idea whether this is breaking the callback or not, nor any idea how to simply 'null' this given
-//it's not a pointer. C++ noob.
-
-//static	CALLBACK_HandlerObject callbackhandler;
 void DOS_SetupMemory(void) {
 	/* Let dos claim a few bios interrupts. Makes DOSBox more compatible with 
 	 * buggy games, which compare against the interrupt table. (probably a 
 	 * broken linked list implementation) */
-	CALLBACK_HandlerObject callbackhandler;
-//--End of modifications
-	callbackhandler.Allocate(&DOS_default_handler,"DOS default int");
 	Bit16u ihseg = 0x70;
 	Bit16u ihofs = 0x08;
-	real_writeb(ihseg,ihofs+0x00,(Bit8u)0xFE);	//GRP 4
-	real_writeb(ihseg,ihofs+0x01,(Bit8u)0x38);	//Extra Callback instruction
-	real_writew(ihseg,ihofs+0x02,callbackhandler.Get_callback());  //The immediate word
-	real_writeb(ihseg,ihofs+0x04,(Bit8u)0xCF);	//An IRET Instruction
+	real_writeb(ihseg,ihofs,(Bit8u)0xCF);		//An IRET Instruction
 	RealSetVec(0x01,RealMake(ihseg,ihofs));		//BioMenace (offset!=4)
 	RealSetVec(0x02,RealMake(ihseg,ihofs));		//BioMenace (segment<0x8000)
 	RealSetVec(0x03,RealMake(ihseg,ihofs));		//Alien Incident (offset!=0)
 	RealSetVec(0x04,RealMake(ihseg,ihofs));		//Shadow President (lower byte of segment!=0)
-//	RealSetVec(0x0f,RealMake(ihseg,ihofs));		//Always a tricky one (soundblaster irq)
+	RealSetVec(0x0f,RealMake(ihseg,ihofs));		//Always a tricky one (soundblaster irq)
 
 	// Create a dummy device MCB with PSPSeg=0x0008
 	DOS_MCB mcb_devicedummy((Bit16u)DOS_MEM_START);
@@ -457,7 +427,7 @@ void DOS_SetupMemory(void) {
 	if (machine==MCH_TANDY) {
 		/* memory up to 608k available, the rest (to 640k) is used by
 			the tandy graphics system's variable mapping of 0xb800 */
-		mcb.SetSize(0x97FF - DOS_MEM_START - mcb_sizes);
+		mcb.SetSize(0x9BFF - DOS_MEM_START - mcb_sizes);
 	} else if (machine==MCH_PCJR) {
 		/* memory from 128k to 640k is available */
 		mcb_devicedummy.SetPt((Bit16u)0x2000);

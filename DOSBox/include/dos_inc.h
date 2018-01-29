@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dos_inc.h,v 1.83 2009-10-28 21:45:12 qbix79 Exp $ */
 
 #ifndef DOSBOX_DOS_INC_H
 #define DOSBOX_DOS_INC_H
@@ -27,6 +26,8 @@
 #ifndef DOSBOX_MEM_H
 #include "mem.h"
 #endif
+
+#include <stddef.h> //for offsetof
 
 #ifdef _MSC_VER
 #pragma pack (1)
@@ -109,19 +110,19 @@ enum { HAND_NONE=0,HAND_FILE,HAND_DEVICE};
 
 /* Routines for File Class */
 void DOS_SetupFiles (void);
-bool DOS_ReadFile(Bit16u handle,Bit8u * data,Bit16u * amount);
-bool DOS_WriteFile(Bit16u handle,Bit8u * data,Bit16u * amount);
-bool DOS_SeekFile(Bit16u handle,Bit32u * pos,Bit32u type);
-bool DOS_CloseFile(Bit16u handle);
+bool DOS_ReadFile(Bit16u handle,Bit8u * data,Bit16u * amount, bool fcb = false);
+bool DOS_WriteFile(Bit16u handle,Bit8u * data,Bit16u * amount,bool fcb = false);
+bool DOS_SeekFile(Bit16u handle,Bit32u * pos,Bit32u type,bool fcb = false);
+bool DOS_CloseFile(Bit16u handle,bool fcb = false);
 bool DOS_FlushFile(Bit16u handle);
 bool DOS_DuplicateEntry(Bit16u entry,Bit16u * newentry);
 bool DOS_ForceDuplicateEntry(Bit16u entry,Bit16u newentry);
 bool DOS_GetFileDate(Bit16u entry, Bit16u* otime, Bit16u* odate);
 
 /* Routines for Drive Class */
-bool DOS_OpenFile(char const * name,Bit8u flags,Bit16u * entry);
+bool DOS_OpenFile(char const * name,Bit8u flags,Bit16u * entry,bool fcb = false);
 bool DOS_OpenFileExtended(char const * name, Bit16u flags, Bit16u createAttr, Bit16u action, Bit16u *entry, Bit16u* status);
-bool DOS_CreateFile(char const * name,Bit16u attribute,Bit16u * entry);
+bool DOS_CreateFile(char const * name,Bit16u attribute,Bit16u * entry, bool fcb = false);
 bool DOS_UnlinkFile(char const * const name);
 bool DOS_FindFirst(char *search,Bit16u attr,bool fcb_findfirst=false);
 bool DOS_FindNext(void);
@@ -176,8 +177,8 @@ bool DOS_FCBFindFirst(Bit16u seg,Bit16u offset);
 bool DOS_FCBFindNext(Bit16u seg,Bit16u offset);
 Bit8u DOS_FCBRead(Bit16u seg,Bit16u offset, Bit16u numBlocks);
 Bit8u DOS_FCBWrite(Bit16u seg,Bit16u offset,Bit16u numBlocks);
-Bit8u DOS_FCBRandomRead(Bit16u seg,Bit16u offset,Bit16u numRec,bool restore);
-Bit8u DOS_FCBRandomWrite(Bit16u seg,Bit16u offset,Bit16u numRec,bool restore);
+Bit8u DOS_FCBRandomRead(Bit16u seg,Bit16u offset,Bit16u * numRec,bool restore);
+Bit8u DOS_FCBRandomWrite(Bit16u seg,Bit16u offset,Bit16u * numRec,bool restore);
 bool DOS_FCBGetFileSize(Bit16u seg,Bit16u offset);
 bool DOS_FCBDeleteFile(Bit16u seg,Bit16u offset);
 bool DOS_FCBRenameFile(Bit16u seg, Bit16u offset);
@@ -500,13 +501,16 @@ public:
 	void GetRecord(Bit16u & _cur_block,Bit8u & _cur_rec);
 	void SetRecord(Bit16u _cur_block,Bit8u _cur_rec);
 	void GetSeqData(Bit8u & _fhandle,Bit16u & _rec_size);
+	void SetSeqData(Bit8u _fhandle,Bit16u _rec_size);
 	void GetRandom(Bit32u & _random);
 	void SetRandom(Bit32u  _random);
 	Bit8u GetDrive(void);
 	bool Extended(void);
 	void GetAttr(Bit8u & attr);
 	void SetAttr(Bit8u attr);
+	void SetResult(Bit32u size,Bit16u date,Bit16u time,Bit8u attr);
 	bool Valid(void);
+	void ClearBlockRecsize(void);
 private:
 	bool extended;
 	PhysPt real_pt;
@@ -526,6 +530,8 @@ private:
 		Bit8u sft_entries;
 		Bit8u share_attributes;
 		Bit8u extra_info;
+		/* Maybe swap file_handle and sft_entries now that fcbs 
+		 * aren't stored in the psp filetable anymore */
 		Bit8u file_handle;
 		Bit8u reserved[4];
 		/* end */
@@ -620,6 +626,7 @@ struct DOS_Block {
 	bool verify;
 	bool breakcheck;
 	bool echo;          // if set to true dev_con::read will echo input 
+	bool direct_output;
 	struct  {
 		RealPt mediaid;
 		RealPt tempdta;
@@ -636,7 +643,7 @@ struct DOS_Block {
 
 extern DOS_Block dos;
 
-static Bit8u RealHandle(Bit16u handle) {
+static INLINE Bit8u RealHandle(Bit16u handle) {
 	DOS_PSP psp(dos.psp());	
 	return psp.GetFileHandle(handle);
 }

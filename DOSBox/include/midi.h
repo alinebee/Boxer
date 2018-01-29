@@ -1,4 +1,4 @@
- /*
+/*
  *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -16,25 +16,45 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef DOSBOX_MAPPER_H
-#define DOSBOX_MAPPER_H
 
-enum MapKeys {
-	MK_f1,MK_f2,MK_f3,MK_f4,MK_f5,MK_f6,MK_f7,MK_f8,MK_f9,MK_f10,MK_f11,MK_f12,
-	MK_return,MK_kpminus,MK_scrolllock,MK_printscreen,MK_pause,MK_home
+#ifndef DOSBOX_MIDI_H
+#define DOSBOX_MIDI_H
 
+#ifndef DOSBOX_PROGRAMS_H
+#include "programs.h"
+#endif
+
+class MidiHandler {
+public:
+	MidiHandler();
+	virtual bool Open(const char * /*conf*/) { return true; };
+	virtual void Close(void) {};
+	virtual void PlayMsg(Bit8u * /*msg*/) {};
+	virtual void PlaySysex(Bit8u * /*sysex*/,Bitu /*len*/) {};
+	virtual const char * GetName(void) { return "none"; };
+	virtual void ListAll(Program * base) {};
+	virtual ~MidiHandler() { };
+	MidiHandler * next;
 };
 
-typedef void (MAPPER_Handler)(bool pressed);
-void MAPPER_AddHandler(MAPPER_Handler * handler,MapKeys key,Bitu mods,char const * const eventname,char const * const buttonname);
-void MAPPER_Init(void);
-void MAPPER_StartUp(Section * sec);
-void MAPPER_Run(bool pressed);
-void MAPPER_RunInternal();
-void MAPPER_LosingFocus(void);
 
+#define SYSEX_SIZE 8192
+struct DB_Midi {
+	Bitu status;
+	Bitu cmd_len;
+	Bitu cmd_pos;
+	Bit8u cmd_buf[8];
+	Bit8u rt_buf[8];
+	struct {
+		Bit8u buf[SYSEX_SIZE];
+		Bitu used;
+		Bitu delay;
+		Bit32u start;
+	} sysex;
+	bool available;
+	MidiHandler * handler;
+};
 
-#define MMOD1 0x1
-#define MMOD2 0x2
+extern DB_Midi midi;
 
 #endif

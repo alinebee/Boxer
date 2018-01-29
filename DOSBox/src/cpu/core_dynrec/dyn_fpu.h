@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dyn_fpu.h,v 1.8 2009-09-23 20:55:19 c2woody Exp $ */
 
 
 #include "dosbox.h"
@@ -535,7 +534,7 @@ static void dyn_fpu_esc5(){
 			gen_mov_word_to_reg(FC_OP1,(void*)(&TOP),true);
 			gen_call_function_R((void*)&FPU_SET_TOP,FC_OP1);
 			dyn_fill_ea(FC_OP1); 
-			gen_mov_word_to_reg(FC_OP2,(void*)(&fpu.sw),true);
+			gen_mov_word_to_reg(FC_OP2,(void*)(&fpu.sw),false);
 			gen_call_function_RR((void*)&mem_writew,FC_OP1,FC_OP2);
 			break;
 		default:

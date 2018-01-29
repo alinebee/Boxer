@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -64,7 +64,11 @@ TCPClientSocket::TCPClientSocket(int platformsocket) {
 	((struct _TCPsocketX*)nativetcpstruct)->sflag=0;
 	((struct _TCPsocketX*)nativetcpstruct)->channel=(SOCKET) platformsocket;
 	sockaddr_in		sa;
+#ifdef OS2
+	int			sz;
+#else
 	socklen_t		sz;
+#endif
 	sz=sizeof(sa);
 	if(getpeername(platformsocket, (sockaddr *)(&sa), &sz)==0) {
 		((struct _TCPsocketX*)nativetcpstruct)->
@@ -223,7 +227,7 @@ bool TCPClientSocket::Putchar(Bit8u data) {
 }
 
 bool TCPClientSocket::SendArray(Bit8u* data, Bitu bufsize) {
-	if(SDLNet_TCP_Send(mysock, data, bufsize)!=(int)bufsize) {
+	if(SDLNet_TCP_Send(mysock, data, bufsize)!=bufsize) {
 		isopen=false;
 		return false;
 	}
@@ -237,7 +241,7 @@ bool TCPClientSocket::SendByteBuffered(Bit8u data) {
 		sendbuffer[sendbufferindex]=data;
 		sendbufferindex=0;
 		
-		if(SDLNet_TCP_Send(mysock, sendbuffer, sendbuffersize)!=(int)sendbuffersize) {
+		if(SDLNet_TCP_Send(mysock, sendbuffer, sendbuffersize)!=sendbuffersize) {
 			isopen=false;
 			return false;
 		}
@@ -269,7 +273,7 @@ bool TCPClientSocket::SendArrayBuffered(Bit8u* data, Bitu bufsize) {
 void TCPClientSocket::FlushBuffer() {
 	if(sendbufferindex) {
 		if(SDLNet_TCP_Send(mysock, sendbuffer,
-			sendbufferindex)!=(int)sendbufferindex) {
+			sendbufferindex)!=sendbufferindex) {
 			isopen=false;
 			return;
 		}

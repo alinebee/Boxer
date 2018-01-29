@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: keyboard.cpp,v 1.41 2009-05-27 09:15:41 qbix79 Exp $ */
 
 #include "dosbox.h"
 #include "keyboard.h"
@@ -54,8 +53,6 @@ static struct {
 	bool active;
 	bool scanning;
 	bool scheduled;
-	bool leftctrl_pressed;
-	bool rightctrl_pressed;
 } keyb;
 
 static void KEYBOARD_SetPort60(Bit8u val) {
@@ -262,10 +259,7 @@ void KEYBOARD_AddKey(KBD_KEYS keytype,bool pressed) {
 	case KBD_leftbracket:ret=26;break;
 	case KBD_rightbracket:ret=27;break;
 	case KBD_enter:ret=28;break;
-	case KBD_leftctrl:
-		ret=29;
-		keyb.leftctrl_pressed=pressed;
-		break;
+	case KBD_leftctrl:ret=29;break;
 
 	case KBD_a:ret=30;break;
 	case KBD_s:ret=31;break;
@@ -334,10 +328,7 @@ void KEYBOARD_AddKey(KBD_KEYS keytype,bool pressed) {
 	//The Extended keys
 
 	case KBD_kpenter:extend=true;ret=28;break;
-	case KBD_rightctrl:
-		extend=true;ret=29;
-		keyb.rightctrl_pressed=pressed;
-		break;
+	case KBD_rightctrl:extend=true;ret=29;break;
 	case KBD_kpdivide:extend=true;ret=53;break;
 	case KBD_rightalt:extend=true;ret=56;break;
 	case KBD_home:extend=true;ret=71;break;
@@ -351,32 +342,15 @@ void KEYBOARD_AddKey(KBD_KEYS keytype,bool pressed) {
 	case KBD_insert:extend=true;ret=82;break;
 	case KBD_delete:extend=true;ret=83;break;
 	case KBD_pause:
-		if (!pressed) {
-			/* keyboards send both make&break codes for this key on
-			   key press and nothing on key release */
-			return;
-		}
-		if (!keyb.leftctrl_pressed && !keyb.rightctrl_pressed) {
-			/* neither leftctrl, nor rightctrl pressed -> PAUSE key */
-			KEYBOARD_AddBuffer(0xe1);
-			KEYBOARD_AddBuffer(29);
-			KEYBOARD_AddBuffer(69);
-			KEYBOARD_AddBuffer(0xe1);
-			KEYBOARD_AddBuffer(29|0x80);
-			KEYBOARD_AddBuffer(69|0x80);
-		} else if (!keyb.leftctrl_pressed || !keyb.rightctrl_pressed) {
-			/* exactly one of [leftctrl, rightctrl] is pressed -> Ctrl+BREAK */
-			KEYBOARD_AddBuffer(0xe0);
-			KEYBOARD_AddBuffer(70);
-			KEYBOARD_AddBuffer(0xe0);
-			KEYBOARD_AddBuffer(70|0x80);
-		}
-		/* pressing this key also disables any previous key repeat */
-		keyb.repeat.key=KBD_NONE;
-		keyb.repeat.wait=0;
+		KEYBOARD_AddBuffer(0xe1);
+		KEYBOARD_AddBuffer(29|(pressed?0:0x80));
+		KEYBOARD_AddBuffer(69|(pressed?0:0x80));
 		return;
 	case KBD_printscreen:
-		/* Not handled yet. But usuable in mapper for special events */
+		KEYBOARD_AddBuffer(0xe0);
+		KEYBOARD_AddBuffer(42|(pressed?0:0x80));
+		KEYBOARD_AddBuffer(0xe0);
+		KEYBOARD_AddBuffer(55|(pressed?0:0x80));
 		return;
 	default:
 		E_Exit("Unsupported key press");
@@ -384,15 +358,18 @@ void KEYBOARD_AddKey(KBD_KEYS keytype,bool pressed) {
 	}
 	/* Add the actual key in the keyboard queue */
 	if (pressed) {
-		if (keyb.repeat.key==keytype) keyb.repeat.wait=keyb.repeat.rate;		
-		else keyb.repeat.wait=keyb.repeat.pause;
-		keyb.repeat.key=keytype;
+		if (keyb.repeat.key == keytype) keyb.repeat.wait = keyb.repeat.rate;		
+		else keyb.repeat.wait = keyb.repeat.pause;
+		keyb.repeat.key = keytype;
 	} else {
-		keyb.repeat.key=KBD_NONE;
-		keyb.repeat.wait=0;
-		ret+=128;
+		if (keyb.repeat.key == keytype) {
+			/* repeated key being released */
+			keyb.repeat.key  = KBD_NONE;
+			keyb.repeat.wait = 0;
+		}
+		ret += 128;
 	}
-	if (extend) KEYBOARD_AddBuffer(0xe0); 
+	if (extend) KEYBOARD_AddBuffer(0xe0);
 	KEYBOARD_AddBuffer(ret);
 }
 
@@ -421,7 +398,5 @@ void KEYBOARD_Init(Section* sec) {
 	keyb.repeat.pause=500;
 	keyb.repeat.rate=33;
 	keyb.repeat.wait=0;
-	keyb.leftctrl_pressed=false;
-	keyb.rightctrl_pressed=false;
 	KEYBOARD_ClrBuffer();
 }

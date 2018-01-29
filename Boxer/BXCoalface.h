@@ -42,7 +42,7 @@ extern "C" {
 	
 #pragma mark - Rendering
 	Bitu boxer_prepareForFrameSize(Bitu width, Bitu height, Bitu gfx_flags, double scalex, double scaley, GFX_CallBack_t callback);
-	bool boxer_startFrame(Bit8u **frameBuffer, Bitu *pitch);
+	bool boxer_startFrame(Bit8u * & frameBuffer, Bitu & pitch);
 	void boxer_finishFrame(const uint16_t *dirtyBlocks);
 	Bitu boxer_idealOutputMode(Bitu flags);
 	

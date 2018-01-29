@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: ipx.cpp,v 1.17 2009-05-27 09:15:41 qbix79 Exp $ */
 
 #include "dosbox.h"
 
@@ -434,7 +433,7 @@ static void handleIpxRequest(void) {
 		case 0x0006:	// cancel operation
 		{
 			RealPt ecbaddress = RealMake(SegValue(es),reg_si);
-			tmpECB= ECBList;
+			ECBClass* tmpECB= ECBList;
 			ECBClass* tmp2ECB;
 			while(tmpECB) {
 				tmp2ECB=tmpECB->nextECB;
@@ -936,7 +935,7 @@ public:
 			if(strcasecmp("startserver", temp_line.c_str()) == 0) {
 				if(!isIpxServer) {
 					if(incomingPacket.connected) {
-						WriteOut("IPX Tunneling Client alreadu connected to another server.  Disconnect first.\n");
+						WriteOut("IPX Tunneling Client already connected to another server.  Disconnect first.\n");
 						return;
 					}
 					bool startsuccess;

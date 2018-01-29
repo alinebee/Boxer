@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2010  The DOSBox Team
+ *  Copyright (C) 2002-2017  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: decoder.h,v 1.59 2009-10-18 17:52:09 c2woody Exp $ */
 
 #define X86_DYNFPU_DH_ENABLED
 #define X86_INLINED_MEMACCESS
@@ -1993,7 +1992,7 @@ static CacheBlock * CreateCacheBlock(CodePageHandler * codepage,PhysPt start,Bit
 /* Init a load of variables */
 	decode.code_start=start;
 	decode.code=start;
-	//Bitu cycles=0;
+	Bitu cycles=0;
 	decode.page.code=codepage;
 	decode.page.index=start&4095;
 	decode.page.wmap=codepage->write_map;
@@ -2104,7 +2103,9 @@ restart_prefix:
 			case 0xbf:dyn_mov_ev_gw(true);break;
 
 			default:
-				DYN_LOG("Unhandled dual opcode 0F%02X",dual_code);
+#if DYN_LOG
+				LOG_MSG("Unhandled dual opcode 0F%02X",dual_code);
+#endif
 				goto illegalopcode;
 			}
 		}break;
@@ -2670,11 +2671,13 @@ restart_prefix:
 			}}
 			break;
 		default:
-//			DYN_LOG("Dynamic unhandled opcode %X",opcode);
+#if DYN_LOG
+//			LOG_MSG("Dynamic unhandled opcode %X",opcode);
+#endif
 			goto illegalopcode;
 		}
 	}
-	// link to next block because the maximal number of opcodes has been reached
+	// link to next block because the maximum number of opcodes has been reached
 	dyn_set_eip_end();
 	dyn_reduce_cycles();
 	dyn_save_critical_regs();

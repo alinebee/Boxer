@@ -1,0 +1,37 @@
+﻿/*
+This translation file contains strings used by Boxer's extensions to the DOS shell.
+These have the same format and usage restrictions as the strings in DOSBox.strings: they can contain DOSBox colour codes and need to be written with a 80-column terminal screen in mind.
+*/
+
+"Shell Command Help" = "
+[33;1mGetting help:[0m
+[34;1mHELP[0m               Display this list of DOS commands.
+[34;1mDRIVES[0m             List the current DOS drives.
+[34;1mPROGRAMS[0m           List the executable programs in the current directory.
+
+[33;1mMoving around in DOS:[0m
+[34;1m[drive]:[0m           Change to the specified drive (e.g. C:, D:, Y:)
+[34;1mCD [directory][0m     Change to the specified directory.
+[34;1mDIR[0m                List the contents of the current directory.
+[34;1mREVEAL[0m             Show the current directory in OS X Finder.
+[34;1mREVEAL [directory][0m Show the specified DOS directory in OS X Finder.
+
+[33;1mUsing files:[0m
+[34;1mLAUNCH [program][0m   Find and run the specified program (wherever it may be.)
+[34;1mEDIT [document][0m    Open the specified document in a text editor.
+[34;1mPRINT [document][0m   Print the specified document to the emulated printer.
+
+[33;1mControlling DOS:[0m
+[34;1mNETWORK[0m            Host or join an IPX network session.
+[34;1mRESTART[0m            Restart DOS and relaunch any game you started with.
+[34;1mQUIT[0m               Close the DOS window.
+";
+
+"Mounting the %@ folder is not permitted." = "[31;1mMounting the [32;1m%@[31;1m folder is not permitted.[0m";
+
+"Currently mounted drives:" = "[33;1mCurrently mounted drives:[0m
+";
+
+"Windows-only game warning" = "[31;1m[32;1m%@[31;1m is a Windows program, which Boxer does not support.
+You may be able to run the program in a Windows emulator instead.[0m
+";

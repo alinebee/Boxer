@@ -1,0 +1,24 @@
+
+/* Class = "NSTextFieldCell"; title = "[Game name] Documentation"; ObjectID = "20"; */
+"20.title" = "[Game name] Documentation";
+
+/* Class = "NSTextFieldCell"; title = "[Documentation name]"; ObjectID = "26"; */
+"26.title" = "[Documentation name]";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "%{value1}@"; ObjectID = "38"; */
+"38.ibShadowedDisplayPattern" = "%{value1}@";
+
+/* Class = "NSMenuItem"; title = "Open"; ObjectID = "40"; */
+"40.title" = "Open";
+
+/* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "41"; */
+"41.title" = "Show in Finder";
+
+/* Class = "NSMenuItem"; title = "Remove from List"; ObjectID = "42"; */
+"42.title" = "Remove from List";
+
+/* Class = "NSTextFieldCell"; title = "Add more documentation by dropping it here."; ObjectID = "83"; */
+"83.title" = "Add more documentation by dropping it here.";
+
+/* Class = "NSMenuItem"; title = "Quick Look"; ObjectID = "94"; */
+"94.title" = "Quick Look";

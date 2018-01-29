@@ -1,0 +1,24 @@
+
+/* Class = "NSButtonCell"; title = "Finish importing"; ObjectID = "318"; */
+"318.title" = "Finish importing";
+
+/* Class = "NSButtonCell"; title = "Relaunch installer"; ObjectID = "382"; */
+"382.title" = "Relaunch installer";
+
+/* Class = "NSTextFieldCell"; title = "Has the installer finished setting up the game?"; ObjectID = "439"; */
+"439.title" = "Has the installer finished setting up the game?";
+
+/* Class = "NSTextFieldCell"; title = "If so, then we’re ready to finish importing."; ObjectID = "441"; */
+"441.title" = "If so, then we’re ready to finish importing.";
+
+/* Class = "NSTextFieldCell"; title = "If you’re asked where to install the game:"; ObjectID = "443"; */
+"443.title" = "If you’re asked where to install the game:";
+
+/* Class = "NSTextFieldCell"; title = "Select anywhere on Drive C."; ObjectID = "445"; */
+"445.title" = "Select anywhere on Drive C.";
+
+/* Class = "NSTextFieldCell"; title = "Select Sound Blaster 16 with IRQ 7."; ObjectID = "448"; */
+"448.title" = "Select Sound Blaster 16 with IRQ 7.";
+
+/* Class = "NSTextFieldCell"; title = "If you’re asked for soundcard settings:"; ObjectID = "449"; */
+"449.title" = "If you’re asked for soundcard settings:";

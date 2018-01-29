@@ -1,0 +1,21 @@
+
+/* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "2UC-FJ-HGt"; */
+"2UC-FJ-HGt.title" = "Show in Finder";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "%{value1}@ %{value2}@"; ObjectID = "7zw-z3-vbZ"; */
+"7zw-z3-vbZ.ibShadowedDisplayPattern" = "%{value1}@ %{value2}@";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "%{value1}@ %{value2}@"; ObjectID = "EJG-CK-zBh"; */
+"EJG-CK-zBh.ibShadowedDisplayPattern" = "%{value1}@ %{value2}@";
+
+/* Class = "NSMenuItem"; title = "Remove From List"; ObjectID = "MMw-2h-bxr"; */
+"MMw-2h-bxr.title" = "Remove From List";
+
+/* Class = "NSTextFieldCell"; title = "Program Title"; ObjectID = "h5A-l9-LVB"; */
+"h5A-l9-LVB.title" = "Program Title";
+
+/* Class = "NSTextFieldCell"; title = "C:\\PATH\\TO\\PROGRAM.EXE"; ObjectID = "kin-gu-pYe"; */
+"kin-gu-pYe.title" = "C:\\PATH\\TO\\PROGRAM.EXE";
+
+/* Class = "NSMenuItem"; title = "Launch"; ObjectID = "pQy-80-Czj"; */
+"pQy-80-Czj.title" = "Launch";

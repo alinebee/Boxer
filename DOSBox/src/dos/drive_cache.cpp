@@ -22,6 +22,10 @@
 #include "support.h"
 #include "cross.h"
 
+//--Added 2009-12-26 by Alun Bestor to allow Boxer to hook into DOSBox internals
+#include "BXCoalface.h"
+//--End of modifications
+
 // STL stuff
 #include <vector>
 #include <iterator>
@@ -690,6 +694,10 @@ bool DOS_Drive_Cache::OpenDir(CFileInfo* dir, const char* expand, Bit16u& id) {
 }
 
 void DOS_Drive_Cache::CreateEntry(CFileInfo* dir, const char* name, bool is_directory) {
+    //--Added 2009-12-26 by Alun Bestor to allow Boxer to hide OSX metadata files
+    if (!boxer_shouldShowFileWithName(name)) return;
+    //--End of modifications
+
 	CFileInfo* info = new CFileInfo;
 	strcpy(info->orgname, name);				
 	info->shortNr = 0;

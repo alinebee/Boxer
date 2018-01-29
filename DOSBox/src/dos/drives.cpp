@@ -111,11 +111,21 @@ void Set_Label(char const * const input, char * const output, bool cdrom) {
 DOS_Drive::DOS_Drive() {
 	curdir[0]=0;
 	info[0]=0;
+    //--Added 2009-10-25 by Alun Bestor to record the base system path for a drive
+    systempath[0]=0;
+    //--End of modifications
 }
 
 char * DOS_Drive::GetInfo(void) {
 	return info;
 }
+
+//--Added 2009-10-25 by Alun Bestor to retrieve the base system path for a drive
+char * DOS_Drive::getSystemPath(void) {
+    return systempath;
+}
+//--End of modifications
+
 
 // static members variables
 int DriveManager::currentDrive;

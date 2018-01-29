@@ -284,7 +284,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 			{
 				const char *cLabel = [driveLabel cStringUsingEncoding: BXDirectStringEncoding];
                 if (cLabel) {
-					//DOSBoxDrive->SetLabel(cLabel, drive.isCDROM, false);
+					DOSBoxDrive->SetLabel(cLabel, drive.isCDROM, false);
                 }
 			}
 			
@@ -784,7 +784,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
             //FIXME: getShortName will always fail for ISO9660 images, which do not (cannot) track long
             //filenames but instead use the ISO filesystem's names. To correctly resolve the paths that
             //OS X sees, we would need to be able to compare ISO vs Joliet names in the image's filesystem.
-            hasShortName = YES;//DOSBoxDrive->getShortName(cDirPath, cFileName, buffer);
+            hasShortName = DOSBoxDrive->getShortName(cDirPath, cFileName, buffer);
 		}
         
 		if (hasShortName)
@@ -974,7 +974,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
             //Tell the file that its backing media may become unavailable.
             //(Currently only necessary for files with a folder or volume backing,
             //but harmless for others.)
-            //origFile->willBecomeUnavailable();
+            origFile->willBecomeUnavailable();
         }
     }
 }
@@ -998,7 +998,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 		}
 		else
 		{
-            NSString *drivePath = [NSString stringWithCString: "bleh"//dosboxDrive->getSystemPath()
+            NSString *drivePath = [NSString stringWithCString: dosboxDrive->getSystemPath()
                                                      encoding: BXDirectStringEncoding];
             
             NSURL *driveURL, *baseURL = self.baseURL;

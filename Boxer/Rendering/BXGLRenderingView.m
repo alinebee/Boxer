@@ -550,7 +550,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	BXGLRenderingView *view = (__bridge BXGLRenderingView *)displayLinkContext;
     
     if (view.needsCVLinkDisplay && !view.inViewAnimation)
-        [view display];
+        [view performSelectorOnMainThread:@selector(display) withObject:nil waitUntilDone:NO];
     
     }
     return kCVReturnSuccess;

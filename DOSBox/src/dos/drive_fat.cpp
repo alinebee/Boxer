@@ -29,6 +29,10 @@
 #include "bios.h"
 #include "bios_disk.h"
 
+//--Added 2011-04-18 by Alun Bestor to fix FAT image endianness bugs
+#import "BXCoalfaceDrives.h"
+//--endif
+
 #define IMGTYPE_FLOPPY 0
 #define IMGTYPE_ISO    1
 #define IMGTYPE_HDD	   2
@@ -629,6 +633,10 @@ bool fatDrive::allocateCluster(Bit32u useCluster, Bit32u prevCluster) {
 }
 
 fatDrive::fatDrive(const char *sysFilename, Bit32u bytesector, Bit32u cylsector, Bit32u headscyl, Bit32u cylinders, Bit32u startSector) {
+    //--Added 2009-10-25 by Alun Bestor to allow Boxer to track the system path for DOSBox drives
+    strcpy(systempath, sysFilename);
+    //--End of modifications
+    
 	created_successfully = true;
 	FILE *diskfile;
 	Bit32u filesize;

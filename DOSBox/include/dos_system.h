@@ -78,6 +78,10 @@ public:
 	virtual void	AddRef()					{ refCtr++; };
 	virtual Bits	RemoveRef()					{ return --refCtr; };
 	virtual bool	UpdateDateTimeFromHost()	{ return true; }
+    //--Added 2011-11-03 by Alun Bestor to let Boxer inform open file handles
+    //that their physical backing media will be removed.
+    virtual void    willBecomeUnavailable()     { }
+    //--End of modifications
 	void SetDrive(Bit8u drv) { hdrive=drv;}
 	Bit8u GetDrive(void) { return hdrive;}
 	Bit32u flags;
@@ -128,6 +132,10 @@ public:
 	bool UpdateDateTimeFromHost(void);   
 	void FlagReadOnlyMedium(void);
 	void Flush(void);
+	//--Added 2011-11-03 by Alun Bestor to let Boxer inform open file handles
+	//that their physical backing media will be removed.
+	void willBecomeUnavailable(void);
+	//--End of modifications
 private:
 	FILE * fhandle;
 	bool read_only_medium;
@@ -259,6 +267,15 @@ public:
 	char info[256];
 	/* Can be overridden for example in iso images */
 	virtual char const * GetLabel(){return dirCache.GetLabel();};
+	virtual void SetLabel(const char *label, bool iscdrom, bool updatable) {};
+
+	//--Added 2009-10-25 by Alun Bestor to access the base system path for a drive
+	char systempath[CROSS_LEN];
+	virtual char * getSystemPath(void);
+
+	//Added 2010-12-11 by Alun Bestor to give Boxer the ability to do directory cache lookups
+	virtual bool getShortName(const char* dirpath, const char*filename, char* shortname) { return false; };
+	//--End of modifications
 
 	DOS_Drive_Cache dirCache;
 

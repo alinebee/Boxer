@@ -1,0 +1,660 @@
+﻿/*
+This translation file is based on Boxer 0.88's default DOSBox translation file. A bunch of redundant strings have been removed for ease of translation, and many descriptions have been rewritten with expanded examples.
+
+When translating, ensure that the strings wrap nicely to an 80-column display. DOS does not perform automatic word-wrapping, only character-wrapping.
+
+Strings should also end in a linebreak, unless they are used as a segment of another command.
+*/
+
+
+
+//CONFIG-related strings
+//----------------------
+
+"PROGRAM_CONFIG_USAGE" = "Usage:    [34;1mconfig -get [section] [property][0m
+          [34;1mconfig -set [section] [property] [value][0m
+		 
+Examples: [32;1mconfig -get cpu cycles[0m shows the current CPU cycles setting.
+          [32;1mconfig -set cpu core dynamic[0m turns on dynamic core emulation.
+		  
+You can also omit [34;1mconfig -get/set [section][0m entirely:
+          [32;1mcycles[0m shows the current CPU cycles setting.
+          [32;1mcore dynamic[0m turns on dynamic core emulation.
+
+Note that some configuration settings cannot be modified
+while the DOS session is running.
+";
+
+"PROGRAM_CONFIG_GET_SYNTAX" = "Usage:   [34;1mconfig -get [section] [property][0m
+
+Example: [32;1mconfig -get cpu cycles[0m shows the current cycles setting.
+
+You can also omit [34;1mconfig -get [section][0m entirely:
+         [32;1mcycles[0m shows the current CPU cycles setting.
+";
+
+"PROGRAM_CONFIG_FILE_ERROR" = "Cannot load configuration file %s.
+";
+
+"PROGRAM_CONFIG_SECTION_ERROR" = "Section %s does not exist.
+";
+
+"PROGRAM_CONFIG_PROPERTY_ERROR" = "No such section or property.
+";
+
+"PROGRAM_CONFIG_NO_PROPERTY" = "There is no property %s in section %s.
+";
+
+"PROGRAM_CONFIG_SECURE_ON" = "Switching to secure mode ([34;1mmount[0m and [34;1mboot[0m are no longer permitted.)
+";
+
+"PROGRAM_CONFIG_SECURE_DISALLOW" = "That operation is not permitted in secure mode.
+";
+
+
+//MOUNT-related strings
+//---------------------
+
+"PROGRAM_MOUNT_USAGE" = "Makes a real folder on your Mac accessible as a DOS drive.
+
+Usage:    [34;1mmount [DOS drive letter] [\"Path/to/real/folder\"][0m
+
+Examples: [32;1mmount d \"/Users/yourname/Desktop/\"[0m
+          ...will make your OS X desktop folder accessible to DOS as drive D.
+          [32;1mmount -u d[0m will remove drive D.
+
+By default, the folder will be mounted as an emulated hard drive.
+To mount the folder as a CD-ROM drive, add [32;1m-t cdrom[0m to the command.
+To mount it as a floppy drive, add [32;1m-t floppy[0m.
+";
+
+"PROGRAM_MOUNT_CDROMS_FOUND" = "CD-ROM devices found: %d
+";
+
+"PROGRAM_MOUNT_STATUS_1" = "
+[34;1mThe following drives are currently mounted:[0m
+";
+
+"PROGRAM_MOUNT_STATUS_2" = "%c: is mounted as %s
+";
+
+"PROGRAM_MOUNT_ERROR_1" = "Folder %s does not exist.
+";
+
+"PROGRAM_MOUNT_ERROR_2" = "%s is not a folder.
+";
+
+"PROGRAM_MOUNT_ILL_TYPE" = "Mount type %s was not recognised.
+Supported types are [32;1mhdd[0m, [32;1mfloppy[0m and [32;1mcdrom[0m.
+";
+
+"PROGRAM_MOUNT_ALREADY_MOUNTED" = "Drive %c is already mounted as %s.
+";
+
+"PROGRAM_MOUNT_UMOUNT_NOT_MOUNTED" = "Drive %c is not mounted.
+";
+
+"PROGRAM_MOUNT_UMOUNT_SUCCESS" = "Drive %c has been successfully removed.
+";
+
+"PROGRAM_MOUNT_UMOUNT_NO_VIRTUAL" = "Virtual drives cannot be unmounted.
+";
+
+
+"PROGRAM_MOUNT_WARNING_OTHER" = "[31;1mMounting this folder is strongly discouraged! DOS programs may inadvertently 
+damage important operating system files.[0m
+
+";
+
+"PROGRAM_RESCAN_SUCCESS" = "DOS filesystem cache cleared.
+";
+
+
+//CD-ROM emulation status strings
+//-------------------------------
+
+"MSCDEX_SUCCESS" = "Emulated MSCDEX driver installed.
+";
+
+"MSCDEX_ERROR_MULTIPLE_CDROMS" = "CD-ROM emulation failure: Multiple CD-ROM drives must be mounted on contiguous drive letters.
+";
+
+"MSCDEX_ERROR_OPEN" = "CD-ROM emulation failure: Unable to open image file.
+";
+
+"MSCDEX_ERROR_NOT_SUPPORTED" = "CD-ROM emulation failure: Not yet supported.
+";
+
+"MSCDEX_ERROR_PATH" = "CD-ROM emulation failure: Path not valid.
+";
+
+"MSCDEX_TOO_MANY_DRIVES" = "CD-ROM emulation failure: Too many CD-ROM drives (maximum 5). MSCDEX driver was not installed.
+";
+
+"MSCDEX_LIMITED_SUPPORT" = "CD-ROM emulation: Mounting a folder as a CD-ROM drive provides limited emulation support.
+";
+
+"MSCDEX_INVALID_FILEFORMAT" = "CD-ROM emulation failure: Disc image file is not in ISO/CUE format, or is corrupted.
+";
+
+"MSCDEX_UNKNOWN_ERROR" = "CD-ROM emulation failure: Unknown error.
+";
+
+
+
+//MEM-related strings
+//-------------------
+
+"PROGRAM_MEM_CONVEN" = "%10d kB free conventional memory
+";
+
+"PROGRAM_MEM_EXTEND" = "%10d kB free extended memory
+";
+
+"PROGRAM_MEM_EXPAND" = "%10d kB free expanded memory
+";
+
+"PROGRAM_MEM_UPPER" = "%10d kB free upper memory in %d blocks (largest UMB %d kB)
+";
+
+
+//LOADFIX-related strings
+//-----------------------
+
+"PROGRAM_LOADFIX_ALLOC" = "%d kB allocated.
+";
+
+"PROGRAM_LOADFIX_DEALLOC" = "%d kB freed.
+";
+
+"PROGRAM_LOADFIX_DEALLOCALL" = "All allocated memory freed.
+";
+
+"PROGRAM_LOADFIX_ERROR" = "Memory allocation error.
+";
+
+
+
+//BOOT-related strings
+//--------------------
+"PROGRAM_BOOT_NOT_EXIST" = "Bootdisk failure: Bootdisk image file does not exist.
+";
+
+"PROGRAM_BOOT_NOT_OPEN" = "Bootdisk failure: Cannot open bootdisk image file.
+";
+
+"PROGRAM_BOOT_WRITE_PROTECTED" = "Bootdisk image file is read-only! This may cause problems.
+";
+
+"PROGRAM_BOOT_PRINT_ERROR" = "Boots the DOS session from a floppy or hard disk image, in Bochs IMG format.
+
+Usage: [34;1mboot [\"Image 1.img\" \"Image 2.img\" ...] -L [A/C/D][0m
+
+Accepts one or more floppy disk images (swap them by pressing Cmd-R)
+or a single hard disk image. 
+
+[32;1m-L[0m specifies which drive letter to boot from: [32;1mA[0m, [32;1mC[0m or [32;1mD[0m (default is [32;1mA[0m.)
+To boot from a hard disk image, it must first be mounted with the
+[34;1mimgmount[0m command.
+
+";
+
+"PROGRAM_BOOT_IMAGE_OPEN" = "Opening boot-disk image file: %s
+";
+
+"PROGRAM_BOOT_BOOT" = "Booting from drive %c...
+";
+
+"PROGRAM_BOOT_UNABLE" = "Unable to boot from drive %c.
+";
+
+"PROGRAM_BOOT_IMAGE_NOT_OPEN" = "Cannot open %s.
+";
+
+"PROGRAM_BOOT_CART_WO_PCJR" = "PCjr cartridge found, but machine emulation mode is not PCjr.
+";
+
+"PROGRAM_BOOT_CART_LIST_CMDS" = "Available PCjr cartridge commands: %s.
+";
+
+"PROGRAM_BOOT_CART_NO_CMDS" = "No PCjr cartridge commands found.
+";
+
+//IMGMOUNT-related strings
+//------------------------
+
+"PROGRAM_IMGMOUNT_SPECIFY_DRIVE" = "Makes the contents of an ISO/CUE/IMG disk image into a DOS drive.
+
+Usage:   [34;1mimgmount [DOS drive letter] [\"Path/to/image.iso\"] -t [hdd/floppy/cdrom][0m
+Example: [32;1mimgmount d \"/Users/yourname/Desktop/Game.iso\" -t cdrom[0m will mount
+the Game.iso disk image as the D: drive.
+
+You can specify what kind of drive to use by adding the [34;1m-t[0m parameter:
+[32;1m-t hdd[0m mounts it as a hard disk.
+[32;1m-t cdrom[0m mounts it as a CD-ROM.
+[32;1m-t floppy[0m mounts it as a floppy disk.
+";
+
+"PROGRAM_IMGMOUNT_SPECIFY2" = "Please specify which drive number to mount the image at:
+0 = Floppy drive 1
+1 = Floppy drive 2
+2 = Hard drive 1
+3 = Hard drive 2
+";
+
+"PROGRAM_IMGMOUNT_SPECIFY_GEOMETRY" = "For [33mCD-ROM[0m images:   [34;1mimgmount [DOS drive letter] [\"Path/to/image.iso\"] -t cdrom[0m
+
+For [33mhard disk images[0m: Specify the drive geometry as follows:
+[34;1mimgmount [DOS drive letter] [\"Path/to/image.img\"] -size [bps,spc,hpc,cyl][0m
+bps = Bytes per sector
+spc = Sectors per cylinder
+hpc = Heads per cylinder
+cyl = Number of cylinders
+";
+
+"PROGRAM_IMGMOUNT_INVALID_IMAGE" = "Could not load the disk image file.
+Check that the path is correct and the image is accessible.
+";
+
+"PROGRAM_IMGMOUNT_INVALID_GEOMETRY" = "Could not extract drive geometry from image.
+Use the parameter [34;1m-size bps,spc,hpc,cyl[0m to specify the geometry:
+bps = Bytes per sector
+spc = Sectors per cylinder
+hpc = Heads per cylinder
+cyl = Number of cylinders
+";
+
+"PROGRAM_IMGMOUNT_TYPE_UNSUPPORTED" = "Image type %s was not recognised.
+Supported types are [32;1mhdd[0m, [32;1mfloppy[0m and [32;1mcdrom[0m.
+";
+
+"PROGRAM_IMGMOUNT_FORMAT_UNSUPPORTED" = "Format %s was not recognised.
+Supported formats are [32;1mfat[0m, [32;1iso[0m and [32;1none[0m.
+";
+
+"PROGRAM_IMGMOUNT_SPECIFY_FILE" = "Please specify the image file you want to mount.
+
+Usage:   [34;1mimgmount [DOS drive letter] [\"Path/to/image.iso\"] -t [hdd/floppy/cdrom][0m
+Example: [32;1mimgmount d \"/Users/yourname/Game.iso\" -t cdrom[0m will mount
+the Game.iso disk image as the D: drive.
+";
+
+"PROGRAM_IMGMOUNT_FILE_NOT_FOUND" = "Disk image file could not be found.
+Check that the path is correct and the image is accessible.
+";
+
+"PROGRAM_IMGMOUNT_MOUNT" = "The [34;1mimgmount[0m command is for mounting disk image files only.
+To mount folders, use the [34;1mmount[0m command.
+";
+
+"PROGRAM_IMGMOUNT_ALREADY_MOUNTED" = "Another drive is already mounted at that letter.
+";
+
+"PROGRAM_IMGMOUNT_CANT_CREATE" = "Can't create drive from file.
+";
+
+"PROGRAM_IMGMOUNT_MOUNT_NUMBER" = "Drive number %d mounted as %s.
+";
+
+"PROGRAM_IMGMOUNT_NON_LOCAL_DRIVE" = "The image must be on a local drive, not a network drive.
+";
+
+"PROGRAM_IMGMOUNT_MULTIPLE_NON_CUEISO_FILES" = "Mounting multiple image files is only supported for images in CUE/ISO format.
+";
+
+
+//KEYB-related strings
+//--------------------
+
+"PROGRAM_KEYB_INFO" = "Codepage %i has been loaded.
+";
+
+"PROGRAM_KEYB_INFO_LAYOUT" = "Codepage %i has been loaded for layout %s.
+";
+
+"PROGRAM_KEYB_SHOWHELP" = "[34;1mkeyb [keyboard layout ID] [codepage number] [codepage file][0m
+
+Examples:
+  [32;1mkeyb[0m: Display currently loaded laout.
+  [32;1mkeyb[0m sp: Load the spanish layout with an automatic codepage.
+  [32;1mkeyb[0m sp 850: Load the spanish layout with codepage 850.
+  [32;1mkeyb[0m sp 850 mycp.cpi: Same as above, but load the codepage from the file mycp.cpi.
+";
+
+"PROGRAM_KEYB_NOERROR" = "Keyboard layout %s loaded for codepage %i.
+";
+
+"PROGRAM_KEYB_FILENOTFOUND" = "Keyboard file %s not found.
+
+";
+
+"PROGRAM_KEYB_INVALIDFILE" = "Keyboard file %s was invalid.
+";
+
+"PROGRAM_KEYB_LAYOUTNOTFOUND" = "No layout in %s for codepage %i.
+";
+
+"PROGRAM_KEYB_INVCPFILE" = "No codepage file or invalid codepage file for layout %s.
+
+";
+
+
+//Shell-related strings
+//---------------------
+
+"SHELL_ILLEGAL_PATH" = "Illegal path.
+";
+
+"SHELL_CMD_HELP" = "For a list of all commands, type [33;1mhelp /all[0m.
+Here are some frequently used commands:
+";
+
+"SHELL_CMD_ECHO_ON" = "ECHO is on.
+";
+
+"SHELL_CMD_ECHO_OFF" = "ECHO is off.
+";
+
+"SHELL_ILLEGAL_SWITCH" = "Illegal switch: %s.
+";
+
+"SHELL_MISSING_PARAMETER" = "Required parameter missing.
+";
+
+"SHELL_CMD_CHDIR_ERROR" = "Unable to change to folder %s.
+Check that the folder exists and you have typed the path correctly.
+";
+
+"SHELL_CMD_CHDIR_HINT" = "To change drives, just type [1;32m%c:[0m
+";
+
+"SHELL_CMD_CHDIR_HINT_2" = "Folder name is longer than 8 characters and/or contains spaces.
+Try [1;32mcd %s[0m
+";
+
+"SHELL_CMD_CHDIR_HINT_3" = "You are on drive Z, which has no folders.
+Change to one of your own drives first by typing [1;32mC:[0m
+To add a drive, [1;34mdrag a folder into the DOS window[0m or select [1;32mAdd DOS Drive[0m
+in the [1;32mDrives[0m menu.
+";
+
+"SHELL_CMD_MKDIR_ERROR" = "Unable to make folder %s.
+";
+
+"SHELL_CMD_RMDIR_ERROR" = "Unable to remove folder %s.
+";
+
+"SHELL_CMD_DEL_ERROR" = "Unable to delete file %s.
+";
+
+"SHELL_SYNTAXERROR" = "The syntax of the command is incorrect.
+";
+
+"SHELL_CMD_SET_NOT_SET" = "Environment variable %s not defined.
+";
+
+"SHELL_CMD_SET_OUT_OF_SPACE" = "Not enough environment space left.
+";
+
+"SHELL_CMD_IF_EXIST_MISSING_FILENAME" = "IF EXIST: Missing filename.
+";
+
+"SHELL_CMD_IF_ERRORLEVEL_MISSING_NUMBER" = "IF ERRORLEVEL: Missing number.
+";
+
+"SHELL_CMD_IF_ERRORLEVEL_INVALID_NUMBER" = "IF ERRORLEVEL: Invalid number.
+";
+
+"SHELL_CMD_GOTO_MISSING_LABEL" = "No label supplied to GOTO command.
+";
+
+"SHELL_CMD_GOTO_LABEL_NOT_FOUND" = "GOTO: Label %s not found.
+";
+
+"SHELL_CMD_FILE_NOT_FOUND" = "File %s not found.
+";
+
+"SHELL_CMD_FILE_EXISTS" = "File %s already exists.
+";
+
+
+//DIR-related strings
+//-------------------
+
+"SHELL_CMD_DIR_INTRO" = "Contents of folder %s
+";
+
+"SHELL_CMD_DIR_BYTES_USED" = "%5d file(s)  %17s bytes total
+";
+
+"SHELL_CMD_DIR_BYTES_FREE" = "%5d folder(s)  %15s bytes free
+";
+
+"SHELL_EXECUTE_DRIVE_NOT_FOUND" = "Drive %c does not exist!
+To add a drive, [1;34mdrag a folder into the DOS window[0m or select [1;32mAdd DOS Drive[0m
+in the [1;32mDrives[0m menu.
+";
+
+"SHELL_EXECUTE_ILLEGAL_COMMAND" = "Unknown command or file name: %s.
+";
+
+"SHELL_CMD_PAUSE" = "Press any key to continue.
+";
+
+"SHELL_CMD_PAUSE_HELP" = "Waits for a keypress before continuing.
+";
+
+"SHELL_CMD_COPY_FAILURE" = "Failed to copy %s.
+";
+
+"SHELL_CMD_COPY_SUCCESS" = "   %d file(s) copied.
+";
+
+
+//COMMAND startup message
+//-----------------------
+
+"SHELL_STARTUP_BEGIN" = "
+[30;1m═══════════════════════════════ [0;37mWelcome to Boxer[30;1m ═══════════════════════════════
+  [37m If you're new to DOS, type [33mhelp[37m for some helpful DOS commands.
+  For tips, games and updates, visit the [34mBoxer Website[37m from the Help menu.
+
+";
+
+"SHELL_STARTUP_CGA" = "
+";
+
+"SHELL_STARTUP_HERC" = "
+";
+
+"SHELL_STARTUP_DEBUG" = "
+";
+
+"SHELL_STARTUP_END" = "[30m════════════════════════════════ [0;37mHappy gaming![30;1m ═════════════════════════════════[0m
+";
+
+
+//Shell-command help messages
+//---------------------------
+//Note: each of these should have an accompanying _HELP_LONG text, which is shown when the command is executed with no arguments or with the /? switch. This should contain usage examples and relevant notes on command behaviour.
+
+"SHELL_CMD_CHDIR_HELP" = "Changes the current folder.
+";
+
+"SHELL_CMD_CHDIR_HELP_LONG" = "Usage:    [34;1mcd [path/to/folder][0m
+          [34;1mcd ..[0m
+Examples: [32;1mcd games[0m Changes to the \"games\" subfolder in the current folder.
+          [32;1mcd ..[0m    Changes to the parent folder.
+";
+
+"SHELL_CMD_CLS_HELP" = "Clears the screen.
+";
+
+"SHELL_CMD_DIR_HELP" = "Lists the contents of a folder.
+";
+
+"SHELL_CMD_DIR_HELP_LONG" = "Usage:    [34;1mdir [/p][0m
+          [34;1mdir [foldername] [/p][0m
+Examples: [32;1mdir[0m        Displays the contents of the current folder.
+          [32;1mdir games[0m  Displays the contents of the \"games\" subfolder.
+		  
+To pause between each screenful of files, add [32;/p[0m to the command.
+";
+
+"SHELL_CMD_ECHO_HELP" = "Displays a message; also toggles command echoing in batch files.
+";
+
+"SHELL_CMD_EXIT_HELP" = "Closes the DOS window.
+";
+
+"SHELL_CMD_HELP_HELP" = "Shows this list of commands.
+";
+
+"SHELL_CMD_MKDIR_HELP" = "Makes a new folder at the specified path.
+";
+
+"SHELL_CMD_MKDIR_HELP_LONG" = "Usage:   [34;1mmkdir [foldername][0m
+Example: [32;1mmkdir games[0m makes a new folder called \"games\" in the current folder.
+";
+
+"SHELL_CMD_RMDIR_HELP" = "Removes the specified folder.
+";
+
+"SHELL_CMD_RMDIR_HELP_LONG" = "Usage:   [34;1mrmdir [foldername][0m
+Example: [32;1mrmdir games[0m removes the folder called \"games\" from the current folder.
+
+Note: for safety, this command will not remove folders that contain files.
+";
+
+"SHELL_CMD_SET_HELP" = "Changes environment variables.
+";
+
+"SHELL_CMD_IF_HELP" = "Performs conditional processing in batch programs.
+";
+
+"SHELL_CMD_GOTO_HELP" = "Jumps to a labeled line in a batch script.
+";
+
+"SHELL_CMD_SHIFT_HELP" = "Left-shifts commandline parameters in a batch script.
+";
+
+"SHELL_CMD_TYPE_HELP" = "Displays the contents of a text file.
+";
+
+"SHELL_CMD_TYPE_HELP_LONG" = "Usage:   [34;1mtype [path/to/file.txt][0m
+Example: [32;1mtype z:/autoexec.bat[0m will display the autoexec.bat file.
+";
+
+"SHELL_CMD_REM_HELP" = "Adds a comment line in a batch file.
+";
+
+"SHELL_CMD_REM_HELP_LONG" = "Usage:   [34;1mrem [comment text][0m
+Example: [32;1mrem This is a batch file comment. It will not be displayed
+		 rem or executed.[0m
+";
+
+"SHELL_CMD_NO_WILD" = "Wildcards (* and ?) are not currently supported.
+";
+
+"SHELL_CMD_RENAME_HELP" = "Moves or renames files and folders.
+";
+
+"SHELL_CMD_RENAME_HELP_LONG" = "Usage:    [34;1mmove [path/to/file] [path/to/destination][0m
+          -or-
+          [34;1mmove/rename [filename] [newname][0m
+
+Examples: [32;1mmove d:/game.exe c:/games/[0m will move \"game.exe\" from drive D
+          to the \"games\" folder of drive C.
+		  
+          [32;1mmove[0m (or [32;1mrename[0m) [32;1mold.exe new.exe[0m will rename
+          \"old.exe\" to \"new.exe\".
+		  
+          [32;1mmove d:/old.exe c:/games/new.exe[0m will move \"old.exe\" from drive D
+          to the \"games\" folder of drive C and rename it to \"new.exe\".
+";
+
+"SHELL_CMD_DELETE_HELP" = "Removes one or more files.
+";
+
+"SHELL_CMD_DELETE_HELP_LONG" = "Usage:    [34;1mdelete [path/to/file][0m
+
+[31;1mWarning: this command will delete files without confirmation.
+Deleted files will not appear in the Trash and will not be recoverable.[0m
+";
+
+
+"SHELL_CMD_COPY_HELP" = "Copies files to the specified location.
+";
+
+"SHELL_CMD_COPY_HELP_LONG" = "Usage:    [34;1mcopy [path/to/file] [path/to/destination][0m
+
+Examples: [32;1mcopy d:/game.exe c:/games/[0m will copy \"game.exe\" from drive D
+          to the \"games\" folder of drive C.
+		  
+          [32;1mcopy d:/old.exe c:/games/new.exe[0m will copy \"old.exe\" from drive D
+          to the \"games\" folder of drive C, naming the new copy as \"new.exe\".
+";
+
+"SHELL_CMD_CALL_HELP" = "Starts a batch file from within another batch file.
+";
+
+"SHELL_CMD_CALL_HELP_LONG" = "Usage: [34;1mcall [path/to/batch.bat] [arguments][0m
+
+This command is only useful within batch files: it will run the specified
+batch file and then allow the original batch file to continue.
+
+If you run a batch file from another batch file without using [32;1mcall[0m, then
+the original batch file will exit without completing the rest of its commands.
+";
+
+"SHELL_CMD_LOADHIGH_HELP" = "Loads a program into upper memory.
+";
+
+"SHELL_CMD_CHOICE_HELP" = "Sets ERRORLEVEL in response to a user's keypress.
+";
+
+"SHELL_CMD_CHOICE_HELP_LONG" = "Usage:   [34;1mchoice [/C:choices] [/N] [/S] [Prompt text][0m
+
+Options:
+  [32;1m/C:choices[0m   List of keys to choose from. Default is YN.
+  [32;1m/N[0m           Do not display the choices at end of prompt.
+  [32;1m/S[0m           Makes choices case-sensitive.
+  [32;1mPrompt text[0m  The text to display as a prompt to the user.
+
+The order of the choices list determines the [34;1ERRORLEVEL[0m produced by each key,
+starting from 1.
+";
+
+"SHELL_CMD_ATTRIB_HELP" = "Does nothing. Provided for compatibility.
+";
+
+"SHELL_CMD_PATH_HELP" = "Sets the folder paths to search when you type a program name.
+";
+
+"SHELL_CMD_VER_HELP" = "View and set the reported DOS version.
+";
+
+"SHELL_CMD_VER_VER" = "DOSBox version %s. Reported DOS version %d.%d.
+";
+
+
+// SUBST-related messages
+// ----------------------
+
+"SHELL_CMD_SUBST_HELP" = "Maps an internal folder to a drive letter.
+";
+
+"SHELL_CMD_SUBST_HELP_LONG" = "Usage:   [34;1msubst [DOS drive letter] [path/to/folder][0m
+
+Example: [32;1msubst d c:/games[0m will make drive D display
+         the contents of the \"games\" folder from drive C.
+";
+
+"SHELL_CMD_SUBST_FAILURE" = "Usage:   [34;1msubst [DOS drive letter] [path/to/folder][0m
+
+Example: [32;1msubst d c:/games[0m will make drive D display
+         the contents of the \"games\" folder from drive C.
+";
+
+"SHELL_CMD_SUBST_NO_REMOVE" = "Removing a drive is not supported.
+";

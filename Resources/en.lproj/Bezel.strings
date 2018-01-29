@@ -1,0 +1,63 @@
+
+/* Class = "NSTextFieldCell"; title = "Press Cmd+F to exit fullscreen.\nCmd+click to access the menu bar."; ObjectID = "6"; */
+"6.title" = "Press Cmd+F to exit fullscreen.\nCmd+click to access the menu bar.";
+
+/* Class = "NSTextFieldCell"; title = "[386 speed (3000 cycles)]"; ObjectID = "9"; */
+"9.title" = "[386 speed (3000 cycles)]";
+
+/* Class = "NSTextFieldCell"; title = "[100% throttle]"; ObjectID = "27"; */
+"27.title" = "[100% throttle]";
+
+/* Class = "NSTextFieldCell"; title = "[Drive D added]"; ObjectID = "31"; */
+"31.title" = "[Drive D added]";
+
+/* Class = "NSTextFieldCell"; title = "[Drive D ejected]"; ObjectID = "43"; */
+"43.title" = "[Drive D ejected]";
+
+/* Class = "NSTextFieldCell"; title = "[Drive D imported]"; ObjectID = "47"; */
+"47.title" = "[Drive D imported]";
+
+/* Class = "NSTextFieldCell"; title = "This game is not responding\nto joystick input."; ObjectID = "53"; */
+"53.title" = "This game is not responding\nto joystick input.";
+
+/* Class = "NSTextFieldCell"; title = "You may need to turn on\njoystick control within the game."; ObjectID = "56"; */
+"56.title" = "You may need to turn on\njoystick control within the game.";
+
+/* Class = "NSTextFieldCell"; title = "[Need For Speed.iso]"; ObjectID = "68"; */
+"68.title" = "[Need For Speed.iso]";
+
+/* Class = "NSTextFieldCell"; title = "[Need For Speed.iso]"; ObjectID = "70"; */
+"70.title" = "[Need For Speed.iso]";
+
+/* Class = "NSTextFieldCell"; title = "[Need For Speed.iso]"; ObjectID = "72"; */
+"72.title" = "[Need For Speed.iso]";
+
+/* Class = "NSTextFieldCell"; title = "[Drive D swapped]"; ObjectID = "78"; */
+"78.title" = "[Drive D swapped]";
+
+/* Class = "NSTextFieldCell"; title = "[Need For Speed.iso]"; ObjectID = "79"; */
+"79.title" = "[Need For Speed.iso]";
+
+/* Class = "NSTextFieldCell"; title = "INSERT BUCKAZOID"; ObjectID = "87"; */
+"87.title" = "INSERT BUCKAZOID";
+
+/* Class = "NSTextFieldCell"; title = "You can add MT-32 ROMs\nin Boxer’s Audio preferences."; ObjectID = "92"; */
+"92.title" = "You can add MT-32 ROMs\nin Boxer’s Audio preferences.";
+
+/* Class = "NSTextFieldCell"; title = "MT-32 ROMs are required to play this game’s music correctly."; ObjectID = "93"; */
+"93.title" = "MT-32 ROMs are required to play this game’s music correctly.";
+
+/* Class = "NSTextFieldCell"; title = "Simulated numpad active"; ObjectID = "100"; */
+"100.title" = "Simulated numpad active";
+
+/* Class = "NSTextFieldCell"; title = "Simulated numpad disabled"; ObjectID = "108"; */
+"108.title" = "Simulated numpad disabled";
+
+/* Class = "NSTextFieldCell"; title = "Numlock active"; ObjectID = "116"; */
+"116.title" = "Numlock active";
+
+/* Class = "NSTextFieldCell"; title = "Numlock disabled"; ObjectID = "122"; */
+"122.title" = "Numlock disabled";
+
+/* Class = "NSTextFieldCell"; title = "Cmd+click to release the mouse pointer."; ObjectID = "147"; */
+"147.title" = "Cmd+click to release the mouse pointer.";

@@ -1,0 +1,9 @@
+
+/* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "Rbh-DG-gHt"; */
+"Rbh-DG-gHt.title" = "Mostrar en Finder";
+
+/* Class = "NSTextFieldCell"; title = "HEADING TITLE"; ObjectID = "s4w-YF-J1z"; */
+"s4w-YF-J1z.title" = "HEADING TITLE";
+
+/* Class = "NSMenuItem"; title = "Switch to Drive"; ObjectID = "tE5-p1-5qY"; */
+"tE5-p1-5qY.title" = "Cambiar de unidad";

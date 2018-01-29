@@ -1,0 +1,6 @@
+
+/* Class = "NSTextFieldCell"; title = "[Joystick type description, which may span up to two lines]"; ObjectID = "7"; */
+"7.title" = "[Joystick type description, which may span up to two lines]";
+
+/* Class = "NSTextFieldCell"; title = "[Joystick type name]"; ObjectID = "8"; */
+"8.title" = "[Joystick type name]";

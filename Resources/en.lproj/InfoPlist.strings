@@ -1,0 +1,2 @@
+/* The copyright notice displayed for the application in Finder's Get Info window. */
+NSHumanReadableCopyright = "© 2016 Alun Bestor and contributors. Released under the GNU Public License 2.0.";

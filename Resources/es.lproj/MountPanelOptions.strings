@@ -1,0 +1,30 @@
+
+/* Class = "NSTextFieldCell"; title = "Drive type:"; ObjectID = "7"; */
+"7.title" = "Tipo de unidad:";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "9"; */
+"9.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "CD-ROM"; ObjectID = "10"; */
+"10.title" = "CD-ROM";
+
+/* Class = "NSMenuItem"; title = "Floppy Disk"; ObjectID = "11"; */
+"11.title" = "Disquete";
+
+/* Class = "NSMenuItem"; title = "Automatic"; ObjectID = "12"; */
+"12.title" = "Automático";
+
+/* Class = "NSMenuItem"; title = "Hard Disk"; ObjectID = "13"; */
+"13.title" = "Disco duro";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "15"; */
+"15.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Automatic"; ObjectID = "16"; */
+"16.title" = "Automático";
+
+/* Class = "NSTextFieldCell"; title = "Drive letter:"; ObjectID = "17"; */
+"17.title" = "Letra de unidad:";
+
+/* Class = "NSButtonCell"; title = "Read-only"; ObjectID = "27"; */
+"27.title" = "Solo-lectura";

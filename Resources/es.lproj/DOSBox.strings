@@ -1,0 +1,665 @@
+/* 
+This translation file is based on Boxer 0.88's default DOSBox translation file. A bunch of redundant strings have been removed for ease of translation, and many descriptions have been rewritten with expanded examples.
+
+When translating, ensure that the strings wrap nicely to an 80-column display. DOS does not perform automatic word-wrapping, only character-wrapping.
+
+Strings should also end in a linebreak, unless they are used as a segment of another command.
+*/
+
+
+
+//CONFIG-related strings
+//----------------------
+
+"PROGRAM_CONFIG_USAGE" = "Uso:    [34;1m  config -get [sección] [propiedad][0m
+          [34;1mconfig -set [sección] [propiedad] [valor][0m
+		 
+Ejemplos: [32;1mconfig -get cpu cycles[0m muestra la configuración actual de ciclos de la CPU.
+          [32;1mconfig -set cpu core dynamic[0m activa la emulación dinámica del núcleo.
+		  
+También puede omitir por completo [34;1mconfig -get/set [sección][0m:
+          [32;1mcycles[0m muestra la configuración actual de ciclos de la CPU.
+          [32;1mcore dynamic[0m activa la emulación dinámica del núcleo.
+
+Tenga en cuenta que algunas configuraciones no se pueden modificar mientras una sesión DOS se está ejecutando.
+";
+
+"PROGRAM_CONFIG_GET_SYNTAX" = "Uso:     [34;1mconfig -get [sección] [propiedad][0m
+
+Ejemplo: [32;1mconfig -get cpu cycles[0m muestra la configuración actual de ciclos.
+
+También puede omitir por completo [34;1mconfig -get [sección][0m:
+         [32;1mcycles[0m muestra la configuración actual de ciclos de la CPU.
+";
+
+"PROGRAM_CONFIG_FILE_ERROR" = "No puede cargar el archivo de configuración %s.
+";
+
+"PROGRAM_CONFIG_SECTION_ERROR" = "La sección %s no existe.
+";
+
+"PROGRAM_CONFIG_PROPERTY_ERROR" = "No existe la sección o propiedad.
+";
+
+"PROGRAM_CONFIG_NO_PROPERTY" = "No existe la propiedad %s en la sección %s.
+";
+
+"PROGRAM_CONFIG_SECURE_ON" = "Cambiar a modo seguro ([34;1mmount[0m y [34;1mboot[0m ya no están permitidos.)
+";
+
+"PROGRAM_CONFIG_SECURE_DISALLOW" = "Esta operación no está permitida en modo seguro.
+";
+
+
+//MOUNT-related strings
+//---------------------
+
+"PROGRAM_MOUNT_USAGE" = "Hace accesible una carpeta real de su Mac como una unidad DOS.
+
+Uso:      [34;1mmount [letra de unidad DOS] [\"ruta/a/carpeta/real\"][0m
+
+Ejemplos: [32;1mmount d \"/Users/yourname/Desktop/\"[0m
+          ...hará accesible en DOS su escritorio de OS X como la unidad D.
+          [32;1mmount -u d[0m extraerá la unidad D.
+
+Por defecto, la carpeta se montará como un disco duro emulado.
+Para montar la carpeta como una unidad de CD-ROM, añada [32;1m-t cdrom[0m al comando.
+Para montarla como una unidad de disquete, añada [32;1m-t floppy[0m.
+";
+
+"PROGRAM_MOUNT_CDROMS_FOUND" = "Dispositivos CD-ROM encontrados: %d
+";
+
+"PROGRAM_MOUNT_STATUS_1" = "
+[34;1mLas siguientes unidades están actualmente montadas:[0m
+";
+
+"PROGRAM_MOUNT_STATUS_2" = "%c: está montada como %s
+";
+
+"PROGRAM_MOUNT_ERROR_1" = "La carpeta %s no existe.
+";
+
+"PROGRAM_MOUNT_ERROR_2" = "%s no es una carpeta.
+";
+
+"PROGRAM_MOUNT_ILL_TYPE" = "El tipo de montaje %s no fue reconocido.
+Los tipos soportados son [32;1mhdd[0m, [32;1mfloppy[0m y [32;1mcdrom[0m.
+";
+
+"PROGRAM_MOUNT_ALREADY_MOUNTED" = "La unidad %c ya está montada como %s.
+";
+
+"PROGRAM_MOUNT_UMOUNT_NOT_MOUNTED" = "La unidad %c no está montada.
+";
+
+"PROGRAM_MOUNT_UMOUNT_SUCCESS" = "La unidad %c ha sido extraída correctamente.
+";
+
+"PROGRAM_MOUNT_UMOUNT_NO_VIRTUAL" = "Las unidades virtuales no se pueden desmontar.
+";
+
+
+"PROGRAM_MOUNT_WARNING_OTHER" = "[31;1m¡No se recomienda el montaje de esta carpeta! Los programas DOS pueden dañar 
+involuntariamente archivos del sistema operativo importantes.[0m
+
+";
+
+"PROGRAM_RESCAN_SUCCESS" = "Caché de sistema de archivo DOS vaciada.
+";
+
+
+//CD-ROM emulation status strings
+//-------------------------------
+
+"MSCDEX_SUCCESS" = "Controlador MSCDEX emulado instalado.
+";
+
+"MSCDEX_ERROR_MULTIPLE_CDROMS" = "Error de emulación de CD-ROM: Las unidades de CD-ROM múltiples deben ser 
+montadas en letras de unidad contiguas.
+";
+
+"MSCDEX_ERROR_OPEN" = "Error de emulación de CD-ROM: No se puede abrir el archivo de imagen.
+";
+
+"MSCDEX_ERROR_NOT_SUPPORTED" = "Error de emulación de CD-ROM: Todavía no soportado.
+";
+
+"MSCDEX_ERROR_PATH" = "Error de emulación de CD-ROM: Ruta no valida.
+";
+
+"MSCDEX_TOO_MANY_DRIVES" = "Error de emulación de CD-ROM: Demasiadas unidades de CD-ROM (máximo 5).
+El controlador MSCDEX driver no fue instalado.
+";
+
+"MSCDEX_LIMITED_SUPPORT" = "Emulación de CD-ROM: El montaje de una carpeta como una unidad de CD-ROM 
+proporciona soporte limitado de emulación.
+";
+
+"MSCDEX_INVALID_FILEFORMAT" = "Error de emulación de CD-ROM: El archivo de imagen de disco no está en formato 
+ISO/CUE, o está corrupto.
+";
+
+"MSCDEX_UNKNOWN_ERROR" = "Error de emulación de CD-ROM: Error desconocido.
+";
+
+
+
+//MEM-related strings
+//-------------------
+
+"PROGRAM_MEM_CONVEN" = "%10d kB de memoria convencional disponible
+";
+
+"PROGRAM_MEM_EXTEND" = "%10d kB de memoria extendida disponible
+";
+
+"PROGRAM_MEM_EXPAND" = "%10d kB de memoria expandida disponible
+";
+
+"PROGRAM_MEM_UPPER" = "%10d kB de memoria superior en %d bloques (mayores de UMB %d kB)
+";
+
+
+//LOADFIX-related strings
+//-----------------------
+
+"PROGRAM_LOADFIX_ALLOC" = "%d kB asignados.
+";
+
+"PROGRAM_LOADFIX_DEALLOC" = "%d kB liberados.
+";
+
+"PROGRAM_LOADFIX_DEALLOCALL" = "Liberada toda la memoria asignada.
+";
+
+"PROGRAM_LOADFIX_ERROR" = "Error de asignación de memoria.
+";
+
+
+
+//BOOT-related strings
+//--------------------
+"PROGRAM_BOOT_NOT_EXIST" = "Error de disco de arranque: El archivo de imagen de disco de arranque no existe.
+";
+
+"PROGRAM_BOOT_NOT_OPEN" = "Error de disco de arranque: No puede abrir el archivo de imagen de disco de arranque.
+";
+
+"PROGRAM_BOOT_WRITE_PROTECTED" = "¡El archivo de imagen de disco de arranque es de solo-lectura! Esto puede causarproblemas.
+";
+
+"PROGRAM_BOOT_PRINT_ERROR" = "Inicia la sesión DOS desde un disquete o una imagen de disco duro, en formato 
+Bochs IMG.
+
+Uso:   [34;1mboot [\"Imagen 1.img\" \"Imagen 2.img\" ...] -L [A/C/D][0m
+
+Acepta una o más imágenes de disquete (intercambiarlas al presionar Cmd-R)
+o una imagen individual de disco duro.
+
+[32;1m-L[0m especifica la letra de unidad para iniciar desde: [32;1mA[0m, [32;1mC[0m o [32;1mD[0m
+(por defecto es [32;1mA[0m.)
+Para iniciar desde una imagen de disco duro, primero se debe montar
+con el comando [34;1mimgmount[0m.
+
+";
+
+"PROGRAM_BOOT_IMAGE_OPEN" = "Abriendo archivo de imagen de disco-arranque: %s
+";
+
+"PROGRAM_BOOT_BOOT" = "Arrancando desde unidad %c...
+";
+
+"PROGRAM_BOOT_UNABLE" = "No se puede arrancar desde la unidad %c.
+";
+
+"PROGRAM_BOOT_IMAGE_NOT_OPEN" = "No puede abrir %s.
+";
+
+"PROGRAM_BOOT_CART_WO_PCJR" = "Cartucho PCjr encontrado, pero el modo de emulación de máquina no es PCjr.
+";
+
+"PROGRAM_BOOT_CART_LIST_CMDS" = "Comandos de cartucho PCjr disponibles: %s.
+";
+
+"PROGRAM_BOOT_CART_NO_CMDS" = "No se encontraron comandos de cartucho PCjr.
+";
+
+//IMGMOUNT-related strings
+//------------------------
+
+"PROGRAM_IMGMOUNT_SPECIFY_DRIVE" = "Prepara el contenido de una imagen de disco ISO/CUE/IMG en una unidad DOS.
+
+Uso:   [34;1mimgmount [letra de unidad DOS] [\"Ruta/a/image.iso\"] -t [hdd/floppy/cdrom][0m
+Ejemplo: [32;1mimgmount d \"/Users/yourname/Desktop/Game.iso\" -t cdrom[0m montará
+la imagen de disco Game.iso como la unidad D:.
+
+Puede especificar que tipo de unidad usar al añadir el parámetro [34;1m-t[0m:
+[32;1m-t hdd[0m monta como disco duro.
+[32;1m-t cdrom[0m monta como CD-ROM.
+[32;1m-t floppy[0m monta como disquete.
+";
+
+"PROGRAM_IMGMOUNT_SPECIFY2" = "Por favor especifique el número de unidad para montar la imagen en:
+0 = Unidad de disco 1
+1 = Unidad de disco 2
+2 = Disco duro 1
+3 = Disco duro 2
+";
+
+"PROGRAM_IMGMOUNT_SPECIFY_GEOMETRY" = "Para [33mimágenes de CD-ROM:[0m    [34;1mimgmount [letra de unidad DOS] [\"ruta/a/imagen.iso\"] -t cdrom[0m
+
+Para [33mimágenes de disco duro[0m: Especifique la geometría de la unidad como a continuación:
+[34;1mimgmount [letra de unidad DOS] [\"ruta/a/imagen.img\"] -size [bps,spc,hpc,cyl][0m
+bps = Bytes por sector
+spc = Sectores por cilindro
+hpc = Cabezales por cilindro
+cyl = Número de cilindros
+";
+
+"PROGRAM_IMGMOUNT_INVALID_IMAGE" = "No puede cargar el archivo de imagen de disco.
+Compruebe que la ruta es correcta y la imagen está accesible.
+";
+
+"PROGRAM_IMGMOUNT_INVALID_GEOMETRY" = "No puede extraer la geometría de la unidad desde el archivo.
+Use el parámetro [34;1m-size bps,spc,hpc,cyl[0m para especificar la geometría:
+bps = Bytes por sector
+spc = Sectores por cilindro
+hpc = Cabezales por cilindro
+cyl = Número de cilindros
+";
+
+"PROGRAM_IMGMOUNT_TYPE_UNSUPPORTED" = "El tipo de imagen %s no fue reconocido.
+Los tipos soportados son [32;1mhdd[0m, [32;1mfloppy[0m y [32;1mcdrom[0m.
+";
+
+"PROGRAM_IMGMOUNT_FORMAT_UNSUPPORTED" = "El formato %s no fue reconocido.
+Los formatos soportados son [32;1mfat[0m, [32;1miso[0m y [32;1mnone[0m.
+";
+
+"PROGRAM_IMGMOUNT_SPECIFY_FILE" = "Por favor especifique el archivo de imagen que desea montar.
+
+Uso:   [34;1mimgmount [letra de unidad DOS] [\"Ruta/a/image.iso\"] -t [hdd/floppy/cdrom][0m
+Ejemplo: [32;1mimgmount d \"/Users/yourname/Game.iso\" -t cdrom[0m montará
+la imagen de disco Game.iso como la unidad D:.
+";
+
+"PROGRAM_IMGMOUNT_FILE_NOT_FOUND" = "El archivo de imagen de disco no se ha podido encontrar.
+Compruebe que la ruta es correcta y la imagen está accesible.
+";
+
+"PROGRAM_IMGMOUNT_MOUNT" = "El comando [34;1mimgmount[0m solo es para montar archivos de imágenes de disco.
+Para montar carpetas, use el comando [34;1mmount[0m .
+";
+
+"PROGRAM_IMGMOUNT_ALREADY_MOUNTED" = "Otra unidad ya está montada en esta letra.
+";
+
+"PROGRAM_IMGMOUNT_CANT_CREATE" = "No puede crear la unidad desde el archivo.
+";
+
+"PROGRAM_IMGMOUNT_MOUNT_NUMBER" = "La unidad número %d montada como %s.
+";
+
+"PROGRAM_IMGMOUNT_NON_LOCAL_DRIVE" = "La imagen debe estar en una unidad local, no en una unidad de red.
+";
+
+"PROGRAM_IMGMOUNT_MULTIPLE_NON_CUEISO_FILES" = "El montaje múltiple de archivos de imagen solo está soportado en imágenes de formato CUE/ISO.
+";
+
+
+//KEYB-related strings
+//--------------------
+
+"PROGRAM_KEYB_INFO" = "El código de página %i ha sido cargado.
+";
+
+"PROGRAM_KEYB_INFO_LAYOUT" = "El código de página %i ha sido cargado para la distribución %s.
+";
+
+"PROGRAM_KEYB_SHOWHELP" = "[34;1mkeyb [distribución de teclado] [código de página] [archivo de código de página][0m
+
+Ejemplos:
+  [32;1mkeyb[0m: Muestra la distribución actualmente cargada.
+  [32;1mkeyb[0m sp: Carga la distribución española con el código de página automático.
+  [32;1mkeyb[0m sp 850: Carga la distribución española con el código de página 850.
+  [32;1mkeyb[0m sp 850 mycp.cpi: Igual que el anterior, pero carga el código de página
+  desde el archivo mycp.cpi.
+";
+
+"PROGRAM_KEYB_NOERROR" = "Distribución de teclado %s cargada para el código de página %i.
+";
+
+"PROGRAM_KEYB_FILENOTFOUND" = "Archivo de teclado %s no encontrado.
+";
+
+"PROGRAM_KEYB_INVALIDFILE" = "El archivo de teclado %s no es valido.
+";
+
+"PROGRAM_KEYB_LAYOUTNOTFOUND" = "No hay distribución en %s para el código de página %i.
+";
+
+"PROGRAM_KEYB_INVCPFILE" = "No hay archivo de código de página o archivo de código de página no valido para la distribución %s.
+
+";
+
+
+//Shell-related strings
+//---------------------
+
+"SHELL_ILLEGAL_PATH" = "Ruta incorrecta.
+";
+
+"SHELL_CMD_HELP" = "Para una lista de todos los comandos, escriba [33;1mhelp /all[0m.
+Aquí hay algunos comandos usados frecuentemente:
+";
+
+"SHELL_CMD_ECHO_ON" = "ECHO está activado.
+";
+
+"SHELL_CMD_ECHO_OFF" = "ECHO está desactivado.
+";
+
+"SHELL_ILLEGAL_SWITCH" = "Switch incorrecto: %s.
+";
+
+"SHELL_MISSING_PARAMETER" = "Parámetro no encontrado requerido.
+";
+
+"SHELL_CMD_CHDIR_ERROR" = "No se puede cambiar a la carpeta %s.
+Compruebe que la carpeta existe y que ha escrito la ruta correctamente.
+";
+
+"SHELL_CMD_CHDIR_HINT" = "Para cambiar unidades, solo escriba [1;32m%c:[0m
+";
+
+"SHELL_CMD_CHDIR_HINT_2" = "El nombre de la carpeta es más largo de 8 caracteres y/o contiene espacios.
+Intente [1;32mcd %s[0m
+";
+
+"SHELL_CMD_CHDIR_HINT_3" = "Está en la unidad Z, la cual no tiene carpetas.
+Primero cambie a una de sus unidades escribiendo [1;32mC:[0m
+Para añadir una unidad, [1;34marrastre una carpeta a la ventana DOS[0m
+o seleccione [1;32mAñadir unidad DOS[0m en el menú [1;32mUnidades[0m.
+";
+
+"SHELL_CMD_MKDIR_ERROR" = "No se puede crear la carpeta %s.
+";
+
+"SHELL_CMD_RMDIR_ERROR" = "No se puede eliminar la carpeta %s.
+";
+
+"SHELL_CMD_DEL_ERROR" = "No se puede eliminar el archivo %s.
+";
+
+"SHELL_SYNTAXERROR" = "La sintaxis del comando es incorrecta.
+";
+
+"SHELL_CMD_SET_NOT_SET" = "Variable de entorno %s no definida.
+";
+
+"SHELL_CMD_SET_OUT_OF_SPACE" = "No hay espacio suficiente para el entorno.
+";
+
+"SHELL_CMD_IF_EXIST_MISSING_FILENAME" = "IF EXIST: Nombre de archivo no encontrado.
+";
+
+"SHELL_CMD_IF_ERRORLEVEL_MISSING_NUMBER" = "IF ERRORLEVEL: Número no encontrado.
+";
+
+"SHELL_CMD_IF_ERRORLEVEL_INVALID_NUMBER" = "IF ERRORLEVEL: Número inválido.
+";
+
+"SHELL_CMD_GOTO_MISSING_LABEL" = "No hay etiqueta proporcionada al comando GOTO.
+";
+
+"SHELL_CMD_GOTO_LABEL_NOT_FOUND" = "GOTO: Etiqueta %s no encontrada.
+";
+
+"SHELL_CMD_FILE_NOT_FOUND" = "Archivo %s no encontrado.
+";
+
+"SHELL_CMD_FILE_EXISTS" = "El archivo %s ya existe.
+";
+
+
+//DIR-related strings
+//-------------------
+
+"SHELL_CMD_DIR_INTRO" = "Contenido de carpeta %s
+";
+
+"SHELL_CMD_DIR_BYTES_USED" = "%5d archivo(s)  %17s bytes totales
+";
+
+"SHELL_CMD_DIR_BYTES_FREE" = "%5d carpeta(s)    %15s bytes libres
+";
+
+"SHELL_EXECUTE_DRIVE_NOT_FOUND" = "¡La unidad %c no existe!
+Para añadir una unidad, [1;34mArrastre la carpeta a la ventana DOS[0m
+o seleccione [1;32mAñadir unidad DOS[0m en el menú [1;32mUnidades[0m.
+";
+
+"SHELL_EXECUTE_ILLEGAL_COMMAND" = "Comando o nombre de archivo desconocido: %s.
+";
+
+"SHELL_CMD_PAUSE" = "Presione cualquier tecla para continuar.
+";
+
+"SHELL_CMD_PAUSE_HELP" = "Espera una pulsación de tecla antes de continuar.
+";
+
+"SHELL_CMD_COPY_FAILURE" = "Fallo al copiar %s.
+";
+
+"SHELL_CMD_COPY_SUCCESS" = "   %d archivo(s) copiado.
+";
+
+
+//COMMAND startup message
+//-----------------------
+
+"SHELL_STARTUP_BEGIN" = "
+[30;1m═══════════════════════════════ [0;37mBienvenido a Boxer[30;1m ═════════════════════════════
+  [37m Si es nuevo en DOS, escriba [33mhelp[37m para algunos comandos DOS útiles.
+  Para consejos, juegos y actualizaciones, visite la [34mpágina web de Boxer[37m
+  desde el menú Ayuda.
+
+";
+
+"SHELL_STARTUP_CGA" = "
+";
+
+"SHELL_STARTUP_HERC" = "
+";
+
+"SHELL_STARTUP_DEBUG" = "
+";
+
+"SHELL_STARTUP_END" = "[30m════════════════════════════════ [0;37m¡Feliz juego![30;1m ═════════════════════════════════[0m
+";
+
+
+//Shell-command help messages
+//---------------------------
+//Note: each of these should have an accompanying _HELP_LONG text, which is shown when the command is executed with no arguments or with the /? switch. This should contain usage examples and relevant notes on command behaviour.
+
+"SHELL_CMD_CHDIR_HELP" = "Cambia la carpeta actual.
+";
+
+"SHELL_CMD_CHDIR_HELP_LONG" = "Uso:      [34;1mcd [ruta/a/carpeta][0m
+          [34;1mcd ..[0m
+Ejemplos: [32;1mcd games[0m Cambia a la subcarpeta \"games\" en la carpeta actual.
+          [32;1mcd ..[0m    Cambia a la carpeta principal.
+";
+
+"SHELL_CMD_CLS_HELP" = "Limpia la pantalla.
+";
+
+"SHELL_CMD_DIR_HELP" = "Lista el contenido de una carpeta.
+";
+
+"SHELL_CMD_DIR_HELP_LONG" = "Uso:      [34;1mdir [/p][0m
+          [34;1mdir [nombre de carpeta] [/p][0m
+Ejemplos: [32;1mdir[0m        Muestra el contenido de la carpeta actual.
+          [32;1mdir games[0m  Muestra el contenido de la subcarpeta \"games\".
+		  
+Para hacer una pausa entre cada pantalla de archivos, añada [32;1m/p[0m al comando.
+";
+
+"SHELL_CMD_ECHO_HELP" = "Muestra un mensaje; también cambia el comando echo en los archivos por lotes.
+";
+
+"SHELL_CMD_EXIT_HELP" = "Cierra la ventana DOS.
+";
+
+"SHELL_CMD_HELP_HELP" = "Muestra esta lista de comandos.
+";
+
+"SHELL_CMD_MKDIR_HELP" = "Crea una nueva carpeta en la ruta especificada.
+";
+
+"SHELL_CMD_MKDIR_HELP_LONG" = "Uso:     [34;1mmkdir [nombre de carpeta][0m
+Ejemplo: [32;1mmkdir games[0m crea una nueva carpeta llamada \"games\" en la carpeta actual.
+";
+
+"SHELL_CMD_RMDIR_HELP" = "Elimina la carpeta especificada.
+";
+
+"SHELL_CMD_RMDIR_HELP_LONG" = "Uso:     [34;1mrmdir [nombre de carpeta][0m
+Ejemplo: [32;1mrmdir games[0m elimina la carpeta llamada \"games\" de la carpeta actual.
+
+Nota: por seguridad, este comando no eliminará carpetas que contengan archivos.
+";
+
+"SHELL_CMD_SET_HELP" = "Modifica las variables de entorno.
+";
+
+"SHELL_CMD_IF_HELP" = "Realiza procesamiento condicional en programas de archivo por lotes.
+";
+
+"SHELL_CMD_GOTO_HELP" = "Salta a la línea etiquetada en el archivo por lotes.
+";
+
+"SHELL_CMD_SHIFT_HELP" = "Desplaza a la izquierda los parámetros de la línea de comandos en un script de 
+archivo por lotes.
+";
+
+"SHELL_CMD_TYPE_HELP" = "Muestra el contenido de un archivo de texto.
+";
+
+"SHELL_CMD_TYPE_HELP_LONG" = "Uso:     [34;1mtype [ruta/a/file.txt][0m
+Ejemplo: [32;1mtype z:/autoexec.bat[0m mostrará el archivo autoexec.bat.
+";
+
+"SHELL_CMD_REM_HELP" = "Añade una línea de comentario en un archivo por lotes.
+";
+
+"SHELL_CMD_REM_HELP_LONG" = "Uso:     [34;1mrem [texto de comentario][0m
+Ejemplo: [32;1mrem Este es un comentario de un archivo por lotes. No se mostrará rem
+             o ejecutará.[0m
+";
+
+"SHELL_CMD_NO_WILD" = "Comodines (* y ?) no están soportados actualmente.
+";
+
+"SHELL_CMD_RENAME_HELP" = "Mueve o renombra archivos y carpetas.
+";
+
+"SHELL_CMD_RENAME_HELP_LONG" = "Uso:      [34;1mmove [ruta/a/archivo] [ruta/a/destino][0m
+          -o-
+          [34;1mmove/rename [nombre de archivo] [nuevo nombre][0m
+
+Ejemplos: [32;1mmove d:/game.exe c:/games/[0m moverá \"game.exe\" desde la unidad D
+          a la carpeta \"games\" de la unidad C.
+		  
+          [32;1mmove[0m (o [32;1mrename[0m) [32;1mold.exe new.exe[0m renombrará \"old.exe\" a \"new.exe\".
+		  
+          [32;1mmove d:/old.exe c:/games/new.exe[0m moverá \"old.exe\" desde la unidad D
+          a la carpeta \"games\" de la unidad C y renombrará a \"new.exe\".
+";
+
+"SHELL_CMD_DELETE_HELP" = "Elimina uno o más archivos.
+";
+
+"SHELL_CMD_DELETE_HELP_LONG" = "Uso:      [34;1mdelete [ruta/a/archivo][0m
+
+[31;1mAdvertencia: este comando eliminará archivos sin confirmación.
+Los archivos eliminados no aparecerán en la papelera y no serán recuperables.[0m
+";
+
+
+"SHELL_CMD_COPY_HELP" = "Copia archivos a la ubicación especificada.
+";
+
+"SHELL_CMD_COPY_HELP_LONG" = "Uso:      [34;1mcopy [ruta/a/archivo] [ruta/a/destino][0m
+
+Ejemplos: [32;1mcopy d:/game.exe c:/games/[0m copiará \"game.exe\" de la unidad D
+          a la carpeta \"games\" de la unidad C.
+		  
+          [32;1mcopy d:/old.exe c:/games/new.exe[0m copiará \"old.exe\" de la unidad D
+          a la carpeta \"games\" de la unidad C, nombrando la nueva copia como
+          \"new.exe\".
+";
+
+"SHELL_CMD_CALL_HELP" = "Ejecuta un archivo por lotes desde otro archivo por lotes.
+";
+
+"SHELL_CMD_CALL_HELP_LONG" = "Uso:   [34;1mcall [ruta/a/batch.bat] [argumentos][0m
+
+Este comando solo es útil dentro de un archivo por lotes: ejecutará el archivo  por lotes especificado y entonces permitirá continuar al archivo por lotes      original.
+
+Si ejecuta el archivo por lotes desde otro archivo por lotes sin usar [32;1mcall[0m,     entonces el archivo por lotes original saldrá sin completar el resto de
+comandos.
+";
+
+"SHELL_CMD_LOADHIGH_HELP" = "Carga un programa en la memoria superior.
+";
+
+"SHELL_CMD_CHOICE_HELP" = "Establece ERRORLEVEL en respuesta a la pulsación de teclas de un usuario.
+";
+
+"SHELL_CMD_CHOICE_HELP_LONG" = "Uso:       [34;1mchoice [/C:letra] [/N] [/S] [Texto de símbolo][0m
+
+Opciones:
+  [32;1m/C:letra[0m          Lista de teclas para elegir. Por defecto es YN.
+  [32;1m/N[0m                No muestra las opciones en el símbolo del sistema.
+  [32;1m/S[0m                Distingue letras entre mayúsculas y minúsculas.
+  [32;1mTexto de símbolo[0m  El texto para mostrar como símbolo del sistema al usuario.
+
+El orden de la lista de letras determina el [34;1mERRORLEVEL[0m producido por cada tecla,a partir de 1.
+";
+
+"SHELL_CMD_ATTRIB_HELP" = "No hace nada. Proporcionado por compatibilidad.
+";
+
+"SHELL_CMD_PATH_HELP" = "Establece las rutas de carpeta para buscar cuando escribe un nombre de programa.
+";
+
+"SHELL_CMD_VER_HELP" = "Visualiza y establece la versión DOS reportada.
+";
+
+"SHELL_CMD_VER_VER" = "Versión de DOSBox %s. Versión DOS reportada %d.%d.
+";
+
+
+// SUBST-related messages
+// ----------------------
+
+"SHELL_CMD_SUBST_HELP" = "Asigna una carpeta interna a una letra de unidad.
+";
+
+"SHELL_CMD_SUBST_HELP_LONG" = "Uso:     [34;1msubst [letra de unidad DOS] [ruta/a/carpeta][0m
+
+Ejemplo: [32;1msubst d c:/games[0m hará que la unidad D muestre el contenido de la
+carpeta \"games\" de la unidad C.
+";
+
+"SHELL_CMD_SUBST_FAILURE" = "Uso:     [34;1msubst [letra de unidad DOS] [ruta/a/carpeta][0m
+
+Ejemplo: [32;1msubst d c:/games[0m hará que la unidad D muestre el contenido de la
+carpeta \"games\" de la unidad C.
+";
+
+"SHELL_CMD_SUBST_NO_REMOVE" = "La extracción de la unidad no está soportada.
+";

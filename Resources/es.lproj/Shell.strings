@@ -1,0 +1,38 @@
+/*
+This translation file contains strings used by Boxer's extensions to the DOS shell.
+These have the same format and usage restrictions as the strings in DOSBox.strings: they can contain DOSBox colour codes and need to be written with a 80-column terminal screen in mind.
+*/
+
+"Shell Command Help" = "
+[33;1mObteniendo ayuda:[0m
+[34;1mHELP[0m               Muestra esta lista de comandos DOS.
+[34;1mDRIVES[0m             Muestra las unidades DOS actuales.
+[34;1mPROGRAMS[0m           Muestra los programas ejecutables del directorio actual.
+
+[33;1mMoverse por DOS:[0m
+[34;1m[unidad]:[0m           Cambia a la unidad especificada (e.g. C:, D:, Y:)
+[34;1mCD [directorio][0m     Cambia al directorio especificado.
+[34;1mDIR[0m                 Muestra el contenido del directorio actual.
+[34;1mREVEAL[0m              Muestra el directorio actual en Finder de OS X.
+[34;1mREVEAL [directorio][0m Muestra el directorio DOS especificado en Finder de OS X.
+
+[33;1mUsando archivos:[0m
+[34;1mLAUNCH [programa][0m   Busca y ejecuta el programa especificado (dondequiera que
+                    esté.)
+[34;1mEDIT [documento][0m    Abre el documento especificado en un editor de texto.
+[34;1mPRINT [documento][0m   Imprime el documento especificado en una impresora emulada.
+
+[33;1mControlando DOS:[0m
+[34;1mNETWORK[0m            Organiza o participa en una sesión de red IPX.
+[34;1mRESTART[0m            Reinicia DOS y ejecuta cualquier juego ya iniciado.
+[34;1mQUIT[0m               Cierra la ventana DOS.
+";
+
+"Mounting the %@ folder is not permitted." = "[31;1mEl montaje de la carpeta [32;1m%@[31;1m no está permitido.[0m";
+
+"Currently mounted drives:" = "[33;1mUnidades montadas actualmente:[0m
+";
+
+"Windows-only game warning" = "[31;1m[32;1m%@[31;1m es un programa de Windows, que Boxer no soporta.
+Es posible que pueda ejecutar el programa en un emulador de Windows en su lugar.[0m
+";

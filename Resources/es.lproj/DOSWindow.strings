@@ -1,0 +1,105 @@
+
+/* Class = "NSTextFieldCell"; title = "Cmd-click to lock the mouse pointer to the window."; ObjectID = "910"; */
+"910.title" = "Cmd-clic para bloquear el puntero de ratón en la ventana.";
+
+/* Class = "NSToolbarItem"; label = "Inspector"; ObjectID = "1279"; */
+"1279.label" = "Inspector";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Inspector"; ObjectID = "1279"; */
+"1279.paletteLabel" = "Inspector";
+
+/* Class = "NSToolbarItem"; toolTip = "Show or hide the inspector panel"; ObjectID = "1279"; */
+"1279.toolTip" = "Mostrar o ocultar panel inspector";
+
+/* Class = "NSToolbarItem"; label = "Programs"; ObjectID = "1285"; */
+"1285.label" = "Programas";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Programs"; ObjectID = "1285"; */
+"1285.paletteLabel" = "Programas";
+
+/* Class = "NSToolbarItem"; toolTip = "Show or hide the game’s launch options"; ObjectID = "1285"; */
+"1285.toolTip" = "Mostrar o ocultar opciones de ejecución de juego";
+
+/* Class = "NSSegmentedCell"; 1344.ibShadowedToolTips[0] = "Pause the game"; ObjectID = "1344"; */
+"1344.ibShadowedToolTips[0]" = "Pausar juego";
+
+/* Class = "NSSegmentedCell"; 1344.ibShadowedToolTips[1] = "Resume the game at normal speed"; ObjectID = "1344"; */
+"1344.ibShadowedToolTips[1]" = "Reanudar juego a velocidad normal";
+
+/* Class = "NSSegmentedCell"; 1344.ibShadowedToolTips[2] = "Fast-forward the game"; ObjectID = "1344"; */
+"1344.ibShadowedToolTips[2]" = "Avance rápido de juego";
+
+/* Class = "NSToolbarItem"; label = "Playback"; ObjectID = "1345"; */
+"1345.label" = "Reproducción";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Playback"; ObjectID = "1345"; */
+"1345.paletteLabel" = "Reproducción";
+
+/* Class = "NSToolbarItem"; toolTip = "Pause, resume or fast-forward the game"; ObjectID = "1345"; */
+"1345.toolTip" = "Pausar, reanudar o avance rápido de juego";
+
+/* Class = "NSToolbarItem"; label = "Manuals"; ObjectID = "1348"; */
+"1348.label" = "Manuales";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Manuals"; ObjectID = "1348"; */
+"1348.paletteLabel" = "Manuales";
+
+/* Class = "NSToolbarItem"; toolTip = "Show the documentation bundled with this game"; ObjectID = "1348"; */
+"1348.toolTip" = "Mostrar documentación empaquetada con este juego";
+
+/* Class = "NSToolbarItem"; label = "Restart"; ObjectID = "1355"; */
+"1355.label" = "Reiniciar";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Restart"; ObjectID = "1355"; */
+"1355.paletteLabel" = "Reiniciar";
+
+/* Class = "NSToolbarItem"; label = "Screenshot"; ObjectID = "1379"; */
+"1379.label" = "Captura de pantalla";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Screenshot"; ObjectID = "1379"; */
+"1379.paletteLabel" = "Captura de pantalla";
+
+/* Class = "NSMenuItem"; title = "Pause"; ObjectID = "1390"; */
+"1390.title" = "Pausa";
+
+/* Class = "NSMenuItem"; title = "Play"; ObjectID = "1391"; */
+"1391.title" = "Reproducir";
+
+/* Class = "NSMenuItem"; title = "Fast Forward"; ObjectID = "1392"; */
+"1392.title" = "Avance rápido";
+
+/* Class = "NSToolbarItem"; label = "Change Discs"; ObjectID = "1402"; */
+"1402.label" = "Cambiar discos";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Change Discs"; ObjectID = "1402"; */
+"1402.paletteLabel" = "Cambiar discos";
+
+/* Class = "NSToolbarItem"; label = "CPU Speed"; ObjectID = "1416"; */
+"1416.label" = "Velocidad de CPU";
+
+/* Class = "NSToolbarItem"; paletteLabel = "CPU Speed"; ObjectID = "1416"; */
+"1416.paletteLabel" = "Velocidad de CPU";
+
+/* Class = "NSSlider"; ibShadowedToolTip = "Adjust the emulated CPU speed"; ObjectID = "1418"; */
+"1418.ibShadowedToolTip" = "Ajustar velocidad de CPU emulada";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Increase the CPU speed"; ObjectID = "1419"; */
+"1419.ibShadowedToolTip" = "Aumentar velocidad de CPU";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Decrease the CPU speed"; ObjectID = "1420"; */
+"1420.ibShadowedToolTip" = "Reducir velocidad de CPU";
+
+/* Class = "NSSlider"; ibShadowedToolTip = "Adjust the volume"; ObjectID = "2UX-hR-kRW"; */
+"2UX-hR-kRW.ibShadowedToolTip" = "Ajustar volumen";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Mute the volume"; ObjectID = "32N-s1-9hf"; */
+"32N-s1-9hf.ibShadowedToolTip" = "Silenciar volumen";
+
+/* Class = "NSToolbarItem"; label = "Volume"; ObjectID = "d9v-Ij-ljW"; */
+"d9v-Ij-ljW.label" = "Volumen";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Volume"; ObjectID = "d9v-Ij-ljW"; */
+"d9v-Ij-ljW.paletteLabel" = "Volumen";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Set the volume to maximum"; ObjectID = "ktK-fd-rsN"; */
+"ktK-fd-rsN.ibShadowedToolTip" = "Establecer volumen al máximo";

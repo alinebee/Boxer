@@ -1,0 +1,21 @@
+
+/* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "ANv-MZ-D7M"; */
+"ANv-MZ-D7M.title" = "Show in Finder";
+
+/* Class = "NSMenuItem"; title = "Remove From List"; ObjectID = "G8T-Oq-M2i"; */
+"G8T-Oq-M2i.title" = "Remove From List";
+
+/* Class = "NSTextFieldCell"; title = "Program Title"; ObjectID = "G92-Yz-I6l"; */
+"G92-Yz-I6l.title" = "Program Title";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "%{value1}@ %{value2}@"; ObjectID = "JWZ-Xu-1s2"; */
+"JWZ-Xu-1s2.ibShadowedDisplayPattern" = "%{value1}@ %{value2}@";
+
+/* Class = "NSTextFieldCell"; title = "C:\\PATH\\TO\\PROGRAM.EXE"; ObjectID = "PAV-T6-VGS"; */
+"PAV-T6-VGS.title" = "C:\\PATH\\TO\\PROGRAM.EXE";
+
+/* Class = "NSMenuItem"; title = "Launch"; ObjectID = "YDu-vB-8Q5"; */
+"YDu-vB-8Q5.title" = "Launch";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "%{value1}@ %{value2}@"; ObjectID = "kjW-Q9-CnI"; */
+"kjW-Q9-CnI.ibShadowedDisplayPattern" = "%{value1}@ %{value2}@";

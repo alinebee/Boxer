@@ -1,0 +1,11 @@
+/* 
+This translation file contains strings used by Boxer for commenting configuration files.
+These strings will be word-wrapped to 78 characters and then prepended with DOSBox comment
+characters (# ).
+*/
+
+//Printed as a header at the top of the configuration file.
+"Configuration preamble" = "Este archivo de configuración fue creado por Boxer. Aquí puede especificar cualquier ajuste adicional de DOSBox o comandos de arranque necesarios para este juego. Puede encontrar una lista de ajustes soportados en la ayuda incorporada de Boxer,  sobre \"Parámetros del archivo de configuración de DOSBox\".\n\nTenga en cuenta que puede ajustar la velocidad de CPU y otros ajustes comunes directamente desde el panel Inspector de Boxer (Cmd-I mientras juega).";
+
+//Printed as a header underneath the [autoexec] section.
+"Preamble for startup commands" = "Cualquier comando DOS que coloque debajo de este encabezado se ejecutará al iniciar la emulación DOS, justo antes de ejecutar el juego. En este punto todas las unidades se montarán y la unidad actual será Z.";

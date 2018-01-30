@@ -31,7 +31,13 @@ This means that this file has had too many modifications to be safely replaceabl
 
 
 /* Determines if the compilers supports always_inline attribute. */
+//--Modified 2018-01-30 by C.W. Betts to enable inlining for release builds
+#if defined(BOXER_DEBUG) && BOXER_DEBUG
 #undef C_ATTRIBUTE_ALWAYS_INLINE
+#else
+#define C_ATTRIBUTE_ALWAYS_INLINE 1
+#endif
+//--End of modifications
 
 /* Determines if the compilers supports fastcall attribute. */
 #undef C_ATTRIBUTE_FASTCALL

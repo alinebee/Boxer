@@ -13,7 +13,6 @@
 		554E2B6E1BFAF6B20038C506 /* Shared.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 554E2B6C1BFAF6720038C506 /* Shared.xcassets */; };
 		554E2B701BFAF6D90038C506 /* Boxer only.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 554E2B6F1BFAF6D90038C506 /* Boxer only.xcassets */; };
 		557A24EC1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24EB1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets */; };
-		558A661B1BFFD7630043F15C /* BBAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558A661A1BFFD7630043F15C /* BBAppDelegate.swift */; };
 		55B22BA21A1BD9760007665E /* Bundler.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55B22BA11A1BD9760007665E /* Bundler.xcassets */; };
 		55DEBB23201E875600F1092F /* pci_bus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55DEBB21201E875500F1092F /* pci_bus.cpp */; };
 		55E6A0B61C00C86200285593 /* MT32Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55E6A0B51C00C81E00285593 /* MT32Emu.framework */; };
@@ -949,8 +948,6 @@
 		554E2B6C1BFAF6720038C506 /* Shared.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Shared.xcassets; sourceTree = "<group>"; };
 		554E2B6F1BFAF6D90038C506 /* Boxer only.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Boxer only.xcassets"; sourceTree = "<group>"; };
 		557A24EB1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Importing-nonLocalizable.xcassets"; sourceTree = "<group>"; };
-		558A66191BFFD7630043F15C /* Boxer Bundler-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Boxer Bundler-Bridging-Header.h"; sourceTree = "<group>"; };
-		558A661A1BFFD7630043F15C /* BBAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BBAppDelegate.swift; sourceTree = "<group>"; };
 		55AEA5CB201F05010000139A /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/DocumentationPanel.strings; sourceTree = "<group>"; };
 		55AEA5CC201F05020000139A /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/DocumentationBrowser.strings; sourceTree = "<group>"; };
 		55AEA5CD201F05020000139A /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PrintStatusPanel.strings; sourceTree = "<group>"; };
@@ -3174,7 +3171,6 @@
 		9FB4539016442CDD00BCF63B /* Bundler */ = {
 			isa = PBXGroup;
 			children = (
-				558A661A1BFFD7630043F15C /* BBAppDelegate.swift */,
 				9FB4539C16442CDD00BCF63B /* BBAppDelegate.h */,
 				9FB4539D16442CDD00BCF63B /* BBAppDelegate.m */,
 				9F5537F21644321500B9447D /* BBAppDelegate+AppExporting.h */,
@@ -3194,7 +3190,6 @@
 			children = (
 				9FCB87DC1C026B7800EAFE47 /* Localizable.strings */,
 				9FB4539216442CDD00BCF63B /* Boxer Bundler-Info.plist */,
-				558A66191BFFD7630043F15C /* Boxer Bundler-Bridging-Header.h */,
 				9FB4539616442CDD00BCF63B /* main.m */,
 				9FB4539816442CDD00BCF63B /* Boxer Bundler-Prefix.pch */,
 			);
@@ -4462,7 +4457,6 @@
 				9F5537F91644321500B9447D /* BBIconDropzone.m in Sources */,
 				9F5537FA1644321500B9447D /* BBURLTransformer.m in Sources */,
 				9FF91EB816CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */,
-				558A661B1BFFD7630043F15C /* BBAppDelegate.swift in Sources */,
 				9F4BCC1A17E5CFF700140390 /* NSImage+ADBSaveImages.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5033,9 +5027,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "net.washboardabs.boxer-standalone-bundler";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "Bundler/Boxer Bundler-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -5064,8 +5055,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "net.washboardabs.boxer-standalone-bundler";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "Bundler/Boxer Bundler-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -5112,6 +5101,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};

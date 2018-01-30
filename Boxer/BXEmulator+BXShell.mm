@@ -187,11 +187,11 @@ nil];
 	if (dosPath.length)
 	{
         [self willChangeValueForKey: @"currentDirectoryURL"];
-        
-        if ([dosPath hasSuffix:@"\\"] && dosPath.length != 1)
-        {
-            dosPath = [dosPath substringToIndex:dosPath.length - 1];
-        }
+		
+		if ([dosPath hasSuffix:@"\\"] && dosPath.length != 1)
+		{
+			dosPath = [dosPath substringToIndex:dosPath.length - 1];
+		}
 		const char *dir = [dosPath cStringUsingEncoding: BXDirectStringEncoding];
 		if (dir) changedPath = DOS_ChangeDir(dir) || changedPath;
         

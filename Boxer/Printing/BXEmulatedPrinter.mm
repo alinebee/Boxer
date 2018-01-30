@@ -15,38 +15,38 @@
 #pragma mark -
 #pragma mark Private constants
 
-//Flags for the control register, as set and returned by BXEmulatedPrinter.controlRegister
-enum {
-    BXEmulatedPrinterControlStrobe      = 1 << 0,   //'Flashed' to indicate that data is waiting to be read.
-    BXEmulatedPrinterControlAutoFeed    = 1 << 1,   //Tells the device to handle linebreaking automatically.
-    BXEmulatedPrinterControlReset       = 1 << 2,   //Tells the device to initialize/reset.
+//! Flags for the control register, as set and returned by \c BXEmulatedPrinter.controlRegister
+typedef NS_OPTIONS(uint8_t, BXEmulatedPrinterControl) {
+    BXEmulatedPrinterControlStrobe      = 1 << 0,   //!< 'Flashed' to indicate that data is waiting to be read.
+    BXEmulatedPrinterControlAutoFeed    = 1 << 1,   //!< Tells the device to handle linebreaking automatically.
+    BXEmulatedPrinterControlReset       = 1 << 2,   //!< Tells the device to initialize/reset.
     
-    BXEmulatedPrinterControlSelect      = 1 << 3,   //Tells the device to select. Unsupported.
-    BXEmulatedPrinterControlEnableIRQ   = 1 << 4,   //Tells the device to enable interrupts. Unsupported.
-    BXEmulatedPrinterControlEnableBiDi  = 1 << 5,   //Tells the device to enable bidirectional communication. Unsupported.
+    BXEmulatedPrinterControlSelect      = 1 << 3,   //!< Tells the device to select. Unsupported.
+    BXEmulatedPrinterControlEnableIRQ   = 1 << 4,   //!< Tells the device to enable interrupts. Unsupported.
+    BXEmulatedPrinterControlEnableBiDi  = 1 << 5,   //!< Tells the device to enable bidirectional communication. Unsupported.
     
     //Bits 6 and 7 are reserved
     
-    //Used when reporting the current control register, to mask unsupported bits 5, 6 and 7.
+    //! Used when reporting the current control register, to mask unsupported bits 5, 6 and 7.
     BXEmulatedPrinterControlMask        = 0xe0,
 };
 
-//Flags for the status register, as returned by BXEmulatedPrinter.statusRegister
-enum {
+//! Flags for the status register, as returned by \c BXEmulatedPrinter.statusRegister
+typedef NS_OPTIONS(uint8_t, BXEmulatedPrinterStatus) {
     //Bits 0 and 1 are reserved
     
-    BXEmulatedPrinterNoInterrupt        = 1 << 2,   //When *unset*, indicates an interrupt has occurred. Unsupported.
-    BXEmulatedPrinterStatusNoError      = 1 << 3,   //When *unset*, indicates the device has encountered an error.
-    BXEmulatedPrinterStatusSelected     = 1 << 4,   //Indicates the device is online and selected.
-    BXEmulatedPrinterStatusPaperEmpty   = 1 << 5,   //Indicates there is no paper remaining.
-    BXEmulatedPrinterStatusNoAck        = 1 << 6,   //When *unset*, indicates acknowledgement that data has been read.
-    BXEmulatedPrinterStatusReady        = 1 << 7,   //When *unset*, the device is busy and no data should be sent.
+    BXEmulatedPrinterNoInterrupt        = 1 << 2,   //!< When *unset*, indicates an interrupt has occurred. Unsupported.
+    BXEmulatedPrinterStatusNoError      = 1 << 3,   //!< When *unset*, indicates the device has encountered an error.
+    BXEmulatedPrinterStatusSelected     = 1 << 4,   //!< Indicates the device is online and selected.
+    BXEmulatedPrinterStatusPaperEmpty   = 1 << 5,   //!< Indicates there is no paper remaining.
+    BXEmulatedPrinterStatusNoAck        = 1 << 6,   //!< When *unset*, indicates acknowledgement that data has been read.
+    BXEmulatedPrinterStatusReady        = 1 << 7,   //!< When *unset*, the device is busy and no data should be sent.
 
-    //Used when reporting the current status register, to mask unsupported bits 0, 1, 2.
+    //! Used when reporting the current status register, to mask unsupported bits 0, 1, 2.
     BXEmulatedPrinterStatusMask         = 0x07,
 };
 
-//Helper macro that returns two adjacent 8-bit parameters from an array, merged into a single 16-bit parameter
+//! Helper macro that returns two adjacent 8-bit parameters from an array, merged into a single 16-bit parameter
 #define WIDEPARAM(p, i) (p[i] + (p[i+1] << 8))
 
 //Used to flag extended ESC/P2 and IBM commands so that they can be handled with the same byte-eating logic

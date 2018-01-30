@@ -25,11 +25,11 @@ typedef NS_OPTIONS(NSUInteger, BXESCPLineStyle) {
     BXESCPLineStyleDoubleBroken = BXESCPLineStyleDouble | BXESCPLineStyleBroken,
 };
 
-typedef enum {
+typedef NS_ENUM(NSInteger, BXEmulatedPrinterPort) {
     BXPrinterPortLPT1 = 1,
     BXPrinterPortLPT2 = 2,
     BXPrinterPortLPT3 = 3
-} BXEmulatedPrinterPort;
+};
 
 typedef enum {
     BXESCPQualityDraft = 1,
@@ -142,7 +142,7 @@ typedef enum {
 @class BXPrintSession;
 @interface BXEmulatedPrinter : NSObject
 {
-    __unsafe_unretained id <BXEmulatedPrinterDelegate> _delegate;
+    __weak id <BXEmulatedPrinterDelegate> _delegate;
     BOOL _initialized;
     BXEmulatedPrinterPort _port;
     
@@ -197,24 +197,24 @@ typedef enum {
     double _verticalTabPositions[BXEmulatedPrinterMaxVerticalTabs];
     NSUInteger _numVerticalTabs;
     
-    NSSize _pageSize;           //The size of the current page in inches.
-    NSSize _defaultPageSize;    //The printer's default page size in inches.
-    NSPoint _headPosition;      //The current position of the printing head in inches.
+    NSSize _pageSize;           //!< The size of the current page in inches.
+    NSSize _defaultPageSize;    //!< The printer's default page size in inches.
+    NSPoint _headPosition;      //!< The current position of the printing head in inches.
     
-    double _topMargin, _bottomMargin, _rightMargin, _leftMargin;	// Margins of the page (in inches)
-	double _lineSpacing;											// Height of one line (in inches)
-    double _effectivePitch;     //The effective width of a single character in the current pitch.
-    double _characterAdvance;   //How far to advance the print head after each character. Unused in proportional mode.
-    double _letterSpacing;      //Extra spacing between each printed character (in inches)
+    double _topMargin, _bottomMargin, _rightMargin, _leftMargin;	//!< Margins of the page (in inches)
+	double _lineSpacing;											//!< Height of one line (in inches)
+    double _effectivePitch;     //!< The effective width of a single character in the current pitch.
+    double _characterAdvance;   //!< How far to advance the print head after each character. Unused in proportional mode.
+    double _letterSpacing;      //!< Extra spacing between each printed character (in inches)
     
     BOOL _multipointEnabled;
-    double _multipointFontSize;     //The vertical font size in points
-    double _multipointFontPitch;    //The horizontal font pitch in characters per inch
+    double _multipointFontSize;     //!< The vertical font size in points
+    double _multipointFontPitch;    //!< The horizontal font pitch in characters per inch
     
-    double _unitSize; //The size of unit to use when interpreting certain commands.
+    double _unitSize; //!< The size of unit to use when interpreting certain commands.
     
-    //The current ASCII-to-unicode mapping
-    uint16_t _charMap[256];
+    //! The current ASCII-to-unicode mapping
+    unichar _charMap[256];
     
     uint16_t _charTables[4];
     BXESCPCharTable _activeCharTable;
@@ -289,7 +289,7 @@ typedef enum {
 @property (assign, nonatomic) BOOL autoFeed;
 
 //The delegate to whom we will send BXEmulatedPrinterDelegate messages.
-@property (assign, nonatomic, nullable) id <BXEmulatedPrinterDelegate> delegate;
+@property (weak, nonatomic, nullable) id <BXEmulatedPrinterDelegate> delegate;
 
 //The current print session that the printer is working on.
 //Will be nil before the printer has received anything to print.

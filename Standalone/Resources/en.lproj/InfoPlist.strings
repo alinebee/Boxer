@@ -1,0 +1,9 @@
+/* (No Commment) */
+"CFBundleName" = "{{APPLICATION_NAME}}";
+
+/* (No Commment) */
+"CFBundleShortVersionString" = "{{APPLICATION_VERSION}}";
+
+/* (No Commment) */
+"NSHumanReadableCopyright" = "© {{YEAR}} {{ORGANIZATION_NAME}}, all rights reserved.";
+

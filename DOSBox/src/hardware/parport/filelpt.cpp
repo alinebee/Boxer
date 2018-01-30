@@ -44,7 +44,7 @@ CFileLPT::CFileLPT (Bitu nr, Bit8u initIrq, CommandLine* cmd)
 	else addLF = false;
 
 	// find the codepage
-	Bitu temp=0;
+	unsigned int temp=0;
 	codepage_ptr = NULL;
 	if(cmd->FindStringBegin("cp:",str,false)) {
 		if(sscanf(str.c_str(), "%u",&temp)!=1) {
@@ -64,10 +64,11 @@ CFileLPT::CFileLPT (Bitu nr, Bit8u initIrq, CommandLine* cmd)
 	
 	temp=0;
 	if(cmd->FindStringBegin("timeout:",str,false)) {
-		if(sscanf(str.c_str(), "%u",&timeout)!=1) {
+		if(sscanf(str.c_str(), "%u",&temp)!=1) {
 			LOG_MSG("parallel%ld: Invalid timeout parameter.",(long)(nr+1));
 			return;
 		}
+		timeout = temp;
 	} else timeout = 500;
 
 	if(cmd->FindStringBegin("dev:",str,false)) {

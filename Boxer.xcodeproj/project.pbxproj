@@ -1213,7 +1213,7 @@
 		9F5537F71644321500B9447D /* BBURLTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBURLTransformer.m; sourceTree = "<group>"; };
 		9F573C580F8E18B10089D8B7 /* NSWorkspace+ADBMountedVolumes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+ADBMountedVolumes.h"; sourceTree = "<group>"; };
 		9F573C590F8E18B10089D8B7 /* NSWorkspace+ADBMountedVolumes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+ADBMountedVolumes.m"; sourceTree = "<group>"; };
-		9F573D370F8E69AF0089D8B7 /* BXGamebox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGamebox.h; sourceTree = "<group>"; };
+		9F573D370F8E69AF0089D8B7 /* BXGamebox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGamebox.h; sourceTree = "<group>"; usesTabs = 0; };
 		9F573D380F8E69AF0089D8B7 /* BXGamebox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGamebox.m; sourceTree = "<group>"; };
 		9F57684715DA27A300B50500 /* BXHUDSpinningProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXHUDSpinningProgressIndicator.h; path = "DOS window/BXHUDSpinningProgressIndicator.h"; sourceTree = "<group>"; };
 		9F57684815DA27A300B50500 /* BXHUDSpinningProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXHUDSpinningProgressIndicator.m; path = "DOS window/BXHUDSpinningProgressIndicator.m"; sourceTree = "<group>"; };

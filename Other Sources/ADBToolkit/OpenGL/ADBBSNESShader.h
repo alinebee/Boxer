@@ -35,18 +35,18 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 #pragma mark Constants
 
-typedef enum {
-    ADBBSNESShaderFilterAuto,     //Application can decide which texture scaling mode to use.
-    ADBBSNESShaderFilterNearest,  //Shader wants nearest-neighbor scaling.
-    ADBBSNESShaderFilterLinear    //Shader wants bilinear scaling.
-} ADBBSNESShaderFilterType;
+typedef NS_ENUM(NSInteger, ADBBSNESShaderFilterType) {
+    ADBBSNESShaderFilterAuto,     //!< Application can decide which texture scaling mode to use.
+    ADBBSNESShaderFilterNearest,  //!< Shader wants nearest-neighbor scaling.
+    ADBBSNESShaderFilterLinear    //!< Shader wants bilinear scaling.
+};
 
-typedef enum {
-    ADBBSNESShaderScaleAuto,                  //Application can decide the appropriate output size.
-    ADBBSNESShaderScaleRelativeToInputSize,   //Scale is treated as a multiple of the input size.
-    ADBBSNESShaderScaleRelativeToOutputSize,  //Scale is treated as a multiple of the final output size.
-    ADBBSNESShaderScaleToFixedSize            //Scale is treated as a fixed pixel size.
-} ADBBSNESShaderScalingBehaviour;
+typedef NS_ENUM(NSInteger, ADBBSNESShaderScalingBehaviour) {
+    ADBBSNESShaderScaleAuto,                  //!< Application can decide the appropriate output size.
+    ADBBSNESShaderScaleRelativeToInputSize,   //!< Scale is treated as a multiple of the input size.
+    ADBBSNESShaderScaleRelativeToOutputSize,  //!< Scale is treated as a multiple of the final output size.
+    ADBBSNESShaderScaleToFixedSize            //!< Scale is treated as a fixed pixel size.
+};
 
 
 #pragma mark -
@@ -57,7 +57,7 @@ enum {
     ADBBSNESShaderDefinitionUnsupported, //The .OpenGLShader file was an unsupported shader type.
 };
 
-extern NSString * const ADBBSNESShaderErrorDomain;
+extern NSErrorDomain const ADBBSNESShaderErrorDomain;
 
 
 #pragma mark -
@@ -105,7 +105,7 @@ extern const GLcharARB * const ADBBSNESShaderFrameCountUniform;
 #pragma mark -
 #pragma mark Loader methods
 
-/// Returns an array of ADBBSNESShaders loaded from the specified OpenGLShader XML definition,
+/// Returns an array of \c ADBBSNESShaders loaded from the specified OpenGLShader XML definition,
 /// in the order they were defined. Returns \c nil and populates \c outError if the file could not
 /// be parsed or if one or more shaders failed to compile.
 + (nullable NSArray<ADBBSNESShader*> *) shadersWithContentsOfURL: (NSURL *)shaderURL

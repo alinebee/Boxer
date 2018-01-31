@@ -60,7 +60,7 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 - (nullable NSString *) typeOfFileAtPath: (NSString *)path;
 
 /// Given a set of UTIs to test, returns the first one of those types to which the file conforms.
-- (NSString *) typeOfFileAtPath: (NSString *)path matchingTypes: (NSSet *)UTIs;
+- (NSString *) typeOfFileAtPath: (NSString *)path matchingTypes: (NSSet<NSString*> *)UTIs;
 
 /// Return whether the file at the specified path conforms to the specified type.
 - (BOOL) fileAtPath: (NSString *)path conformsToType: (NSString *)UTI;
@@ -83,7 +83,7 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 - (BOOL) removeItemAtPath: (NSString *)path error: (out NSError **)outError;
 
 /// Copy/move an item from the specified source path to the specified destination.
-/// Returns \c YES if the operation was successful, or \c NO and populates outError on failure.
+/// Returns \c YES if the operation was successful, or \c NO and populates \c outError on failure.
 - (BOOL) copyItemAtPath: (NSString *)fromPath toPath: (NSString *)toPath error: (out NSError **)outError;
 - (BOOL) moveItemAtPath: (NSString *)fromPath toPath: (NSString *)toPath error: (out NSError **)outError;
 

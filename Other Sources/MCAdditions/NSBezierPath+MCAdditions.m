@@ -7,13 +7,6 @@
 
 #import "NSBezierPath+MCAdditions.h"
 
-// remove/comment out this line of you don't want to use undocumented functions
-#define MCBEZIER_USE_PRIVATE_FUNCTION
-
-#ifdef MCBEZIER_USE_PRIVATE_FUNCTION
-extern CGPathRef CGContextCopyPath(CGContextRef context);
-#endif
-
 static void CGPathCallback(void *info, const CGPathElement *element)
 {
 	NSBezierPath *path = (__bridge NSBezierPath *)info;
@@ -102,7 +95,6 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 
 - (NSBezierPath *)pathWithStrokeWidth:(CGFloat)strokeWidth
 {
-#ifdef MCBEZIER_USE_PRIVATE_FUNCTION
 	NSBezierPath *path = [self copy];
 	CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
 	CGPathRef pathRef = [path createCGPath];
@@ -123,9 +115,6 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 	CFRelease(strokedPathRef);
 	
 	return strokedPath;
-#else
-	return nil;
-#endif//MCBEZIER_USE_PRIVATE_FUNCTION
 }
 
 - (void)fillWithInnerShadow:(NSShadow *)innerShadow

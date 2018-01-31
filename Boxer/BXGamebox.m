@@ -534,7 +534,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
                              [NSSortDescriptor sortDescriptorWithKey: @"sourceURL.lastPathComponent" ascending: YES]];
     [drives sortUsingDescriptors: descriptors];
     
-    return drives;
+    return [drives copy];
 }
 
 - (NSURL *) configurationFileURL

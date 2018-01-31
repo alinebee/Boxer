@@ -26,21 +26,25 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NSKeyedArchiver (ADBArchivingAdditions)
 
-//Performs the same job as archivedDataWithRootObject: but allows an optional
-//delegate to be specified for the operation.
+//! Performs the same job as \c archivedDataWithRootObject: but allows an optional
+//! delegate to be specified for the operation.
 + (NSData *) archivedDataWithRootObject: (id)rootObject
-                               delegate: (id <NSKeyedArchiverDelegate>)delegate;
+                               delegate: (nullable id <NSKeyedArchiverDelegate>)delegate;
 
 @end
 
 
 @interface NSKeyedUnarchiver (ADBUnarchivingAdditions)
 
-//Performs the same job as unarchiveObjectWithData: but allows an optional
-//delegate to be specified for the operation.
-+ (id) unarchiveObjectWithData: (NSData *)data
-                      delegate: (id <NSKeyedUnarchiverDelegate>)delegate;
+//! Performs the same job as \c unarchiveObjectWithData: but allows an optional
+//! delegate to be specified for the operation.
++ (nullable id) unarchiveObjectWithData: (NSData *)data
+							   delegate: (nullable id <NSKeyedUnarchiverDelegate>)delegate;
 
 @end
+
+NS_ASSUME_NONNULL_END

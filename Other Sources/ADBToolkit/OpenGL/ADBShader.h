@@ -43,11 +43,11 @@ enum {
 };
 
 /// The domain for errors produced by ADBShader.
-extern NSString * const ADBShaderErrorDomain;
+extern NSErrorDomain const ADBShaderErrorDomain;
 
 /// For compilation errors, contains the source code and info log of the offending shader.
-extern NSString * const ADBShaderErrorSourceKey;
-extern NSString * const ADBShaderErrorInfoLogKey;
+extern NSErrorUserInfoKey const ADBShaderErrorSourceKey;
+extern NSErrorUserInfoKey const ADBShaderErrorInfoLogKey;
 
 
 #pragma mark -

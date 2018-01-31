@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-//Declare that NSEnumerator already conforms to the ADBStepwiseEnumeration protocol.
+/// Declare that NSEnumerator already conforms to the ADBStepwiseEnumeration protocol.
 @interface NSEnumerator (ADBScanningExtensions) <ADBStepwiseEnumeration>
 @end
 

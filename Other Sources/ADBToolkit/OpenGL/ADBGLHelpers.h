@@ -33,10 +33,10 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Error constants
 
 /// The error domain for errors produced by standard GL calls.
-extern NSString * const ADBGLErrorDomain;
+extern NSErrorDomain const ADBGLErrorDomain;
 
 /// The error domain for errors produced by \c GL_EXT_framebuffer_object extension.
-extern NSString * const ADBGLFramebufferExtensionErrorDomain;
+extern NSErrorDomain const ADBGLFramebufferExtensionErrorDomain;
 
 
 
@@ -50,7 +50,7 @@ NSError *__nullable errorForGLErrorCode(GLenum errorCode);
 /// Returns a Cocoa error object representing the specified status code
 /// from the \c GL_FRAMEBUFFER_EXT extension. The error will be in the
 /// \c ADBGLFramebufferExtensionErrorDomain.
-/// Will return nil if the status is \c GL_FRAMEBUFFER_COMPLETE_EXT, as this
+/// Will return \c nil if the status is \c GL_FRAMEBUFFER_COMPLETE_EXT, as this
 /// indicates a successful operation.
 NSError *__nullable errorForGLFramebufferExtensionStatus(GLenum status);
 

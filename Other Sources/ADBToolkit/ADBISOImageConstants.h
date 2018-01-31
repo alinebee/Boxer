@@ -37,7 +37,7 @@
 #define ADBISODirectoryRecordMinLength 34
 #define ADBISORootDirectoryRecordLength 34
 
-enum {
+typedef NS_OPTIONS(uint8_t, ADBISODirectoryRecordOptions) {
     ADBISOFileIsHidden               = 1 << 0,
     ADBISOFileIsDirectory            = 1 << 1,
     ADBISOFileIsAssociated           = 1 << 2,
@@ -47,17 +47,15 @@ enum {
     ADBISOFileFlagReserved2          = 1 << 6,
     ADBISOFileSpansMultipleExtents   = 1 << 7
 };
-typedef uint8_t ADBISODirectoryRecordOptions;
 
 
-enum {
+typedef NS_ENUM(uint8_t, ADBISOVolumeDescriptorType) {
     ADBISOVolumeDescriptorTypeBootRecord     = 0,
     ADBISOVolumeDescriptorTypePrimary        = 1,
     ADBISOVolumeDescriptorTypeSupplementary  = 2,
     ADBISOVolumeDescriptorTypePartition      = 3,
     ADBISOVolumeDescriptorTypeSetTerminator  = 255
 };
-typedef uint8_t ADBISOVolumeDescriptorType;
 
 
 #pragma mark -

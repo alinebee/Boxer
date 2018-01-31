@@ -13,7 +13,6 @@
 @interface BXMT32ROMDropzone : NSButton <CALayerDelegate>
 {
     BXMT32ROMType _ROMType;
-    BOOL _highlighted;
     
     CALayer *_backgroundLayer;
     CALayer *_CM32LLayer;
@@ -26,6 +25,7 @@
 @property (assign, nonatomic) BXMT32ROMType ROMType;
 
 //Whether the dropzone is highlighted for a drag-drop operation.
-@property (assign, atomic, getter=isHighlighted) BOOL highlighted;
+//We now use NSControl's highlighted property.
+//@property (assign, atomic, getter=isHighlighted) BOOL highlighted;
 
 @end

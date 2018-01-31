@@ -27,7 +27,7 @@
 
 
 @implementation BXImportDropzone
-@synthesize highlighted, borderPhase, borderOutset;
+@synthesize borderPhase, borderOutset;
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -132,11 +132,11 @@
 //Start up the border animation when we get highlighted, and stop it when we stop being highlighted
 - (void) setHighlighted: (BOOL)highlight
 {
-	if (highlighted != highlight)
+	if (self.highlighted != highlight)
 	{
-		highlighted = highlight;
+		super.highlighted = highlight;
 		
-		if (highlighted)
+		if (self.highlighted)
 		{
 			//Animate the phase to a sufficiently high number that will take forever for us to reach
 			//We have to loop the animation this way instead of with CAMediaTiming repeat options,

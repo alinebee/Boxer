@@ -16,13 +16,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// (<code>BXImportDropzone</code> does not actually handle drag-drop events itself: the panel itself does that.)
 @interface BXImportDropzone : NSButton
 {
-	BOOL highlighted;
 	CGFloat borderPhase;
 	CGFloat borderOutset;
 }
 
 //Whether we're the target of a drag-drop operation. When YES, the dropzone's border will animate.
-@property (assign, nonatomic, getter=isHighlighted) BOOL highlighted;
+//We now use NSControl's highlighted property.
+//@property (assign, getter=isHighlighted) BOOL highlighted;
 
 //The current phase of the dropzone's dashed border. This is manipulated to produce animation effects.
 @property (assign, nonatomic) CGFloat borderPhase;

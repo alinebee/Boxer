@@ -22,6 +22,101 @@ NSString * const BXEmulatorUnrecoverableException = @"BXEmulatorUnrecoverableExc
 
 @implementation BXEmulatorCouldNotReadDriveError
 
++ (void)load
+{
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		[NSError setUserInfoValueProviderForDomain:BXDOSFilesystemErrorDomain provider:^id _Nullable(NSError * _Nonnull err, NSErrorUserInfoKey  _Nonnull userInfoKey) {
+			BXDrive *drive = err.userInfo[BXDOSFilesystemErrorDriveKey];
+			switch (err.code) {
+				case BXDOSFilesystemInvalidImage:
+					if ([userInfoKey isEqualToString:NSLocalizedDescriptionKey]) {
+						NSString *displayName = drive.sourceURL.lastPathComponent;
+						NSString *descriptionFormat = NSLocalizedString(@"The disk image “%1$@” could not be opened.",
+																		@"Error shown when a drive's source image could not be loaded by DOSBox. %1$@ is the filename of the image.");
+
+						NSString *description = [NSString stringWithFormat: descriptionFormat, displayName];
+						return description;
+					} else if ([userInfoKey isEqualToString:NSLocalizedRecoverySuggestionErrorKey]) {
+						return NSLocalizedString(@"The disk image file may be corrupted or incomplete.", @"Recovery suggestion shown when a drive's source image could not be loaded by DOSBox.");
+					}
+					break;
+					
+				case BXDOSFilesystemCouldNotReadDrive:
+					if ([userInfoKey isEqualToString:NSLocalizedDescriptionKey]) {
+						NSString *displayName = drive.sourceURL.lastPathComponent;
+						NSString *descriptionFormat = NSLocalizedString(@"The file “%1$@” could not be read.",
+																		@"Error shown when a drive's source does not exist or could not be accessed. %1$@ is the filename of the drive's source.");
+
+						NSString *description = [NSString stringWithFormat: descriptionFormat, displayName];
+						return description;
+					} else if ([userInfoKey isEqualToString:NSLocalizedRecoverySuggestionErrorKey]) {
+						return NSLocalizedString(@"Ensure that you have permission to access this file and that the volume containing it is still available.", @"Recovery suggestion shown when a drive's source does not exist or could not be accessed.");
+					}
+					break;
+
+				case BXDOSFilesystemDriveLetterOccupied:
+					if ([userInfoKey isEqualToString:NSLocalizedDescriptionKey]) {
+						NSString *descriptionFormat = NSLocalizedString(@"There is already another drive at the DOS drive letter %1$@.",
+																		@"Error shown when a drive's letter is already occupied. %1$@ is the occupied drive letter.");
+						
+						NSString *description	= [NSString stringWithFormat: descriptionFormat, drive.letter];
+						return description;
+					} else if ([userInfoKey isEqualToString:NSLocalizedRecoverySuggestionErrorKey]) {
+						return NSLocalizedString(@"Eject the existing drive and try again.", @"Recovery suggestion shown when a drive's letter is already occupied.");
+					}
+					break;
+
+				case BXDOSFilesystemOutOfDriveLetters:
+					if ([userInfoKey isEqualToString:NSLocalizedDescriptionKey]) {
+						return NSLocalizedString(@"There are no free DOS drive letters remaining.",
+												 @"Error shown when all drive letters are already occupied.");
+					} else if ([userInfoKey isEqualToString:NSLocalizedRecoverySuggestionErrorKey]) {
+						return NSLocalizedString(@"Eject one or more existing drives and try again.", @"Recovery suggestion shown when all drive letters are already occupied.");
+					}
+					break;
+					
+				case BXDOSFilesystemMSCDEXNonContiguousDrives:
+					if ([userInfoKey isEqualToString:NSLocalizedDescriptionKey]) {
+						return NSLocalizedString(@"CD-ROM drives must be on sequential drive letters, with no gaps between them.",
+												 @"Error shown when the chosen drive letter for a CD-ROM drive would be non-contiguous.");
+					} else if ([userInfoKey isEqualToString:NSLocalizedRecoverySuggestionErrorKey]) {
+						return NSLocalizedString(@"Try removing later drives before adding or removing any other CD-ROM drives.", @"Recovery suggestion shown when the chosen drive letter for a CD-ROM drive would be non-contiguous.");
+					}
+					break;
+					
+				case BXDOSFilesystemMSCDEXOutOfCDROMDrives:
+					if ([userInfoKey isEqualToString:NSLocalizedDescriptionKey]) {
+						NSString *descriptionFormat	= NSLocalizedString(@"MS-DOS is limited to a maximum of %1$d CD-ROM drives.",
+																		@"Error shown when the user tries to add more than the maximum number of CD-ROM drives. %1$d is the maximum number allowed.");
+						
+						NSString *description   = [NSString stringWithFormat: descriptionFormat, BXMaxCDROMDrives];
+						return description;
+					} else if ([userInfoKey isEqualToString:NSLocalizedRecoverySuggestionErrorKey]) {
+						return NSLocalizedString(@"Eject one or more existing drives and try again.", @"Recovery suggestion shown when the user tries to add more than the maximum number of CD-ROM drives.");
+					}
+					break;
+					
+				case BXDOSFilesystemDriveLocked:
+					if ([userInfoKey isEqualToString:NSLocalizedDescriptionKey]) {
+						NSString *descriptionFormat = NSLocalizedString(@"Drive %1$@ is required by Boxer and cannot be ejected.",
+																		@"Error shown when a drive was locked and cannot be ejected. %1$@ is the drive's letter.");
+						
+						NSString *description	= [NSString stringWithFormat: descriptionFormat, drive.letter];
+						return description;
+					}
+
+					break;
+
+				default:
+					break;
+			}
+			
+			return nil;
+		}];
+	});
+}
+
 + (id) errorWithDrive: (BXDrive *)drive
 {
     NSString *displayName = drive.sourceURL.lastPathComponent;

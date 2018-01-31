@@ -14,14 +14,14 @@
 @interface BXThemedImageCell : NSImageCell <BXThemable>
 {
     NSString *_themeKey;
-    BOOL _highlighted;
 }
 
 //The current theme key.
 @property (copy, nonatomic) NSString *themeKey;
 
 //Toggles the highlighted appearance for the image cell.
-@property (assign, getter=isHighlighted) BOOL highlighted;
+//We now use NSControl's highlighted property.
+//@property (assign, getter=isHighlighted) BOOL highlighted;
 
 @end
 

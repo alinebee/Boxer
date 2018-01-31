@@ -52,6 +52,6 @@
 {
 	BOOL isDragTarget;
 }
-@property (readonly, assign) BOOL isHighlighted;
+- (BOOL) isHighlighted;
 
 @end

@@ -390,14 +390,29 @@ bool localDrive::MakeDir(char * dir) {
 	strcpy(newdir,basedir);
 	strcat(newdir,dir);
 	CROSS_FILENAME(newdir);
-#if defined (WIN32)						/* MS Visual C++ */
+	//--Modified 2010-12-29 by Alun Bestor to allow Boxer to selectively prevent file operations,
+	//and to prevent DOSBox from creating folders with the wrong file permissions.
+	/*
+#if defined (WIN32)						// MS Visual C++
 	int temp=mkdir(dirCache.GetExpandName(newdir));
 #else
 	int temp=mkdir(dirCache.GetExpandName(newdir),0700);
 #endif
-	if (temp==0) dirCache.CacheOut(newdir,true);
+	 */
+	if (!boxer_shouldAllowWriteAccessToPath(dirCache.GetExpandName(newdir), this))
+	{
+		DOS_SetError(DOSERR_ACCESS_DENIED);
+		return false;
+	}
 
-	return (temp==0);// || ((temp!=0) && (errno==EEXIST));
+	//if (temp==0) dirCache.CacheOut(newdir,true);
+
+	//return (temp==0);// || ((temp!=0) && (errno==EEXIST));
+	
+	bool created = boxer_createLocalDir(dirCache.GetExpandName(newdir), this);
+	if (created) dirCache.CacheOut(newdir,true);
+	return created;
+	//--End of modifications
 }
 
 bool localDrive::RemoveDir(char * dir) {
@@ -465,10 +480,13 @@ bool localDrive::FileExists(const char* name) {
 	strcat(newname,name);
 	CROSS_FILENAME(newname);
 	dirCache.ExpandName(newname);
-	struct stat temp_stat;
-	if(stat(newname,&temp_stat)!=0) return false;
-	if(temp_stat.st_mode & S_IFDIR) return false;
-	return true;
+	//--Modified 2012-04-27 by Alun Bestor to wrap local file operations
+	//struct stat temp_stat;
+	//if(stat(newname,&temp_stat)!=0) return false;
+	//if(temp_stat.st_mode & S_IFDIR) return false;
+	//return true;
+	return boxer_localFileExists(newname, this);
+	//--End of modifications
 }
 
 bool localDrive::FileStat(const char* name, FileStat_Block * const stat_block) {
@@ -478,7 +496,12 @@ bool localDrive::FileStat(const char* name, FileStat_Block * const stat_block) {
 	CROSS_FILENAME(newname);
 	dirCache.ExpandName(newname);
 	struct stat temp_stat;
-	if(stat(newname,&temp_stat)!=0) return false;
+	
+	//--Modified 2012-04-27 by Alun Bestor to wrap local file operations
+	//if(stat(newname,&temp_stat)!=0) return false;
+    if (!boxer_getLocalPathStats(newname, this, &temp_stat)) return false;
+    //--End of modifications
+	
 	/* Convert the stat to a FileStat */
 	struct tm *time;
 	if((time=localtime(&temp_stat.st_mtime))!=0) {

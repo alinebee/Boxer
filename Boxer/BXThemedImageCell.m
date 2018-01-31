@@ -22,7 +22,6 @@
 
 @implementation BXThemedImageCell
 @synthesize themeKey = _themeKey;
-@synthesize highlighted = _highlighted;
 
 
 #pragma mark - Default theme handling

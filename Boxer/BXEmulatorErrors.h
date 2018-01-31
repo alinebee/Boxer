@@ -13,18 +13,18 @@
 
 
 //The error domain for general emulator errors.
-extern NSString * const BXEmulatorErrorDomain;
+extern NSErrorDomain const BXEmulatorErrorDomain;
 
 //The error domain used for drive- and DOS filesystem-related errors.
-extern NSString * const BXDOSFilesystemErrorDomain;
+extern NSErrorDomain const BXDOSFilesystemErrorDomain;
 
 //The name of exceptions generated when the emulation hits an error it cannot recover from.
 //The emulator should be assumed to be in an unusable state.
-extern NSString * const BXEmulatorUnrecoverableException;
+extern NSExceptionName const BXEmulatorUnrecoverableException;
 
 
 //User info key representing a BXDrive instance in drive-related errors.
-extern NSString * const BXDOSFilesystemErrorDriveKey;
+extern NSErrorUserInfoKey const BXDOSFilesystemErrorDriveKey;
 
 //Error constants for BXEmulatorErrorDomain
 enum {

@@ -29,7 +29,6 @@
 
 @implementation BXMT32ROMDropzone
 @synthesize ROMType = _ROMType;
-@synthesize highlighted = _highlighted;
 @synthesize backgroundLayer = _backgroundLayer;
 @synthesize CM32LLayer = _CM32LLayer;
 @synthesize MT32Layer = _MT32Layer;
@@ -142,14 +141,9 @@
 {
     if (self.isHighlighted != flag)
     {
-        _highlighted = flag;
+        super.highlighted = flag;
         [self _syncDisplayedDevice];
     }
-}
-
-- (BOOL)isHighlighted
-{
-    return _highlighted;
 }
 
 - (void) _syncDisplayedDevice

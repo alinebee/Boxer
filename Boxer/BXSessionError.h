@@ -12,29 +12,29 @@
 #import "NSError+ADBErrorHelpers.h"
 
 //Error domains and codes
-extern NSString * const BXSessionErrorDomain;
-enum
+extern NSErrorDomain const BXSessionErrorDomain;
+typedef NS_ENUM(NSInteger, BXSessionErrorValue)
 {
-    BXSessionCannotMountSystemFolder,   //Returned when user attempts to mount an OS X system folder as a DOS drive.
+    BXSessionCannotMountSystemFolder,   //!< Returned when user attempts to mount an OS X system folder as a DOS drive.
 	
-    BXImportNoExecutablesInSource,      //Returned when the import scanner can find no executables of any kind in the source folder.
-	BXImportSourceIsWindowsOnly,        //Returned when the import scanner can only find Windows executables in the source folder.
-	BXImportSourceIsMacOSApp,           //Returned when the import scanner can only find Mac applications in the source folder.
-	BXImportSourceIsHybridCD,           //Returned when the import scanner detects a hybrid Mac+PC CD.
-    BXImportDriveUnavailable,           //Returned when a DOSBox configuration file was provided that defines drives with paths that cannot be found.
+    BXImportNoExecutablesInSource,      //!< Returned when the import scanner can find no executables of any kind in the source folder.
+	BXImportSourceIsWindowsOnly,        //!< Returned when the import scanner can only find Windows executables in the source folder.
+	BXImportSourceIsMacOSApp,           //!< Returned when the import scanner can only find Mac applications in the source folder.
+	BXImportSourceIsHybridCD,           //!< Returned when the import scanner detects a hybrid Mac+PC CD.
+    BXImportDriveUnavailable,           //!< Returned when a DOSBox configuration file was provided that defines drives with paths that cannot be found.
     
-    BXGameStateUnsupported,     //Returned when the current session does not support game states. (e.g. no gamebox is present.)
-    BXGameStateGameboxMismatch, //Returned when validating a boxerstate file, if it is for a different game than the current game.
+    BXGameStateUnsupported,     //!< Returned when the current session does not support game states. (e.g. no gamebox is present.)
+    BXGameStateGameboxMismatch, //!< Returned when validating a boxerstate file, if it is for a different game than the current game.
     
-    BXSessionNotReady,          //Returned when openURLInDOS:error: is not ready to open a program.
-    BXURLNotReachableInDOS,     //Returned when openURLInDOS:error: is passed a URL that cannot be mapped to a DOS path.
+    BXSessionNotReady,          //!< Returned when \c openURLInDOS:error: is not ready to open a program.
+    BXURLNotReachableInDOS,     //!< Returned when \c openURLInDOS:error: is passed a URL that cannot be mapped to a DOS path.
 };
 
-//General base class for all session errors
+//! General base class for all session errors
 @interface BXSessionError : NSError
 @end
 
-//Errors specific to game importing
+//! Errors specific to game importing
 @interface BXImportError : BXSessionError
 @end
 

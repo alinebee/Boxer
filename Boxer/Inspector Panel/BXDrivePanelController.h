@@ -35,16 +35,16 @@
 
 //The list of drives to display for the current session.
 //This is pre-filtered with driveFilterPredicate.
-@property (weak, readonly, nonatomic) NSArray *drives;
+@property (copy, readonly, nonatomic) NSArray<BXDrive*> *drives;
 
 //The currently-selected drives, formatted for our array controller.
-@property (strong, nonatomic) NSIndexSet *selectedDriveIndexes;
+@property (copy, nonatomic) NSIndexSet *selectedDriveIndexes;
 
 //How our array controller should filter our drives.
-@property (weak, readonly, nonatomic) NSPredicate *driveFilterPredicate;
+@property (copy, readonly, nonatomic) NSPredicate *driveFilterPredicate;
 
 //The currently-selected drives, formatted for our personal use.
-@property (weak, readonly, nonatomic) NSArray *selectedDrives;
+@property (copy, readonly, nonatomic) NSArray<BXDrive*> *selectedDrives;
 
 
 #pragma mark -

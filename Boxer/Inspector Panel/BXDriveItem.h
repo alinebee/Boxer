@@ -41,17 +41,17 @@
 #pragma mark - Description properties
 
 //The drive to which this item corresponds. Derived automatically from representedObject.
-@property (weak, readonly, nonatomic) BXDrive *drive;
+@property (strong, readonly, nonatomic) BXDrive *drive;
 
 //The icon to display for the drive we represent.
-@property (weak, readonly, nonatomic) NSImage *driveImage;
+@property (strong, readonly, nonatomic) NSImage *driveImage;
 
 //The type description to display for our drive.
-@property (weak, readonly, nonatomic) NSString *typeDescription;
+@property (copy, readonly, nonatomic) NSString *typeDescription;
 
 //The icon and tooltip to display on the insert/eject toggle.
-@property (weak, readonly, nonatomic) NSImage *iconForToggle;
-@property (weak, readonly, nonatomic) NSString *tooltipForToggle;
+@property (strong, readonly, nonatomic) NSImage *iconForToggle;
+@property (copy, readonly, nonatomic) NSString *tooltipForToggle;
 
 #pragma mark - Status properties
 

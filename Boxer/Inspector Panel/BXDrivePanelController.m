@@ -157,7 +157,7 @@ enum {
 {
     if (![indexes isEqualToIndexSet: self.selectedDriveIndexes])
     {
-        _selectedDriveIndexes = indexes;
+        _selectedDriveIndexes = [indexes copy];
         
         //Sync the action buttons whenever our selection changes
         [self syncButtonStates];

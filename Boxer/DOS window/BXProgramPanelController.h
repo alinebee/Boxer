@@ -60,8 +60,8 @@
 @property (readonly, nonatomic) BOOL hasDefaultTarget;
 
 //The localised display string used for the "Open this program every time" toggles.
-@property (weak, readonly, nonatomic) NSString *labelForDefaultProgramToggle;
-@property (weak, readonly, nonatomic) NSString *labelForInitialDefaultProgramToggle;
+@property (copy, readonly, nonatomic) NSString *labelForDefaultProgramToggle;
+@property (copy, readonly, nonatomic) NSString *labelForInitialDefaultProgramToggle;
 
 //An array of {@path, @isDefault} pairs representing executables to display in the program panel.
 @property (readonly, strong, nonatomic) NSArray *panelExecutables;

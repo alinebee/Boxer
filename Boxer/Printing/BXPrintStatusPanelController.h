@@ -37,11 +37,11 @@
 
 //State properties for UI bindings
 //The bold status text to display in the panel: e.g. "Printer is idle", "Printing page 6", etc.
-@property (weak, readonly, nonatomic) NSString *printerStatus;
+@property (copy, readonly, nonatomic) NSString *printerStatus;
 
 //The small explanatory text to display in the panel,
 //explaining which port to print to and which paper size to use.
-@property (weak, readonly, nonatomic) NSString *printerInstructions;
+@property (copy, readonly, nonatomic) NSString *printerInstructions;
 
 //Whether any pages have been printed so far.
 @property (readonly, nonatomic) BOOL hasPages;

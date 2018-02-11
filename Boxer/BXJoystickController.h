@@ -22,7 +22,7 @@
 
 //An array of DDHIDJoystick instances for each joystick currently connected.
 //Corresponds to hidMonitor matchedDevices.
-@property (weak, readonly, nonatomic) NSArray<DDHidJoystick*> *joystickDevices;
+@property (copy, readonly, nonatomic) NSArray<DDHidJoystick*> *joystickDevices;
 
 //An array of bundle identifiers of known HID remappers that were running last we checked.
 //(This will be cached, and the cache cleared whenever Boxer loses the application focus.)

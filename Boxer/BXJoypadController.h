@@ -17,10 +17,10 @@
     JoypadControllerLayout *currentLayout;
     BOOL hasJoypadDevices;
 }
-@property (readonly, nonatomic) JoypadManager *joypadManager;
+@property (strong, readonly, nonatomic) JoypadManager *joypadManager;
 
 /// An array of all currently-connected joypad devices being used by Boxer.
-@property (weak, readonly, nonatomic) NSArray<JoypadDevice*> *joypadDevices;
+@property (copy, readonly, nonatomic) NSArray<JoypadDevice*> *joypadDevices;
 
 //The current joystick controller layout in use.
 @property (strong, nonatomic) JoypadControllerLayout *currentLayout;

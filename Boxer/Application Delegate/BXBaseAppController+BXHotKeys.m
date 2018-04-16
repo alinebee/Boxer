@@ -222,7 +222,7 @@
         //tap at all even though the API reports that we have permission to do so (which would otherwise
         //cause us to enter a continual restart loop as we keep thinking we're just a restart away from
         //those permissions taking effect.)
-        BOOL permissionGrantedThisSession = self.canCaptureHotkeys && !_couldCaptureHotkeysAtStartup;
+		BOOL permissionGrantedThisSession = self.canCaptureHotkeys && !self->_couldCaptureHotkeysAtStartup;
         
         self.needsRestartForHotkeyCapture = (tap.status != BXKeyboardEventTapTappingAllKeyboardEvents) && permissionGrantedThisSession;
         

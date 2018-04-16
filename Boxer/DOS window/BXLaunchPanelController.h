@@ -49,11 +49,11 @@
 @property (weak, nonatomic) IBOutlet NSScrollView *launcherScrollView;
 @property (weak, nonatomic) IBOutlet NSSearchField *filter;
 
-//An array of NSDictionaries for every item to display in the list.
-@property (readonly, strong, nonatomic) NSMutableArray *displayedRows;
+//! An array of NSDictionaries for every item to display in the list.
+@property (readonly, strong, nonatomic) NSMutableArray<NSDictionary*> *displayedRows;
 
-//An array of sanitised NSStrings derived from the contents of the search field. 
-@property (readonly, strong, nonatomic) NSMutableArray *filterKeywords;
+//! An array of sanitised NSStrings derived from the contents of the search field.
+@property (readonly, strong, nonatomic) NSMutableArray<NSString*> *filterKeywords;
 
 #pragma mark - Actions
 

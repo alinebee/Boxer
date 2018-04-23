@@ -34,9 +34,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Error constants
-extern NSString * const ADBMountableImageErrorDomain;
+extern NSErrorDomain const ADBMountableImageErrorDomain;
 
-typedef NS_ENUM(NSInteger, ADBMountableImageErrors) {
+typedef NS_ERROR_ENUM(ADBMountableImageErrorDomain, ADBMountableImageErrors) {
     /// Returned by if the specified image is not
     ADBMountableImageUnsupportedImageType = 1,
     

@@ -172,15 +172,15 @@ NSString * const BXDOCFileType      = @"com.microsoft.word.doc";
 {
 	static NSSet *types = nil;
 	if (!types) types = [[NSSet alloc] initWithObjects:
-                         @"public.jpeg",
-                         @"public.plain-text",
-                         @"public.png",
-                         @"com.compuserve.gif",
-                         @"com.adobe.pdf",
-                         @"public.rtf",
-                         @"com.microsoft.bmp",
+                         (NSString *)kUTTypeJPEG,
+                         (NSString *)kUTTypePlainText,
+                         (NSString *)kUTTypePNG,
+                         (NSString *)kUTTypeGIF,
+                         (NSString *)kUTTypePDF,
+                         (NSString *)kUTTypeRTF,
+                         (NSString *)kUTTypeBMP,
                          @"com.microsoft.word.doc",
-                         @"public.html",
+                         (NSString *)kUTTypeHTML,
                          nil];
 	return types;
 }

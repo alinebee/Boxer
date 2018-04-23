@@ -66,6 +66,6 @@
 //the first pair it finds. Recurses into any folders in the list.
 //Returns YES if one or more ROMs were imported, or NO and populates outError
 //if there was a problem (including if the URLs did not contain any MT-32 ROMs.)
-- (BOOL) importMT32ROMsFromURLs: (NSArray *)URLs error: (out NSError **)outError;
+- (BOOL) importMT32ROMsFromURLs: (NSArray<NSURL*> *)URLs error: (out NSError **)outError;
 
 @end

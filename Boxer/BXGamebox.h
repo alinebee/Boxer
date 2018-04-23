@@ -232,7 +232,7 @@ typedef NS_ENUM(NSInteger, BXGameboxDocumentationConflictBehaviour) {
 /// Returns an array of documentation found in the gamebox. If the gamebox has a documentation
 /// folder, the contents of this folder will be returned; otherwise, the rest of the gamebox
 /// will be searched for documentation.
-@property (readonly, nonatomic) NSArray *documentationURLs;
+@property (readonly, nonatomic) NSArray<NSURL*> *documentationURLs;
 
 /// Returns the eventual URL for the gamebox's documentation folder. This may not yet exist.
 @property (readonly, nonatomic) NSURL *documentationFolderURL;
@@ -245,7 +245,7 @@ typedef NS_ENUM(NSInteger, BXGameboxDocumentationConflictBehaviour) {
 #pragma mark - Class helper methods
 
 /// Filename patterns for documentation to exclude from searches.
-+ (NSSet<NSString*> *) documentationExclusions;
+@property (class, readonly, copy) NSSet<NSString*> *documentationExclusions;
 
 /// Returns all the documentation files in the specified filesystem location.
 + (NSArray<NSURL*> *) URLsForDocumentationInLocation: (NSURL *)location searchSubdirectories: (BOOL)searchSubdirs;

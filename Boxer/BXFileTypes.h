@@ -54,7 +54,7 @@ extern NSString * const BXBatchProgramType;     //.bat
 //These are looked up by file extension rather than UTI because it's common for particular
 //legacy file extensions (like .DOC) to be construed by OSX as the wrong UTI, and we don't
 //want to override the handler for files with different extensions that conform to that UTI.
-+ (NSDictionary *) fileHandlerOverrides;
++ (NSDictionary<NSString*,NSString*> *) fileHandlerOverrides;
 
 //Returns a specific bundle identifier that we want to use to open the specified URL,
 //or nil if OS X's default handler should be used. This uses fileHandlerOverrides to

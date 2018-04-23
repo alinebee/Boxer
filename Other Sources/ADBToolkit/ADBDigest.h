@@ -25,20 +25,19 @@
  */
 
 
-//ADBDigest is a tool for generating hashes for sets of files.
-
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+//! ADBDigest is a tool for generating hashes for sets of files.
 @interface ADBDigest : NSObject
 
-//Returns an SHA1 digest built from every file in the specified list.
-//Returns nil and populates outError on failure.
+//! Returns an SHA1 digest built from every file in the specified list.
+//! Returns nil and populates outError on failure.
 + (nullable NSData *) SHA1DigestForURLs: (NSArray<NSURL*> *)fileURLs error: (out NSError **)outError;
 
-//Returns an SHA1 digest built from the first readLength bytes of every file in the specified list.
-//If readLength is 0, this behaves the same as SHA1DigestForURLs:error:
+//! Returns an SHA1 digest built from the first readLength bytes of every file in the specified list.
+//! If @c readLength is 0, this behaves the same as @c SHA1DigestForURLs:error:
 + (nullable NSData *) SHA1DigestForURLs: (NSArray<NSURL*> *)fileURLs
                     upToLength: (NSUInteger)readLength
                          error: (out NSError **)outError;

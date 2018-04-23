@@ -13,7 +13,7 @@
 
 //Error domains and codes
 extern NSErrorDomain const BXSessionErrorDomain;
-typedef NS_ENUM(NSInteger, BXSessionErrorValue)
+typedef NS_ERROR_ENUM(BXSessionErrorDomain, BXSessionErrorValue)
 {
     BXSessionCannotMountSystemFolder,   //!< Returned when user attempts to mount an OS X system folder as a DOS drive.
 	

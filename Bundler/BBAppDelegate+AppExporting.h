@@ -13,7 +13,7 @@
 
 extern NSString * const BBAppExportErrorDomain;
 
-typedef NS_ENUM(NSInteger, BBAppExportErrorCode) {
+typedef NS_ERROR_ENUM(BBAppExportErrorDomain, BBAppExportErrorCode) {
     /// The app could not be code-signed successfully.
     BBAppExportCodeSignFailed,
 };

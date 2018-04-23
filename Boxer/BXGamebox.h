@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Gamebox-related error constants
 
 extern NSErrorDomain const BXGameboxErrorDomain;
-typedef NS_ENUM(NSInteger, BXLauncherErrors) {
+typedef NS_ERROR_ENUM(BXGameboxErrorDomain, BXLauncherErrors) {
 	BXLauncherURLOutsideGameboxError,   //!< Attempted to set gamebox's target path to a location outside the gamebox
     BXGameboxLockedGameboxError,        //!< Attempted a mutation operation that was not possible because the gamebox is locked
     BXDocumentationNotInFolderError,    //!< Attempted a destructive documentation operation on a URL that was not within the gamebox's documentation folder
@@ -205,7 +205,7 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 #pragma mark - Filesystem methods
 
 /// Returns the URLs of all bundled volumes with the specified UTIs.
-- (NSArray<NSURL*> *) URLsOfVolumesMatchingTypes: (NSSet *)fileTypes;
+- (NSArray<NSURL*> *) URLsOfVolumesMatchingTypes: (NSSet<NSString*> *)fileTypes;
 
 /// Returns whether the gamebox's disk representation is currently writable to Boxer:
 /// according to the NSURLFileIsWritableKey resource property of the bundle's URL.

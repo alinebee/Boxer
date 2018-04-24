@@ -1273,8 +1273,8 @@
 		9F6463F616C67415008B65BF /* BXOutputBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXOutputBinding.m; path = Input/BXOutputBinding.m; sourceTree = "<group>"; };
 		9F675DE30F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXDOSFileSystem.h"; sourceTree = "<group>"; };
 		9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXDOSFileSystem.mm"; sourceTree = "<group>"; };
-		9F6785591649A6BC007FE89A /* BXPrintStatusPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPrintStatusPanelController.h; path = Printing/BXPrintStatusPanelController.h; sourceTree = "<group>"; };
-		9F67855A1649A6BC007FE89A /* BXPrintStatusPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPrintStatusPanelController.m; path = Printing/BXPrintStatusPanelController.m; sourceTree = "<group>"; };
+		9F6785591649A6BC007FE89A /* BXPrintStatusPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPrintStatusPanelController.h; sourceTree = "<group>"; };
+		9F67855A1649A6BC007FE89A /* BXPrintStatusPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPrintStatusPanelController.m; sourceTree = "<group>"; };
 		9F687002109F83ED003C26E4 /* BXDriveList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveList.h; sourceTree = "<group>"; };
 		9F687003109F83ED003C26E4 /* BXDriveList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDriveList.m; sourceTree = "<group>"; };
 		9F68919F14B0F6D800641C62 /* BXTFlightControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTFlightControllerProfile.m; sourceTree = "<group>"; };
@@ -1807,8 +1807,8 @@
 		9FD6AA0C16314A5B002B774E /* printer_redir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = printer_redir.cpp; sourceTree = "<group>"; };
 		9FD6AA0D16314A5B002B774E /* printer_redir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = printer_redir.h; sourceTree = "<group>"; };
 		9FD6AA1D16314AC6002B774E /* parport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parport.h; sourceTree = "<group>"; };
-		9FD6AA1E16315278002B774E /* BXEmulatedPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXEmulatedPrinter.h; path = Printing/BXEmulatedPrinter.h; sourceTree = "<group>"; };
-		9FD6AA1F16315278002B774E /* BXEmulatedPrinter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BXEmulatedPrinter.mm; path = Printing/BXEmulatedPrinter.mm; sourceTree = "<group>"; };
+		9FD6AA1E16315278002B774E /* BXEmulatedPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedPrinter.h; sourceTree = "<group>"; };
+		9FD6AA1F16315278002B774E /* BXEmulatedPrinter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulatedPrinter.mm; sourceTree = "<group>"; };
 		9FD7B6AE145745D800565CEB /* BXThemedPopUpButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedPopUpButtonCell.h; sourceTree = "<group>"; };
 		9FD7B6AF145745D800565CEB /* BXThemedPopUpButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedPopUpButtonCell.m; sourceTree = "<group>"; };
 		9FD7B6B1145746CC00565CEB /* BXThemedButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedButtonCell.h; sourceTree = "<group>"; };
@@ -1881,8 +1881,8 @@
 		9FF86677134DCA16001CE857 /* toc2cue */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = toc2cue; sourceTree = "<group>"; };
 		9FF91EB416CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+ADBIconHelpers.h"; sourceTree = "<group>"; };
 		9FF91EB516CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+ADBIconHelpers.m"; sourceTree = "<group>"; };
-		9FF9820F1646C7640080F763 /* BXPrintSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPrintSession.h; path = Printing/BXPrintSession.h; sourceTree = "<group>"; };
-		9FF982101646C7640080F763 /* BXPrintSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPrintSession.m; path = Printing/BXPrintSession.m; sourceTree = "<group>"; };
+		9FF9820F1646C7640080F763 /* BXPrintSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPrintSession.h; sourceTree = "<group>"; };
+		9FF982101646C7640080F763 /* BXPrintSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPrintSession.m; sourceTree = "<group>"; };
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
 		9FFBF67011A7F8F4000A1863 /* BXFrameRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameRenderingView.h; sourceTree = "<group>"; };
@@ -3503,7 +3503,7 @@
 				9F6785591649A6BC007FE89A /* BXPrintStatusPanelController.h */,
 				9F67855A1649A6BC007FE89A /* BXPrintStatusPanelController.m */,
 			);
-			name = Printing;
+			path = Printing;
 			sourceTree = "<group>";
 		};
 		9FFF978412327D58009B5EE5 /* Other Sources */ = {

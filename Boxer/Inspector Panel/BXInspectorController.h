@@ -6,9 +6,6 @@
  */
 
 
-//BXInspectorController manages the Boxer inspector panel. It is responsible for displaying and
-//toggling the tabs of the panel.
-
 #import "ADBTabbedWindowController.h"
 
 enum {
@@ -22,26 +19,28 @@ enum {
 
 @class BXDriveList;
 
+/// \c BXInspectorController manages the Boxer inspector panel. It is responsible for displaying and
+/// toggling the tabs of the panel.
 @interface BXInspectorController : ADBTabbedWindowController
 {
 	BOOL _isTemporarilyHidden;
 }
 
-//Whether the inspector panel is currently visible.
+/// Whether the inspector panel is currently visible.
 @property (assign, nonatomic, getter=isVisible) BOOL visible;
 
-//A singleton instance of the inspector controller, which is shared by all session windows.
-//The controller should always be accessed through this method.
+/// A singleton instance of the inspector controller, which is shared by all session windows.
+/// The controller should always be accessed through this method.
 + (BXInspectorController *) controller;
 
-//Select the specified panel and reveal the window.
+/// Select the specified panel and reveal the window.
 - (IBAction) showGamePanel:		(id)sender;
 - (IBAction) showCPUPanel:		(id)sender;
 - (IBAction) showDrivesPanel:	(id)sender;
 - (IBAction) showMousePanel:	(id)sender;
 - (IBAction) showJoystickPanel:	(id)sender;
 
-//Show help pages for the various panels
+/// Show help pages for the various panels
 - (IBAction) showGamePanelHelp: (id)sender;
 - (IBAction) showCPUPanelHelp: (id)sender;
 - (IBAction) showMousePanelHelp: (id)sender;
@@ -49,9 +48,9 @@ enum {
 - (IBAction) showJoystickPanelHelp: (id)sender;
 - (IBAction) showInactiveJoystickPanelHelp: (id)sender;
 
-//Temporarily hides the panel if it is currently visible:
-//It can then be unhidden with revealIfHidden.
-//This is used to temporarily suppress the inspector panel while the mouse is locked.
+/// Temporarily hides the panel if it is currently visible:
+/// It can then be unhidden with revealIfHidden.
+/// This is used to temporarily suppress the inspector panel while the mouse is locked.
 - (void) hideIfVisible;
 - (void) revealIfHidden;
 

@@ -15,6 +15,9 @@
 
 @protocol BXWelcomeButtonDraggingDelegate;
 
+/// BXWelcomeView and friends render the custom background and button appearance for the welcome window.
+/// These are based on the draw methods of the filter gallery since they share a lot of presentational
+/// code.
 @interface BXWelcomeView : NSView
 @end
 
@@ -22,7 +25,7 @@
 {
 	__unsafe_unretained id <BXWelcomeButtonDraggingDelegate> _draggingDelegate;
 }
-//The delegate used for drag-drop operations.
+/// The delegate used for drag-drop operations.
 @property (assign) IBOutlet id <BXWelcomeButtonDraggingDelegate> draggingDelegate;
 - (BOOL) isHighlighted;
 

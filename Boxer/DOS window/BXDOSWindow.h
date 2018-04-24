@@ -14,8 +14,8 @@
 
 @class BXDOSWindowController;
 
-/// <code>BXDOSWindow</code> is the main window for a DOS session. This class is heavily reliant on
-/// <code>BXDOSWindowController</code> and exists mainly just to override <code>NSWindow</code>'s default window sizing
+/// \c BXDOSWindow is the main window for a DOS session. This class is heavily reliant on
+/// \c BXDOSWindowController and exists mainly just to override <code>NSWindow</code>'s default window sizing
 /// and constraining methods.
 @interface BXDOSWindow : ADBFullscreenCapableWindow
 {

@@ -5,11 +5,13 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
+
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/CALayer.h>
 #import "BXEmulatedPrinter.h"
 
 @class BXPrintPreview;
+
 @interface BXPrintStatusPanelController : NSWindowController
 {
     BXEmulatedPrinterPort _activePrinterPort;
@@ -20,33 +22,33 @@
     BXPrintPreview *_preview;
 }
 
-//The number of pages printed so far, including the current page.
+/// The number of pages printed so far, including the current page.
 @property (assign, nonatomic) NSUInteger numPages;
 
-//Whether the current page is still being printed.
+/// Whether the current page is still being printed.
 @property (assign, nonatomic, getter=isInProgress) BOOL inProgress;
 
-//The localized descriptive name of the paper type the user should select in DOS.
+/// The localized descriptive name of the paper type the user should select in DOS.
 @property (copy, nonatomic) NSString *localizedPaperName;
 
-//Which printer port the emulated printer is attached to.
+/// Which printer port the emulated printer is attached to.
 @property (assign, nonatomic) BXEmulatedPrinterPort activePrinterPort;
 
-//The preview view into which page previews will be rendered.
+/// The preview view into which page previews will be rendered.
 @property (strong, nonatomic) IBOutlet BXPrintPreview *preview;
 
-//State properties for UI bindings
-//The bold status text to display in the panel: e.g. "Printer is idle", "Printing page 6", etc.
+/// State properties for UI bindings
+/// The bold status text to display in the panel: e.g. "Printer is idle", "Printing page 6", etc.
 @property (copy, readonly, nonatomic) NSString *printerStatus;
 
-//The small explanatory text to display in the panel,
-//explaining which port to print to and which paper size to use.
+/// The small explanatory text to display in the panel,
+/// explaining which port to print to and which paper size to use.
 @property (copy, readonly, nonatomic) NSString *printerInstructions;
 
-//Whether any pages have been printed so far.
+/// Whether any pages have been printed so far.
 @property (readonly, nonatomic) BOOL hasPages;
 
-//Whether the "Print" button should be enabled. Will return NO while printing is in progress.
+/// Whether the "Print" button should be enabled. Will return NO while printing is in progress.
 @property (readonly, nonatomic) BOOL canPrint;
 
 @end

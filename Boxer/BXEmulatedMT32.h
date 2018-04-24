@@ -39,18 +39,18 @@
 #pragma mark -
 #pragma mark Constants
 
-extern NSString * const BXEmulatedMT32ErrorDomain;
-//Keys included in the error dictionary for BXEmulatedMT32MismatchedROMs errors.
-//These point to NSNumbers whose integer values represent the types of the respective ROMs.
+extern NSErrorDomain const BXEmulatedMT32ErrorDomain;
+/// Keys included in the error dictionary for \c BXEmulatedMT32MismatchedROMs errors.
+/// These point to NSNumbers whose integer values represent the types of the respective ROMs.
 extern NSString * const BXMT32ControlROMTypeKey;
 extern NSString * const BXMT32PCMROMTypeKey;
 
 
-enum {
-    BXEmulatedMT32MissingROM,       //No ROMs were specified when initializing.
-    BXEmulatedMT32CouldNotReadROM,  //A specified ROM could not be opened.
-    BXEmulatedMT32InvalidROM,       //A specified ROM was not a valid MT-32 ROM.
-    BXEmulatedMT32MismatchedROMs,   //Control and PCM ROMs aren't from matching versions.
+NS_ERROR_ENUM(BXEmulatedMT32ErrorDomain) {
+    BXEmulatedMT32MissingROM,       //!< No ROMs were specified when initializing.
+    BXEmulatedMT32CouldNotReadROM,  //!< A specified ROM could not be opened.
+    BXEmulatedMT32InvalidROM,       //!< A specified ROM was not a valid MT-32 ROM.
+    BXEmulatedMT32MismatchedROMs,   //!< Control and PCM ROMs aren't from matching versions.
 };
 
 
@@ -81,6 +81,10 @@ typedef NS_OPTIONS(NSUInteger, BXMT32ROMType) {
 
 @protocol BXEmulatedMT32Delegate;
 
+/// \c BXEmulatedMT32 provides a \c BXMIDIDevice wrapper for the MUNT MT-32 emulator.
+/// It takes an optional delegate to which it sends notifications of LCD display messages.
+/// Unlike the other \c BXMIDIDevice classes, this currently feeds audio output back into
+/// DOSBox's own mixer.
 @interface BXEmulatedMT32 : NSObject <BXMIDIDevice, BXAudioSource>
 {
     __unsafe_unretained id <BXEmulatedMT32Delegate> _delegate;

@@ -5,15 +5,15 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//A renderer variant that renders a video frame to an even multiple of the frame's pixel size
-//that is as large or larger than the final viewport, before scaling it down to the final viewport.
-//This provides crisper scaling than scaling directly to the final size, but is unavailable on
-//hardware that does not support the GL frame buffer extension. (All modern Macs have this though.)
 
 #import "BXBasicRenderer.h"
 
 #define BXDefaultMaxSupersamplingScale 4.0f
 
+/// A renderer variant that renders a video frame to an even multiple of the frame's pixel size
+/// that is as large or larger than the final viewport, before scaling it down to the final viewport.
+/// This provides crisper scaling than scaling directly to the final size, but is unavailable on
+/// hardware that does not support the GL frame buffer extension. (All modern Macs have this though.)
 @interface BXSupersamplingRenderer : BXBasicRenderer
 {
     ADBTexture2D *_supersamplingBufferTexture;
@@ -28,9 +28,9 @@
     BOOL _shouldRecalculateBufferAfterViewportChange;
 }
 
-//The maximum frame->viewport scale, above which we will just render
-//directly to the viewport instead of bothering to resample.
-//Defaults to BXDefaultMaxSupersamplingScale.
+/// The maximum frame->viewport scale, above which we will just render
+/// directly to the viewport instead of bothering to resample.
+/// Defaults to <code>BXDefaultMaxSupersamplingScale</code>.
 @property (assign, nonatomic) CGFloat maxSupersamplingScale;
 
 @end

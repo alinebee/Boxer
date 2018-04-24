@@ -11,7 +11,7 @@
 //Ugghhhhhhh.
 
 
-// Accomodates 400x300 and 320x400 resolutions, which should still be small enough for reasonable filtering.
+/// Accomodates 400x300 and 320x400 resolutions, which should still be small enough for reasonable filtering.
 const NSSize BXDefaultFilterResolutionCutoff = NSMakeSize(400, 400);
 
 
@@ -79,14 +79,14 @@ BXFilterDefinition BXFilterSaIParams = {
 BXFilterDefinition BXFilterSuperSaIParams		= BXFilterSaIParams;
 BXFilterDefinition BXFilterSuperEagleParams		= BXFilterSaIParams;
 
-//Advanced Interpolation appears to be based on the same algorithm as MAME
+/// Advanced Interpolation appears to be based on the same algorithm as MAME
 BXFilterDefinition BXFilterInterpolatedParams	= BXFilterMAMEParams;
 
 BXFilterDefinition BXFilterScanlinesParams		= BXFilterTVScanlinesParams;
 
 
 
-//Mapping table of filter definitions - the order corresponds to BXFilterType constants
+/// Mapping table of filter definitions - the order corresponds to BXFilterType constants
 const BXFilterDefinition *BXFilters[BXMaxFilters] = {
 	&BXFilterNormalParams,
 	&BXFilterMAMEParams,

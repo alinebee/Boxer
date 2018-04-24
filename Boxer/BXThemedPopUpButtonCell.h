@@ -6,22 +6,21 @@
  */
 
 
-//BXThemedPopUpButtonCell is a rewrite of BGHUDSegmentedCell
-//to make it sane, maintainable, and pretty.
-
 #import <BGHUDAppKit/BGHUDAppKit.h>
 #import "BXThemes.h"
 
+/// \c BXThemedPopUpButtonCell is a rewrite of \c BGHUDSegmentedCell
+/// to make it sane, maintainable, and pretty.
 @interface BXThemedPopUpButtonCell : BGHUDPopUpButtonCell <BXThemable>
 
-//Returns a path with the arrows to render for popup buttons.
+/// Returns a path with the arrows to render for popup buttons.
 - (NSBezierPath *) popUpArrowsForFrame: (NSRect)frame;
 
-//Returns a path with the arrow to render for pulldown buttons.
+/// Returns a path with the arrow to render for pulldown buttons.
 - (NSBezierPath *) pullDownArrowForFrame: (NSRect)frame;
 
-//Given a cell frame, renders popup/pulldown arrows at the
-//right-hand side of the field.
+/// Given a cell frame, renders popup/pulldown arrows at the
+/// right-hand side of the field.
 - (void) drawArrowsWithFrame: (NSRect)frame inView: (NSView *)controlView;
 
 @end

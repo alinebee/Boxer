@@ -6,17 +6,16 @@
  */
 
 
-//BXDrivesInUseAlert is shown when a user tries to unmount one or more drives that are currently
-//being accessed by the DOS process. It displays a warning and confirmation.
-
 #import <Cocoa/Cocoa.h>
 
 @class BXSession;
 @class BXDrive;
 
+/// \c BXDrivesInUseAlert is shown when a user tries to unmount one or more drives that are currently
+/// being accessed by the DOS process. It displays a warning and confirmation.
 @interface BXDrivesInUseAlert : NSAlert
 
-//Initialise and return a new alert, whose text refers to the drives and session provided.
+/// Initialise and return a new alert, whose text refers to the drives and session provided.
 - (instancetype) initWithDrives: (NSArray<BXDrive*> *)drivesInUse forSession: (BXSession *)theSession;
 
 @end

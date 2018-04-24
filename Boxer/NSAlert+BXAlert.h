@@ -6,17 +6,16 @@
  */
 
 
-//The BXAlert category provides some convenience methods for alerts.
-
 #import <Cocoa/Cocoa.h>
 
+/// The BXAlert category provides some convenience methods for alerts.
 @interface NSAlert (BXAlert)
 
-//Returns a non-retained NSAlert instance.
+/// Returns a non-retained NSAlert instance.
 + (instancetype) alert;
 
-//Set the alert's icon to the represented icon of the specified window.
-//Returns YES if the window had a specific icon, NO otherwise.
+/// Set the alert's icon to the represented icon of the specified window.
+/// Returns YES if the window had a specific icon, NO otherwise.
 - (BOOL) adoptIconFromWindow: (NSWindow *)window;
 
 @end

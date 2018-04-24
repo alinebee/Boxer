@@ -5,12 +5,6 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXMIDIDeviceMonitor is used for scanning connected MIDI devices to find MT-32s and listening
-//for device connections/disconnections. It is formulated as an NSThread subclass which runs
-//in the background until cancelled.
-//(This work is moved to a thread because CoreMIDI initialization is fairly costly, and would
-//otherwise block application startup. Besides improved startup time, there are no other benefits.)
-
 
 #import <Foundation/Foundation.h>
 #import <CoreMIDI/CoreMIDI.h>
@@ -19,6 +13,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class BXMIDIInputListener;
+
 @protocol BXMIDIInputListenerDelegate <NSObject>
 
 @optional
@@ -34,6 +29,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/// \c BXMIDIDeviceMonitor is used for scanning connected MIDI devices to find MT-32s and listening
+/// for device connections/disconnections. It is formulated as an NSThread subclass which runs
+/// in the background until cancelled.
+/// (This work is moved to a thread because CoreMIDI initialization is fairly costly, and would
+/// otherwise block application startup. Besides improved startup time, there are no other benefits.)
 @interface BXMIDIDeviceMonitor : ADBContinuousThread <BXMIDIInputListenerDelegate>
 {
     MIDIClientRef _client;
@@ -52,19 +52,18 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
-//BXMIDIInputListener attaches to a MIDI source on a specified port,
-//and tracks the raw MIDI data it receives from that source, sending messages
-//to its delegate whenever new data arrives or the connection times out
-//(stops sending data).
-
-//BXMIDIDeviceBrowser uses instances of BXMIDIInputListener to track the sources
-//to which it is listening, to sniff the data coming from those ports in response
-//to its requests, and to clean up source connections when they're no longer needed.
-
-//Note that while BXMIDIListener receives MIDI data on a dedicated CoreMIDI thread,
-//it always delivers notifications about that data on the thread upon which
-//listenToSource:onPort:contextInfo was called.
-
+/// \c BXMIDIInputListener attaches to a MIDI source on a specified port,
+/// and tracks the raw MIDI data it receives from that source, sending messages
+/// to its delegate whenever new data arrives or the connection times out
+/// (stops sending data).
+///
+/// \c BXMIDIDeviceBrowser uses instances of \c BXMIDIInputListener to track the sources
+/// to which it is listening, to sniff the data coming from those ports in response
+/// to its requests, and to clean up source connections when they're no longer needed.
+///
+/// Note that while \c BXMIDIListener receives MIDI data on a dedicated CoreMIDI thread,
+/// it always delivers notifications about that data on the thread upon which
+/// \c listenToSource:onPort:contextInfo: was called.
 @interface BXMIDIInputListener : NSObject
 {
     __unsafe_unretained id <BXMIDIInputListenerDelegate> _delegate;
@@ -79,26 +78,26 @@ NS_ASSUME_NONNULL_BEGIN
 # pragma mark -
 # pragma mark Properties
 
-//Whether the listener is currently listening to a source.
+/// Whether the listener is currently listening to a source.
 @property (readonly, nonatomic, getter=isListening) BOOL listening;
 
-//The port on which the listener is listening, and the source to which it is listening.
-//Set by listenToSource:onPort:contextInfo, and cannot be set directly.
+/// The port on which the listener is listening, and the source to which it is listening.
+/// Set by listenToSource:onPort:contextInfo, and cannot be set directly.
 @property (readonly, nonatomic) MIDIPortRef port;
 @property (readonly, nonatomic) MIDIEndpointRef source;
 
-//The context info associated with the listening connection.
-//Set by listenToSource:onPort:contextInfo, and cannot be set directly.
+/// The context info associated with the listening connection.
+/// Set by listenToSource:onPort:contextInfo, and cannot be set directly.
 @property (readonly, nonatomic) void *contextInfo;
 
-//The data this listener has received so far.
+/// The data this listener has received so far.
 @property (readonly, nonatomic) NSData *receivedData;
 
-//How long the listener will wait between data packets before sending
-//a portListenerDidTimeOut: message to the delegate and/or disconnecting.
-//Defaults to 1 second.
-//Set to 0 to prevent timeout altogether, in which case the listener must
-//be told to stop manually with stopListening.
+/// How long the listener will wait between data packets before sending
+/// a \c portListenerDidTimeOut: message to the delegate and/or disconnecting.
+/// Defaults to 1 second.
+/// Set to 0 to prevent timeout altogether, in which case the listener must
+/// be told to stop manually with stopListening.
 @property (assign, nonatomic) NSTimeInterval timeout;
 
 //The delegate to which notification messages will be sent.

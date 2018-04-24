@@ -5,20 +5,20 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXDriveBundleImport wraps BIN/CUE images and any associated audio tracks into a .cdmedia bundle,
-//rewriting cue paths as necessary.
 
 #import "ADBFileTransferSet.h"
 #import "BXDriveImport.h"
 
-//Domain and constants for errors encountered during disc-image ripping
-extern NSString * const BXDriveBundleErrorDomain;
+/// Domain and constants for errors encountered during disc-image ripping
+extern NSErrorDomain const BXDriveBundleErrorDomain;
 
-enum {
+NS_ERROR_ENUM(BXDriveBundleErrorDomain) {
 	BXDriveBundleCouldNotParseCue //Could not rip the cue file to determine source files
 };
 
 
+/// BXDriveBundleImport wraps BIN/CUE images and any associated audio tracks into a .cdmedia bundle,
+/// rewriting cue paths as necessary.
 @interface BXDriveBundleImport : ADBFileTransferSet <BXDriveImport>
 {
 	BXDrive *_drive;

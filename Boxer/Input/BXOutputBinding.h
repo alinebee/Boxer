@@ -5,6 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
+
 #import <Foundation/Foundation.h>
 #import "BXEmulatedJoystick.h"
 #import "BXEmulatedKeyboard.h"
@@ -23,7 +24,7 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 };
 
 
-//The minimum and maximum acceptable input values.
+/// The minimum and maximum acceptable input values.
 #define kBXOutputBindingMin 0.0
 #define kBXOutputBindingMax 1.0
 
@@ -47,7 +48,7 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 @end
 
 
-//A base class to provide standard functionality to all output bindings. Should not be used directly.
+/// A base class to provide standard functionality to all output bindings. Should not be used directly.
 @interface BXBaseOutputBinding : NSObject <BXOutputBinding>
 {
     float _previousValue;
@@ -56,32 +57,32 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
     BOOL _inverted;
 }
 
-//Input values below this amount will be rounded to 0. This is useful as a deadzone.
+/// Input values below this amount will be rounded to 0. This is useful as a deadzone.
 @property (assign, nonatomic) float threshold;
 
-//Whether the input values will be flipped.
+/// Whether the input values will be flipped.
 @property (assign, nonatomic) BOOL inverted;
 
-//The last raw value that was provided to this binding.
+/// The last raw value that was provided to this binding.
 @property (readonly, nonatomic) float latestValue;
 
-//The last normalized value that was processed by this binding.
+/// The last normalized value that was processed by this binding.
 @property (readonly, nonatomic) float latestNormalizedValue;
 
-//The current scalar value of the property to which this binding is attached.
-//Returns 0 by default; should be overridden by subclasses.
+/// The current scalar value of the property to which this binding is attached.
+/// Returns 0 by default; should be overridden by subclasses.
 @property (readonly, nonatomic) float effectiveValue;
 
-//Receives a raw input value. The base implementation normalizes it with normalizedValue:,
-//and then calls applyNormalizedInputValue: with the result if it differs from the previous
-//normalized value. This also updates previousValue: and previousNormalizedValue: to match.
+/// Receives a raw input value. The base implementation normalizes it with normalizedValue:,
+/// and then calls applyNormalizedInputValue: with the result if it differs from the previous
+/// normalized value. This also updates previousValue: and previousNormalizedValue: to match.
 - (void) applyInputValue: (float)value;
 
-//Called by applyInputValue: with an already-normalized value. Must be implemented by subclasses.
+/// Called by applyInputValue: with an already-normalized value. Must be implemented by subclasses.
 - (void) applyNormalizedInputValue: (float)value;
 
-//Returns a normalized version of the specified input value, normalized according to our threshold and inverted flag.
-//May be overridden by subclasses to do additional normalizing.
+/// Returns a normalized version of the specified input value, normalized according to our threshold and inverted flag.
+/// May be overridden by subclasses to do additional normalizing.
 - (float) normalizedValue: (float)value;
 
 @end
@@ -128,7 +129,7 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 @end
 
 
-//Presses a particular hat-switch direction when input > 0, releases it when input = 0.
+/// Presses a particular hat-switch direction when input > 0, releases it when input = 0.
 @interface BXEmulatedJoystickPOVDirectionBinding : BXBaseEmulatedJoystickBinding
 {
     NSUInteger _POVNumber;
@@ -146,17 +147,17 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 
 #pragma mark - Keyboard bindings
 
-//Presses a particular keyboard key when input > 0, releases it when input = 0.
+/// Presses a particular keyboard key when input > 0, releases it when input = 0.
 @interface BXEmulatedKeyboardKeyBinding : BXBaseOutputBinding
 {
     BXEmulatedKeyboard *_keyboard;
     BXDOSKeyCode _keyCode;
 }
 
-//The keyboard to which we send key signals.
+/// The keyboard to which we send key signals.
 @property (strong, nonatomic) BXEmulatedKeyboard *keyboard;
 
-//The key code to press/release when this binding is activated.
+/// The key code to press/release when this binding is activated.
 @property (assign, nonatomic) BXDOSKeyCode keyCode;
 
 + (instancetype) bindingWithKeyboard: (BXEmulatedKeyboard *)keyboard keyCode: (BXDOSKeyCode)keyCode;
@@ -185,10 +186,11 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 
 #pragma mark Meta-bindings
 
-//Sends a signal to another binding at a certain interval while the input value is > 0.
-//Stops sending the signal when the input value is 0.
-//Can be given a delegate to which it will send signals whenever the binding fires.
 @protocol BXPeriodicOutputBindingDelegate;
+
+/// Sends a signal to another binding at a certain interval while the input value is > 0.
+/// Stops sending the signal when the input value is 0.
+/// Can be given a delegate to which it will send signals whenever the binding fires.
 @interface BXPeriodicOutputBinding : BXBaseOutputBinding
 {
     __unsafe_unretained NSTimer *_timer;
@@ -197,29 +199,29 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
     NSTimeInterval _lastUpdated;
 }
 
-//The delegate to whom we will send BXPeriodicOutputBindingDelegate messages whenever the binding fires.
+/// The delegate to whom we will send BXPeriodicOutputBindingDelegate messages whenever the binding fires.
 @property (assign, nonatomic, nullable) id <BXPeriodicOutputBindingDelegate> delegate;
 
-//The frequency with which to fire signals. Defaults to 1 / 30.0, i.e. 30 times a second.
+/// The frequency with which to fire signals. Defaults to 1 / 30.0, i.e. 30 times a second.
 @property (assign, nonatomic) NSTimeInterval period;
 
-//Called whenever the timer fires, with the elapsed time since the previous firing.
-//Must be implemented by subclasses.
+/// Called whenever the timer fires, with the elapsed time since the previous firing.
+/// Must be implemented by subclasses.
 - (void) applyPeriodicUpdateForTimeStep: (NSTimeInterval)timeStep;
 
 @end
 
 @protocol BXPeriodicOutputBindingDelegate <NSObject>
 
-//Posted to the delegate whenever the specified binding updates itself.
-//(It is up to the delegate to interrogate the binding as to what change actually occurred.)
+/// Posted to the delegate whenever the specified binding updates itself.
+/// (It is up to the delegate to interrogate the binding as to what change actually occurred.)
 - (void) outputBindingDidUpdate: (BXPeriodicOutputBinding *)binding;
 
 @end
 
 
-//Increments (or decrements) the value of an axis over time.
-//Useful for mimicking throttle axes that don't return to 0 when released.
+/// Increments (or decrements) the value of an axis over time.
+/// Useful for mimicking throttle axes that don't return to 0 when released.
 @interface BXEmulatedJoystickAxisAdditiveBinding : BXPeriodicOutputBinding
 {
     id <BXEmulatedJoystick> _joystick;
@@ -228,16 +230,16 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
     float _outputThreshold;
 }
 
-//The joystick and axis this binding will increment/decrement.
+/// The joystick and axis this binding will increment/decrement.
 @property (strong, nonatomic) id <BXEmulatedJoystick> joystick;
 @property (copy, nonatomic) NSString *axisName;
 
-//Output axis values below this amount will be snapped to zero.
+/// Output axis values below this amount will be snapped to zero.
 @property (assign, nonatomic) float outputThreshold;
 
-//How much to increment/decrement the axis value by over the course of one second,
-//while the input value is at maximum. If this is positive, the axis value will increase;
-//if negative, the axis value will decrease.
+/// How much to increment/decrement the axis value by over the course of one second,
+/// while the input value is at maximum. If this is positive, the axis value will increase;
+/// if negative, the axis value will decrease.
 @property (assign, nonatomic) float ratePerSecond;
 
 + (instancetype) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick axis: (NSString *)axisName rate: (float)ratePerSecond;

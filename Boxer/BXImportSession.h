@@ -52,6 +52,12 @@ typedef NS_ENUM(NSInteger, BXSourceFileImportType) {
 @class BXEmulatorConfiguration;
 @protocol BXDriveImport;
 
+/// \c BXImportSession is a BXSession document subclass which manages the importing of a new game
+/// from start to finish.
+///
+/// Besides handling the emulator session that runs the game installer, \c BXImportSession also
+/// prepares a new gamebox and manages the drag-drop wizard which bookends (or in many cases
+/// comprises) the import process.
 @interface BXImportSession : BXSession <ADBOperationDelegate>
 {
 	NSURL *_sourceURL;
@@ -78,113 +84,118 @@ typedef NS_ENUM(NSInteger, BXSourceFileImportType) {
 #pragma mark -
 #pragma mark Properties
 
-//The window controller which manages the import window, as distinct from the DOS session window.
+/// The window controller which manages the import window, as distinct from the DOS session window.
 @property (retain, nonatomic) BXImportWindowController *importWindowController;
 
 
-//The source path from which we are installing the game.
+/// The source path from which we are installing the game.
 @property (copy, nonatomic) NSURL *sourceURL;
 
-//The path of the DOSBox configuration file we will use for guiding the import.
-//Populated when a suitable configuration file is found in the source path.
+/// The path of the DOSBox configuration file we will use for guiding the import.
+/// Populated when a suitable configuration file is found in the source path.
 @property (copy, nonatomic) NSURL *bundledConfigurationURL;
 @property (retain, nonatomic) BXEmulatorConfiguration *configurationToImport;
 
-//The range of possible DOS installers to choose from, ordered by preference.
+/// The range of possible DOS installers to choose from, ordered by preference.
 @property (retain, nonatomic) NSArray *installerURLs;
 
-//The display filename of the gamebox, minus extension.
-//Changing this will rename the gamebox file itself.
+/// The display filename of the gamebox, minus extension.
+/// Changing this will rename the gamebox file itself.
 @property (retain, nonatomic) NSString *gameboxName;
 
 
-//What stage of the import process we are up to (as a BXImportStage constant.)
+/// What stage of the import process we are up to (as a BXImportStage constant.)
 @property (readonly, nonatomic) BXImportStage importStage;
 
-//How far through the current stage we have progressed.
-//Only relevant during the BXImportSessionLoadingSourcePath and BXImportSessionImportingSourceFiles stages.
+/// How far through the current stage we have progressed.
+///
+/// Only relevant during the \c BXImportSessionLoadingSourcePath and \c BXImportSessionImportingSourceFiles stages.
 @property (readonly, nonatomic) ADBOperationProgress stageProgress;
 
-//Whether our progress cannot be meaningfully determined currently.
-//Only relevant during the BXImportSessionLoadingSourcePath and BXImportSessionImportingSourceFiles stages.
+///Whether our progress cannot be meaningfully determined currently.
+///
+///Only relevant during the \c BXImportSessionLoadingSourcePath and \c BXImportSessionImportingSourceFiles stages.
 @property (readonly, nonatomic) BOOL stageProgressIndeterminate;
 
-//The final import/file transfer operation being performed to import the game's source files into the gamebox.
-//Only relevant during the BXImportSessionImportingSourceFiles stage.
+/// The final import/file transfer operation being performed to import the game's source files into the gamebox.
+/// Only relevant during the BXImportSessionImportingSourceFiles stage.
 @property (readonly, retain, nonatomic) ADBOperation *sourceFileImportOperation;
 
-//The specific way we are importing the game's source files into the gamebox.
-//This affects descriptions in the progress UI and confirmation prompts.
+/// The specific way we are importing the game's source files into the gamebox.
+/// This affects descriptions in the progress UI and confirmation prompts.
 @property (readonly, nonatomic) BXSourceFileImportType sourceFileImportType;
 
-//Whether it is necessary to import the source files into the gamebox after installation.
-//If YES, then the user will not be able to skip the final importing step.
+/// Whether it is necessary to import the source files into the gamebox after installation.
+/// If YES, then the user will not be able to skip the final importing step.
 @property (assign, nonatomic) BOOL sourceFileImportRequired;
 
 
 #pragma mark -
 #pragma mark Import helper methods
 
-//The UTIs of filetypes we can accept for import.
+/// The UTIs of filetypes we can accept for import.
 + (NSSet<NSString*> *)acceptedSourceTypes;
 
-//Whether the specified source path is a folder, volume or image type we can import.
+/// Whether the specified source path is a folder, volume or image type we can import.
 + (BOOL) canImportFromSourceURL: (NSURL *)sourceURL;
 
-//Whether the game has installed any files into the gamebox's C drive.
-//Only relevant after the game's installer has been run.
-- (BOOL) gameDidInstall;
+/// Whether the game has installed any files into the gamebox's C drive.
+///
+/// Only relevant after the game's installer has been run.
+@property (readonly) BOOL gameDidInstall;
 
-//Whether the DOS session is currently running an installer program.
-//Used for toggling the display of the installation help bar versus the this-program-is-default bar.
-- (BOOL) isRunningInstaller;
+/// Whether the DOS session is currently running an installer program.
+///
+/// Used for toggling the display of the installation help bar versus the this-program-is-default bar.
+@property (readonly,getter=isRunningInstaller) BOOL runningInstaller;
 
 
-//Generate a new bootleg cover-art icon and add it to the gamebox.
-//This icon will be based on the gamebox's name and the size and age of the files being imported.
+/// Generate a new bootleg cover-art icon and add it to the gamebox.
+///
+/// This icon will be based on the gamebox's name and the size and age of the files being imported.
 - (void) generateBootlegIcon;
 
 
 #pragma mark -
 #pragma mark Import steps
 
-//Selects the specified source URL, detects the installers available in the source URL,
-//and continues to the next step of importing.
+/// Selects the specified source URL, detects the installers available in the source URL,
+/// and continues to the next step of importing.
 - (void) importFromSourceURL: (NSURL *)URL;
 
-//Cancels an in-progress installer scan started from importFromSourcePath:.
+/// Cancels an in-progress installer scan started from importFromSourcePath:.
 - (void) cancelInstallerScan;
 
-//Clears any previously-specified source URL and returns to the source selection step.
+/// Clears any previously-specified source URL and returns to the source selection step.
 - (void) cancelSourceSelection;
 
-//Launches the specified DOS installer program to continue importing.
+/// Launches the specified DOS installer program to continue importing.
 - (void) launchInstallerAtURL: (NSURL *)URL;
 
-//Skips the installer selection process and continues to the next step of importing.
+/// Skips the installer selection process and continues to the next step of importing.
 - (void) skipInstaller;
 
-//Closes the DOS installer process and continues to the next step of importing.
+/// Closes the DOS installer process and continues to the next step of importing.
 - (void) finishInstaller;
 
-//Copy the source files into the gamebox.
+/// Copy the source files into the gamebox.
 - (void) importSourceFiles;
 
-//Cancel an in-progress source-file import.
+/// Cancel an in-progress source-file import.
 - (void) cancelSourceFileImport;
 
-//Clean up the gamebox and finish the operation.
+/// Clean up the gamebox and finish the operation.
 - (void) finalizeGamebox;
 
 
 #pragma mark -
 #pragma mark Notifications
 
-//Custom progress callbacks for sourceFileImportOperation.
+/// Custom progress callbacks for sourceFileImportOperation.
 - (void) sourceFileImportInProgress: (NSNotification *)notification;
 - (void) sourceFileImportDidFinish: (NSNotification *)notification;
 
-//Custom progress callbacks for our installer scanner.
+/// Custom progress callbacks for our installer scanner.
 - (void) installerScanDidFinish: (NSNotification *)notification;
 
 @end

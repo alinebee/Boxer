@@ -5,12 +5,11 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//Provides a suitable layout for BXCHFlightstick and BXThrustmasterFCS:
-//Flightsticks with 4 buttons and a hat-switch. Unlike BXFlightstickLayout,
-//this uses tilt control for pitch and roll.
 
 #import "BXJoypadLayout.h"
 
-
+/// Provides a suitable layout for BXCHFlightstick and BXThrustmasterFCS:
+/// Flightsticks with 4 buttons and a hat-switch. Unlike BXFlightstickLayout,
+/// this uses tilt control for pitch and roll.
 @interface BXFlightstickAccelerometerLayout : BXJoypadLayout
 @end

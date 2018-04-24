@@ -6,9 +6,6 @@
  */
 
 
-//BXDriveList represents the currently-mounted DOS drives in the Boxer inspector panel. It is
-//a custom subclass of the standard Cocoa collection view to implement drag operations for drives.
-
 #import <Cocoa/Cocoa.h>
 #import "BXCollectionItemView.h"
 #import "BXThemedButtonCell.h"
@@ -17,20 +14,22 @@
 @class BXDriveItem;
 @class BXDriveItemView;
 
+/// \c BXDriveList represents the currently-mounted DOS drives in the Boxer inspector panel. It is
+/// a custom subclass of the standard Cocoa collection view to implement drag operations for drives.
 @interface BXDriveList : NSCollectionView
 
-//Returns the collection view item representing the specified drive.
+/// Returns the collection view item representing the specified drive.
 - (BXDriveItem *) itemForDrive: (BXDrive *)drive;
 
 @end
 
 
-//BXDriveItemView displays each drive entry in the list.
+/// BXDriveItemView displays each drive entry in the list.
 @interface BXDriveItemView : BXInspectorListCollectionItemView
 @end
 
 
-//A custom appearance for control buttons within drive item views.
+/// A custom appearance for control buttons within drive item views.
 @interface BXDriveItemButtonCell : BXThemedButtonCell
 {
 	BOOL _hovered;
@@ -39,7 +38,7 @@
 @end
 
 
-//A custom appearance for drive labels.
+/// A custom appearance for drive labels.
 @interface BXDriveLetterCell : NSTextFieldCell <BXThemable>
 {
     NSString *_themeKey;

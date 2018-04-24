@@ -7,8 +7,6 @@
 
 #import "JoypadSDK.h"
 
-//BXJoypadLayot is a base class for our custom joypad controller layouts.
-//It mostly provides functions to register layouts for particular joystick types.
 
 @protocol BXEmulatedJoystick;
 
@@ -22,24 +20,26 @@ enum {
     BXJoyInputFakeDPadButtonLeft
 };
 
+/// \c BXJoypadLayot is a base class for our custom joypad controller layouts.
+/// It mostly provides functions to register layouts for particular joystick types.
 @interface BXJoypadLayout : JoypadControllerLayout
 
-//Register a Joypad controller layout as matching the specified joystick type.
-//Used by BXJoypadLayout subclasses to register themeselves.
+/// Register a Joypad controller layout as matching the specified joystick type.
+/// Used by BXJoypadLayout subclasses to register themeselves.
 + (void) registerLayout: (Class)layoutClass forJoystickType: (Class)joystickType;
 
-//Returns the registered layout class appropriate for the specified joystick type,
-//or nil if none has been registered.
+/// Returns the registered layout class appropriate for the specified joystick type,
+/// or \c nil if none has been registered.
 + (Class) layoutClassForJoystickType: (Class)joystickType;
 
-//Returns a fully prepared custom joystick controller layout for the specified
-//joystick type, suitable for passing to JoypadManager.
+/// Returns a fully prepared custom joystick controller layout for the specified
+/// joystick type, suitable for passing to JoypadManager.
 + (JoypadControllerLayout *) layoutForJoystickType: (Class)joystickType;
 
-//Returns an empty JoypadControllerLayout. Intended to be overridden by subclasses
-//to provide fully-configured layouts.
-//NOTE: we must provide instances of JoypadControllerLayout because the Joypad SDK
-//does not support subclassing JoypadControllerLayout.
+/// Returns an empty \c JoypadControllerLayout. Intended to be overridden by subclasses
+/// to provide fully-configured layouts.
+/// NOTE: we must provide instances of JoypadControllerLayout because the Joypad SDK
+/// does not support subclassing JoypadControllerLayout.
 + (JoypadControllerLayout *) layout;
 
 @end

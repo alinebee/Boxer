@@ -21,7 +21,7 @@
     CATextLayer *_titleLayer;
 }
 
-//The type of MT-32 device to display (or BXMT32ROMTypeUnknown for no device.)
+/// The type of MT-32 device to display (or BXMT32ROMTypeUnknown for no device.)
 @property (assign, nonatomic) BXMT32ROMType ROMType;
 
 //Whether the dropzone is highlighted for a drag-drop operation.

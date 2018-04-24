@@ -6,18 +6,17 @@
  */
 
 
-//BXDockTileController is a standalone class that listens for changes to the active DOS session
-//and changes the Boxer dock icon to match the current session's gamebox icon (if any).
-//This class is instantiated in MainMenu.xib.
-
 #import <Cocoa/Cocoa.h>
 
 @class BXSession;
 
+/// \c BXDockTileController is a standalone class that listens for changes to the active DOS session
+/// and changes the Boxer dock icon to match the current session's gamebox icon (if any).
+/// This class is instantiated in MainMenu.xib.
 @interface BXDockTileController : NSObject
 
-//Called whenever the current session or its icon changes.
-//This calls coverArtForSession: with the current session and sets NSApplication's icon to the result.
+/// Called whenever the current session or its icon changes.
+/// This calls \c coverArtForSession: with the current session and sets NSApplication's icon to the result.
 - (void) syncIconWithActiveSession;
 
 @end

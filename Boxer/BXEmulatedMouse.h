@@ -6,22 +6,21 @@
  */
 
 
-//BXEmulatedMouse represents the DOS PC's mouse and its driver, and offers an API for sending
-//emulated mouse signals.
-
 #import <Foundation/Foundation.h>
 #import "BXEventConstants.h"
 
 
-//How long buttonPressed: should pretend to hold the specified button down before releasing.
+/// How long \c buttonPressed: should pretend to hold the specified button down before releasing.
 #define BXMouseButtonPressDurationDefault 0.1
 
-//The minimum duration for a mouse button press. Buttons that are released before this
-//will be 'held down' until this time has elapsed, preventing ultra-quick taps from
-//getting missed by a game's mouse-polling.
+/// The minimum duration for a mouse button press. Buttons that are released before this
+/// will be 'held down' until this time has elapsed, preventing ultra-quick taps from
+/// getting missed by a game's mouse-polling.
 #define BXMouseButtonPressDurationMinimum 0.05
 
 
+/// \c BXEmulatedMouse represents the DOS PC's mouse and its driver, and offers an API for sending
+/// emulated mouse signals.
 @interface BXEmulatedMouse: NSObject
 {
 	BOOL _active;
@@ -35,15 +34,15 @@
 #pragma mark -
 #pragma mark Properties
 
-//Whether we are responding to mouse input.
+/// Whether we are responding to mouse input.
 @property (assign, nonatomic, getter=isActive) BOOL active;
 
-//The current X and Y coordinates of the mouse relative to a 0.0-to-1.0 canvas.
-//This is synchronised by DOSBox, as the DOS program may warp the mouse itself.
+/// The current X and Y coordinates of the mouse relative to a 0.0-to-1.0 canvas.
+/// This is synchronised by DOSBox, as the DOS program may warp the mouse itself.
 @property (assign, nonatomic) NSPoint position;
 
 
-//Releases all mouse buttons, as if the user took their hand off the mouse.
+/// Releases all mouse buttons, as if the user took their hand off the mouse.
 - (void) clearInput;
 
 
@@ -55,12 +54,12 @@
 - (void) buttonUp: (BXMouseButton)button;
 - (BOOL) buttonIsDown: (BXMouseButton)button;
 
-//Press the specified mouse button and then release it after the default/specified delay.
+/// Press the specified mouse button and then release it after the default/specified delay.
 - (void) buttonPressed: (BXMouseButton)button;
 - (void) buttonPressed: (BXMouseButton)button forDuration: (NSTimeInterval)duration;
 
-//Move the mouse to a relative point on the specified canvas, by the relative delta.
-//TODO: simplify this API to always use a 0.0-1.0 canvas.
+/// Move the mouse to a relative point on the specified canvas, by the relative delta.
+/// TODO: simplify this API to always use a 0.0-1.0 canvas.
 - (void) movedTo: (NSPoint)point
 			  by: (NSPoint)delta
 		onCanvas: (NSRect)canvas

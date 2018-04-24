@@ -5,10 +5,10 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-
 //BXGLRenderingView is an NSOpenGLView subclass which displays DOSBox's rendered output.
 //It manages a BXRenderer object to do the actual drawing, passing it new frames to draw
 //and notifying it of changes to the view dimensions.
+
 
 #import "BXFrameRenderingView.h"
 #import <QuartzCore/QuartzCore.h>
@@ -16,6 +16,10 @@
 
 @class BXBasicRenderer;
 @class ADBTexture2D;
+
+/// \c BXGLRenderingView is an \c NSOpenGLView subclass which displays DOSBox's rendered output.
+/// It manages a \c BXRenderer object to do the actual drawing, passing it new frames to draw
+/// and notifying it of changes to the view dimensions.
 @interface BXGLRenderingView : NSOpenGLView <BXFrameRenderingView, BXRendererDelegate, NSAnimationDelegate>
 {
 	BXBasicRenderer *_renderer;
@@ -45,20 +49,20 @@
 @property (readonly, nonatomic) NSRect viewportRect;
 
 
-//Returns the rectangular region of the view into which the specified frame will be drawn.
-//This will be equal to the view bounds if managesAspectRatio is NO; otherwise, it will
-//be a rectangle of the same aspect ratio as the frame fitted to within the current or maximum
-//viewport size (whichever is smaller).
+/// Returns the rectangular region of the view into which the specified frame will be drawn.
+/// This will be equal to the view bounds if managesAspectRatio is NO; otherwise, it will
+/// be a rectangle of the same aspect ratio as the frame fitted to within the current or maximum
+/// viewport size (whichever is smaller).
 - (NSRect) viewportForFrame: (BXVideoFrame *)frame;
 
-//The renderer we should use for the specified rendering style, in the specified context.
-//Returns a fully-configured renderer set up for the specified context.
+/// The renderer we should use for the specified rendering style, in the specified context.
+/// Returns a fully-configured renderer set up for the specified context.
 - (BXBasicRenderer *) rendererForStyle: (BXRenderingStyle)style
                              inContext: (CGLContextObj)context;
 
-//Set the viewport (the area of the view in which the frame is rendered) to the specified rectangle.
-//If animated is YES, the viewport will be smoothly animated to the new size; otherwise the viewport
-//will be changed immediately (cancelling any in-progress animation.)
+/// Set the viewport (the area of the view in which the frame is rendered) to the specified rectangle.
+/// If animated is YES, the viewport will be smoothly animated to the new size; otherwise the viewport
+/// will be changed immediately (cancelling any in-progress animation.)
 - (void) setViewportRect: (NSRect)viewportRect animated: (BOOL)animated;
 
 @end

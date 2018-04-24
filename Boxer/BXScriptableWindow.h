@@ -16,7 +16,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-/// BXScriptableWindow is a wrapper for NSWindow which transparently passes KVO scripting messages
+/// \c BXScriptableWindow is a wrapper for \c NSWindow which transparently passes KVO scripting messages
 /// first to the window controller, then to the window itself if the window controller doesn't
 /// respond to that key (or doesn't exist in the first place).
 ///

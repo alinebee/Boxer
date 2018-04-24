@@ -19,12 +19,12 @@
 
 @end
 
-//A preset renderer that applies the smoothed appearance.
+/// A preset renderer that applies the smoothed appearance.
 @interface BXSmoothedRenderer : BXBuiltinShaderRenderer
 
 @end
 
-//A preset renderer that applies the CRT scanlines appearance.
+/// A preset renderer that applies the CRT scanlines appearance.
 @interface BXCRTRenderer : BXBuiltinShaderRenderer
 
 @end

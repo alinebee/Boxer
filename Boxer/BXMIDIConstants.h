@@ -11,8 +11,8 @@
 #define BXSysexStart 0xF0
 #define BXSysexEnd 0xF7
 
-//MIDI messages use 7 bits, but must be sent via byte arrays.
-//This mask clears the 8th and higher bits of the byte.
+/// MIDI messages use 7 bits, but must be sent via byte arrays.
+/// This mask clears the 8th and higher bits of the byte.
 #define BXMIDIBitmask 0x7F
 
 

@@ -8,8 +8,8 @@
 #import "BXCollectionItemView.h"
 
 @class BXDrive;
-//BXDriveItem represents each drive in the list and acts
-//as a view controller for its corresponding BXDriveItemView.
+/// BXDriveItem represents each drive in the list and acts
+/// as a view controller for its corresponding BXDriveItemView.
 @interface BXDriveItem : BXCollectionItem
 {
     BOOL _importing;
@@ -40,29 +40,29 @@
 
 #pragma mark - Description properties
 
-//The drive to which this item corresponds. Derived automatically from representedObject.
+/// The drive to which this item corresponds. Derived automatically from representedObject.
 @property (strong, readonly, nonatomic) BXDrive *drive;
 
-//The icon to display for the drive we represent.
+/// The icon to display for the drive we represent.
 @property (strong, readonly, nonatomic) NSImage *driveImage;
 
-//The type description to display for our drive.
+/// The type description to display for our drive.
 @property (copy, readonly, nonatomic) NSString *typeDescription;
 
-//The icon and tooltip to display on the insert/eject toggle.
+/// The icon and tooltip to display on the insert/eject toggle.
 @property (strong, readonly, nonatomic) NSImage *iconForToggle;
 @property (copy, readonly, nonatomic) NSString *tooltipForToggle;
 
 #pragma mark - Status properties
 
-//Whether this drive is currently mounted.
+/// Whether this drive is currently mounted.
 @property (readonly, nonatomic, getter=isMounted) BOOL mounted;
 
-//Whether this drive is part of the current gamebox.
+/// Whether this drive is part of the current gamebox.
 @property (readonly, nonatomic, getter=isBundled) BOOL bundled;
 
-//Whether this drive is currently being imported into the gamebox.
-//Used to toggle the visibility of import progress fields in the drive item view.
+/// Whether this drive is currently being imported into the gamebox.
+/// Used to toggle the visibility of import progress fields in the drive item view.
 @property (assign, nonatomic, getter=isImporting) BOOL importing;
 
 
@@ -76,8 +76,8 @@
 
 #pragma mark - Notifications
 
-//Import notifications dispatched by BXDrivePanelController,
-//to the drive item for the drive being imported.
+/// Import notifications dispatched by BXDrivePanelController,
+/// to the drive item for the drive being imported.
 - (void) driveImportWillStart: (NSNotification *)notification;
 - (void) driveImportInProgress: (NSNotification *)notification;
 - (void) driveImportWasCancelled: (NSNotification *)notification;

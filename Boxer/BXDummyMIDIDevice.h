@@ -5,11 +5,10 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXDummyMIDIDevice receives but ignores all MIDI events.
-//It is used as a placeholder when MIDI is disabled.
-
 #import <Foundation/Foundation.h>
 #import "BXMIDIDevice.h"
 
+/// \c BXDummyMIDIDevice receives but ignores all MIDI events.
+/// It is used as a placeholder when MIDI is disabled.
 @interface BXDummyMIDIDevice : NSObject <BXMIDIDevice>
 @end

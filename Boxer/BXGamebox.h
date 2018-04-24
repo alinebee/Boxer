@@ -108,6 +108,13 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 
 #pragma mark - Interface
 
+/// \c BXGamebox represents a single Boxer gamebox and offers methods for retrieving and persisting
+/// bundled drives, configuration files and documentation. It is based on \c NSBundle but does not
+/// require that Boxer gameboxes use any standard OS X bundle folder structure.
+/// (and indeed, gameboxes with an OS X bundle structure haven't been tested.)
+///
+/// TODO: it is inappropriate to subclass NSBundle for representing a modifiable file package,
+/// and we should instead be using an NSFileWrapper directory wrapper.
 @interface BXGamebox : NSBundle <ADBUndoable>
 {
 	NSMutableDictionary *_gameInfo;

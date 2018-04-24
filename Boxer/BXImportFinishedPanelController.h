@@ -11,7 +11,7 @@
 @class BXImportIconDropzone;
 @class BXImportWindowController;
 
-/// <code>BXImportFinishedPanelController</code> controls the appearance and behaviour of the final
+/// \c BXImportFinishedPanelController controls the appearance and behaviour of the final
 /// your-gamebox-is-finished panel of the import process.
 @interface BXImportFinishedPanelController : NSViewController
 {

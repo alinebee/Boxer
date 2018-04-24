@@ -61,23 +61,23 @@ typedef NS_OPTIONS(NSUInteger, BXGameportButtonMask)
 
 @interface BXBaseEmulatedJoystick ()
 
-//The pressed/released state of all emulated buttons
+/// The pressed/released state of all emulated buttons
 @property (assign) BXGameportButtonMask pressedButtons;
 
-//Process the press/release of a joystick button.
+/// Process the press/release of a joystick button.
 - (void) setButton: (BXEmulatedJoystickButton)button
            toState: (BOOL)pressed;
 
-//Called by buttonPressed: after a delay to release the pressed button.
+/// Called by buttonPressed: after a delay to release the pressed button.
 - (void) releaseButton: (NSNumber *)button;
 
-//A helper method for normalizing an 8-way POV direction to the closest cardinal (NSEW) BXEmulatedPOVDirection
-//constant, taking into account which cardinal POV direction it was in before. This makes the corners 'sticky',
-//so that e.g. N to NE will return N, while E to NE will return E. This reduces unintentional switching.
+/// A helper method for normalizing an 8-way POV direction to the closest cardinal (NSEW) BXEmulatedPOVDirection
+/// constant, taking into account which cardinal POV direction it was in before. This makes the corners 'sticky',
+/// so that e.g. N to NE will return N, while E to NE will return E. This reduces unintentional switching.
 + (BXEmulatedPOVDirection) closest4WayDirectionForPOV: (BXEmulatedPOVDirection)direction
                                           previousPOV: (BXEmulatedPOVDirection)oldDirection;
 
-//Move the specified axis to the specified position.
+/// Move the specified axis to the specified position.
 - (void) setPosition: (float)position forGameportAxis: (BXGameportAxis)axis;
 - (float) positionForGameportAxis: (BXGameportAxis)axis;
 

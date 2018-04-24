@@ -6,19 +6,18 @@
  */
 
 
-//BXAboutController is a simple window controller which styles and displays the About Boxer panel.
-
 #import <Cocoa/Cocoa.h>
 
+/// \c BXAboutController is a simple window controller which styles and displays the About Boxer panel.
 @interface BXAboutController : NSWindowController
 {
 	NSTextField *_version;
 }
 @property (strong, nonatomic) IBOutlet NSTextField *version;
 
-//Provides a singleton instance of the window controller which stays retained for the lifetime
-//of the application. BXAboutController should always be accessed from this singleton.
-+ (id) controller;
+/// Provides a singleton instance of the window controller which stays retained for the lifetime
+/// of the application. BXAboutController should always be accessed from this singleton.
+@property (class, readonly, strong) id controller;
 
 //Display the credits and acknowledgements help page
 - (IBAction) showAcknowledgements: (id)sender;
@@ -26,6 +25,6 @@
 @end
 
 
-//Simple view to draw the custom About window background.
+/// Simple view to draw the custom About window background.
 @interface BXAboutBackgroundView : NSView
 @end

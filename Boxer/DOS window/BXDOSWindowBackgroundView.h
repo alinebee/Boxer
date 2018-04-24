@@ -7,7 +7,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-//BXDOSWindowBackgroundView simply renders the badged grey gradient background of the DOS window.
+/// BXDOSWindowBackgroundView simply renders the badged grey gradient background of the DOS window.
 @interface BXDOSWindowBackgroundView : NSView
 {
     NSBitmapImageRep *_snapshot;
@@ -19,8 +19,8 @@
 
 @property (strong, nonatomic) NSBitmapImageRep *snapshot;
 
-//Separate functions for drawing each component of the view, called during drawRect:.
-//These should not be called directly: they are intended for overriding by subclasses.
+/// Separate functions for drawing each component of the view, called during drawRect:.
+/// These should not be called directly: they are intended for overriding by subclasses.
 - (void) _drawBackgroundInRect: (NSRect)dirtyRect;
 - (void) _drawGrillesInRect: (NSRect)dirtyRect;
 - (void) _drawLightingInRect: (NSRect)dirtyRect;

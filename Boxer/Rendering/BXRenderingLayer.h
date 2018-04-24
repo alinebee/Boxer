@@ -6,13 +6,13 @@
  */
 
 
-//BXRenderingLayer is the OpenGL layer used by BXLayerBackedRenderingView for rendering its content.
-
 #import <QuartzCore/QuartzCore.h>
 #import "BXFrameRenderingView.h"
 
 @class BXVideoFrame;
 @class BXBasicRenderer;
+
+/// \c BXRenderingLayer is the OpenGL layer used by BXLayerBackedRenderingView for rendering its content.
 @interface BXRenderingLayer : CAOpenGLLayer
 {
     BXVideoFrame *_currentFrame;

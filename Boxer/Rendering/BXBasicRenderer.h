@@ -12,18 +12,19 @@
 //It is responsible for preparing the specified CGL context, creating textures and framebuffers,
 //setting and clearing the viewport, reading frame data, and actually rendering the frames.
 
+
 #import <Foundation/Foundation.h>
 #import <OpenGL/OpenGL.h>
 
 #pragma mark -
 #pragma mark Error constants
 
-enum {
-    BXRendererUnsupported,    //The renderer is not supported by the current context.
-};
-
-//The domain for errors produced by BXBasicRenderer and subclasses.
+/// The domain for errors produced by BXBasicRenderer and subclasses.
 extern NSString * const BXRendererErrorDomain;
+
+NS_ERROR_ENUM(BXRendererErrorDomain) {
+    BXRendererUnsupported,    //!< The renderer is not supported by the current context.
+};
 
 
 #pragma mark -
@@ -32,6 +33,12 @@ extern NSString * const BXRendererErrorDomain;
 @class BXVideoFrame;
 @class ADBTexture2D;
 @protocol BXRendererDelegate;
+
+/// \c BXBasicRenderer and its subclasses are view- and context-agnostic classes for rendering
+/// \c BXVideoFrame content using OpenGL.
+///
+/// It is responsible for preparing the specified CGL context, creating textures and framebuffers,
+/// setting and clearing the viewport, reading frame data, and actually rendering the frames.
 @interface BXBasicRenderer : NSObject
 {
     CGLContextObj _context;
@@ -60,91 +67,91 @@ extern NSString * const BXRendererErrorDomain;
 #pragma mark -
 #pragma mark Properties
 
-//The delegate to which we will send BXRendererDelegate messages.
+/// The delegate to which we will send BXRendererDelegate messages.
 @property (assign) id <BXRendererDelegate> delegate;
 
-//The context in which this renderer is running, set when the renderer is created.
-//Renderers cannot be moved between contexts.
+/// The context in which this renderer is running, set when the renderer is created.
+/// Renderers cannot be moved between contexts.
 @property (readonly) CGLContextObj context;
 
-//The current frame that will be rendered when render is called. Set using updateWithFrame:.
+/// The current frame that will be rendered when render is called. Set using updateWithFrame:.
 @property (strong, readonly) BXVideoFrame *currentFrame;
 
-//The viewport in the current context into which we'll render the frame.
-//Measured in device pixels.
+/// The viewport in the current context into which we'll render the frame.
+/// Measured in device pixels.
 @property (assign, nonatomic) CGRect viewport;
 
-//The frames-per-second the renderer is producing, measured as the time between
-//the last two rendered frames.
+/// The frames-per-second the renderer is producing, measured as the time between
+/// the last two rendered frames.
 @property (assign) CGFloat frameRate;
 
-//The time it took to render the last frame, measured as the time renderToGLContext: was called to
-//the time when renderToGLContext: finished. This measures the efficiency of the rendering pipeline.
+/// The time it took to render the last frame, measured as the time renderToGLContext: was called to
+/// the time when \c renderToGLContext: finished. This measures the efficiency of the rendering pipeline.
 @property (assign) CFTimeInterval renderingTime;
 
-//The timestamp of the last frame that was processed (not necessarily rendered) by this renderer.
-//This indicates what frame has been uploaded as a texture and is ready for rendering.
+/// The timestamp of the last frame that was processed (not necessarily rendered) by this renderer.
+/// This indicates what frame has been uploaded as a texture and is ready for rendering.
 @property (assign) CFAbsoluteTime latestFrameTimestamp;
 
-//A general-purpose tag for this renderer, for the upstream context to distinguish it from other renderers.
-//Defaults to 0.
+/// A general-purpose tag for this renderer, for the upstream context to distinguish it from other renderers.
+/// Defaults to 0.
 @property (assign) NSInteger tag;
 
 
 #pragma mark -
 #pragma mark Helper class methods
 
-//Returns the maximum supported texture size for the specified type of texture in the specified context.
+/// Returns the maximum supported texture size for the specified type of texture in the specified context.
 + (CGSize) maxTextureSizeForType: (GLenum)textureType
                        inContext: (CGLContextObj)glContext;
 
-//Returns whether the specified context supports the specified extension.
+/// Returns whether the specified context supports the specified extension.
 + (BOOL) context: (CGLContextObj)glContext supportsExtension: (const char *)featureName;
 
 
 #pragma mark -
 #pragma mark Initialization and context setup
 
-//Returns a new renderer prepared for the specified context.
-//Returns nil and populates outError if the renderer could not be created.
+/// Returns a new renderer prepared for the specified context.
+/// Returns \c nil and populates outError if the renderer could not be created.
 - (id) initWithContext: (CGLContextObj)glContext error: (NSError **)outError;
 
-//Set up OpenGL assets and configure the GL context appropriately.
-//Must be called before the renderer is first used.
+/// Set up OpenGL assets and configure the GL context appropriately.
+/// Must be called before the renderer is first used.
 - (void) prepareContext;
 
-//Clean up OpenGL assets. Called automatically at dealloc, but should be called beforehand
-//if possible when the renderer goes out of use.
+/// Clean up OpenGL assets. Called automatically at dealloc, but should be called beforehand
+/// if possible when the renderer goes out of use.
 - (void) tearDownContext;
 
-//Returns the maximum drawable frame size in pixels.
-//This is usually a limit of the maximum GL texture size.
+/// Returns the maximum drawable frame size in pixels.
+/// This is usually a limit of the maximum GL texture size.
 - (CGSize) maxFrameSize;
 
 
 #pragma mark -
 #pragma mark Frame updates and rendering
 
-//Sets the viewport to the specified rectangle in device pixels.
-//If recalculate is YES, the renderer may adjust its rendering to suit the new size.
-//If recalculate is NO, the renderer should not perform any expensive changes to the renderer setup.
-//(recalculate may be NO if e.g. the view is dynamically resizing.)
+/// Sets the viewport to the specified rectangle in device pixels.
+/// If recalculate is YES, the renderer may adjust its rendering to suit the new size.
+/// If recalculate is NO, the renderer should not perform any expensive changes to the renderer setup.
+/// (recalculate may be NO if e.g. the view is dynamically resizing.)
 - (void) setViewport: (CGRect)rect recalculate: (BOOL)recalculate;
 
-//Called to force the renderer to update to its current viewport size.
-//Intended to be used after a series of calls to setViewport:recalculate:
-//with recalculate as NO.
+/// Called to force the renderer to update to its current viewport size.
+/// Intended to be used after a series of calls to setViewport:recalculate:
+/// with recalculate as NO.
 - (void) recalculateViewport;
 
-//Replaces the current frame with a new/updated one for rendering.
-//Forces the texture contents to be reuploaded.
+/// Replaces the current frame with a new/updated one for rendering.
+/// Forces the texture contents to be reuploaded.
 - (void) updateWithFrame: (BXVideoFrame *)frame;
 
-//Whether the renderer is ready to render the current frame.
-//Will be YES as long as there is a frame to render.
+/// Whether the renderer is ready to render the current frame.
+/// Will be \c YES as long as there is a frame to render.
 - (BOOL) canRender;
 
-//Renders the frame into its GL context.
+/// Renders the frame into its GL context.
 - (void) render;
 
 @end
@@ -152,10 +159,10 @@ extern NSString * const BXRendererErrorDomain;
 
 @protocol BXRendererDelegate <NSObject>
 
-//Called when the renderer has completed all intermediate rendering steps
-//and is ready to render to the final output surface (usually the screen.)
-//The delegate can use this step to activate additional shaders or render
-//to a framebuffer.
+/// Called when the renderer has completed all intermediate rendering steps
+/// and is ready to render to the final output surface (usually the screen.)
+/// The delegate can use this step to activate additional shaders or render
+/// to a framebuffer.
 - (void) renderer: (BXBasicRenderer *)renderer willRenderTextureToDestinationContext: (ADBTexture2D *)texture;
 - (void) renderer: (BXBasicRenderer *)renderer didRenderTextureToDestinationContext: (ADBTexture2D *)texture;
 

@@ -5,17 +5,17 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//The BXJoypadInput category handles JoyPad iOS app input passed on from BXJoypadController.
 
 #import "BXInputController.h"
 #import "JoypadSDK.h"
 
+/// The \c BXJoypadInput category handles JoyPad iOS app input passed on from BXJoypadController.
 @interface BXInputController (BXJoypadInput) <JoypadDeviceDelegate, JoypadManagerDelegate>
 
-//Returns a custom Joypad layout appropriate for the currently-selected joystick type.
+/// Returns a custom Joypad layout appropriate for the currently-selected joystick type.
 @property (readonly, nonatomic) JoypadControllerLayout *currentJoypadLayout;
 
-//Whether any joypad controller devices are currently available.
+/// Whether any joypad controller devices are currently available.
 @property (readonly, nonatomic) BOOL joypadControllersAvailable;
 
 @end

@@ -5,12 +5,11 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXSteppedShaderRenderer is a renderer that uses different shaders depending on the current scale:
-//e.g. one version of the shader optimised for 2x, another for 3x, another for 4x and above.
-
 
 #import "BXShaderRenderer.h"
 
+/// \c BXSteppedShaderRenderer is a renderer that uses different shaders depending on the current scale:
+/// e.g. one version of the shader optimised for 2x, another for 3x, another for 4x and above.
 @interface BXSteppedShaderRenderer : BXShaderRenderer
 {
     NSMutableArray *_shaderSets;
@@ -18,10 +17,10 @@
     BOOL _scalesInPixels;
 }
 
-//Whether the scales for this shader are relative multiples or absolute pixel sizes.
+/// Whether the scales for this shader are relative multiples or absolute pixel sizes.
 @property (assign, nonatomic) BOOL scalesInPixels;
 
-//Creates a renderer that uses the specified shader sets at the specified scales.
+/// Creates a renderer that uses the specified shader sets at the specified scales.
 - (id) initWithShaderSets: (NSArray *)shaderSets
                  atScales: (CGFloat *)steps
                 inContext: (CGLContextObj)glContext

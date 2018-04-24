@@ -12,34 +12,34 @@
 #import <Cocoa/Cocoa.h>
 #import <BGHUDAppKit/BGHUDAppKit.h>
 
-//Extends BGTheme with more specific overrides.
+/// Extends BGTheme with more specific overrides.
 @interface BGTheme (BXThemeExtensions)
 
-//Registers the theme class with the theme manager,
-//keyed under the specific name.
-//If name is nil, the classname will be used.
+/// Registers the theme class with the theme manager,
+/// keyed under the specific name.
+/// If name is nil, the classname will be used.
 + (void) registerWithName: (NSString *)name;
 
-//The shadow to draw inside the slider track, on top of the background color.
-//Defaults to nil.
+/// The shadow to draw inside the slider track, on top of the background color.
+/// Defaults to nil.
 - (NSShadow *) sliderTrackInnerShadow;
 
-//The shadow to draw beneath the slider track. Defaults to nil.
+/// The shadow to draw beneath the slider track. Defaults to nil.
 - (NSShadow *) sliderTrackShadow;
 
-//The color with which to stroke the slider track. Defaults to strokeColor.
+/// The color with which to stroke the slider track. Defaults to strokeColor.
 - (NSColor *) sliderTrackStrokeColor;
 
-//The color with which to stroke the disabled slider track. Defaults to disabledStrokeColor.
+/// The color with which to stroke the disabled slider track. Defaults to disabledStrokeColor.
 - (NSColor *) disabledSliderTrackStrokeColor;
 
-//The shadow to draw beneath slider knobs. Defaults to the value of dropShadow.
+/// The shadow to draw beneath slider knobs. Defaults to the value of dropShadow.
 - (NSShadow *) sliderKnobShadow;
 
-//The color with which to stroke the slider knob. Defaults to strokeColor.
+/// The color with which to stroke the slider knob. Defaults to strokeColor.
 - (NSColor *) sliderKnobStrokeColor;
 
-//The color with which to stroke the slider knob. Defaults to disabledStrokeColor.
+/// The color with which to stroke the slider knob. Defaults to disabledStrokeColor.
 - (NSColor *) disabledSliderKnobStrokeColor;
 
 
@@ -67,23 +67,23 @@
 @end
 
 
-//Base class used by all Boxer themes. Currently empty.
+/// Base class used by all Boxer themes. Currently empty.
 @interface BXBaseTheme : BGGradientTheme
 @end
 
-//Adds a soft shadow around text.
+/// Adds a soft shadow around text.
 @interface BXBlueprintTheme : BXBaseTheme
 - (NSShadow *) textShadow;
 - (NSColor *) textColor;
 @end
 
-//Same as above, but paler text.
+/// Same as above, but paler text.
 @interface BXBlueprintHelpTextTheme : BXBlueprintTheme
 - (NSColor *) textColor;
 @end
 
-//White text, blue highlights and subtle text shadows
-//for HUD and bezel panels.
+/// White text, blue highlights and subtle text shadows
+/// for HUD and bezel panels.
 @interface BXHUDTheme : BXBaseTheme
 - (NSGradient *) highlightGradient;
 - (NSGradient *) pushedGradient;
@@ -93,19 +93,19 @@
 - (NSShadow *) focusRing;
 @end
 
-//Lightly indented text for program panels and inspector.
+/// Lightly indented text for program panels and inspector.
 @interface BXIndentedTheme : BXBaseTheme
 @end
 
-//Same as above, but paler text.
+/// Same as above, but paler text.
 @interface BXIndentedHelpTextTheme : BXIndentedTheme
 @end
 
-//Style used for list items in inspector.
+/// Style used for list items in inspector.
 @interface BXInspectorListTheme : BXIndentedTheme
 @end
 
-//Style used for selected list items in inspector.
+/// Style used for selected list items in inspector.
 @interface BXInspectorListSelectionTheme : BXBaseTheme
 @end
 
@@ -129,15 +129,15 @@
 @end
 
 
-//Lightly indented medium text for About panel.
+/// Lightly indented medium text for About panel.
 @interface BXAboutTheme : BXBaseTheme
 @end
 
-//Lightly indented dark text for About panel.
+/// Lightly indented dark text for About panel.
 @interface BXAboutDarkTheme : BXAboutTheme
 @end
 
-//Lightly indented bright text for About panel.
+/// Lightly indented bright text for About panel.
 @interface BXAboutLightTheme : BXAboutTheme
 @end
 
@@ -148,8 +148,8 @@
 @property (copy, nonatomic) NSString *themeKey;
 
 
-//Base implementations for these are provided by BXThemableExtensions,
-//so they're automatically available on any object that implement this protocol.
+/// Base implementations for these are provided by BXThemableExtensions,
+/// so they're automatically available on any object that implement this protocol.
 @optional
 + (NSString *) defaultThemeKey;
 @property (readonly, nonatomic) BGTheme *themeForKey;
@@ -159,7 +159,7 @@
 
 @interface NSObject (BXThemableExtensions)
 
-//The initial theme key for all instances of this object.
+/// The initial theme key for all instances of this object.
 + (NSString *) defaultThemeKey;
 
 @property (readonly, nonatomic) BGTheme *themeForKey;
@@ -167,6 +167,6 @@
 @end
 
 
-//NSControl extension to allow passthroughs to themed cell properties
+/// NSControl extension to allow passthroughs to themed cell properties
 @interface NSControl (BXThemedControls) <BXThemable>
 @end

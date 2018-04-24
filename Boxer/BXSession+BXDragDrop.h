@@ -6,24 +6,23 @@
  */
 
 
-//The BXDragDrop category extends BXSession with methods for responding to drag-drop events
-//into the session's main window.
-
 #import "BXSession.h"
 
+/// The \c BXDragDrop category extends \c BXSession with methods for responding to drag-drop events
+/// into the session's main window.
 @interface BXSession (BXDragDrop)
 
-//UTI filetypes that may be dropped onto this session to mount or launch them.
-- (NSSet *) droppableFileTypes;
+/// UTI filetypes that may be dropped onto this session to mount or launch them.
+- (NSSet<NSString*> *) droppableFileTypes;
 
-//Returns an NSDragOperation indicating what the session would do with the files were they dropped.
-- (NSDragOperation) responseToDraggedURLs: (NSArray *)draggedURLs;
+/// Returns an \c NSDragOperation indicating what the session would do with the files were they dropped.
+- (NSDragOperation) responseToDraggedURLs: (NSArray<NSURL*> *)draggedURLs;
 
-- (NSDragOperation) responseToDraggedStrings: (NSArray *)draggedStrings;
+- (NSDragOperation) responseToDraggedStrings: (NSArray<NSString*> *)draggedStrings;
 
-//Handles an array of dropped file URLs.
-- (BOOL) handleDraggedURLs: (NSArray *)URLs launchImmediately: (BOOL)launch;
+/// Handles an array of dropped file URLs.
+- (BOOL) handleDraggedURLs: (NSArray<NSURL*> *)URLs launchImmediately: (BOOL)launch;
 
-- (BOOL) handleDraggedStrings: (NSArray *)strings;
+- (BOOL) handleDraggedStrings: (NSArray<NSString*> *)strings;
 
 @end

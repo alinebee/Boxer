@@ -6,13 +6,12 @@
  */
 
 
-//BXSimpleDriveImport handles the importing of a drive to a specified destination.
-
 #import "ADBSingleFileTransfer.h"
 #import "BXDriveImport.h"
 
 @class BXDrive;
 
+/// \c BXSimpleDriveImport handles the importing of a drive to a specified destination.
 @interface BXSimpleDriveImport : ADBSingleFileTransfer <BXDriveImport>
 {
 	BXDrive *_drive;

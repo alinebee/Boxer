@@ -82,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
     ADBHIDPOVSwitchDirection _previousDirection;
 }
 
-/// Creates a new binding from interleaved pairs of bindings and directions, followed by a nil sentinel.
+/// Creates a new binding from interleaved pairs of bindings and directions, followed by a \c nil sentinel.
 + (instancetype) bindingWithOutputBindingsAndDirections: (id <BXOutputBinding>)binding, ... NS_REQUIRES_NIL_TERMINATION;
 
 /// Set/get the binding for a particular cardinal POV direction.

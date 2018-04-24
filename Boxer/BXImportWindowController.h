@@ -6,14 +6,13 @@
  */
 
 
-//BXImportWindowController manages the behaviour of the drive import window and coordinates
-//animation and transitions between the window's various views.
-//It takes its marching orders from the BXImportSession document class.
-
 #import "ADBMultiPanelWindowController.h"
 
 @class BXImportSession;
 
+/// \c BXImportWindowController manages the behaviour of the drive import window and coordinates
+/// animation and transitions between the window's various views.
+/// It takes its marching orders from the BXImportSession document class.
 @interface BXImportWindowController : ADBMultiPanelWindowController
 {
 	IBOutlet NSView *dropzonePanel;
@@ -27,36 +26,37 @@
 #pragma mark -
 #pragma mark Properties
 
-//The dropzone panel, displayed initially when no import source has been selected 
+/// The dropzone panel, displayed initially when no import source has been selected 
 @property (strong, nonatomic) NSView *dropzonePanel;
 
-//The indeterminate progress panel shown while scanning a game folder for installers.
+/// The indeterminate progress panel shown while scanning a game folder for installers.
 @property (strong, nonatomic) NSView *loadingPanel;
 
-//The choose-thine-installer panel, displayed if the chosen game source contains
-//installers to choose from.
+/// The choose-thine-installer panel, displayed if the chosen game source contains
+/// installers to choose from.
 @property (strong, nonatomic) NSView *installerPanel;
 
-//The finalizing-gamebox panel, which shows the progress of the import operation.
+/// The finalizing-gamebox panel, which shows the progress of the import operation.
 @property (strong, nonatomic) NSView *finalizingPanel;
 
-//The final gamebox panel, which displays the finished gamebox for the user to launch.
+/// The final gamebox panel, which displays the finished gamebox for the user to launch.
 @property (strong, nonatomic) NSView *finishedPanel;
 
 
-//Recast NSWindowController's standard accessors so that we get our own classes
-//(and don't have to keep recasting them ourselves.)
+/// Recast NSWindowController's standard accessors so that we get our own classes
+/// (and don't have to keep recasting them ourselves.)
 - (BXImportSession *) document;
 
-//Hand off control and appearance from one window controller to another.
-//Used to morph between windows.
+/// Hand off control and appearance from one window controller to another.
+/// Used to morph between windows.
 - (void) handOffToController: (NSWindowController *)controller;
 
-//Return control to us from the specified window controller. 
+/// Return control to us from the specified window controller. 
 - (void) pickUpFromController: (NSWindowController *)controller;
 
-//Ensure the appropriate panel is displayed in the import window.
-//This is called automatically whenever the import session's stage changes.
+/// Ensure the appropriate panel is displayed in the import window.
+///
+/// This is called automatically whenever the import session's stage changes.
 - (void) syncActivePanel;
 
 @end

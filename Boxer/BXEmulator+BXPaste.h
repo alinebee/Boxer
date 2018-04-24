@@ -5,23 +5,22 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//The BXPaste category extends BXEmulator to add methods for handling pasted text.
-
 #import "BXEmulator.h"
 
+/// The \c BXPaste category extends BXEmulator to add methods for handling pasted text.
 @interface BXEmulator (BXPaste)
 
-//Returns whether there is any pasted text that hasn't yet been consumed by the DOS process.
+/// Returns whether there is any pasted text that hasn't yet been consumed by the DOS process.
 - (BOOL) hasPendingPaste;
 
-//Clear any pasted text that hasn't yet been consumed by the DOS process.
+/// Clear any pasted text that hasn't yet been consumed by the DOS process.
 - (void) cancelPaste;
 
-//Accepts a string of characters, and deals with how best to paste it into DOS.
-//Returns YES if the string was handled, NO otherwise.
+/// Accepts a string of characters, and deals with how best to paste it into DOS.
+/// Returns \c YES if the string was handled, NO otherwise.
 - (BOOL) handlePastedString: (NSString *)pastedString asCommand: (BOOL)treatAsCommand;
 
-//Returns YES if Boxer can paste the specified string, no otherwise.
+/// Returns \c YES if Boxer can paste the specified string, no otherwise.
 - (BOOL) canAcceptPastedString: (NSString *)pastedString;
 
 @end

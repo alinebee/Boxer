@@ -5,22 +5,21 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//The BXKeyboardInput category handles BXInputController's keyboard event responses
-//and simulated keyboard actions.
-
 
 #import "BXInputController.h"
 
+/// The \c BXKeyboardInput category handles BXInputController's keyboard event responses
+/// and simulated keyboard actions.
 @interface BXInputController (BXKeyboardInput)
 
-//A mapping table of input source IDs to DOS keyboard layout codes.
-//Loaded from KeyboardLayouts.plist. 
+/// A mapping table of input source IDs to DOS keyboard layout codes.
+/// Loaded from KeyboardLayouts.plist. 
 + (NSDictionary *) keyboardLayoutMappings;
 
-//Returns the DOS keyboard layout code corresponding to the specified input source ID
+/// Returns the DOS keyboard layout code corresponding to the specified input source ID
 + (NSString *) keyboardLayoutForInputSourceID: (NSString *)inputSourceID;
 
-//Returns the DOS keyboard layout code corresponding to the current input source ID
+/// Returns the DOS keyboard layout code corresponding to the current input source ID
 + (NSString *) keyboardLayoutForCurrentInputMethod;
 
 
@@ -59,7 +58,7 @@
 - (IBAction) sendColon:         (id)sender;
 - (IBAction) sendDash:          (id)sender;
 
-//'Types' the specified message into the DOS prompt by imitating keypress events.
+/// 'Types' the specified message into the DOS prompt by imitating keypress events.
 - (void) type: (NSString *)message;
 
 @end

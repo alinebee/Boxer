@@ -9,6 +9,7 @@
 #import "BXCollectionItemView.h"
 
 @class BXLauncherItem;
+
 @protocol BXLauncherItemDelegate <NSObject>
 
 - (void) openItemInDOS: (BXLauncherItem *)item;
@@ -49,26 +50,26 @@
 @property (weak, nonatomic) IBOutlet NSScrollView *launcherScrollView;
 @property (weak, nonatomic) IBOutlet NSSearchField *filter;
 
-//! An array of NSDictionaries for every item to display in the list.
+/// An array of NSDictionaries for every item to display in the list.
 @property (readonly, strong, nonatomic) NSMutableArray<NSDictionary*> *displayedRows;
 
-//! An array of sanitised NSStrings derived from the contents of the search field.
+/// An array of sanitised NSStrings derived from the contents of the search field.
 @property (readonly, strong, nonatomic) NSMutableArray<NSString*> *filterKeywords;
 
 #pragma mark - Actions
 
 - (IBAction) enterSearchText: (NSSearchField *)sender;
 
-//Called by BXDOSWindowController when it is about to switch to/away from the launcher panel.
-//Causes it to (re-)populate its program list.
+/// Called by \c BXDOSWindowController when it is about to switch to/away from the launcher panel.
+/// Causes it to (re-)populate its program list.
 - (void) willShowPanel;
 - (void) didHidePanel;
 
 @end
 
 
-//A custom collection view that uses a different prototype for drive 'headings'
 @class BXLauncherItem;
+/// A custom collection view that uses a different prototype for drive 'headings'
 @interface BXLauncherList : NSCollectionView
 {
     BXLauncherItem *__weak _headingPrototype;
@@ -95,12 +96,12 @@
 - (IBAction) revealItemInFinder: (id)sender;
 - (IBAction) removeItem: (id)sender;
 
-//Returns the menu which the specified view should display when right-clicked.
-//Allows the launcher item to customise the menu based on the contents of its represented object.
+/// Returns the menu which the specified view should display when right-clicked.
+/// Allows the launcher item to customise the menu based on the contents of its represented object.
 - (NSMenu *) menuForView: (BXLauncherItemView *)view;
 @end
 
-//A base class for launcher items that registers mouse-hover events.
+/// A base class for launcher items that registers mouse-hover events.
 @interface BXLauncherItemView : BXCollectionItemView
 {
     BOOL _mouseInside;
@@ -108,32 +109,32 @@
     BOOL _enabled;
 }
 
-//Typecast to indicate the type of delegate this view expects.
+/// Typecast to indicate the type of delegate this view expects.
 @property (weak, nonatomic) BXLauncherItem *delegate;
 
-//Whether the mouse cursor is currently inside the view.
+/// Whether the mouse cursor is currently inside the view.
 @property (assign, nonatomic, getter=isMouseInside) BOOL mouseInside;
 
-//Whether the item is in the process of being clicked on or otherwise triggered.
+/// Whether the item is in the process of being clicked on or otherwise triggered.
 @property (assign, nonatomic, getter=isActive) BOOL active;
 
-//Whether the item is able to be activated.
+/// Whether the item is able to be activated.
 @property (assign, nonatomic, getter=isEnabled) BOOL enabled;
 @end
 
-//Handles the custom appearance and input behaviour of regular program items.
+/// Handles the custom appearance and input behaviour of regular program items.
 @interface BXLauncherRegularItemView : BXLauncherItemView
 @end
 
-//Handles the custom appearance and input behaviour of favorites.
+/// Handles the custom appearance and input behaviour of favorites.
 @interface BXLauncherFavoriteView : BXLauncherRegularItemView
 @end
 
-//Handles the behaviour of launcher heading rows.
+/// Handles the behaviour of launcher heading rows.
 @interface BXLauncherHeadingView : BXLauncherItemView
 @end
 
 
-//Draws the background of the navigation strip at the top of the launch panel
+/// Draws the background of the navigation strip at the top of the launch panel
 @interface BXLauncherNavigationHeader : NSView
 @end

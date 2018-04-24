@@ -21,20 +21,21 @@ typedef NS_ENUM(NSInteger, BXBezelPriority) {
 
 //XIB view flags for indicating different view roles within a bezel
 enum {
-    BXBezelMessage          = 7,    //Message imparted by the bezel
-    BXBezelIcon             = 1,    //Decorative icon for the bezel
-    BXBezelLevel            = 2,    //Level indicator
-    BXBezelLevelStatus      = 3,    //Label describing the status indicated in the level indicator
+    BXBezelMessage          = 7,    //!< Message imparted by the bezel
+    BXBezelIcon             = 1,    //!< Decorative icon for the bezel
+    BXBezelLevel            = 2,    //!< Level indicator
+    BXBezelLevelStatus      = 3,    //!< Label describing the status indicated in the level indicator
     
-    BXBezelDriveAction      = 4,    //Label describing what's happening to the drive
-    BXBezelDriveTitle       = 5,    //Display title of the drive
+    BXBezelDriveAction      = 4,    //!< Label describing what's happening to the drive
+    BXBezelDriveTitle       = 5,    //!< Display title of the drive
     
-    BXBezelDriveFromIcon    = 1,    //The icon of the drive we are switching from
-    BXBezelDriveToIcon      = 6     //The icon of the drive we are switching to
+    BXBezelDriveFromIcon    = 1,    //!< The icon of the drive we are switching from
+    BXBezelDriveToIcon      = 6     //!< The icon of the drive we are switching to
 };
 
 @class BXDrive;
 @class BXGamebox;
+/// BXBezelController is a singleton that manages a translucent notification bezel.
 @interface BXBezelController : NSWindowController
 {
     NSView *__weak _driveAddedBezel;
@@ -67,67 +68,67 @@ enum {
 #pragma mark -
 #pragma mark Properties
 
-//The bezel view used for drive inserted/ejected/imported notifications.
+/// The bezel view used for drive inserted/ejected/imported notifications.
 @property (weak, nonatomic) IBOutlet NSView *driveAddedBezel;
 @property (weak, nonatomic) IBOutlet NSView *driveSwappedBezel;
 @property (weak, nonatomic) IBOutlet NSView *driveRemovedBezel;
 @property (weak, nonatomic) IBOutlet NSView *driveImportedBezel;
 
-//The bezel used for fullscreen toggle notifications.
+/// The bezel used for fullscreen toggle notifications.
 @property (weak, nonatomic) IBOutlet NSView *fullscreenBezel;
 
-//The bezel used for notifying the user that the joystick is being ignored.
+/// The bezel used for notifying the user that the joystick is being ignored.
 @property (weak, nonatomic) IBOutlet NSView *joystickIgnoredBezel;
 
-//The bezel view used for CPU speed notifications.
+/// The bezel view used for CPU speed notifications.
 @property (weak, nonatomic) IBOutlet NSView *CPUSpeedBezel;
 
-//The bezel view used for flightstick throttle notifications.
+/// The bezel view used for flightstick throttle notifications.
 @property (weak, nonatomic) IBOutlet NSView *throttleBezel;
 
-//The bezel view used for volume notifications.
+/// The bezel view used for volume notifications.
 @property (weak, nonatomic) IBOutlet NSView *volumeBezel;
 
-//The bezel view used for MT-32 LCD messages.
+/// The bezel view used for MT-32 LCD messages.
 @property (weak, nonatomic) IBOutlet NSView *MT32MessageBezel;
-//The bezel view used for notifying the user that they need an MT-32 to hear proper music.
+/// The bezel view used for notifying the user that they need an MT-32 to hear proper music.
 @property (weak, nonatomic) IBOutlet NSView *MT32MissingBezel;
 
-//Screenshot bezel views.
+/// Screenshot bezel views.
 @property (weak, nonatomic) IBOutlet NSView *screenshotBezel;
 
-//Pause/play/fast-forward bezel views.
+/// Pause/play/fast-forward bezel views.
 @property (weak, nonatomic) IBOutlet NSView *pauseBezel;
 @property (weak, nonatomic) IBOutlet NSView *playBezel;
 @property (weak, nonatomic) IBOutlet NSView *fastForwardBezel;
 
-//Numpad simulation bezels.
+/// Numpad simulation bezels.
 @property (weak, nonatomic) IBOutlet NSView *numpadActiveBezel;
 @property (weak, nonatomic) IBOutlet NSView *numpadInactiveBezel;
 
-//Numlock toggle bezels.
+/// Numlock toggle bezels.
 @property (weak, nonatomic) IBOutlet NSView *numlockActiveBezel;
 @property (weak, nonatomic) IBOutlet NSView *numlockInactiveBezel;
 
 @property (weak, nonatomic) IBOutlet NSView *mouseLockedBezel;
 
-//The last bezel that was displayed.
+/// The last bezel that was displayed.
 @property (weak, readonly, nonatomic) NSView *currentBezel;
 
 #pragma mark -
 #pragma mark Class methods
 
-//The singleton controller to which all bezel requests should be directed.
-+ (id) controller;
+/// The singleton controller to which all bezel requests should be directed.
+@property (class, readonly, strong) id controller;
 
-//Returns the icon image to use for representing the specified drive.
+/// Returns the icon image to use for representing the specified drive.
 + (NSImage *) bezelIconForDrive: (BXDrive *)drive;
 
 #pragma mark -
 #pragma mark Methods
 
-//Whether to show or suppress drive notifications.
-//This will return NO if the Drives Inspector panel is open.
+/// Whether to show or suppress drive notifications.
+/// This will return NO if the Drives Inspector panel is open.
 - (BOOL) shouldShowDriveNotifications;
 
 - (void) showDriveAddedBezelForDrive: (BXDrive *)drive;

@@ -80,17 +80,17 @@ extern NSString * const shellProcessPath;
 //Such errors are handled by BXEmulator and should never reach outside classes.
 
 /// Error domain for internal DOSBox errors.
-extern NSString * const BXDOSBoxErrorDomain;
+extern NSErrorDomain const BXDOSBoxErrorDomain;
 
 /// Error domain for internal DOSBox error codes returned when unmounting a DOSBox drive.
-extern NSString * const BXDOSBoxUnmountErrorDomain;
+extern NSErrorDomain const BXDOSBoxUnmountErrorDomain;
 
 /// Error domain for internal DOSBox error codes returned when mounting a DOSBox drive.
-extern NSString * const BXDOSBoxMountErrorDomain;
+extern NSErrorDomain const BXDOSBoxMountErrorDomain;
 
 
-//BXDOSBoxUnmountErrorDomain constants
-enum {
+/// BXDOSBoxUnmountErrorDomain constants
+NS_ERROR_ENUM(BXDOSBoxUnmountErrorDomain) {
     /// Unmounting failed for an unknown reason.
     BXDOSBoxUnmountUnknownError             = -1,
     
@@ -105,8 +105,8 @@ enum {
 };
 
 
-//BXDOSBoxMountErrorDomain constants
-enum {
+/// BXDOSBoxMountErrorDomain constants
+NS_ERROR_ENUM(BXDOSBoxMountErrorDomain) {
     /// Mounting failed for an unknown reason.
     BXDOSBoxMountUnknownError               = -1,
     
@@ -662,8 +662,8 @@ enum {
 
 #pragma mark - Exception handling
 
-//Thrown by boxer_die. Encapsulates as much data as we can about the stack at the moment of creation.
-//Caught and converted into a BXEmulatorException by BXEmulator _startDOSBox.
+/// Thrown by boxer_die. Encapsulates as much data as we can about the stack at the moment of creation.
+/// Caught and converted into a BXEmulatorException by BXEmulator _startDOSBox.
 struct boxer_emulatorException: public std::exception {
     char errorReason[1024];
     char fileName[256];

@@ -6,10 +6,9 @@
  */
 
 
-//BXCursorFadeAnimation class description goes here.
-
 #import <Cocoa/Cocoa.h>
 
+/// BXCursorFadeAnimation class description goes here.
 @interface BXCursorFadeAnimation : NSAnimation
 {
 	NSCursor *originalCursor;

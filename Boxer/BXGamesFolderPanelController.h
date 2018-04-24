@@ -6,15 +6,11 @@
  */
 
 
-//BXGamesFolderPanelController displays the choose-a-game-folder open panel, and manages its
-//accessory view. It is also responsible for adding sample games to the chosen folder, if requested.
-
 #import <Cocoa/Cocoa.h>
 
-@interface BXGamesFolderPanelController : NSViewController
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
-< NSOpenSavePanelDelegate >
-#endif
+/// BXGamesFolderPanelController displays the choose-a-game-folder open panel, and manages its
+/// accessory view. It is also responsible for adding sample games to the chosen folder, if requested.
+@interface BXGamesFolderPanelController : NSViewController <NSOpenSavePanelDelegate>
 {
 	NSButton *_sampleGamesToggle;
 	NSButton *_useShelfAppearanceToggle;
@@ -23,11 +19,11 @@
 @property (strong, nonatomic) IBOutlet NSButton *sampleGamesToggle;
 @property (strong, nonatomic) IBOutlet NSButton *useShelfAppearanceToggle;
 
-//Returns a singleton instance, which loads the view from the NIB file the first time.
-+ (id) controller;
+/// Returns a singleton instance, which loads the view from the NIB file the first time.
+@property (class, readonly, strong) id controller;
 
-//Display the open panel as a sheet in the specified window
-//(or as a modal dialog, if window is null.)
+/// Display the open panel as a sheet in the specified window
+/// (or as a modal dialog, if window is nil.)
 - (void) showGamesFolderPanelForWindow: (NSWindow *)window;
 
 @end

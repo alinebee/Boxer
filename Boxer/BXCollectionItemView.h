@@ -11,12 +11,13 @@
 
 #import <Cocoa/Cocoa.h>
 
-//Designed for use with BXCollectionItemView: runs viewDidLoad for every item created,
-//and tells its view to redraw whenever the item's selected status changes.
+/// Designed for use with BXCollectionItemView: runs viewDidLoad for every item created,
+/// and tells its view to redraw whenever the item's selected status changes.
 @interface BXCollectionItem : NSCollectionViewItem
 
-//Called for every collection view item after the view has been set or the item has been cloned.
-//Intended to be overridden in subclasses to perform additional initialization.
+/// Called for every collection view item after the view has been set or the item has been cloned.
+///
+/// Intended to be overridden in subclasses to perform additional initialization.
 - (void) viewDidLoad;
 
 @end
@@ -26,19 +27,19 @@
 {
 	__unsafe_unretained NSCollectionViewItem *_delegate;
 }
-//A nonretained reference back to the collection view item we represent.
+/// A nonretained reference back to the collection view item we represent.
 @property (assign, nonatomic) IBOutlet NSCollectionViewItem *delegate;
 
-//The view prototype we were copied from.
+/// The view prototype we were copied from.
 @property (weak, readonly, nonatomic) NSView *prototype;
 
-//Called by BXCollectionItem when the item's selected status changes.
-//By default, flags the view as needing to be displayed.
+/// Called by BXCollectionItem when the item's selected status changes.
+/// By default, flags the view as needing to be displayed.
 - (void) collectionViewItemDidChangeSelection;
 @end
 
 
-//Provides a blue lozenge appearance when its collection view item is selected.
+/// Provides a blue lozenge appearance when its collection view item is selected.
 @interface BXHUDCollectionItemView : BXCollectionItemView
 @end
 

@@ -36,7 +36,7 @@ enum
 
 #define BXAutoSpeed -1
 
-//The maximum frameskip level we can set
+/// The maximum frameskip level we can set
 #define BXMaxFrameskip 9
 
 typedef NS_ENUM(NSInteger, BXPlaybackMode) {
@@ -47,131 +47,133 @@ typedef NS_ENUM(NSInteger, BXPlaybackMode) {
 
 @class BXEmulator;
 
+/// The \c BXUIControls category is responsible for bridging the session's UI elements with the
+/// underlying session, emulator and gamebox features. Most of its methods are UI-facing.
 @interface BXSession (BXUIControls)
 
 #pragma mark -
 #pragma mark Properties
 
-//The number of frames to be skipped for each frame that is played
+/// The number of frames to be skipped for each frame that is played
 @property (assign, nonatomic) NSUInteger frameskip;
 
-//The CPU speed, as a fixed cycles number or BXAutoSpeed (if autoSpeed is YES).
+/// The CPU speed, as a fixed cycles number or BXAutoSpeed (if autoSpeed is YES).
 @property (assign, nonatomic) NSInteger CPUSpeed;
 
-//Whether the CPU speed is automatically scaled to the maximum possible value.
+/// Whether the CPU speed is automatically scaled to the maximum possible value.
 @property (assign, nonatomic, getter=isAutoSpeed) BOOL autoSpeed;
 
-//The slider speed snaps the CPU speed to fixed increments and automatically bumps
-//it to maximum speed if set to the highest limit. Used by speed slider in CPU panel.
+/// The slider speed snaps the CPU speed to fixed increments and automatically bumps
+/// it to maximum speed if set to the highest limit. Used by speed slider in CPU panel.
 @property (assign, nonatomic) NSInteger sliderSpeed;
 
-//Whether the CPU is in dynamic core mode
+/// Whether the CPU is in dynamic core mode
 @property (assign, nonatomic, getter=isDynamic) BOOL dynamic;
 
 
-//Whether the current frameskip level is at the minimum or maximum bounds.
+/// Whether the current frameskip level is at the minimum or maximum bounds.
 @property (readonly, nonatomic) BOOL frameskipAtMinimum; 
 @property (readonly, nonatomic) BOOL frameskipAtMaximum;
 
-//Whether the current CPU speed is at the minimum or maximum bounds.
+/// Whether the current CPU speed is at the minimum or maximum bounds.
 @property (readonly, nonatomic) BOOL speedAtMinimum;
 @property (readonly, nonatomic) BOOL speedAtMaximum;
 
-//Localised human-readable descriptions of the current CPU speed/frameskip setting.
+/// Localised human-readable descriptions of the current CPU speed/frameskip setting.
 @property (readonly, nonatomic) NSString *speedDescription;
 @property (readonly, nonatomic) NSString *frameskipDescription;
 
-//The current playback mode: paused, playing, fast-forwarding. Used for UI bindings.
+/// The current playback mode: paused, playing, fast-forwarding. Used for UI bindings.
 @property (assign, nonatomic) BXPlaybackMode playbackMode;
 
-//The title to use for the "Player Data" submenu in the File menu when this session is active.
+/// The title to use for the "Player Data" submenu in the File menu when this session is active.
 @property (readonly, nonatomic) NSString *playerDataMenuLabel;
 
 #pragma mark -
 #pragma mark Class methods
 
-//Returns the appropriate increment amount for the specified speed (see the speed increment constants above.)
-//increasing specifies whether the speed will be increased or decreased, and affects which increment will be
-//returned if the speed is exactly at a threshold.
+/// Returns the appropriate increment amount for the specified speed (see the speed increment constants above.)
+/// increasing specifies whether the speed will be increased or decreased, and affects which increment will be
+/// returned if the speed is exactly at a threshold.
 + (NSInteger) incrementAmountForSpeed: (NSInteger)speed goingUp: (BOOL)increasing;
 
-//Returns a speed snapped to the appropriate increment for whichever CPU range that speed falls into.
+/// Returns a speed snapped to the appropriate increment for whichever CPU range that speed falls into.
 + (NSInteger) snappedSpeed: (NSInteger) rawSpeed;
 
-//Returns a localised human-readable string describing the CPU class (AT, 386, Pentium etc.)
-//corresponding to the specified speed.
+/// Returns a localised human-readable string describing the CPU class (AT, 386, Pentium etc.)
+/// corresponding to the specified speed.
 + (NSString *) cpuClassFormatForSpeed: (NSInteger)speed;
 
-//Returns a version of the above pre-formatted with the specified speed.
+/// Returns a version of the above pre-formatted with the specified speed.
 + (NSString *) descriptionForSpeed: (NSInteger)speed;
 
 
 #pragma mark -
 #pragma mark Interface actions and validation
 
-//Pause/unpause the emulation. Will show a paused/unpaused bezel notification.
+/// Pause/unpause the emulation. Will show a paused/unpaused bezel notification.
 - (IBAction) togglePaused: (id)sender;
 
-//Pause the emulation if it was not already paused. Will show a paused bezel
-//notification if the emulation was previously running, otherwise will have no effect.
+/// Pause the emulation if it was not already paused. Will show a paused bezel
+/// notification if the emulation was previously running, otherwise will have no effect.
 - (IBAction) pause: (id)sender;
 
-//Resume the emulation if it was paused. Will show an unpaused bezel notification
-//if the emulation was previously paused, otherwise will have no effect.
+/// Resume the emulation if it was paused. Will show an unpaused bezel notification
+/// if the emulation was previously paused, otherwise will have no effect.
 - (IBAction) resume: (id)sender;
 
-//Increase/decrease the current frameskip by 1.
+/// Increase/decrease the current frameskip by 1.
 - (IBAction) incrementFrameSkip: (id)sender;
 - (IBAction) decrementFrameSkip: (id)sender;
 
-//Increase/decrease the CPU speed by an appropriate increment,
-//according to incrementAmountForSpeed:goingUp:
+/// Increase/decrease the CPU speed by an appropriate increment,
+/// according to incrementAmountForSpeed:goingUp:
 - (IBAction) incrementSpeed: (id)sender;	
 - (IBAction) decrementSpeed: (id)sender;
 
-//Run the CPU in turbo mode.
+/// Run the CPU in turbo mode.
 - (IBAction) toggleFastForward: (id)sender;
 - (IBAction) fastForward: (id)sender;
 - (IBAction) releaseFastForward: (id)sender;
 
-//Caps the speed within minimum and maximum limits
+/// Caps the speed within minimum and maximum limits
 - (BOOL) validateCPUSpeed: (NSNumber **)ioValue error: (NSError **)outError;
 
-//Caps the frameskip amount within minimum and maximum limits
+/// Caps the frameskip amount within minimum and maximum limits
 - (BOOL) validateFrameskip: (NSNumber **)ioValue error: (NSError **)outError;
 
-//Snaps the speed to set increments, and switches to auto speed above the maximum speed.
+/// Snaps the speed to set increments, and switches to auto speed above the maximum speed.
 - (BOOL) validateSliderSpeed: (NSNumber **)ioValue error: (NSError **)outError;
 
-//Paste data from the clipboard into the DOS session.
+/// Paste data from the clipboard into the DOS session.
 - (IBAction) paste: (id)sender;
 
-//Whether we can accept pasted data from the specified pasteboard.
+/// Whether we can accept pasted data from the specified pasteboard.
 - (BOOL) canPasteFromPasteboard: (NSPasteboard *)pboard;
 
-//Save a screenshot to the desktop.
+/// Save a screenshot to the desktop.
 - (IBAction) saveScreenshot: (id)sender;
 
 
-//Cycle forward/backward through all drive queues.
+/// Cycle forward/backward through all drive queues.
 - (IBAction) mountNextDrivesInQueues: (id)sender;
 - (IBAction) mountPreviousDrivesInQueues: (id)sender;
 
-//Whether we have any drive queues that can be cycled. Used for UI bindings.
+/// Whether we have any drive queues that can be cycled. Used for UI bindings.
 - (BOOL) canCycleDrivesInQueues;
 
-//Discard/merge the current game data.
-//The game be relaunched after the operation is complete.
+/// Discard/merge the current game data.
+/// The game be relaunched after the operation is complete.
 - (IBAction) revertShadowedChanges: (id)sender;
 - (IBAction) mergeShadowedChanges: (id)sender;
 
-//Import/export the current game data.
-//The game will be relaunched after importing is complete.
+/// Import/export the current game data.
+/// The game will be relaunched after importing is complete.
 - (IBAction) importGameState: (id)sender;
 - (IBAction) exportGameState: (id)sender;
 
-//Restart the emulation by closing and reopening the document.
-//This will show a confirmation first if there are programs running or drives being imported.
+/// Restart the emulation by closing and reopening the document.
+/// This will show a confirmation first if there are programs running or drives being imported.
 - (IBAction) performRestart: (id)sender;
 - (IBAction) performRestartAtLaunchPanel: (id)sender;
 
@@ -185,18 +187,18 @@ typedef NS_ENUM(NSInteger, BXPlaybackMode) {
 
 #pragma mark - Responding to UI changes
 
-//Called when the user has manually changed the state of the program panel.
-//This records the state of the program panel to use next time the user starts up this gamebox.
+/// Called when the user has manually changed the state of the program panel.
+/// This records the state of the program panel to use next time the user starts up this gamebox.
 - (void) userDidToggleProgramPanel;
 
-//Called when the user has manually toggled full screen mode.
-//This records the fullscreen/windowed to use next time the user starts up this gamebox.
+/// Called when the user has manually toggled full screen mode.
+/// This records the fullscreen/windowed to use next time the user starts up this gamebox.
 - (void) userDidToggleFullScreen;
 
-//Called when the user manually switches from/to the launch panel to/from the DOS prompt.
+/// Called when the user manually switches from/to the launch panel to/from the DOS prompt.
 - (void) userDidToggleLaunchPanel;
 
-//Called when the mouse is locked or unlocked from the window. Hides/re-shows subsidiary windows.
+/// Called when the mouse is locked or unlocked from the window. Hides/re-shows subsidiary windows.
 - (void) didToggleMouseLocked;
 
 @end

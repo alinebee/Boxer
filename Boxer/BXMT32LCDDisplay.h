@@ -5,36 +5,37 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXMT32LCDDisplay imitates, as the name suggests, the LCD display on a Roland MT-32 Sound Module.
-//It is used for displaying messages sent by the games to the emulated MT-32. (Many Sierra games
-//would send cheeky messages to it on startup.)
-//This field can only display ASCII characters, as that was all the MT-32's display could handle.
-//Non-ASCII characters will be drawn as empty space.
 
 #import <Cocoa/Cocoa.h>
 
+/// BXMT32LCDDisplay imitates, as the name suggests, the LCD display on a Roland MT-32 Sound Module.
+/// It is used for displaying messages sent by the games to the emulated MT-32. (Many Sierra games
+/// would send cheeky messages to it on startup.)
+///
+/// This field can only display ASCII characters, as that was all the MT-32's display could handle.
+/// Non-ASCII characters will be drawn as empty space.
 @interface BXMT32LCDDisplay : NSTextField
 
-//The image containing glyph data for the pixel font.
+/// The image containing glyph data for the pixel font.
 - (NSImage *) pixelFont;
 
-//The mask image to use for the LCD pixel grid.
-//This will be drawn in for 20 character places.
+/// The mask image to use for the LCD pixel grid.
+/// This will be drawn in for 20 character places.
 - (NSImage *) pixelGrid;
 
-//The background color of the field.
+/// The background color of the field.
 - (NSColor *) screenColor;
 
-//The background color of the LCD pixel grid.
+/// The background color of the LCD pixel grid.
 - (NSColor *) gridColor;
 
-//The colour of lit LCD pixels upon the grid.
+/// The colour of lit LCD pixels upon the grid.
 - (NSColor *) pixelColor;
 
-//The inner shadow of the screen. 
+/// The inner shadow of the screen. 
 - (NSShadow *) innerShadow;
 
-//The lighting effects applied on top of the screen.
+/// The lighting effects applied on top of the screen.
 - (NSGradient *) screenLighting;
 
 @end

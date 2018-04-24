@@ -22,6 +22,6 @@
 @property (copy) NSURL *gamesFolderURL;
 
 /// The singleton for this class.
-+ (BXScriptablePreferences *) sharedPreferences;
+@property (class, readonly, strong) BXScriptablePreferences *sharedPreferences;
 
 @end

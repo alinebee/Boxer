@@ -6,11 +6,6 @@
  */
 
 
-//BXInputController processes keyboard and mouse events received by its view and turns them
-//into input commands to the emulator's own input handler (which for convenience is set as the
-//controller's representedObject).
-//It also manages mouse locking and the appearance and behaviour of the OS X mouse cursor.
-
 #import <Cocoa/Cocoa.h>
 #import "JoypadSDK.h"
 #import "BXEventConstants.h"
@@ -20,6 +15,10 @@
 @class BXSession;
 @class DDHidJoystick;
 
+/// BXInputController processes keyboard and mouse events received by its view and turns them
+/// into input commands to the emulator's own input handler (which for convenience is set as the
+/// controller's representedObject).
+/// It also manages mouse locking and the appearance and behaviour of the OS X mouse cursor.
 @interface BXInputController : NSViewController <NSAnimationDelegate>
 {
 	BXCursorFadeAnimation *_cursorFade;
@@ -30,21 +29,21 @@
 	BOOL _trackMouseWhileUnlocked;
 	CGFloat _mouseSensitivity;
 	
-	//Used internally for constraining mouse location and movement
+	/// Used internally for constraining mouse location and movement
 	NSRect _cursorWarpDeadzone;
 	NSRect _canvasBounds;
 	NSRect _visibleCanvasBounds;
 	
-	//Used internally for tracking mouse state between events
+	/// Used internally for tracking mouse state between events
 	NSPoint _distanceWarped;
 	BOOL _updatingMousePosition;
 	NSTimeInterval _threeFingerTapStarted;
     
 	BXMouseButtonMask _simulatedMouseButtons;
     
-    //Which OSX virtual keycodes were pressed with a modifier, causing
-    //them to send a different key than usual. Used for releasing
-    //simulated keys upon key-up.
+    /// Which OSX virtual keycodes were pressed with a modifier, causing
+    /// them to send a different key than usual. Used for releasing
+    /// simulated keys upon key-up.
     BOOL _modifiedKeys[BXMaxSystemKeyCode];
     
 	NSUInteger _lastModifiers;
@@ -52,72 +51,72 @@
 	NSMutableDictionary *_controllerProfiles;
 	NSArray *_availableJoystickTypes;
     
-    //Used internally by BXJoypadInput for tracking joypad state
+    /// Used internally by BXJoypadInput for tracking joypad state
     JoypadAcceleration _joypadFilteredAcceleration;
 }
 
 #pragma mark -
 #pragma mark Properties
 
-//Whether the mouse is in use by the DOS program. Set programmatically to match the emulator.
+/// Whether the mouse is in use by the DOS program. Set programmatically to match the emulator.
 @property (assign, nonatomic) BOOL mouseActive;
 
-//Whether the mouse is locked to the DOS view.
+/// Whether the mouse is locked to the DOS view.
 @property (assign, nonatomic) BOOL mouseLocked;
 
-//Whether we should handle mouse movement while the mouse is unlocked from the DOS view.
+/// Whether we should handle mouse movement while the mouse is unlocked from the DOS view.
 @property (assign, nonatomic) BOOL trackMouseWhileUnlocked;
 
-//How much to scale mouse motion by.
+/// How much to scale mouse motion by.
 @property (assign, nonatomic) CGFloat mouseSensitivity;
 
-//Whether we can currently lock the mouse. This will be YES if the game supports mouse control
-//or we're in fullscreen mode (so that we can hide the mouse cursor), NO otherwise.
+/// Whether we can currently lock the mouse. This will be YES if the game supports mouse control
+/// or we're in fullscreen mode (so that we can hide the mouse cursor), NO otherwise.
 @property (readonly, nonatomic) BOOL canLockMouse;
 
-//Whether the mouse is currently within our view.
+/// Whether the mouse is currently within our view.
 @property (readonly, nonatomic) BOOL mouseInView;
 
-//Whether numpad simulation is turned on. When active, certain keys will be remapped to imitate
-//the numeric keypad on a fullsize PC keyboard.
+/// Whether numpad simulation is turned on. When active, certain keys will be remapped to imitate
+/// the numeric keypad on a fullsize PC keyboard.
 @property (assign, nonatomic) BOOL simulatedNumpadActive;
 
 #pragma mark -
 #pragma mark Methods
 
-//Overridden to declare the class expected for our represented object
+/// Overridden to declare the class expected for our represented object
 - (BXSession *)representedObject;
 - (void) setRepresentedObject: (BXSession *)session;
 
-//Returns whether the specified cursor animation should continue.
-//Called by our cursor animation as a delegate method.
+/// Returns whether the specified cursor animation should continue.
+/// Called by our cursor animation as a delegate method.
 - (BOOL) animationShouldChangeCursor: (BXCursorFadeAnimation *)cursorAnimation;
 
-//Called when the cursor needs updating outside of the standard NSResponder event mechanisms.
+/// Called when the cursor needs updating outside of the standard NSResponder event mechanisms.
 - (void) syncCursor;
 
-//Called by BXDOSWindowController whenever the view loses keyboard focus.
+/// Called by \c BXDOSWindowController whenever the view loses keyboard focus.
 - (void) didResignKey;
 
-//Called by BXDOSWindowController whenever the view regains keyboard focus.
+/// Called by \c BXDOSWindowController whenever the view regains keyboard focus.
 - (void) didBecomeKey;
 
-//Applies the specified mouse-lock state.
-//If force is NO, the mouse will not be locked if canLockMouse returns NO.
-//If force is YES, it will be locked regardless.
+/// Applies the specified mouse-lock state.
+/// If force is NO, the mouse will not be locked if canLockMouse returns NO.
+/// If force is YES, it will be locked regardless.
 - (void) setMouseLocked: (BOOL)locked
                   force: (BOOL)force;
 
 #pragma mark -
 #pragma mark UI actions
 
-//Lock/unlock the mouse. Only available while a program is running.
+/// Lock/unlock the mouse. Only available while a program is running.
 - (IBAction) toggleMouseLocked: (id)sender;
 
-//Enable/disable unlocked mouse tracking.
+/// Enable/disable unlocked mouse tracking.
 - (IBAction) toggleTrackMouseWhileUnlocked: (id)sender;
 
-//Enable/disable the simulated numpad layout. Only available while a program is running.
+/// Enable/disable the simulated numpad layout. Only available while a program is running.
 - (IBAction) toggleSimulatedNumpad: (id)sender;
 
 @end

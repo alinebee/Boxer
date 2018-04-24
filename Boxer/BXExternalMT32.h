@@ -5,15 +5,14 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXExternalMT32 is a BXExternalMIDIDevice subclass for use with devices that are known to be
-//MT32s. It has more accurate sysex delay calculations that allow for the processing delay
-//of earlier-model MT32s.
 
 #import "BXExternalMIDIDevice.h"
-
 
 #define SYSEX_HEADER_LENGTH 5
 #define MT32SYSEX_ADDRESS_LENGTH 3
 
+/// \c BXExternalMT32 is a \c BXExternalMIDIDevice subclass for use with devices that are known to be
+/// MT32s. It has more accurate sysex delay calculations that allow for the processing delay
+/// of earlier-model MT32s.
 @interface BXExternalMT32 : BXExternalMIDIDevice
 @end

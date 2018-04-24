@@ -5,8 +5,6 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//The BXAudio category extends BXEmulator with functionality
-//for controlling DOSBox's audio emulation and output.
 
 #import "BXEmulator.h"
 #import "BXEmulatedMT32Delegate.h"
@@ -19,7 +17,7 @@
 /// Possible values for the BXMIDIMusicTypeKey of MIDI device description dictionaries.
 /// Set by the game configuration's @c mididevice setting to determine what kind of MIDI
 /// device the emulator should request.
-enum {
+typedef NS_ENUM(NSInteger, BXMIDIMusicType) {
     /// The emulator should disable MIDI playback altogether.
     /// Determined by the game configuration file and is not used in descriptions
     /// when requesting a MIDI device from the delegate.
@@ -36,7 +34,6 @@ enum {
     /// The game plays MT-32 music.
     BXMIDIMusicMT32        = 2
 };
-typedef NSInteger BXMIDIMusicType;
 
 /// An NSNumber corresponding to one of the BXMIDIMusicType constants.
 /// If BXMIDIMusicDisabled, Boxer will disable MIDI playback.
@@ -64,21 +61,24 @@ extern NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey;
 #pragma mark - BXEmulator (BXAudio)
 
 @protocol BXMIDIDevice;
+
+/// The \c BXAudio category extends \c BXEmulator with functionality
+/// for controlling DOSBox's audio emulation and output.
 @interface BXEmulator (BXAudio) <BXEmulatedMT32Delegate>
 
 #pragma mark - MIDI processing
 
-//Sends an LCD message via Sysex to the MT-32 emulator
-//(or to a real MT-32, in CoreMIDI mode.)
-//Intended for debugging.
+/// Sends an LCD message via Sysex to the MT-32 emulator
+/// (or to a real MT-32, in CoreMIDI mode.)
+/// Intended for debugging.
 - (void) sendMT32LCDMessage: (NSString *)message;
 
-//Attach a new active MIDI device suitable for the specified description.
-//Returns the newly-attached device if it was initialized and attached successfully,
-//or nil if the device could not be created.
+/// Attach a new active MIDI device suitable for the specified description.
+/// Returns the newly-attached device if it was initialized and attached successfully,
+/// or \c nil if the device could not be created.
 - (id <BXMIDIDevice>) attachMIDIDeviceForDescription: (NSDictionary *)description;
 
-//Dispatch the specified MIDI message/sysex onward to the active MIDI device.
+/// Dispatch the specified MIDI message/sysex onward to the active MIDI device.
 - (void) sendMIDIMessage: (NSData *)message;
 - (void) sendMIDISysex: (NSData *)message;
 

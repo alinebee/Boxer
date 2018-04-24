@@ -10,10 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// <code>BXImportDropzone</code> is used in the game import window to draw a dashed dropzone region,
+/// \c BXImportDropzone is used in the game import window to draw a dashed dropzone region,
 /// which animates while an importable file is dragged over the panel, and which displays
 /// the file's icon after dropping. Clicking the region will reveal a file picker.
-/// (<code>BXImportDropzone</code> does not actually handle drag-drop events itself: the panel itself does that.)
+/// (\c BXImportDropzone does not actually handle drag-drop events itself: the panel itself does that.)
 @interface BXImportDropzone : NSButton
 {
 	CGFloat borderPhase;
@@ -24,20 +24,20 @@ NS_ASSUME_NONNULL_BEGIN
 //We now use NSControl's highlighted property.
 //@property (assign, getter=isHighlighted) BOOL highlighted;
 
-//The current phase of the dropzone's dashed border. This is manipulated to produce animation effects.
+/// The current phase of the dropzone's dashed border. This is manipulated to produce animation effects.
 @property (assign, nonatomic) CGFloat borderPhase;
 
-//The distance to outset the border by, while we're highlighted. This will be animated.
+/// The distance to outset the border by, while we're highlighted. This will be animated.
 @property (assign, nonatomic) CGFloat borderOutset;
 
 
-//Returns the dropzone shadow with which to render the border and icon of the dropzone
+/// Returns the dropzone shadow with which to render the border and icon of the dropzone
 + (NSShadow *) dropzoneShadow;
 
-//Returns the glow with which to render the dropzone when we're highlighted
+/// Returns the glow with which to render the dropzone when we're highlighted
 + (NSShadow *) dropzoneHighlight;
 
-//Returns a rounded dashed border suitable for display in the specified frame
+/// Returns a rounded dashed border suitable for display in the specified frame
 + (NSBezierPath *) borderForFrame: (NSRect)frame withPhase: (CGFloat)phase;
 
 @end

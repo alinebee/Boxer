@@ -5,14 +5,14 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXJoystickController receives joystick input from connected controllers via the DDHidLib toolkit.
-//These messages are then translated into a more Boxer-friendly format and sent onwards to the
-//active DOS session's input controller.
 
 #import <Foundation/Foundation.h>
 #import <DDHidLib/DDHidJoystick.h>
 #import "ADBHIDMonitor.h"
 
+/// \c BXJoystickController receives joystick input from connected controllers via the DDHidLib toolkit.
+/// These messages are then translated into a more Boxer-friendly format and sent onwards to the
+/// active DOS session's input controller.
 @interface BXJoystickController: NSObject <ADBHIDMonitorDelegate, DDHidJoystickDelegate>
 {
 	ADBHIDMonitor *_HIDMonitor;
@@ -20,12 +20,12 @@
 }
 @property (readonly, strong, nonatomic) ADBHIDMonitor *HIDMonitor;
 
-//An array of DDHIDJoystick instances for each joystick currently connected.
-//Corresponds to hidMonitor matchedDevices.
+/// An array of\c  DDHIDJoystick instances for each joystick currently connected.
+/// Corresponds to hidMonitor matchedDevices.
 @property (copy, readonly, nonatomic) NSArray<DDHidJoystick*> *joystickDevices;
 
-//An array of bundle identifiers of known HID remappers that were running last we checked.
-//(This will be cached, and the cache cleared whenever Boxer loses the application focus.)
+/// An array of bundle identifiers of known HID remappers that were running last we checked.
+/// (This will be cached, and the cache cleared whenever Boxer loses the application focus.)
 @property (readonly, strong, nonatomic) NSArray<NSString*> *recentHIDRemappers;
 
 

@@ -6,9 +6,6 @@
  */
 
 
-//BXAudioSource defines an interface for sources that can provide chunked audio data to DOSBox's
-//audio mixer.
-
 #import <Foundation/Foundation.h>
 
 typedef NS_OPTIONS(NSUInteger, BXAudioFormat) {
@@ -29,15 +26,17 @@ typedef NS_OPTIONS(NSUInteger, BXAudioFormat) {
 };
 
 
+/// \c BXAudioSource defines an interface for sources that can provide chunked audio data to DOSBox's
+/// audio mixer.
 @protocol BXAudioSource <NSObject>
 
-//The sample rate this source expects to produce for a mixer channel.
+/// The sample rate this source expects to produce for a mixer channel.
 - (NSUInteger) sampleRate; 
 
-//Renders the next batch of audio into the specified buffer for the specified number of sample
-//frames, ideally rendered using the specified sample rate and audio format. The audio source
-//should modify sampleRate and format to reflect the actual sample rate and format being rendered.
-//Returns YES if audio was successfully rendered, or NO otherwise.
+/// Renders the next batch of audio into the specified buffer for the specified number of sample
+/// frames, ideally rendered using the specified sample rate and audio format. The audio source
+/// should modify sampleRate and format to reflect the actual sample rate and format being rendered.
+/// Returns \c YES if audio was successfully rendered, or \c NO otherwise.
 - (BOOL)renderOutputToBuffer: (void *)buffer
                       frames: (NSUInteger)numFrames
                   sampleRate: (NSUInteger *)sampleRate

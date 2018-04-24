@@ -6,10 +6,9 @@
  */
 
 
-//BXBottomBar is a very simple presentational class to add a light white bezel at the top of a
-//window's bottom content border, since the default appearance for content borders is too wimpy. 
-
 #import <Cocoa/Cocoa.h>
 
+/// BXBottomBar is a very simple presentational class to add a light white bezel at the top of a
+/// window's bottom content border, since the default appearance for content borders is too wimpy. 
 @interface BXBottomBar : NSView
 @end

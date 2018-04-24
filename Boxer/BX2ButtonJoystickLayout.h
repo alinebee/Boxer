@@ -5,9 +5,9 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//Provides a suitable layout for BX2AxisJoystick: a 2-button, 2-axis joystick.
 
 #import "BXJoypadLayout.h"
 
+/// Provides a suitable layout for BX2AxisJoystick: a 2-button, 2-axis joystick.
 @interface BX2ButtonJoystickLayout : BXJoypadLayout
 @end

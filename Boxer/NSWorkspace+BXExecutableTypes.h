@@ -25,23 +25,22 @@
  */
 
 
-//The BXExecutableTypes category extends NSWorkspace to add methods for verifying MS-DOS executables.
-//The actual implementations behind these methods have been moved to BXFileTypes; this is a deprecated
-//interface.
-
 #import <Cocoa/Cocoa.h>
 #import "BXFileTypes.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// The \c BXExecutableTypes category extends \c NSWorkspace to add methods for verifying MS-DOS executables.
+/// The actual implementations behind these methods have been moved to BXFileTypes; this is a deprecated
+/// interface.
 @interface NSWorkspace (BXExecutableTypes)
 
-//Returns whether the file at the specified path is an executable that can be run by DOSBox.
-//Returns NO and populates outError if the executable type could not be determined.
+/// Returns whether the file at the specified path is an executable that can be run by DOSBox.
+/// Returns \c NO and populates outError if the executable type could not be determined.
 - (BOOL) isCompatibleExecutableAtPath: (NSString *)filePath error: (out NSError **)outError;
 
-//Returns the executable type of the file at the specified path.
-//If the executable type cannot be determined, outError will be populated with the reason.
+/// Returns the executable type of the file at the specified path.
+/// If the executable type cannot be determined, \c outError will be populated with the reason.
 - (BXExecutableType) executableTypeAtPath: (NSString *)path error: (out NSError **)outError;
 
 @end

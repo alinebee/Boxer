@@ -6,14 +6,13 @@
  */
 
 
-//The BXAudioControls category manages delegate responses to BXEmulator's audio subsystem.
-
 #import "BXSession.h"
 
+/// The \c BXAudioControls category manages delegate responses to BXEmulator's audio subsystem.
 @interface BXSession (BXAudioControls) <BXEmulatorAudioDelegate>
 
-//Returns whether the specified MIDI device is suitable for the specified description.
-//Used for choosing whether to stick with the current MIDI device or create a new one.
+/// Returns whether the specified MIDI device is suitable for the specified description.
+/// Used for choosing whether to stick with the current MIDI device or create a new one.
 - (BOOL) MIDIDevice: (id <BXMIDIDevice>)device meetsDescription: (NSDictionary *)description;
 
 @end

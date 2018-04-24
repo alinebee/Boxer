@@ -8,15 +8,15 @@
 #import <AppKit/AppKit.h>
 #import "BXThemes.h"
 
-//BXHUDProgressIndicator is a translucent white progress indicator designed
-//for HUD panels.
+/// BXHUDProgressIndicator is a translucent white progress indicator designed
+/// for HUD panels.
 @interface BXThemedProgressIndicator: NSProgressIndicator <BXThemable>
 {
     NSString *_themeKey;
     NSTimer *_animationTimer;
 }
 
-//Draw methods called from drawRect:
+/// Draw methods called from drawRect:
 - (NSBezierPath *) stripePathForFrame: (NSRect)frame
                         animationTime: (NSTimeInterval)timeInterval;
 - (void) drawProgressInRect: (NSRect)dirtyRect;

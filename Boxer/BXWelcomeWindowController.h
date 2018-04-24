@@ -6,13 +6,12 @@
  */
 
 
-//BXWelcomeWindowController manages the welcome window shown when Boxer launches.
-
 #import <Cocoa/Cocoa.h>
 #import "BXWelcomeButtonDraggingDelegate.h"
 
 @class BXWelcomeButton;
 
+/// \c BXWelcomeWindowController manages the welcome window shown when Boxer launches.
 @interface BXWelcomeWindowController : NSWindowController <BXWelcomeButtonDraggingDelegate>
 {
 	IBOutlet NSPopUpButton *__weak recentDocumentsButton;
@@ -21,27 +20,27 @@
 	IBOutlet BXWelcomeButton *__weak showGamesFolderButton;
 }
 
-//The Open Recent popup button.
+/// The Open Recent popup button.
 @property (weak, nonatomic) NSPopUpButton *recentDocumentsButton;
 
-//The import-a-new-game button. Drag-drop events onto this button will be handled by this controller.
+/// The import-a-new-game button. Drag-drop events onto this button will be handled by this controller.
 @property (weak, nonatomic) BXWelcomeButton *importGameButton;
 
-//The open-DOS-prompt button. Drag-drop events onto this button will be handled by this controller.
+/// The open-DOS-prompt button. Drag-drop events onto this button will be handled by this controller.
 @property (weak, nonatomic) BXWelcomeButton *openPromptButton;
 
-//The browse-games-folder button. Has no special behaviour.
+/// The browse-games-folder button. Has no special behaviour.
 @property (weak, nonatomic) BXWelcomeButton *showGamesFolderButton;
 
 
-//Provides a singleton instance of the window controller which stays retained for the lifetime
-//of the application. The controller should always be accessed from this singleton.
+/// Provides a singleton instance of the window controller which stays retained for the lifetime
+/// of the application. The controller should always be accessed from this singleton.
 + (instancetype) controller;
 
-//Open the URL represented by the sending menu item. Called by items in the Open Recent popup button.
+/// Open the URL represented by the sending menu item. Called by items in the Open Recent popup button.
 - (IBAction) openRecentDocument: (NSMenuItem *)sender;
 
-//Reveal the window by bringing it in with a flip transition.
+/// Reveal the window by bringing it in with a flip transition.
 - (void) showWindowWithTransition: (id)sender;
 
 @end

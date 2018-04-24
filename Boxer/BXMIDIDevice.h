@@ -5,8 +5,6 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//The BXMIDIDevice protocol defines an interface for emulated (and not-so-emulated)
-//MIDI devices, to which BXEmulator can send MIDI output.
 
 #import <Foundation/Foundation.h>
 #import "BXMIDIConstants.h"
@@ -16,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 #pragma mark Protocol declaration
 
+/// The \c BXMIDIDevice protocol defines an interface for emulated (and not-so-emulated)
+/// MIDI devices, to which BXEmulator can send MIDI output.
 @protocol BXMIDIDevice <NSObject>
 
 #pragma mark -
@@ -28,10 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readwrite) float volume;
 
 /// Returns whether this device can play back MT-32 music properly.
-- (BOOL) supportsMT32Music;
+@property (readonly) BOOL supportsMT32Music;
 
 /// Returns whether this device can play back General MIDI music properly.
-- (BOOL) supportsGeneralMIDIMusic;
+@property (readonly) BOOL supportsGeneralMIDIMusic;
 
 /// Returns whether this device is still processing events.
 /// If <code>YES</code>, further messages should not be sent until <code>dateWhenReady</code>.

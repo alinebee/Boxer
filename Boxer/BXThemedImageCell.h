@@ -5,18 +5,19 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXThemeImageCell renders its image as a template using a fill and shadow effects defined in a theme.
 
 #import <Cocoa/Cocoa.h>
 #import "BXThemes.h"
 
 @class BGTheme;
+
+/// \c BXThemeImageCell renders its image as a template using a fill and shadow effects defined in a theme.
 @interface BXThemedImageCell : NSImageCell <BXThemable>
 {
     NSString *_themeKey;
 }
 
-//The current theme key.
+/// The current theme key.
 @property (copy, nonatomic) NSString *themeKey;
 
 //Toggles the highlighted appearance for the image cell.
@@ -25,10 +26,10 @@
 
 @end
 
-//A subclass of BXTemplateImageCell intended for HUD windows, that defaults to white with a soft black shadow.
+/// A subclass of \c BXTemplateImageCell intended for HUD windows, that defaults to white with a soft black shadow.
 @interface BXHUDImageCell : BXThemedImageCell
 @end
 
-//A subclass of BXTemplateImageCell using the indented appearance.
+/// A subclass of \c BXTemplateImageCell using the indented appearance.
 @interface BXIndentedImageCell : BXThemedImageCell
 @end

@@ -96,7 +96,7 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 	return URLs;
 }
 
-+ (NSString *) preferredGamesFolderURL
++ (NSURL *) preferredGamesFolderURL
 {
     return [[self commonGamesFolderURLs] objectAtIndex: 0];
 }

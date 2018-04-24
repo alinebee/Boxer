@@ -354,7 +354,7 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 
         //Set up a listener to receive responses from the device.
         BXMIDIInputListener *listener = [[BXMIDIInputListener alloc] initWithDelegate: self];
-        [listener listenToSource: source onPort: _inputPort contextInfo: (void *)destination];
+        [listener listenToSource: source onPort: _inputPort contextInfo: (void *)(uintptr_t)destination];
         
         //Send the request to the device.
         OSStatus errCode = MIDISend(_outputPort, destination, packets);

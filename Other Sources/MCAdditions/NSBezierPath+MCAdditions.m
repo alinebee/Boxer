@@ -183,7 +183,7 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 - (void)strokeInsideWithinRect:(NSRect)clipRect
 {
     NSGraphicsContext *thisContext = [NSGraphicsContext currentContext];
-    float lineWidth = [self lineWidth];
+    CGFloat lineWidth = [self lineWidth];
     
     /* Save the current graphics context. */
     [thisContext saveGraphicsState];

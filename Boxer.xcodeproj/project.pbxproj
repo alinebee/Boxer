@@ -12,6 +12,16 @@
 		554E2B6D1BFAF6720038C506 /* Shared.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 554E2B6C1BFAF6720038C506 /* Shared.xcassets */; };
 		554E2B6E1BFAF6B20038C506 /* Shared.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 554E2B6C1BFAF6720038C506 /* Shared.xcassets */; };
 		554E2B701BFAF6D90038C506 /* Boxer only.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 554E2B6F1BFAF6D90038C506 /* Boxer only.xcassets */; };
+		55574801208FA8040045E635 /* ymf262.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555747F0208FA8030045E635 /* ymf262.cpp */; };
+		55574802208FA8040045E635 /* ymf262.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555747F0208FA8030045E635 /* ymf262.cpp */; };
+		55574803208FA8040045E635 /* fmopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555747F2208FA8030045E635 /* fmopl.cpp */; };
+		55574804208FA8040045E635 /* fmopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555747F2208FA8030045E635 /* fmopl.cpp */; };
+		55574805208FA8040045E635 /* ymdeltat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555747F4208FA8030045E635 /* ymdeltat.cpp */; };
+		55574806208FA8040045E635 /* ymdeltat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555747F4208FA8030045E635 /* ymdeltat.cpp */; };
+		55574809208FA8040045E635 /* saa1099.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555747F8208FA8030045E635 /* saa1099.cpp */; };
+		5557480A208FA8040045E635 /* saa1099.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555747F8208FA8030045E635 /* saa1099.cpp */; };
+		5557480B208FA8040045E635 /* sn76496.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555747F9208FA8030045E635 /* sn76496.cpp */; };
+		5557480C208FA8040045E635 /* sn76496.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555747F9208FA8030045E635 /* sn76496.cpp */; };
 		557A24EC1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 557A24EB1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets */; };
 		55B22BA21A1BD9760007665E /* Bundler.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55B22BA11A1BD9760007665E /* Bundler.xcassets */; };
 		55DEBB23201E875600F1092F /* pci_bus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55DEBB21201E875500F1092F /* pci_bus.cpp */; };
@@ -947,6 +957,17 @@
 		501F283A161303DA00B1ED53 /* BXBuiltinShaderRenderers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBuiltinShaderRenderers.m; sourceTree = "<group>"; };
 		554E2B6C1BFAF6720038C506 /* Shared.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Shared.xcassets; sourceTree = "<group>"; };
 		554E2B6F1BFAF6D90038C506 /* Boxer only.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Boxer only.xcassets"; sourceTree = "<group>"; };
+		555747F0208FA8030045E635 /* ymf262.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ymf262.cpp; sourceTree = "<group>"; };
+		555747F1208FA8030045E635 /* sn76496.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sn76496.h; sourceTree = "<group>"; };
+		555747F2208FA8030045E635 /* fmopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fmopl.cpp; sourceTree = "<group>"; };
+		555747F3208FA8030045E635 /* ymdeltat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ymdeltat.h; sourceTree = "<group>"; };
+		555747F4208FA8030045E635 /* ymdeltat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ymdeltat.cpp; sourceTree = "<group>"; };
+		555747F6208FA8030045E635 /* fmopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fmopl.h; sourceTree = "<group>"; };
+		555747F7208FA8030045E635 /* emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = emu.h; sourceTree = "<group>"; };
+		555747F8208FA8030045E635 /* saa1099.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = saa1099.cpp; sourceTree = "<group>"; };
+		555747F9208FA8030045E635 /* sn76496.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sn76496.cpp; sourceTree = "<group>"; };
+		555747FA208FA8030045E635 /* saa1099.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saa1099.h; sourceTree = "<group>"; };
+		555747FB208FA8030045E635 /* ymf262.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ymf262.h; sourceTree = "<group>"; };
 		557A24EB1A1AF167002FE9BD /* Importing-nonLocalizable.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Importing-nonLocalizable.xcassets"; sourceTree = "<group>"; };
 		55AEA5CB201F05010000139A /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/DocumentationPanel.strings; sourceTree = "<group>"; };
 		55AEA5CC201F05020000139A /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/DocumentationBrowser.strings; sourceTree = "<group>"; };
@@ -2081,6 +2102,24 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		555747EF208FA8030045E635 /* mame */ = {
+			isa = PBXGroup;
+			children = (
+				555747F7208FA8030045E635 /* emu.h */,
+				555747F2208FA8030045E635 /* fmopl.cpp */,
+				555747F6208FA8030045E635 /* fmopl.h */,
+				555747F8208FA8030045E635 /* saa1099.cpp */,
+				555747FA208FA8030045E635 /* saa1099.h */,
+				555747F9208FA8030045E635 /* sn76496.cpp */,
+				555747F1208FA8030045E635 /* sn76496.h */,
+				555747F4208FA8030045E635 /* ymdeltat.cpp */,
+				555747F3208FA8030045E635 /* ymdeltat.h */,
+				555747F0208FA8030045E635 /* ymf262.cpp */,
+				555747FB208FA8030045E635 /* ymf262.h */,
+			);
+			path = mame;
+			sourceTree = "<group>";
+		};
 		55E6A0981C00C7F900285593 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2853,6 +2892,7 @@
 		9F77211B12B38C4400072AE8 /* hardware */ = {
 			isa = PBXGroup;
 			children = (
+				555747EF208FA8030045E635 /* mame */,
 				55DEBB21201E875500F1092F /* pci_bus.cpp */,
 				55DEBB22201E875500F1092F /* pci_devices.h */,
 				9FD6A9FF16314A5B002B774E /* parport */,
@@ -3901,6 +3941,7 @@
 				9F0497C01334C5970001FEE4 /* ADBForwardCompatibility.m in Sources */,
 				9FBAA6BD134A1A430092BF95 /* BXCDImageImport.m in Sources */,
 				9FBAA6E1134A21A50092BF95 /* BXDriveImport.m in Sources */,
+				55574801208FA8040045E635 /* ymf262.cpp in Sources */,
 				9FBAA878134A66C80092BF95 /* BXBinCueImageImport.m in Sources */,
 				9FF865CF134DAB5A001CE857 /* ADBTaskOperation.m in Sources */,
 				9FDE341F1351DE26000DCE44 /* BXBlueprintBackgroundView.m in Sources */,
@@ -4026,6 +4067,7 @@
 				9F77217712B38C4400072AE8 /* core_dyn_x86.cpp in Sources */,
 				9F77217812B38C4400072AE8 /* core_dynrec.cpp in Sources */,
 				9F77217912B38C4400072AE8 /* core_full.cpp in Sources */,
+				5557480B208FA8040045E635 /* sn76496.cpp in Sources */,
 				9F77217A12B38C4400072AE8 /* core_normal.cpp in Sources */,
 				9F77217B12B38C4400072AE8 /* core_prefetch.cpp in Sources */,
 				9F77217C12B38C4400072AE8 /* core_simple.cpp in Sources */,
@@ -4056,6 +4098,7 @@
 				9F77219512B38C4400072AE8 /* dos_programs.cpp in Sources */,
 				9F77219612B38C4400072AE8 /* dos_tables.cpp in Sources */,
 				9F77219712B38C4400072AE8 /* drive_cache.cpp in Sources */,
+				55574805208FA8040045E635 /* ymdeltat.cpp in Sources */,
 				9F77219812B38C4400072AE8 /* drive_fat.cpp in Sources */,
 				9F77219912B38C4400072AE8 /* drive_iso.cpp in Sources */,
 				9F77219A12B38C4400072AE8 /* drive_local.cpp in Sources */,
@@ -4063,6 +4106,7 @@
 				9F77219C12B38C4400072AE8 /* drive_virtual.cpp in Sources */,
 				9F77219D12B38C4400072AE8 /* drives.cpp in Sources */,
 				9F77219E12B38C4400072AE8 /* dosbox.cpp in Sources */,
+				55574803208FA8040045E635 /* fmopl.cpp in Sources */,
 				9F77219F12B38C4400072AE8 /* fpu.cpp in Sources */,
 				9F7721A012B38C4400072AE8 /* midi.cpp in Sources */,
 				9F7721A112B38C4400072AE8 /* render.cpp in Sources */,
@@ -4089,6 +4133,7 @@
 				9F7721B912B38C4400072AE8 /* sblaster.cpp in Sources */,
 				9F7721BA12B38C4400072AE8 /* directserial.cpp in Sources */,
 				9F7721BB12B38C4400072AE8 /* libserial.cpp in Sources */,
+				55574809208FA8040045E635 /* saa1099.cpp in Sources */,
 				9F7721BC12B38C4400072AE8 /* misc_util.cpp in Sources */,
 				9F7721BD12B38C4400072AE8 /* nullmodem.cpp in Sources */,
 				9F7721BE12B38C4400072AE8 /* serialdummy.cpp in Sources */,
@@ -4297,10 +4342,12 @@
 				9F2D306715B8233800FAE848 /* vga_crtc.cpp in Sources */,
 				9F2D306815B8233800FAE848 /* vga_dac.cpp in Sources */,
 				9F2D306915B8233800FAE848 /* vga_draw.cpp in Sources */,
+				55574802208FA8040045E635 /* ymf262.cpp in Sources */,
 				9F2D306A15B8233800FAE848 /* vga_gfx.cpp in Sources */,
 				9F2D306B15B8233800FAE848 /* vga_memory.cpp in Sources */,
 				9F2D306C15B8233800FAE848 /* vga_misc.cpp in Sources */,
 				9F2D306D15B8233800FAE848 /* vga_other.cpp in Sources */,
+				5557480A208FA8040045E635 /* saa1099.cpp in Sources */,
 				9F2D306E15B8233800FAE848 /* vga_paradise.cpp in Sources */,
 				9F2D306F15B8233800FAE848 /* vga_s3.cpp in Sources */,
 				9F2D307015B8233800FAE848 /* vga_seq.cpp in Sources */,
@@ -4369,6 +4416,7 @@
 				9F2D30B215B8233800FAE848 /* BXMT32LCDDisplay.m in Sources */,
 				9F2D30B315B8233800FAE848 /* BXMIDISynth.m in Sources */,
 				9F2D30B415B8233800FAE848 /* BXEmulatedMT32.mm in Sources */,
+				5557480C208FA8040045E635 /* sn76496.cpp in Sources */,
 				9F2D30B515B8233800FAE848 /* BXExternalMIDIDevice.m in Sources */,
 				9F2D30B615B8233800FAE848 /* BXMIDIDeviceMonitor.m in Sources */,
 				9F2D30B715B8233800FAE848 /* BXSession+BXAudioControls.m in Sources */,
@@ -4418,6 +4466,7 @@
 				9F872482160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */,
 				9F872487160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */,
 				501F283C161303DA00B1ED53 /* BXBuiltinShaderRenderers.m in Sources */,
+				55574806208FA8040045E635 /* ymdeltat.cpp in Sources */,
 				9FD6AA0F16314A5B002B774E /* directlpt_linux.cpp in Sources */,
 				9FD6AA1116314A5B002B774E /* directlpt_win32.cpp in Sources */,
 				9FD6AA1316314A5B002B774E /* filelpt.cpp in Sources */,
@@ -4431,6 +4480,7 @@
 				9F201E391657DB7F0086F1BB /* ADBUserNotificationDispatcher.m in Sources */,
 				9F61B94E16625DF700B41546 /* BXInspectorController.m in Sources */,
 				9F6463F816C67415008B65BF /* BXOutputBinding.m in Sources */,
+				55574804208FA8040045E635 /* fmopl.cpp in Sources */,
 				9FF91EB716CC362700E1D1A8 /* NSWorkspace+ADBIconHelpers.m in Sources */,
 				9F35F3EA16CFBB700093CF45 /* NSFileManager+ADBUniqueFilenames.m in Sources */,
 				9F80E80016DA3170001C3162 /* ADBFileHandle.m in Sources */,

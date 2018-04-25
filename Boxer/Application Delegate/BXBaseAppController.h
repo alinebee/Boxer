@@ -42,7 +42,7 @@
 
 /// An array of open @c BXSession documents.
 /// This is equivalent to @c [NSDocumentController documents] filtered to contain just @c BXSession instances.
-@property (readonly, nonatomic) NSArray *sessions;
+@property (readonly, nonatomic) NSArray<BXSession*> *sessions;
 
 
 #pragma mark App-wide controllers
@@ -91,12 +91,12 @@
 + (NSString *) appIdentifier;
 
 /// Whether this is a standalone app bundled with a gamebox.
-/// Returns NO by default; overridden by @c BXStandaloneAppController.
-- (BOOL) isStandaloneGameBundle;
+/// Returns @c NO by default; overridden by @c BXStandaloneAppController.
+@property (readonly, getter=isStandaloneGameBundle) BOOL standaloneGameBundle;
 
 /// Whether the app should hide all potential branding.
-/// Returns NO by default; overridden by @c BXStandaloneAppController.
-- (BOOL) isUnbrandedGameBundle;
+/// Returns @c NO by default; overridden by @c BXStandaloneAppController.
+@property (readonly, getter=isUnbrandedGameBundle) BOOL unbrandedGameBundle;
 
 
 #pragma mark Application audio
@@ -152,12 +152,12 @@
 ///                         which will usually be the OS X default application for that filetype.
 /// @param launchOptions    The options which NSWorkspace should use when opening the URLs.
 /// @see BXFileTypes  @c -bundleIdentifierForApplicationToOpenURL:
-- (BOOL) openURLsInPreferredApplications: (NSArray *)URLs
+- (BOOL) openURLsInPreferredApplications: (NSArray<NSURL*> *)URLs
                                  options: (NSWorkspaceLaunchOptions)launchOptions;
 
 /// Reveal and select the specified URLs in Finder.
 /// @param URLs The URLs to reveal in Finder. URLs located in the same folder will be shown in the same Finder window.
-- (BOOL) revealURLsInFinder: (NSArray *)URLs;
+- (BOOL) revealURLsInFinder: (NSArray<NSURL*> *)URLs;
 
 /// Open the specified help anchor in Boxer's help.
 /// @param anchor   The name of the help anchor to open. This is assumed to be in Boxer's own helpbook.

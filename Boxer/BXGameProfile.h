@@ -71,7 +71,7 @@ extern NSString * const BXGenericProfileIdentifier;
 
 /// The configuration file(s) to use for this game (sans path and .conf extension),
 /// as stored in Resources/Configurations
-@property (copy, nonatomic) NSArray *configurations;
+@property (copy, nonatomic) NSArray<NSString*> *configurations;
 
 /// The description of what kind of games this game profile covers.
 /// Will be nil for game-specific profiles (in which case gameName will be available.)
@@ -156,7 +156,7 @@ extern NSString * const BXGenericProfileIdentifier;
 + (instancetype) profileWithIdentifier: (NSString *)identifier;
 
 /// Creates a new profile from the specified GameProfiles.plist-format dictionary.
-- (instancetype) initWithDictionary: (NSDictionary *)profileDictionary;
+- (instancetype) initWithDictionary: (NSDictionary<NSString*,id> *)profileDictionary;
 
 
 /// Detects and returns an appropriate game profile for the specified path,

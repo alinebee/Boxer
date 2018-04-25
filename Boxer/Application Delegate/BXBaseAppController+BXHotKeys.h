@@ -5,9 +5,9 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
+
 #import "BXBaseAppController.h"
 #import "BXKeyboardEventTap.h"
-
 
 /// Extensions for handling system hotkey events and displaying a startup warning if hotkeys cannot be captured.
 @interface BXBaseAppController (BXHotKeys) <BXKeyboardEventTapDelegate>
@@ -68,7 +68,6 @@
 /// Constructs and returns a hotkey warning that will be displayed if the application cannot capture hotkeys.
 /// Used by @c showHotkeyWarningIfUnavailable:.
 - (NSAlert *) hotkeyWarningAlert;
-
 
 
 @end

@@ -89,21 +89,12 @@ NSString * const ADBMountedVolumesErrorDomain = @"ADBMountedVolumesErrorDomain";
     NSAssert(URL != nil, @"No URL provided!");
     
     //The NSURLVolumeIsBrowsableKey constant is only supported on 10.7+.
-    BOOL URLVisibililityKeyAvailable = (&NSURLVolumeIsBrowsableKey != NULL);
-    if (URLVisibililityKeyAvailable)
-    {
-        NSNumber *visibleFlag = nil;
-        BOOL checkedVisible = [URL getResourceValue: &visibleFlag forKey: NSURLVolumeIsBrowsableKey error: NULL];
-        if (checkedVisible)
-            return visibleFlag.boolValue;
-        else
-            return YES;
-    }
-    //For 10.6, we need to actually check the list of non-hidden volumes.
+    NSNumber *visibleFlag = nil;
+    BOOL checkedVisible = [URL getResourceValue: &visibleFlag forKey: NSURLVolumeIsBrowsableKey error: NULL];
+    if (checkedVisible)
+        return visibleFlag.boolValue;
     else
-    {
-        return [[self mountedVolumeURLsIncludingHidden: NO] containsObject: URL];
-    }
+        return YES;
 }
 
 - (NSString *) typeOfVolumeAtURL: (NSURL *)URL;

@@ -5,6 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
+
 #import <Cocoa/Cocoa.h>
 
 @class FinderApplication;

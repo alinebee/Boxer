@@ -5,9 +5,6 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXAppController is Boxer's NSApp delegate and document controller. It controls application launch
-//behaviour, shared resources and user defaults, and handles non-window-specific UI functions.
-//This controller is instantiated in MainMenu.xib.
 
 #import "BXBaseAppController.h"
 
@@ -19,22 +16,26 @@ enum {
 };
 
 @class BXInspectorController;
+
+/// \c BXAppController is Boxer's NSApp delegate and document controller. It controls application launch
+/// behaviour, shared resources and user defaults, and handles non-window-specific UI functions.
+/// This controller is instantiated in MainMenu.xib.
 @interface BXAppController : BXBaseAppController
 {
 	NSURL *_gamesFolderURL;
 }
 
-//Returns YES if there are other Boxer processes currently running, no otherwise.
+/// Returns YES if there are other Boxer processes currently running, no otherwise.
 + (BOOL) otherBoxersActive;
 
-//A reference to the app's shared inspector panel controller, used for UI bindings.
+/// A reference to the app's shared inspector panel controller, used for UI bindings.
 @property (weak, readonly, nonatomic) BXInspectorController *inspectorController;
 
 #pragma mark -
 #pragma mark Opening documents
 
-//A special method for creating a new untitled import session.
-//This follows the same method signature as @c NSDocument @c -openUntitledDocumentAndDisplay:error:.
+/// A special method for creating a new untitled import session.
+/// This follows the same method signature as @c NSDocument @c -openUntitledDocumentAndDisplay:error:.
 - (id) openImportSessionAndDisplay: (BOOL)displayDocument error: (NSError **)outError;
 
 /// Opens an import window to import the specified URL.

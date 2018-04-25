@@ -90,7 +90,7 @@ extern NSErrorDomain const BXDOSBoxMountErrorDomain;
 
 
 /// BXDOSBoxUnmountErrorDomain constants
-NS_ERROR_ENUM(BXDOSBoxUnmountErrorDomain) {
+typedef NS_ERROR_ENUM(BXDOSBoxUnmountErrorDomain, BXDOSBoxUnmountErrors) {
     /// Unmounting failed for an unknown reason.
     BXDOSBoxUnmountUnknownError             = -1,
     
@@ -106,7 +106,7 @@ NS_ERROR_ENUM(BXDOSBoxUnmountErrorDomain) {
 
 
 /// BXDOSBoxMountErrorDomain constants
-NS_ERROR_ENUM(BXDOSBoxMountErrorDomain) {
+typedef NS_ERROR_ENUM(BXDOSBoxMountErrorDomain, BXDOSBoxMountErrors) {
     /// Mounting failed for an unknown reason.
     BXDOSBoxMountUnknownError               = -1,
     

@@ -26,13 +26,13 @@ extern NSExceptionName const BXEmulatorUnrecoverableException;
 extern NSErrorUserInfoKey const BXDOSFilesystemErrorDriveKey;
 
 /// Error constants for BXEmulatorErrorDomain
-NS_ERROR_ENUM(BXEmulatorErrorDomain) {
+typedef NS_ERROR_ENUM(BXEmulatorErrorDomain, BXEmulatorErrors) {
     BXEmulatorUnknownError,
     BXEmulatorUnrecoverableError,   //!< Error code used when DOSBox encounters any kind of unrecoverable error and must quit.
 };
 
 /// Error constants for BXDOSFilesystemErrorDomain
-NS_ERROR_ENUM(BXDOSFilesystemErrorDomain) {
+typedef NS_ERROR_ENUM(BXDOSFilesystemErrorDomain, BXDOSFilesystemErrors) {
     BXDOSFilesystemUnknownError,
     BXDOSFilesystemCouldNotReadDrive,   //!< Drive source path did not exist or could not be read
     BXDOSFilesystemInvalidImage,        //!< Drive image could not be successfully loaded by DOSBox

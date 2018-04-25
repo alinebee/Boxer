@@ -46,7 +46,7 @@ extern NSString * const BXMT32ControlROMTypeKey;
 extern NSString * const BXMT32PCMROMTypeKey;
 
 
-NS_ERROR_ENUM(BXEmulatedMT32ErrorDomain) {
+typedef NS_ERROR_ENUM(BXEmulatedMT32ErrorDomain, BXEmulatedMT32Errors) {
     BXEmulatedMT32MissingROM,       //!< No ROMs were specified when initializing.
     BXEmulatedMT32CouldNotReadROM,  //!< A specified ROM could not be opened.
     BXEmulatedMT32InvalidROM,       //!< A specified ROM was not a valid MT-32 ROM.

@@ -78,7 +78,7 @@ extern NSString * const BXBatchProgramType;     //!< .bat
 #pragma mark - Executable type checking
 
 extern NSErrorDomain const BXExecutableTypesErrorDomain;
-NS_ERROR_ENUM(BXExecutableTypesErrorDomain)
+typedef NS_ERROR_ENUM(BXExecutableTypesErrorDomain, BXExecutableTypesErrors)
 {
 	BXNotAnExecutable			= 1,	//!< Specified file was simply not a recognised executable type
 	BXCouldNotReadExecutable	= 2,	//!< Specified file could not be opened for reading

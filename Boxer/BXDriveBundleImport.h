@@ -13,7 +13,7 @@
 extern NSErrorDomain const BXDriveBundleErrorDomain;
 
 NS_ERROR_ENUM(BXDriveBundleErrorDomain) {
-	BXDriveBundleCouldNotParseCue //Could not rip the cue file to determine source files
+	BXDriveBundleCouldNotParseCue //!< Could not rip the cue file to determine source files
 };
 
 

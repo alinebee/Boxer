@@ -156,7 +156,7 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 
 /// The cover art image for this gamebox. Will be nil if the gamebox has no custom cover art.
 /// This is stored internally as the gamebox's OS X icon resource.
-@property (copy, nonatomic) NSImage *coverArt;
+@property (copy, nonatomic, nullable) NSImage *coverArt;
 
 /// Program launchers for this gamebox, displayed as favorites in the launch panel.
 @property (weak, readonly, nonatomic) NSArray *launchers;

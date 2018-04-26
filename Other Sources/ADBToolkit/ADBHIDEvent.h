@@ -167,7 +167,7 @@ typedef NS_ENUM(NSInteger, ADBHIDPOVSwitchDirection) {
 @interface NSObject (ADBHIDEventDispatch)
 
 //Returns the appropriate ADBHIDDeviceDelegate selector to handle the specified HID event.
-+ (SEL) delegateMethodForHIDEvent: (ADBHIDEvent *)event;
++ (nullable SEL) delegateMethodForHIDEvent: (ADBHIDEvent *)event;
 
 //Dispatches the specified event to the appropriate ADBHIDDeviceDelegate method.
 - (void) dispatchHIDEvent: (ADBHIDEvent *)event;

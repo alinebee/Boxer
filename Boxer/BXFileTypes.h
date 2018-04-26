@@ -70,7 +70,7 @@ extern NSString * const BXBatchProgramType;     //!< .bat
 /// Returns a specific bundle identifier that we want to use to open the specified URL,
 /// or \c nil if OS X's default handler should be used. This uses \c fileHandlerOverrides to
 /// selectively override the default for files with particular extensions.
-+ (NSString *) bundleIdentifierForApplicationToOpenURL: (NSURL *)URL;
++ (nullable NSString *) bundleIdentifierForApplicationToOpenURL: (NSURL *)URL;
 
 @end
 

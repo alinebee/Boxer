@@ -8,6 +8,8 @@
 
 #import "BXImportSession.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 #pragma mark -
 #pragma mark Class constants
 
@@ -89,7 +91,7 @@ static const NSUInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 
 /// Returns a recommended installer from the list of possible installers,
 /// using <code>preferredInstallerPatterns</code>.
-+ (NSString *) preferredInstallerFromPaths: (NSArray<NSString*> *)paths;
++ (nullable NSString *) preferredInstallerFromPaths: (NSArray<NSString*> *)paths;
 
 /// Whether we should import the specified source files into a subfolder of drive C,
 /// or directly into the base folder of drive C.
@@ -104,7 +106,7 @@ static const NSUInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 /// it as an icon-ready \c NSImage resource. This will strip out low-res Windows icons but otherwise
 /// no additional processing (i.e. Boxer's shiny box-art appearance etc.) is applied to the image.
 /// Returns \c nil if no suitable art is found.
-+ (NSImage *) boxArtForGameAtURL: (NSURL *)URL;
++ (nullable NSImage *) boxArtForGameAtURL: (NSURL *)URL;
 
 /// Returns an (attempt at an) OSX-safe filename from the provided name.
 /// This will replace /, \ and : characters with dashes, and remove leading dots. 
@@ -127,7 +129,7 @@ static const NSUInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 /// the shortest name. This is intended to handle e.g. GOG games that come with client/server
 /// configurations as well as standalone configurations, where the former have "_client"/"_server"
 /// suffixes applied to the base name of the latter.
-+ (NSURL *) preferredConfigurationFileFromURLs: (NSArray<NSURL*> *)URLs;
++ (nullable NSURL *) preferredConfigurationFileFromURLs: (NSArray<NSURL*> *)URLs;
 
 /// Returns a new DOSBox configuration cherry-picked from the specified configuration.
 /// This will strip out all settings that are redundant, or that will interfere with Boxer.
@@ -143,3 +145,5 @@ static const NSUInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 + (NSArray<NSString*> *) launchCommandsFromConfiguration: (BXEmulatorConfiguration *)configuration;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -39,42 +39,42 @@ typedef NS_ERROR_ENUM(BXSessionErrorDomain, BXSessionErrorValue)
 @end
 
 @interface BXSessionCannotMountSystemFolderError : BXSessionError
-+ (id) errorWithFolderURL: (NSURL *)folderURL userInfo: (NSDictionary *)userInfo;
++ (instancetype) errorWithFolderURL: (NSURL *)folderURL userInfo: (NSDictionary<NSErrorUserInfoKey, id> *)userInfo;
 @end
 
 @interface BXImportNoExecutablesError : BXImportError
-+ (id) errorWithSourceURL: (NSURL *)sourceURL userInfo: (NSDictionary *)userInfo;
++ (instancetype) errorWithSourceURL: (NSURL *)sourceURL userInfo: (NSDictionary<NSErrorUserInfoKey, id> *)userInfo;
 @end
 
 @interface BXImportWindowsOnlyError : BXImportError
-+ (id) errorWithSourceURL: (NSURL *)sourceURL userInfo: (NSDictionary *)userInfo;
++ (instancetype) errorWithSourceURL: (NSURL *)sourceURL userInfo: (NSDictionary<NSErrorUserInfoKey, id> *)userInfo;
 - (NSString *) helpAnchor;
 @end
 
 @interface BXImportHybridCDError : BXImportError
-+ (id) errorWithSourceURL: (NSURL *)sourceURL userInfo: (NSDictionary *)userInfo;
++ (instancetype) errorWithSourceURL: (NSURL *)sourceURL userInfo: (NSDictionary<NSErrorUserInfoKey, id> *)userInfo;
 @end
 
 @interface BXImportMacAppError : BXImportError
-+ (id) errorWithSourceURL: (NSURL *)sourceURL userInfo: (NSDictionary *)userInfo;
++ (instancetype) errorWithSourceURL: (NSURL *)sourceURL userInfo: (NSDictionary<NSErrorUserInfoKey, id> *)userInfo;
 @end
 
 @class BXDrive;
 @interface BXImportDriveUnavailableError : BXImportError
-+ (id) errorWithSourceURL: (NSURL *)sourceURL drive: (BXDrive *)drive userInfo: (NSDictionary *)userInfo;
++ (instancetype) errorWithSourceURL: (NSURL *)sourceURL drive: (BXDrive *)drive userInfo: (NSDictionary<NSErrorUserInfoKey, id> *)userInfo;
 @end
 
 @class BXGamebox;
 @interface BXGameStateGameboxMismatchError : BXSessionError
-+ (id) errorWithStateURL: (NSURL *)stateURL gamebox: (BXGamebox *)gamebox userInfo: (NSDictionary *)userInfo;
++ (instancetype) errorWithStateURL: (NSURL *)stateURL gamebox: (BXGamebox *)gamebox userInfo: (NSDictionary<NSErrorUserInfoKey, id> *)userInfo;
 @end
 
 @interface BXSessionNotReadyError : BXSessionError
 
-+ (id) errorWithUserInfo: (NSDictionary *)userInfo;
++ (instancetype) errorWithUserInfo: (NSDictionary<NSErrorUserInfoKey, id> *)userInfo;
 
 @end
 
 @interface BXSessionURLNotReachableError : BXSessionError
-+ (id) errorWithURL: (NSURL *)URL userInfo: (NSDictionary *)userInfo;
++ (instancetype) errorWithURL: (NSURL *)URL userInfo: (NSDictionary<NSErrorUserInfoKey, id> *)userInfo;
 @end

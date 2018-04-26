@@ -114,6 +114,9 @@ typedef NS_OPTIONS(NSUInteger, BXDriveMountOptions) {
 @class ADBOperation;
 @protocol BXDriveImport;
 
+/// The @c BXFileManagement category extends BXSession with methods for controlling the DOS filesystem
+/// and for responding to relevant changes in the OS X filesystem. It implements Boxer's policies
+/// for opening files and folders from the OS X filesystem and creating new drives for them.
 @interface BXSession (BXFileManagement) <BXEmulatorFileSystemDelegate, ADBOperationDelegate>
 
 /// The 'principal' drive of the session, whose executables we will display in the programs panel
@@ -156,21 +159,21 @@ typedef NS_OPTIONS(NSUInteger, BXDriveMountOptions) {
 
 /// Returns a set of filesnames that should be hidden from DOS directory listings.
 /// Used by emulator:shouldShowDOSFile:.
-+ (NSSet *) hiddenFilenamePatterns;
+@property (class, readonly, copy) NSSet<NSString*> *hiddenFilenamePatterns;
 
 /// UTI filetypes of folders that should be used as mount-points for files inside them: if we open a file
 /// inside a folder matching one of these types, it will mount that folder as its drive.
 /// Used by \c preferredMountPointForPath: which will also prefer the root folders of floppy and CD-ROM volumes.
-+ (NSSet<NSString*> *) preferredMountPointTypes;
+@property (class, readonly, copy) NSSet<NSString*> *preferredMountPointTypes;
 
 /// The volume formats (as listed in NSWorkspace+ADBMountedVolumes) that will be automatically mounted
 /// as new DOS drives when they appear in Finder.
-+ (NSSet<NSString*> *) automountedVolumeFormats;
+@property (class, readonly, copy) NSSet<NSString*> *automountedVolumeFormats;
 
 /// UTI filetypes that should be given their own drives, even if they are already accessible within an existing DOS drive.
 /// This is used by shouldMountDriveForPath: to allow disc images or drive folders inside a gamebox to be mounted as
 /// separate drives even when their containing gamebox is already mounted.
-+ (NSSet<NSString*> *) separatelyMountedTypes;
+@property (class, readonly, copy) NSSet<NSString*> *separatelyMountedTypes;
 
 
 #pragma mark - Launching programs
@@ -201,7 +204,7 @@ typedef NS_OPTIONS(NSUInteger, BXDriveMountOptions) {
 #pragma mark - Managing drive shadowing
 
 /// Returns the path to the bundle where we will store state data for the current gamebox.
-- (NSURL *) currentGameStateURL;
+@property (readonly, copy) NSURL *currentGameStateURL;
 
 /// Sets/retrieves the Info.plist metadata for the game state at the specified URL. 
 - (NSDictionary *) infoForGameStateAtURL: (NSURL *)stateURL;

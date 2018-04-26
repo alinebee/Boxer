@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 //Returns the first element matching the specified usage,
 //or nil if no elements were found.
-- (DDHidElement *) elementWithUsage: (DDHidUsage *)usage;
+- (nullable DDHidElement *) elementWithUsage: (DDHidUsage *)usage;
 @end
 
 
@@ -72,8 +72,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 //Convenience method to return the first matching axis/button element.
 //Returns nil if no matching elements were found.
-- (DDHidElement *) axisElementWithUsageID: (unsigned)usageID;
-- (DDHidElement *) buttonElementWithUsageID: (unsigned)usageID;
+- (nullable DDHidElement *) axisElementWithUsageID: (unsigned)usageID;
+- (nullable DDHidElement *) buttonElementWithUsageID: (unsigned)usageID;
 @end
 
 
@@ -89,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 //Convenience method to return the first matching axis element.
 //Returns nil if no matching elements were found.
-- (DDHidElement *) axisElementWithUsageID: (unsigned)usageID;
+- (nullable DDHidElement *) axisElementWithUsageID: (unsigned)usageID;
 
 @end
 

@@ -35,16 +35,16 @@ typedef NS_ENUM(NSInteger, BXImportStage) {
 
 //Constants returned by sourceFileImportType
 typedef NS_ENUM(NSInteger, BXSourceFileImportType) {
-	BXImportTypeUnknown,                //We haven't decided yet what we're importing from
-	BXImportFromPreInstalledGame,		//Bundling a pre-installed game folder into a gamebox
-	BXImportFromCDVolume,				//Coping from a real CD
-	BXImportFromFloppyVolume,			//Copying from a real floppy disk
-	BXImportFromCDImage,				//Copying from a CD image
-	BXImportFromFloppyImage,			//Copying from a floppy-disk image
-	BXImportFromHardDiskImage,			//Copying from a hard-disk image (currently unused)
-	BXImportFromFolderToCD,				//Converting a folder of game files into a fake CD
-	BXImportFromFolderToFloppy,			//Converting a folder of game files into a fake floppy
-	BXImportFromFolderToHardDisk,		//Converting a folder of game files into a secondary hard disk
+	BXImportTypeUnknown,                //!< We haven't decided yet what we're importing from
+	BXImportFromPreInstalledGame,		//!< Bundling a pre-installed game folder into a gamebox
+	BXImportFromCDVolume,				//!< Coping from a real CD
+	BXImportFromFloppyVolume,			//!< Copying from a real floppy disk
+	BXImportFromCDImage,				//!< Copying from a CD image
+	BXImportFromFloppyImage,			//!< Copying from a floppy-disk image
+	BXImportFromHardDiskImage,			//!< Copying from a hard-disk image (currently unused)
+	BXImportFromFolderToCD,				//!< Converting a folder of game files into a fake CD
+	BXImportFromFolderToFloppy,			//!< Converting a folder of game files into a fake floppy
+	BXImportFromFolderToHardDisk,		//!< Converting a folder of game files into a secondary hard disk
 };
 
 

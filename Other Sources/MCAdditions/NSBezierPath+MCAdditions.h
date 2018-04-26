@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NSBezierPath (MCAdditions)
 
 + (NSBezierPath *)bezierPathWithCGPath:(CGPathRef)pathRef;
-- (CGPathRef)createCGPath CF_RETURNS_RETAINED;
+- (nullable CGPathRef)createCGPath CF_RETURNS_RETAINED;
 
 - (NSBezierPath *)pathWithStrokeWidth:(CGFloat)strokeWidth;
 

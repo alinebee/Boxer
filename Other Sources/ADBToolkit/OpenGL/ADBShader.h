@@ -35,15 +35,15 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 #pragma mark Error constants
 
-enum {
-    ADBShaderCouldNotCompileVertexShader,   //Vertex shader source code could not be compiled.
-    ADBShaderCouldNotCompileFragmentShader, //Fragment shader source code could not be compiled.
-    ADBShaderCouldNotCreateShaderProgram,   //Failed to create a shader program from the specified
-                                            //vertex and/or fragment shader.
-};
-
 /// The domain for errors produced by ADBShader.
 extern NSErrorDomain const ADBShaderErrorDomain;
+
+NS_ERROR_ENUM(ADBShaderErrorDomain) {
+    ADBShaderCouldNotCompileVertexShader,   //!< Vertex shader source code could not be compiled.
+    ADBShaderCouldNotCompileFragmentShader, //!< Fragment shader source code could not be compiled.
+    ADBShaderCouldNotCreateShaderProgram,   //!< Failed to create a shader program from the specified
+                                            //!< vertex and/or fragment shader.
+};
 
 /// For compilation errors, contains the source code and info log of the offending shader.
 extern NSErrorUserInfoKey const ADBShaderErrorSourceKey;
@@ -57,6 +57,7 @@ extern NSErrorUserInfoKey const ADBShaderErrorInfoLogKey;
 #define ADBShaderUnsupportedUniformLocation -1
 
 //Keys for uniform description dictionaries.
+typedef NSString *ADBShaderUniformKey NS_EXTENSIBLE_STRING_ENUM;
 
 /// An NSString representing the name of the uniform.
 extern NSString * const ADBShaderUniformNameKey;
@@ -97,15 +98,15 @@ extern NSString * const ADBShaderUniformSizeKey;
 #pragma mark -
 #pragma mark Helper class methods
 
-//Returns an array of dictionaries describing the active uniforms
-//defined in the specified shader program.
-//See the key constants above for what is included in this dictionary.
-+ (NSArray<NSDictionary<NSString*,id>*> *) uniformDescriptionsForShaderProgram: (GLhandleARB)shaderProgram
-                                                                     inContext: (CGLContextObj)context;
+/// Returns an array of dictionaries describing the active uniforms
+/// defined in the specified shader program.
+/// See the key constants above for what is included in this dictionary.
++ (NSArray<NSDictionary<ADBShaderUniformKey,id>*> *) uniformDescriptionsForShaderProgram: (GLhandleARB)shaderProgram
+                                                                               inContext: (CGLContextObj)context;
 
-//Returns the contents of the info log for the specified object
-//(normally a shader or shader program).
-+ (NSString *) infoLogForObject: (GLhandleARB)objectHandle inContext: (CGLContextObj)context;
+/// Returns the contents of the info log for the specified object
+/// (normally a shader or shader program).
++ (nullable NSString *) infoLogForObject: (GLhandleARB)objectHandle inContext: (CGLContextObj)context;
 
 /// Compiles the specified shader source code of the specified type,
 /// and returns a handle for the new shader object.
@@ -175,7 +176,7 @@ extern NSString * const ADBShaderUniformSizeKey;
 /// Returns an array of NSDictionaries describing all of the active uniforms defined
 /// in the shader program.
 /// See the key constants above for what data is included in each dictionary.
-- (NSArray<NSDictionary<NSString*, id>*> *) uniformDescriptions;
+- (NSArray<NSDictionary<ADBShaderUniformKey, id>*> *) uniformDescriptions;
 
 /// The info log for this shader program.
 - (NSString *) infoLog;

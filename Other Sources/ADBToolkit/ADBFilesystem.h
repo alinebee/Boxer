@@ -60,7 +60,7 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 - (nullable NSString *) typeOfFileAtPath: (NSString *)path;
 
 /// Given a set of UTIs to test, returns the first one of those types to which the file conforms.
-- (NSString *) typeOfFileAtPath: (NSString *)path matchingTypes: (NSSet<NSString*> *)UTIs;
+- (nullable NSString *) typeOfFileAtPath: (NSString *)path matchingTypes: (NSSet<NSString*> *)UTIs;
 
 /// Return whether the file at the specified path conforms to the specified type.
 - (BOOL) fileAtPath: (NSString *)path conformsToType: (NSString *)UTI;
@@ -96,8 +96,8 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 /// Returns a file handle suitable for reading from (and, if supported, writing to) the resource represented
 /// by the specified path using the specified access options.
 - (nullable id) fileHandleAtPath: (NSString *)path
-                options: (ADBHandleOptions)options
-                  error: (out NSError **)outError;
+                         options: (ADBHandleOptions)options
+                           error: (out NSError **)outError;
 
 /// Return an open stdlib \c FILE handle for the resource represented by the specified path,
 /// using the specified access mode (in the standard fopen format). The calling context is
@@ -186,10 +186,10 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 /// pointing to resources on the local filesystem.
 /// This enumerator should respect the same parameters as NSFileManager's
 /// enumeratorAtURL:includingPropertiesForKeys:options:errorHandler: method.
-- (id <ADBFilesystemFileURLEnumeration>) enumeratorAtFileURL: (NSURL *)URL
-                                  includingPropertiesForKeys: (NSArray *)keys
-                                                     options: (NSDirectoryEnumerationOptions)mask
-                                                errorHandler: (nullable ADBFilesystemFileURLErrorHandler)errorHandler;
+- (nullable id <ADBFilesystemFileURLEnumeration>) enumeratorAtFileURL: (NSURL *)URL
+                                           includingPropertiesForKeys: (NSArray<NSURLResourceKey> *)keys
+                                                              options: (NSDirectoryEnumerationOptions)mask
+                                                         errorHandler: (nullable ADBFilesystemFileURLErrorHandler)errorHandler;
 
 @end
 

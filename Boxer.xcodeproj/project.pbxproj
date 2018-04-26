@@ -87,7 +87,7 @@
 		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9F2C458715DB7E77009F4477 /* ADBGLHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C458615DB7E77009F4477 /* ADBGLHelpers.m */; };
 		9F2D2F9915B8233800FAE848 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
-		9F2D2F9C15B8233800FAE848 /* BXSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35210F56C7B7001811F2 /* BXSession.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		9F2D2F9C15B8233800FAE848 /* BXSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35210F56C7B7001811F2 /* BXSession.m */; };
 		9F2D2F9D15B8233800FAE848 /* BXEmulator+BXShell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */; };
 		9F2D2F9E15B8233800FAE848 /* BXDOSWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35240F56C7B7001811F2 /* BXDOSWindow.m */; };
 		9F2D2FA015B8233800FAE848 /* NSWindow+ADBWindowDimensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35260F56C7B7001811F2 /* NSWindow+ADBWindowDimensions.m */; };
@@ -671,7 +671,7 @@
 		9FBC32120F56C3E9001811F2 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC32110F56C3E9001811F2 /* Carbon.framework */; };
 		9FBC352B0F56C7B7001811F2 /* BXAboutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC351D0F56C7B7001811F2 /* BXAboutController.m */; };
 		9FBC352C0F56C7B7001811F2 /* BXAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC351E0F56C7B7001811F2 /* BXAppController.m */; };
-		9FBC352F0F56C7B7001811F2 /* BXSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35210F56C7B7001811F2 /* BXSession.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		9FBC352F0F56C7B7001811F2 /* BXSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35210F56C7B7001811F2 /* BXSession.m */; };
 		9FBC35310F56C7B7001811F2 /* BXEmulator+BXShell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */; };
 		9FBC35320F56C7B7001811F2 /* BXDOSWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35240F56C7B7001811F2 /* BXDOSWindow.m */; };
 		9FBC35330F56C7B7001811F2 /* BXDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */; };

@@ -216,11 +216,11 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 		self.drives = [NSMutableDictionary dictionaryWithCapacity: 10];
 		self.executableURLs = [NSMutableDictionary dictionaryWithCapacity: 10];
 		
-		self.emulator = [[[BXEmulator alloc] init] autorelease];
+		self.emulator = [[BXEmulator alloc] init];
 		self.gameSettings = defaults;
 		
-		self.importQueue = [[[NSOperationQueue alloc] init] autorelease];
-		self.scanQueue = [[[NSOperationQueue alloc] init] autorelease];
+		self.importQueue = [[NSOperationQueue alloc] init];
+		self.scanQueue = [[NSOperationQueue alloc] init];
 	}
 	return self;
 }
@@ -283,8 +283,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     
     self.temporaryFolderURL = nil;
     self.MT32MessagesReceived = nil;
-    
-	[super dealloc];
 }
 
 - (BOOL) readFromURL: (NSURL *)absoluteURL
@@ -396,8 +394,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	{
         self.gamebox.undoDelegate = nil;
         
-		[_gamebox release];
-		_gamebox = [gamebox retain];
+		_gamebox = gamebox;
 		
 		if (self.gamebox)
 		{
@@ -511,8 +508,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 {
     if (![self.gameProfile isEqual: profile])
     {
-        [_gameProfile release];
-        _gameProfile = [profile retain];
+        _gameProfile = profile;
         
         //Save the profile into our game settings so that we can retrieve it quicker later
         if (self.gameProfile && [self _shouldPersistGameProfile: self.gameProfile])
@@ -545,8 +541,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 			[self _deregisterForFilesystemNotifications];
 		}
 		
-		[_emulator release];
-		_emulator = [newEmulator retain];
+		_emulator = newEmulator;
 		
 		if (self.emulator)
 		{	
@@ -590,8 +585,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	self.DOSWindowController = controller;
 	
 	controller.shouldCloseDocument = YES;
-	
-	[controller release];
 }
 
 - (void) removeWindowController: (NSWindowController *)windowController
@@ -612,8 +605,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             [self.DOSWindowController removeObserver: self forKeyPath: @"currentPanel"];
         }
         
-        [_DOSWindowController release];
-        _DOSWindowController = [controller retain];
+        _DOSWindowController = controller;
         
         if (controller)
         {
@@ -742,7 +734,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 			alert = [BXCloseAlert closeAlertWhileImportingDrives: self];
 		else
 			alert = [BXCloseAlert closeAlertWhileSessionIsEmulating: self];
-        [callback retain];
 		
         [alert beginSheetModalForWindow: self.windowForSheet
                       completionHandler: ^(NSModalResponse returnCode) {
@@ -768,9 +759,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	BOOL shouldClose = (returnCode == NSAlertFirstButtonReturn);
 	[callback setArgument: &shouldClose atIndex: 3];
 	[callback invoke];
-	
-	//Release the previously-retained callback
-	[callback release];
 }
 
 - (void) _windowsOnlyProgramCloseAlertDidEnd: (BXCloseAlert *)alert
@@ -1300,7 +1288,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     }
      */
     
-    return [configURLs autorelease];
+    return configURLs;
 }
 
 - (void) runPreflightCommandsForEmulator: (BXEmulator *)theEmulator
@@ -1624,7 +1612,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	//NSWindow/NSDocument close flow.
 	
     NSEvent *event;
-    [requestedDate retain];
     
 	NSDate *untilDate = self.isSuspended ? [NSDate distantFuture] : requestedDate;
 	
@@ -1655,8 +1642,6 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
         //if requestedDate was nil or in the past.)
 		untilDate = self.isSuspended ? [NSDate distantFuture] : requestedDate;
 	}
-    
-    [requestedDate release];
 }
 
 #pragma mark -
@@ -2343,7 +2328,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
             
             IOReturn success = IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, 
                                                            kIOPMAssertionLevelOn,
-                                                           (CFStringRef)reason,
+                                                           (__bridge CFStringRef)reason,
                                                            &_displaySleepAssertionID);
             if (success != kIOReturnSuccess)
             {

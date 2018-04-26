@@ -124,12 +124,12 @@ extern NSString * const BXGameImportedNotificationType;
 
 /// Callback for close alert. Confirms document close when window is closed or application is shut down.
 - (void) _closeAlertDidEnd: (BXCloseAlert *)alert
-				returnCode: (int)returnCode
+				returnCode: (NSInteger)returnCode
 			   contextInfo: (NSInvocation *)callback;
 
 /// Callback for close alert after a windows-only program is failed.
 - (void) _windowsOnlyProgramCloseAlertDidEnd: (BXCloseAlert *)alert
-								  returnCode: (int)returnCode
+								  returnCode: (NSInteger)returnCode
 								 contextInfo: (void *)contextInfo;
 @end
 

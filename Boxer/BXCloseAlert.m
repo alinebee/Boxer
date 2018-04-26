@@ -240,4 +240,10 @@
 							   contextInfo: contextInfo];
 }
 
+- (void)beginSheetModalForWindow:(NSWindow *)sheetWindow completionHandler:(void (^)(NSModalResponse))handler
+{
+    [self adoptIconFromWindow: sheetWindow];
+    [super beginSheetModalForWindow: sheetWindow completionHandler: handler];
+}
+
 @end

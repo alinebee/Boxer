@@ -39,8 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 //! Returns an SHA1 digest built from the first readLength bytes of every file in the specified list.
 //! If @c readLength is 0, this behaves the same as @c SHA1DigestForURLs:error:
 + (nullable NSData *) SHA1DigestForURLs: (NSArray<NSURL*> *)fileURLs
-                    upToLength: (NSUInteger)readLength
-                         error: (out NSError **)outError;
+                             upToLength: (NSUInteger)readLength
+                                  error: (out NSError **)outError;
 
 @end
 

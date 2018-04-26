@@ -773,7 +773,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 }
 
 - (void) _windowsOnlyProgramCloseAlertDidEnd: (BXCloseAlert *)alert
-								  returnCode: (int)returnCode
+								  returnCode: (NSInteger)returnCode
 								 contextInfo: (void *)contextInfo
 {
 	if (returnCode == NSAlertFirstButtonReturn)
@@ -1511,10 +1511,9 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
                     if ([programURL isEqual: self.targetURL])
                     {
                         BXCloseAlert *alert = [BXCloseAlert closeAlertAfterWindowsOnlyProgramExited: programURL.path];
-                        [alert beginSheetModalForWindow: self.windowForSheet
-                                          modalDelegate: self
-                                         didEndSelector: @selector(_windowsOnlyProgramCloseAlertDidEnd:returnCode:contextInfo:)
-                                            contextInfo: NULL];
+                        [alert beginSheetModalForWindow: self.windowForSheet completionHandler:^(NSModalResponse returnCode) {
+                            [self _windowsOnlyProgramCloseAlertDidEnd:alert returnCode:returnCode contextInfo:NULL];
+                        }];
                         
                     }
                     //Otherwise, just print out explanatory text at the DOS prompt.

@@ -36,12 +36,12 @@
 - (NSString *) sentenceCapitalizedString;
 
 //Returns an enumerator for looping easily over the lines in a string.
-- (NSEnumerator *) lineEnumerator;
+- (NSEnumerator<NSString*> *) lineEnumerator;
 
 //Returns an array of lines split at the specified line length.
 //If wordWrap is YES, the substrings will be split at the nearest whitespace (unless an entire
 //word fills the line); otherwise they will be split willy-nilly in the middle of words.
-- (NSArray *) componentsSplitAtLineLength: (NSUInteger)maxLength atWordBoundaries: (BOOL)wordWrap;
+- (NSArray<NSString*> *) componentsSplitAtLineLength: (NSUInteger)maxLength atWordBoundaries: (BOOL)wordWrap;
 
 //Return strings word/character-wrapped to the specified line length, with the specified string joining each line.
 - (NSString *) stringWordWrappedAtLineLength: (NSUInteger)maxLength withJoiner: (NSString *)joiner;

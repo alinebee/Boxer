@@ -25,45 +25,44 @@
  */
 
 
-//ADBUserNotificationDispatcher is a delegate for OS X 10.8+'s NSUserNotificationCenter delivery mechanism.
-//It allows notifications to be scheduled with blocks that are called when they are clicked on by the
-//user, and allows each notification to be given a type and sender to permit easy cleanup of stale
-//notifications.
-
 #import <Foundation/Foundation.h>
 
 typedef void(^ADBUserNotificationActivationHandler)(NSUserNotification *notification);
 
+/// \c ADBUserNotificationDispatcher is a delegate for OS X 10.8+'s @c NSUserNotificationCenter delivery mechanism.
+/// It allows notifications to be scheduled with blocks that are called when they are clicked on by the
+/// user, and allows each notification to be given a type and sender to permit easy cleanup of stale
+/// notifications.
 @interface ADBUserNotificationDispatcher : NSObject <NSUserNotificationCenterDelegate>
 {
     NSMutableDictionary *_activationHandlers;
 }
 
-//Whether user notifications are supported in this version of OS X. Will return NO on OS X < 10.8.
-+ (BOOL) userNotificationsAvailable;
+/// Whether user notifications are supported in this version of OS X. Will return NO on OS X < 10.8.
+@property (class, readonly) BOOL userNotificationsAvailable;
 
-//Returns the singleton instance of the notification dispatcher.
-+ (instancetype) dispatcher;
+/// Returns the singleton instance of the notification dispatcher.
+@property (class, readonly, strong) ADBUserNotificationDispatcher *dispatcher;
 
-//Schedules the specified notification for display, giving it the specified type key
-//(which must be an NSString, NSNumber or other plist type) and sender.
-//If activationHandler is specified, it will be called on completion and passed the notification
-//that was activated. Note that any objects referenced in the handler will be retained until
-//the notification for the handler has been removed.
+/// Schedules the specified notification for display, giving it the specified type key
+/// (which must be an NSString, NSNumber or other plist type) and sender.
+/// If activationHandler is specified, it will be called on completion and passed the notification
+/// that was activated. Note that any objects referenced in the handler will be retained until
+/// the notification for the handler has been removed.
 - (void) scheduleNotification: (NSUserNotification *)notification
                        ofType: (id)typeKey
                    fromSender: (id)sender
                  onActivation: (ADBUserNotificationActivationHandler)activationHandler;
 
-//Remove the specified notification from the user notification panel.
+/// Remove the specified notification from the user notification panel.
 - (void) removeNotification: (NSUserNotification *)notification;
 
-//Remove all scheduled and delivered notifications from the specified sender and/or type.
-//Pass nil as the type to remove all notifications from that sender regardless of type.
-//Pass nil as the sender to remove all notifications of that type regardless of sender.
+/// Remove all scheduled and delivered notifications from the specified sender and/or type.
+/// Pass @c nil as the @c type to remove all notifications from that sender regardless of type.
+/// Pass @c nil as the @c sender to remove all notifications of that type regardless of sender.
 - (void) removeAllNotificationsOfType: (id)typeKey fromSender: (id)sender;
 
-//Remove all delivered and scheduled notifications for the entire application.
+/// Remove all delivered and scheduled notifications for the entire application.
 - (void) removeAllNotifications;
 
 @end

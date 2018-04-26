@@ -742,11 +742,12 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 			alert = [BXCloseAlert closeAlertWhileImportingDrives: self];
 		else
 			alert = [BXCloseAlert closeAlertWhileSessionIsEmulating: self];
+        [callback retain];
 		
-		[alert beginSheetModalForWindow: self.windowForSheet
-						  modalDelegate: self
-						 didEndSelector: @selector(_closeAlertDidEnd:returnCode:contextInfo:)
-							contextInfo: [callback retain]];
+        [alert beginSheetModalForWindow: self.windowForSheet
+                      completionHandler: ^(NSModalResponse returnCode) {
+                          [self _closeAlertDidEnd:alert returnCode:returnCode contextInfo:callback];
+                      }];
 	}
 	else
 	{
@@ -758,7 +759,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 }
 
 - (void) _closeAlertDidEnd: (BXCloseAlert *)alert
-				returnCode: (int)returnCode
+				returnCode: (NSModalResponse)returnCode
 			   contextInfo: (NSInvocation *)callback
 {
 	if (alert.showsSuppressionButton && alert.suppressionButton.state == NSOnState)

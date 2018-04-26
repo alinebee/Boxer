@@ -346,7 +346,7 @@
 }
 
 - (void) _closeAlertDidEnd: (BXCloseAlert *)alert
-				returnCode: (int)returnCode
+				returnCode: (NSInteger)returnCode
 			   contextInfo: (NSInvocation *)callback
 {
 	if (alert.showsSuppressionButton && alert.suppressionButton.state == NSOnState)

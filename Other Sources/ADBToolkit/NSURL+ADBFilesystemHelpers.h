@@ -32,47 +32,47 @@
 
 @interface NSURL (ADBFilePaths)
 
-//Returns a path for this URL that's relative to the specified file URL,
-//producing the following results:
-// - /foo/bar relative to / becomes @"foo/bar"
-// - /foo/bar relative to /foo/bar becomes @""
-// - /foo/bar relative to /foo becomes @"bar"
-// - /foo/bar relative to /foo/baz becomes @"../bar"
-// - /foo/bar relative to /baz becomes @"../foo/bar"
-// - /foo/bar relative to /baz/bla becomes @"../../foo/bar"
-
-//That is, the resulting string can be appended to the base URL with URLByAppendingPathComponent:
-//to form an absolute URL to the original resource.
+/// Returns a path for this URL that's relative to the specified file URL,
+/// producing the following results:
+/// - /foo/bar relative to / becomes @"foo/bar"
+/// - /foo/bar relative to /foo/bar becomes @""
+/// - /foo/bar relative to /foo becomes @"bar"
+/// - /foo/bar relative to /foo/baz becomes @"../bar"
+/// - /foo/bar relative to /baz becomes @"../foo/bar"
+/// - /foo/bar relative to /baz/bla becomes @"../../foo/bar"
+///
+/// That is, the resulting string can be appended to the base URL with URLByAppendingPathComponent:
+/// to form an absolute URL to the original resource.
 - (NSString *) pathRelativeToURL: (NSURL *)baseURL;
 
-//Convert a URL to/from a local filesystem path representation.
+/// Convert a URL to/from a local filesystem path representation.
 + (NSURL *) URLFromFileSystemRepresentation: (const char *)representation;
 
-//Whether this URL has the specified file URL as an ancestor.
+/// Whether this URL has the specified file URL as an ancestor.
 - (BOOL) isBasedInURL: (NSURL *)baseURL;
 
-//An analogue for NSString pathComponents:
-//Returns an array containing this URL and every parent directory leading back to the root.
-- (NSArray *) componentURLs;
+/// An analogue for NSString pathComponents:
+/// Returns an array containing this URL and every parent directory leading back to the root.
+- (NSArray<NSURL*> *) componentURLs;
 
-//An analogue for NSString stringsByAppendingPaths:
-- (NSArray *) URLsByAppendingPaths: (NSArray *)paths;
+/// An analogue for NSString stringsByAppendingPaths:
+- (NSArray<NSURL*> *) URLsByAppendingPaths: (NSArray<NSString*> *)paths;
 
 @end
 
 
 @interface NSURL (ADBResourceValues)
 
-//Returns the value for the specified resource property.
-//Returns nil if the property cannot be retrieved for any reason.
-//This is just a simpler calling syntax for NSURL getResourceValue:forKey:error:
-//for when you don't care about failure reasons.
-- (id) resourceValueForKey: (NSString *)key;
+/// Returns the value for the specified resource property.
+/// Returns nil if the property cannot be retrieved for any reason.
+/// This is just a simpler calling syntax for NSURL getResourceValue:forKey:error:
+/// for when you don't care about failure reasons.
+- (id) resourceValueForKey: (NSURLResourceKey)key;
 
-//Returns the localized display name of the file: i.e., the value of NSURLLocalizedNameKey.
+/// Returns the localized display name of the file: i.e., the value of NSURLLocalizedNameKey.
 - (NSString *) localizedName;
 
-//Returns whether this URL represents a directory: i.e. the value of NSURLIsDirectoryKey.
+/// Returns whether this URL represents a directory: i.e. the value of NSURLIsDirectoryKey.
 - (BOOL) isDirectory;
 
 @end
@@ -80,21 +80,21 @@
 
 @interface NSURL (ADBFileTypes)
 
-//Returns the UTI of the file at this URL, or nil if this could not be determined.
+/// Returns the UTI of the file at this URL, or @c nil if this could not be determined.
 @property (readonly, nonatomic) NSString *typeIdentifier;
 
-//Returns YES if the Uniform Type Identifier for the file at this URL is equal to or inherits
-//from the specified UTI, or if the URL has a path extension that would be suitable for the specified UTI.
+/// Returns @c YES if the Uniform Type Identifier for the file at this URL is equal to or inherits
+/// from the specified UTI, or if the URL has a path extension that would be suitable for the specified UTI.
 - (BOOL) conformsToFileType: (NSString *)UTI;
 
-//Given a set of Uniform TypeIdentifiers, returns the first one to which this URL conforms,
-//or nil if it doesn't match any of them.
-- (NSString *) matchingFileType: (NSSet *)UTIs;
+/// Given a set of Uniform TypeIdentifiers, returns the first one to which this URL conforms,
+/// or @c nil if it doesn't match any of them.
+- (NSString *) matchingFileType: (NSSet<NSString*> *)UTIs;
 
-//Returns the recommended file extension to use for files of the specified type.
-//Analogous to NSWorkspace preferredExtensionForFileType:.
+/// Returns the recommended file extension to use for files of the specified type.
+/// Analogous to NSWorkspace preferredExtensionForFileType:.
 + (NSString *) preferredExtensionForFileType: (NSString *)UTI;
 
-//Returns the UTI most applicable to files with the specified extension.
+/// Returns the UTI most applicable to files with the specified extension.
 + (NSString *) fileTypeForExtension: (NSString *)extension;
 @end

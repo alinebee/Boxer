@@ -34,18 +34,18 @@
 }
 
 //A property for bindings. Calls stopAnimation/startAnimation when set.
-@property (assign, getter=isAnimating) BOOL animating;
+@property (nonatomic, assign, getter=isAnimating) BOOL animating;
 
-@property (assign, getter=isIndeterminate) BOOL indeterminate;
-@property (copy) NSColor *color;
-@property (copy) NSColor *backgroundColor;
-@property (assign) BOOL drawsBackground;
-@property (assign) double doubleValue;
-@property (assign) double maxValue;
-@property (assign) BOOL usesThreadedAnimation;
-@property (assign) CGFloat lineWidth;
-@property (assign) CGFloat lineStartOffset;
-@property (assign) CGFloat lineEndOffset;
+@property (nonatomic, assign, getter=isIndeterminate) BOOL indeterminate;
+@property (nonatomic, copy) NSColor *color;
+@property (nonatomic, copy) NSColor *backgroundColor;
+@property (nonatomic, assign) BOOL drawsBackground;
+@property (nonatomic, assign) double doubleValue;
+@property (nonatomic, assign) double maxValue;
+@property (nonatomic, assign) BOOL usesThreadedAnimation;
+@property (nonatomic, assign) CGFloat lineWidth;
+@property (nonatomic, assign) CGFloat lineStartOffset;
+@property (nonatomic, assign) CGFloat lineEndOffset;
 
 - (void)stopAnimation: (id)sender;
 - (void)startAnimation: (id)sender;

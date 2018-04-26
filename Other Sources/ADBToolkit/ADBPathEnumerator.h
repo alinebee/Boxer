@@ -25,12 +25,11 @@
  */
 
 
-//ADBPathEnumerator is an NSDirectoryEnumerator wrapper with a bunch of convenience methods
-//for filtering out unwanted files.
-
 #import <AppKit/AppKit.h>
 
-@interface ADBPathEnumerator : NSEnumerator
+/// @c ADBPathEnumerator is an @c NSDirectoryEnumerator wrapper with a bunch of convenience methods
+/// for filtering out unwanted files.
+@interface ADBPathEnumerator : NSEnumerator<NSString*>
 {
 	NSDirectoryEnumerator *_enumerator;
 	BOOL _skipHiddenFiles;
@@ -79,8 +78,8 @@
 
 
 /// Passthroughs for NSDirectoryEnumerator methods.
-@property (weak, readonly, nonatomic) NSDictionary *fileAttributes;
-@property (weak, readonly, nonatomic) NSDictionary *directoryAttributes;
+@property (weak, readonly, nonatomic) NSDictionary<NSFileAttributeKey, id> *fileAttributes;
+@property (weak, readonly, nonatomic) NSDictionary<NSFileAttributeKey, id> *directoryAttributes;
 
 
 #pragma mark -

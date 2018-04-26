@@ -61,7 +61,7 @@
 - (void) drawRect:(NSRect)rect
 {
     int i;
-    float alpha = 1.0f;
+    CGFloat alpha = 1.0f;
 
     // Determine size based on current bounds
     NSSize size = [self bounds].size;
@@ -181,10 +181,7 @@
 	} while (![[NSThread currentThread] isCancelled]);
 }
 
-- (BOOL) isAnimating
-{
-	return _isAnimating;
-}
+@synthesize animating=_isAnimating;
 
 - (void) setAnimating: (BOOL)animate
 {
@@ -268,10 +265,7 @@
 # pragma mark -
 # pragma mark Accessors
 
-- (NSColor *) color
-{
-    return _foreColor;
-}
+@synthesize color=_foreColor;
 
 - (void) setColor: (NSColor *)value
 {
@@ -281,10 +275,7 @@
     }
 }
 
-- (NSColor *) backgroundColor
-{
-    return _backColor;
-}
+@synthesize backgroundColor=_backColor;
 
 - (void) setBackgroundColor: (NSColor *)value
 {
@@ -295,10 +286,7 @@
     }
 }
 
-- (BOOL) drawsBackground
-{
-    return _drawBackground;
-}
+@synthesize drawsBackground=_drawBackground;
 
 - (void) setDrawsBackground: (BOOL)value
 {
@@ -309,10 +297,7 @@
     [self setNeedsDisplay: YES];
 }
 
-- (BOOL) isIndeterminate
-{
-    return _isIndeterminate;
-}
+@synthesize indeterminate=_isIndeterminate;
 
 - (void) setIndeterminate: (BOOL)isIndeterminate
 {
@@ -321,10 +306,7 @@
     [self setNeedsDisplay: YES];
 }
 
-- (double) doubleValue
-{
-    return _currentValue;
-}
+@synthesize doubleValue=_currentValue;
 
 - (void) setDoubleValue: (double)doubleValue
 {
@@ -337,10 +319,7 @@
     [self setNeedsDisplay: YES];
 }
 
-- (double) maxValue
-{
-    return _maxValue;
-}
+@synthesize maxValue=_maxValue;
 
 - (void) setMaxValue: (double)maxValue
 {
@@ -363,9 +342,6 @@
     }
 }
 
-- (BOOL) usesThreadedAnimation
-{
-    return _usesThreadedAnimation;
-}
+@synthesize usesThreadedAnimation=_usesThreadedAnimation;
 
 @end

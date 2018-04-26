@@ -29,16 +29,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-//ADBShadowedFilesystem mediates access to filesystem resources that are
-//write-shadowed to another location. Files are initially read from a source
-//path, but writes and deletions are applied to a separate shadowed path
-//which is then used in future for reads and writes of that file.
-
 /// The file extension that will be used for flagging source files as deleted.
 extern NSString * const ADBShadowedDeletionMarkerExtension;
 
          
 @class ADBShadowedDirectoryEnumerator;
+/// @c ADBShadowedFilesystem mediates access to filesystem resources that are
+/// write-shadowed to another location. Files are initially read from a source
+/// path, but writes and deletions are applied to a separate shadowed path
+/// which is then used in future for reads and writes of that file.
 @interface ADBShadowedFilesystem : ADBLocalFilesystem
 {
     NSURL *_shadowURL;

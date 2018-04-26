@@ -25,35 +25,34 @@
  */
 
 
-//The ADBPaths category extends NSString to add a few helpful path-related methods.
-
 #import <Cocoa/Cocoa.h>
 
+/// The @c ADBPaths category extends NSString to add a few helpful path-related methods.
 @interface NSString (ADBPaths)
 
-//Performs a sort comparison based on the number of components in the file path, from shallowest to deepest.
+/// Performs a sort comparison based on the number of components in the file path, from shallowest to deepest.
 - (NSComparisonResult) pathDepthCompare: (NSString *)comparison;
 
-//Returns an NSString path relative to another path:
-//This standardizes both paths, trims any shared parent path, and then adds "../"s as necessary.
-//e.g. [@"/Library/Frameworks" pathRelativeToPath: @"/Library/Caches"] will return @"../Frameworks".
+/// Returns an NSString path relative to another path:
+/// This standardizes both paths, trims any shared parent path, and then adds "../"s as necessary.
+/// e.g. [@"/Library/Frameworks" pathRelativeToPath: @"/Library/Caches"] will return @"../Frameworks".
 - (NSString *) pathRelativeToPath: (NSString *)basePath;
 
-//A stricter version of hasPrefix:, which checks whether one path is contained inside another.
-//Note that this does no path standardization - you should do this first if needed.
+/// A stricter version of hasPrefix:, which checks whether one path is contained inside another.
+/// Note that this does no path standardization - you should do this first if needed.
 - (BOOL) isRootedInPath: (NSString *)rootPath;
 
-//Returns an array of full paths for every component in this path.
-- (NSArray *) fullPathComponents;
+/// Returns an array of full paths for every component in this path.
+- (NSArray<NSString*> *) fullPathComponents;
 
 @end
 
 @interface NSArray (ADBPaths)
 
-//Filters an array of paths to return only the shallowest members.
-//maxRelativeDepth is relative to the shallowest member:
-//maxRelativeDepth = 0 returns paths at the shallowest depth,
-//maxRelativeDepth = 1 returns paths at the shallowest and next-shallowest depth etc.
-- (NSArray *) pathsFilteredToDepth: (NSUInteger)maxRelativeDepth;
+/// Filters an array of paths to return only the shallowest members.
+/// maxRelativeDepth is relative to the shallowest member:
+/// maxRelativeDepth = 0 returns paths at the shallowest depth,
+/// maxRelativeDepth = 1 returns paths at the shallowest and next-shallowest depth etc.
+- (NSArray<NSString*> *) pathsFilteredToDepth: (NSUInteger)maxRelativeDepth;
 
 @end

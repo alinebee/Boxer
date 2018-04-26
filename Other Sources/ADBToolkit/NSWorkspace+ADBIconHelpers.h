@@ -24,14 +24,14 @@
  *	POSSIBILITY OF SUCH DAMAGE.
  */
 
-//The ADBIconHelpers category adds further methods to NSWorkspace for handling
-//file and folder icons.
 
 #import <Cocoa/Cocoa.h>
 
+/// The ADBIconHelpers category adds further methods to NSWorkspace for handling
+/// file and folder icons.
 @interface NSWorkspace (ADBIconHelpers)
 
-//Returns whether the file or folder at the specified path has a custom icon resource.
+/// Returns whether the file or folder at the specified path has a custom icon resource.
 - (BOOL) fileHasCustomIcon: (NSString *)path;
 - (BOOL) URLHasCustomIcon: (NSURL *)URL;
 

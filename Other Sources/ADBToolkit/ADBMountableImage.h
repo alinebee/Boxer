@@ -24,9 +24,6 @@
  *	POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ADBMountableFilesystem is a local filesystem variant whose baseURL represents an image
-//that can be mounted as a volume by hdiutil. It mounts the volume whenever file access
-//is needed, and can unmount the volume automatically once it has finished.
 
 #import "ADBLocalFilesystem.h"
 
@@ -46,6 +43,9 @@ typedef NS_ERROR_ENUM(ADBMountableImageErrorDomain, ADBMountableImageErrors) {
 };
 
 
+/// @c ADBMountableFilesystem is a local filesystem variant whose baseURL represents an image
+/// that can be mounted as a volume by hdiutil. It mounts the volume whenever file access
+/// is needed, and can unmount the volume automatically once it has finished.
 @interface ADBMountableImage : ADBLocalFilesystem
 {
     NSURL *_mountedVolumeURL;

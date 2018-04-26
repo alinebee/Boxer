@@ -25,17 +25,16 @@
  */
 
 
-//The ADBTemporaryFiles category extends NSFileManager with methods for creating temporary files
-//and folders. Note that the files and folders created will not necessarily be cleaned up by the
-//system: the application is responsible for deleting them once it is finished.
-
 #import <Foundation/Foundation.h>
 
+/// The @c ADBTemporaryFiles category extends @c NSFileManager with methods for creating temporary files
+/// and folders. Note that the files and folders created will not necessarily be cleaned up by the
+/// system: the application is responsible for deleting them once it is finished.
 @interface NSFileManager (ADBTemporaryFiles)
 
-//Creates a new temporary directory in the system temp directory with the specified prefix,
-//to which will be appended a path extension of 8 randomly generated digits (a la mkdtemp()).
-//Returns the URL to the new temporary directory, or nil and sets outError if an error occurred.
+/// Creates a new temporary directory in the system temp directory with the specified prefix,
+/// to which will be appended a path extension of 8 randomly generated digits (a la mkdtemp()).
+/// Returns the URL to the new temporary directory, or nil and sets outError if an error occurred.
 - (NSURL *) createTemporaryURLWithPrefix: (NSString *)namePrefix error: (out NSError **)outError;
 
 @end

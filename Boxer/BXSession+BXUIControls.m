@@ -891,9 +891,9 @@
         [confirmation adoptIconFromWindow: self.windowForSheet];
         
         [confirmation beginSheetModalForWindow: self.windowForSheet
-                                 modalDelegate: self
-                                didEndSelector: @selector(_mergeConfirmationDidEnd:returnCode:contextInfo:)
-                                   contextInfo: NULL];
+                             completionHandler: ^(NSModalResponse returnCode) {
+                                 [self _mergeConfirmationDidEnd:confirmation returnCode:returnCode contextInfo:NULL];
+                             }];
     }
 }
 

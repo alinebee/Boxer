@@ -86,6 +86,8 @@
                            toPath: (NSString *)destination
                         copyFiles: (BOOL)copy;
 
+/// Create/initialize a suitable file transfer operation from the specified source path
+/// to the specified destination.
 - (instancetype) initFromPath: (NSString *)source
                        toPath: (NSString *)destination
                     copyFiles: (BOOL)copy;

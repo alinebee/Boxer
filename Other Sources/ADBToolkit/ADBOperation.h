@@ -35,22 +35,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef float ADBOperationProgress;
 
-#define ADBUnknownTimeRemaining -1
+#define ADBUnknownTimeRemaining -1.0
 
 #pragma mark -
 #pragma mark Notification constants
 
 //Sent when the operation is about to start.
-extern NSString * const ADBOperationWillStart;
+extern NSNotificationName const ADBOperationWillStart;
 
 //Sent periodically while the operation is in progress.
-extern NSString * const ADBOperationInProgress;
+extern NSNotificationName const ADBOperationInProgress;
 
 //Sent when the operation ends (be it because of success, failure or cancellation.)
-extern NSString * const ADBOperationDidFinish;
+extern NSNotificationName const ADBOperationDidFinish;
 
 //Sent when the operation gets cancelled.
-extern NSString * const ADBOperationWasCancelled;
+extern NSNotificationName const ADBOperationWasCancelled;
 
 
 #pragma mark -
@@ -82,7 +82,7 @@ extern NSString * const ADBOperationIndeterminateKey;
 
 @interface ADBOperation : NSOperation
 {
-	__unsafe_unretained id <ADBOperationDelegate> _delegate;
+	__weak id <ADBOperationDelegate> _delegate;
 	id _contextInfo;
 	
 	SEL _willStartSelector;
@@ -99,7 +99,7 @@ extern NSString * const ADBOperationIndeterminateKey;
 #pragma mark Configuration properties
 
 /// The delegate that will receive notification messages about this operation.
-@property (assign, nullable) id <ADBOperationDelegate> delegate;
+@property (weak, nullable) id <ADBOperationDelegate> delegate;
 
 /// The callback methods that will be called on the delegate for progress notifications.
 /// These default to ADBOperationDelegate operationInProgress:, operationDidFinish: etc.

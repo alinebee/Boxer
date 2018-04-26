@@ -3536,7 +3536,6 @@
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				9FBC3D5E0F56EA69001811F2 /* Copy Bundled Frameworks */,
-				9FA2E5DF109D257200E50623 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -3560,7 +3559,6 @@
 				9F2D30D415B8233800FAE848 /* Resources */,
 				9F2D314E15B8233800FAE848 /* Frameworks */,
 				9F2D316515B8233800FAE848 /* Copy Bundled Frameworks */,
-				9F2D316E15B8233800FAE848 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -3805,37 +3803,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		9F2D316E15B8233800FAE848 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			comments = "This deletes the extraneous plugin resources from the BGHUDAppKit framework. See README.textile in the framework's source folder for details.";
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "rm -fR \"${CONFIGURATION_BUILD_DIR}/${WRAPPER_NAME}/Contents/Frameworks/BGHUDAppKit.framework/Versions/Current/Resources/BGHUDAppKitPlugin.ibplugin\"";
-		};
-		9FA2E5DF109D257200E50623 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			comments = "This deletes the extraneous plugin resources from the BGHUDAppKit framework. See README.textile in the framework's source folder for details.";
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "rm -fR \"${CONFIGURATION_BUILD_DIR}/${WRAPPER_NAME}/Contents/Frameworks/BGHUDAppKit.framework/Versions/Current/Resources/BGHUDAppKitPlugin.ibplugin\"";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8D11072C0486CEB800E47090 /* Sources */ = {

@@ -77,6 +77,8 @@ Para montarla como una unidad de disquete, añada [32;1m-t floppy[0m.
 "PROGRAM_MOUNT_STATUS_2" = "%c: está montada como %s
 ";
 
+"PROGRAM_MOUNT_STATUS_FORMAT" = "%-5s  %-58s %-12s\n";
+
 "PROGRAM_MOUNT_ERROR_1" = "La carpeta %s no existe.
 ";
 

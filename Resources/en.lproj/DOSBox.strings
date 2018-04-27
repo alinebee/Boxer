@@ -1,4 +1,4 @@
-﻿/*
+/*
 This translation file is based on Boxer 0.88's default DOSBox translation file. A bunch of redundant strings have been removed for ease of translation, and many descriptions have been rewritten with expanded examples.
 
 When translating, ensure that the strings wrap nicely to an 80-column display. DOS does not perform automatic word-wrapping, only character-wrapping.
@@ -77,6 +77,8 @@ To mount it as a floppy drive, add [32;1m-t floppy[0m.
 
 "PROGRAM_MOUNT_STATUS_2" = "%c: is mounted as %s
 ";
+
+"PROGRAM_MOUNT_STATUS_FORMAT" = "%-5s  %-58s %-12s\n";
 
 "PROGRAM_MOUNT_ERROR_1" = "Folder %s does not exist.
 ";

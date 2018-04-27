@@ -33,8 +33,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// ADBLineEnumerator allows easy enumeration of the lines of an NSString.
-/// It is exposed as a method on \c NSString by the \c ADBStringFormatting category,
+/// @c ADBLineEnumerator allows easy enumeration of the lines of an NSString.
+/// It is exposed as a method on @c NSString by the @c ADBStringFormatting category,
 /// but can be used separately also.
 @interface ADBLineEnumerator : NSEnumerator<NSString*>
 {

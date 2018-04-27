@@ -28,20 +28,20 @@
 
 @interface NSView (ADBDrawingHelpers)
 
-//Returns the view's offset from the bottom left corner of the window.
-//Useful for aligning pattern phase when drawing pattern colours.
+/// Returns the view's offset from the bottom left corner of the window.
+/// Useful for aligning pattern phase when drawing pattern colours.
 - (NSPoint) offsetFromWindowOrigin;
 
-//Returns whether the view is in an active window (the main window or a floating panel)
-//in the active application.
-//This is intended to reflect whether the window appears inactive (dimmed titlebar),
-//and thus whether the controls within it should draw an active or inactive appearance.
-//Note that views are not automatically redrawn when the application becomes active/inactive
-//or when the window gains/loses main window status.
+/// Returns whether the view is in an active window (the main window or a floating panel)
+/// in the active application.
+/// This is intended to reflect whether the window appears inactive (dimmed titlebar),
+/// and thus whether the controls within it should draw an active or inactive appearance.
+/// Note that views are not automatically redrawn when the application becomes active/inactive
+/// or when the window gains/loses main window status.
 - (BOOL) windowIsActive;
 
-//Returns a bitmap image snapshot of the specified rectangle of the view
-//(as expressed in the view's coordinate system.)
+/// Returns a bitmap image snapshot of the specified rectangle of the view
+/// (as expressed in the view's coordinate system.)
 - (nonnull NSImage *) imageWithContentsOfRect: (NSRect)rect;
 
 @end

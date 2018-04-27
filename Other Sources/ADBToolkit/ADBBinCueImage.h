@@ -24,14 +24,13 @@
  *	POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ADBBinCueImage is an ADBISOImage subclass for handling the minor format variations
-//from CDRWin BIN/CUE binary images, as well as processing their accompanying cue sheets.
-
 
 #import "ADBISOImage.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// @c ADBBinCueImage is an @c ADBISOImage subclass for handling the minor format variations
+/// from CDRWin BIN/CUE binary images, as well as processing their accompanying cue sheets.
 @interface ADBBinCueImage : ADBISOImage
     
 #pragma mark -
@@ -43,16 +42,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Returns the location of the binary image for the specified CUE file,
 /// as an absolute OS X filesystem URL resolved relative to the CUE's location.
-/// Returns \c nil if the binary image path could not be determined.
+/// Returns @c nil if the binary image path could not be determined.
 + (nullable NSURL *) dataImageURLInCueAtURL: (NSURL *)cueURL error: (out NSError **)outError;
 
 /// Given a string representing the contents of a cue file, returns the raw paths in the exact
 /// form they are written.
 + (NSArray<NSString*> *) rawPathsInCueContents: (NSString *)cueContents;
 
-/// Returns \c YES if the specified path contains a parseable cue file, \c NO otherwise.
-/// Populates \c outError if there is a problem accessing the file.
-///FIXME: returning \NO will make Swift look for the error!
+/// Returns @c YES if the specified path contains a parseable cue file, \c NO otherwise.
+/// Populates @c outError if there is a problem accessing the file.
+/// FIXME: returning @c NO will make Swift look for the error!
 + (BOOL) isCueAtURL: (NSURL *)cueURL error: (out NSError **)outError;
 
 @end

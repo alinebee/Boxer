@@ -36,9 +36,9 @@
 /// The default interval in seconds at which to poll the progress of the file transfer.
 #define ADBFileTransferDefaultPollInterval 0.5
 
-/// ADBFileTransfer is an ADBOperation subclass class for performing asynchronous file copy/move.
+/// @c ADBFileTransfer is an @c ADBOperation subclass class for performing asynchronous file copy/move.
 /// ADBFileTransfer transfers only a single file/directory to a single destination: see also
-/// ADBFileTransferSet for a batch transfer operation.
+/// @c ADBFileTransferSet for a batch transfer operation.
 @interface ADBSingleFileTransfer : ADBOperation <ADBFileTransfer>
 {
 	BOOL _copyFiles;

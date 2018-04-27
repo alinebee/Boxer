@@ -30,12 +30,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-//ADBGLTexture wraps an OpenGL texture, tracks information about its size
-//and parameters, and provides easy methods to write to and draw from it.
-
 #pragma mark -
 #pragma mark Implementation
 
+/// @c ADBGLTexture wraps an OpenGL texture, tracks information about its size
+/// and parameters, and provides easy methods to write to and draw from it.
 @interface ADBTexture2D : NSObject
 {
     CGLContextObj _context;
@@ -52,29 +51,29 @@ NS_ASSUME_NONNULL_BEGIN
     GLenum _magFilter;
 }
 
-//The context in which this texture was created.
+/// The context in which this texture was created.
 @property (readonly, nonatomic) CGLContextObj context;
 
-//The GL texture handle for this texture.
+/// The GL texture handle for this texture.
 @property (readonly, nonatomic) GLuint texture;
 
 //The type of this texture: one of GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE.
 @property (readonly, nonatomic) GLenum type;
 
-//The size in texels of this texture.
+/// The size in texels of this texture.
 @property (readonly, nonatomic) CGSize textureSize;
 
-//The region (expressed in texels) of the texture that is filled by content:
-//i.e., the usable area of the texture.
-//This is used by drawOntoVertices:error: and other operations that work with
-//the texture content as a whole.
+/// The region (expressed in texels) of the texture that is filled by content:
+/// i.e., the usable area of the texture.
+/// This is used by drawOntoVertices:error: and other operations that work with
+/// the texture content as a whole.
 @property (assign, nonatomic) CGRect contentRegion;
 
-//The above expressed in normalized texture coordinates (0-1).
+/// The above expressed in normalized texture coordinates (0-1).
 @property (assign, nonatomic) CGRect normalizedContentRegion;
 
-//Whether the texture uses texels or normalized (0-1) texture coordinates for draw functions.
-//Will be NO for GL_TEXTURE_RECTANGLE textures, YES for everything else.
+/// Whether the texture uses texels or normalized (0-1) texture coordinates for draw functions.
+/// Will be @c NO for @c GL_TEXTURE_RECTANGLE textures, @c YES for everything else.
 @property (readonly, nonatomic) BOOL usesNormalizedTextureCoordinates;
 
 

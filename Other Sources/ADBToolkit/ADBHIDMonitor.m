@@ -78,32 +78,32 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 + (NSDictionary *) joystickDescriptor
 {
 	return @{
-        (NSString *)CFSTR(kIOHIDDeviceUsagePageKey): @(kHIDPage_GenericDesktop),
-        (NSString *)CFSTR(kIOHIDDeviceUsageKey): @(kHIDUsage_GD_Joystick),
+        @kIOHIDDeviceUsagePageKey: @(kHIDPage_GenericDesktop),
+        @kIOHIDDeviceUsageKey: @(kHIDUsage_GD_Joystick),
     };
 }
 
 + (NSDictionary *) gamepadDescriptor
 {
 	return @{
-        (NSString *)CFSTR(kIOHIDDeviceUsagePageKey): @(kHIDPage_GenericDesktop),
-        (NSString *)CFSTR(kIOHIDDeviceUsageKey): @(kHIDUsage_GD_GamePad),
+        @kIOHIDDeviceUsagePageKey: @(kHIDPage_GenericDesktop),
+        @kIOHIDDeviceUsageKey: @(kHIDUsage_GD_GamePad),
     };
 }
 
 + (NSDictionary *) keyboardDescriptor
 {
 	return @{
-        (NSString *)CFSTR(kIOHIDDeviceUsagePageKey): @(kHIDPage_GenericDesktop),
-        (NSString *)CFSTR(kIOHIDDeviceUsageKey): @(kHIDUsage_GD_Keyboard),
+        @kIOHIDDeviceUsagePageKey: @(kHIDPage_GenericDesktop),
+        @kIOHIDDeviceUsageKey: @(kHIDUsage_GD_Keyboard),
     };
 }
 
 + (NSDictionary *) mouseDescriptor
 {
 	return @{
-        (NSString *)CFSTR(kIOHIDDeviceUsagePageKey): @(kHIDPage_GenericDesktop),
-        (NSString *)CFSTR(kIOHIDDeviceUsageKey): @(kHIDUsage_GD_Mouse),
+        @kIOHIDDeviceUsagePageKey: @(kHIDPage_GenericDesktop),
+        @kIOHIDDeviceUsageKey: @(kHIDUsage_GD_Mouse),
     };
 }
 

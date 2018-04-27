@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype) filesystemWithBaseURL: (NSURL *)baseURL;
 - (instancetype) initWithBaseURL: (NSURL *)baseURL;
 
-//Redeclared to make explicit the ADB*Handle protocols the handle will support.
+/// Redeclared to make explicit the ADB*Handle protocols the handle will support.
 - (nullable id <ADBFileHandleAccess, ADBReadable, ADBWritable, ADBSeekable>) fileHandleAtPath: (NSString *)path
                                                                                       options: (ADBHandleOptions)options
                                                                                         error: (out NSError **)outError;

@@ -25,11 +25,6 @@
  */
 
 
-//ADBHIDEvent is a high-level replacement for DDHidEvent, modelled after NSEvents and passed
-//to ADBHIDDeviceDelegate delegates instead of the old DDHidLib delegate methods.
-//(At some point this will be factored into DDHidLib to become the standard delegate interface.)
-
-
 #import <DDHidLib/DDHidLib.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -62,6 +57,9 @@ typedef NS_ENUM(NSInteger, ADBHIDPOVSwitchDirection) {
 };
 
 
+/// @c ADBHIDEvent is a high-level replacement for DDHidEvent, modelled after @c NSEvents and passed
+/// to @c ADBHIDDeviceDelegate delegates instead of the old DDHidLib delegate methods.
+/// (At some point this will be factored into DDHidLib to become the standard delegate interface.)
 @interface ADBHIDEvent : NSObject <NSCopying>
 {
 	ADBHIDEventType _type;
@@ -80,67 +78,67 @@ typedef NS_ENUM(NSInteger, ADBHIDPOVSwitchDirection) {
 #pragma mark -
 #pragma mark Properties
 
-//The type of the event, as one of the above constants.
+/// The type of the event, as one of the above constants.
 @property (assign, nonatomic) ADBHIDEventType type;
 
-//The device on which the element that triggered the event is located.
+/// The device on which the element that triggered the event is located.
 @property (strong, nonatomic) DDHidDevice *device;
 
-//The element that triggered the event.
+/// The element that triggered the event.
 @property (strong, nonatomic) DDHidElement *element;
 
-//The stick on which the element that triggered the event is located.
-//Only relevant for joystick events.
+/// The stick on which the element that triggered the event is located.
+/// Only relevant for joystick events.
 @property (strong, nonatomic) DDHidJoystickStick *stick;
 
-//The order of the stick in the device's enumeration order.
-//Only relevant for joystick events.
+/// The order of the stick in the device's enumeration order.
+/// Only relevant for joystick events.
 @property (assign, nonatomic) NSUInteger stickNumber;
 
-//The order of the POV switch in the device's enumeration order.
-//Only relevant for POV events.
+/// The order of the POV switch in the device's enumeration order.
+/// Only relevant for POV events.
 @property (assign, nonatomic) NSUInteger POVNumber;
 
 
 //The following three variables all correspond to the usage ID of the element in question.
 
-//The joystick or mouse axis that triggered the event.
-//Corresponds to one of the kHIDUsage_GD_X, kHIDUsage_GD_Y etc. constants.
-//(Note that for joysticks, this may be unique only in combination with stick.)
+/// The joystick or mouse axis that triggered the event.
+/// Corresponds to one of the <code>kHIDUsage_GD_X</code>, @c kHIDUsage_GD_Y etc. constants.
+/// (Note that for joysticks, this may be unique only in combination with stick.)
 @property (readonly, nonatomic) NSUInteger axis;
 
-//The device keycode that triggered the event.
-//Corresponds to one of the kHIDUsage_KeyboardA etc. constants.
+/// The device keycode that triggered the event.
+/// Corresponds to one of the @c kHIDUsage_KeyboardA etc. constants.
 @property (readonly, nonatomic) NSUInteger key;
 
-//The number of the button that triggered the event.
-//Corresponds to one of the kHIDUsage_Button_1 etc. constants.
+/// The number of the button that triggered the event.
+/// Corresponds to one of the @c kHIDUsage_Button_1 etc. constants.
 @property (readonly, nonatomic) NSUInteger buttonNumber;
 
 
-//The absolute position of the axis: normalized to within -65535 to +65535 (where 0 is centered).
-//Will be 0 if no absolute position is available or absolute position is meaningless (e.g. mouse axes).
+/// The absolute position of the axis: normalized to within -65535 to +65535 (where 0 is centered).
+/// Will be 0 if no absolute position is available or absolute position is meaningless (e.g. mouse axes).
 @property (assign, nonatomic) NSInteger axisPosition;
 
-//The delta of the axis since the last event. Will be 0 if no delta information is available.
+/// The delta of the axis since the last event. Will be 0 if no delta information is available.
 @property (assign, nonatomic) NSInteger axisDelta;
 
-//The angle of the POV switch: normalized to within 0-35999 (clockwise from north) or ADBHIDPOVCentered for centered.
+/// The angle of the POV switch: normalized to within 0-35999 (clockwise from north) or ADBHIDPOVCentered for centered.
 @property (assign, nonatomic) NSInteger POVDirection;
 
 
 #pragma mark -
 #pragma mark Helper class methods
 
-//Returns the closest ADBHIDPOVSwitchDirection constant for the specified POV direction.
+/// Returns the closest @c ADBHIDPOVSwitchDirection constant for the specified POV direction.
 + (ADBHIDPOVSwitchDirection) closest8WayDirectionForPOV: (NSInteger)direction;
 
-//Normalizes the specified direction to the closest cardinal (NSEW) ADBHIDPOVSwitchDirection constant.
+/// Normalizes the specified direction to the closest cardinal (NSEW) @c ADBHIDPOVSwitchDirection constant.
 + (ADBHIDPOVSwitchDirection) closest4WayDirectionForPOV: (NSInteger)direction;
 
-//Normalizes the specified direction to the closest cardinal (NSEW) ADBHIDPOVSwitchDirection constant,
-//taking into account which cardinal POV direction it was in before. This makes the corners
-//'sticky' to avoid unintentional switching.
+/// Normalizes the specified direction to the closest cardinal (NSEW) @c ADBHIDPOVSwitchDirection constant,
+/// taking into account which cardinal POV direction it was in before. This makes the corners
+/// 'sticky' to avoid unintentional switching.
 + (ADBHIDPOVSwitchDirection) closest4WayDirectionForPOV: (NSInteger)direction
                                             previousPOV: (ADBHIDPOVSwitchDirection)oldDirection;
 @end

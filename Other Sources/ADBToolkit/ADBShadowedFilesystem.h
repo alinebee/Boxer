@@ -24,6 +24,7 @@
  *	POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #import <Foundation/Foundation.h>
 #import "ADBLocalFilesystem.h"
 
@@ -34,6 +35,7 @@ extern NSString * const ADBShadowedDeletionMarkerExtension;
 
          
 @class ADBShadowedDirectoryEnumerator;
+
 /// @c ADBShadowedFilesystem mediates access to filesystem resources that are
 /// write-shadowed to another location. Files are initially read from a source
 /// path, but writes and deletions are applied to a separate shadowed path
@@ -56,6 +58,8 @@ extern NSString * const ADBShadowedDeletionMarkerExtension;
 /// Return a new filesystem manager rooted in the specified base URL but using
 /// the specified shadow URL to store shadowed files and deletion markers.
 + (instancetype) filesystemWithBaseURL: (NSURL *)baseURL shadowURL: (NSURL *)shadowURL;
+/// Return a new filesystem manager rooted in the specified base URL but using
+/// the specified shadow URL to store shadowed files and deletion markers.
 - (instancetype) initWithBaseURL: (NSURL *)baseURL shadowURL: (NSURL *)shadowURL;
 
 

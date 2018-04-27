@@ -37,14 +37,15 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 
 #pragma mark Relative path-based filesystem access
 
-//This protocol allows filesystems to handle filesystem-relative paths: that is, paths that are
-//relative to the root of the represented logical filesystem, instead of referring to anywhere
-//in the actual OS X filesystem.
-//IMPLEMENTATION REQUIREMENTS:
-//- the path @"/" should be treated as the root of the filesystem.
-//- relative paths like @"path/to/file.txt" should be resolved relative to the root of the filesystem.
 
 @protocol ADBFilesystemPathEnumeration;
+
+/// This protocol allows filesystems to handle filesystem-relative paths: that is, paths that are
+/// relative to the root of the represented logical filesystem, instead of referring to anywhere
+/// in the actual OS X filesystem.
+/// IMPLEMENTATION REQUIREMENTS:
+/// - the path @"/" should be treated as the root of the filesystem.
+/// - relative paths like @"path/to/file.txt" should be resolved relative to the root of the filesystem.
 @protocol ADBFilesystemPathAccess <NSObject>
 
 - (id <ADBFilesystemPathEnumeration>) enumeratorAtPath: (NSString *)path
@@ -70,8 +71,8 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 - (nullable NSDictionary *) attributesOfFileAtPath: (NSString *)path
                                              error: (out NSError **)outError;
 
-///Returns the raw byte data of the file at the specified path. <br>
-///Returns \c nil and populates \c outError if the file's contents could not be read.
+/// Returns the raw byte data of the file at the specified path. <br>
+/// Returns \c nil and populates \c outError if the file's contents could not be read.
 - (nullable NSData *) contentsOfFileAtPath: (NSString *)path
                                      error: (out NSError **)outError;
 
@@ -82,9 +83,12 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 /// Returns \c YES if the operation was successful, or \c NO and populates \c outError on failure.
 - (BOOL) removeItemAtPath: (NSString *)path error: (out NSError **)outError;
 
-/// Copy/move an item from the specified source path to the specified destination.
+/// Copy an item from the specified source path to the specified destination.
 /// Returns \c YES if the operation was successful, or \c NO and populates \c outError on failure.
 - (BOOL) copyItemAtPath: (NSString *)fromPath toPath: (NSString *)toPath error: (out NSError **)outError;
+
+/// Move an item from the specified source path to the specified destination.
+/// Returns \c YES if the operation was successful, or \c NO and populates \c outError on failure.
 - (BOOL) moveItemAtPath: (NSString *)fromPath toPath: (NSString *)toPath error: (out NSError **)outError;
 
 /// Creates a new directory at the specified URL, optionally creating any missing directories in-between.
@@ -115,11 +119,13 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 
 /// This protocol extends the logical path access protocol to allow to handle 'logical URLs':
 /// file URLs prefixed by the filesystem's base URL and followed by a logical path within the
-/// filesystem.<br>
+/// filesystem.
+///
 /// These URLs do not necessarily exist in the real OS X filesystem and may not be usable by
 /// standard \c NSURL introspection methods or AppKit loading methods. They are intended mainly
 /// for storing filesystem-unique paths and simplifying lookups across multiple filesystems.<br>
-/// IMPLEMENTATION REQUIREMENTS:<br>
+/// IMPLEMENTATION REQUIREMENTS:
+///
 /// - URLs converted to logical filesystem paths must be absolute, i.e. begin with @"/".
 @protocol ADBFilesystemLogicalURLAccess <NSObject>
 
@@ -157,16 +163,17 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 #pragma mark Local URL filesystem access
 
 @protocol ADBFilesystemFileURLEnumeration;
-///This protocol allows a filesystem to convert its own logical paths to and from real
-///OS X filesystem locations. Unlike the logical URL access protocol above, these locations
-///must be actually accessible to standard OS X filesystem tools.
-///IMPLEMENTATION REQUIREMENTS:<br>
-/// - URLs returned by these methods must be accessible under the standard OS X file access APIs
-///  (NSFileManager, NSURL getPropertyValue:forKey:error: et. al.), though the files themselves
-///  may not yet exist.<br>
-/// - URLs converted to logical filesystem paths must be absolute, i.e. begin with @"/".
+/// This protocol allows a filesystem to convert its own logical paths to and from real
+/// OS X filesystem locations. Unlike the logical URL access protocol above, these locations
+/// must be actually accessible to standard OS X filesystem tools.
+/// IMPLEMENTATION REQUIREMENTS:
 ///
-///It is not required that URLs will be identical when 'round-tripped' through these methods.
+///  - URLs returned by these methods must be accessible under the standard OS X file access APIs
+///   (NSFileManager, NSURL getPropertyValue:forKey:error: et. al.), though the files themselves
+///   may not yet exist.<br>
+///  - URLs converted to logical filesystem paths must be absolute, i.e. begin with @"/".
+///
+/// It is not required that URLs will be identical when 'round-tripped' through these methods.
 @protocol ADBFilesystemFileURLAccess <NSObject>
 
 /// Return the canonical OS X filesystem URL that corresponds
@@ -185,7 +192,7 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 /// Returns an enumerator for the specified local filesystem URL, which will return NSURL objects
 /// pointing to resources on the local filesystem.
 /// This enumerator should respect the same parameters as NSFileManager's
-/// enumeratorAtURL:includingPropertiesForKeys:options:errorHandler: method.
+/// @c enumeratorAtURL:includingPropertiesForKeys:options:errorHandler: method.
 - (nullable id <ADBFilesystemFileURLEnumeration>) enumeratorAtFileURL: (NSURL *)URL
                                            includingPropertiesForKeys: (NSArray<NSURLResourceKey> *)keys
                                                               options: (NSDirectoryEnumerationOptions)mask
@@ -201,10 +208,10 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 /// The filesystem represented by this enumerator.
 - (id <ADBFilesystemPathAccess>) filesystem;
 
-- (NSDictionary *) fileAttributes;
+- (NSDictionary<NSFileAttributeKey,id> *) fileAttributes;
 
 - (void) skipDescendants;
-- (NSUInteger) level;
+@property (readonly) NSUInteger level;
 
 /// Returns a filesystem-relative logical path.
 /// Note that unlike NSDirectoryEnumerator, which returns paths relative to the path being enumerated,
@@ -220,7 +227,7 @@ typedef BOOL (^ADBFilesystemFileURLErrorHandler)(NSURL *url, NSError *error);
 - (id <ADBFilesystemFileURLAccess>) filesystem;
 
 - (void) skipDescendants;
-- (NSUInteger) level;
+@property (readonly) NSUInteger level;
 
 /// Returns an absolute OS X filesystem URL.
 - (nullable NSURL *) nextObject;

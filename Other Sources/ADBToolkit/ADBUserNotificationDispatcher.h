@@ -29,7 +29,7 @@
 
 typedef void(^ADBUserNotificationActivationHandler)(NSUserNotification *notification);
 
-/// \c ADBUserNotificationDispatcher is a delegate for OS X 10.8+'s @c NSUserNotificationCenter delivery mechanism.
+/// @c ADBUserNotificationDispatcher is a delegate for OS X 10.8+'s @c NSUserNotificationCenter delivery mechanism.
 /// It allows notifications to be scheduled with blocks that are called when they are clicked on by the
 /// user, and allows each notification to be given a type and sender to permit easy cleanup of stale
 /// notifications.

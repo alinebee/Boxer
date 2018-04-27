@@ -172,7 +172,8 @@ typedef NS_ENUM(int, ADBHandleSeekLocation) {
 /// \c FILE * handle and is responsible for closing the handle when it has finished.
 /// If adopt is \c NO, the \c FILE * handle will only be viable for the lifetime
 /// of the \c ADBFileHandle instance: i.e. it may be closed when the instance
-/// is deallocated.<br>
+/// is deallocated.
+///
 /// This method should raise an assertion if adopt is \c YES and ownership has
 /// already been taken of the file handle.
 /// Calling \c fclose() on the resulting handle should have the same effect as
@@ -190,8 +191,8 @@ typedef NS_ENUM(int, ADBHandleSeekLocation) {
 
 #pragma mark - Abstract interface definitions
 
-//A base implementation that presents a funopen() wrapper around its own access methods.
-//This must be subclassed with concrete implementations of all data access methods.
+/// A base implementation that presents a funopen() wrapper around its own access methods.
+/// This must be subclassed with concrete implementations of all data access methods.
 @interface ADBAbstractHandle : NSObject <ADBFileHandleAccess>
 {
     /// A funopen() handle constructed the first time a FILE * handle is requested
@@ -258,8 +259,8 @@ typedef NS_ENUM(int, ADBHandleSeekLocation) {
                                  mode: (const char *)mode
                                 error: (out NSError **)outError;
 
-//Wraps an existing stdlib file handle. If \c closeOnDealloc is \c YES, the instance will
-//take control of the file handle and close it when the instance itself is deallocated.
+/// Wraps an existing stdlib file handle. If \c closeOnDealloc is \c YES, the instance will
+/// take control of the file handle and close it when the instance itself is deallocated.
 - (instancetype) initWithOpenFileHandle: (FILE *)handle
                          closeOnDealloc: (BOOL)closeOnDealloc;
 

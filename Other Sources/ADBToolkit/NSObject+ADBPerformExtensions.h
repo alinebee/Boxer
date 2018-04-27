@@ -24,10 +24,10 @@
  *	POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #import <Foundation/Foundation.h>
 
-//ADBPerformExtensions provides helper methods for performing selectors with arbitrary arguments.
-
+/// @c ADBPerformExtensions provides helper methods for performing selectors with arbitrary arguments.
 @interface NSObject (ADBPerformExtensions)
 
 - (void) performSelector: (SEL)selector
@@ -62,9 +62,9 @@
                                selector: (SEL)selector
                               arguments: (void *)arg1, ...;
 
-//For use with downstream variadic methods like performSelector:withValues:...).
-//args is expected to be already started with va_start(): It is the responsibility
-//of the calling context to call va_end() after this method returns.
+/// For use with downstream variadic methods like performSelector:withValues:...).
+/// args is expected to be already started with va_start(): It is the responsibility
+/// of the calling context to call va_end() after this method returns.
 + (NSInvocation *) invocationWithTarget: (id)target
                                selector: (SEL)selector
                           firstArgument: (void *)arg1

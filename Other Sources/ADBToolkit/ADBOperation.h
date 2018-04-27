@@ -25,10 +25,6 @@
  */
 
 
-//ADBOperation is an abstract base class for NSOperations, which can be observed by a delegate
-//and which sends periodic progress notifications.
-//ADBOperationDelegate defines the interface for delegates.
-
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -40,16 +36,16 @@ typedef float ADBOperationProgress;
 #pragma mark -
 #pragma mark Notification constants
 
-//Sent when the operation is about to start.
+/// Sent when the operation is about to start.
 extern NSNotificationName const ADBOperationWillStart;
 
-//Sent periodically while the operation is in progress.
+/// Sent periodically while the operation is in progress.
 extern NSNotificationName const ADBOperationInProgress;
 
-//Sent when the operation ends (be it because of success, failure or cancellation.)
+/// Sent when the operation ends (be it because of success, failure or cancellation.)
 extern NSNotificationName const ADBOperationDidFinish;
 
-//Sent when the operation gets cancelled.
+/// Sent when the operation gets cancelled.
 extern NSNotificationName const ADBOperationWasCancelled;
 
 
@@ -80,6 +76,9 @@ extern NSString * const ADBOperationIndeterminateKey;
 
 @protocol ADBOperationDelegate;
 
+/// @c ADBOperation is an abstract base class for NSOperations, which can be observed by a delegate
+/// and which sends periodic progress notifications.
+/// @c ADBOperationDelegate defines the interface for delegates.
 @interface ADBOperation : NSOperation
 {
 	__weak id <ADBOperationDelegate> _delegate;
@@ -102,7 +101,7 @@ extern NSString * const ADBOperationIndeterminateKey;
 @property (weak, nullable) id <ADBOperationDelegate> delegate;
 
 /// The callback methods that will be called on the delegate for progress notifications.
-/// These default to ADBOperationDelegate operationInProgress:, operationDidFinish: etc.
+/// These default to @c ADBOperationDelegate <code>operationInProgress:</code>, @c operationDidFinish: etc.
 /// and must have the same signatures as those methods.
 @property (assign) SEL willStartSelector;
 @property (assign) SEL inProgressSelector;
@@ -154,14 +153,14 @@ extern NSString * const ADBOperationIndeterminateKey;
 //These methods are for the use of ADBOperation subclasses only.
 @interface ADBOperation ()
 
-///Post one of the corresponding notifications.
+/// Post one of the corresponding notifications.
 - (void) _sendWillStartNotificationWithInfo: (nullable NSDictionary *)info;
 - (void) _sendInProgressNotificationWithInfo: (nullable NSDictionary *)info;
 - (void) _sendWasCancelledNotificationWithInfo: (nullable NSDictionary *)info;
 - (void) _sendDidFinishNotificationWithInfo: (nullable NSDictionary *)info;
 
-///Shortcut method for sending a notification both to the default notification center
-///and to a selector on our delegate. The object of the notification will be self.
+/// Shortcut method for sending a notification both to the default notification center
+/// and to a selector on our delegate. The object of the notification will be self.
 - (void) _postNotificationName: (NSString *)name
 			  delegateSelector: (SEL)selector
 					  userInfo: (nullable NSDictionary *)userInfo;

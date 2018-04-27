@@ -30,15 +30,15 @@
 #import "RegexKitLite.h"
 
 
-//Matches the following lines with optional leading and trailing whitespace:
-//FILE MAX.gog BINARY
-//FILE "MAX.gog" BINARY
-//FILE "Armin van Buuren - A State of Trance 179 (16-12-2004) Part2.wav" WAV
-//FILE 01_armin_van_buuren_-_in_the_mix_(asot179)-cable-12-16-2004-hsalive.mp3 MP3
+/// Matches the following lines with optional leading and trailing whitespace:
+/// FILE MAX.gog BINARY
+/// FILE "MAX.gog" BINARY
+/// FILE "Armin van Buuren - A State of Trance 179 (16-12-2004) Part2.wav" WAV
+/// FILE 01_armin_van_buuren_-_in_the_mix_(asot179)-cable-12-16-2004-hsalive.mp3 MP3
 NSString * const ADBCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A-Z]+";
 
-//The maximum size in bytes that a cue file is expected to be, before we consider it not a cue file.
-//This is used as a sanity check by +isCueAtPath: to avoid scanning large files unnecessarily.
+/// The maximum size in bytes that a cue file is expected to be, before we consider it not a cue file.
+/// This is used as a sanity check by +isCueAtPath: to avoid scanning large files unnecessarily.
 #define ADBCueMaxFileSize 10240
 
 

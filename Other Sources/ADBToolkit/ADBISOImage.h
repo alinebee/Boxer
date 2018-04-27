@@ -24,15 +24,6 @@
  *	POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ADBISOImage represents the filesystem of an ISO 9660-format (.ISO, .CDR, .BIN/CUE) image.
-//It provides information about the structure of the image and allows its contents to be
-//iterated and extracted.
-
-//TODOS:
-// - More disc metadata (abstract name, etc.)
-// - Handle Logical Block Address sizes other than 2048
-// - Handle interleaved files
-
 
 #import <Foundation/Foundation.h>
 #import "ADBFilesystemBase.h"
@@ -44,6 +35,15 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Public interface
 
 @protocol ADBReadable, ADBSeekable;
+
+/// ADBISOImage represents the filesystem of an ISO 9660-format (.ISO, .CDR, .BIN/CUE) image.
+/// It provides information about the structure of the image and allows its contents to be
+/// iterated and extracted.
+///
+/// TODOS:
+///  - More disc metadata (abstract name, etc.)
+///  - Handle Logical Block Address sizes other than 2048
+///  - Handle interleaved files
 @interface ADBISOImage : ADBFilesystemBase <ADBFilesystemPathAccess>
 {
     id <ADBReadable, ADBSeekable> _handle;
@@ -70,10 +70,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - ADBFilesystem API
 
-//Clarify method signature to indicate that only readable, not writeable, file handles will be returned.
+/// Clarify method signature to indicate that only readable, not writeable, file handles will be returned.
 - (nullable id <ADBFileHandleAccess, ADBReadable, ADBSeekable>) fileHandleAtPath: (NSString *)path
-                                                                options: (ADBHandleOptions)options
-                                                                  error: (out NSError **)outError;
+                                                                         options: (ADBHandleOptions)options
+                                                                           error: (out NSError **)outError;
 
 @end
 

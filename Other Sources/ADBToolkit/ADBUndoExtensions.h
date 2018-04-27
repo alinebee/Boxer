@@ -29,17 +29,17 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol ADBUndoable;
-//! \c ADBUndoDelegate declares a means for a controller to provide a model object with the undo manager
-//! it should use for an undoable operation. This obviates the need for every model object to store
-//! its own reference to an undo manager.
+/// @c ADBUndoDelegate declares a means for a controller to provide a model object with the undo manager
+/// it should use for an undoable operation. This obviates the need for every model object to store
+/// its own reference to an undo manager.
 @protocol ADBUndoDelegate <NSObject>
 
-//! Returns the undo manager that the object should use for undoing the specified operation on itself.
-//! Return \c nil instead to prevent undo for this operation.
+/// Returns the undo manager that the object should use for undoing the specified operation on itself.
+/// Return @c nil instead to prevent undo for this operation.
 - (nullable NSUndoManager *) undoManagerForClient: (id <ADBUndoable>)undoClient operation: (SEL)operation;
 
-//! Removes the undo/redo actions for the specified client.
-//! Usually called when the delegate is being deallocated.
+/// Removes the undo/redo actions for the specified client.
+/// Usually called when the delegate is being deallocated.
 - (void) removeAllUndoActionsForClient: (id <ADBUndoable>)undoClient;
 
 @end
@@ -47,8 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ADBUndoable <NSObject>
 
-//! Set/retrieve the delegate that will provide this object with an undo manager.
-//! The receiver should not retain the delegate.
+/// Set/retrieve the delegate that will provide this object with an undo manager.
+/// The receiver should not retain the delegate.
 @property (readwrite, assign, nullable) id <ADBUndoDelegate> undoDelegate;
 
 @end

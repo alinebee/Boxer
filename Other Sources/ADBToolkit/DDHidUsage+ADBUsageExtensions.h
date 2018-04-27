@@ -25,9 +25,6 @@
  */
 
 
-//ADBUsageExtensions adds helper methods to DDHidUsage for comparing HID usages
-//and translating them to/from string constants for persisting in plist files.
-
 #import <DDHidLib/DDHidLib.h>
 #import <IOKit/hid/IOHIDLib.h>
 
@@ -35,24 +32,26 @@
 #pragma mark -
 #pragma mark Shortcut functions
 
-//Shortcut function for returning an autoreleased usage with the specified page and ID.
+/// Shortcut function for returning an autoreleased usage with the specified page and ID.
 DDHidUsage * ADBUsageFromID(unsigned int usagePage, unsigned int usageID);
-//Shortcut function for returning an autoreleased usage with the specified constant name.
+/// Shortcut function for returning an autoreleased usage with the specified constant name.
 DDHidUsage * ADBUsageFromName(NSString *usageName);
 
 
 #pragma mark -
 #pragma mark Interface declaration
 
+/// @c ADBUsageExtensions adds helper methods to DDHidUsage for comparing HID usages
+/// and translating them to/from string constants for persisting in plist files.
 @interface DDHidUsage (ADBUsageExtensions) <NSCopying, NSCoding>
 
-//Returns an autoreleased usage corresponding to a predefined usage-name constant.
-+ (id) usageWithName: (NSString *)usageName;
+/// Returns an autoreleased usage corresponding to a predefined usage-name constant.
++ (DDHidUsage *) usageWithName: (NSString *)usageName;
 
-//Compares equality between usages.
+/// Compares equality between usages.
 - (BOOL) isEqualToUsage: (DDHidUsage *)usage;
 
-//Orders usages by page and ID.
+/// Orders usages by page and ID.
 - (NSComparisonResult) compare: (DDHidUsage *)usage;
 
 @end

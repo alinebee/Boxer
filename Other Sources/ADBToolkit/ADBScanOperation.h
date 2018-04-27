@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString * const ADBScanLatestScannedObjectKey;
 
 /// Contains the object that was most recently matched.
-/// Will be NSNull if no matches have been found.
+/// Will be @c NSNull if no matches have been found.
 extern NSString * const ADBScanLatestMatchKey;
 
 

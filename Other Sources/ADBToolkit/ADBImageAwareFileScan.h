@@ -25,12 +25,7 @@
  */
 
 
-//ADBImageAwareFileScan is a ADBFileScan subclass that can also scan the
-//contents of any disk image supported by OS X's hdiutil. File matches
-//will be returned as a relative path appended to the original image path.
-
 #import "ADBFileScan.h"
-
 
 typedef NS_ENUM(NSInteger, ADBFileScanEjectionBehaviour) {
     ADBFileScanEjectIfSelfMounted,
@@ -38,7 +33,10 @@ typedef NS_ENUM(NSInteger, ADBFileScanEjectionBehaviour) {
     ADBFileScanAlwaysEject
 };
 
-    
+
+/// @c ADBImageAwareFileScan is a @c ADBFileScan subclass that can also scan the
+/// contents of any disk image supported by OS X's hdiutil. File matches
+/// will be returned as a relative path appended to the original image path.
 @interface ADBImageAwareFileScan : ADBFileScan
 {
     NSString *_mountedVolumePath;
@@ -46,30 +44,30 @@ typedef NS_ENUM(NSInteger, ADBFileScanEjectionBehaviour) {
     BOOL _didMountVolume;
 }
 
-//The volume path at which the original source disk image is mounted.
-//Only valid while scanning a disk image.
+/// The volume path at which the original source disk image is mounted.
+/// Only valid while scanning a disk image.
 @property (copy) NSString *mountedVolumePath;
 
-//Whether the file scan operation mounted an image volume itself while scanning.
-//This will be NO if scanning a regular folder or if the scanned image was
-//already mounted by the time we came to scan it.
+/// Whether the file scan operation mounted an image volume itself while scanning.
+/// This will be NO if scanning a regular folder or if the scanned image was
+/// already mounted by the time we came to scan it.
 @property (readonly) BOOL didMountVolume;
 
-//Whether to automatically unmount any mounted path after the scan is complete.
-//By default this will only unmount if the scan itself was responsible for
-//mounting the path.
+/// Whether to automatically unmount any mounted path after the scan is complete.
+/// By default this will only unmount if the scan itself was responsible for
+/// mounting the path.
 @property (assign) ADBFileScanEjectionBehaviour ejectAfterScanning;
 
-//The scan's main implementation is split up into 3 stages for easy
-//customisation in subclasses:
-
-//Called before scanning to mount the base path if it is an image.
+/// The scan's main implementation is split up into 3 stages for easy
+/// customisation in subclasses:
+///
+/// Called before scanning to mount the base path if it is an image.
 - (void) mountVolumesForScan;
 
-//Performs the actual scan, which calls BXFileScan's original main implementation.
+/// Performs the actual scan, which calls BXFileScan's original main implementation.
 - (void) performScan;
 
-//Called after scanning to unmount if desired.
+/// Called after scanning to unmount if desired.
 - (void) unmountVolumesForScan;
 
 @end

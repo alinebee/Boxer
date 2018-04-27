@@ -62,34 +62,34 @@ typedef NS_ENUM(uint8_t, ADBISOVolumeDescriptorType) {
 #pragma mark ISO file structure definitions
 
 typedef struct {
-	uint8_t year;       //From 0-99: add 1900 to get full year
-	uint8_t month;      //From 1-12
-	uint8_t day;        //From 1-31
-	uint8_t hour;       //From 0-23
-	uint8_t minute;     //From 0-59
-	uint8_t second;     //From 0-59
-	int8_t gmtOffset;   //From -48 to +52 in 15-minute intervals
+	uint8_t year;       //!< From 0-99: add 1900 to get full year
+	uint8_t month;      //!< From 1-12
+	uint8_t day;        //!< From 1-31
+	uint8_t hour;       //!< From 0-23
+	uint8_t minute;     //!< From 0-59
+	uint8_t second;     //!< From 0-59
+	int8_t gmtOffset;   //!< From -48 to +52 in 15-minute intervals
 } __attribute__ ((packed)) ADBISODateTime;
 
 
-//Note that unlike ADBISODateTime, these fields are stored as char
-//arrays without null terminators.
+/// Note that unlike ADBISODateTime, these fields are stored as char
+/// arrays without null terminators.
 typedef struct {
-	uint8_t year[4];        //e.g. {'1','9','0','0')
-	uint8_t month[2];       //e.g. {'1','2'}
-	uint8_t day[2];         //e.g. {'3','1'}
-	uint8_t hour[2];        //e.g. {'2','3'}
-	uint8_t minute[2];      //e.g. {'5','9'}
-	uint8_t second[2];      //e.g. {'5','9'}
-	uint8_t hsecond[2];     //e.g. {'9','9'}
-	int8_t gmtOffset;       //From -48 to +52 in 15-minute intervals
+	uint8_t year[4];        //!< e.g. {'1','9','0','0')
+	uint8_t month[2];       //!< e.g. {'1','2'}
+	uint8_t day[2];         //!< e.g. {'3','1'}
+	uint8_t hour[2];        //!< e.g. {'2','3'}
+	uint8_t minute[2];      //!< e.g. {'5','9'}
+	uint8_t second[2];      //!< e.g. {'5','9'}
+	uint8_t hsecond[2];     //!< e.g. {'9','9'}
+	int8_t gmtOffset;       //!< From -48 to +52 in 15-minute intervals
 } __attribute__ ((packed)) ADBISOExtendedDateTime;
 
 
 typedef struct {
-	uint8_t type;           //Always 0x01.
-	uint8_t identifier[5];  //Always 'CD001'.
-	uint8_t version;        //Always 0x01.
+	uint8_t type;           //!< Always 0x01.
+	uint8_t identifier[5];  //!< Always 'CD001'.
+	uint8_t version;        //!< Always 0x01.
     
 	uint8_t unused1[1];
     
@@ -179,8 +179,8 @@ typedef struct {
 extern const ADBISOFormat ADBISOFormatUnknown;
 extern const ADBISOFormat ADBISOFormatAudio;
 extern const ADBISOFormat ADBISOFormatMode1;
-extern const ADBISOFormat ADBISOFormatMode1Unpadded;    //Typical sector layout for ISO and CDR images
-extern const ADBISOFormat ADBISOFormatMode2;            //VCD sector layout (no error correction)
+extern const ADBISOFormat ADBISOFormatMode1Unpadded;    //!< Typical sector layout for ISO and CDR images
+extern const ADBISOFormat ADBISOFormatMode2;            //!< VCD sector layout (no error correction)
 
 extern const ADBISOFormat ADBISOFormatXAMode2Form1;
 extern const ADBISOFormat ADBISOFormatXAMode2Form2;

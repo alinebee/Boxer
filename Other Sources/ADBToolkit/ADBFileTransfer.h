@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 #pragma mark Notification user info dictionary keys
 
-/// \cNSNumber unsigned integers with the number of files total and transferred so far.
+/// \c NSNumber unsigned integers with the number of files total and transferred so far.
 /// Included with ADBOperationInProgress.
 extern NSString * const ADBFileTransferFilesTotalKey;
 extern NSString * const ADBFileTransferFilesTransferredKey;

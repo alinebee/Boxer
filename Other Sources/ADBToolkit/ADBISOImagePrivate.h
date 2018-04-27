@@ -47,17 +47,17 @@
 
 #pragma mark - Private helper class methods
 
-//Autodetects the format of the ISO at the specified location.
-//This is done by scanning for strings at known offsets in each
-//of the formats in turn until one matches. Returns ADBISOFormatUnknown
-//and populates outError if there was a read error or the format could
-//not be determined.
+/// Autodetects the format of the ISO at the specified location.
+/// This is done by scanning for strings at known offsets in each
+/// of the formats in turn until one matches. Returns ADBISOFormatUnknown
+/// and populates outError if there was a read error or the format could
+/// not be determined.
 + (ADBISOFormat) _formatOfISOAtURL: (NSURL *)URL error: (out NSError **)outError;
 + (ADBISOFormat) _formatOfISOInHandle: (id <ADBReadable, ADBSeekable>)handle error: (out NSError **)outError;
 
 
-//Returns autoreleased NSDate instances created from the date and time
-//data in the specified ISO-format date struct.
+/// Returns autoreleased @c NSDate instances created from the date and time
+/// data in the specified ISO-format date struct.
 + (NSDate *) _dateFromExtendedDateTime: (ADBISOExtendedDateTime) dateTime;
 + (NSDate *) _dateFromDateTime: (ADBISODateTime) dateTime;
 
@@ -132,7 +132,7 @@
 
 //The standard file attributes of this file.
 //Equivalent to the output of NSFileManager's attributesOfFileAtPath:.
-@property (weak, readonly, nonatomic) NSDictionary *attributes;
+@property (weak, readonly, nonatomic) NSDictionary<NSFileAttributeKey,id> *attributes;
 
 //The image in which this file is located.
 @property (assign, nonatomic) ADBISOImage *parentImage;

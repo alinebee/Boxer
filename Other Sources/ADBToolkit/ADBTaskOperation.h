@@ -27,7 +27,7 @@
 //ADBTaskOperation monitors the progress of an NSTask.
 
 
-//Default to polling task progress every second
+/// Default to polling task progress every second
 #define ADBTaskOperationDefaultPollInterval 1.0
 
 
@@ -57,8 +57,10 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 #pragma mark Initialization
 
-/// Create/initialize a suitable ADBTaskOperation using the specified task.
+/// Create/initialize a suitable @c ADBTaskOperation using the specified task.
 + (instancetype) operationWithTask: (NSTask *)task;
+
+/// Create/initialize a suitable @c ADBTaskOperation using the specified task.
 - (instancetype) initWithTask: (NSTask *)task;
 
 

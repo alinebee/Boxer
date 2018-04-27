@@ -60,24 +60,26 @@ extern NSErrorUserInfoKey const ADBShaderErrorInfoLogKey;
 typedef NSString *ADBShaderUniformKey NS_EXTENSIBLE_STRING_ENUM;
 
 /// An NSString representing the name of the uniform.
-extern NSString * const ADBShaderUniformNameKey;
+extern ADBShaderUniformKey const ADBShaderUniformNameKey;
 
 /// An NSNumber representing the location at which values can be assigned to the uniform.
-extern NSString * const ADBShaderUniformLocationKey;
+extern ADBShaderUniformKey const ADBShaderUniformLocationKey;
 
 /// An NSNumber representing the uniform's index in the list of active uniforms.
-extern NSString * const ADBShaderUniformIndexKey;
+extern ADBShaderUniformKey const ADBShaderUniformIndexKey;
 
 /// An NSNumber representing the uniform's type.
-extern NSString * const ADBShaderUniformTypeKey;
+extern ADBShaderUniformKey const ADBShaderUniformTypeKey;
 
 /// An NSNumber representing the uniform's size.
-extern NSString * const ADBShaderUniformSizeKey;
+extern ADBShaderUniformKey const ADBShaderUniformSizeKey;
 
 
 #pragma mark -
 #pragma mark Interface declaration
 
+/// @c ADBShader is an Objective-C wrapper for a GLSL shader program, providing simple shader
+/// loading and compilation and allowing introspection of the shader's available uniforms.
 @interface ADBShader : NSObject
 {
     CGLContextObj _context;
@@ -132,13 +134,13 @@ extern NSString * const ADBShaderUniformSizeKey;
 /// Shorthands for loading a shader from the main bundle,
 /// composed of a [shaderName].frag+[shaderName].vert pair.
 + (nullable instancetype) shaderNamed: (NSString *)shaderName
-                     context: (CGLContextObj)context
-                       error: (NSError **)outError;
+                              context: (CGLContextObj)context
+                                error: (NSError **)outError;
 
 + (nullable instancetype) shaderNamed: (NSString *)shaderName
-                subdirectory: (NSString *)subdirectory
-                     context: (CGLContextObj)context
-                       error: (NSError **)outError;
+                         subdirectory: (NSString *)subdirectory
+                              context: (CGLContextObj)context
+                                error: (NSError **)outError;
 
 /// Returns a new shader compiled from the specified vertex shader and/or fragment shaders,
 /// passed as source code. Returns \c nil and populates \c outError if the shader could not be compiled.

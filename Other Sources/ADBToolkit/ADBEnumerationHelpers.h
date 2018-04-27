@@ -123,11 +123,11 @@ NS_ASSUME_NONNULL_BEGIN
 typedef id __nullable (^ADBScanCallback)(id scannedObject, BOOL *stop);
 
 
-//An enumerator that scans forwards through an inner enumerator,
-//passing each enumerated object to an ADBScanCallback block and returning
-//an object only when the block itself produces an object. This is intended
-//as a generic way to provide 'pre-filtered' enumerator objects without
-//the need for NSEnumerator subclasses.
+/// An enumerator that scans forwards through an inner enumerator,
+/// passing each enumerated object to an @c ADBScanCallback block and returning
+/// an object only when the block itself produces an object. This is intended
+/// as a generic way to provide 'pre-filtered' enumerator objects without
+/// the need for @c NSEnumerator subclasses.
 @interface ADBScanningEnumerator : NSEnumerator
 {
     id <ADBStepwiseEnumeration> _innerEnumerator;
@@ -144,22 +144,21 @@ typedef id __nullable (^ADBScanCallback)(id scannedObject, BOOL *stop);
 
 #pragma mark - ADBEnumeratorChain
 
-//An enumerator that chains several enumerators together, moving on to the next one once one is exhausted.
-//This retains the enumerators and releases each one as it is exhausted.
-//This can chain objects that conform to the ADBStepwiseEnumeration protocol themselves, or that respond
-//to an objectEnumerator message.
-
+/// An enumerator that chains several enumerators together, moving on to the next one once one is exhausted.
+/// This retains the enumerators and releases each one as it is exhausted.
+/// This can chain objects that conform to the @c ADBStepwiseEnumeration protocol themselves, or that respond
+/// to an @c objectEnumerator message.
 @interface ADBEnumeratorChain : NSEnumerator
 {
     NSMutableArray *_enumerators;
 }
 
-///Returns a chain of the specified enumerators.
+/// Returns a chain of the specified enumerators.
 + (instancetype) chainWithEnumerators: (NSArray *)enumerators;
 - (instancetype) initWithEnumerators: (NSArray *)enumerators;
 
-///Adds another enumerator onto the end of the chain. This will raise an assertion if the specified object
-///neither conforms to the \c ADBStepwiseEnumeration protocol nor responds to an \c objectEnumerator message.
+/// Adds another enumerator onto the end of the chain. This will raise an assertion if the specified object
+/// neither conforms to the @c ADBStepwiseEnumeration protocol nor responds to an @c objectEnumerator message.
 - (void) addEnumerator: (id)enumerator;
 
 @end

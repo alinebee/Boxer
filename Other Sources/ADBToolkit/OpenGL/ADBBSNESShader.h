@@ -52,12 +52,12 @@ typedef NS_ENUM(NSInteger, ADBBSNESShaderScalingBehaviour) {
 #pragma mark -
 #pragma mark Error constants
 
-enum {
-    ADBBSNESShaderDefinitionInvalid,     //The .OpenGLShader file was in an unrecognised format or had invalid parameters.
-    ADBBSNESShaderDefinitionUnsupported, //The .OpenGLShader file was an unsupported shader type.
-};
-
 extern NSErrorDomain const ADBBSNESShaderErrorDomain;
+
+NS_ERROR_ENUM(ADBBSNESShaderErrorDomain) {
+    ADBBSNESShaderDefinitionInvalid,     //!< The .OpenGLShader file was in an unrecognised format or had invalid parameters.
+    ADBBSNESShaderDefinitionUnsupported, //!< The .OpenGLShader file was an unsupported shader type.
+};
 
 
 #pragma mark -

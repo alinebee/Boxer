@@ -30,8 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSKeyedArchiver (ADBArchivingAdditions)
 
-//! Performs the same job as \c archivedDataWithRootObject: but allows an optional
-//! delegate to be specified for the operation.
+/// Performs the same job as @c archivedDataWithRootObject: but allows an optional
+/// delegate to be specified for the operation.
 + (NSData *) archivedDataWithRootObject: (id)rootObject
                                delegate: (nullable id <NSKeyedArchiverDelegate>)delegate;
 
@@ -40,8 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSKeyedUnarchiver (ADBUnarchivingAdditions)
 
-//! Performs the same job as \c unarchiveObjectWithData: but allows an optional
-//! delegate to be specified for the operation.
+/// Performs the same job as @c unarchiveObjectWithData: but allows an optional
+/// delegate to be specified for the operation.
 + (nullable id) unarchiveObjectWithData: (NSData *)data
 							   delegate: (nullable id <NSKeyedUnarchiverDelegate>)delegate;
 

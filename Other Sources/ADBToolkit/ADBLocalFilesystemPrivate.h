@@ -30,11 +30,11 @@
 
 @interface ADBLocalFilesystem () <NSFileManagerDelegate>
 
-///Our own file manager for internal use.
+/// Our own file manager for internal use.
 @property (strong, nonatomic) NSFileManager *manager;
 
-//A base implementation for copyItemAtPath:toPath:error: and moveItemAtPath:toPath:error:,
-//which share 95% of their logic.
+/// A base implementation for copyItemAtPath:toPath:error: and moveItemAtPath:toPath:error:,
+/// which share 95% of their logic.
 - (BOOL) _transferItemAtPath: (NSString *)fromPath
                       toPath: (NSString *)toPath
                      copying: (BOOL)copying
@@ -42,9 +42,9 @@
 
 @end
 
-//An extremely thin wrapper for an NSDirectoryEnumerator to implement
-//the ADBFilesystem enumeration protocols and allow filesystem-relative
-//paths to be returned.
+/// An extremely thin wrapper for an NSDirectoryEnumerator to implement
+/// the @c ADBFilesystem enumeration protocols and allow filesystem-relative
+/// paths to be returned.
 @interface ADBLocalDirectoryEnumerator : NSEnumerator <ADBFilesystemPathEnumeration, ADBFilesystemFileURLEnumeration>
 {
     BOOL _returnsFileURLs;

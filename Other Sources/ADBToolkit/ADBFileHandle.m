@@ -986,7 +986,7 @@ int _ADBHandleClose(void *cookie)
 
 - (long long) localOffsetForSourceOffset: (long long)offset
 {
-    if (offset == ADBOffsetUnknown || offset < self.range.location)
+    if (offset == ADBOffsetUnknown || offset < (long long)self.range.location)
         return ADBOffsetUnknown;
     
     return offset - self.range.location;

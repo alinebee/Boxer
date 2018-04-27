@@ -712,7 +712,8 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 	//Define an invocation for the callback, which has the signature:
 	//- (void)document:(NSDocument *)document shouldClose:(BOOL)shouldClose contextInfo:(void *)contextInfo;
     NSInvocation *callback = [NSInvocation invocationWithTarget: delegate selector: shouldCloseSelector];
-	[callback setArgument: &self atIndex: 2];
+    __unsafe_unretained BXSession *unSelf = self;
+	[callback setArgument: &unSelf atIndex: 2];
 	[callback setArgument: &contextInfo atIndex: 4];
 	
 	BOOL hasActiveImports = self.isImportingDrives;

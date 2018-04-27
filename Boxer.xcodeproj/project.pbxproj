@@ -200,7 +200,7 @@
 		9F2D304415B8233800FAE848 /* fpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210212B38C4400072AE8 /* fpu.cpp */; };
 		9F2D304515B8233800FAE848 /* midi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210812B38C4400072AE8 /* midi.cpp */; };
 		9F2D304615B8233800FAE848 /* render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210E12B38C4400072AE8 /* render.cpp */; };
-		9F2D304715B8233800FAE848 /* render_scalers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211012B38C4400072AE8 /* render_scalers.cpp */; };
+		9F2D304715B8233800FAE848 /* render_scalers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211012B38C4400072AE8 /* render_scalers.cpp */; settings = {COMPILER_FLAGS = "-Wno-unused-function"; }; };
 		9F2D304815B8233800FAE848 /* adlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211C12B38C4400072AE8 /* adlib.cpp */; };
 		9F2D304915B8233800FAE848 /* cmos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211E12B38C4400072AE8 /* cmos.cpp */; };
 		9F2D304A15B8233800FAE848 /* dbopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211F12B38C4400072AE8 /* dbopl.cpp */; };
@@ -524,7 +524,7 @@
 		9F77219F12B38C4400072AE8 /* fpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210212B38C4400072AE8 /* fpu.cpp */; };
 		9F7721A012B38C4400072AE8 /* midi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210812B38C4400072AE8 /* midi.cpp */; };
 		9F7721A112B38C4400072AE8 /* render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210E12B38C4400072AE8 /* render.cpp */; };
-		9F7721A212B38C4400072AE8 /* render_scalers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211012B38C4400072AE8 /* render_scalers.cpp */; };
+		9F7721A212B38C4400072AE8 /* render_scalers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211012B38C4400072AE8 /* render_scalers.cpp */; settings = {COMPILER_FLAGS = "-Wno-unused-function"; }; };
 		9F7721A612B38C4400072AE8 /* adlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211C12B38C4400072AE8 /* adlib.cpp */; };
 		9F7721A712B38C4400072AE8 /* cmos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211E12B38C4400072AE8 /* cmos.cpp */; };
 		9F7721A812B38C4400072AE8 /* dbopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211F12B38C4400072AE8 /* dbopl.cpp */; };
@@ -2642,11 +2642,9 @@
 		9F77207312B38C4400072AE8 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				55DEBB20201E81DF00F1092F /* pci_bus.h */,
-				55DEBB1A201E81C200F1092F /* midi.h */,
 				9FD6AA1D16314AC6002B774E /* parport.h */,
-				9F77207412B38C4400072AE8 /* bios.h */,
 				9F77207512B38C4400072AE8 /* bios_disk.h */,
+				9F77207412B38C4400072AE8 /* bios.h */,
 				9F77207612B38C4400072AE8 /* callback.h */,
 				9F77207712B38C4400072AE8 /* control.h */,
 				9F77207812B38C4400072AE8 /* cpu.h */,
@@ -2666,19 +2664,21 @@
 				9F77208612B38C4400072AE8 /* logging.h */,
 				9F77208712B38C4400072AE8 /* mapper.h */,
 				9F77208812B38C4400072AE8 /* mem.h */,
+				55DEBB1A201E81C200F1092F /* midi.h */,
 				9F77208912B38C4400072AE8 /* mixer.h */,
 				9F77208A12B38C4400072AE8 /* modules.h */,
 				9F77208B12B38C4400072AE8 /* mouse.h */,
 				9F77208C12B38C4400072AE8 /* paging.h */,
+				55DEBB20201E81DF00F1092F /* pci_bus.h */,
 				9F77208D12B38C4400072AE8 /* pic.h */,
 				9F77208E12B38C4400072AE8 /* programs.h */,
 				9F77208F12B38C4400072AE8 /* regs.h */,
 				9F77209012B38C4400072AE8 /* render.h */,
-				9F77209112B38C4400072AE8 /* SDL.h */,
 				9F77209212B38C4400072AE8 /* SDL_endian.h */,
 				9F77209312B38C4400072AE8 /* SDL_net.h */,
 				9F77209412B38C4400072AE8 /* SDL_sound.h */,
 				9F77209512B38C4400072AE8 /* SDL_thread.h */,
+				9F77209112B38C4400072AE8 /* SDL.h */,
 				9F77209612B38C4400072AE8 /* serialport.h */,
 				9F77209712B38C4400072AE8 /* setup.h */,
 				9F77209812B38C4400072AE8 /* shell.h */,
@@ -2894,9 +2894,10 @@
 			isa = PBXGroup;
 			children = (
 				555747EF208FA8030045E635 /* mame */,
+				9FD6A9FF16314A5B002B774E /* parport */,
+				9F77213312B38C4400072AE8 /* serialport */,
 				55DEBB21201E875500F1092F /* pci_bus.cpp */,
 				55DEBB22201E875500F1092F /* pci_devices.h */,
-				9FD6A9FF16314A5B002B774E /* parport */,
 				9F77211C12B38C4400072AE8 /* adlib.cpp */,
 				9F77211D12B38C4400072AE8 /* adlib.h */,
 				9F77211E12B38C4400072AE8 /* cmos.cpp */,
@@ -2920,7 +2921,6 @@
 				9F77213012B38C4400072AE8 /* pcspeaker.cpp */,
 				9F77213112B38C4400072AE8 /* pic.cpp */,
 				9F77213212B38C4400072AE8 /* sblaster.cpp */,
-				9F77213312B38C4400072AE8 /* serialport */,
 				9F77214112B38C4400072AE8 /* tandy_sound.cpp */,
 				9F77214212B38C4400072AE8 /* timer.cpp */,
 				9F77214312B38C4400072AE8 /* vga.cpp */,

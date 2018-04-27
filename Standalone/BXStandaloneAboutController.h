@@ -5,7 +5,6 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXStandaloneAboutController styles and configures an about window suitable for standalone game apps.
 
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
@@ -13,6 +12,7 @@
 #import "BXThemedControls.h"
 #import "BXThemes.h"
 
+/// BXStandaloneAboutController styles and configures an about window suitable for standalone game apps.
 @interface BXStandaloneAboutController : NSWindowController
 {
     WebView *_creditsView;

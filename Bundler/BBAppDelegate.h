@@ -14,19 +14,19 @@
 
 extern NSString * const kBBRowIndexSetDropType;
 extern NSString * const kUTTypeGamebox;
-extern NSString * const kBBValidationErrorDomain;
+extern NSErrorDomain const kBBValidationErrorDomain;
 
-enum {
+NS_ERROR_ENUM(kBBValidationErrorDomain) {
     kBBValidationValueMissing,
     kBBValidationInvalidValue,
     kBBValidationUnsupportedApplication
 };
 
-enum {
-	kBXGameIdentifierUserSpecified	= 0,	//Manually specified type.
-	kBXGameIdentifierUUID			= 1,	//Standard UUID. Generated for empty gameboxes.
-	kBXGameIdentifierEXEDigest		= 2,	//SHA1 digest of each EXE file in the gamebox.
-	kBXGameIdentifierReverseDNS		= 3,	//Reverse-DNS (net.washboardabs.boxer)-style identifer.
+typedef NS_ENUM(NSInteger, BXGameIdentifierType) {
+	kBXGameIdentifierUserSpecified	= 0,	//!< Manually specified type.
+	kBXGameIdentifierUUID			= 1,	//!< Standard UUID. Generated for empty gameboxes.
+	kBXGameIdentifierEXEDigest		= 2,	//!< SHA1 digest of each EXE file in the gamebox.
+	kBXGameIdentifierReverseDNS		= 3,	//!< Reverse-DNS (net.washboardabs.boxer)-style identifer.
 };
 
 
@@ -95,6 +95,6 @@ enum {
 + (NSString *) bundleIdentifierFragmentFromString: (NSString *)inString;
 
 //Given the URL of a gamebox, returns an array of launch options found inside that gamebox.
-+ (NSArray *) launchersForGameboxAtURL: (NSURL *)gameboxURL;
++ (NSArray<NSDictionary<NSString*,id>*> *) launchersForGameboxAtURL: (NSURL *)gameboxURL;
 
 @end

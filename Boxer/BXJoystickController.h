@@ -34,12 +34,12 @@
 
 /// Returns a set of bundle identifiers for known HID remapper tools that may
 /// interfere with/affect Boxer's HID controller support.
-+ (NSSet<NSString*> *) HIDRemapperIdentifiers;
+@property (class, readonly, copy) NSSet<NSString*> *HIDRemapperIdentifiers;
 
 /// Returns an array of bundle identifiers for known HID remappers that are currently running.
 /// (This call may be expensive, so recentHIDRemappers should be used instead if
 /// up-to-the-minute data is not needed.)
-+ (NSArray<NSString*> *) runningHIDRemapperIdentifiers;
+@property (class, readonly, copy) NSArray<NSString*> *runningHIDRemapperIdentifiers;
 
 //Flushes our cache of known HID remappers. Called whenever Boxer loses then regains
 //the application focus.

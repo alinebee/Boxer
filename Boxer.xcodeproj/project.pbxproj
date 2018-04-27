@@ -1690,7 +1690,7 @@
 		9FBC35190F56C7B7001811F2 /* NSWindow+ADBWindowDimensions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = "NSWindow+ADBWindowDimensions.h"; sourceTree = "<group>"; };
 		9FBC351B0F56C7B7001811F2 /* ADBGeometry.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = ADBGeometry.h; sourceTree = "<group>"; };
 		9FBC351D0F56C7B7001811F2 /* BXAboutController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXAboutController.m; sourceTree = "<group>"; };
-		9FBC351E0F56C7B7001811F2 /* BXAppController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXAppController.m; sourceTree = "<group>"; };
+		9FBC351E0F56C7B7001811F2 /* BXAppController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXAppController.m; sourceTree = "<group>"; usesTabs = 1; };
 		9FBC35210F56C7B7001811F2 /* BXSession.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXSession.m; sourceTree = "<group>"; };
 		9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXShell.mm"; sourceTree = "<group>"; };
 		9FBC35240F56C7B7001811F2 /* BXDOSWindow.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXDOSWindow.m; sourceTree = "<group>"; };

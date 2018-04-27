@@ -207,9 +207,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 }
 
 
-- (id) openDocumentWithContentsOfURL: (NSURL *)absoluteURL
-							 display: (BOOL)displayDocument
-							   error: (NSError **)outError
+- (void) openDocumentWithContentsOfURL: (NSURL *)absoluteURL
+							   display: (BOOL)displayDocument
+					 completionHandler: (void (^)(NSDocument * _Nullable, BOOL, NSError * _Nullable))completionHandler
 {
 	//First go through our existing sessions, checking if any can open the specified URL.
 	//(This will be possible if the URL is accessible to a session's emulated filesystem,
@@ -224,7 +224,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 			if ([session.gamebox.bundleURL isEqual: absoluteURL])
 			{
 				[session showWindows];
-				return session;
+				completionHandler(session, YES, nil);
+				return;
 			}
 		}
 	}
@@ -236,14 +237,18 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 			if ([session openURLInDOS: absoluteURL error: nil])
 			{
 				if (displayDocument)
-                    [session showWindows];
-				return session;
+				{
+					[session showWindows];
+				}
+				
+				completionHandler(session, YES, nil);
+				return;
 			}
-		}		
+		}
 	}
 	
 	//If no existing session can open the URL, continue with the default document opening behaviour.
-	return [super openDocumentWithContentsOfURL: absoluteURL display: displayDocument error: outError];
+	[super openDocumentWithContentsOfURL:absoluteURL display:displayDocument completionHandler:completionHandler];
 }
 
 //Prevent the opening of new documents if we have a session already active

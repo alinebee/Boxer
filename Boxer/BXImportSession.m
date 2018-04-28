@@ -332,9 +332,9 @@
 		//Show our custom close alert, passing it the callback so we can complete
 		//our response down in _closeAlertDidEnd:returnCode:contextInfo:
 		[alert beginSheetModalForWindow: self.windowForSheet
-						  modalDelegate: self
-						 didEndSelector: @selector(_closeAlertDidEnd:returnCode:contextInfo:)
-							contextInfo: (__bridge void *)([callback retain])];
+					  completionHandler: ^(NSModalResponse returnCode) {
+						  [self _closeAlertDidEnd: alert returnCode: returnCode contextInfo: [callback retain]];
+					  }];
 	}
 	else
 	{

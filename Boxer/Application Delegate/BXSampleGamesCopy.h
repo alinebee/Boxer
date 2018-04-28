@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy) NSURL *sourceURL;
 
 - (instancetype) initFromSourceURL: (NSURL *)sourceURL
-                       toTargetURL: (NSURL *)targetURL DEPRECATED_ATTRIBUTE;
+                       toTargetURL: (NSURL *)targetURL DEPRECATED_ATTRIBUTE NS_SWIFT_UNAVAILABLE("");
 
 /// Create a new copy operation from the specified source path to the specified path.
 - (instancetype) initWithSourceURL: (NSURL *)sourceURL

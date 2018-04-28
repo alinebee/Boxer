@@ -47,7 +47,6 @@
 	if (!icon)
 	{
 		icon = [[NSImage imageNamed: @"DropzoneTemplate"] copy];
-		[icon setFlipped: YES];
 		
 		NSColor *tint = [NSColor whiteColor];
 		
@@ -214,7 +213,9 @@
 			[icon drawInRect: imageFrame
 					fromRect: NSZeroRect 
 				   operation: NSCompositeSourceOver
-					fraction: 1.0f];
+					fraction: 1.0f
+			  respectFlipped: YES
+					   hints: nil];
 		}
 	[NSGraphicsContext restoreGraphicsState];
 }

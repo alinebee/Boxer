@@ -676,7 +676,9 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
     [self close];
     
     if (reopenURL)
-        [(BXBaseAppController *)[NSApp delegate] openDocumentWithContentsOfURL: reopenURL display: YES error: NULL];
+        [(BXBaseAppController *)[NSApp delegate] openDocumentWithContentsOfURL: reopenURL display: YES completionHandler:^(NSDocument * _Nullable document, BOOL documentWasAlreadyOpen, NSError * _Nullable error) {
+            //do nothing
+        }];
     else
         [(BXBaseAppController *)[NSApp delegate] openUntitledDocumentAndDisplay: YES error: NULL];
 }

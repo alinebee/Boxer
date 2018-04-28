@@ -696,8 +696,8 @@ NSString * const BXGamesFolderBookmarkUserDefaultsKey = @"gamesFolderURLBookmark
 {
 	NSURL *sourceURL = [[NSBundle mainBundle] URLForResource: @"Sample Games" withExtension: nil];
 	
-	BXSampleGamesCopy *copyOperation = [[BXSampleGamesCopy alloc] initFromSourceURL: sourceURL
-																		toTargetURL: URL];
+	BXSampleGamesCopy *copyOperation = [[BXSampleGamesCopy alloc] initWithSourceURL: sourceURL
+																		  targetURL: URL];
 	
 	for (id operation in self.generalQueue.operations)
 	{

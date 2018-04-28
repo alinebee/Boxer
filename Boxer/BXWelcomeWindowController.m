@@ -109,7 +109,9 @@
 {
 	NSURL *url = sender.representedObject;
 	
-	[(BXBaseAppController *)[NSApp delegate] openDocumentWithContentsOfURL: url display: YES error: NULL];
+	[(BXBaseAppController *)[NSApp delegate] openDocumentWithContentsOfURL: url display: YES completionHandler: ^(NSDocument * _Nullable document, BOOL documentWasAlreadyOpen, NSError * _Nullable error) {
+		//do nothing
+	}];
 }
 
 #pragma mark -
@@ -187,7 +189,9 @@
 	{
 		[(BXBaseAppController *)[NSApp delegate] openDocumentWithContentsOfURL: URL
                                                                        display: YES
-                                                                         error: NULL];
+															 completionHandler: ^(NSDocument * _Nullable document, BOOL documentWasAlreadyOpen, NSError * _Nullable error) {
+																 //do nothing
+															 }];
 	}
 }
 

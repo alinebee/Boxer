@@ -25,6 +25,7 @@
  */
 
 #import "NSWorkspace+ADBIconHelpers.h"
+#import "NSURL+ADBFilesystemHelpers.h"
 
 
 @implementation NSWorkspace (ADBIconHelpers)
@@ -35,26 +36,9 @@
 }
 
 - (BOOL) URLHasCustomIcon: (NSURL *)URL
-{
-    FSRef fileRef;
-    struct FSCatalogInfo catInfo;
-    struct FileInfo *finderInfo = (struct FileInfo *)&catInfo.finderInfo;
-	
-	//Get an FSRef filesystem reference to the specified path
-	BOOL gotFileRef = (BOOL)CFURLGetFSRef((CFURLRef)URL, &fileRef);
-	//Bail out if we couldn't resolve an FSRef
-	if (!gotFileRef) return NO;
-		
-	//Retrieve the Finder catalog info for the file
-    OSStatus result = FSGetCatalogInfo(&fileRef,
-									   kFSCatInfoFinderInfo,
-									   &catInfo,
-									   NULL,
-									   NULL,
-									   NULL);
-    if (result != noErr) return NO;
-	
-	//Return whether the custom icon bit has been set
-    return (finderInfo->finderFlags & kHasCustomIcon) == kHasCustomIcon;
+{	
+    NSImage *icon = [URL resourceValueForKey:NSURLCustomIconKey];
+    
+    return icon != nil;
 }
 @end

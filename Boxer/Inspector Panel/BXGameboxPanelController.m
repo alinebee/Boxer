@@ -306,8 +306,8 @@ enum {
 	//Use the DOS path of the executable to display it
 	NSString *displayPath = nil;
 	//If we know the drive already, we can look up the path directly; otherwise, get the emulator to determine the drive
-	if (drive) displayPath	= [emulator DOSPathForPath: path onDrive: drive];
-	else		displayPath = [emulator DOSPathForPath: path];
+	if (drive) displayPath	= [emulator DOSPathForLogicalURL: [NSURL fileURLWithPath: path] onDrive: drive];
+	else		displayPath = [emulator DOSPathForLogicalURL: [NSURL fileURLWithPath: path]];
 	
 	//If the file is not accessible in DOS, use the file's OSX filesystem path
 	//(This should never happen - we don't list programs that aren't on mounted drives - but just in case)

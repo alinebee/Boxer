@@ -64,9 +64,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	NSWorkspace *workspace		= [NSWorkspace sharedWorkspace];
 	NSUInteger numBoxers = 0;
 	
-	for (NSDictionary *appDetails in [workspace launchedApplications])
+	for (NSRunningApplication *appDetails in [workspace runningApplications])
 	{
-		if ([[appDetails objectForKey: @"NSApplicationBundleIdentifier"] isEqualToString: bundleIdentifier]) numBoxers++;
+		if ([appDetails.bundleIdentifier isEqualToString: bundleIdentifier]) numBoxers++;
 	}
 	return numBoxers > 1;
 }

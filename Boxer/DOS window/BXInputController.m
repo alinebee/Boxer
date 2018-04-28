@@ -315,7 +315,10 @@
         return NO;
     
     //If it is, check if the mouse is inside our actual DOS view.
-    NSPoint locationInWindow = [window convertScreenToBase: locationOnScreen];
+    NSRect tmpRect;
+    tmpRect.origin = locationOnScreen;
+    tmpRect.size = NSMakeSize(1, 1);
+    NSPoint locationInWindow = [window convertRectFromScreen:tmpRect].origin;
     NSPoint locationInView = [self.view convertPoint: locationInWindow fromView: nil];
     
     if (![self.view mouse: locationInView inRect: self.view.bounds])
@@ -1012,14 +1015,20 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 									  canvasPoint.y * canvas.size.height);
 	
 	NSPoint pointInWindow = [self.view convertPoint: pointInView toView: nil];
-	NSPoint pointOnScreen = [self.view.window convertBaseToScreen: pointInWindow];
+    NSRect tmpRect;
+    tmpRect.origin = pointInWindow;
+    tmpRect.size = NSMakeSize(1, 1);
+	NSPoint pointOnScreen = [self.view.window convertRectToScreen:tmpRect].origin;
 	
 	return pointOnScreen;
 }
 
 - (NSPoint) _pointInCanvas: (NSPoint)screenPoint
 {
-	NSPoint pointInWindow	= [self.view.window convertScreenToBase: screenPoint];
+    NSRect tmpRect;
+    tmpRect.origin = screenPoint;
+    tmpRect.size = NSMakeSize(1, 1);
+	NSPoint pointInWindow	= [self.view.window convertRectFromScreen:tmpRect].origin;
 	NSPoint pointInView		= [self.view convertPoint: pointInWindow fromView: nil];
 	
 	NSRect canvas = self.view.bounds;

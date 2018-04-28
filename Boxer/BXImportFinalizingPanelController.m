@@ -276,9 +276,9 @@
 		{
 			[skipAlert adoptIconFromWindow: self.controller.window];
 			[skipAlert beginSheetModalForWindow: self.controller.window
-								  modalDelegate: self
-								 didEndSelector: @selector(_skipAlertDidEnd:returnCode:contextInfo:)
-									contextInfo: NULL];
+							  completionHandler: ^(NSModalResponse returnCode) {
+								  [self _skipAlertDidEnd: skipAlert returnCode: returnCode contextInfo: NULL];
+							  }];
 		}
 		//If skipAlertForSourceURLtype: thought that it wasn't worth showing any confirmation
 		//at all, then go right ahead and cancel.

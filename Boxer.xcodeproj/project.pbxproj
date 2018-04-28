@@ -1066,7 +1066,7 @@
 		9F13F9CF11F85E6F0069A02E /* NSFileManager+ADBTemporaryFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+ADBTemporaryFiles.m"; sourceTree = "<group>"; };
 		9F160BD91236952400F8768E /* Sample Games */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Sample Games"; sourceTree = "<group>"; };
 		9F160E6F1236B2A600F8768E /* BXAppController+BXGamesFolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXAppController+BXGamesFolder.h"; sourceTree = "<group>"; };
-		9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXGamesFolder.m"; sourceTree = "<group>"; };
+		9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXGamesFolder.m"; sourceTree = "<group>"; usesTabs = 1; };
 		9F165384142E8AFE00CAADBF /* BXEmulatedMT32Delegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedMT32Delegate.h; sourceTree = "<group>"; };
 		9F1812BC12996337009BC4B2 /* YRKSpinningProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRKSpinningProgressIndicator.h; sourceTree = "<group>"; };
 		9F1812BD12996337009BC4B2 /* YRKSpinningProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YRKSpinningProgressIndicator.m; sourceTree = "<group>"; };
@@ -1114,8 +1114,8 @@
 		9F2122ED1301BE6E002AB1B7 /* BXSampleGamesCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSampleGamesCopy.h; sourceTree = "<group>"; };
 		9F2122EE1301BE6E002AB1B7 /* BXSampleGamesCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSampleGamesCopy.m; sourceTree = "<group>"; };
 		9F2140FE0F59F28000A5A183 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		9F24D24B122439E0009C1817 /* BXWelcomeWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeWindowController.h; sourceTree = "<group>"; };
-		9F24D24C122439E0009C1817 /* BXWelcomeWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXWelcomeWindowController.m; sourceTree = "<group>"; };
+		9F24D24B122439E0009C1817 /* BXWelcomeWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeWindowController.h; sourceTree = "<group>"; usesTabs = 1; };
+		9F24D24C122439E0009C1817 /* BXWelcomeWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXWelcomeWindowController.m; sourceTree = "<group>"; usesTabs = 1; };
 		9F24D24E12243C9A009C1817 /* BXWelcomeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeView.h; sourceTree = "<group>"; };
 		9F24D24F12243C9A009C1817 /* BXWelcomeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXWelcomeView.m; sourceTree = "<group>"; };
 		9F25C1FD1212BB450025CB2C /* BXSessionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSessionPrivate.h; sourceTree = "<group>"; };
@@ -2270,6 +2270,7 @@
 			);
 			name = "Game import session";
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		9F1CBA94120C7D4300C5E926 /* Game import window */ = {
 			isa = PBXGroup;
@@ -2295,6 +2296,7 @@
 			);
 			name = "Game import window";
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		9F1D50280F5C0ACD009F0AB9 /* Emulator */ = {
 			isa = PBXGroup;
@@ -5146,7 +5148,6 @@
 					USE_PRIVATE_APIS,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5182,7 +5183,6 @@
 					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
-				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",

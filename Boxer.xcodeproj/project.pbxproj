@@ -217,7 +217,6 @@
 		9F2D305515B8233800FAE848 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212B12B38C4400072AE8 /* memory.cpp */; };
 		9F2D305615B8233800FAE848 /* mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212C12B38C4400072AE8 /* mixer.cpp */; };
 		9F2D305715B8233800FAE848 /* mpu401.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212D12B38C4400072AE8 /* mpu401.cpp */; };
-		9F2D305815B8233800FAE848 /* opl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212E12B38C4400072AE8 /* opl.cpp */; };
 		9F2D305915B8233800FAE848 /* pcspeaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213012B38C4400072AE8 /* pcspeaker.cpp */; };
 		9F2D305A15B8233800FAE848 /* pic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213112B38C4400072AE8 /* pic.cpp */; };
 		9F2D305B15B8233800FAE848 /* sblaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213212B38C4400072AE8 /* sblaster.cpp */; };
@@ -541,7 +540,6 @@
 		9F7721B312B38C4400072AE8 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212B12B38C4400072AE8 /* memory.cpp */; };
 		9F7721B412B38C4400072AE8 /* mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212C12B38C4400072AE8 /* mixer.cpp */; };
 		9F7721B512B38C4400072AE8 /* mpu401.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212D12B38C4400072AE8 /* mpu401.cpp */; };
-		9F7721B612B38C4400072AE8 /* opl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212E12B38C4400072AE8 /* opl.cpp */; };
 		9F7721B712B38C4400072AE8 /* pcspeaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213012B38C4400072AE8 /* pcspeaker.cpp */; };
 		9F7721B812B38C4400072AE8 /* pic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213112B38C4400072AE8 /* pic.cpp */; };
 		9F7721B912B38C4400072AE8 /* sblaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213212B38C4400072AE8 /* sblaster.cpp */; };
@@ -4098,7 +4096,6 @@
 				9F7721B312B38C4400072AE8 /* memory.cpp in Sources */,
 				9F7721B412B38C4400072AE8 /* mixer.cpp in Sources */,
 				9F7721B512B38C4400072AE8 /* mpu401.cpp in Sources */,
-				9F7721B612B38C4400072AE8 /* opl.cpp in Sources */,
 				9F7721B712B38C4400072AE8 /* pcspeaker.cpp in Sources */,
 				9F7721B812B38C4400072AE8 /* pic.cpp in Sources */,
 				9F7721B912B38C4400072AE8 /* sblaster.cpp in Sources */,
@@ -4294,7 +4291,6 @@
 				9F2D305515B8233800FAE848 /* memory.cpp in Sources */,
 				9F2D305615B8233800FAE848 /* mixer.cpp in Sources */,
 				9F2D305715B8233800FAE848 /* mpu401.cpp in Sources */,
-				9F2D305815B8233800FAE848 /* opl.cpp in Sources */,
 				9F2D305915B8233800FAE848 /* pcspeaker.cpp in Sources */,
 				9F2D305A15B8233800FAE848 /* pic.cpp in Sources */,
 				9F2D305B15B8233800FAE848 /* sblaster.cpp in Sources */,

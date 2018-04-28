@@ -11,22 +11,22 @@
 #import "ADBFilesystem.h"
 
 
-//Used when decoding drive records from previous Boxer versions,
-//to decide whether to resolve bookmarks or aliases.
+/// Used when decoding drive records from previous Boxer versions,
+/// to decide whether to resolve bookmarks or aliases.
 #define BXCurrentDriveEncodingVersion 1400
 #define BXFirstBookmarkSupportingVersion 1400
 
 
-//Used for decoding NDAlias-encoded paths from previous Boxer versions.
+/// Used for decoding NDAlias-encoded paths from previous Boxer versions.
 @interface __NDAliasDecoder : NSObject
 @end
 
 @implementation __NDAliasDecoder
 
-//NDAlias encoded its internal alias record as an NSData object;
-//we no longer use NDAlias, but we can convert its alias record
-//into modern bookmark data. This class is substituted for NDAlias
-//during decoding and returns the decoded NSData object directly.
+/// NDAlias encoded its internal alias record as an NSData object;
+/// we no longer use NDAlias, but we can convert its alias record
+/// into modern bookmark data. This class is substituted for NDAlias
+/// during decoding and returns the decoded NSData object directly.
 - (id) initWithCoder: (NSCoder *)aDecoder
 {
     return (id)[aDecoder decodeDataObject];

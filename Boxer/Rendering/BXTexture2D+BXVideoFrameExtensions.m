@@ -41,7 +41,7 @@
     //If the frame has changed shape: update the content region, wipe the texture clean,
     //and copy the entire frame into the texture rather than bothering to check for changed lines.
     CGRect newContentRegion = CGRectMake(0, 0, frame.size.width, frame.size.height);
-    if (YES || !CGRectEqualToRect(_contentRegion, newContentRegion))
+    if (/* DISABLES CODE */ (YES) || !CGRectEqualToRect(_contentRegion, newContentRegion))
     {
         self.contentRegion = newContentRegion;
         CGRect textureRegion = CGRectMake(0, 0, _textureSize.width, _textureSize.height);

@@ -1031,7 +1031,7 @@ NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
         
         //Slide horizontally between the launcher panel and the DOS view.
         //TWEAK: disabled for now because the lurching slide animation was making me carsick.
-        if (NO && ((self.currentPanel == BXDOSWindowDOSView && newPanel == BXDOSWindowLaunchPanel) ||
+        if (/* DISABLES CODE */ (NO) && ((self.currentPanel == BXDOSWindowDOSView && newPanel == BXDOSWindowLaunchPanel) ||
             (self.currentPanel == BXDOSWindowLaunchPanel && newPanel == BXDOSWindowDOSView)))
         {
             //Disable window flushes to prevent partial redraws while we're setting up the views.

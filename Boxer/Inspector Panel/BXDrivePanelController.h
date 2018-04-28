@@ -14,7 +14,7 @@
 @class BXDrive;
 
 /// \c BXDrivePanelController manages the Drives panel of the Inspector window.
-@interface BXDrivePanelController : NSViewController <ADBOperationDelegate, NSWindowDelegate, NSDraggingDestination>
+@interface BXDrivePanelController : NSViewController <ADBOperationDelegate, NSWindowDelegate, NSDraggingDestination, NSDraggingSource>
 {
 	NSSegmentedControl *_driveControls;
 	NSMenu *_driveActionsMenu;

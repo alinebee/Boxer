@@ -248,7 +248,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 	
 	//If no existing session can open the URL, continue with the default document opening behaviour.
-	[super openDocumentWithContentsOfURL:absoluteURL display:displayDocument completionHandler:completionHandler];
+	[super openDocumentWithContentsOfURL: absoluteURL display: displayDocument completionHandler: completionHandler];
 }
 
 //Prevent the opening of new documents if we have a session already active

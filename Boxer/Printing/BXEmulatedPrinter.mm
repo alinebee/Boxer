@@ -68,7 +68,7 @@ typedef NS_OPTIONS(uint8_t, BXEmulatedPrinterStatus) {
 #pragma mark Internal properties
 
 //Overridden to make them read-write internally.
-@property (strong, nonatomic) NSMutableDictionary *textAttributes;
+@property (strong, nonatomic) NSMutableDictionary<NSAttributedStringKey, id> *textAttributes;
 @property (strong, nonatomic) BXPrintSession *currentSession;
 
 //The effective pitch in characters-per-inch, counting the current font settings.

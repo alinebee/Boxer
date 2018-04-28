@@ -653,9 +653,19 @@ enum {
     else return NO;
 }
 
-- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal
+- (NSDragOperation) draggingSession: (NSDraggingSession *)session sourceOperationMaskForDraggingContext: (NSDraggingContext)context
 {
-	return (isLocal) ? NSDragOperationPrivate | NSDragOperationDelete : NSDragOperationNone;
+    switch (context) {
+        case NSDraggingContextWithinApplication:
+            return NSDragOperationPrivate | NSDragOperationDelete;
+            break;
+            
+        case NSDraggingContextOutsideApplication:
+            return NSDragOperationNone;
+            break;
+            
+            //No default case, so when Apple adds more, warnings happen.
+    }
 }
 
 //Required for us to work as a dragging source *rolls eyes all the way out of head*
@@ -664,7 +674,7 @@ enum {
     return self.view.window;
 }
 
-- (void) draggedImage: (NSImage *)image beganAt: (NSPoint)screenPoint
+- (void) draggingSession: (NSDraggingSession *)session willBeginAtPoint: (NSPoint)screenPoint
 {
     //Create a transparent backing window the first time we need it
     if (!_driveRemovalDropzone)
@@ -704,7 +714,7 @@ enum {
         [_driveRemovalDropzone orderWindow: NSWindowBelow relativeTo: self.view.window.windowNumber];
 }
 
-- (void) draggedImage: (NSImage *)image movedTo: (NSPoint)screenPoint
+- (void) draggingSession: (NSDraggingSession *)session movedToPoint: (NSPoint)screenPoint
 {
     //Once the image is dragged away from its original location, hide the views represented by the image.
     [self.driveList.selectionIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
@@ -713,9 +723,9 @@ enum {
     }];
 }
 
-- (void) draggedImage: (NSImage *)draggedImage
-			  endedAt: (NSPoint)screenPoint
-		    operation: (NSDragOperation)operation
+- (void) draggingSession: (NSDraggingSession *)session
+            endedAtPoint: (NSPoint)screenPoint
+               operation: (NSDragOperation)operation
 {
     [self.driveList.selectionIndexes enumerateIndexesUsingBlock: ^(NSUInteger idx, BOOL *stop) {
         NSCollectionViewItem *item = [self.driveList itemAtIndex: idx];

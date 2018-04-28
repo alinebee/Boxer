@@ -90,7 +90,8 @@
 ///                 Use @c BXDisplayStringEncoding if the value contains text to displayed to the user.
 ///                 Use @c BXDirectStringEncoding if the value contains filesystem paths which must
 ///                 be consistent with OS X's filesystem encoding.
-//TODO: handle environment variables internally instead of using shell commands.
+///
+/// TODO: handle environment variables internally instead of using shell commands.
 - (void) setVariable: (NSString *)name
 				  to: (NSString *)value
 			encoding: (NSStringEncoding)encoding;

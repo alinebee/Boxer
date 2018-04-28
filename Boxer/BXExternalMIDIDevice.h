@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// The default seconds-per-byte delay to allow after sending a sysex.
 /// Equivalent to the MIDI 1.0 specified delay of 3125 bytes/sec.
-#define BXExternalMIDIDeviceDefaultSysexRate 1.0f / 3125.0f
+#define BXExternalMIDIDeviceDefaultSysexRate (1.0f / 3125.0f)
 
 /// A short delay between programmatically changing the volume and updating the device,
 /// to avoid rapid volume changes flooding the device with messages.

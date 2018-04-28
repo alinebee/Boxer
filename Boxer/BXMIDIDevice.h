@@ -52,8 +52,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// Handle a System Exclusive message of arbitrary length.
 - (void) handleSysex: (NSData *)message;
 
-/// Pause/resume MIDI playback.
+/// Pause MIDI playback.
 - (void) pause;
+/// Resume MIDI playback.
 - (void) resume;
 
 /// Close down the connection and free up all resources.

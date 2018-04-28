@@ -42,8 +42,8 @@
 extern NSErrorDomain const BXEmulatedMT32ErrorDomain;
 /// Keys included in the error dictionary for \c BXEmulatedMT32MismatchedROMs errors.
 /// These point to NSNumbers whose integer values represent the types of the respective ROMs.
-extern NSString * const BXMT32ControlROMTypeKey;
-extern NSString * const BXMT32PCMROMTypeKey;
+extern NSErrorUserInfoKey const BXMT32ControlROMTypeKey;
+extern NSErrorUserInfoKey const BXMT32PCMROMTypeKey;
 
 
 typedef NS_ERROR_ENUM(BXEmulatedMT32ErrorDomain, BXEmulatedMT32Errors) {

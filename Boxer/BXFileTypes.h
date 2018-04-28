@@ -85,7 +85,7 @@ typedef NS_ERROR_ENUM(BXExecutableTypesErrorDomain, BXExecutableTypesErrors)
 	BXExecutableTruncated		= 3		//!< Specified file was truncated or corrupted
 };
 
-//Executable types.
+/// Executable types.
 typedef NS_ENUM(NSInteger, BXExecutableType) {
 	BXExecutableTypeUnknown	= 0,
 	BXExecutableTypeDOS,

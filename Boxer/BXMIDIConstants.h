@@ -57,9 +57,9 @@
 #define BXRolandSysexRequest 0x11
 #define BXRolandSysexSend 0x12
 
-#define BXRolandSysexSendMinLength BXRolandSysexHeaderLength + BXRolandSysexAddressLength + BXRolandSysexTailLength
+#define BXRolandSysexSendMinLength (BXRolandSysexHeaderLength + BXRolandSysexAddressLength + BXRolandSysexTailLength)
 
-#define BXRolandSysexRequestLength BXRolandSysexSendMinLength + BXRolandSysexRequestSizeLength
+#define BXRolandSysexRequestLength (BXRolandSysexSendMinLength + BXRolandSysexRequestSizeLength)
 
 #pragma mark -
 #pragma mark MT-32-specific sysex message parameters

@@ -14,6 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class BXEmulator;
+
 /// BXMIDISyth sending MIDI signals from DOSBox to OS X's built-in MIDI synth, using the AUGraph API.
 /// It's largely cribbed from DOSBox's own coreaudio MIDI handler.
 @interface BXMIDISynth : NSObject <BXMIDIDevice>

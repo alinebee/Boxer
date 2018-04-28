@@ -330,9 +330,9 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
 	
 	//Header is stored in little-endian format, so swap the bytes
     //around on PowerPC systems to ensure correct comparisons.
-	unsigned short typeMarker			= NSSwapLittleShortToHost(header.typeMarker);
-	unsigned short relocationAddress	= NSSwapLittleShortToHost(header.relocationTableAddress);
-	unsigned long newHeaderAddress		= NSSwapLittleLongToHost(header.newHeaderAddress);
+	unsigned short typeMarker			= CFSwapInt16LittleToHost(header.typeMarker);
+	unsigned short relocationAddress	= CFSwapInt16LittleToHost(header.relocationTableAddress);
+	unsigned int newHeaderAddress		= CFSwapInt32LittleToHost(header.newHeaderAddress);
 	
 	//DOS headers always start with the MZ type marker:
 	//if this differs, then it's not a real executable.
@@ -392,7 +392,7 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
         return BXExecutableTypeDOS;
     }
 	
-	newTypeMarker = NSSwapLittleShortToHost(newTypeMarker);
+	newTypeMarker = CFSwapInt16LittleToHost(newTypeMarker);
 	
 	switch (newTypeMarker)
 	{

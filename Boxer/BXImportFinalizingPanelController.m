@@ -17,9 +17,9 @@
 
 @interface BXImportFinalizingPanelController ()
 
-//Callback for confirmation alert shown by skipSourceFileImport:
+/// Callback for confirmation alert shown by @c skipSourceFileImport:
 - (void) _skipAlertDidEnd: (NSAlert *)alert
-			   returnCode: (int)returnCode
+			   returnCode: (NSModalResponse)returnCode
 			  contextInfo: (void *)contextInfo;
 
 @end
@@ -291,7 +291,7 @@
 }
 
 - (void) _skipAlertDidEnd: (NSAlert *)alert
-			   returnCode: (int)returnCode
+			   returnCode: (NSModalResponse)returnCode
 			  contextInfo: (void *)contextInfo
 {
 	if (returnCode == NSAlertFirstButtonReturn)

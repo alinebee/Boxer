@@ -129,15 +129,15 @@ extern NSString * const BXGenericProfileIdentifier;
 /// The version of the current profile detection catalogue.
 /// This is used for invalidating profiles that were detected and saved under
 /// previous versions of Boxer (and which may have since been superseded.)
-+ (NSString *) catalogueVersion;
+@property (class, readonly, copy) NSString *catalogueVersion;
 
 /// Returns an array of generic profiles that match multiple games.
 /// This corresponds the contents of the BXGenericProfiles key in GameProfiles.plist.
-+ (NSArray<BXGameProfile*> *) genericProfiles;
+@property (class, readonly, copy) NSArray<BXGameProfile*> *genericProfiles;
 
 /// Returns an array of game profiles identifying specific games.
 /// This corresponds the contents of the BXSpecificGameProfiles key in GameProfiles.plist.
-+ (NSArray<BXGameProfile*> *) specificGameProfiles;
+@property (class, readonly, copy) NSArray<BXGameProfile*> *specificGameProfiles;
 
 /// Returns the kind of distribution medium (CD-ROM, floppy) that the contents of the specified
 /// file URL probably used, based on filesize and age of files. Among other things, this is used

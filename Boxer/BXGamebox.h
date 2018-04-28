@@ -105,6 +105,7 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 	BXGameIdentifierReverseDNS		= 3,
 };
 
+@class BXDrive;
 
 #pragma mark - Interface
 
@@ -119,7 +120,7 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 {
 	NSMutableDictionary *_gameInfo;
     NSMutableArray *_launchers;
-    __unsafe_unretained id <ADBUndoDelegate> _undoDelegate;
+    __weak id <ADBUndoDelegate> _undoDelegate;
     BOOL _lastWritableStatus;
     CFAbsoluteTime _nextWriteableCheckTime;
 }
@@ -131,24 +132,24 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 @property (readonly, strong, nonatomic, nullable) NSDictionary<NSString*,id> *gameInfo;
 
 /// The name of the game, suitable for display. This is the gamebox's filename minus any ".boxer" extension.
-@property (weak, readonly, nonatomic) NSString *gameName;
+@property (copy, readonly, nonatomic) NSString *gameName;
 
 /// The unique identifier of this game.
 @property (copy, nonatomic) NSString *gameIdentifier;
 
 /// URLs to bundled drives and images of the specified types.
-@property (weak, readonly, nonatomic) NSArray<NSURL*> *hddVolumeURLs;
-@property (weak, readonly, nonatomic) NSArray<NSURL*> *cdVolumeURLs;
-@property (weak, readonly, nonatomic) NSArray<NSURL*> *floppyVolumeURLs;
+@property (copy, readonly, nonatomic) NSArray<NSURL*> *hddVolumeURLs;
+@property (copy, readonly, nonatomic) NSArray<NSURL*> *cdVolumeURLs;
+@property (copy, readonly, nonatomic) NSArray<NSURL*> *floppyVolumeURLs;
 
 /// An array of drives bundled inside this gamebox, ordered by drive letter and filename.
-@property (weak, readonly, nonatomic) NSArray *bundledDrives;
+@property (copy, readonly, nonatomic) NSArray<BXDrive *> *bundledDrives;
 
 /// Returns the URL at which the configuration file is stored (which may not yet exist.)
-@property (weak, readonly, nonatomic) NSURL *configurationFileURL;
+@property (copy, readonly, nonatomic) NSURL *configurationFileURL;
 
 /// Returns the URL of the target program saved under Boxer 1.3.x and below.
-@property (weak, readonly, nonatomic) NSURL *legacyTargetURL;
+@property (copy, readonly, nonatomic) NSURL *legacyTargetURL;
 
 /// Whether the emulation should finish once the default launcher exits,
 /// rather than returning to the DOS prompt. No longer supported.
@@ -159,18 +160,18 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 @property (copy, nonatomic, nullable) NSImage *coverArt;
 
 /// Program launchers for this gamebox, displayed as favorites in the launch panel.
-@property (weak, readonly, nonatomic) NSArray *launchers;
+@property (copy, readonly, nonatomic) NSArray<NSMutableDictionary<NSString*,id>*> *launchers;
 
 /// The default launcher for this gamebox, which should be launched the first time the gamebox is run.
-/// This will be nil if the gamebox has no default launcher.
-@property (weak, readonly, nonatomic) NSDictionary *defaultLauncher;
+/// This will be @c nil if the gamebox has no default launcher.
+@property (copy, readonly, nonatomic, nullable) NSDictionary<NSString*,id> *defaultLauncher;
 
 /// The index in the launchers array of the default launcher.
 /// Will be NSNotFound if no default launcher has been set.
 @property (assign, nonatomic) NSUInteger defaultLauncherIndex;
 
 /// The delegate from whom we will request an undo manager for undoable operations.
-@property (assign, nullable) id <ADBUndoDelegate> undoDelegate;
+@property (weak, nullable) id <ADBUndoDelegate> undoDelegate;
 
 
 #pragma mark - Instance methods
@@ -183,8 +184,8 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 - (void) refresh;
 
 
-- (void) addLauncher: (NSDictionary *)launcher;
-- (void) insertLauncher: (NSDictionary *)launcher atIndex: (NSUInteger)index;
+- (void) addLauncher: (NSDictionary<NSString*,id> *)launcher;
+- (void) insertLauncher: (NSDictionary<NSString*,id> *)launcher atIndex: (NSUInteger)index;
 
 /// Insert a new launcher item into the launcher list at the specified location,
 /// with the specified optional launch arguments.
@@ -201,7 +202,7 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
                       title: (NSString *)title;
 
 /// Remove the specified launcher item from the launchers array.
-- (void) removeLauncher: (NSDictionary *)launcher;
+- (void) removeLauncher: (NSDictionary<NSString*,id> *)launcher;
 - (void) removeLauncherAtIndex: (NSUInteger)index;
 
 /// Validates that the specified URL is located within the gamebox
@@ -221,7 +222,7 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 /// Note that even if this method returns YES, attempts to modify the gamebox's disk state
 /// may still fail because of access restrictions.
 /// Also note that this is *not* a KVO-compliant property: you must manually check the value each time.
-- (BOOL) isWritable;
+@property (readonly, getter=isWritable) BOOL writable;
 
 @end
 

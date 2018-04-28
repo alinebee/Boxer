@@ -87,10 +87,20 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
                                       includingPropertiesForKeys: propertyKeys
                                                          options: NSDirectoryEnumerationSkipsHiddenFiles
                                                     errorHandler: NULL];
-	
-	NSDate *cutoffDate525       = [NSDate dateWithString: BX525DisketteGameDateThreshold];
-	NSDate *cutoffDate35        = [NSDate dateWithString: BX35DisketteGameDateThreshold];
-	NSDate *cutoffDateInvalid	= [NSDate dateWithString: BXInvalidGameDateThreshold];
+    
+    static NSDate *cutoffDate525;
+    static NSDate *cutoffDate35;
+    static NSDate *cutoffDateInvalid;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss ZZZ";
+        formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]; //Just in case other locales mess with the formatting
+        formatter.calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian]; //Just in case the default calendar is different.
+        cutoffDate525 = [formatter dateFromString:BX525DisketteGameDateThreshold];
+        cutoffDate35 = [formatter dateFromString:BX35DisketteGameDateThreshold];
+        cutoffDateInvalid = [formatter dateFromString:BXInvalidGameDateThreshold];
+    });
 	unsigned long long pathSize = 0;
 	
 	for (NSURL *URL in enumerator)

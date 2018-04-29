@@ -31,29 +31,6 @@ extern NSString * const BXGenericProfileIdentifier;
 /// It has helper class methods for detecting a game profile from a filesystem path, and for
 /// determining the 'era' of a particular game at a filesystem path.
 @interface BXGameProfile : NSObject
-{
-    NSString *_identifier;
-    NSUInteger _priority;
-	NSString *_gameName;
-	NSString *_profileDescription;
-	NSArray *_configurations;
-    
-    NSDictionary *_driveLabelMappings;
-    NSString *_preferredInstallationFolderPath;
-	NSArray *_installerPatterns;
-    NSArray *_ignoredInstallerPatterns;
-	
-	BXReleaseMedium _coverArtMedium;
-	BXDriveType _sourceDriveType;
-	NSInteger _requiredDiskSpace;
-	BOOL _shouldMountHelperDrivesDuringImport;
-    BOOL _shouldMountTempDrive;
-    BOOL _requiresCDROM;
-    
-    BOOL _shouldImportMountCommands;
-    BOOL _shouldImportLaunchCommands;
-    BOOL _shouldImportSettings;
-}
 
 #pragma mark -
 #pragma mark Properties

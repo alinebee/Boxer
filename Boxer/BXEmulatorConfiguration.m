@@ -48,6 +48,9 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 
 @interface BXEmulatorConfiguration ()
 
+//Our private storage of configuration sections
+@property (strong, nonatomic) NSMutableDictionary *sections;
+
 //Parses a DOSBox-formatted configuration string and sets sections and settings from it
 - (void) _parseSettingsFromString: (NSString *)configuration;
 
@@ -62,8 +65,6 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 
 
 @implementation BXEmulatorConfiguration
-@synthesize preamble = _preamble;
-@synthesize startupCommandsPreamble = _startupCommandsPreamble;
 
 #pragma mark -
 #pragma mark Initialization and teardown
@@ -130,7 +131,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 {
 	if ((self = [super init]))
 	{
-		_sections = [[NSMutableDictionary alloc] initWithCapacity: BXConfigurationNumKnownSections];
+		self.sections = [[NSMutableDictionary alloc] initWithCapacity: BXConfigurationNumKnownSections];
 	}
 	return self;
 }
@@ -167,7 +168,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 	NSAssert(![sectionName isEqualToString: @"autoexec"],
 			 @"Startup commands should be set with setStartupCommands: or addStartupCommand:");
 	
-	NSMutableDictionary *section = [_sections objectForKey: sectionName];
+	NSMutableDictionary *section = [self.sections objectForKey: sectionName];
 		
 	if (section)
 	{
@@ -187,7 +188,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 	NSAssert(![sectionName isEqualToString: @"autoexec"],
 			 @"Startup commands should be retrieved with [BXEmulatorConfiguration startupCommands].");
 	
-	return [[_sections objectForKey: sectionName] objectForKey: settingName];
+	return [[self.sections objectForKey: sectionName] objectForKey: settingName];
 }
 
 - (void) removeValueForKey: (NSString *)settingName inSection: (NSString *)sectionName
@@ -196,7 +197,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 	NSAssert(![sectionName isEqualToString: @"autoexec"],
 			 @"Startup commands should be removed with [BXEmulatorConfiguration removeStartupCommand].");
 	
-	[[_sections objectForKey: sectionName] removeObjectForKey: settingName];
+	[[self.sections objectForKey: sectionName] removeObjectForKey: settingName];
 }
 
 
@@ -205,7 +206,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 
 - (NSArray *) startupCommands
 {
-	return [_sections objectForKey: @"autoexec"];
+	return [self.sections objectForKey: @"autoexec"];
 }
 
 - (void) setStartupCommands: (NSArray *)commands
@@ -213,7 +214,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
     if (commands)
     {
         NSMutableArray *mutableCommands = [commands mutableCopy];
-        [_sections setObject: mutableCommands forKey: @"autoexec"];
+        [self.sections setObject: mutableCommands forKey: @"autoexec"];
     }
     else
     {
@@ -228,7 +229,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 
 - (void) addStartupCommand: (NSString *)command
 {
-	NSMutableArray *commands = [_sections objectForKey: @"autoexec"];
+	NSMutableArray *commands = [self.sections objectForKey: @"autoexec"];
 	if (commands)
 	{
 		[commands addObject: command];
@@ -244,7 +245,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 {
     if (!newCommands.count) return;
     
-	NSMutableArray *commands = [_sections objectForKey: @"autoexec"];
+	NSMutableArray *commands = [self.sections objectForKey: @"autoexec"];
 	if (commands)
 	{
 		[commands addObjectsFromArray: newCommands];
@@ -258,7 +259,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 
 - (void) removeStartupCommand: (NSString *)command
 {
-	NSMutableArray *commands = [_sections objectForKey: @"autoexec"];
+	NSMutableArray *commands = [self.sections objectForKey: @"autoexec"];
 	[commands removeObject: command];
 }
 
@@ -268,7 +269,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 
 - (NSDictionary *) settings
 {
-	NSMutableDictionary *settings = [_sections mutableCopy];
+	NSMutableDictionary *settings = [self.sections mutableCopy];
 	
 	//Remove the startup commands from our returned dictionary
 	[settings removeObjectForKey: @"autoexec"];
@@ -278,7 +279,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 - (BOOL) isEmpty
 {
 	//If any section has any content, we're not empty
-	for (id section in _sections.objectEnumerator)
+	for (id section in self.sections.objectEnumerator)
         if ([section count] > 0) return NO;
     
 	return YES;
@@ -289,7 +290,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 	//The autoexec section is an array, not a dictionary, and must be accessed with different methods
 	NSAssert(![sectionName isEqualToString: @"autoexec"],
 			 @"Startup commands should be accessed with [BXEmulatorConfiguration startupCommands].");
-	return [_sections objectForKey: sectionName];
+	return [self.sections objectForKey: sectionName];
 }
 
 - (void) setSettings: (NSDictionary *)newSettings forSection: (NSString *)sectionName
@@ -297,7 +298,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
     if (newSettings)
     {
         NSMutableDictionary *section = [newSettings mutableCopy];
-        [_sections setObject: section forKey: sectionName];
+        [self.sections setObject: section forKey: sectionName];
     }
     else
     {
@@ -314,7 +315,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
     if (!newSettings.count)
         return;
     
-	NSMutableDictionary *section = [_sections objectForKey: sectionName];
+	NSMutableDictionary *section = [self.sections objectForKey: sectionName];
 	if (section)
 	{
 		[section addEntriesFromDictionary: newSettings];
@@ -328,7 +329,7 @@ NSString * const BXEmulatorConfigurationEmptyFormat     = @"^\\s*$";
 
 - (void) removeSection: (NSString *)sectionName
 {
-	[_sections removeObjectForKey: sectionName];
+	[self.sections removeObjectForKey: sectionName];
 }
 
 

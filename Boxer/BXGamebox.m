@@ -84,8 +84,11 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 
 @implementation BXGamebox
-@synthesize gameInfo = _gameInfo;
-@synthesize undoDelegate = _undoDelegate;
+{
+	NSMutableArray *_launchers;
+	BOOL _lastWritableStatus;
+	CFAbsoluteTime _nextWriteableCheckTime;
+}
 
 //We ignore files with these names when considering which programs are important enough to list
 //TODO: read this data from a configuration plist instead

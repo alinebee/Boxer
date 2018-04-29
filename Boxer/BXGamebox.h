@@ -117,43 +117,36 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 /// TODO: it is inappropriate to subclass NSBundle for representing a modifiable file package,
 /// and we should instead be using an NSFileWrapper directory wrapper.
 @interface BXGamebox : NSBundle <ADBUndoable>
-{
-	NSMutableDictionary *_gameInfo;
-    NSMutableArray *_launchers;
-    __weak id <ADBUndoDelegate> _undoDelegate;
-    BOOL _lastWritableStatus;
-    CFAbsoluteTime _nextWriteableCheckTime;
-}
 
 #pragma mark - Properties
 
 /// Returns a dictionary of gamebox metadata loaded from Boxer.plist.
 /// Keys in this dictionary also be retrieved with gameInfoForKey:, and set with setGameInfo:forKey:.
-@property (readonly, strong, nonatomic, nullable) NSDictionary<NSString*,id> *gameInfo;
+@property (readonly, strong, nonatomic, null_resettable) NSDictionary<NSString*,id> *gameInfo;
 
 /// The name of the game, suitable for display. This is the gamebox's filename minus any ".boxer" extension.
-@property (copy, readonly, nonatomic) NSString *gameName;
+@property (readonly, nonatomic) NSString *gameName;
 
 /// The unique identifier of this game.
 @property (copy, nonatomic) NSString *gameIdentifier;
 
 /// URLs to bundled drives and images of the specified types.
-@property (copy, readonly, nonatomic) NSArray<NSURL*> *hddVolumeURLs;
-@property (copy, readonly, nonatomic) NSArray<NSURL*> *cdVolumeURLs;
-@property (copy, readonly, nonatomic) NSArray<NSURL*> *floppyVolumeURLs;
+@property (readonly, nonatomic) NSArray<NSURL*> *hddVolumeURLs;
+@property (readonly, nonatomic) NSArray<NSURL*> *cdVolumeURLs;
+@property (readonly, nonatomic) NSArray<NSURL*> *floppyVolumeURLs;
 
 /// An array of drives bundled inside this gamebox, ordered by drive letter and filename.
-@property (copy, readonly, nonatomic) NSArray<BXDrive *> *bundledDrives;
+@property (readonly, nonatomic) NSArray<BXDrive *> *bundledDrives;
 
 /// Returns the URL at which the configuration file is stored (which may not yet exist.)
-@property (copy, readonly, nonatomic) NSURL *configurationFileURL;
+@property (readonly, nonatomic) NSURL *configurationFileURL;
 
 /// Returns the URL of the target program saved under Boxer 1.3.x and below.
-@property (copy, readonly, nonatomic) NSURL *legacyTargetURL;
+@property (readonly, nonatomic) NSURL *legacyTargetURL;
 
 /// Whether the emulation should finish once the default launcher exits,
 /// rather than returning to the DOS prompt. No longer supported.
-@property (assign, nonatomic) BOOL closeOnExit;
+@property (nonatomic) BOOL closeOnExit;
 
 /// The cover art image for this gamebox. Will be nil if the gamebox has no custom cover art.
 /// This is stored internally as the gamebox's OS X icon resource.
@@ -164,14 +157,14 @@ typedef NS_ENUM(NSUInteger, BXGameIdentifierType) {
 
 /// The default launcher for this gamebox, which should be launched the first time the gamebox is run.
 /// This will be @c nil if the gamebox has no default launcher.
-@property (copy, readonly, nonatomic, nullable) NSDictionary<NSString*,id> *defaultLauncher;
+@property (readonly, nonatomic, nullable) NSDictionary<NSString*,id> *defaultLauncher;
 
 /// The index in the launchers array of the default launcher.
 /// Will be NSNotFound if no default launcher has been set.
-@property (assign, nonatomic) NSUInteger defaultLauncherIndex;
+@property (nonatomic) NSUInteger defaultLauncherIndex;
 
 /// The delegate from whom we will request an undo manager for undoable operations.
-@property (weak, nullable) id <ADBUndoDelegate> undoDelegate;
+@property (weak, nonatomic) id <ADBUndoDelegate> undoDelegate;
 
 
 #pragma mark - Instance methods

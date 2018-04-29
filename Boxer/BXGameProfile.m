@@ -53,26 +53,6 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 
 
 @implementation BXGameProfile
-@synthesize priority = _priority;
-@synthesize gameName = _gameName;
-@synthesize configurations = _configurations;
-@synthesize identifier = _identifier;
-@synthesize profileDescription = _profileDescription;
-@synthesize sourceDriveType = _sourceDriveType;
-@synthesize releaseMedium = _coverArtMedium;
-@synthesize requiredDiskSpace = _requiredDiskSpace;
-@synthesize shouldMountHelperDrivesDuringImport = _shouldMountHelperDrivesDuringImport;
-@synthesize shouldMountTempDrive = _shouldMountTempDrive;
-@synthesize requiresCDROM = _requiresCDROM;
-
-@synthesize installerPatterns = _installerPatterns;
-@synthesize ignoredInstallerPatterns = _ignoredInstallerPatterns;
-@synthesize driveLabelMappings = _driveLabelMappings;
-
-@synthesize shouldImportMountCommands = _shouldImportMountCommands;
-@synthesize shouldImportLaunchCommands = _shouldImportLaunchCommands;
-@synthesize shouldImportSettings = _shouldImportSettings;
-@synthesize preferredInstallationFolderPath = _preferredInstallationFolderPath;
 
 + (BXReleaseMedium) mediumOfGameAtURL: (NSURL *)baseURL
 {

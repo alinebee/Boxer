@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Set/retrieve the delegate that will provide this object with an undo manager.
 /// The receiver should not retain the delegate.
-@property (readwrite, assign, nullable) id <ADBUndoDelegate> undoDelegate;
+@property (weak, nonatomic) id <ADBUndoDelegate> undoDelegate;
 
 @end
 

@@ -1826,7 +1826,6 @@
 		9FDCA78E118F2B7900E2FD74 /* BXCoalface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalface.h; sourceTree = "<group>"; };
 		9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalface.mm; sourceTree = "<group>"; };
 		9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
-		9FDD4CB411E619D50035BA9E /* CGSPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGSPrivate.h; sourceTree = "<group>"; };
 		9FDE341D1351DE26000DCE44 /* BXBlueprintBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBlueprintBackgroundView.h; sourceTree = "<group>"; };
 		9FDE341E1351DE26000DCE44 /* BXBlueprintBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBlueprintBackgroundView.m; sourceTree = "<group>"; };
 		9FDE34321351DFD4000DCE44 /* BXImportTipsPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportTipsPanelController.h; sourceTree = "<group>"; };
@@ -3512,7 +3511,6 @@
 			isa = PBXGroup;
 			children = (
 				9F991BDE1800395900E2C0FE /* Scripting Bridge */,
-				9FDD4CB411E619D50035BA9E /* CGSPrivate.h */,
 				9FADFE9511EC932800990E91 /* NSData+HexStrings.h */,
 				9FADFE9611EC932800990E91 /* NSData+HexStrings.m */,
 				9F7A8F230F8E705100D1AAD5 /* ADBToolkit */,
@@ -5105,7 +5103,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -5178,6 +5176,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",
 				);
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				HEADER_SEARCH_PATHS = (
@@ -5224,7 +5223,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

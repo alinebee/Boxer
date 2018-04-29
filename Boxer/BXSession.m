@@ -1092,7 +1092,7 @@ NSString * const BXGameImportedNotificationType     = @"BXGameImported";
 }
 
 + (NSSet *) keyPathsForValuesAffectingHasGamebox        { return [NSSet setWithObject: @"gamebox"]; }
-+ (NSSet *) keyPathsForValuesAffectingRepresentedIcon	{ return [NSSet setWithObjects: @"gamebox", @"gamebox.coverArt", nil]; }
++ (NSSet *) keyPathsForValuesAffectingRepresentedIcon	{ return [NSSet setWithObject: @"gamebox"]; }
 + (NSSet *) keyPathsForValuesAffectingCurrentURL        { return [NSSet setWithObjects: @"launchedProgramURL", @"emulator.currentDirectoryURL", nil]; }
 
 - (NSArray *) recentPrograms

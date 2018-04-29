@@ -86,26 +86,10 @@ typedef NS_OPTIONS(NSUInteger, BXMT32ROMType) {
 /// Unlike the other \c BXMIDIDevice classes, this currently feeds audio output back into
 /// DOSBox's own mixer.
 @interface BXEmulatedMT32 : NSObject <BXMIDIDevice, BXAudioSource>
-{
-    __unsafe_unretained id <BXEmulatedMT32Delegate> _delegate;
-    NSURL *_PCMROMURL;
-    NSURL *_controlROMURL;
-    NSError *_synthError;
-    unsigned int _sampleRate;
-    
-#ifdef __cplusplus
-    MT32Emu::Synth *_synth;
-    BXEmulatedMT32ReportHandler *_reportHandler;
-    MT32Emu::FileStream *_PCMROMHandle;
-    MT32Emu::FileStream *_controlROMHandle;
-    const MT32Emu::ROMImage *_PCMROMImage;
-    const MT32Emu::ROMImage *_controlROMImage;
-#endif
-}
 
 @property (copy, nonatomic) NSURL *PCMROMURL;
 @property (copy, nonatomic) NSURL *controlROMURL;
-@property (assign, nonatomic) id <BXEmulatedMT32Delegate> delegate;
+@property (weak, nonatomic) id <BXEmulatedMT32Delegate> delegate;
 @property (assign, nonatomic) unsigned int sampleRate;
 
 - (id <BXMIDIDevice>) initWithPCMROM: (NSURL *)PCMROMURL

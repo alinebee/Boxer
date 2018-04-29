@@ -22,19 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 #define BXVolumeSyncDelay 0.05
 
 @interface BXExternalMIDIDevice : NSObject <BXMIDIDevice>
-{
-	MIDIPortRef _port;
-	MIDIClientRef _client;
-	MIDIEndpointRef _destination;
-    
-    NSTimeInterval _secondsPerByte;
-    
-    NSDate *_dateWhenReady;
-    
-    float _volume;
-    float _requestedVolume;
-    NSTimer *_volumeSyncTimer;
-}
 
 /// The destination this device is connecting to. Set at initialization time.
 @property (readonly, nonatomic) MIDIEndpointRef destination;
@@ -48,6 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// The master volume set by the MIDI-using application via sysex, from 0.0 to 1.0.
 /// This will be multiplied by @volume to arrive at the actual volume passed on the device.
 @property (assign, nonatomic) float requestedVolume;
+
+@property (assign, nonatomic) NSTimeInterval secondsPerByte;
 
 
 #pragma mark -

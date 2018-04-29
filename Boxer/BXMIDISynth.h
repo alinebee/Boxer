@@ -18,12 +18,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// BXMIDISyth sending MIDI signals from DOSBox to OS X's built-in MIDI synth, using the AUGraph API.
 /// It's largely cribbed from DOSBox's own coreaudio MIDI handler.
 @interface BXMIDISynth : NSObject <BXMIDIDevice>
-{
-	AUGraph _graph;
-	AudioUnit _synthUnit;
-	AudioUnit _outputUnit;
-    NSURL *_soundFontURL;
-}
 
 /// The URL of the soundfont bank we are currently using,
 /// which be the default system unless a custom one has been

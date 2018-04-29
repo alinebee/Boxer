@@ -33,10 +33,12 @@
 #pragma mark Implementation
 
 @implementation BXExternalMIDIDevice
-@synthesize dateWhenReady = _dateWhenReady;
-@synthesize destination = _destination;
-@synthesize volume = _volume;
-@synthesize requestedVolume = _requestedVolume;
+{
+	MIDIPortRef _port;
+	MIDIClientRef _client;
+	
+	NSTimer *_volumeSyncTimer;
+}
 
 #pragma mark -
 #pragma mark Class helper methods

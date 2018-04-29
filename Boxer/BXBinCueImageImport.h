@@ -11,12 +11,9 @@
 /// \c BXBinCueImageImport rips CD-ROM discs to BIN/CUE images that are bundled into a .cdmedia bundle,
 /// using the cdrdao utility.
 @interface BXBinCueImageImport : BXCDImageImport
-{	
-	@protected
-	BOOL _usesErrorCorrection;
-}
+
 /// Enables/disables cdrdao's error-correction when reading audio tracks.
 /// This halves the speed of importing when enabled.
-@property (assign) BOOL usesErrorCorrection;
+@property (atomic) BOOL usesErrorCorrection;
 
 @end

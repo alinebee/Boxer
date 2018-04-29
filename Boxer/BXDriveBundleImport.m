@@ -16,9 +16,12 @@
 
 NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 
-
+@interface BXDriveBundleImport ()
+@property (atomic) BOOL hasWrittenFiles;
+@end
 
 @implementation BXDriveBundleImport
+
 @synthesize drive = _drive;
 @synthesize destinationFolderURL = _destinationFolderURL;
 @synthesize destinationURL = _destinationURL;
@@ -146,9 +149,9 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
     if (self.isCancelled) return;
     
     //Perform the standard file import from here on in.
-    _hasWrittenFiles = NO;
+    self.hasWrittenFiles = NO;
     [super main];
-    _hasWrittenFiles = YES;
+    self.hasWrittenFiles = YES;
     
     if (!self.error)
     {
@@ -196,7 +199,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 - (BOOL) undoTransfer
 {
 	BOOL undid = [super undoTransfer];
-	if (self.copyFiles && self.destinationURL && _hasWrittenFiles)
+	if (self.copyFiles && self.destinationURL && self.hasWrittenFiles)
 	{
 		undid = [[NSFileManager defaultManager] removeItemAtURL: self.destinationURL error: NULL];
 	}

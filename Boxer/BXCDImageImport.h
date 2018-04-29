@@ -21,22 +21,13 @@ typedef NS_ERROR_ENUM(BXCDImageImportErrorDomain, BXCDImageImportErrors) {
 
 /// BXCDImageImport rips physical CDs to (CDR-format) ISO disc images using OS X's hdiutil.
 @interface BXCDImageImport : ADBTaskOperation <BXDriveImport>
-{
-	BXDrive *_drive;
-	unsigned long long _numBytes;
-	unsigned long long _bytesTransferred;
-	ADBOperationProgress _currentProgress;
-	BOOL _indeterminate;
-	NSURL *_destinationFolderURL;
-	NSURL *_destinationURL;
-    BOOL _hasWrittenFiles;
-}
 
-@property (assign, readwrite) unsigned long long numBytes;
-@property (assign, readwrite) unsigned long long bytesTransferred;
-@property (assign, readwrite) ADBOperationProgress currentProgress;
-@property (assign, readwrite, getter=isIndeterminate) BOOL indeterminate;
+@property (atomic) unsigned long long numBytes;
+@property (atomic) unsigned long long bytesTransferred;
+@property (atomic) ADBOperationProgress currentProgress;
+@property (atomic, getter=isIndeterminate) BOOL indeterminate;
 
+@property (atomic) BOOL hasWrittenFiles;
 
 @end
 

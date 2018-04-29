@@ -76,9 +76,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	return status == BXDADiskOperationSucceeded;
 }
 
-
 @implementation BXBinCueImageImport
-@synthesize usesErrorCorrection = _usesErrorCorrection;
 
 + (BOOL) driveUnavailableDuringImport
 {
@@ -142,7 +140,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
     if (!self.destinationURL)
         self.destinationURL = self.preferredDestinationURL;
     
-    _hasWrittenFiles = NO;
+    self.hasWrittenFiles = NO;
     
 	NSURL *sourceURL		= self.drive.sourceURL;
 	NSURL *destinationURL	= self.destinationURL;
@@ -225,7 +223,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	
 	//At this point we have started creating data; record this fact so that we will
 	//clean up our partial files in BXCDImageImport -undoTransfer if the import is aborted.
-	_hasWrittenFiles = YES;
+	self.hasWrittenFiles = YES;
 
 	
 	//Unmount the disc's volume without ejecting it, so that cdrdao can access the device exclusively.

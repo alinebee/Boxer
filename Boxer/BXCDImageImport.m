@@ -20,14 +20,10 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 #pragma mark Implementations
 
 @implementation BXCDImageImport
+
 @synthesize drive = _drive;
 @synthesize destinationFolderURL	= _destinationFolderURL;
 @synthesize destinationURL          = _destinationURL;
-
-@synthesize numBytes			= _numBytes;
-@synthesize bytesTransferred	= _bytesTransferred;
-@synthesize currentProgress		= _currentProgress;
-@synthesize indeterminate		= _indeterminate;
 
 
 #pragma mark -
@@ -194,9 +190,9 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	self.task = hdiutil;
 	
 	//Run the task to completion and monitor its progress
-    _hasWrittenFiles = NO;
+    self.hasWrittenFiles = NO;
 	[super main];
-    _hasWrittenFiles = YES;
+    self.hasWrittenFiles = YES;
 	
 	if (!self.error)
 	{
@@ -268,7 +264,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 - (BOOL) undoTransfer
 {
 	BOOL undid = NO;
-	if (self.destinationURL && _hasWrittenFiles)
+	if (self.destinationURL && self.hasWrittenFiles)
 	{
         undid = [[NSFileManager defaultManager] removeItemAtURL: self.destinationURL error: NULL];
 	}

@@ -17,15 +17,6 @@
 /// It also collects overall file data about the source while scanning, such as the game profile
 /// and whether the game appears to be already installed (or not a DOS game at all).
 @interface BXInstallerScan : ADBImageAwareFileScan
-{
-    NSMutableArray<NSString*> *_windowsExecutables;
-    NSMutableArray<NSString*> *_DOSExecutables;
-    NSMutableArray<NSString*> *_macOSApps;
-    NSMutableArray<NSString*> *_DOSBoxConfigurations;
-    BOOL _alreadyInstalled;
-    
-    BXGameProfile *_detectedProfile;
-} 
 
 /// The relative paths of all DOS and Windows executables and DOSBox configuration files
 /// discovered during scanning.

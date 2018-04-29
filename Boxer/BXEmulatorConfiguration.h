@@ -26,10 +26,10 @@
 @property (readonly, nonatomic) BOOL isEmpty;
 
 /// Returns a dictionary of all settings organised by section (not including startup commands.)
-@property (weak, readonly, nonatomic) NSDictionary *settings;
+@property (copy, readonly, nonatomic) NSDictionary *settings;
 
 /// Returns an array of all startup commands.
-@property (weak, readonly, nonatomic) NSArray<NSString*> *startupCommands;
+@property (copy, readonly, nonatomic) NSArray<NSString*> *startupCommands;
 
 /// A string to prepend as a header comment at the start of the configuration file.
 /// Used by description and writeToFile:error:

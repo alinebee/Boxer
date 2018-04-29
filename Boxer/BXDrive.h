@@ -148,7 +148,7 @@ typedef NS_ENUM(NSInteger, BXDriveType) {
 @property (readonly, strong, nonatomic) id <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess> filesystem;
 
 /// A localized human-readable title for the drive's type, for display in the UI.
-@property (weak, readonly, nonatomic) NSString *localizedTypeDescription;
+@property (copy, readonly, nonatomic) NSString *localizedTypeDescription;
 
 
 #pragma mark - Class methods

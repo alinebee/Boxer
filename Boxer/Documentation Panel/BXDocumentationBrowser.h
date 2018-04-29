@@ -17,48 +17,48 @@
 /// BXDocumentationBrowser manages the list of documentation for the gamebox.
 @interface BXDocumentationBrowser : NSViewController <NSCollectionViewDelegate, NSDraggingDestination>
 {
-    NSArray *_documentationURLs;
+    NSArray<NSURL*> *_documentationURLs;
     NSIndexSet *_documentationSelectionIndexes;
     
-    __unsafe_unretained NSScrollView *_documentationScrollView;
-    __unsafe_unretained BXDocumentationList *_documentationList;
-    __unsafe_unretained NSTextField *_titleLabel;
-    __unsafe_unretained NSTextField *_helpTextLabel;
+    __weak NSScrollView *_documentationScrollView;
+    __weak BXDocumentationList *_documentationList;
+    __weak NSTextField *_titleLabel;
+    __weak NSTextField *_helpTextLabel;
     
-    __unsafe_unretained id <BXDocumentationBrowserDelegate> _delegate;
+    __weak id <BXDocumentationBrowserDelegate> _delegate;
 }
 
 #pragma mark - Properties
 
 /// The delegate to which we will send \c BXDocumentationBrowserDelegate messages.
-@property (assign, nonatomic) IBOutlet id <BXDocumentationBrowserDelegate> delegate;
+@property (weak, nonatomic) IBOutlet id <BXDocumentationBrowserDelegate> delegate;
 
 /// The scrolling wrapper in which our documenation list is displayed.
-@property (assign, nonatomic) IBOutlet NSScrollView *documentationScrollView;
+@property (weak, nonatomic) IBOutlet NSScrollView *documentationScrollView;
 
 /// The title at the top of the browser.
-@property (assign, nonatomic) IBOutlet NSTextField *titleLabel;
+@property (weak, nonatomic) IBOutlet NSTextField *titleLabel;
 
 /// The help text displayed at the bottom of the browser.
-@property (assign, nonatomic) IBOutlet NSTextField *helpTextLabel;
+@property (weak, nonatomic) IBOutlet NSTextField *helpTextLabel;
 
 /// The collection view in which our documentation will be displayed.
-@property (assign, nonatomic) IBOutlet BXDocumentationList *documentationList;
+@property (weak, nonatomic) IBOutlet BXDocumentationList *documentationList;
 
 /// An array of NSURLs for the documentation files included in this gamebox.
 /// This is mapped directly to the documentation URLs reported by the gamebox.
-@property (readonly, copy, nonatomic) NSArray *documentationURLs;
+@property (readonly, copy, nonatomic) NSArray<NSURL*> *documentationURLs;
 
 /// An array of criteria for how the documentation files should be sorted in the UI.
 /// Documentation will be sorted by type and then by name, to group similar types
 /// of documentation files together.
-@property (weak, readonly, nonatomic) NSArray *sortCriteria;
+@property (copy, readonly, nonatomic) NSArray<NSSortDescriptor*> *sortCriteria;
 
 /// The currently selected documentation items. Normally, only one item can be selected at a time.
 @property (strong, nonatomic) NSIndexSet *documentationSelectionIndexes;
 
 /// An array of the currently-selected documentation items.
-@property (weak, readonly, nonatomic) NSArray *selectedDocumentationURLs;
+@property (copy, readonly, nonatomic) NSArray<NSURL*> *selectedDocumentationURLs;
 
 /// The ideal size for displaying the browser without clipping.
 /// This varies based on the number of documentation items and the length of the title.
@@ -66,7 +66,7 @@
 
 /// The text that will be displayed in the help text label at the foot of the view.
 /// Changes depending on how many documentation items there are and whether adding new documentation is possible.
-@property (weak, readonly, nonatomic) NSString *helpText;
+@property (copy, readonly, nonatomic) NSString *helpText;
 
 /// Whether we are able to add or remove documentation from the gamebox.
 /// This is determined from the locked status of the gamebox,
@@ -172,7 +172,7 @@
 /// The display name of the documentation file.
 ///
 /// This will be the filename of the documentation file sans extension.
-@property (weak, readonly, nonatomic) NSString *displayName;
+@property (copy, readonly, nonatomic) NSString *displayName;
 
 @end
 

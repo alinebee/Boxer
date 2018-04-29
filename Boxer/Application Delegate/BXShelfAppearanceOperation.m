@@ -27,9 +27,6 @@
 
 
 @implementation BXShelfAppearanceOperation
-@synthesize finder = _finder;
-@synthesize targetURL = _targetURL;
-@synthesize appliesToSubFolders = _appliesToSubFolders;
 
 - (instancetype) init
 {
@@ -108,10 +105,6 @@
 @end
 
 @implementation BXShelfAppearanceApplicator
-@synthesize backgroundImageURL = _backgroundImageURL;
-@synthesize icon = _icon;
-@synthesize switchToIconView = _switchToIconView;
-@synthesize backgroundPicture = _backgroundPicture;
 
 - (id) initWithTargetURL: (NSURL *)targetURL
 	  backgroundImageURL: (NSURL *)backgroundImageURL
@@ -190,8 +183,6 @@
 @end
 
 @implementation BXShelfAppearanceRemover
-@synthesize sourceURL = _sourceURL;
-@synthesize sourceOptions = _sourceOptions;
 
 - (id) initWithTargetURL: (NSURL *)targetURL
        appearanceFromURL: (NSURL *)sourceURL

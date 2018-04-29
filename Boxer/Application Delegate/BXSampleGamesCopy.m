@@ -10,8 +10,6 @@
 #import "BXCoverArt.h"
 
 @implementation BXSampleGamesCopy
-@synthesize sourceURL = _sourceURL;
-@synthesize targetURL = _targetURL;
 
 - (id) initFromSourceURL: (NSURL *)sourceURL toTargetURL: (NSURL *)targetURL
 {

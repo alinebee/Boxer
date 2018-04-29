@@ -697,10 +697,6 @@ struct boxer_emulatorException: public std::exception {
 
 
 @interface BXEmulatorException: NSException
-{
-    NSArray *_BXCallStackReturnAddresses;
-    NSArray *_BXCallStackSymbols;
-}
 
 @property (copy) NSArray *callStackReturnAddresses;
 @property (copy) NSArray *callStackSymbols;

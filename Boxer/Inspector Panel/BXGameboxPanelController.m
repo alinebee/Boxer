@@ -42,8 +42,6 @@ enum {
 #pragma mark Implementation
 
 @implementation BXGameboxPanelController
-@synthesize programSelector = _programSelector;
-@synthesize sessionMediator = _sessionMediator;
 
 - (BXSession *) session
 {

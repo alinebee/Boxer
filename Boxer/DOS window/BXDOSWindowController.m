@@ -41,28 +41,18 @@
 NSString * const BXDOSWindowFullscreenSizeFormat = @"Fullscreen size for %@";
 
 @implementation BXDOSWindowController
+{
+	NSSize _renderingViewSizeBeforeFullScreen;
+	BOOL _resizingProgrammatically;
+	BOOL _windowIsClosing;
+	
+	NSSize _currentScaledSize;
+	NSSize _currentScaledResolution;
+}
+
 
 #pragma mark -
 #pragma mark Accessors
-
-@synthesize renderingView = _renderingView;
-@synthesize inputView = _inputView;
-@synthesize currentPanel = _currentPanel;
-@synthesize statusBar = _statusBar;
-@synthesize programPanel = _programPanel;
-@synthesize launchPanel = _launchPanel;
-@synthesize panelWrapper = _panelWrapper;
-@synthesize programPanelController = _programPanelController;
-@synthesize launchPanelController = _launchPanelController;
-@synthesize inputController = _inputController;
-@synthesize statusBarController = _statusBarController;
-@synthesize autosaveNameBeforeFullScreen = _autosaveNameBeforeFullScreen;
-@synthesize aspectCorrected = _aspectCorrected;
-@synthesize loadingPanel = _loadingPanel;
-@synthesize loadingSpinner = _loadingSpinner;
-@synthesize documentationButton = _documentationButton;
-@synthesize maxFullscreenViewportSize = _maxFullscreenViewportSize;
-@synthesize renderingStyle = _renderingStyle;
 
 - (void) setDocument: (BXSession *)document
 {	

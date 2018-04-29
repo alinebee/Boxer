@@ -12,12 +12,6 @@
 #define BXFrameResizeDelayFalloff 7.5
 
 @implementation BXDOSWindow
-@synthesize actualContentView;
-
-- (void) dealloc
-{
-    [self setActualContentView: nil];
-}
 
 //Overridden to smooth out the speed of shorter resize animations,
 //while leaving larger resize animations largely as they were.

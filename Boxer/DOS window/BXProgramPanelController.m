@@ -22,11 +22,6 @@
 @end
 
 @implementation BXProgramPanelController
-@synthesize programList, programScroller, scanSpinner;
-@synthesize defaultProgramPanel, initialDefaultProgramPanel;
-@synthesize programChooserPanel, noProgramsPanel, scanningForProgramsPanel;
-@synthesize panelExecutables;
-@synthesize lastActiveProgramPath;
 
 - (void) dealloc
 {
@@ -132,24 +127,24 @@
 	{	
 		//If we have a default program, show the checkbox version;
 		//also keep showing the checkbox if it's already active
-		if ([self hasDefaultTarget] || [self activePanel] == defaultProgramPanel)
-			panel = defaultProgramPanel;
+		if ([self hasDefaultTarget] || [self activePanel] == self.defaultProgramPanel)
+			panel = self.defaultProgramPanel;
 		//Otherwise, show the Yes/No choice.
 		else
-			panel = initialDefaultProgramPanel;
+			panel = self.initialDefaultProgramPanel;
 	}
 	else if	(session.programURLsOnPrincipalDrive)
 	{
-		panel = programChooserPanel;
+		panel = self.programChooserPanel;
         [self syncProgramButtonStates];
 	}
     else if ([session isScanningForExecutables])
     {
-        panel = scanningForProgramsPanel;
+        panel = self.scanningForProgramsPanel;
     }
     else
     {   
-		panel = noProgramsPanel;
+		panel = self.noProgramsPanel;
     }
 
 	[self setActivePanel: panel];
@@ -157,7 +152,7 @@
 
 - (void) syncProgramButtonStates
 {
-	for (NSView *itemView in [programList subviews])
+	for (NSView *itemView in [self.programList subviews])
 	{
 		NSButton *button = [itemView viewWithTag: BXProgramPanelButtons];
 		

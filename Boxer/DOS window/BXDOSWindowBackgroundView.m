@@ -11,7 +11,6 @@
 #import "NSView+ADBDrawingHelpers.h"
 
 @implementation BXDOSWindowBackgroundView
-@synthesize snapshot = _snapshot;
 
 - (void) _drawBackgroundInRect: (NSRect)dirtyRect
 {

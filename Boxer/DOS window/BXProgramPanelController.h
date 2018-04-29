@@ -16,44 +16,28 @@
 ///
 /// TODO: move most of the which-panel-to-show logic upstream into BXSession, which knows a lot
 /// more about what to display. The current implementation is a rat's-nest of bindings and predictions.
+__deprecated
 @interface BXProgramPanelController : NSViewController
-{
-	IBOutlet NSView *programChooserPanel;
-	IBOutlet NSView *defaultProgramPanel;
-	IBOutlet NSView *initialDefaultProgramPanel;
-	IBOutlet NSView *noProgramsPanel;
-    IBOutlet NSView *scanningForProgramsPanel;
-    
-    IBOutlet NSProgressIndicator *scanSpinner;
-    
-	IBOutlet NSCollectionView *programList;
-	IBOutlet NSScrollView *programScroller;
-	
-	NSArray *panelExecutables;
-    
-    NSString *lastActiveProgramPath;
-}
-
 
 #pragma mark -
 #pragma mark Properties
 
-@property (strong, nonatomic) NSView *programChooserPanel;
-@property (strong, nonatomic) NSView *defaultProgramPanel;
-@property (strong, nonatomic) NSView *initialDefaultProgramPanel;
-@property (strong, nonatomic) NSView *noProgramsPanel;
-@property (strong, nonatomic) NSView *scanningForProgramsPanel;
+@property (strong, nonatomic) IBOutlet NSView *programChooserPanel;
+@property (strong, nonatomic) IBOutlet NSView *defaultProgramPanel;
+@property (strong, nonatomic) IBOutlet NSView *initialDefaultProgramPanel;
+@property (strong, nonatomic) IBOutlet NSView *noProgramsPanel;
+@property (strong, nonatomic) IBOutlet NSView *scanningForProgramsPanel;
 
-@property (strong, nonatomic) NSProgressIndicator *scanSpinner;
+@property (strong, nonatomic) IBOutlet NSProgressIndicator *scanSpinner;
 
-@property (strong, nonatomic) NSCollectionView *programList;
-@property (strong, nonatomic) NSScrollView *programScroller;
+@property (strong, nonatomic) IBOutlet NSCollectionView *programList;
+@property (strong, nonatomic) IBOutlet NSScrollView *programScroller;
 
 /// The currently displayed view in the program panel.
 @property (weak, nonatomic) NSView *activePanel;
 
 /// Whether the currently executing program is the default program for its gamebox.
-@property (assign, nonatomic) BOOL activeProgramIsDefault;
+@property (nonatomic) BOOL activeProgramIsDefault;
 
 /// Whether the current session currently has any default program.
 @property (readonly, nonatomic) BOOL hasDefaultTarget;

@@ -28,10 +28,10 @@
 
 
 @implementation BXHelpMenuController
-@synthesize mobygamesItem = _mobygamesItem;
-@synthesize replacementDocsItem = _replacementDocsItem;
-@synthesize documentationDivider = _documentationDivider;
-@synthesize helpLinksDivider = _helpLinksDivider;
+{
+	BOOL _needsHelpLinksRefresh;
+	BOOL _needsSessionDocsRefresh;
+}
 
 - (void) awakeFromNib
 {

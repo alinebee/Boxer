@@ -41,35 +41,10 @@
 #define BXMouseLockedBezelDuration 1.5
 
 @implementation BXBezelController
-
-@synthesize driveAddedBezel = _driveAddedBezel;
-@synthesize driveRemovedBezel = _driveRemovedBezel;
-@synthesize driveSwappedBezel = _driveSwappedBezel;
-@synthesize driveImportedBezel = _driveImportedBezel;
-
-@synthesize pauseBezel = _pauseBezel;
-@synthesize playBezel = _playBezel;
-@synthesize fastForwardBezel = _fastForwardBezel;
-
-@synthesize fullscreenBezel = _fullscreenBezel;
-@synthesize screenshotBezel = _screenshotBezel;
-
-@synthesize CPUSpeedBezel = _CPUSpeedBezel;
-@synthesize volumeBezel = _volumeBezel;
-
-@synthesize throttleBezel = _throttleBezel;
-@synthesize joystickIgnoredBezel = _joystickIgnoredBezel;
-
-@synthesize MT32MessageBezel = _MT32MessageBezel;
-@synthesize MT32MissingBezel = _MT32MissingBezel;
-
-@synthesize numpadActiveBezel = _numpadActiveBezel;
-@synthesize numpadInactiveBezel = _numpadInactiveBezel;
-@synthesize numlockActiveBezel = _numlockActiveBezel;
-@synthesize numlockInactiveBezel = _numlockInactiveBezel;
-
-@synthesize mouseLockedBezel = _mouseLockedBezel;
-
+{
+	BXBezelPriority _currentPriority;	
+	BOOL _hasShownFullscreenBezel;
+}
 
 + (NSImage *) bezelIconForDrive: (BXDrive *)drive
 {

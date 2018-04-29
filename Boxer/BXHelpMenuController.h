@@ -15,15 +15,6 @@
 /// and links to look up the game on Mobygames or Replacementdocs.
 /// This controller is instantiated in MainMenu.xib.
 @interface BXHelpMenuController : NSObject
-{
-	NSMenuItem *_mobygamesItem;
-	NSMenuItem *_replacementDocsItem;
-    NSMenuItem *_helpLinksDivider;
-    NSMenuItem *_documentationDivider;
-    
-    BOOL _needsHelpLinksRefresh;
-    BOOL _needsSessionDocsRefresh;
-}
 @property (strong, nonatomic) IBOutlet NSMenuItem *mobygamesItem;
 @property (strong, nonatomic) IBOutlet NSMenuItem *replacementDocsItem;
 @property (strong, nonatomic) IBOutlet NSMenuItem *helpLinksDivider;

@@ -37,83 +37,56 @@ enum {
 @class BXGamebox;
 /// BXBezelController is a singleton that manages a translucent notification bezel.
 @interface BXBezelController : NSWindowController
-{
-    NSView *__weak _driveAddedBezel;
-    NSView *__weak _driveSwappedBezel;
-    NSView *__weak _driveRemovedBezel;
-    NSView *__weak _driveImportedBezel;
-    NSView *__weak _fullscreenBezel;
-    NSView *__weak _joystickIgnoredBezel;
-    NSView *__weak _CPUSpeedBezel;
-    NSView *__weak _throttleBezel;
-    NSView *__weak _volumeBezel;
-    NSView *__weak _pauseBezel;
-    NSView *__weak _playBezel;
-    NSView *__weak _fastForwardBezel;
-    NSView *__weak _screenshotBezel;
-    NSView *__weak _MT32MessageBezel;
-    NSView *__weak _MT32MissingBezel;
-    NSView *__weak _numpadActiveBezel;
-    NSView *__weak _numpadInactiveBezel;
-    NSView *__weak _numlockActiveBezel;
-    NSView *__weak _numlockInactiveBezel;
-    
-    NSView *__weak _mouseLockedBezel;
-    
-    BXBezelPriority _currentPriority;
-    
-    BOOL _hasShownFullscreenBezel;
-}
 
 #pragma mark -
 #pragma mark Properties
 
 /// The bezel view used for drive inserted/ejected/imported notifications.
-@property (weak, nonatomic) IBOutlet NSView *driveAddedBezel;
-@property (weak, nonatomic) IBOutlet NSView *driveSwappedBezel;
-@property (weak, nonatomic) IBOutlet NSView *driveRemovedBezel;
-@property (weak, nonatomic) IBOutlet NSView *driveImportedBezel;
+@property (strong, nonatomic) IBOutlet NSView *driveAddedBezel;
+@property (strong, nonatomic) IBOutlet NSView *driveSwappedBezel;
+@property (strong, nonatomic) IBOutlet NSView *driveRemovedBezel;
+@property (strong, nonatomic) IBOutlet NSView *driveImportedBezel;
 
 /// The bezel used for fullscreen toggle notifications.
-@property (weak, nonatomic) IBOutlet NSView *fullscreenBezel;
+@property (strong, nonatomic) IBOutlet NSView *fullscreenBezel;
 
 /// The bezel used for notifying the user that the joystick is being ignored.
-@property (weak, nonatomic) IBOutlet NSView *joystickIgnoredBezel;
+@property (strong, nonatomic) IBOutlet NSView *joystickIgnoredBezel;
 
 /// The bezel view used for CPU speed notifications.
-@property (weak, nonatomic) IBOutlet NSView *CPUSpeedBezel;
+@property (strong, nonatomic) IBOutlet NSView *CPUSpeedBezel;
 
 /// The bezel view used for flightstick throttle notifications.
-@property (weak, nonatomic) IBOutlet NSView *throttleBezel;
+@property (strong, nonatomic) IBOutlet NSView *throttleBezel;
 
 /// The bezel view used for volume notifications.
-@property (weak, nonatomic) IBOutlet NSView *volumeBezel;
+@property (strong, nonatomic) IBOutlet NSView *volumeBezel;
 
 /// The bezel view used for MT-32 LCD messages.
-@property (weak, nonatomic) IBOutlet NSView *MT32MessageBezel;
+@property (strong, nonatomic) IBOutlet NSView *MT32MessageBezel;
 /// The bezel view used for notifying the user that they need an MT-32 to hear proper music.
-@property (weak, nonatomic) IBOutlet NSView *MT32MissingBezel;
+@property (strong, nonatomic) IBOutlet NSView *MT32MissingBezel;
 
 /// Screenshot bezel views.
-@property (weak, nonatomic) IBOutlet NSView *screenshotBezel;
+@property (strong, nonatomic) IBOutlet NSView *screenshotBezel;
 
 /// Pause/play/fast-forward bezel views.
-@property (weak, nonatomic) IBOutlet NSView *pauseBezel;
-@property (weak, nonatomic) IBOutlet NSView *playBezel;
-@property (weak, nonatomic) IBOutlet NSView *fastForwardBezel;
+@property (strong, nonatomic) IBOutlet NSView *pauseBezel;
+@property (strong, nonatomic) IBOutlet NSView *playBezel;
+@property (strong, nonatomic) IBOutlet NSView *fastForwardBezel;
 
 /// Numpad simulation bezels.
-@property (weak, nonatomic) IBOutlet NSView *numpadActiveBezel;
-@property (weak, nonatomic) IBOutlet NSView *numpadInactiveBezel;
+@property (strong, nonatomic) IBOutlet NSView *numpadActiveBezel;
+@property (strong, nonatomic) IBOutlet NSView *numpadInactiveBezel;
 
 /// Numlock toggle bezels.
-@property (weak, nonatomic) IBOutlet NSView *numlockActiveBezel;
-@property (weak, nonatomic) IBOutlet NSView *numlockInactiveBezel;
+@property (strong, nonatomic) IBOutlet NSView *numlockActiveBezel;
+@property (strong, nonatomic) IBOutlet NSView *numlockInactiveBezel;
 
-@property (weak, nonatomic) IBOutlet NSView *mouseLockedBezel;
+@property (strong, nonatomic) IBOutlet NSView *mouseLockedBezel;
 
 /// The last bezel that was displayed.
-@property (weak, readonly, nonatomic) NSView *currentBezel;
+@property (readonly, nonatomic, nullable) NSView *currentBezel;
 
 #pragma mark -
 #pragma mark Class methods

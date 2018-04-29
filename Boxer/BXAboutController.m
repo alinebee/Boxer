@@ -10,7 +10,6 @@
 
 
 @implementation BXAboutController
-@synthesize version = _version;
 
 + (id) controller
 {

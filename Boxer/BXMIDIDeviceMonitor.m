@@ -58,7 +58,13 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 #pragma mark Implementation
 
 @implementation BXMIDIDeviceMonitor
-@synthesize discoveredMT32s = _discoveredMT32s;
+{
+	MIDIClientRef _client;
+	MIDIPortRef _outputPort;
+	MIDIPortRef _inputPort;
+	NSMutableArray *_discoveredMT32s;
+	NSMutableArray *_listeners;
+}
 
 #pragma mark -
 #pragma mark Public API
@@ -393,13 +399,10 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 @end
 
 @implementation BXMIDIInputListener
-@synthesize port = _port;
-@synthesize source = _source;
-@synthesize contextInfo = _contextInfo;
-@synthesize timeout = _timeout;
-@synthesize delegate = _delegate;
-@synthesize receivedData = _receivedData;
-
+{
+	NSMutableData *_receivedData;
+	NSThread *_notificationThread;
+}
 
 #pragma mark -
 #pragma mark Class helpers

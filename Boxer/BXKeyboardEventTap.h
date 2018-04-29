@@ -29,17 +29,6 @@ typedef NS_ENUM(NSInteger, BXKeyboardEventTapStatus) {
 /// Manages a low-level event tap that captures keyboard events, giving Boxer the ability to respond to them
 /// (and potentially swallow them) before they reach the system and trigger system-wide hotkey functions.
 @interface BXKeyboardEventTap : NSObject
-{
-    ADBContinuousThread *_tapThread;
-    CFMachPortRef _tap;
-    CFRunLoopSourceRef _source;
-    BOOL _enabled;
-    BOOL _usesDedicatedThread;
-    BOOL _restartNeeded;
-    BXKeyboardEventTapStatus _status;
-    
-    __unsafe_unretained id <BXKeyboardEventTapDelegate> _delegate;
-}
 
 /// Whether OS X has granting the application permission to capture keyup and keydown events.
 /// In OS X 10.8 and below, this will be YES if the accessibility API is enabled: i.e. "Enable access for assistive devices" is turned on.
@@ -49,7 +38,7 @@ typedef NS_ENUM(NSInteger, BXKeyboardEventTapStatus) {
 + (BOOL) canCaptureKeyEvents;
 
 /// The delegate whom we will ask for event-capture decisions.
-@property (assign) id <BXKeyboardEventTapDelegate> delegate;
+@property (weak) id <BXKeyboardEventTapDelegate> delegate;
 
 /// Whether the event tap should capture system hotkeys and media keys.
 /// Toggling this will attach/detach the event tap.

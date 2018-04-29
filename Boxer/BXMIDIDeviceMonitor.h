@@ -35,13 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// (This work is moved to a thread because CoreMIDI initialization is fairly costly, and would
 /// otherwise block application startup. Besides improved startup time, there are no other benefits.)
 @interface BXMIDIDeviceMonitor : ADBContinuousThread <BXMIDIInputListenerDelegate>
-{
-    MIDIClientRef _client;
-    MIDIPortRef _outputPort;
-    MIDIPortRef _inputPort;
-    NSMutableArray *_discoveredMT32s;
-    NSMutableArray *_listeners;
-}
 
 /// An array of unique destination IDs for MT-32s found during our scan.
 /// This will be populated and depopulated as devices are added and removed.
@@ -65,15 +58,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// it always delivers notifications about that data on the thread upon which
 /// \c listenToSource:onPort:contextInfo: was called.
 @interface BXMIDIInputListener : NSObject
-{
-    __unsafe_unretained id <BXMIDIInputListenerDelegate> _delegate;
-    MIDIPortRef _port;
-    MIDIEndpointRef _source;
-    void * _contextInfo;
-    NSTimeInterval _timeout;
-    NSMutableData *_receivedData;
-    NSThread *_notificationThread;
-}
 
 # pragma mark -
 # pragma mark Properties
@@ -101,7 +85,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) NSTimeInterval timeout;
 
 //The delegate to which notification messages will be sent.
-@property (assign, nonatomic, nullable) id <BXMIDIInputListenerDelegate> delegate;
+@property (weak, nonatomic) id <BXMIDIInputListenerDelegate> delegate;
 
 
 # pragma mark -

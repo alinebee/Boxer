@@ -18,9 +18,7 @@
 /// \c BXDOSWindowController and exists mainly just to override <code>NSWindow</code>'s default window sizing
 /// and constraining methods.
 @interface BXDOSWindow : ADBFullscreenCapableWindow
-{
-    NSView *actualContentView;
-}
+
 /// The 'real' content view by which our content size calculations will be constrained,
 /// and which will fill the screen in fullscreen mode. This is distinct from the window's
 /// top-level content view and does not include the program panel or statusbar views.

@@ -14,7 +14,6 @@
 #define BXDefaultAxisDeadzone 0.20f
 
 @implementation BXHIDButtonBinding
-@synthesize outputBinding = _outputBinding;
 
 + (id) binding
 {
@@ -45,11 +44,6 @@
 
 
 @implementation BXHIDAxisBinding
-@synthesize positiveBinding = _positiveBinding;
-@synthesize negativeBinding = _negativeBinding;
-@synthesize deadzone = _deadzone;
-@synthesize inverted = _inverted;
-@synthesize unidirectional = _unidirectional;
 
 + (id) binding
 {
@@ -129,11 +123,13 @@
 
 
 @interface BXHIDPOVSwitchBinding ()
+
 @property (strong, nonatomic) NSMutableDictionary *outputBindings;
+@property (nonatomic) ADBHIDPOVSwitchDirection previousDirection;
+
 @end
 
 @implementation BXHIDPOVSwitchBinding
-@synthesize outputBindings = _outputBindings;
 
 + (id) binding
 {
@@ -174,7 +170,7 @@
     if (self)
     {
         self.outputBindings = [NSMutableDictionary dictionaryWithCapacity: 8];
-		_previousDirection = ADBHIDPOVCentered;
+		self.previousDirection = ADBHIDPOVCentered;
     }
     return self;
 }
@@ -222,9 +218,9 @@
 {
     ADBHIDPOVSwitchDirection direction = [ADBHIDEvent closest8WayDirectionForPOV: event.POVDirection];
     
-    if (direction != _previousDirection)
+    if (direction != self.previousDirection)
     {
-        NSSet *inactiveBindings = [self closestBindingsForDirection: _previousDirection];
+        NSSet *inactiveBindings = [self closestBindingsForDirection: self.previousDirection];
         NSSet *activeBindings = [self closestBindingsForDirection: direction];
         
         for (id <BXOutputBinding> binding in inactiveBindings)
@@ -239,7 +235,7 @@
                 [binding applyInputValue: kBXOutputBindingMax];
         }
         
-        _previousDirection = direction;
+        self.previousDirection = direction;
     }
 }
 

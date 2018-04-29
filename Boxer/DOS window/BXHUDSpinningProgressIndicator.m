@@ -9,7 +9,6 @@
 #import "NSShadow+ADBShadowExtensions.h"
 
 @implementation BXHUDSpinningProgressIndicator
-@synthesize dropShadow = _dropShadow;
 
 - (void) awakeFromNib
 {

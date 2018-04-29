@@ -13,24 +13,18 @@
 
 /// \c BXWelcomeWindowController manages the welcome window shown when Boxer launches.
 @interface BXWelcomeWindowController : NSWindowController <BXWelcomeButtonDraggingDelegate>
-{
-	IBOutlet NSPopUpButton *__weak recentDocumentsButton;
-	IBOutlet BXWelcomeButton *__weak importGameButton;
-	IBOutlet BXWelcomeButton *__weak openPromptButton;
-	IBOutlet BXWelcomeButton *__weak showGamesFolderButton;
-}
 
 /// The Open Recent popup button.
-@property (weak, nonatomic) NSPopUpButton *recentDocumentsButton;
+@property (strong, nonatomic) IBOutlet NSPopUpButton *recentDocumentsButton;
 
 /// The import-a-new-game button. Drag-drop events onto this button will be handled by this controller.
-@property (weak, nonatomic) BXWelcomeButton *importGameButton;
+@property (strong, nonatomic) IBOutlet BXWelcomeButton *importGameButton;
 
 /// The open-DOS-prompt button. Drag-drop events onto this button will be handled by this controller.
-@property (weak, nonatomic) BXWelcomeButton *openPromptButton;
+@property (strong, nonatomic) IBOutlet BXWelcomeButton *openPromptButton;
 
 /// The browse-games-folder button. Has no special behaviour.
-@property (weak, nonatomic) BXWelcomeButton *showGamesFolderButton;
+@property (strong, nonatomic) IBOutlet BXWelcomeButton *showGamesFolderButton;
 
 
 /// Provides a singleton instance of the window controller which stays retained for the lifetime

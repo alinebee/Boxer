@@ -24,17 +24,6 @@
 @end
 
 @implementation BXDriveItem
-@synthesize importing = _importing;
-@synthesize titleLabel = _titleLabel;
-@synthesize typeLabel = _typeLabel;
-@synthesize progressMeter = _progressMeter;
-@synthesize progressMeterLabel = _progressMeterLabel;
-@synthesize toggleButton = _toggleButton;
-@synthesize revealButton = _revealButton;
-@synthesize importButton = _importButton;
-@synthesize cancelButton = _cancelButton;
-@synthesize icon = _icon;
-@synthesize letterLabel = _letterLabel;
 
 - (void) viewDidLoad
 {

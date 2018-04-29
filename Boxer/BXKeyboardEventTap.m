@@ -48,12 +48,10 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 
 
 @implementation BXKeyboardEventTap
-@synthesize enabled = _enabled;
-@synthesize usesDedicatedThread = _usesDedicatedThread;
-@synthesize tapThread = _tapThread;
-@synthesize delegate = _delegate;
-@synthesize status = _status;
-@synthesize restartNeeded = _restartNeeded;
+{
+	CFMachPortRef _tap;
+	CFRunLoopSourceRef _source;
+}
 
 - (id) init
 {

@@ -38,17 +38,13 @@
 @end
 
 @implementation BXLaunchPanelController
-@synthesize launcherList = _launcherList;
-@synthesize launcherScrollView = _launcherScrollView;
-@synthesize allProgramRows = _allProgramRows;
-@synthesize favoriteProgramRows = _favoriteProgramRows;
-@synthesize recentProgramRows = _recentProgramRows;
-@synthesize favoritesHeading = _favoritesHeading;
-@synthesize recentProgramsHeading = _recentProgramsHeading;
-@synthesize allProgramsHeading = _allProgramsHeading;
-@synthesize displayedRows = _displayedRows;
-@synthesize filter = _filter;
-@synthesize filterKeywords = _filterKeywords;
+{
+	BOOL _allProgramRowsDirty;
+	BOOL _favoriteProgramRowsDirty;
+	BOOL _recentProgramRowsDirty;
+	
+	BOOL _shouldUpdateImmediately;
+}
 
 - (void) awakeFromNib
 {
@@ -781,8 +777,6 @@
 
 
 @implementation BXLauncherList
-@synthesize headingPrototype = _headingPrototype;
-@synthesize favoritePrototype = _favoritePrototype;
 
 - (NSCollectionViewItem *) newItemForRepresentedObject: (NSDictionary *)object
 {
@@ -812,9 +806,6 @@
 
 
 @implementation BXLauncherItem
-@synthesize delegate = _delegate;
-@synthesize launchable = _launchable;
-@synthesize menu = _menu;
 
 - (id) copyWithZone: (NSZone *)zone
 {
@@ -888,9 +879,6 @@
 @end
 
 @implementation BXLauncherItemView
-@synthesize mouseInside = _mouseInside;
-@synthesize active = _active;
-@synthesize enabled = _enabled;
 
 - (void) awakeFromNib
 {

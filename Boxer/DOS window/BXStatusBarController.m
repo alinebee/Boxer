@@ -35,10 +35,6 @@
 @end
 
 @implementation BXStatusBarController
-@synthesize notificationMessage = _notificationMessage;
-@synthesize statusBarControls = _statusBarControls;
-@synthesize volumeControls = _volumeControls;
-@synthesize mouseLockButton = _mouseLockButton;
 
 - (BXDOSWindowController *)controller
 {

@@ -12,10 +12,8 @@
 /// \c BXShelfArt generates tiled shelf artwork for Finder folders. It can return an NSImage resource
 /// suitable for saving as a file, or draw the art directly into the current graphics context.
 @interface BXShelfArt : NSObject
-{
-	NSImage *sourceImage;
-}
-/// The original image we will render into tiled shelf art
+
+/// The original image we will render into tiled shelf art.
 @property (strong) NSImage *sourceImage;
 
 #pragma mark -

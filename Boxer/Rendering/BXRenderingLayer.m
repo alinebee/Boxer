@@ -18,9 +18,11 @@
 #pragma mark - Private method declarations
 
 @interface BXRenderingLayer ()
-
 @property (strong, nonatomic) NSMutableArray *renderers;
-@property (strong, nonatomic) BXVideoFrame *currentFrame;
+@property (strong, nonatomic, nullable) BXBasicRenderer *lastRenderer;
+
+@property (readwrite, strong, nonatomic) BXVideoFrame *currentFrame;
+@property (nonatomic) CFTimeInterval lastRenderTime;
 
 + (BOOL) contextSupportsAdvancedShaders: (CGLContextObj)context;
 + (Class) rendererClassForStyle: (BXRenderingStyle)style;
@@ -36,10 +38,6 @@
 #pragma mark - Implementation
 
 @implementation BXRenderingLayer
-@synthesize renderers = _renderers;
-@synthesize renderingStyle = _renderingStyle;
-@synthesize currentFrame = _currentFrame;
-
 
 #pragma mark Initialization and deallocation
 
@@ -147,7 +145,7 @@
     //Prepare a new renderer in advance for this context.
     BXBasicRenderer *renderer = [self.class prepareRendererForStyle: self.renderingStyle inContext: ctx];
     [self.renderers addObject: renderer];
-    _lastRenderer = renderer;
+    self.lastRenderer = renderer;
     
     return ctx;
 }
@@ -161,8 +159,8 @@
             [renderer tearDownContext];
             [self.renderers removeObject: renderer];
             
-            if (_lastRenderer == renderer)
-                _lastRenderer = nil;
+            if (self.lastRenderer == renderer)
+                self.lastRenderer = nil;
         }
     }
     
@@ -183,7 +181,7 @@
                 forLayerTime: (CFTimeInterval)timeInterval
                  displayTime: (const CVTimeStamp *)timeStamp
 {
-    return self.currentFrame.timestamp > _lastRenderTime;
+    return self.currentFrame.timestamp > self.lastRenderTime;
 }
 
 - (void) drawInCGLContext: (CGLContextObj)ctx
@@ -199,15 +197,15 @@
     
 	[super drawInCGLContext: ctx pixelFormat: pf forLayerTime: t displayTime: ts];
     
-    _lastRenderer = renderer;
-    _lastRenderTime = t;
+    self.lastRenderer = renderer;
+    self.lastRenderTime = t;
 }
 
 - (BXBasicRenderer *) rendererForStyle: (BXRenderingStyle)style inContext: (CGLContextObj)context
 {
     //Check the last renderer we used to save time.
-    if (_lastRenderer.tag == style && _lastRenderer.context == context)
-        return _lastRenderer;
+    if (self.lastRenderer.tag == style && self.lastRenderer.context == context)
+        return self.lastRenderer;
     
     //Otherwise, go through the renderers we've created and find a suitable one.
     for (BXBasicRenderer *renderer in self.renderers)
@@ -231,15 +229,15 @@
         
         //Ensure that we'll be re-rendered
         [self setNeedsDisplay];
-        _lastRenderTime = 0;
+        self.lastRenderTime = 0;
     }
 }
 
 - (NSSize) maxFrameSize
 {
-    if (_lastRenderer)
+    if (self.lastRenderer)
     {
-        return NSSizeFromCGSize(_lastRenderer.maxFrameSize);
+        return NSSizeFromCGSize(self.lastRenderer.maxFrameSize);
     }
     //If we don't have a renderer yet, we'll have to guess
     else

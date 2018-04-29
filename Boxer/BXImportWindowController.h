@@ -14,33 +14,25 @@
 /// animation and transitions between the window's various views.
 /// It takes its marching orders from the BXImportSession document class.
 @interface BXImportWindowController : ADBMultiPanelWindowController
-{
-	IBOutlet NSView *dropzonePanel;
-	IBOutlet NSView *loadingPanel;
-	IBOutlet NSView *installerPanel;
-	IBOutlet NSView *finalizingPanel;
-	IBOutlet NSView *finishedPanel;
-}
-
 
 #pragma mark -
 #pragma mark Properties
 
 /// The dropzone panel, displayed initially when no import source has been selected 
-@property (strong, nonatomic) NSView *dropzonePanel;
+@property (strong, nonatomic) IBOutlet NSView *dropzonePanel;
 
 /// The indeterminate progress panel shown while scanning a game folder for installers.
-@property (strong, nonatomic) NSView *loadingPanel;
+@property (strong, nonatomic) IBOutlet NSView *loadingPanel;
 
 /// The choose-thine-installer panel, displayed if the chosen game source contains
 /// installers to choose from.
-@property (strong, nonatomic) NSView *installerPanel;
+@property (strong, nonatomic) IBOutlet NSView *installerPanel;
 
 /// The finalizing-gamebox panel, which shows the progress of the import operation.
-@property (strong, nonatomic) NSView *finalizingPanel;
+@property (strong, nonatomic) IBOutlet NSView *finalizingPanel;
 
 /// The final gamebox panel, which displays the finished gamebox for the user to launch.
-@property (strong, nonatomic) NSView *finishedPanel;
+@property (strong, nonatomic) IBOutlet NSView *finishedPanel;
 
 
 /// Recast NSWindowController's standard accessors so that we get our own classes

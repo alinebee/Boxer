@@ -34,13 +34,6 @@ typedef NS_ENUM(NSInteger, BXControllerStyle) {
 /// \c BXControllerProfile is controller- and joystick-specific and each emulation session maintains
 /// its own set of active controller profiles.
 @interface BXHIDControllerProfile : NSObject
-{
-	DDHidJoystick *_device;
-	id <BXEmulatedJoystick> _emulatedJoystick;
-	BXEmulatedKeyboard *_emulatedKeyboard;
-	NSMutableDictionary *_bindings;
-    BXControllerStyle _controllerStyle;
-}
 
 /// The HID controller whose inputs we are converting from.
 @property (strong, nonatomic) DDHidJoystick *device;

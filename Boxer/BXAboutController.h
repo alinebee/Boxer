@@ -10,9 +10,7 @@
 
 /// \c BXAboutController is a simple window controller which styles and displays the About Boxer panel.
 @interface BXAboutController : NSWindowController
-{
-	NSTextField *_version;
-}
+
 @property (strong, nonatomic) IBOutlet NSTextField *version;
 
 /// Provides a singleton instance of the window controller which stays retained for the lifetime

@@ -28,7 +28,6 @@
 #pragma mark Implementation
 
 @implementation BXImportFinalizingPanelController
-@synthesize controller = _controller;
 
 #pragma mark -
 #pragma mark Cancel button behaviour

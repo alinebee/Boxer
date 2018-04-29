@@ -15,9 +15,6 @@
 #import "NSWorkspace+ADBFileTypes.h"
 
 @implementation BXImportFinishedPanelController
-@synthesize controller = _controller;
-@synthesize iconView = _iconView;
-@synthesize nameField = _nameField;
 
 + (NSSet *) keyPathsForValuesAffectingGameboxIcon
 {

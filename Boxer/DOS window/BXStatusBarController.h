@@ -17,12 +17,13 @@ enum {
 };
 
 /// BXStatusBarController manages the main window's status bar and button states.
+__deprecated
 @interface BXStatusBarController : NSViewController
 
-@property (weak, nonatomic) IBOutlet NSSegmentedControl *statusBarControls;
-@property (weak, nonatomic) IBOutlet NSTextField *notificationMessage;
-@property (weak, nonatomic) IBOutlet NSButton *mouseLockButton;
-@property (weak, nonatomic) IBOutlet NSView *volumeControls;
+@property (strong, nonatomic) IBOutlet NSSegmentedControl *statusBarControls;
+@property (strong, nonatomic) IBOutlet NSTextField *notificationMessage;
+@property (strong, nonatomic) IBOutlet NSButton *mouseLockButton;
+@property (strong, nonatomic) IBOutlet NSView *volumeControls;
 
 /// The window controller for the window containing this statusbar
 @property (weak, readonly, nonatomic) BXDOSWindowController *controller;

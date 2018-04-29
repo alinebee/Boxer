@@ -9,13 +9,9 @@
 
 
 @interface BXImportTipsPanelController : BXProgramPanelController
-{
-	IBOutlet NSView *finishImportingPanel;
-	IBOutlet NSView *installerTipsPanel;
-}
 
-@property (strong, nonatomic) NSView *finishImportingPanel;
-@property (strong, nonatomic) NSView *installerTipsPanel;
+@property (strong, nonatomic) IBOutlet NSView *finishImportingPanel;
+@property (strong, nonatomic) IBOutlet NSView *installerTipsPanel;
 
 /// Used by installerTipsPanel to show the help page for game installation.
 - (IBAction) showInstallerHelp: (id)sender;

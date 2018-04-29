@@ -12,18 +12,10 @@
 
 @property (strong, nonatomic) BXRenderingLayer *layer;
 
-//Returns the rectangular region of the view into which the specified frame will be drawn.
-//This will be equal to the view bounds if managesAspectRatio is NO; otherwise, it will
-//be a rectangle of the same aspect ratio as the frame fitted to within the current or maximum
-//viewport size (whichever is smaller).
-//- (NSRect) viewportForFrame: (BXVideoFrame *)frame;
-
 @end
 
 
 @implementation BXLayerBackedRenderingView
-@synthesize managesViewport = _managesViewport;
-@synthesize maxViewportSize = _maxViewportSize;
 
 - (void) awakeFromNib
 {

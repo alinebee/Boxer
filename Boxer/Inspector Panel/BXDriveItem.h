@@ -11,20 +11,6 @@
 /// BXDriveItem represents each drive in the list and acts
 /// as a view controller for its corresponding BXDriveItemView.
 @interface BXDriveItem : BXCollectionItem
-{
-    BOOL _importing;
-    
-    NSProgressIndicator *_progressMeter;
-    NSTextField *_progressMeterLabel;
-    NSTextField *_titleLabel;
-    NSTextField *_typeLabel;
-    NSButton *_toggleButton;
-    NSButton *_revealButton;
-    NSButton *_importButton;
-    NSImageView *_icon;
-    NSTextField *_letterLabel;
-    NSButton *_cancelButton;
-}
 
 #pragma mark - Outlet properties
 @property (strong, nonatomic) IBOutlet NSProgressIndicator *progressMeter;

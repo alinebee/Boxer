@@ -28,45 +28,30 @@ typedef KBD_KEYS BXDOSKeyCode;
 /// \c BXEmulatedKeyboard represents the DOS PC's keyboard hardware, and offers an API for sending
 /// emulated key events and setting keyboard layout.
 @interface BXEmulatedKeyboard : NSObject
-{
-	BOOL _capsLockEnabled;
-	BOOL _numLockEnabled;
-    BOOL _scrollLockEnabled;
-    NSUInteger _pressedKeys[KBD_LAST];
-    
-    /// Whether to re-enable capslock and the active layout
-    /// once a simulated typing session is finished.
-    BOOL _enableActiveLayoutAfterTyping;
-    BOOL _enableCapslockAfterTyping;
-    
-	NSString *_preferredLayout;
-    
-    __unsafe_unretained NSTimer *_pendingKeypresses;
-}
 
 /// NOTE: these are only readwrite for the sake of BXCoalface.
 /// They should not be modified by code outside BXEmulator.
-@property (assign) BOOL capsLockEnabled;
-@property (assign) BOOL numLockEnabled;
-@property (assign) BOOL scrollLockEnabled;
+@property (nonatomic) BOOL capsLockEnabled;
+@property (nonatomic) BOOL numLockEnabled;
+@property (nonatomic) BOOL scrollLockEnabled;
 
 /// The DOS keyboard layout that is currently in use.
 @property (copy, nonatomic) NSString *activeLayout;
 
 /// Whether to map keyboard input through the active keyboard layout.
 /// If NO, input will be mapped according to a standard US keyboard layout instead.
-@property (assign, nonatomic) BOOL usesActiveLayout;
+@property (nonatomic) BOOL usesActiveLayout;
 
 /// The DOS keyboard layout that will be applied once emulation has started up.
 /// Set whenever activeLayout is changed.
-@property (copy) NSString *preferredLayout;
+@property (copy, nonatomic) NSString *preferredLayout;
 
 /// Returns \c YES if the emulated keyboard buffer is full, meaning further key events will be ignored.
-@property (readonly) BOOL keyboardBufferFull;
+@property (readonly, nonatomic) BOOL keyboardBufferFull;
 
 /// Whether we are currently typing text into the keyboard. Will be \c YES while the input from
 /// \c typeCharacters: is being processed.
-@property (readonly) BOOL isTyping;
+@property (readonly, nonatomic) BOOL isTyping;
 
 
 #pragma mark -

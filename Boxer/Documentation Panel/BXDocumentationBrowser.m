@@ -36,14 +36,6 @@ enum {
 @end
 
 @implementation BXDocumentationBrowser
-@synthesize documentationScrollView = _documentationScrollView;
-@synthesize documentationList = _documentationList;
-@synthesize titleLabel = _titleLabel;
-@synthesize helpTextLabel = _helpTextLabel;
-
-@synthesize documentationURLs = _documentationURLs;
-@synthesize documentationSelectionIndexes = _documentationSelectionIndexes;
-@synthesize delegate = _delegate;
 
 - (void) setDocumentationSelectionIndexes: (NSIndexSet *)indexes
 {
@@ -654,7 +646,6 @@ enum {
 @end
 
 @implementation BXDocumentationBrowserPreviewItem
-@synthesize originalURL = _originalURL;
 
 + (id) previewItemWithURL: (NSURL *)URL
 {
@@ -793,7 +784,6 @@ enum {
 @end
 
 @implementation BXDocumentationItem
-@synthesize icon = _icon;
 
 - (void) viewDidLoad
 {
@@ -887,7 +877,6 @@ enum {
 @end
 
 @implementation BXDocumentationWrapper
-@synthesize highlightStrength = _highlightStrength;
 
 + (id) defaultAnimationForKey: (NSString *)key
 {

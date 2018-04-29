@@ -27,7 +27,6 @@
 
 
 @implementation BXImportDropzone
-@synthesize borderPhase, borderOutset;
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -162,13 +161,13 @@
 - (void) setBorderPhase: (CGFloat)phase
 {
 	//Wrap the phase to the length of our dash pattern
-	borderPhase = (CGFloat)((NSUInteger)phase % 18);
+	_borderPhase = (CGFloat)((NSUInteger)phase % 18);
 	[self setNeedsDisplay: YES];
 }
 
 - (void) setBorderOutset: (CGFloat)outset
 {
-	borderOutset = outset;
+	_borderOutset = outset;
 	[self setNeedsDisplay: YES];
 }
 
@@ -204,7 +203,7 @@
 		if (NSIntersectsRect(dirtyRect, borderFrame))
 		{
 			[borderColor set];
-			NSBezierPath *border = [[self class] borderForFrame: borderFrame withPhase: borderPhase];
+			NSBezierPath *border = [[self class] borderForFrame: borderFrame withPhase: self.borderPhase];
 			[border stroke];
 		}
 		

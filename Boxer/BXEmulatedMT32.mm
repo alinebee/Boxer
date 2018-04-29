@@ -40,12 +40,14 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMType";
 #pragma mark Implementation
 
 @implementation BXEmulatedMT32
-@synthesize delegate = _delegate;
-@synthesize PCMROMURL = _PCMROMURL;
-@synthesize controlROMURL = _controlROMURL;
-@synthesize synthError = _synthError;
-@synthesize sampleRate = _sampleRate;
-
+{
+	MT32Emu::Synth *_synth;
+	BXEmulatedMT32ReportHandler *_reportHandler;
+	MT32Emu::FileStream *_PCMROMHandle;
+	MT32Emu::FileStream *_controlROMHandle;
+	const MT32Emu::ROMImage *_PCMROMImage;
+	const MT32Emu::ROMImage *_controlROMImage;
+}
 
 #pragma mark - ROM validation methods
 

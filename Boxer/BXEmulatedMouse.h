@@ -22,14 +22,6 @@
 /// \c BXEmulatedMouse represents the DOS PC's mouse and its driver, and offers an API for sending
 /// emulated mouse signals.
 @interface BXEmulatedMouse: NSObject
-{
-	BOOL _active;
-	NSPoint _position;
-	
-	BXMouseButtonMask _pressedButtons;
-    NSTimeInterval _lastButtonDown[BXMouseButtonMax];
-}
-
 
 #pragma mark -
 #pragma mark Properties

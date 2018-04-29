@@ -20,7 +20,7 @@
 - (NSTimeInterval) processingDelayForSysex: (NSData *)sysex
 {
     //The calculations for these sysex processing delays have been adapted from DOSBox's delaysysex patch.
-    NSTimeInterval baseDelay = (BXExternalMT32DelayFactor * _secondsPerByte * sysex.length) + BXExternalMT32BaseDelay;
+    NSTimeInterval baseDelay = (BXExternalMT32DelayFactor * self.secondsPerByte * sysex.length) + BXExternalMT32BaseDelay;
     
     //If this wasn't a valid MT-32 sysex message, ignore it and go with the standard delay.
     //(Even if the MT-32 can't handle it, it'll still take time for it to reach the MT-32 and get rejected.)

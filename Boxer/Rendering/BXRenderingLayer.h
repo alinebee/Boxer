@@ -14,17 +14,8 @@
 
 /// \c BXRenderingLayer is the OpenGL layer used by BXLayerBackedRenderingView for rendering its content.
 @interface BXRenderingLayer : CAOpenGLLayer
-{
-    BXVideoFrame *_currentFrame;
-    BXRenderingStyle _renderingStyle;
-    NSMutableArray *_renderers;
-    
-    BXBasicRenderer *_lastRenderer;
-    CFTimeInterval _lastRenderTime;
-    
-}
 
-@property (assign, nonatomic) BXRenderingStyle renderingStyle;
+@property (nonatomic) BXRenderingStyle renderingStyle;
 @property (strong, readonly, nonatomic) BXVideoFrame *currentFrame;
 
 - (void) updateWithFrame: (BXVideoFrame *)currentFrame;

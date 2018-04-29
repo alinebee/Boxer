@@ -15,18 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
 @class BXSession;
 
 @interface BXDocumentationPanelController : NSWindowController <NSPopoverDelegate, BXDocumentationBrowserDelegate>
-{
-    NSPopover *_popover;
-    BXDocumentationBrowser *_popoverBrowser;
-    BXDocumentationBrowser *_windowBrowser;
-    NSSize _maxPopoverSize;
-    
-    BXSession *_session;
-}
 
 #pragma mark - Properties
 
 /// The session whose documents are being displayed in the panel.
+// FIXME: This may be introducing a memory leak by holding a strong reference
 @property (strong, nonatomic, nullable) BXSession *session;
 
 /// Whether the panel is currently visible, either as a popover or as a window.

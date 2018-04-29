@@ -15,10 +15,7 @@
 /// menu with the available programs in the current gamebox (if any), and synchronising its selection
 /// with the default program of the gamebox.
 @interface BXGameboxPanelController : NSViewController <NSOpenSavePanelDelegate>
-{
-    NSPopUpButton *_programSelector;
-    NSObjectController *_sessionMediator;
-}
+
 /// The program selector popup button we populate.
 @property (strong, nonatomic) IBOutlet NSPopUpButton *programSelector;
 /// The NIB's object-controller proxy for the current session.

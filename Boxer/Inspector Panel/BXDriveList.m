@@ -27,7 +27,6 @@
 
 
 @implementation BXDriveItemButtonCell
-@synthesize hovered = _hovered;
 
 + (NSString *) defaultThemeKey
 {

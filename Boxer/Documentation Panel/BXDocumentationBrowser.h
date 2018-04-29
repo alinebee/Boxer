@@ -16,17 +16,6 @@
 
 /// BXDocumentationBrowser manages the list of documentation for the gamebox.
 @interface BXDocumentationBrowser : NSViewController <NSCollectionViewDelegate, NSDraggingDestination>
-{
-    NSArray<NSURL*> *_documentationURLs;
-    NSIndexSet *_documentationSelectionIndexes;
-    
-    __weak NSScrollView *_documentationScrollView;
-    __weak BXDocumentationList *_documentationList;
-    __weak NSTextField *_titleLabel;
-    __weak NSTextField *_helpTextLabel;
-    
-    __weak id <BXDocumentationBrowserDelegate> _delegate;
-}
 
 #pragma mark - Properties
 
@@ -34,16 +23,16 @@
 @property (weak, nonatomic) IBOutlet id <BXDocumentationBrowserDelegate> delegate;
 
 /// The scrolling wrapper in which our documenation list is displayed.
-@property (weak, nonatomic) IBOutlet NSScrollView *documentationScrollView;
+@property (strong, nonatomic) IBOutlet NSScrollView *documentationScrollView;
 
 /// The title at the top of the browser.
-@property (weak, nonatomic) IBOutlet NSTextField *titleLabel;
+@property (strong, nonatomic) IBOutlet NSTextField *titleLabel;
 
 /// The help text displayed at the bottom of the browser.
-@property (weak, nonatomic) IBOutlet NSTextField *helpTextLabel;
+@property (strong, nonatomic) IBOutlet NSTextField *helpTextLabel;
 
 /// The collection view in which our documentation will be displayed.
-@property (weak, nonatomic) IBOutlet BXDocumentationList *documentationList;
+@property (strong, nonatomic) IBOutlet BXDocumentationList *documentationList;
 
 /// An array of NSURLs for the documentation files included in this gamebox.
 /// This is mapped directly to the documentation URLs reported by the gamebox.
@@ -52,7 +41,7 @@
 /// An array of criteria for how the documentation files should be sorted in the UI.
 /// Documentation will be sorted by type and then by name, to group similar types
 /// of documentation files together.
-@property (copy, readonly, nonatomic) NSArray<NSSortDescriptor*> *sortCriteria;
+@property (readonly, nonatomic) NSArray<NSSortDescriptor*> *sortCriteria;
 
 /// The currently selected documentation items. Normally, only one item can be selected at a time.
 @property (strong, nonatomic) NSIndexSet *documentationSelectionIndexes;
@@ -66,7 +55,7 @@
 
 /// The text that will be displayed in the help text label at the foot of the view.
 /// Changes depending on how many documentation items there are and whether adding new documentation is possible.
-@property (copy, readonly, nonatomic) NSString *helpText;
+@property (readonly, nonatomic) NSString *helpText;
 
 /// Whether we are able to add or remove documentation from the gamebox.
 /// This is determined from the locked status of the gamebox,
@@ -159,9 +148,6 @@
 
 /// BXDocumentationItem manages each individual documentation file listed in the documentation popup.
 @interface BXDocumentationItem : BXCollectionItem
-{
-    NSImage *_icon;
-}
 
 /// The icon for the documentation file.
 ///
@@ -178,9 +164,6 @@
 
 /// Custom appearance for documentation items. Highlights the background when selected.
 @interface BXDocumentationWrapper : BXCollectionItemView
-{
-    CGFloat _highlightStrength;
-}
 @end
 
 

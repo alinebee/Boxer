@@ -26,10 +26,12 @@ enum {
 
 /// BXProgramPanel is the containing view for all other panel content. This class draws
 /// itself as a shaded grey gradient background with a grille at the top.
+__deprecated
 @interface BXProgramPanel : NSView
 @end
 
 /// The tracking item for individual programs in the program panel collection view.
+__deprecated
 @interface BXProgramItem : BXCollectionItem
 {
     NSButton *programButton;
@@ -38,10 +40,12 @@ enum {
 @end
 
 /// Overridden to fix button hover state behaviour when scrolling.
+__deprecated
 @interface BXProgramItemButton : NSButton
 @end
 
 /// Custom button appearance for buttons in the program panel collection view.
+__deprecated
 @interface BXProgramItemButtonCell : BXThemedButtonCell
 {
     BOOL mouseIsInside;
@@ -54,6 +58,7 @@ enum {
 
 /// A subclass to fix some hugely annoying redraw bugs
 /// in 10.5's implementation of NSCollectionView
+__deprecated
 @interface BXProgramListView : NSCollectionView
 {
     @private

@@ -10,7 +10,6 @@
 #import "ADBAppKitVersionHelpers.h"
 
 @implementation BXJewelCase
-@synthesize title;
 
 + (NSString *) fontName	{ return @"Marker Felt Thin"; }
 

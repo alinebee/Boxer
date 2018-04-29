@@ -14,21 +14,6 @@
 /// BXPreferencesController manages Boxer's application-wide preferences panel.
 /// It is a singleton, and once opened for the first time it stays alive throughout the lifetime of the application.
 @interface BXPreferencesController : ADBTabbedWindowController <NSOpenSavePanelDelegate>
-{
-    BXFilterGallery *_filterGallery;
-    NSPopUpButton *_gamesFolderSelector;
-	NSMenuItem *_currentGamesFolderItem;
-    BXMT32ROMDropzone *_MT32ROMDropzone;
-    NSView *_missingMT32ROMHelp;
-    NSView *_realMT32Help;
-    NSView *_MT32ROMOptions;
-    
-    NSButton *_hotkeyCaptureToggle;
-    NSTextField *_hotkeyCaptureDescription;
-    NSTextField *_hotkeyCaptureExtraHelp;
-    NSTextField *_hotkeyCaptureDisabledHelp;
-    NSButton *_hotkeyCapturePermissionsButton;
-}
 
 /// The filter gallery view from which the user can choose the active rendering style.
 @property (strong, nonatomic) IBOutlet BXFilterGallery *filterGallery;

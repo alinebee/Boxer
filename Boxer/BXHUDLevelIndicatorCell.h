@@ -10,10 +10,6 @@
 /// BXHUDLevelIndicatorCell is a shadowed white level indicator
 /// designed for bezel notifications.
 @interface BXHUDLevelIndicatorCell : NSLevelIndicatorCell
-{
-	NSColor *indicatorColor;
-	NSShadow *indicatorShadow;
-}
 
 @property (copy, nonatomic) NSColor *indicatorColor;
 @property (copy, nonatomic) NSShadow *indicatorShadow;

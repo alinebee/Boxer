@@ -10,10 +10,8 @@
 
 /// BXCursorFadeAnimation class description goes here.
 @interface BXCursorFadeAnimation : NSAnimation
-{
-	NSCursor *originalCursor;
-}
-@property (strong) NSCursor *originalCursor;
+
+@property (strong, nonatomic) NSCursor *originalCursor;
 
 - (NSCursor *) cursorWithOpacity: (CGFloat)opacity;
 

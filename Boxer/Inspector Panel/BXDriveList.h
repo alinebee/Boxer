@@ -31,16 +31,10 @@
 
 /// A custom appearance for control buttons within drive item views.
 @interface BXDriveItemButtonCell : BXThemedButtonCell
-{
-	BOOL _hovered;
-}
 @property (assign, nonatomic, getter=isHovered) BOOL hovered;
 @end
 
 
 /// A custom appearance for drive labels.
 @interface BXDriveLetterCell : NSTextFieldCell <BXThemable>
-{
-    NSString *_themeKey;
-}
 @end

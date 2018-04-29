@@ -154,7 +154,7 @@
     //When we first set up the tap at application startup, check if Boxer already has permission to capture hotkeys.
     //We use this later to determine whether Boxer has been granted that permission while it's running,
     //and hence whether we may need to restart in order for those permissions to take effect.
-    _couldCaptureHotkeysAtStartup = self.canCaptureHotkeys;
+    self.couldCaptureHotkeysAtStartup = self.canCaptureHotkeys;
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
@@ -222,7 +222,7 @@
         //tap at all even though the API reports that we have permission to do so (which would otherwise
         //cause us to enter a continual restart loop as we keep thinking we're just a restart away from
         //those permissions taking effect.)
-		BOOL permissionGrantedThisSession = self.canCaptureHotkeys && !self->_couldCaptureHotkeysAtStartup;
+        BOOL permissionGrantedThisSession = self.canCaptureHotkeys && !self.couldCaptureHotkeysAtStartup;
         
         self.needsRestartForHotkeyCapture = (tap.status != BXKeyboardEventTapTappingAllKeyboardEvents) && permissionGrantedThisSession;
         

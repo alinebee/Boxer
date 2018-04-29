@@ -9,9 +9,6 @@
 
 /// BXDOSWindowBackgroundView simply renders the badged grey gradient background of the DOS window.
 @interface BXDOSWindowBackgroundView : NSView
-{
-    NSBitmapImageRep *_snapshot;
-}
 @end
 
 

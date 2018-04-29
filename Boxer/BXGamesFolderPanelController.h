@@ -11,10 +11,6 @@
 /// BXGamesFolderPanelController displays the choose-a-game-folder open panel, and manages its
 /// accessory view. It is also responsible for adding sample games to the chosen folder, if requested.
 @interface BXGamesFolderPanelController : NSViewController <NSOpenSavePanelDelegate>
-{
-	NSButton *_sampleGamesToggle;
-	NSButton *_useShelfAppearanceToggle;
-}
 
 @property (strong, nonatomic) IBOutlet NSButton *sampleGamesToggle;
 @property (strong, nonatomic) IBOutlet NSButton *useShelfAppearanceToggle;

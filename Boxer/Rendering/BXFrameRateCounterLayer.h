@@ -11,9 +11,6 @@
 /// \c BXFrameRateCounterLayer is a cheap and dirty subclass of CATextLayer to format a provided/bound
 /// frame rate as a suitable string for display.
 @interface BXFrameRateCounterLayer : CATextLayer
-{
-	CGFloat frameRate;
-}
-@property (assign, nonatomic) CGFloat frameRate;
+@property (nonatomic) CGFloat frameRate;
 
 @end

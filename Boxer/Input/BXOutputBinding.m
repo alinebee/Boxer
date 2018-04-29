@@ -27,10 +27,6 @@
 @end
 
 @implementation BXBaseOutputBinding
-@synthesize latestValue = _previousValue;
-@synthesize latestNormalizedValue = _previousNormalizedValue;
-@synthesize threshold = _threshold;
-@synthesize inverted = _inverted;
 
 + (id) binding
 {
@@ -80,12 +76,9 @@
 #pragma mark - Joystick bindings
 
 @implementation BXBaseEmulatedJoystickBinding
-@synthesize joystick = _joystick;
-
 @end
 
 @implementation BXEmulatedJoystickButtonBinding
-@synthesize button = _button;
 
 #pragma mark - Binding behaviour
 
@@ -121,8 +114,6 @@
 
 
 @implementation BXEmulatedJoystickAxisBinding
-@synthesize axisName = _axisName;
-@synthesize polarity = _polarity;
 
 #pragma mark - Binding behaviour
 
@@ -171,8 +162,6 @@
 
 
 @implementation BXEmulatedJoystickPOVDirectionBinding
-@synthesize POVDirection = _POVDirection;
-@synthesize POVNumber = _POVNumber;
 
 #pragma mark - Binding behaviour
 
@@ -216,8 +205,6 @@
 #pragma mark - Keyboard bindings
 
 @implementation BXEmulatedKeyboardKeyBinding
-@synthesize keyCode = _keyCode;
-@synthesize keyboard = _keyboard;
 
 #pragma mark - Binding behaviour
 
@@ -257,7 +244,8 @@
 @interface BXPeriodicOutputBinding ()
 
 //NOTE: timers retain their targets, so we keep a weak reference to the timer to avoid a circular retain.
-@property (assign, nonatomic) NSTimer *timer;
+@property (weak, nonatomic) NSTimer *timer;
+@property (nonatomic) NSTimeInterval lastUpdated;
 
 //Called by the timer. Calculates the elapsed time, calls applyPeriodicUpdateForTimeStep:, and notifies the delegate.
 - (void) _applyPeriodicUpdate;
@@ -268,9 +256,6 @@
 @end
 
 @implementation BXPeriodicOutputBinding
-@synthesize delegate = _delegate;
-@synthesize period = _period;
-@synthesize timer = _timer;
 
 #pragma mark - Binding behaviour
 
@@ -287,9 +272,9 @@
     if (self.latestNormalizedValue > 0)
     {
         NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
-        NSTimeInterval elapsedTime = now - _lastUpdated;
+        NSTimeInterval elapsedTime = now - self.lastUpdated;
         [self applyPeriodicUpdateForTimeStep: elapsedTime];
-        _lastUpdated = now;
+        self.lastUpdated = now;
         
         [self.delegate outputBindingDidUpdate: self];
     }
@@ -305,7 +290,7 @@
 {
     if (!self.timer)
     {
-        _lastUpdated = [NSDate timeIntervalSinceReferenceDate];
+        self.lastUpdated = [NSDate timeIntervalSinceReferenceDate];
         self.timer = [NSTimer scheduledTimerWithTimeInterval: self.period
                                                       target: self
                                                     selector: @selector(_applyPeriodicUpdate)
@@ -341,10 +326,6 @@
 
 
 @implementation BXEmulatedJoystickAxisAdditiveBinding
-@synthesize ratePerSecond = _ratePerSecond;
-@synthesize joystick = _joystick;
-@synthesize axisName = _axisName;
-@synthesize outputThreshold = _outputThreshold;
 
 #pragma mark - Binding behaviour
 
@@ -384,9 +365,6 @@
 
 
 @implementation BXTargetActionBinding
-@synthesize target = _target;
-@synthesize pressedAction = _pressedAction;
-@synthesize releasedAction = _releasedAction;
 
 + (id) bindingWithTarget: (id)target pressedAction: (SEL)pressedAction releasedAction: (SEL)releasedAction
 {

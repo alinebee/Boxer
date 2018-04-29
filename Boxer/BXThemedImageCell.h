@@ -13,16 +13,9 @@
 
 /// \c BXThemeImageCell renders its image as a template using a fill and shadow effects defined in a theme.
 @interface BXThemedImageCell : NSImageCell <BXThemable>
-{
-    NSString *_themeKey;
-}
 
 /// The current theme key.
 @property (copy, nonatomic) NSString *themeKey;
-
-//Toggles the highlighted appearance for the image cell.
-//We now use NSControl's highlighted property.
-//@property (assign, getter=isHighlighted) BOOL highlighted;
 
 @end
 

@@ -24,8 +24,6 @@
 @end
 
 @implementation BXJoystickController
-@synthesize HIDMonitor = _HIDMonitor;
-@synthesize recentHIDRemappers = _recentHIDRemappers;
 
 - (id) init
 {

@@ -27,33 +27,31 @@
 
 @implementation BXJoypadController
 
-@synthesize joypadManager, currentLayout, hasJoypadDevices;
-
 #pragma mark -
 #pragma mark Initialization and deallocation
 
 - (void) setCurrentLayout: (JoypadControllerLayout *)layout
 {
-    if (currentLayout != layout)
+    if (_currentLayout != layout)
     {
-        currentLayout = layout;
+        _currentLayout = layout;
         
         if (layout)
         {
-            [joypadManager setControllerLayout: layout];
+            [self.joypadManager setControllerLayout: layout];
         }
     }
 }
 
 - (void) awakeFromNib
 {
-    joypadManager = [[JoypadManager alloc] init];
-    [joypadManager setDelegate: self];
-    [joypadManager setMaxPlayerCount: 1];
+    _joypadManager = [[JoypadManager alloc] init];
+    [self.joypadManager setDelegate: self];
+    [self.joypadManager setMaxPlayerCount: 1];
     
     //Default to a 4-button layout (this may be overridden by any game the user starts)
     [self setCurrentLayout: [BX4ButtonJoystickLayout layout]];
-    [joypadManager startFindingDevices];
+    [self.joypadManager startFindingDevices];
     
     BXBaseAppController *appController = (BXBaseAppController *)[NSApp delegate];
     [appController addObserver: self
@@ -73,7 +71,7 @@
     [appController removeObserver: self forKeyPath: @"currentSession.DOSWindowController.inputController.currentJoypadLayout"];
     [appController removeObserver: self forKeyPath: @"currentSession.DOSWindowController.inputController"];
     
-    [joypadManager stopFindingDevices];
+    [self.joypadManager stopFindingDevices];
     [self setCurrentLayout: nil];
 }
 
@@ -83,7 +81,7 @@
 
 - (NSArray *) joypadDevices
 {
-    return [joypadManager connectedDevices];
+    return [self.joypadManager connectedDevices];
 }
 
 - (BXInputController *) activeWindowController

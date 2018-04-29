@@ -42,18 +42,6 @@
 
 @implementation BXBaseAppController
 
-@synthesize currentSession = _currentSession;
-@synthesize generalQueue = _generalQueue;
-@synthesize joystickController = _joystickController;
-@synthesize joypadController = _joypadController;
-@synthesize MIDIDeviceMonitor = _MIDIDeviceMonitor;
-@synthesize hotkeySuppressionTap = _hotkeySuppressionTap;
-
-@synthesize postTerminationHandler = _postTerminationHandler;
-@synthesize activeHotkeyAlert = _activeHotkeyAlert;
-@synthesize needsRestartForHotkeyCapture = _needsRestartForHotkeyCapture;
-
-
 #pragma mark - Helper class methods
 
 + (NSString *) localizedVersion

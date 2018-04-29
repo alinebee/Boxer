@@ -19,22 +19,6 @@
 #pragma mark - Implementation
 
 @implementation BXDrive
-@synthesize sourceURL = _sourceURL;
-@synthesize shadowURL = _shadowURL;
-@synthesize mountPointURL = _mountPointURL;
-@synthesize letter = _letter;
-@synthesize title = _title;
-@synthesize volumeLabel = _volumeLabel;
-@synthesize DOSVolumeLabel = _DOSVolumeLabel;
-@synthesize type = _type;
-@synthesize freeSpace = _freeSpace;
-@synthesize usesCDAudio = _usesCDAudio;
-@synthesize readOnly = _readOnly;
-@synthesize locked = _locked;
-@synthesize hidden = _hidden;
-@synthesize mounted = _mounted;
-@synthesize filesystem = _filesystem;
-
 
 #pragma mark - Helper class methods
 
@@ -218,7 +202,7 @@
 		if (driveType == BXDriveAutodetect)
         {
             self.type = [self.class preferredTypeForContentsOfURL: sourceURL];
-            _hasAutodetectedType = YES;
+            self.hasAutodetectedType = YES;
 		}
 		else
         {
@@ -258,26 +242,26 @@
 			if (!self.mountPointURL)
             {
 				self.mountPointURL = [self.class mountPointForContentsOfURL: _sourceURL];
-                _hasAutodetectedMountPoint = YES;
+                self.hasAutodetectedMountPoint = YES;
             }
 			
 			//Automatically parse the drive letter, title and volume label from the name of the drive
 			if (!self.letter)
             {
                 self.letter = [self.class preferredDriveLetterForContentsOfURL: _sourceURL];
-                _hasAutodetectedLetter = YES;
+                self.hasAutodetectedLetter = YES;
             }
             
 			if (!self.volumeLabel)
             {
                 self.volumeLabel = [self.class preferredVolumeLabelForContentsOfURL: _sourceURL];
-                _hasAutodetectedVolumeLabel = YES;
+                self.hasAutodetectedVolumeLabel = YES;
             }
             
 			if (!self.title)
             {
                 self.title = [self.class preferredTitleForContentsOfURL: _sourceURL];
-                _hasAutodetectedTitle = YES;
+                self.hasAutodetectedTitle = YES;
             }
 		}
 	}
@@ -290,7 +274,7 @@
 	{
 		_mountPointURL = [mountPointURL copy];
 		
-        _hasAutodetectedMountPoint = NO;
+        self.hasAutodetectedMountPoint = NO;
         
         //Clear our old filesystem whenever the source changes: it will be recreated when needed.
         self.filesystem = nil;
@@ -305,7 +289,7 @@
 		_shadowURL = [shadowURL copy];
         
         //Clear our old filesystem, if it was shadowed: it will be recreated when needed.
-        if (_shadowURL && [_filesystem isKindOfClass: [ADBShadowedFilesystem class]])
+        if (_shadowURL && [self.filesystem isKindOfClass: [ADBShadowedFilesystem class]])
         {
             self.filesystem = nil;
         }
@@ -321,7 +305,7 @@
 	{
 		_letter = [driveLetter copy];
         
-        _hasAutodetectedLetter = NO;
+        self.hasAutodetectedLetter = NO;
 	}
 }
 
@@ -331,7 +315,7 @@
 	{
 		_volumeLabel = [newLabel copy];
 		
-        _hasAutodetectedVolumeLabel = NO;
+        self.hasAutodetectedVolumeLabel = NO;
 	}
 }
 
@@ -341,7 +325,7 @@
 	{
 		_title = [title copy];
 		
-        _hasAutodetectedTitle = NO;
+        self.hasAutodetectedTitle = NO;
 	}
 }
 

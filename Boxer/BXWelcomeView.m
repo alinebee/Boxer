@@ -40,7 +40,6 @@
 
 
 @implementation BXWelcomeButton
-@synthesize draggingDelegate = _draggingDelegate;
 
 - (void) awakeFromNib
 {

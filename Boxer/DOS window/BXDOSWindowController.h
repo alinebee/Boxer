@@ -51,38 +51,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 /// Besides the usual window-controller responsibilities, it handles switching to and from fullscreen
 /// and passing frames to the emulator to the rendering view.
 @interface BXDOSWindowController : NSWindowController <ADBFullScreenCapableWindowDelegate>
-{
-    NSView <BXFrameRenderingView> *_renderingView;
-	BXInputView *_inputView;
-	NSView *_statusBar;
-	NSView *_programPanel;
-    NSView *_launchPanel;
-    NSView *_loadingPanel;
-    NSView *_panelWrapper;
-    NSSegmentedControl *_panelToggle;
-    YRKSpinningProgressIndicator *_loadingSpinner;
-
-	BXProgramPanelController *_programPanelController;
-	BXInputController *_inputController;
-	BXStatusBarController *_statusBarController;
-    BXLaunchPanelController *_launchPanelController;
-    
-    NSToolbarItem *_documentationButton;
-	
-    NSSize _currentScaledSize;
-	NSSize _currentScaledResolution;
-    BOOL _aspectCorrected;
-	BOOL _resizingProgrammatically;
-    BOOL _windowIsClosing;
-    
-    NSSize _renderingViewSizeBeforeFullScreen;
-    NSString *_autosaveNameBeforeFullScreen;
-    
-    NSSize _maxFullscreenViewportSize;
-    
-    BXDOSWindowPanel _currentPanel;
-    BXRenderingStyle _renderingStyle;
-}
 
 #pragma mark - Properties
 

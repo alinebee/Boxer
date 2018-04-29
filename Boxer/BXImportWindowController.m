@@ -13,7 +13,6 @@
 #import "ADBAppKitVersionHelpers.h"
 
 @implementation BXImportWindowController
-@synthesize dropzonePanel, loadingPanel, installerPanel, finalizingPanel, finishedPanel;
 
 - (BXImportSession *) document { return (BXImportSession *)[super document]; }
 

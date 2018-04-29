@@ -60,22 +60,6 @@ enum {
 
 @implementation BXPreferencesController
 
-@synthesize gamesFolderSelector = _gamesFolderSelector;
-@synthesize currentGamesFolderItem = _currentGamesFolderItem;
-
-@synthesize filterGallery = _filterGallery;
-
-@synthesize MT32ROMDropzone = _MT32ROMDropzone;
-@synthesize missingMT32ROMHelp = _missingMT32ROMHelp;
-@synthesize realMT32Help = _realMT32Help;
-@synthesize MT32ROMOptions = _MT32ROMOptions;
-
-@synthesize hotkeyCaptureToggle = _hotkeyCaptureToggle;
-@synthesize hotkeyCaptureDescription = _hotkeyCaptureDescription;
-@synthesize hotkeyCaptureExtraHelp = _hotkeyCaptureExtraHelp;
-@synthesize hotkeyCapturePermissionsButton = _hotkeyCapturePermissionsButton;
-
-
 #pragma mark - Initialization and deallocation
 
 + (BXPreferencesController *) controller

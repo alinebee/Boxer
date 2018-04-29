@@ -13,9 +13,4 @@
 
 /// \c BXSimpleDriveImport handles the importing of a drive to a specified destination.
 @interface BXSimpleDriveImport : ADBSingleFileTransfer <BXDriveImport>
-{
-	BXDrive *_drive;
-	NSURL *_destinationFolderURL;
-	NSURL *_destinationURL;
-}
 @end

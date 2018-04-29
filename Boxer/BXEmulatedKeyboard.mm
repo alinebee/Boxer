@@ -25,7 +25,7 @@ const char* DOS_GetLoadedLayout(void);
 @interface BXEmulatedKeyboard ()
 
 //Assign rather than retain, because NSTimers retain their targets
-@property (assign) NSTimer *pendingKeypresses;
+@property (weak) NSTimer *pendingKeypresses;
 
 //Returns the DOS keycode constant that will produce the specified character
 //under the US keyboard layout, along with any modifiers needed to trigger it.
@@ -40,11 +40,14 @@ const char* DOS_GetLoadedLayout(void);
 #pragma mark Implementation
 
 @implementation BXEmulatedKeyboard
-@synthesize capsLockEnabled = _capsLockEnabled;
-@synthesize numLockEnabled = _numLockEnabled;
-@synthesize scrollLockEnabled = _scrollLockEnabled;
-@synthesize preferredLayout = _preferredLayout;
-@synthesize pendingKeypresses = _pendingKeypresses;
+{
+	NSUInteger _pressedKeys[KBD_LAST];
+	
+	//Whether to re-enable capslock and the active layout
+	//once a simulated typing session is finished.
+	BOOL _enableActiveLayoutAfterTyping;
+	BOOL _enableCapslockAfterTyping;
+}
 
 + (NSTimeInterval) defaultKeypressDuration { return 0.25; }
 

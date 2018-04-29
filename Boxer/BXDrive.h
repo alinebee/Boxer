@@ -32,33 +32,6 @@ typedef NS_ENUM(NSInteger, BXDriveType) {
 /// \c BXDrive represents a single DOS drive and encapsulates all the data needed to mount the drive
 /// and locate it on the OS X filesystem. BXDrives are mounted via ADBFilesystem's mountDrive: method.
 @interface BXDrive : NSObject
-{
-    NSURL *_sourceURL;
-    NSURL *_shadowURL;
-    NSURL *_mountPointURL;
-    NSMutableSet *_equivalentURLs;
-    
-	NSString *_letter;
-	NSString *_title;
-	NSString *_volumeLabel;
-    NSString *_DOSVolumeLabel;
-	BXDriveType _type;
-	NSInteger _freeSpace;
-	BOOL _usesCDAudio;
-	BOOL _readOnly;
-	BOOL _locked;
-	BOOL _hidden;
-    BOOL _mounted;
-    
-    BOOL _hasAutodetectedMountPoint;
-    BOOL _hasAutodetectedLetter;
-    BOOL _hasAutodetectedTitle;
-    BOOL _hasAutodetectedVolumeLabel;
-    BOOL _hasAutodetectedType;
-    
-    id <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess> _filesystem;
-}
-
 
 #pragma mark - Properties
 
@@ -106,29 +79,30 @@ typedef NS_ENUM(NSInteger, BXDriveType) {
 /// BXDefaultFreeSpace: which is ~250MB for hard disks, 1.44MB for floppies and 0B for CDROMs.
 /// Note that this is not an enforced limit: it only affects how much free space is reported
 /// to DOS programs.
-@property (assign, nonatomic) NSInteger freeSpace;
+@property (nonatomic) NSInteger freeSpace;
 
 /// Whether to use SDL CD-ROM audio: only relevant for folders mounted as CD-ROM drives.
 /// If YES, DOS emulation will read CD audio for this drive from the first audio CD volume mounted in OS X.
-@property (assign, nonatomic) BOOL usesCDAudio;
+@property (nonatomic) BOOL usesCDAudio;
 
 /// Whether to prevent DOS from writing to the OS X filesystem representing this drive. Defaults to NO.
 /// This property is ignored for CD-ROM drives and DOSBox's internal Z drive,
 /// which are always treated as read-only.
-@property (assign, nonatomic, getter=isReadOnly) BOOL readOnly;
+@property (nonatomic, getter=isReadOnly) BOOL readOnly;
 
 /// Whether to protect this drive from being unmounted from Boxer's drive manager UI. Defaults to NO.
 /// Ignored for DOSBox's internal Z drive, which is always locked.
-@property (assign, nonatomic, getter=isLocked) BOOL locked;
+@property (nonatomic, getter=isLocked) BOOL locked;
 
 /// Whether to hide this drive from Boxer's drive manager UI. Defaults to NO.
 /// Ignored for DOSBox's internal Z drive, which is always hidden.
-@property (assign, nonatomic, getter=isHidden) BOOL hidden;
+@property (nonatomic, getter=isHidden) BOOL hidden;
 
 /// Whether this drive is currently mounted in an emulation session.
 /// This is merely a flag to make displaying the state of a drive easier; setting it to YES
 /// will not actually mount the drive, just indicate that it is mounted somewhere.
-@property (assign, nonatomic, getter=isMounted) BOOL mounted;
+@property (nonatomic, getter=isMounted) BOOL mounted;
+
 
 
 #pragma mark - Immutable properties
@@ -148,7 +122,7 @@ typedef NS_ENUM(NSInteger, BXDriveType) {
 @property (readonly, strong, nonatomic) id <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess> filesystem;
 
 /// A localized human-readable title for the drive's type, for display in the UI.
-@property (copy, readonly, nonatomic) NSString *localizedTypeDescription;
+@property (readonly, nonatomic) NSString *localizedTypeDescription;
 
 
 #pragma mark - Class methods

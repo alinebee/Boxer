@@ -15,22 +15,17 @@
 /// \c BXImportDropzonePanelController controls the behaviour of the dropzone panel
 /// in the game import process.
 @interface BXImportDropzonePanelController : NSViewController <NSOpenSavePanelDelegate>
-{
-    __unsafe_unretained BXImportWindowController *_controller;
-	BXImportDropzone *_dropzone;
-	BXBlueprintProgressIndicator *_spinner;
-}
 
-/// The dropzone within the dropzone panel
-@property (strong, nonatomic, nullable) IBOutlet BXImportDropzone *dropzone;
+/// The dropzone within the dropzone panel.
+@property (strong, nonatomic) IBOutlet BXImportDropzone *dropzone;
 
 /// The progress indicator shown when scanning a game for installers.
 /// (This now lives on a separate interstitial view and not the Dropzone
 /// view, but I can't be bothered making a second controller for it.)
-@property (strong, nonatomic, nullable) IBOutlet BXBlueprintProgressIndicator *spinner;
+@property (strong, nonatomic) IBOutlet BXBlueprintProgressIndicator *spinner;
 
-/// A reference to our window controller
-@property (assign, nonatomic, nullable) IBOutlet BXImportWindowController *controller;
+/// A back-reference to our owning window controller
+@property (unsafe_unretained, nonatomic) IBOutlet BXImportWindowController *controller;
 
 
 /// Display a file picker for choosing a folder or disc image to import

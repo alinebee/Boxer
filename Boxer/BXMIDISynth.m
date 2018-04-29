@@ -24,8 +24,11 @@
 #pragma mark Implementation
 
 @implementation BXMIDISynth
-@synthesize soundFontURL = _soundFontURL;
-
+{
+	AUGraph _graph;
+	AudioUnit _synthUnit;
+	AudioUnit _outputUnit;
+}
 
 #pragma mark -
 #pragma mark Initialization and cleanup

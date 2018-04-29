@@ -11,7 +11,6 @@
 
 
 @implementation BXCursorFadeAnimation
-@synthesize originalCursor;
 
 - (void) setCurrentProgress: (NSAnimationProgress)progress
 {

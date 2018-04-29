@@ -33,7 +33,6 @@
 
 
 @implementation BXWelcomeWindowController
-@synthesize recentDocumentsButton, importGameButton, openPromptButton, showGamesFolderButton;
 
 #pragma mark -
 #pragma mark Initialization and deallocation

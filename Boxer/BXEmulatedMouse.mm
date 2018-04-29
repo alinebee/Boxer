@@ -29,9 +29,9 @@
 #pragma mark Implementation
 
 @implementation BXEmulatedMouse
-@synthesize active = _active;
-@synthesize position = _position;
-@synthesize pressedButtons = _pressedButtons;
+{
+	NSTimeInterval _lastButtonDown[BXMouseButtonMax];
+}
 
 - (id) init
 {

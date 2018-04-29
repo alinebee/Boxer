@@ -16,12 +16,7 @@
 /// appearance from Finder folders. This means interacting with Finder via the Scripting
 /// Bridge API, which is slow, so we do this work as a background operation.
 @interface BXShelfAppearanceOperation : NSOperation
-{
-	NSURL *_targetURL;
-	BOOL _appliesToSubFolders;
-	
-	FinderApplication *_finder;
-}
+
 @property (copy) NSURL *targetURL;
 @property (assign) BOOL appliesToSubFolders;
 
@@ -29,13 +24,6 @@
 
 
 @interface BXShelfAppearanceApplicator : BXShelfAppearanceOperation
-{
-	NSImage *_icon;
-	NSURL *_backgroundImageURL;
-	BOOL _switchToIconView;
-	
-	FinderFile *_backgroundPicture;
-}
 
 @property (copy) NSURL *backgroundImageURL;
 @property (copy) NSImage *icon;
@@ -48,11 +36,6 @@
 
 
 @interface BXShelfAppearanceRemover: BXShelfAppearanceOperation
-{
-	NSURL *_sourceURL;
-	
-	FinderIconViewOptions *_sourceOptions;
-}
 
 @property (copy) NSURL *sourceURL;
 

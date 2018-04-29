@@ -23,32 +23,10 @@
 @end
 
 @interface BXLaunchPanelController : NSViewController <NSCollectionViewDelegate, NSTextFieldDelegate, BXLauncherItemDelegate>
-{
-    NSCollectionView *__weak _launcherList;
-    NSScrollView *__weak _launcherScrollView;
-    NSSearchField *__weak _filter;
-    
-    NSMutableArray *_filterKeywords;
-    
-    NSMutableArray *_allProgramRows;
-    NSMutableArray *_favoriteProgramRows;
-    NSMutableArray *_recentProgramRows;
-    NSMutableArray *_displayedRows;
-    
-    NSDictionary *_favoritesHeading;
-    NSDictionary *_recentProgramsHeading;
-    NSDictionary *_allProgramsHeading;
-    
-    BOOL _allProgramRowsDirty;
-    BOOL _favoriteProgramRowsDirty;
-    BOOL _recentProgramRowsDirty;
-    
-    BOOL _shouldUpdateImmediately;
-}
 
-@property (weak, nonatomic) IBOutlet NSCollectionView *launcherList;
-@property (weak, nonatomic) IBOutlet NSScrollView *launcherScrollView;
-@property (weak, nonatomic) IBOutlet NSSearchField *filter;
+@property (strong, nonatomic) IBOutlet NSCollectionView *launcherList;
+@property (strong, nonatomic) IBOutlet NSScrollView *launcherScrollView;
+@property (strong, nonatomic) IBOutlet NSSearchField *filter;
 
 /// An array of NSDictionaries for every item to display in the list.
 @property (readonly, strong, nonatomic) NSMutableArray<NSDictionary*> *displayedRows;
@@ -71,24 +49,15 @@
 @class BXLauncherItem;
 /// A custom collection view that uses a different prototype for drive 'headings'
 @interface BXLauncherList : NSCollectionView
-{
-    BXLauncherItem *__weak _headingPrototype;
-    BXLauncherItem *__weak _favoritePrototype;
-}
 
-@property (weak, nonatomic) IBOutlet BXLauncherItem *headingPrototype;
-@property (weak, nonatomic) IBOutlet BXLauncherItem *favoritePrototype;
+@property (strong, nonatomic) IBOutlet BXLauncherItem *headingPrototype;
+@property (strong, nonatomic) IBOutlet BXLauncherItem *favoritePrototype;
 
 @end
 
 @class BXLauncherItemView;
 @interface BXLauncherItem : BXCollectionItem
-{
-    id <BXLauncherItemDelegate> __unsafe_unretained _delegate;
-    BOOL _launchable;
-    NSMenu *_menu;
-}
-@property (unsafe_unretained, nonatomic) IBOutlet id <BXLauncherItemDelegate> delegate;
+@property (weak, nonatomic) IBOutlet id <BXLauncherItemDelegate> delegate;
 @property (assign, nonatomic, getter=isLaunchable) BOOL launchable;
 @property (strong, nonatomic) IBOutlet NSMenu *menu; //The context menu to display for this item.
 
@@ -103,11 +72,6 @@
 
 /// A base class for launcher items that registers mouse-hover events.
 @interface BXLauncherItemView : BXCollectionItemView
-{
-    BOOL _mouseInside;
-    BOOL _active;
-    BOOL _enabled;
-}
 
 /// Typecast to indicate the type of delegate this view expects.
 @property (weak, nonatomic) BXLauncherItem *delegate;

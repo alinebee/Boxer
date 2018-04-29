@@ -16,9 +16,6 @@
 @end
 
 @implementation BXJoystickItem
-@synthesize titleLabel = _titleLabel;
-@synthesize descriptionLabel = _descriptionLabel;
-@synthesize icon = _icon;
 
 - (void) setSelected: (BOOL)selected
 {

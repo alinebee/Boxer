@@ -24,14 +24,12 @@
 
 
 @interface BXCollectionItemView : NSView
-{
-	__unsafe_unretained NSCollectionViewItem *_delegate;
-}
-/// A nonretained reference back to the collection view item we represent.
-@property (assign, nonatomic) IBOutlet NSCollectionViewItem *delegate;
+
+/// The collection view item represented by this view.
+@property (unsafe_unretained, nonatomic) IBOutlet NSCollectionViewItem *delegate;
 
 /// The view prototype we were copied from.
-@property (weak, readonly, nonatomic) NSView *prototype;
+@property (readonly, nonatomic) NSView *prototype;
 
 /// Called by BXCollectionItem when the item's selected status changes.
 /// By default, flags the view as needing to be displayed.

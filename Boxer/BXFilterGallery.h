@@ -15,21 +15,20 @@
 @end
 
 @interface BXFilterPortrait : NSButton
-{
-	CGFloat _illumination;
-}
+
 /// The current illumination, which controls the brightness of the portrait and the opacity of the
 /// spotlight. This is animatable via -animator and will change automatically when the button's state
 /// is toggled on or off.
-@property (assign, nonatomic) CGFloat illumination;
+@property (nonatomic) CGFloat illumination;
+
 @end
 
 @interface BXFilterPortraitCell : NSButtonCell
 
 /// Methods defining how the button title text should be rendered
-@property (readonly, weak) NSColor *titleColor;
-@property (readonly, weak) NSShadow *titleShadow;
-@property (readonly, weak) NSDictionary *titleAttributes;
+@property (readonly, nonatomic) NSColor *titleColor;
+@property (readonly, nonatomic) NSShadow *titleShadow;
+@property (readonly, nonatomic) NSDictionary *titleAttributes;
 
 - (void) drawSpotlightWithFrame: (NSRect)frame inView: (NSView *)controlView withAlpha: (CGFloat)alpha;
 

@@ -34,12 +34,6 @@
 @end
 
 @implementation BXInstallerScan
-@synthesize windowsExecutables      = _windowsExecutables;
-@synthesize DOSExecutables          = _DOSExecutables;
-@synthesize DOSBoxConfigurations    = _DOSBoxConfigurations;
-@synthesize macOSApps               = _macOSApps;
-@synthesize alreadyInstalled        = _alreadyInstalled;
-@synthesize detectedProfile         = _detectedProfile;
 
 - (id) init
 {

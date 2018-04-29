@@ -15,10 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// the file's icon after dropping. Clicking the region will reveal a file picker.
 /// (\c BXImportDropzone does not actually handle drag-drop events itself: the panel itself does that.)
 @interface BXImportDropzone : NSButton
-{
-	CGFloat borderPhase;
-	CGFloat borderOutset;
-}
 
 //Whether we're the target of a drag-drop operation. When YES, the dropzone's border will animate.
 //We now use NSControl's highlighted property.

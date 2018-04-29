@@ -18,23 +18,6 @@
 /// the standard and standalone app controller subclasses. It is not intended to be instantiated directly.
 @interface BXBaseAppController : NSDocumentController <NSApplicationDelegate, NSAlertDelegate>
 
-{
-	BXSession *_currentSession;
-	NSOperationQueue *_generalQueue;
-	
-    BXJoystickController *_joystickController;
-    BXJoypadController *_joypadController;
-    
-    BXMIDIDeviceMonitor *_MIDIDeviceMonitor;
-    
-    void (^_postTerminationHandler)(void);
-    
-    BXKeyboardEventTap *_hotkeySuppressionTap;
-    NSAlert *_activeHotkeyAlert;
-    BOOL _couldCaptureHotkeysAtStartup;
-    BOOL _needsRestartForHotkeyCapture;
-}
-
 #pragma mark - Properties
 
 /// The currently-active DOS session. Changes whenever a new session opens.

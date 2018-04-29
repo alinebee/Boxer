@@ -12,6 +12,10 @@
 /// Private API for BXAppController which should only be accessed by subclasses.
 @interface BXBaseAppController ()
 
+/// Whether Boxer was able to capture hotkeys at application startup time.
+/// This is used to detect whether permission was successfully granted during the current application session, in which case a restart is required for to take full effect.
+@property (nonatomic) BOOL couldCaptureHotkeysAtStartup;
+
 /// A block to run once the application has finished terminating. Used by @c -terminateWithHandler:.
 @property (copy, nonatomic) void(^postTerminationHandler)(void);
 

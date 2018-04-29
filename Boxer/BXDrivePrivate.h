@@ -11,7 +11,13 @@
 
 @interface BXDrive ()
 
-@property (readwrite, assign, nonatomic) BXDriveType type;
+@property (readwrite, nonatomic) BXDriveType type;
 @property (readwrite, strong, nonatomic) id <ADBFilesystemPathAccess, ADBFilesystemLogicalURLAccess> filesystem;
+
+@property (nonatomic) BOOL hasAutodetectedMountPoint;
+@property (nonatomic) BOOL hasAutodetectedLetter;
+@property (nonatomic) BOOL hasAutodetectedType;
+@property (nonatomic) BOOL hasAutodetectedTitle;
+@property (nonatomic) BOOL hasAutodetectedVolumeLabel;
 
 @end

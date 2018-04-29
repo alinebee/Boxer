@@ -173,18 +173,18 @@
     
     //For other paths and strings, only bother recording them if they have been
     //manually changed from their autodetected versions.
-    if (self.mountPointURL && !_hasAutodetectedMountPoint)
+    if (self.mountPointURL && !self.hasAutodetectedMountPoint)
     {
         NSData *mountPointURLBookmark = BOOKMARK_FROM_URL(self.mountPointURL);
         [aCoder encodeObject: mountPointURLBookmark forKey: @"mountPointURLBookmark"];
     }
     
-    if (self.title && !_hasAutodetectedTitle)
+    if (self.title && !self.hasAutodetectedTitle)
     {
         [aCoder encodeObject: self.title forKey: @"title"];
     }
     
-    if (self.volumeLabel && !_hasAutodetectedVolumeLabel)
+    if (self.volumeLabel && !self.hasAutodetectedVolumeLabel)
         [aCoder encodeObject: self.volumeLabel forKey: @"volumeLabel"];
     
     if (self.filesystem.representedURLs.count)

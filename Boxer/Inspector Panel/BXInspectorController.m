@@ -105,7 +105,6 @@
 	[self loadWindow];
 	
 	[self.window fadeInWithDuration: 0.2];
-	//[[self window] applyGaussianBlurWithRadius: BXInspectorPanelBlurRadius];
 	
 	_isTemporarilyHidden = NO;
 }

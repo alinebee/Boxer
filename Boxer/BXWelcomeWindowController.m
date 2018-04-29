@@ -88,14 +88,7 @@
 
 - (void) showWindowWithTransition: (id)sender
 {
-#ifdef USE_PRIVATE_APIS
-	[self.window revealWithTransition: CGSFlip
-                            direction: CGSDown
-                             duration: 0.4
-                         blockingMode: NSAnimationNonblocking];
-#else
     [self.window fadeInWithDuration: 0.4];
-#endif
     
 	[self showWindow: sender];
 }

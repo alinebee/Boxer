@@ -9,7 +9,6 @@
 
 
 @implementation BXScriptableWindow
-@synthesize window;
 
 #pragma mark -
 #pragma mark Introspection

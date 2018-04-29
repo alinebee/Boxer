@@ -11,7 +11,6 @@
 
 
 @implementation BXHUDLevelIndicatorCell
-@synthesize indicatorShadow, indicatorColor;
 
 + (CGFloat) heightForControlSize: (NSControlSize)size
 {

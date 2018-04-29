@@ -14,7 +14,6 @@
 #pragma mark Date transformers
 
 @implementation BXDateTransformer
-@synthesize formatter = _formatter;
 
 + (Class) transformedValueClass			{ return [NSString class]; }
 + (BOOL) allowsReverseTransformation	{ return YES; }
@@ -45,6 +44,11 @@
 #pragma mark Numeric transformers
 
 @implementation BXRollingAverageTransformer
+{
+	float _previousAverage;
+	BOOL _hasAverage;
+	NSUInteger _windowSize;
+}
 
 + (Class) transformedValueClass			{ return [NSNumber class]; }
 + (BOOL) allowsReverseTransformation	{ return NO; }
@@ -88,8 +92,6 @@
 
 
 @implementation BXArraySizeTransformer
-@synthesize minSize = _minSize;
-@synthesize maxSize = _maxSize;
 
 + (Class) transformedValueClass			{ return [NSNumber class]; }
 + (BOOL) allowsReverseTransformation	{ return NO; }
@@ -124,6 +126,10 @@
 
 
 @implementation BXBandedValueTransformer
+{
+	double _bandThresholds[MAX_BANDS];
+	NSUInteger _numBands;
+}
 
 + (Class) transformedValueClass			{ return [NSNumber class]; }
 + (BOOL) allowsReverseTransformation	{ return YES; }
@@ -281,10 +287,6 @@
 
 
 @implementation BXDisplayPathTransformer
-@synthesize joiner = _joiner;
-@synthesize ellipsis = _ellipsis;
-@synthesize maxComponents = _maxComponents;
-@synthesize usesFilesystemDisplayPath = _usesFilesystemDisplayPath;
 
 + (Class) transformedValueClass			{ return [NSString class]; }
 + (BOOL) allowsReverseTransformation	{ return NO; }
@@ -353,11 +355,6 @@
 
 
 @implementation BXIconifiedDisplayPathTransformer
-@synthesize missingFileIcon = _missingFileIcon;
-@synthesize textAttributes = _textAttributes;
-@synthesize iconAttributes = _iconAttributes;
-@synthesize iconSize = _iconSize;
-@synthesize hidesSystemRoots = _hidesSystemRoots;
 
 + (Class) transformedValueClass { return [NSAttributedString class]; }
 
@@ -481,7 +478,6 @@
 #pragma mark Image transformers
 
 @implementation BXImageSizeTransformer
-@synthesize size = _size;
 
 + (Class) transformedValueClass			{ return [NSImage class]; }
 + (BOOL) allowsReverseTransformation	{ return NO; }

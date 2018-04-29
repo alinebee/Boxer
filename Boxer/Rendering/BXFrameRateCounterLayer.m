@@ -9,11 +9,10 @@
 #import "BXFrameRateCounterLayer.h"
 
 @implementation BXFrameRateCounterLayer
-@synthesize frameRate;
 
 - (void) setFrameRate: (CGFloat)newRate
 {
-	frameRate = newRate;	
+	_frameRate = newRate;	
 	[self setString: [NSString stringWithFormat: @"%0.02f fps", newRate]];
 }
 

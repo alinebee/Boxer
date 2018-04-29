@@ -16,9 +16,6 @@
 
 /// A simple value transformer that wraps an NSDateFormatter instance.
 @interface BXDateTransformer : NSValueTransformer
-{
-    NSDateFormatter *_formatter;
-}
 @property (strong, nonatomic) NSDateFormatter *formatter;
 
 - (id) initWithDateFormatter: (NSDateFormatter *)formatter;
@@ -31,11 +28,6 @@
 /// Note that this transformer stores state internally, which means it must not be shared between multiple
 /// input sources.
 @interface BXRollingAverageTransformer : NSValueTransformer
-{
-	float _previousAverage;
-    BOOL _hasAverage;
-	NSUInteger _windowSize;
-}
 - (id) initWithWindowSize: (NSUInteger)size;
 
 @end
@@ -43,12 +35,8 @@
 /// Returns the NSNumber equivalents of \c YES or \c NO based on whether an array's size is within the min and max range of the transformer.
 /// Registered as \c BXIsEmpty and \c BXIsNotEmpty by BXAppController, which are used for detecting whether an array is empty or not.
 @interface BXArraySizeTransformer : NSValueTransformer
-{
-	NSUInteger _minSize;
-	NSUInteger _maxSize;
-}
-@property (assign, nonatomic) NSUInteger minSize;
-@property (assign, nonatomic) NSUInteger maxSize;
+@property (nonatomic) NSUInteger minSize;
+@property (nonatomic) NSUInteger maxSize;
 
 - (id) initWithMinSize: (NSUInteger)min maxSize: (NSUInteger)max;
 @end
@@ -65,10 +53,6 @@
 /// NOTE: sliders using this transformer must have a range from 0.0 to 1.0.
 #define MAX_BANDS 32
 @interface BXBandedValueTransformer: NSValueTransformer
-{
-	double _bandThresholds[MAX_BANDS];
-    NSUInteger _numBands;
-}
 
 - (id) initWithThresholds: (double *)thresholds count: (NSUInteger)count;
 - (void) setThresholds: (double *)thresholds count: (NSUInteger)count;
@@ -94,16 +78,10 @@
 
 /// Converts a POSIX file path into a representation suitable for display.
 @interface BXDisplayPathTransformer: NSValueTransformer
-{
-	NSString *_joiner;
-	NSString *_ellipsis;
-	NSUInteger _maxComponents;
-	BOOL _usesFilesystemDisplayPath;
-}
 @property (copy, nonatomic) NSString *joiner;
 @property (copy, nonatomic) NSString *ellipsis;
-@property (assign, nonatomic) NSUInteger maxComponents;
-@property (assign, nonatomic) BOOL usesFilesystemDisplayPath;
+@property (nonatomic) NSUInteger maxComponents;
+@property (nonatomic) BOOL usesFilesystemDisplayPath;
 
 - (id) initWithJoiner: (NSString *)joinString
 			 ellipsis: (NSString *)ellipsisString
@@ -118,13 +96,7 @@
 /// for each part of the file path. Unlike BXDisplayPathTransformer, this returns
 /// an \c NSAttributedString rather than an NSString.
 @interface BXIconifiedDisplayPathTransformer: BXDisplayPathTransformer
-{
-	NSImage *_missingFileIcon;
-	NSMutableDictionary *_textAttributes;
-	NSMutableDictionary *_iconAttributes;
-	NSSize _iconSize;
-	BOOL _hidesSystemRoots;
-}
+
 /// The file icon to use for files/folders that don't yet exist.
 /// If left as nil, will use NSWorkspace's default icon for missing files.
 @property (copy, nonatomic) NSImage *missingFileIcon;
@@ -138,11 +110,11 @@
 @property (strong, nonatomic) NSMutableDictionary *iconAttributes;
 
 /// The pixel size at which to display icons. Defaults to 16x16.
-@property (assign, nonatomic) NSSize iconSize;
+@property (nonatomic) NSSize iconSize;
 
 /// Whether to hide the / and /Users/ subpaths in displayed paths.
 /// This imitates the behaviour of \c NSPathControl et. al.
-@property (assign, nonatomic) BOOL hidesSystemRoots;
+@property (nonatomic) BOOL hidesSystemRoots;
 
 /// Returns an icon-and-label attributed string for the specified path.
 /// defaultIcon specifies the icon to use if the path does not exist.
@@ -157,10 +129,8 @@
 
 /// Resizes an NSImage to the target size.
 @interface BXImageSizeTransformer: NSValueTransformer
-{
-	NSSize _size;
-}
-@property (assign, nonatomic) NSSize size;
+
+@property (nonatomic) NSSize size;
 
 - (id) initWithSize: (NSSize)targetSize;
 

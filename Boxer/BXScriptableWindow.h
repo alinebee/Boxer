@@ -23,9 +23,6 @@
 /// This allows a unified Applescript interface for dealing with a window and its controller as a unit,
 /// without overloading the window with controller logic.
 @interface BXScriptableWindow : NSObject
-{
-	NSWindow *window;
-}
 
 @property (strong, nonatomic) NSWindow *window;
 

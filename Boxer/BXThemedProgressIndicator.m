@@ -20,7 +20,6 @@
 @end
 
 @implementation BXThemedProgressIndicator
-@synthesize animationTimer = _animationTimer;
 @synthesize themeKey = _themeKey;
 
 - (void) dealloc

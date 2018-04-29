@@ -20,12 +20,8 @@
 /// - All rendering occurs on the main thread, causing lag instead of dropped frames during heavy computation
 /// - It slows down whenever notification bezels appear over it
 @interface BXLayerBackedRenderingView : NSView <BXFrameRenderingView, CALayerDelegate>
-{
-    BOOL _managesViewport;
-    NSSize _maxViewportSize;
-}
 
-@property (assign, nonatomic) BOOL managesViewport;
-@property (assign, nonatomic) NSSize maxViewportSize;
+@property (nonatomic) BOOL managesViewport;
+@property (nonatomic) NSSize maxViewportSize;
 
 @end

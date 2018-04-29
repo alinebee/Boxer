@@ -12,11 +12,9 @@
 /// an \c NSImage resource suitable for use as a file thumbnail, or draw the art directly into the
 /// current graphics context.
 @interface BXCoverArt : NSObject
-{
-	NSImage *sourceImage;
-}
+
 /// The original image we will render into cover art
-@property (strong) NSImage *sourceImage;
+@property (strong, nonatomic) NSImage *sourceImage;
 
 
 #pragma mark -

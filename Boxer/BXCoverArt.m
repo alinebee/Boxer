@@ -12,8 +12,6 @@
 #import "ADBAppKitVersionHelpers.h"
 
 @implementation BXCoverArt
-@synthesize sourceImage;
-
 
 //We give gameboxes a fairly strong shadow to lift them out from light backgrounds
 + (NSShadow *) dropShadowForSize: (NSSize)iconSize

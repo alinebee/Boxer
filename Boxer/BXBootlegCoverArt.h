@@ -16,8 +16,8 @@
 /// Return a new BXBootlegCoverArt implementor using the specified title.
 - (instancetype) initWithTitle: (NSString *)coverTitle;
 
-/// Set and get the title which this cover art will display.
-@property (readwrite, copy) NSString *title;
+/// The game title to display on this cover art.
+@property (copy, nonatomic) NSString *title;
 
 /// Draws the source image as cover art into the specified frame in the current graphics context.
 - (void) drawInRect: (NSRect)frame;
@@ -35,10 +35,9 @@
 
 
 @interface BXJewelCase : NSObject <BXBootlegCoverArt>
-{
-	NSString *title;
-}
-@property (copy) NSString *title;
+
+/// The game title to display on this cover art.
+@property (copy, nonatomic) NSString *title;
 
 /// Returns the font family name used for printing the title.
 + (NSString *) fontName;

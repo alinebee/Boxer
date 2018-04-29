@@ -8,7 +8,6 @@
 #import "BXShelfArt.h"
 
 @implementation BXShelfArt
-@synthesize sourceImage;
 
 - (id) initWithSourceImage: (NSImage *)image
 {

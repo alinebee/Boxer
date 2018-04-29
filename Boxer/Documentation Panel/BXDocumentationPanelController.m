@@ -31,11 +31,6 @@
 @end
 
 @implementation BXDocumentationPanelController
-@synthesize session = _session;
-@synthesize popover = _popover;
-@synthesize windowBrowser = _windowBrowser;
-@synthesize popoverBrowser = _popoverBrowser;
-@synthesize maxPopoverSize = _maxPopoverSize;
 
 #pragma mark - Initialization and deallocation
 

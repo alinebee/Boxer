@@ -14,18 +14,7 @@
 #import "BXAppController.h"
 
 
-#pragma mark -
-#pragma mark Private method declarations
-
-@interface BXImportDropzonePanelController ()
-
-@end
-
-
 @implementation BXImportDropzonePanelController
-@synthesize dropzone = _dropzone;
-@synthesize controller = _controller;
-@synthesize spinner = _spinner;
 
 #pragma mark -
 #pragma mark Initialization and deallocation

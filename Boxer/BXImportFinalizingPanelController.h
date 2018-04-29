@@ -13,22 +13,19 @@
 
 /// \c BXImportFinalizingPanelController manages the finalizing-gamebox view of the game import window.
 @interface BXImportFinalizingPanelController : NSViewController
-{
-    __unsafe_unretained BXImportWindowController *_controller;
-}
 
 #pragma mark -
 #pragma mark Properties
 
-/// A reference to our window controller.
-@property (assign, nonatomic) IBOutlet BXImportWindowController *controller;
+/// A back-reference to our owning window controller.
+@property (unsafe_unretained, nonatomic) IBOutlet BXImportWindowController *controller;
 
 /// A textual description of what import stage we are currently performing.
 /// Used for populating the description field beneath the progress bar.
-@property (copy, readonly, nonatomic) NSString *progressDescription;
+@property (readonly, nonatomic) NSString *progressDescription;
 
 /// The label and enabledness of the stop importing/skip importing button.
-@property (copy, readonly, nonatomic) NSString * cancelButtonLabel;
+@property (readonly, nonatomic) NSString * cancelButtonLabel;
 @property (readonly, nonatomic) BOOL cancelButtonEnabled;
 
 /// Whether to show the tip about importing additional CDs.

@@ -37,8 +37,6 @@
 
 
 @implementation BXImportInstallerPanelController
-@synthesize installerSelector = _installerSelector;
-@synthesize controller = _controller;
 
 #pragma mark -
 #pragma mark Initialization and deallocation

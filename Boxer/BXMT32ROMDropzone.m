@@ -28,12 +28,6 @@
 #pragma mark Implementation
 
 @implementation BXMT32ROMDropzone
-@synthesize ROMType = _ROMType;
-@synthesize backgroundLayer = _backgroundLayer;
-@synthesize CM32LLayer = _CM32LLayer;
-@synthesize MT32Layer = _MT32Layer;
-@synthesize highlightLayer = _highlightLayer;
-@synthesize titleLayer = _titleLayer;
 
 - (void) awakeFromNib
 {

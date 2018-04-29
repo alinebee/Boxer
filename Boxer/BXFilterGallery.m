@@ -51,7 +51,6 @@
 @end
 
 @implementation BXFilterPortrait
-@synthesize illumination = _illumination;
 
 + (id)defaultAnimationForKey: (NSString *)key
 {

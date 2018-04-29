@@ -11,22 +11,6 @@
 /// BXPrintSession represents a single multi-page session into which an emulated printer
 /// (such as <code>BXEmulatedPrinter</code>) may print.
 @interface BXPrintSession : NSObject
-{
-    BOOL _finished;
-    BOOL _pageInProgress;
-    NSUInteger _numPages;
-    NSSize _previewDPI;
-    
-    CGContextRef _CGPDFContext;
-    CGDataConsumerRef _PDFDataConsumer;
-    NSGraphicsContext *_PDFContext;
-    NSMutableData *_PDFData;
-    
-    NSMutableArray *_pagePreviews;
-    NSGraphicsContext *_previewContext;
-    NSBitmapImageRep *_previewCanvas;
-    void *_previewCanvasBacking;
-}
 
 #pragma mark -
 #pragma mark Properties

@@ -12,11 +12,6 @@
 #import <QuartzCore/QuartzCore.h>
 
 @implementation BXPrintStatusPanelController
-@synthesize numPages = _numPages;
-@synthesize inProgress = _inProgress;
-@synthesize activePrinterPort = _activePrinterPort;
-@synthesize localizedPaperName = _localizedPaperName;
-@synthesize preview = _preview;
 
 - (void) windowDidLoad
 {
@@ -143,16 +138,9 @@
 @end
 
 @implementation BXPrintPreview
-
-@synthesize currentPage = _currentPage;
-@synthesize previousPage = _previousPage;
-@synthesize paperFeed = _paperFeed;
-@synthesize head = _head;
-
-@synthesize headOffset = _headOffset;
-@synthesize feedOffset = _feedOffset;
-@synthesize pageSize = _pageSize;
-@synthesize dpi = _dpi;
+{
+	CGImageRef _paperTexture;
+}
 
 - (void) awakeFromNib
 {

@@ -13,14 +13,6 @@
 @class BXPrintPreview;
 
 @interface BXPrintStatusPanelController : NSWindowController
-{
-    BXEmulatedPrinterPort _activePrinterPort;
-    NSString *_localizedPaperName;
-    BOOL _inProgress;
-    NSUInteger _numPages;
-    
-    BXPrintPreview *_preview;
-}
 
 /// The number of pages printed so far, including the current page.
 @property (assign, nonatomic) NSUInteger numPages;
@@ -55,20 +47,6 @@
 
 
 @interface BXPrintPreview : NSView <CALayerDelegate>
-{
-    CALayer *_currentPage;
-    CALayer *_previousPage;
-    CALayer *_paperFeed;
-    CALayer *_head;
-    
-    CGImageRef _paperTexture;
-    
-    CGFloat _headOffset;
-    CGFloat _feedOffset;
-    
-    CGSize _pageSize;
-    CGSize _dpi;
-}
 
 //The preview images for the current and previous page.
 @property (strong, nonatomic) NSImage *currentPagePreview;

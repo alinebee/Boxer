@@ -35,16 +35,17 @@
 
 
 @implementation BXPrintSession
-@synthesize PDFContext = _PDFContext;
-@synthesize previewContext = _previewContext;
-@synthesize _previewCanvas = _previewCanvas;
+{
+	CGContextRef _CGPDFContext;
+	CGDataConsumerRef _PDFDataConsumer;
+	NSMutableData *_PDFData;
+	
+	NSMutableArray *_pagePreviews;
+	void *_previewCanvasBacking;
+}
+
 @synthesize _mutablePDFData = _PDFData;
 @synthesize _mutablePagePreviews = _pagePreviews;
-
-@synthesize pageInProgress = _pageInProgress;
-@synthesize finished = _finished;
-@synthesize numPages = _numPages;
-@synthesize previewDPI = _previewDPI;
 
 #pragma mark -
 #pragma mark Starting and ending sessions

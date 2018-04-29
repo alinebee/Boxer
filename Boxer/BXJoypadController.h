@@ -12,11 +12,7 @@
 #import "JoypadSDK.h"
 
 @interface BXJoypadController : NSObject <JoypadManagerDelegate>
-{
-    JoypadManager *joypadManager;
-    JoypadControllerLayout *currentLayout;
-    BOOL hasJoypadDevices;
-}
+
 @property (strong, readonly, nonatomic) JoypadManager *joypadManager;
 
 /// An array of all currently-connected joypad devices being used by Boxer.

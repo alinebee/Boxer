@@ -50,18 +50,12 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 
 /// A base class to provide standard functionality to all output bindings. Should not be used directly.
 @interface BXBaseOutputBinding : NSObject <BXOutputBinding>
-{
-    float _previousValue;
-    float _previousNormalizedValue;
-    float _threshold;
-    BOOL _inverted;
-}
 
 /// Input values below this amount will be rounded to 0. This is useful as a deadzone.
-@property (assign, nonatomic) float threshold;
+@property (nonatomic) float threshold;
 
 /// Whether the input values will be flipped.
-@property (assign, nonatomic) BOOL inverted;
+@property (nonatomic) BOOL inverted;
 
 /// The last raw value that was provided to this binding.
 @property (readonly, nonatomic) float latestValue;
@@ -92,21 +86,17 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 
 /// The base class for all joystick output bindings. Should not be used directly.
 @interface BXBaseEmulatedJoystickBinding : BXBaseOutputBinding
-{
-    id <BXEmulatedJoystick> _joystick;
-}
+
 /// The joystick to which we send input signals.
-@property (strong, nonatomic) id <BXEmulatedJoystick> joystick;
+@property (nonatomic) id <BXEmulatedJoystick> joystick;
 
 @end
 
 
 /// Presses a joystick button when input > 0, releases it when input = 0.
 @interface BXEmulatedJoystickButtonBinding : BXBaseEmulatedJoystickBinding
-{
-    BXEmulatedJoystickButton _button;
-}
-@property (assign, nonatomic) BXEmulatedJoystickButton button;
+
+@property (nonatomic) BXEmulatedJoystickButton button;
 
 + (instancetype) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick button: (BXEmulatedJoystickButton)button;
 
@@ -115,12 +105,9 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 
 /// Maps the input value as input on a particular joystick axis and polarity.
 @interface BXEmulatedJoystickAxisBinding : BXBaseEmulatedJoystickBinding
-{
-    NSString *_axisName;
-    BXAxisPolarity _polarity;
-}
+
 @property (copy, nonatomic) NSString *axisName;
-@property (assign, nonatomic) BXAxisPolarity polarity;
+@property (nonatomic) BXAxisPolarity polarity;
 
 + (instancetype) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick
                                 axis: (NSString *)axisName
@@ -131,12 +118,9 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 
 /// Presses a particular hat-switch direction when input > 0, releases it when input = 0.
 @interface BXEmulatedJoystickPOVDirectionBinding : BXBaseEmulatedJoystickBinding
-{
-    NSUInteger _POVNumber;
-    BXEmulatedPOVDirection _POVDirection;
-}
-@property (assign, nonatomic) NSUInteger POVNumber;
-@property (assign, nonatomic) BXEmulatedPOVDirection POVDirection;
+
+@property (nonatomic) NSUInteger POVNumber;
+@property (nonatomic) BXEmulatedPOVDirection POVDirection;
 
 + (instancetype) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick
                                  POV: (NSUInteger)POVNumber
@@ -149,16 +133,12 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 
 /// Presses a particular keyboard key when input > 0, releases it when input = 0.
 @interface BXEmulatedKeyboardKeyBinding : BXBaseOutputBinding
-{
-    BXEmulatedKeyboard *_keyboard;
-    BXDOSKeyCode _keyCode;
-}
 
 /// The keyboard to which we send key signals.
 @property (strong, nonatomic) BXEmulatedKeyboard *keyboard;
 
 /// The key code to press/release when this binding is activated.
-@property (assign, nonatomic) BXDOSKeyCode keyCode;
+@property (nonatomic) BXDOSKeyCode keyCode;
 
 + (instancetype) bindingWithKeyboard: (BXEmulatedKeyboard *)keyboard keyCode: (BXDOSKeyCode)keyCode;
 
@@ -169,16 +149,12 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 
 
 @interface BXTargetActionBinding : BXBaseOutputBinding
-{
-    __unsafe_unretained id _target;
-    SEL _pressedAction;
-    SEL _releasedAction;
-}
-@property (assign, nonatomic, nullable) id target;
-@property (assign, nonatomic, nullable) SEL pressedAction;
-@property (assign, nonatomic, nullable) SEL releasedAction;
 
-+ (instancetype) bindingWithTarget: (id)target pressedAction: (SEL)pressedAction releasedAction: (nullable SEL)releasedAction;
+@property (weak, nonatomic, nullable) id target;
+@property (nonatomic, nullable) SEL pressedAction;
+@property (nonatomic, nullable) SEL releasedAction;
+
++ (instancetype) bindingWithTarget: (id)target pressedAction: (nullable SEL)pressedAction releasedAction: (nullable SEL)releasedAction;
 
 @end
 
@@ -192,18 +168,12 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 /// Stops sending the signal when the input value is 0.
 /// Can be given a delegate to which it will send signals whenever the binding fires.
 @interface BXPeriodicOutputBinding : BXBaseOutputBinding
-{
-    __unsafe_unretained NSTimer *_timer;
-    __unsafe_unretained id <BXPeriodicOutputBindingDelegate> _delegate;
-    NSTimeInterval _period;
-    NSTimeInterval _lastUpdated;
-}
 
-/// The delegate to whom we will send BXPeriodicOutputBindingDelegate messages whenever the binding fires.
-@property (assign, nonatomic, nullable) id <BXPeriodicOutputBindingDelegate> delegate;
+//The delegate to whom we will send BXPeriodicOutputBindingDelegate messages whenever the binding fires.
+@property (weak, nonatomic) id <BXPeriodicOutputBindingDelegate> delegate;
 
 /// The frequency with which to fire signals. Defaults to 1 / 30.0, i.e. 30 times a second.
-@property (assign, nonatomic) NSTimeInterval period;
+@property (nonatomic) NSTimeInterval period;
 
 /// Called whenever the timer fires, with the elapsed time since the previous firing.
 /// Must be implemented by subclasses.
@@ -223,24 +193,18 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 /// Increments (or decrements) the value of an axis over time.
 /// Useful for mimicking throttle axes that don't return to 0 when released.
 @interface BXEmulatedJoystickAxisAdditiveBinding : BXPeriodicOutputBinding
-{
-    id <BXEmulatedJoystick> _joystick;
-    NSString *_axisName;
-    float _ratePerSecond;
-    float _outputThreshold;
-}
 
 /// The joystick and axis this binding will increment/decrement.
 @property (strong, nonatomic) id <BXEmulatedJoystick> joystick;
 @property (copy, nonatomic) NSString *axisName;
 
 /// Output axis values below this amount will be snapped to zero.
-@property (assign, nonatomic) float outputThreshold;
+@property (nonatomic) float outputThreshold;
 
 /// How much to increment/decrement the axis value by over the course of one second,
 /// while the input value is at maximum. If this is positive, the axis value will increase;
 /// if negative, the axis value will decrease.
-@property (assign, nonatomic) float ratePerSecond;
+@property (nonatomic) float ratePerSecond;
 
 + (instancetype) bindingWithJoystick: (id <BXEmulatedJoystick>)joystick axis: (NSString *)axisName rate: (float)ratePerSecond;
 

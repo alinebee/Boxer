@@ -29,9 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @interface BXHIDButtonBinding : NSObject <BXHIDInputBinding>
-{
-    id <BXOutputBinding> _outputBinding;
-}
 
 /// This binding will be sent 1.0 when the joystick button is pressed, and 0.0 when released.
 @property (strong, nonatomic) id <BXOutputBinding> outputBinding;
@@ -42,14 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @interface BXHIDAxisBinding : NSObject <BXHIDInputBinding>
-{
-    id <BXOutputBinding> _positiveBinding;
-    id <BXOutputBinding> _negativeBinding;
-    
-    BOOL _inverted;
-    float _deadzone;
-    BOOL _unidirectional;
-}
 
 /// This binding will be sent the absolute axis value when the axis is positive,
 /// and 0.0 when the axis is centered or negative.
@@ -77,10 +66,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @interface BXHIDPOVSwitchBinding : NSObject <BXHIDInputBinding>
-{
-    NSMutableDictionary *_outputBindings;
-    ADBHIDPOVSwitchDirection _previousDirection;
-}
 
 /// Creates a new binding from interleaved pairs of bindings and directions, followed by a \c nil sentinel.
 + (instancetype) bindingWithOutputBindingsAndDirections: (id <BXOutputBinding>)binding, ... NS_REQUIRES_NIL_TERMINATION;

@@ -14,10 +14,7 @@
 /// These messages are then translated into a more Boxer-friendly format and sent onwards to the
 /// active DOS session's input controller.
 @interface BXJoystickController: NSObject <ADBHIDMonitorDelegate, DDHidJoystickDelegate>
-{
-	ADBHIDMonitor *_HIDMonitor;
-    NSArray *_recentHIDRemappers;
-}
+
 @property (readonly, strong, nonatomic) ADBHIDMonitor *HIDMonitor;
 
 /// An array of\c  DDHIDJoystick instances for each joystick currently connected.

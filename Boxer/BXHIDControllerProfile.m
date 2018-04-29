@@ -12,12 +12,6 @@
 
 @implementation BXHIDControllerProfile
 
-@synthesize device = _device;
-@synthesize emulatedJoystick = _emulatedJoystick;
-@synthesize emulatedKeyboard = _emulatedKeyboard;
-@synthesize bindings = _bindings;
-@synthesize controllerStyle = _controllerStyle;
-
 #pragma mark -
 #pragma mark Constants
 

@@ -15,20 +15,13 @@
 /// It is responsible for synchronising the drive-settings fields with the current file selection, 
 /// and for calling the relevant mount commands once a file is chosen.
 @interface BXMountPanelController : NSViewController <NSOpenSavePanelDelegate>
-{
-	NSPopUpButton *_driveType;
-	NSPopUpButton *_driveLetter;
-	NSButton *_readOnlyToggle;
-	
-	NSCellStateValue _previousReadOnlyState;
-	NSMenuItem *_previousDriveTypeSelection;
-}
+
 /// The drive type selector in the accessory view.
-@property (strong) IBOutlet NSPopUpButton *driveType;
+@property (strong, nonatomic) IBOutlet NSPopUpButton *driveType;
 /// The drive letter selector in the accessory view.
-@property (strong) IBOutlet NSPopUpButton *driveLetter;
+@property (strong, nonatomic) IBOutlet NSPopUpButton *driveLetter;
 /// The read-only checkbox toggle in the accessory view.
-@property (strong) IBOutlet NSButton *readOnlyToggle;	
+@property (strong, nonatomic) IBOutlet NSButton *readOnlyToggle;
 
 /// Returns a singleton instance, which loads the view from the NIB file the first time.
 @property (class, readonly, strong) id controller;

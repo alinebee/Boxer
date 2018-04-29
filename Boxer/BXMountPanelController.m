@@ -18,9 +18,10 @@
 
 
 @implementation BXMountPanelController
-@synthesize driveType = _driveType;
-@synthesize driveLetter = _driveLetter;
-@synthesize readOnlyToggle = _readOnlyToggle;
+{
+	NSCellStateValue _previousReadOnlyState;
+	NSMenuItem *_previousDriveTypeSelection;
+}
 
 + (id) controller
 {

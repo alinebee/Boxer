@@ -19,8 +19,6 @@
 @end
 
 @implementation BXGamesFolderPanelController
-@synthesize sampleGamesToggle = _sampleGamesToggle;
-@synthesize useShelfAppearanceToggle = _useShelfAppearanceToggle;
 
 + (id) controller
 {

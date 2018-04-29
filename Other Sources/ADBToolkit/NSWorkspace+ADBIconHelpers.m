@@ -32,13 +32,28 @@
 
 - (BOOL) fileHasCustomIcon: (NSString *)path
 {
-    return [self URLHasCustomIcon: [NSURL fileURLWithPath: path]];
+    return [self directoryAtURLHasCustomIcon: [NSURL fileURLWithPath: path]];
 }
 
-- (BOOL) URLHasCustomIcon: (NSURL *)URL
-{	
-    NSImage *icon = [URL resourceValueForKey:NSURLCustomIconKey];
-    
-    return icon != nil;
+- (BOOL) directoryAtURLHasCustomIcon: (NSURL *)URL
+{
+    // IMPLEMENTATION NOTE:
+    //
+    // FSCatalogInfo.finderInfo.finderFlags & kHasCustomIcon still works in 10.13.4,
+    // but has been deprecated for years and cannot be long for this world.
+    //
+    // It has two replacement APIs, neither of which actually work:
+    // MDItemCopyAttribute(itemFromURL, kMDItemFSHasCustomIcon) always returns NULL.
+    // [URL resourceValueForKey:NSURLCustomIconKey] always returns nil.
+    //
+    // Custom icons on folders and bundles are stored in a file called `Icon\r` in the root of that folder,
+    // and are marked with a special metadata attribute which tells Finder to bother looking for that icon.
+    // If the file is present, but the attribute isn't, then no custom icon will be displayed.
+    // (The attribute can sometimes be stripped by Dropbox and other file-syncing services.)
+    //
+    // We can no longer reliably check for the presence of that attribute,
+    // but we can at least check if the icon is there and hope that the attribute is still intact.
+    NSURL *iconURL = [URL URLByAppendingPathComponent: @"Icon\r"];
+    return [iconURL checkResourceIsReachableAndReturnError: NULL];
 }
 @end

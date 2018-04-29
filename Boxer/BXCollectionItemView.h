@@ -25,8 +25,8 @@
 
 @interface BXCollectionItemView : NSView
 
-//A weak reference back to the collection view item we represent.
-@property (weak, nonatomic) IBOutlet NSCollectionViewItem *delegate;
+/// The collection view item represented by this view.
+@property (unsafe_unretained, nonatomic) IBOutlet NSCollectionViewItem *delegate;
 
 /// The view prototype we were copied from.
 @property (readonly, nonatomic) NSView *prototype;

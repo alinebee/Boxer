@@ -169,7 +169,7 @@ typedef NS_ENUM(NSInteger, BXAxisPolarity) {
 /// Can be given a delegate to which it will send signals whenever the binding fires.
 @interface BXPeriodicOutputBinding : BXBaseOutputBinding
 
-//The delegate to whom we will send BXPeriodicOutputBindingDelegate messages whenever the binding fires.
+/// The delegate to whom we will send BXPeriodicOutputBindingDelegate messages whenever the binding fires.
 @property (weak, nonatomic) id <BXPeriodicOutputBindingDelegate> delegate;
 
 /// The frequency with which to fire signals. Defaults to 1 / 30.0, i.e. 30 times a second.

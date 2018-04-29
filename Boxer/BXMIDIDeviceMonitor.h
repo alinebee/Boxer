@@ -84,7 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// be told to stop manually with stopListening.
 @property (assign, nonatomic) NSTimeInterval timeout;
 
-//The delegate to which notification messages will be sent.
+/// The delegate to which notification messages will be sent.
 @property (weak, nonatomic) id <BXMIDIInputListenerDelegate> delegate;
 
 

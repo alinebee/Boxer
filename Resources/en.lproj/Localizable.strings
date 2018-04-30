@@ -117,24 +117,6 @@
 /* Bold message in skip confirmation alert when importing from a folder or other source with no more specific message. */
 "Boxer is importing the game’s source files so that the game can find them later." = "Boxer is importing the game’s source files so that the game can find them later.";
 
-/* Label for simple joystick Joypad layout. */
-"Boxer: 2-axis, 2-button joystick" = "Boxer: 2-axis, 2-button joystick";
-
-/* Label for standard joystick Joypad layout. */
-"Boxer: 2-axis, 4-button joystick" = "Boxer: 2-axis, 4-button joystick";
-
-/* Label for 4-button wheel Joypad layout. */
-"Boxer: 2-button racing wheel" = "Boxer: 2-button racing wheel";
-
-/* Label for flightstick Joypad layout. */
-"Boxer: 4-button flightstick with POV switch" = "Boxer: 4-button flightstick with POV switch";
-
-/* Label for 4-button wheel Joypad layout. */
-"Boxer: 4-button racing wheel" = "Boxer: 4-button racing wheel";
-
-/* Label for brake pedal on Joypad wheel layouts. */
-"Brake" = "Brake";
-
 /* Label for CD-ROM drive mounts. */
 "CD-ROM" = "CD-ROM";
 
@@ -262,9 +244,6 @@
 /* The display title for Boxer’s dummy CD-ROM drive. */
 "Dummy CD" = "Dummy CD";
 
-/* Label for Escape button on Joypad layouts. */
-"ESC" = "Esc";
-
 /* Label for drive panel menu item to remove selected drives entirely from the drive list. Shown when one or more selected drives is currently mounted. */
 "Eject and Remove from List" = "Eject and Remove from List";
 
@@ -325,9 +304,6 @@
 
 /* Subtitle of user notification shown when a game finishes importing. */
 "Game imported successfully" = "Game imported successfully";
-
-/* Label for gas pedal on Joypad wheel layouts. */
-"Gas" = "Gas";
 
 /* View menu option for hiding the launch panel. */
 "Hide Launch Panel" = "Hide Launch Panel";
@@ -503,10 +479,6 @@
 
 /* Label of default button in hotkey warning alert. %@ is the localized name of the preferences pane that contains the relevant accessibility controls. */
 "Open %@ Preferences" = "Open %@ Preferences";
-
-/* Label for Pause button on Joypad layouts.
-   Label for pause button on Joypad layouts. */
-"PAUSE" = "PAUSE";
 
 /* The term to use for MT-32 PCM ROMs in error messages. */
 "PCM ROM" = "PCM ROM";

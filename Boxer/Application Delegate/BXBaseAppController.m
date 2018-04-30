@@ -142,7 +142,6 @@
 	
     self.currentSession = nil;
     self.joystickController = nil;
-    self.joypadController = nil;
     self.MIDIDeviceMonitor = nil;
     self.hotkeySuppressionTap = nil;
     self.generalQueue = nil;

@@ -11,7 +11,6 @@
 #import "BXInputController.h"
 #import "BXInputController+BXKeyboardInput.h"
 #import "BXInputController+BXJoystickInput.h"
-#import "BXInputController+BXJoypadInput.h"
 
 #import "BXEmulator.h"
 #import "BXEmulatedKeyboard.h"
@@ -155,20 +154,5 @@ void _inputSourceChanged(CFNotificationCenterRef center,
 /// Called whenever the emulated keyboard's numlock state changes.
 /// Displays a notification bezel indicating the current state.
 - (void) _notifyNumlockState;
-
-@end
-
-
-@interface BXInputController (BXJoypadInputInternals)
-
-+ (BXEmulatedJoystickButton) emulatedJoystickButtonForJoypadButton: (JoyInputIdentifier)button;
-+ (BXEmulatedPOVDirection) emulatedJoystickPOVDirectionForDPadState: (NSUInteger)state;
-
-/// Called whenever a Joypad disconnects/reconnects to reset internal tracking values.
-- (void) _resetJoypadTrackingValues;
-
-/// Show a warning to the user if the game seems to be ignoring joystick input.
-/// Called internally if Joypad input is received while the joystick is inactive.
-- (void) _warnIfJoystickInactive;
 
 @end

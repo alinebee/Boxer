@@ -175,7 +175,7 @@
 
 - (BOOL) controllersAvailable
 {
-	return [self joystickControllersAvailable] || [self joypadControllersAvailable];
+	return [self joystickControllersAvailable];
 }
 
 - (void) _syncAvailableJoystickTypes

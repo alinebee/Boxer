@@ -7,7 +7,6 @@
 
 
 #import <Cocoa/Cocoa.h>
-#import "JoypadSDK.h"
 #import "BXEventConstants.h"
 
 @class BXCursorFadeAnimation;
@@ -50,9 +49,6 @@
 	
 	NSMutableDictionary *_controllerProfiles;
 	NSArray *_availableJoystickTypes;
-    
-    /// Used internally by BXJoypadInput for tracking joypad state
-    JoypadAcceleration _joypadFilteredAcceleration;
 }
 
 #pragma mark -

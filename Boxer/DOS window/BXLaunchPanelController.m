@@ -46,14 +46,21 @@
 	BOOL _shouldUpdateImmediately;
 }
 
-- (void) awakeFromNib
-{
-    self.allProgramRows = [NSMutableArray array];
-    self.favoriteProgramRows = [NSMutableArray array];
-    self.recentProgramRows = [NSMutableArray array];
-    self.displayedRows = [NSMutableArray array];
-    self.filterKeywords = [NSMutableArray array];
+- (instancetype) initWithCoder: (NSCoder *)coder {
+    self = [super initWithCoder: coder];
+    if (self) {
+        _allProgramRows = [NSMutableArray array];
+        _favoriteProgramRows = [NSMutableArray array];
+        _recentProgramRows = [NSMutableArray array];
+        _displayedRows = [NSMutableArray array];
+        _filterKeywords = [NSMutableArray array];
+    }
+    return self;
+}
 
+- (void) viewDidLoad {
+    [super viewDidLoad];
+    
     //These attributes are unsupported in 10.6 and so cannot be defined in the XIB.
     if ([self.launcherScrollView respondsToSelector: @selector(setScrollerKnobStyle:)])
         self.launcherScrollView.scrollerKnobStyle = NSScrollerKnobStyleLight;

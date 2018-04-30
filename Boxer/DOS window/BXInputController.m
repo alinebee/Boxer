@@ -10,7 +10,6 @@
 #import "BXBaseAppController.h"
 #import "BXSession.h"
 #import "BXJoystickController.h"
-#import "BXJoypadController.h"
 #import "ADBGeometry.h"
 #import "BXCursorFadeAnimation.h"
 #import "BXDOSWindowController.h"
@@ -120,7 +119,6 @@
 	if (session != previousSession)
 	{
 		BXJoystickController *joystickController    = [(BXBaseAppController *)[NSApp delegate] joystickController];
-        BXJoypadController *joypadController        = [(BXBaseAppController *)[NSApp delegate] joypadController];
 		
 		if (previousSession)
 		{
@@ -136,7 +134,6 @@
 			[previousSession removeObserver: self forKeyPath: @"emulator.joystickSupport"];
 			
 			[joystickController removeObserver: self forKeyPath: @"joystickDevices"];
-			[joypadController removeObserver: self forKeyPath: @"hasJoypadDevices"];
 			
             CFNotificationCenterRef cfCenter = CFNotificationCenterGetDistributedCenter();
             CFNotificationCenterRemoveObserver(cfCenter, (__bridge const void *)(self), kTISNotifySelectedKeyboardInputSourceChanged, NULL);
@@ -188,11 +185,6 @@
 								 forKeyPath: @"joystickDevices"
 									options: NSKeyValueObservingOptionInitial
 									context: nil];
-            
-			[joypadController addObserver: self
-                               forKeyPath: @"hasJoypadDevices"
-                                  options: NSKeyValueObservingOptionInitial
-                                  context: nil];
 			
 			[session addObserver: self
 					  forKeyPath: @"emulator.joystick"
@@ -287,16 +279,6 @@
         [self willChangeValueForKey: @"controllersAvailable"];
         [self didChangeValueForKey: @"controllersAvailable"];
     }
-    
-    else if ([keyPath isEqualToString: @"hasJoypadDevices"])
-    {
-        //Connect a joystick if none was available before
-		[self _syncJoystickType];
-        
-        //Let the Inspector UI know to switch from the connect-a-controller panel
-        [self willChangeValueForKey: @"controllersAvailable"];
-        [self didChangeValueForKey: @"controllersAvailable"];
-	}		 
 }
 
 

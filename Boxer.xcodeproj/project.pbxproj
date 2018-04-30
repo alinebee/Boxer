@@ -275,14 +275,6 @@
 		9F2D309015B8233800FAE848 /* BXSixaxisControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */; };
 		9F2D309115B8233800FAE848 /* BXCollectionItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F60B0DB13AA418300F06BB1 /* BXCollectionItemView.m */; };
 		9F2D309215B8233800FAE848 /* BXThemedImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD012FA13AB87E500AF6FE8 /* BXThemedImageCell.m */; };
-		9F2D309315B8233800FAE848 /* BXJoypadController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC637FF13C09B79004478A3 /* BXJoypadController.m */; };
-		9F2D309415B8233800FAE848 /* BX2ButtonJoystickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382113C0D54C004478A3 /* BX2ButtonJoystickLayout.m */; };
-		9F2D309515B8233800FAE848 /* BXJoypadLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382413C0D637004478A3 /* BXJoypadLayout.m */; };
-		9F2D309615B8233800FAE848 /* BX4ButtonJoystickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382813C0DB4F004478A3 /* BX4ButtonJoystickLayout.m */; };
-		9F2D309715B8233800FAE848 /* BX4ButtonWheelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382E13C0E01B004478A3 /* BX4ButtonWheelLayout.m */; };
-		9F2D309815B8233800FAE848 /* BX2ButtonWheelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6383113C0E244004478A3 /* BX2ButtonWheelLayout.m */; };
-		9F2D309915B8233800FAE848 /* BXFlightstickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */; };
-		9F2D309A15B8233800FAE848 /* BXInputController+BXJoypadInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6380C13C0A10E004478A3 /* BXInputController+BXJoypadInput.m */; };
 		9F2D309B15B8233800FAE848 /* BXG25ControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB446EA13D23BD900E69AF5 /* BXG25ControllerProfile.m */; };
 		9F2D309C15B8233800FAE848 /* DDHidUsage+ADBUsageExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA0C9E213D24FF3000F6FCB /* DDHidUsage+ADBUsageExtensions.m */; };
 		9F2D309D15B8233800FAE848 /* BXDualActionControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */; };
@@ -343,7 +335,6 @@
 		9F2D311515B8233800FAE848 /* KeyboardLayouts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FCC303B13670F680013F083 /* KeyboardLayouts.plist */; };
 		9F2D312B15B8233800FAE848 /* MT32ROMTypes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */; };
 		9F2D313F15B8233800FAE848 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = 9F84C86D157800DD00CCBCA7 /* Shaders */; };
-		9F2D314F15B8233800FAE848 /* libJoypadCocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC6380913C09C5B004478A3 /* libJoypadCocoa.a */; };
 		9F2D315015B8233800FAE848 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC637FC13C09B10004478A3 /* CoreServices.framework */; };
 		9F2D315115B8233800FAE848 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9F2D315215B8233800FAE848 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC32110F56C3E9001811F2 /* Carbon.framework */; };
@@ -448,7 +439,6 @@
 		9F59DA9F10AEF9E0008DBBC1 /* BXCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DA9E10AEF9E0008DBBC1 /* BXCoverArt.m */; };
 		9F59DAD510AF1042008DBBC1 /* BXProgramPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DAD410AF1042008DBBC1 /* BXProgramPanel.m */; };
 		9F59DEDA10B0159A008DBBC1 /* BXProgramPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */; };
-		9F5B6B7213C3529500E9CA18 /* BXInputController+BXJoypadInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6380C13C0A10E004478A3 /* BXInputController+BXJoypadInput.m */; };
 		9F5F12C615ADCE74007A070F /* NSKeyedArchiver+ADBArchivingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5F12C515ADCE74007A070F /* NSKeyedArchiver+ADBArchivingAdditions.m */; };
 		9F60B0DC13AA418300F06BB1 /* BXCollectionItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F60B0DB13AA418300F06BB1 /* BXCollectionItemView.m */; };
 		9F61931B1233D8F000F35AB4 /* ADBTabbedWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61931A1233D8F000F35AB4 /* ADBTabbedWindowController.m */; };
@@ -602,7 +592,6 @@
 		9F872482160F7DF200400D8C /* BXSteppedShaderRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F872480160F7DF200400D8C /* BXSteppedShaderRenderer.m */; };
 		9F872486160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F872485160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m */; };
 		9F872487160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F872485160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m */; };
-		9F87EF7A13C232B600326608 /* BXFlightstickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */; };
 		9F887105156F85F9006CDB5F /* BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F887104156F85F8006CDB5F /* BXFileTypes.m */; };
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
 		9F8A9CD2143E120B00C37A93 /* MT32ROMTypes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */; };
@@ -689,13 +678,6 @@
 		9FC2F84013D60FBD00BD4F6B /* BXDualActionControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */; };
 		9FC3B2550F62D9CE006DE439 /* BXSession+BXUIControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXUIControls.m */; };
 		9FC637FD13C09B11004478A3 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC637FC13C09B10004478A3 /* CoreServices.framework */; };
-		9FC6380013C09B79004478A3 /* BXJoypadController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC637FF13C09B79004478A3 /* BXJoypadController.m */; };
-		9FC6380A13C09C5B004478A3 /* libJoypadCocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC6380913C09C5B004478A3 /* libJoypadCocoa.a */; };
-		9FC6382213C0D54C004478A3 /* BX2ButtonJoystickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382113C0D54C004478A3 /* BX2ButtonJoystickLayout.m */; };
-		9FC6382513C0D637004478A3 /* BXJoypadLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382413C0D637004478A3 /* BXJoypadLayout.m */; };
-		9FC6382913C0DB4F004478A3 /* BX4ButtonJoystickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382813C0DB4F004478A3 /* BX4ButtonJoystickLayout.m */; };
-		9FC6382F13C0E01C004478A3 /* BX4ButtonWheelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382E13C0E01B004478A3 /* BX4ButtonWheelLayout.m */; };
-		9FC6383213C0E245004478A3 /* BX2ButtonWheelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6383113C0E244004478A3 /* BX2ButtonWheelLayout.m */; };
 		9FC74821122A7C8B00E86E6A /* ADBPathEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC74820122A7C8B00E86E6A /* ADBPathEnumerator.m */; };
 		9FC8B073121807AD004F6DA2 /* NSView+ADBDrawingHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B072121807AD004F6DA2 /* NSView+ADBDrawingHelpers.m */; };
 		9FC8B16B12182586004F6DA2 /* BXImportFinalizingPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B16A12182586004F6DA2 /* BXImportFinalizingPanelController.m */; };
@@ -1588,8 +1570,6 @@
 		9F872480160F7DF200400D8C /* BXSteppedShaderRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSteppedShaderRenderer.m; sourceTree = "<group>"; };
 		9F872484160F89C600400D8C /* BXGLRenderingView+BXImageCapture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXGLRenderingView+BXImageCapture.h"; sourceTree = "<group>"; };
 		9F872485160F89C600400D8C /* BXGLRenderingView+BXImageCapture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXGLRenderingView+BXImageCapture.m"; sourceTree = "<group>"; };
-		9F87EF7113C1B18900326608 /* BXFlightstickAccelerometerLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFlightstickAccelerometerLayout.h; sourceTree = "<group>"; };
-		9F87EF7213C1B18900326608 /* BXFlightstickAccelerometerLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFlightstickAccelerometerLayout.m; sourceTree = "<group>"; };
 		9F887103156F85F8006CDB5F /* BXFileTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFileTypes.h; sourceTree = "<group>"; };
 		9F887104156F85F8006CDB5F /* BXFileTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFileTypes.m; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
@@ -1714,28 +1694,6 @@
 		9FC3B2530F62D9CE006DE439 /* BXSession+BXUIControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXUIControls.h"; sourceTree = "<group>"; };
 		9FC3B2540F62D9CE006DE439 /* BXSession+BXUIControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXUIControls.m"; sourceTree = "<group>"; };
 		9FC637FC13C09B10004478A3 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
-		9FC637FE13C09B79004478A3 /* BXJoypadController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXJoypadController.h; sourceTree = "<group>"; };
-		9FC637FF13C09B79004478A3 /* BXJoypadController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXJoypadController.m; sourceTree = "<group>"; };
-		9FC6380213C09C13004478A3 /* JoypadConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoypadConstants.h; sourceTree = "<group>"; };
-		9FC6380313C09C13004478A3 /* JoypadControllerLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoypadControllerLayout.h; sourceTree = "<group>"; };
-		9FC6380413C09C13004478A3 /* JoypadDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoypadDevice.h; sourceTree = "<group>"; };
-		9FC6380513C09C13004478A3 /* JoypadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoypadManager.h; sourceTree = "<group>"; };
-		9FC6380613C09C13004478A3 /* JoypadSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoypadSDK.h; sourceTree = "<group>"; };
-		9FC6380913C09C5B004478A3 /* libJoypadCocoa.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libJoypadCocoa.a; path = "Other Sources/JoypadCocoaSDK/libJoypadCocoa.a"; sourceTree = "<group>"; };
-		9FC6380B13C0A10E004478A3 /* BXInputController+BXJoypadInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXInputController+BXJoypadInput.h"; sourceTree = "<group>"; };
-		9FC6380C13C0A10E004478A3 /* BXInputController+BXJoypadInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXInputController+BXJoypadInput.m"; sourceTree = "<group>"; };
-		9FC6382013C0D54C004478A3 /* BX2ButtonJoystickLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BX2ButtonJoystickLayout.h; sourceTree = "<group>"; };
-		9FC6382113C0D54C004478A3 /* BX2ButtonJoystickLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BX2ButtonJoystickLayout.m; sourceTree = "<group>"; };
-		9FC6382313C0D636004478A3 /* BXJoypadLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXJoypadLayout.h; sourceTree = "<group>"; };
-		9FC6382413C0D637004478A3 /* BXJoypadLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXJoypadLayout.m; sourceTree = "<group>"; };
-		9FC6382713C0DB4F004478A3 /* BX4ButtonJoystickLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BX4ButtonJoystickLayout.h; sourceTree = "<group>"; };
-		9FC6382813C0DB4F004478A3 /* BX4ButtonJoystickLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BX4ButtonJoystickLayout.m; sourceTree = "<group>"; };
-		9FC6382A13C0DC48004478A3 /* BXFlightstickLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFlightstickLayout.h; sourceTree = "<group>"; };
-		9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFlightstickLayout.m; sourceTree = "<group>"; };
-		9FC6382D13C0E01A004478A3 /* BX4ButtonWheelLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BX4ButtonWheelLayout.h; sourceTree = "<group>"; };
-		9FC6382E13C0E01B004478A3 /* BX4ButtonWheelLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BX4ButtonWheelLayout.m; sourceTree = "<group>"; };
-		9FC6383013C0E244004478A3 /* BX2ButtonWheelLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BX2ButtonWheelLayout.h; sourceTree = "<group>"; };
-		9FC6383113C0E244004478A3 /* BX2ButtonWheelLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BX2ButtonWheelLayout.m; sourceTree = "<group>"; };
 		9FC7481F122A7C8B00E86E6A /* ADBPathEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBPathEnumerator.h; sourceTree = "<group>"; };
 		9FC74820122A7C8B00E86E6A /* ADBPathEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBPathEnumerator.m; sourceTree = "<group>"; };
 		9FC8B071121807AD004F6DA2 /* NSView+ADBDrawingHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSView+ADBDrawingHelpers.h"; sourceTree = "<group>"; };
@@ -1900,7 +1858,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F77EE0215DCC9DC00B75835 /* WebKit.framework in Frameworks */,
-				9FC6380A13C09C5B004478A3 /* libJoypadCocoa.a in Frameworks */,
 				9FC637FD13C09B11004478A3 /* CoreServices.framework in Frameworks */,
 				55E6A0BE1C00C86200285593 /* BGHUDAppKit.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
@@ -1930,7 +1887,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F77EE0115DCC9BF00B75835 /* WebKit.framework in Frameworks */,
-				9F2D314F15B8233800FAE848 /* libJoypadCocoa.a in Frameworks */,
 				9F2D315015B8233800FAE848 /* CoreServices.framework in Frameworks */,
 				9F2D315115B8233800FAE848 /* Cocoa.framework in Frameworks */,
 				9F2D315215B8233800FAE848 /* Carbon.framework in Frameworks */,
@@ -2091,7 +2047,6 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9FC6380913C09C5B004478A3 /* libJoypadCocoa.a */,
 				9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */,
 				9FBC3C130F56D6E8001811F2 /* Bundled Frameworks */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
@@ -3288,28 +3243,13 @@
 			path = Frameworks;
 			sourceTree = "<group>";
 		};
-		9FC6380113C09C13004478A3 /* JoypadCocoaSDK */ = {
-			isa = PBXGroup;
-			children = (
-				9FC6380213C09C13004478A3 /* JoypadConstants.h */,
-				9FC6380313C09C13004478A3 /* JoypadControllerLayout.h */,
-				9FC6380413C09C13004478A3 /* JoypadDevice.h */,
-				9FC6380513C09C13004478A3 /* JoypadManager.h */,
-				9FC6380613C09C13004478A3 /* JoypadSDK.h */,
-			);
-			path = JoypadCocoaSDK;
-			sourceTree = "<group>";
-		};
 		9FC6381213C0B5C0004478A3 /* Input */ = {
 			isa = PBXGroup;
 			children = (
 				9FC6382613C0DA0B004478A3 /* Controller profiles */,
-				9FC6381F13C0C786004478A3 /* Joypad layouts */,
 				9FCC2FF71366FB6E0013F083 /* Window input handling */,
 				9FD1D6FF1364819E00792011 /* BXJoystickController.h */,
 				9FD1D7001364819E00792011 /* BXJoystickController.m */,
-				9FC637FE13C09B79004478A3 /* BXJoypadController.h */,
-				9FC637FF13C09B79004478A3 /* BXJoypadController.m */,
 				9F06C6DF13993FB100B19DF1 /* BXHIDInputBinding.h */,
 				9F06C6E013993FB100B19DF1 /* BXHIDInputBinding.m */,
 				9FF1562E14506F5C00545317 /* BXKeyboardEventTap.h */,
@@ -3319,27 +3259,6 @@
 				9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */,
 			);
 			name = Input;
-			sourceTree = "<group>";
-		};
-		9FC6381F13C0C786004478A3 /* Joypad layouts */ = {
-			isa = PBXGroup;
-			children = (
-				9FC6382313C0D636004478A3 /* BXJoypadLayout.h */,
-				9FC6382413C0D637004478A3 /* BXJoypadLayout.m */,
-				9FC6382013C0D54C004478A3 /* BX2ButtonJoystickLayout.h */,
-				9FC6382113C0D54C004478A3 /* BX2ButtonJoystickLayout.m */,
-				9FC6382713C0DB4F004478A3 /* BX4ButtonJoystickLayout.h */,
-				9FC6382813C0DB4F004478A3 /* BX4ButtonJoystickLayout.m */,
-				9FC6382A13C0DC48004478A3 /* BXFlightstickLayout.h */,
-				9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */,
-				9F87EF7113C1B18900326608 /* BXFlightstickAccelerometerLayout.h */,
-				9F87EF7213C1B18900326608 /* BXFlightstickAccelerometerLayout.m */,
-				9FC6383013C0E244004478A3 /* BX2ButtonWheelLayout.h */,
-				9FC6383113C0E244004478A3 /* BX2ButtonWheelLayout.m */,
-				9FC6382D13C0E01A004478A3 /* BX4ButtonWheelLayout.h */,
-				9FC6382E13C0E01B004478A3 /* BX4ButtonWheelLayout.m */,
-			);
-			name = "Joypad layouts";
 			sourceTree = "<group>";
 		};
 		9FC6382613C0DA0B004478A3 /* Controller profiles */ = {
@@ -3407,8 +3326,6 @@
 				9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */,
 				9FCC2FF21366FA820013F083 /* BXInputController+BXKeyboardInput.h */,
 				9FCC2FF31366FA820013F083 /* BXInputController+BXKeyboardInput.m */,
-				9FC6380B13C0A10E004478A3 /* BXInputController+BXJoypadInput.h */,
-				9FC6380C13C0A10E004478A3 /* BXInputController+BXJoypadInput.m */,
 				9FCC2FF81366FB840013F083 /* BXInputControllerPrivate.h */,
 			);
 			name = "Window input handling";
@@ -3518,7 +3435,6 @@
 				9F18B7C0169DE6E500101848 /* VDKQueue */,
 				9F8A974710E7DEF500A4B72A /* RegexKitLite */,
 				9F1812B812996308009BC4B2 /* YRKSpinningProgressIndicator */,
-				9FC6380113C09C13004478A3 /* JoypadCocoaSDK */,
 			);
 			path = "Other Sources";
 			sourceTree = "<group>";
@@ -3929,14 +3845,6 @@
 				9FD3A27F139A839600D0918E /* BXSixaxisControllerProfile.m in Sources */,
 				9F60B0DC13AA418300F06BB1 /* BXCollectionItemView.m in Sources */,
 				9FD012FB13AB87E500AF6FE8 /* BXThemedImageCell.m in Sources */,
-				9FC6380013C09B79004478A3 /* BXJoypadController.m in Sources */,
-				9FC6382213C0D54C004478A3 /* BX2ButtonJoystickLayout.m in Sources */,
-				9FC6382513C0D637004478A3 /* BXJoypadLayout.m in Sources */,
-				9FC6382913C0DB4F004478A3 /* BX4ButtonJoystickLayout.m in Sources */,
-				9FC6382F13C0E01C004478A3 /* BX4ButtonWheelLayout.m in Sources */,
-				9FC6383213C0E245004478A3 /* BX2ButtonWheelLayout.m in Sources */,
-				9F87EF7A13C232B600326608 /* BXFlightstickLayout.m in Sources */,
-				9F5B6B7213C3529500E9CA18 /* BXInputController+BXJoypadInput.m in Sources */,
 				9FB446EB13D23BD900E69AF5 /* BXG25ControllerProfile.m in Sources */,
 				9FA0C9E313D24FF3000F6FCB /* DDHidUsage+ADBUsageExtensions.m in Sources */,
 				9FC2F84013D60FBD00BD4F6B /* BXDualActionControllerProfile.m in Sources */,
@@ -4350,14 +4258,6 @@
 				9F2D309015B8233800FAE848 /* BXSixaxisControllerProfile.m in Sources */,
 				9F2D309115B8233800FAE848 /* BXCollectionItemView.m in Sources */,
 				9F2D309215B8233800FAE848 /* BXThemedImageCell.m in Sources */,
-				9F2D309315B8233800FAE848 /* BXJoypadController.m in Sources */,
-				9F2D309415B8233800FAE848 /* BX2ButtonJoystickLayout.m in Sources */,
-				9F2D309515B8233800FAE848 /* BXJoypadLayout.m in Sources */,
-				9F2D309615B8233800FAE848 /* BX4ButtonJoystickLayout.m in Sources */,
-				9F2D309715B8233800FAE848 /* BX4ButtonWheelLayout.m in Sources */,
-				9F2D309815B8233800FAE848 /* BX2ButtonWheelLayout.m in Sources */,
-				9F2D309915B8233800FAE848 /* BXFlightstickLayout.m in Sources */,
-				9F2D309A15B8233800FAE848 /* BXInputController+BXJoypadInput.m in Sources */,
 				9F2D309B15B8233800FAE848 /* BXG25ControllerProfile.m in Sources */,
 				9F2D309C15B8233800FAE848 /* DDHidUsage+ADBUsageExtensions.m in Sources */,
 				9F2D309D15B8233800FAE848 /* BXDualActionControllerProfile.m in Sources */,
@@ -4964,10 +4864,7 @@
 				);
 				INFOPLIST_FILE = "Standalone/Boxer Standalone-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.washboardabs.boxer-standalone";
 				PRODUCT_NAME = "Boxer Standalone";
@@ -5001,10 +4898,7 @@
 				);
 				INFOPLIST_FILE = "Standalone/Boxer Standalone-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.washboardabs.boxer-standalone";
 				PRODUCT_NAME = "Boxer Standalone";
@@ -5149,10 +5043,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_BUNDLE_IDENTIFIER = net.washboardabs.boxer;
 				PRODUCT_NAME = Boxer;
@@ -5185,10 +5076,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_BUNDLE_IDENTIFIER = net.washboardabs.boxer;
 				PRODUCT_NAME = Boxer;

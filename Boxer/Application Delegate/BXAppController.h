@@ -104,9 +104,6 @@ enum {
 /// Opens Boxer's donations page in the default browser.
 - (IBAction) showDonationPage:		(id)sender;
 
-/// Opens the Joypad website in the default browser.
-- (IBAction) showJoypadDownloadPage:(id)sender;
-
 /// Opens Boxer's issue tracker in the default browser, ready to create a new issue.
 - (IBAction) showBugReportPage:		(id)sender;
 

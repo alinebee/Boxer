@@ -34,8 +34,8 @@
 /// Whether any HID joystick/gamepad controller devices are currently available.
 @property (readonly, nonatomic) BOOL joystickControllersAvailable;
 
-/// Whether there are currently any supported controllers (either HID joysticks or Joypads)
-/// connected to the Mac. Used by the joystick type picker in the Inspector UI.
+/// Whether there are currently any supported HID controllers connected to the Mac.
+/// Used by the joystick type picker in the Inspector UI.
 @property (readonly, nonatomic) BOOL controllersAvailable;
 
 @end

@@ -148,8 +148,6 @@
 	<string>http://images.search.yahoo.com/search/images?p=dos%%20%@%%20cover</string>
 	<key>DonationURL</key>
 	<string>http://boxerapp.com/donate</string>
-	<key>JoypadURL</key>
-	<string>http://getjoypad.com/</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
 	<key>MobygamesSearchURL</key>

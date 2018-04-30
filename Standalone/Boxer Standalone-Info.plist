@@ -65,8 +65,6 @@
 	<string>Boxr</string>
 	<key>CFBundleVersion</key>
 	<string>20151206.1</string>
-	<key>JoypadURL</key>
-	<string>http://getjoypad.com/</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
 	<key>NSHumanReadableCopyright</key>

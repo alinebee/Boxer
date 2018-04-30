@@ -10,7 +10,6 @@
 
 @class BXSession;
 @class BXJoystickController;
-@class BXJoypadController;
 @class BXMIDIDeviceMonitor;
 @class BXKeyboardEventTap;
 
@@ -32,9 +31,6 @@
 
 /// Responds to incoming HID controller events from gamepads and joysticks, and dispatches them the current DOS session.
 @property (retain, nonatomic) IBOutlet BXJoystickController *joystickController;
-
-/// Responds to incoming JoyPad controller events and dispatches them to the current DOS session.
-@property (retain, nonatomic) IBOutlet BXJoypadController *joypadController;
 
 /// Monitors the connected MIDI devices, and scans newly-connected devices to see if they're MT-32 units.
 @property (retain, nonatomic) BXMIDIDeviceMonitor *MIDIDeviceMonitor;

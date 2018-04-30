@@ -15,7 +15,7 @@
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-	NSImage *wallpaper	= [NSImage imageNamed: @"GalleryBkg.jpg"];
+	NSImage *wallpaper	= [NSImage imageNamed: @"GalleryBkg"];
 	NSColor *pattern	= [NSColor colorWithPatternImage: wallpaper];
 	
 	NSSize patternSize	= wallpaper.size;

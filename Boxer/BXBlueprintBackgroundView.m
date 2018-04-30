@@ -14,7 +14,7 @@
 
 - (void) _drawBlueprintInRect: (NSRect)dirtyRect
 {	
-	NSColor *blueprintColor = [NSColor colorWithPatternImage: [NSImage imageNamed: @"Blueprint.jpg"]];
+	NSColor *blueprintColor = [NSColor colorWithPatternImage: [NSImage imageNamed: @"Blueprint"]];
 	NSSize patternSize		= blueprintColor.patternImage.size;
 	NSSize viewSize			= self.bounds.size;
 	NSPoint patternOffset	= [NSView focusView].offsetFromWindowOrigin;

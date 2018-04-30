@@ -813,6 +813,7 @@
 
 
 @implementation BXLauncherItem
+@synthesize menu = _menu;
 
 - (id) copyWithZone: (NSZone *)zone
 {

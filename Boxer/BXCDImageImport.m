@@ -20,6 +20,8 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 #pragma mark Implementations
 
 @implementation BXCDImageImport
+@synthesize currentProgress = _currentProgress;
+@synthesize indeterminate = _indeterminate;
 
 @synthesize drive = _drive;
 @synthesize destinationFolderURL	= _destinationFolderURL;

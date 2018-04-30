@@ -297,6 +297,8 @@ NSString * const BXEmulatorUnrecoverableException = @"BXEmulatorUnrecoverableExc
 
 
 @implementation BXEmulatorException
+@synthesize callStackReturnAddresses = _callStackReturnAddresses;
+@synthesize callStackSymbols = _callStackSymbols;
 
 + (id) exceptionWithName: (NSString *)name
        originalException: (boxer_emulatorException *)cppException

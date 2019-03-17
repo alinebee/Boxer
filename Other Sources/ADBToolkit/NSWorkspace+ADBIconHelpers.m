@@ -32,10 +32,10 @@
 
 - (BOOL) fileHasCustomIcon: (NSString *)path
 {
-    return [self directoryAtURLHasCustomIcon: [NSURL fileURLWithPath: path]];
+    return [self URLHasCustomIcon: [NSURL fileURLWithPath: path]];
 }
 
-- (BOOL) directoryAtURLHasCustomIcon: (NSURL *)URL
+- (BOOL) URLHasCustomIcon: (NSURL *)URL
 {
     // IMPLEMENTATION NOTE:
     //

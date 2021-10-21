@@ -251,7 +251,7 @@ static void dyn_prep_word_imm(Bit8u reg) {
 	Bitu val;
 	if (decode.big_op) {
 		if (decode_fetchd_imm(val)) {
-			gen_mov_LEE_word_to_reg(FC_OP2,(void*)val,true);
+			gen_mov_LE_word_to_reg(FC_OP2,(void*)val,true);
 			return;
 		}
 	} else {

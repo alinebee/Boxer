@@ -140,7 +140,7 @@ static struct {
 #define X86_64		0x02
 #define MIPSEL		0x03
 #define ARMV4LE		0x04
-#define POWERPC		0x04
+#define POWERPC		0x05
 
 #if C_TARGETCPU == X86_64
 #include "core_dynrec/risc_x64.h"
@@ -152,6 +152,11 @@ static struct {
 #include "core_dynrec/risc_armv4le.h"
 #elif C_TARGETCPU == POWERPC
 #include "core_dynrec/risc_ppc.h"
+#endif
+
+#if !defined(WORDS_BIGENDIAN)
+#define gen_add_LE gen_add
+#define gen_mov_LE_word_to_reg gen_mov_word_to_reg
 #endif
 
 #include "core_dynrec/decoder.h"

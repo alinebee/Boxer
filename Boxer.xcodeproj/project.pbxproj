@@ -482,6 +482,7 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		835A35DD2721FEB7001425CD /* risc_ppc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = risc_ppc.h; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F0102DF1440543500942713 /* MT32ShelfHighlight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MT32ShelfHighlight.png; sourceTree = "<group>"; };
 		9F0102E11440561E00942713 /* MT32Shelf.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = MT32Shelf.jpg; sourceTree = "<group>"; };
@@ -1918,6 +1919,7 @@
 				9F7720B712B38C4400072AE8 /* risc_mipsel32.h */,
 				9F7720B812B38C4400072AE8 /* risc_x64.h */,
 				9F7720B912B38C4400072AE8 /* risc_x86.h */,
+				835A35DD2721FEB7001425CD /* risc_ppc.h */,
 			);
 			path = core_dynrec;
 			sourceTree = "<group>";
@@ -3409,10 +3411,7 @@
 		9F83F93B145DFCA000860733 /* Legacy Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					i386,
-					ppc,
-				);
+				ARCHS = ppc;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",
@@ -3433,9 +3432,10 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
-				VALID_ARCHS = "i386 ppc";
+				VALID_ARCHS = ppc;
 			};
 			name = "Legacy Release";
 		};

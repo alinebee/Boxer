@@ -49,9 +49,9 @@ This means that this file has had too many modifications to be safely replaceabl
 
 /* Define to 1 to use x86 dynamic cpu core */
 //--Modified 2009-02-26 by Alun Bestor to enable automatically for x86
-#if defined(__i386__)
-	#define C_DYNAMIC_X86 1
-#endif
+//#if defined(__i386__)
+//	#define C_DYNAMIC_X86 1
+//#endif
 //--End of modifications
 
 
@@ -60,9 +60,9 @@ This means that this file has had too many modifications to be safely replaceabl
 
 /* #undef C_DYNREC */
 //--Modified 2009-02-26 by Alun Bestor to enable automatically for X64
-#if defined(__x86_64__) && !defined(C_DYNAMIC_X86)
-	#define  C_DYNREC 1
-#endif
+//#if defined(__x86_64__) && !defined(C_DYNAMIC_X86)
+#define  C_DYNREC 1
+//#endif
 //--End of modifications
 
 /* Define to 1 to enable floating point emulation */
@@ -71,9 +71,9 @@ This means that this file has had too many modifications to be safely replaceabl
 /* Define to 1 to use a x86 assembly fpu core */
 //--Modified 2009-02-26 by Alun Bestor to force this on for Intel
 
-#if defined(__i386__) || defined(__x86_64__)
-	#define C_FPU_X86 1
-#endif
+//#if defined(__i386__) || defined(__x86_64__)
+//	#define C_FPU_X86 1
+//#endif
 
 //--End of modifications
 
@@ -115,11 +115,11 @@ This means that this file has had too many modifications to be safely replaceabl
 
 /* The type of cpu this target has */
 //--Modified 2009-02-26 by Alun Bestor to define these manually
-#if defined(__x86_64__)
-	#define C_TARGETCPU X86_64
-#elif defined(__i386__)
-	#define C_TARGETCPU X86
-#elif defined(__ppc__) || defined(__ppc64__)
+//#if defined(__x86_64__)
+//	#define C_TARGETCPU X86_64
+//#elif defined(__i386__)
+//	#define C_TARGETCPU X86
+#1if defined(__ppc__) || defined(__ppc64__)
 	#define C_TARGETCPU POWERPC
 #endif
 //--End of modifications

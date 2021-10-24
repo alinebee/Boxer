@@ -3411,10 +3411,7 @@
 		9F83F93B145DFCA000860733 /* Legacy Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					i386,
-					ppc,
-				);
+				ARCHS = ppc;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",
@@ -3435,9 +3432,10 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
-				VALID_ARCHS = "i386 ppc";
+				VALID_ARCHS = ppc;
 			};
 			name = "Legacy Release";
 		};
